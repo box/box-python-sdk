@@ -7,26 +7,37 @@ import pytest
 import re
 from threading import Thread
 
+from six.moves.urllib import parse as urlparse  # pylint:disable=import-error,no-name-in-module
+
 from boxsdk.exception import BoxOAuthException
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.config import API
 
 
-def test_get_correct_authorization_url():
+@pytest.fixture(params=('https://url.com/foo?bar=baz', 'https://ȕŕľ.com/ƒőő?Ƅȁŕ=Ƅȁż', None))
+def redirect_url(request):
+    """A value for the `redirect_uri` query string parameter for OAuth2."""
+    return request.param
+
+
+def test_get_correct_authorization_url(redirect_url):
+    # pylint:disable=redefined-outer-name
     fake_client_id = 'fake_client_id'
     fake_client_secret = 'fake_client_secret'
     oauth2 = OAuth2(
         client_id=fake_client_id,
         client_secret=fake_client_secret,
     )
-    redirect_url = 'http://some.redirect.url.com'
-    auth_url, csrf_token = oauth2.get_authorization_url(redirect_url)
-    assert auth_url == '{0}?state={1}&response_type=code&client_id={2}&redirect_uri={3}'.format(
+    auth_url, csrf_token = oauth2.get_authorization_url(redirect_url=redirect_url)
+    expected_auth_url_format = '{0}?state={1}&response_type=code&client_id={2}'
+    if redirect_url:
+        expected_auth_url_format += '&redirect_uri={3}'
+    assert auth_url == expected_auth_url_format.format(
         API.OAUTH2_AUTHORIZE_URL,
         csrf_token,
         fake_client_id,
-        redirect_url,
+        urlparse.quote_plus((redirect_url or '').encode('utf-8')),
     )
     assert re.match('^box_csrf_token_[A-Za-z0-9]{16}$', csrf_token)
 

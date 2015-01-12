@@ -6,6 +6,8 @@ from threading import Lock
 import random
 import string  # pylint:disable=deprecated-module
 
+from six.moves.urllib.parse import urlencode, urlunsplit  # pylint:disable=import-error,no-name-in-module
+
 from boxsdk.network.default_network import DefaultNetwork
 from boxsdk.config import API
 from boxsdk.exception import BoxOAuthException
@@ -91,7 +93,7 @@ class OAuth2(object):
             An HTTPS URI or custom URL scheme where the response will be redirected. Optional if the redirect URI is
             registered with Box already.
         :type redirect_url:
-            `unicode`
+            `unicode` or None
         :return:
             A tuple of the URL of Box’s authorization page and the CSRF token.
             This is the URL that your application should forward the user to in first leg of OAuth 2.
@@ -99,12 +101,21 @@ class OAuth2(object):
             (`unicode`, `unicode`)
         """
         csrf_token = self._get_state_csrf_token()
-        return '{0}?state={1}&response_type=code&client_id={2}&redirect_uri={3}'.format(
-            API.OAUTH2_AUTHORIZE_URL,
-            csrf_token,
-            self._client_id,
-            redirect_url,
-        ), csrf_token
+        # For the query string parameters, use a sequence of two-element
+        # tuples, rather than a dictionary, in order to get a consistent and
+        # predictable order of parameters in the output of `urlencode()`.
+        params = [
+            ('state', csrf_token),
+            ('response_type', 'code'),
+            ('client_id', self._client_id),
+        ]
+        if redirect_url:
+            params.append(('redirect_uri', redirect_url))
+        # `urlencode()` doesn't work with non-ASCII unicode characters, so
+        # encode the parameters as ASCII bytes.
+        params = [(key.encode('utf-8'), value.encode('utf-8')) for (key, value) in params]
+        query_string = urlencode(params)
+        return urlunsplit(('', '', API.OAUTH2_AUTHORIZE_URL, query_string, '')), csrf_token
 
     def authenticate(self, auth_code):
         """
