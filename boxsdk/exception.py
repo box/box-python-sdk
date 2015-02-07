@@ -24,6 +24,36 @@ class BoxAPIException(BoxException):
     Exception raised from the box session layer.
     """
     def __init__(self, status, code=None, message=None, request_id=None, headers=None, url=None, method=None):
+        """
+        :param status:
+            HTTP status code of the failed response
+        :type status:
+            `int`
+        :param code:
+            The 'code' field of the failed response
+        :type code:
+            `unicode`
+        :param message:
+            A message to associate with the exception, e.g. 'message' field of the json in the failed response
+        :type message:
+            `unicode`
+        :param request_id:
+            The 'request_id' field of the json in the failed response
+        :type request_id:
+            `unicode`
+        :param headers:
+            The HTTP headers in the failed response
+        :type headers:
+            `dict`
+        :param url:
+            The url which raised the exception
+        :type url:
+            `unicode`
+        :param method:
+            The HTTP verb used to make the request.
+        :type method:
+            `unicode`
+        """
         super(BoxAPIException, self).__init__()
         self._status = status
         self._code = code
@@ -94,6 +124,24 @@ class BoxOAuthException(BoxException):
     Exception raised during auth.
     """
     def __init__(self, status, message=None, url=None, method=None):
+        """
+        :param status:
+            HTTP status code of the auth response
+        :type status:
+            `int`
+        :param message:
+            A message to associate with the exception, e.g. HTTP content of the auth response
+        :type message:
+            `unicode`
+        :param url:
+            The url which raised the exception
+        :type url:
+            `unicode`
+        :param method:
+            The HTTP verb used to make the request.
+        :type method:
+            `unicode`
+        """
         super(BoxOAuthException, self).__init__()
         self._status = status
         self._message = message
