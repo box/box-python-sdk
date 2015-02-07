@@ -1,0 +1,4 @@
+enum34>=1.0.4
+ordereddict>=1.1
+requests>=2.4.3
+six >= 1.4.0

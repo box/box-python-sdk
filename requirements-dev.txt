@@ -1,0 +1,12 @@
+-r requirements.txt
+bottle
+jsonpatch
+mock
+pep8
+pylint
+pytest
+pytest-cov
+pytest-xdist
+sphinx
+sqlalchemy
+tox
