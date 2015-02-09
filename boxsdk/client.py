@@ -18,7 +18,17 @@ from .object.group_membership import GroupMembership
 class Client(object):
 
     def __init__(self, oauth, network_layer=None):
-        network_layer = network_layer if network_layer else DefaultNetwork()
+        """
+        :param oauth:
+            OAuth2 object used by the session to authorize requests.
+        :type oauth:
+            :class:`OAuth2`
+        :param network_layer:
+            The Network layer to use. If none is provided then an instance of :class:`DefaultNetwork` will be used.
+        :type network_layer:
+            :class:`Network`
+        """
+        network_layer = network_layer or DefaultNetwork()
         self._session = BoxSession(oauth=oauth, network_layer=network_layer)
 
     def folder(self, folder_id):
