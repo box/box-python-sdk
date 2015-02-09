@@ -48,8 +48,9 @@ class Box(object):
     """
     API_PORT = 8086
     UPLOAD_PORT = 8087
-    OAUTH_PORT = 8088
+    OAUTH_API_PORT = 8088
     EVENT_PORT = 8089
+    OAUTH_AUTHORIZE_PORT = 8090
     RATE_LIMIT_THRESHOLD = 100
     RATE_LIMIT_REQUEST_PER_SECOND = 4
 
@@ -60,12 +61,13 @@ class Box(object):
         self._db_session_maker = None
         self.reset_filesystem()
         # Mock Box consists of 3 webservers - one for the content API, one for the upload API, and one for OAuth2
-        api, upload, oauth, event = Bottle(), Bottle(), Bottle(), Bottle()
+        api, upload, oauth_api, event, oauth_authorize = Bottle(), Bottle(), Bottle(), Bottle(), Bottle()
         app_mapping = {
             self.API_PORT: api,
             self.EVENT_PORT: event,
-            self.OAUTH_PORT: oauth,
+            self.OAUTH_API_PORT: oauth_api,
             self.UPLOAD_PORT: upload,
+            self.OAUTH_AUTHORIZE_PORT: oauth_authorize,
         }
         # Since we don't instantiate the servers until Box is instantiated, we have to apply the routes now
         for routed_method in (getattr(self, m) for m in dir(self) if hasattr(getattr(self, m), 'route')):
@@ -77,8 +79,9 @@ class Box(object):
                 app.error(code)(self.handle_error)
         self._api = StoppableWSGIRefServer(host='localhost', port=self.API_PORT).run(api)
         self._upload = StoppableWSGIRefServer(host='localhost', port=self.UPLOAD_PORT).run(upload)
-        self._oauth = StoppableWSGIRefServer(host='localhost', port=self.OAUTH_PORT).run(oauth)
+        self._oauth_api = StoppableWSGIRefServer(host='localhost', port=self.OAUTH_API_PORT).run(oauth_api)
         self._event = StoppableWSGIRefServer(host='localhost', port=self.EVENT_PORT).run(event)
+        self._oauth_authorize = StoppableWSGIRefServer(host='localhost', port=self.OAUTH_AUTHORIZE_PORT).run(oauth_authorize)
         self._rate_limit_bucket = (self.RATE_LIMIT_THRESHOLD, datetime.utcnow())
 
     @staticmethod
@@ -90,10 +93,12 @@ class Box(object):
         """Shutdown the webservers and wait for them to exit."""
         self._api.shutdown()
         self._upload.shutdown()
-        self._oauth.shutdown()
+        self._oauth_api.shutdown()
+        self._oauth_authorize.shutdown()
         self._api.wait()
         self._upload.wait()
-        self._oauth.wait()
+        self._oauth_api.wait()
+        self._oauth_authorize.wait()
 
     def reset_filesystem(self, users=(), applications=()):
         """
@@ -175,20 +180,20 @@ class Box(object):
 
     @log_request
     @allow_chaos
-    @GET(OAUTH_PORT, '/authorize')
+    @GET(OAUTH_AUTHORIZE_PORT, '/')
     @view('oauth2')
     def oauth2_authorize(self):
         return self._oauth_behavior.oauth2_authorize()
 
     @log_request
     @allow_chaos
-    @POST(OAUTH_PORT, '/authorize')
+    @POST(OAUTH_AUTHORIZE_PORT, '/')
     def oauth2_finish_loop(self):
         return self._oauth_behavior.oauth2_finish_loop()
 
     @log_request
     @allow_chaos
-    @POST(OAUTH_PORT, '/token')
+    @POST(OAUTH_API_PORT, '/token')
     def oauth2_token(self):
         return self._oauth_behavior.oauth2_token()
 

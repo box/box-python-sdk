@@ -50,7 +50,8 @@ def mock_box(mock_box_server, monkeypatch, client_id, client_secret, user_name, 
     mock_box_server.reset_filesystem([(user_name, user_login)], [(client_id, client_secret, 0)])
     monkeypatch.setattr(API, 'BASE_API_URL', 'http://localhost:{0}'.format(Box.API_PORT))
     monkeypatch.setattr(API, 'UPLOAD_URL', 'http://localhost:{0}'.format(Box.UPLOAD_PORT))
-    monkeypatch.setattr(API, 'OAUTH2_URL', 'http://localhost:{0}'.format(Box.OAUTH_PORT))
+    monkeypatch.setattr(API, 'OAUTH2_API_URL', 'http://localhost:{0}'.format(Box.OAUTH_API_PORT))
+    monkeypatch.setattr(API, 'OAUTH2_AUTHORIZE_URL', 'http://localhost:{0}'.format(Box.OAUTH_AUTHORIZE_PORT))
     return mock_box_server
 
 

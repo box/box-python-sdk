@@ -27,7 +27,7 @@ def test_automatic_refresh(
         ),
         call(
             'POST',
-            '{0}/token'.format(API.OAUTH2_URL),
+            '{0}/token'.format(API.OAUTH2_API_URL),
             data=ANY,
             headers={'content-type': 'application/x-www-form-urlencoded'},
         ),

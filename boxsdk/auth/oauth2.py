@@ -99,8 +99,8 @@ class OAuth2(object):
             (`unicode`, `unicode`)
         """
         csrf_token = self._get_state_csrf_token()
-        return '{0}/authorize?state={1}&response_type=code&client_id={2}&redirect_uri={3}'.format(
-            API.OAUTH2_URL,
+        return '{0}?state={1}&response_type=code&client_id={2}&redirect_uri={3}'.format(
+            API.OAUTH2_AUTHORIZE_URL,
             csrf_token,
             self._client_id,
             redirect_url,
@@ -201,7 +201,7 @@ class OAuth2(object):
         :rtype:
             (`unicode`, `unicode`)
         """
-        url = '{base_auth_url}/token'.format(base_auth_url=API.OAUTH2_URL)
+        url = '{base_auth_url}/token'.format(base_auth_url=API.OAUTH2_API_URL)
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         network_response = self._network_layer.request(
             'POST',

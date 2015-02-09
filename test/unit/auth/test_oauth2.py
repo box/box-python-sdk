@@ -22,8 +22,8 @@ def test_get_correct_authorization_url():
     )
     redirect_url = 'http://some.redirect.url.com'
     auth_url, csrf_token = oauth2.get_authorization_url(redirect_url)
-    assert auth_url == '{0}/authorize?state={1}&response_type=code&client_id={2}&redirect_uri={3}'.format(
-        API.OAUTH2_URL,
+    assert auth_url == '{0}?state={1}&response_type=code&client_id={2}&redirect_uri={3}'.format(
+        API.OAUTH2_AUTHORIZE_URL,
         csrf_token,
         fake_client_id,
         redirect_url,
@@ -55,7 +55,7 @@ def test_authenticate_send_post_request_with_correct_params(mock_network_layer, 
 
     mock_network_layer.request.assert_called_once_with(
         'POST',
-        '{0}/token'.format(API.OAUTH2_URL),
+        '{0}/token'.format(API.OAUTH2_API_URL),
         data=data,
         headers={'content-type': 'application/x-www-form-urlencoded'},
         access_token=None,
@@ -106,7 +106,7 @@ def test_refresh_send_post_request_with_correct_params_and_handles_multiple_requ
     # and it was made with the correct params.
     mock_network_layer.request.assert_called_once_with(
         'POST',
-        '{0}/token'.format(API.OAUTH2_URL),
+        '{0}/token'.format(API.OAUTH2_API_URL),
         data=data,
         headers={'content-type': 'application/x-www-form-urlencoded'},
         access_token=fake_access_token,
