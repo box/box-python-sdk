@@ -20,6 +20,7 @@ class LRUCache(object):
         """
         Lookup the value in cache using the associated key. Returns the value if found.
         Raises :class:`KeyError` otherwise.
+
         :param key:
             The key used to lookup the cache.
         :type key:
@@ -36,6 +37,7 @@ class LRUCache(object):
     def set(self, key, value=None):
         """
         Store the key-value pair to cache.
+
         :param key:
             The key associated with the value to be stored. It's used to lookup the cache.
         :type key:
