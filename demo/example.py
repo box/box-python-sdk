@@ -160,10 +160,9 @@ def run_groups_example(client):
     - Remove a member from a group
     - Delete a Group
     """
-    original_groups = client.groups()
-
     try:
         # First delete group if it already exists
+        original_groups = client.groups()
         _delete_leftover_group(original_groups, 'box_sdk_demo_group')
         _delete_leftover_group(original_groups, 'renamed_box_sdk_demo_group')
 
