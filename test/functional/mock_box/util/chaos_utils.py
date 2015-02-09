@@ -64,7 +64,9 @@ def xml(method):
 
 def patch(operations):
     json_patch = jsonpatch.JsonPatch(operations)
-    patcher = lambda doc: json_patch.apply(doc)
+
+    def patcher(doc):
+        return json_patch.apply(doc)
 
     def inner(patched_function):
         def patched_inner(*args, **kwargs):
