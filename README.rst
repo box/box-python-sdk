@@ -203,7 +203,7 @@ Copyright and License
 
 ::
 
- Copyright 2014 Box, Inc. All rights reserved.
+ Copyright 2015 Box, Inc. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
