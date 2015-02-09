@@ -130,7 +130,9 @@ class Events(BaseEndpoint):
                     if message == 'new_change':
                         next_stream_position = stream_position
                         for event, next_stream_position in self._get_all_events_since(stream_position):
-                            if event_ids.get(event['event_id']) == -1:
+                            try:
+                                event_ids.get(event['event_id'])
+                            except KeyError:
                                 yield event
                                 event_ids.set(event['event_id'])
                         stream_position = next_stream_position
