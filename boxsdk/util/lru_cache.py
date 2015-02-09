@@ -18,11 +18,11 @@ class LRUCache(object):
 
     def get(self, key):
         """
-        Lookup the value in cache using the associated key. Returns the value if found.
+        Look up the value in cache using the associated key. Returns the value if found.
         Raises :class:`KeyError` otherwise.
 
         :param key:
-            The key used to lookup the cache.
+            The key used to look up the cache.
         :type key:
             `unicode`
         :return:
@@ -39,7 +39,7 @@ class LRUCache(object):
         Store the key-value pair to cache.
 
         :param key:
-            The key associated with the value to be stored. It's used to lookup the cache.
+            The key associated with the value to be stored. It's used to look up the cache.
         :type key:
             `unicode`
         :param value:
