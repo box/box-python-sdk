@@ -7,6 +7,10 @@ box-python-sdk
 .. image:: https://travis-ci.org/box/box-python-sdk.png?branch=master
     :target: https://travis-ci.org/box/box-python-sdk
 
+.. image:: https://readthedocs.org/projects/box-python-sdk/badge/?version=latest
+    :target: http://box-python-sdk.readthedocs.org/en/latest
+    :alt: Documentation Status
+
 .. image:: https://pypip.in/v/boxsdk/badge.png
     :target: https://pypi.python.org/pypi/boxsdk
 
@@ -57,8 +61,7 @@ Authenticate (get access/refresh token)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you navigate the user to the auth_url, 
-the user will eventually get redirected to
-  http://YOUR_REDIRECT_URL?code=YOUR_AUTH_CODE.
+the user will eventually get redirected to http://YOUR_REDIRECT_URL?code=YOUR_AUTH_CODE.
 After getting the code, you will be able to use the code to exchange for access token and fresh token.
 
 The SDK handles all the work for you; all you need to do is run:
