@@ -57,7 +57,7 @@ def main():
         install_requires.append('ordereddict>=1.1')
     setup(
         name='boxsdk',
-        version='1.0.1',
+        version='1.0.2',
         description='Official Box Python SDK',
         long_description=open(join(base_dir, 'README.rst')).read(),
         author='Box',
@@ -68,7 +68,8 @@ def main():
         tests_require=['pytest', 'pytest-xdist', 'mock', 'sqlalchemy', 'bottle', 'jsonpatch'],
         cmdclass={'test': PyTest},
         classifiers=CLASSIFIERS,
-        keywords='box oauth2 sdk'
+        keywords='box oauth2 sdk',
+        license=open(join(base_dir, 'LICENSE')).read(),
     )
 
 

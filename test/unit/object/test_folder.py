@@ -60,7 +60,7 @@ def _assert_collaborator_added(test_folder, collaborator, mock_box_session, mock
 @pytest.mark.parametrize('role', iter(CollaborationRole))
 def test_add_user_collaborator(test_folder, mock_user, mock_box_session, mock_collab_response, notify, role):
     data = json.dumps({
-        'item': {'type': 'folder', 'id': test_folder.object_id},
+        'item': {'id': test_folder.object_id, 'type': 'folder'},
         'accessible_by': {'id': mock_user.object_id, 'type': 'user'},
         'role': role,
     })
@@ -71,7 +71,7 @@ def test_add_user_collaborator(test_folder, mock_user, mock_box_session, mock_co
 @pytest.mark.parametrize('role', iter(CollaborationRole))
 def test_add_group_collaborator(test_folder, mock_group, mock_box_session, mock_collab_response, notify, role):
     data = json.dumps({
-        'item': {'type': 'folder', 'id': test_folder.object_id},
+        'item': {'id': test_folder.object_id, 'type': 'folder'},
         'accessible_by': {'id': mock_group.object_id, 'type': 'group'},
         'role': role,
     })
@@ -83,7 +83,7 @@ def test_add_group_collaborator(test_folder, mock_group, mock_box_session, mock_
 def test_add_email_collaborator(test_folder, mock_box_session, mock_collab_response, notify, role):
     email_address = 'foo@example.com'
     data = json.dumps({
-        'item': {'type': 'folder', 'id': test_folder.object_id},
+        'item': {'id': test_folder.object_id, 'type': 'folder'},
         'accessible_by': {'login': email_address, 'type': 'user'},
         'role': role,
     })
