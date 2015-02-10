@@ -1,0 +1,18 @@
+language: python
+env:
+  - TOX_ENV=py26
+  - TOX_ENV=py27
+  - TOX_ENV=py33
+  - TOX_ENV=py34
+  - TOX_ENV=pypy
+  - TOX_ENV=pep8
+  - TOX_ENV=pylint
+  - TOX_ENV=coverage
+# commands to install dependencies
+install:
+  - pip install tox --use-mirrors
+# commands to run
+script:
+  - tox -e $TOX_ENV
+after_success:
+  - if [ "-x$TOX_ENV" = "xcoverage" ]; then coveralls; fi
