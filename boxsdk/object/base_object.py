@@ -207,9 +207,12 @@ class BaseObject(BaseEndpoint):
         :type factory:
             `callable` or None
         :returns:
-            A generator of instances returned by the given factory callable.
+            A generator of 3-tuples. Each tuple contains:
+            1) An instance returned by the given factory callable.
+            3) The number of object returned by the last paged API call
+            2) Index the current instance in the current page
         :rtype:
-            `generator` of varies
+            `generator` of `tuple` of (varies, `int`, `int`)
         """
         current_index = starting_index
 
@@ -218,11 +221,15 @@ class BaseObject(BaseEndpoint):
             box_response = self._session.get(url, params=params)
             response = box_response.json()
 
+            current_page_size = len(response['entries'])
+            index_in_current_page = 0
             for item in response['entries']:
                 instance_factory = factory
                 if not instance_factory:
                     instance_factory = Translator().translate(item['type'])
-                yield instance_factory(self._session, item['id'], item)
+                instance = instance_factory(self._session, item['id'], item)
+                yield instance, current_page_size, index_in_current_page
+                index_in_current_page += 1
 
             current_index += limit
             if current_index >= response['total_count']:

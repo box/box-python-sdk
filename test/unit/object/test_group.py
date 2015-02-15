@@ -154,3 +154,46 @@ def test_membership_with_hidden_results(test_group, mock_box_session, mock_membe
     # Assert we got the expected number of membership instances
     assert len(all_members) == total - total_hidden
     assert all(isinstance(m, GroupMembership) for m in all_members)
+
+
+def test_membership_with_page_info(test_group, mock_box_session, mock_membership_responses):
+    """
+    Verify that the paging info returned by the membership call when include_page_info=True
+    is correct, thus allowing a client complete knowledge of when another API call
+    is going to be triggered.
+    """
+    # pylint:disable=redefined-outer-name
+    total = 9
+    page_size = 3
+    hidden_in_batch = 0, 2, 1
+
+    # Each call the 'get' (the GET next page call) will return the next response
+    mock_box_session.get.side_effect = mock_membership_responses(total, page_size, hidden_in_batch=hidden_in_batch)
+
+    # Initialize the generator of all the membership
+    group_generator = test_group.membership(0, page_size, include_page_info=True)
+
+    # manually get all the items, verifying that the page-info data is correct.
+    _, page_size, index = next(group_generator)
+    assert page_size == 3 and index == 0
+    _, page_size, index = next(group_generator)
+    assert page_size == 3 and index == 1
+    _, page_size, index = next(group_generator)
+    assert page_size == 3 and index == 2
+
+    # This next call will trigger a new GET request, returning the 2nd page
+    _, page_size, index = next(group_generator)
+    assert page_size == 1 and index == 0
+
+    # This next call will trigger a new GET request, returning the 3rd page
+    _, page_size, index = next(group_generator)
+    assert page_size == 2 and index == 0
+    _, page_size, index = next(group_generator)
+    assert page_size == 2 and index == 1
+
+    try:
+        # And since we're finished... this call will return StopIteration
+        next(group_generator)
+        assert False
+    except StopIteration:
+        pass
