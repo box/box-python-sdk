@@ -20,7 +20,8 @@ def run_folder_examples(client):
 
     items = root_folder.get_items(limit=100, offset=0)
     print 'This is the first 100 items in the root folder:'
-    print items
+    for item in items:
+        print "   " + item.name
 
 
 def run_collab_examples(client):
@@ -50,8 +51,8 @@ def rename_folder(client):
 
 def get_folder_shared_link(client):
     root_folder = client.folder(folder_id='0')
-    collab_folder = root_folder.create_subfolder('collab folder')
-    print 'Folder {} created'.format(collab_folder.get()['name'])
+    collab_folder = root_folder.create_subfolder('shared link folder')
+    print 'Folder {} created'.format(collab_folder.get().name)
 
     shared_link = collab_folder.get_shared_link()
     print 'Got shared link:' + shared_link
@@ -98,17 +99,19 @@ def search_files(client):
     )
     for item in search_results:
         item_with_name = item.get(fields=['name'])
-        print item_with_name.id
+        print "matching item: " + item_with_name.id
+    else:
+        print "no matching items"
 
 
 def copy_item(client):
     root_folder = client.folder(folder_id='0')
     file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file.txt')
     a_file = root_folder.upload(file_path, file_name='a file.txt')
-    subfolder1 = root_folder.create_subfolder('sub')
+    subfolder1 = root_folder.create_subfolder('copy_sub')
     a_file.copy(subfolder1)
     print subfolder1.get_items(limit=10, offset=0)
-    subfolder2 = root_folder.create_subfolder('sub2')
+    subfolder2 = root_folder.create_subfolder('copy_sub2')
     subfolder1.copy(subfolder2)
     print subfolder2.get_items(limit=10, offset=0)
 
@@ -119,10 +122,10 @@ def move_item(client):
     root_folder = client.folder(folder_id='0')
     file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file.txt')
     a_file = root_folder.upload(file_path, file_name='a file.txt')
-    subfolder1 = root_folder.create_subfolder('sub')
+    subfolder1 = root_folder.create_subfolder('move_sub')
     a_file.move(subfolder1)
     print subfolder1.get_items(limit=10, offset=0)
-    subfolder2 = root_folder.create_subfolder('sub2')
+    subfolder2 = root_folder.create_subfolder('move_sub2')
     subfolder1.move(subfolder2)
     print subfolder2.get_items(limit=10, offset=0)
 
@@ -168,7 +171,7 @@ def run_groups_example(client):
 
         new_group = client.create_group('box_sdk_demo_group')
     except BoxAPIException as ex:
-        if ex.status != 403 or ex.code != 'access_denied_insufficient_permissions':
+        if ex.status != 403:
             raise
         print 'The authenticated user does not have permissions to manage groups. Skipping the test of this demo.'
         return
