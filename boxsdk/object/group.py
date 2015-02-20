@@ -14,21 +14,17 @@ class Group(BaseObject):
 
     _item_type = 'group'
 
-    def membership(self, starting_index=0, limit=100):
+    def membership(self, starting_index=0, limit=100, include_page_info=False):
         """
         A generator over all the members of this Group. The paging in the API is transparently implemented
         inside the generator. By adjusting the page_size, the caller can control the chattiness of the API. Caller
-        can also implement their owning paging and/or control exactly when an API is called:
+        can also implement their owning paging and/or control exactly when an API is called by
+        using the 'include_page_info' param as follows:
 
-            def get_slice(group, start, limit):
-                return list(itertools.islice(group.membership(..., start, limit, ...), limit))
-
-            first_ten = get_slice(some_group, 0, 10)
-            second_ten = get_slice(some_group, 10, 10)
-            third_ten = get_slice(some_group, 20, 10)
-
-        caveat - any hidden items (see the Box Developer API for more details) will render the above
-        inaccurate. Hidden results will lead the above get_slice() code to trigger API calls at non-expected places.
+            for group, page_size, index in group.membership(..., include_page_info=True):
+                # when index + 1 == page_size, the next iteration of this loop will
+                # trigger an API call, unless we've reached the end of *all* the data.
+                pass
 
         :param starting_index:
             The index at which to begin.
@@ -39,15 +35,24 @@ class Group(BaseObject):
         :type limit:
             `int`
         :returns:
-            A generator of GroupMembership instances.
+            A generator of GroupMembership instances. Or, if include_page_info
+            is True, it is a generator of 3-tuples, where each tuple is
+                1) GroupMembership instance
+                2) Number of GroupMemberships returned by the last paged API call
+                3) Index of *this* GroupMembership instance in the current page.
         :rtype:
-            `generator` of :class:`GroupMembership`
+            `generator` of :class:`GroupMembership` or, if include_page_info
+            is True then `tuple` of (:class:`GroupMembership`, `int`, `int`)
         """
         url = self.get_url('memberships')
 
         membership_factory = partial(GroupMembership, group=self)
-        for group_membership in self._paging_wrapper(url, starting_index, limit, membership_factory):
-            yield group_membership
+        for group_membership_tuple in self._paging_wrapper(url, starting_index, limit, membership_factory):
+            if include_page_info:
+                yield group_membership_tuple
+            else:
+                group_membership, _, _ = group_membership_tuple
+                yield group_membership
 
     def add_member(self, user, role):
         """
