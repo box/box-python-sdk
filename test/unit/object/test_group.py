@@ -167,7 +167,7 @@ def test_membership_with_page_info(test_group, mock_box_session, mock_membership
     page_size = 3
     hidden_in_batch = 0, 2, 1
 
-    # Each call the 'get' (the GET next page call) will return the next response
+    # Each call to 'get' (the GET next page call) will return the next response
     mock_box_session.get.side_effect = mock_membership_responses(total, page_size, hidden_in_batch=hidden_in_batch)
 
     # Initialize the generator of all the membership
@@ -191,9 +191,5 @@ def test_membership_with_page_info(test_group, mock_box_session, mock_membership
     _, page_size, index = next(group_generator)
     assert page_size == 2 and index == 1
 
-    try:
-        # And since we're finished... this call will return StopIteration
+    with pytest.raises(StopIteration):
         next(group_generator)
-        assert False
-    except StopIteration:
-        pass

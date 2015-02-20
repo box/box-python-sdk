@@ -36,7 +36,7 @@ class Group(BaseObject):
             `int`
         :returns:
             A generator of GroupMembership instances. Or, if include_page_info
-            is True, the it is a generator of 3-tuples, where each tuple is
+            is True, it is a generator of 3-tuples, where each tuple is
                 1) GroupMembership instance
                 2) Number of GroupMemberships returned by the last paged API call
                 3) Index of *this* GroupMembership instance in the current page.

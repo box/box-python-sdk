@@ -209,8 +209,8 @@ class BaseObject(BaseEndpoint):
         :returns:
             A generator of 3-tuples. Each tuple contains:
             1) An instance returned by the given factory callable.
-            3) The number of object returned by the last paged API call
-            2) Index the current instance in the current page
+            2) The number of objects in the current page.
+            3) Index the current instance in the current page.
         :rtype:
             `generator` of `tuple` of (varies, `int`, `int`)
         """
