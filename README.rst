@@ -102,6 +102,7 @@ Get folder info
 
     root_folder = client.folder(folder_id='0').get()
     print 'folder owner: ' + root_folder.owned_by['login']
+    print 'folder name: ' + root_folder['name']
 
 Get items in a folder
 ~~~~~~~~~~~~~~~~~~~~~
@@ -124,6 +125,13 @@ Get shared link
 .. code-block:: python
 
     shared_link = client.folder(folder_id='SOME_FOLDER_ID').get_shared_link()
+
+Get file name
+~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    client.file(file_id='SOME_FILE_ID').get()['name']
 
 Rename an item
 ~~~~~~~~~~~~~~
