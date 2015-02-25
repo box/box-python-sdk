@@ -222,14 +222,12 @@ class BaseObject(BaseEndpoint):
             response = box_response.json()
 
             current_page_size = len(response['entries'])
-            index_in_current_page = 0
-            for item in response['entries']:
+            for index_in_current_page, item in enumerate(response['entries']):
                 instance_factory = factory
                 if not instance_factory:
                     instance_factory = Translator().translate(item['type'])
                 instance = instance_factory(self._session, item['id'], item)
                 yield instance, current_page_size, index_in_current_page
-                index_in_current_page += 1
 
             current_index += limit
             if current_index >= response['total_count']:
