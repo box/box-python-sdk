@@ -132,6 +132,13 @@ Rename an item
 
     client.file(file_id='SOME_FILE_ID').rename('bar-2.txt')
 
+Move an item
+~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    client.file(file_id='SOME_FILE_ID').move(client.folder(folder_id='SOME_FOLDER_ID'))
+
 Get content of a file
 ~~~~~~~~~~~~~~~~~~~~~
 
