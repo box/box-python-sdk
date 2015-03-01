@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import print_function, unicode_literals
 
 import bottle
 import os
@@ -57,8 +57,8 @@ def authenticate():
     assert auth_code['state'] == csrf_token
     access_token, refresh_token = oauth.authenticate(auth_code['auth_code'])
 
-    print 'access_token: ' + access_token
-    print 'refresh_token: ' + refresh_token
+    print('access_token: ' + access_token)
+    print('refresh_token: ' + refresh_token)
 
     return oauth
 
