@@ -231,12 +231,27 @@ def run_groups_example(client):
     print('The new group has been deleted: ', has_been_deleted)
 
 
+def run_metadata_example(client):
+    root_folder = client.folder(folder_id='0')
+    file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file.txt')
+    foo = root_folder.upload(file_path, file_name='foo.txt')
+    print('{0} uploaded '.format(foo.get()['name']))
+    try:
+        metadata = foo.metadata()
+        metadata.create({'foo': 'bar'})
+        print('Created metadata: {0}'.format(metadata.get()))
+        update = metadata.start_update()
+        update.update('/foo', 'baz', 'bar')
+        print('Updated metadata: {0}'.format(metadata.update(update)))
+    finally:
+        foo.delete()
+
+
 def run_examples(oauth):
 
     client = Client(oauth)
 
     run_user_example(client)
-    run_groups_example(client)
     run_folder_examples(client)
     run_collab_examples(client)
     rename_folder(client)
@@ -250,6 +265,9 @@ def run_examples(oauth):
     get_events(client)
     get_latest_stream_position(client)
     # long_poll(client)
+    # Enterprise accounts only
+    run_groups_example(client)
+    run_metadata_example(client)
 
 
 def main():

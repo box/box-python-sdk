@@ -76,6 +76,14 @@ boxsdk.object.item module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.object.metadata module
+-----------------------------
+
+.. automodule:: boxsdk.object.metadata
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.object.search module
 ---------------------------
 

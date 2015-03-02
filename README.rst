@@ -184,6 +184,23 @@ Events
     # Get latest stream position
     client.events().get_latest_stream_position()
 
+Metadata
+~~~~~~~~
+
+.. code-block:: python
+
+    # Get metadata
+    client.file(file_id='SOME_FILE_ID').metadata().get()
+
+    # Create metadata
+    client.file(file_id='SOME_FILE_ID').metadata().create({'key', 'value')
+
+    # Update metadata
+    metadata = client.file(file_id='SOME_FILE_ID').metadata()
+    update = metadata.start_update()
+    update.add('/key', 'new_value')
+    metadata.update(update)
+
 
 Contributing
 ------------
