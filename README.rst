@@ -205,7 +205,7 @@ Metadata
 Contributing
 ------------
 
-See `CONTRIBUTING <https://github.com/box/box-python-sdk/blob/master/CONTRIBUTING.rst>`_.
+See `CONTRIBUTING.rst <https://github.com/box/box-python-sdk/blob/master/CONTRIBUTING.rst>`_.
 
 
 Developer Setup
