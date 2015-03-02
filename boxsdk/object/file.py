@@ -2,8 +2,8 @@
 
 from __future__ import unicode_literals
 from boxsdk.config import API
-from boxsdk.object.item import Item
-from boxsdk.object.metadata import Metadata
+from .item import Item
+from .metadata import Metadata
 
 
 class File(Item):

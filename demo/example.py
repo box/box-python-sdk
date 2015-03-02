@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 import os
 from boxsdk.client import Client
 from boxsdk.object.collaboration import CollaborationRole
-from boxsdk.object.metadata import MetadataUpdate
 from boxsdk.exception import BoxAPIException
 from demo.auth import authenticate
 
@@ -209,7 +208,7 @@ def run_metadata_example(client):
         metadata = foo.metadata()
         metadata.create({'foo': 'bar'})
         print('Created metadata: {0}'.format(metadata.get()))
-        update = MetadataUpdate()
+        update = metadata.start_update()
         update.update('/foo', 'baz', 'bar')
         print('Updated metadata: {0}'.format(metadata.update(update)))
     finally:

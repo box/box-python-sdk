@@ -125,6 +125,18 @@ class Metadata(BaseEndpoint):
     def get_url(self, *args):
         return self._object.get_url('metadata', self._scope, self._template)
 
+    @staticmethod
+    def start_update():
+        """
+        Get a :class:`MetadataUpdate` for use with the :meth:`update` method.
+
+        :return:
+            A metadata update object that can be used to update this metadata object.
+        :rtype:
+            :class:`MetadataUpdate`
+        """
+        return MetadataUpdate()
+
     def update(self, metadata_update):
         """
         Update the key/value pairs associated with this metadata object.

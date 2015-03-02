@@ -181,10 +181,10 @@ Metadata
     client.file(file_id='SOME_FILE_ID').metadata().create({'key', 'value')
 
     # Update metadata
-    from boxsdk.object.metadata import MetadataUpdate
-    update = MetadataUpdate()
+    metadata = client.file(file_id='SOME_FILE_ID').metadata()
+    update = metadata.start_update()
     update.add('/key', 'new_value')
-    client.file(file_id='SOME_FILE_ID').metadata().update(update)
+    metadata.update(update)
 
 
 Contributing
