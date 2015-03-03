@@ -118,8 +118,8 @@ Create subfolder
 
 .. code-block:: python
 
-    # creates folder structure /l1/l2/l3
-    client.folder(folder_id='0').create_subfolder('l1').create_subfolder('l2').create_subfolder('l3')
+    # creates folder structure /L1/L2/L3
+    client.folder(folder_id='0').create_subfolder('L1').create_subfolder('L2').create_subfolder('L3')
 
 Get shared link
 ~~~~~~~~~~~~~~~
