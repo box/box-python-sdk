@@ -29,7 +29,8 @@ Installing
 Authorization
 -------------
 
-The Box API uses OAuth2 for auth. The SDK makes it relatively painless to work with OAuth2 tokens.
+The Box API uses OAuth2 for auth. The SDK makes it relatively painless
+to work with OAuth2 tokens.
 
 Get the authorization url
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,37 +39,38 @@ Get the authorization url
 
     from boxsdk.auth.oauth2 import OAuth2
 
-    oauth = OAuth2(
-        client_id='YOUR_CLIENT_ID',
-        client_secret='YOUR_CLIENT_SECRET',
-        store_tokens=your_store_tokens_callback_method,
-    )
+    oauth = OAuth2(client_id='YOUR_CLIENT_ID',
+                   client_secret='YOUR_CLIENT_SECRET',
+                   store_tokens=your_store_tokens_callback_method)
 
     auth_url, csrf_token = oauth.get_authorization_url('http://YOUR_REDIRECT_URL')
 
-store_tokens is a callback used to store the access token
-and refresh token. You might want to define something like this:
+store_tokens is a callback used to store the access token and refresh
+token. You might want to define something like this:
 
 .. code-block:: python
 
     def store_tokens(access_token, refresh_token):
         # store the tokens at secure storage (e.g. Keychain)
 
-The SDK will keep the tokens in memory for the duration of the Python script run, so you don't always need to
-pass store_tokens.
+The SDK will keep the tokens in memory for the duration of the Python
+script run, so you don't always need to pass store_tokens.
 
 Authenticate (get access/refresh token)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you navigate the user to the auth_url, 
-the user will eventually get redirected to http://YOUR_REDIRECT_URL?code=YOUR_AUTH_CODE.
-After getting the code, you will be able to use the code to exchange for access token and fresh token.
+If you navigate the user to the auth_url, the user will eventually get
+redirected to http://YOUR_REDIRECT_URL?code=YOUR_AUTH_CODE.  After
+getting the code, you will be able to use the code to exchange for
+access token and fresh token.
 
 The SDK handles all the work for you; all you need to do is run:
 
 .. code-block:: python
 
-    # Make sure that the csrf token you get from the `state` parameter in the final redirect URI is the same token you get from the get_authorization_url method.
+    # Make sure that the csrf token you get from the `state` parameter
+    # in the final redirect URI is the same token you get from the
+    # get_authorization_url method.
     assert 'THE_CSRF_TOKEN_YOU_GOT' == csrf_token
     access_token, refresh_token = oauth.authenticate('YOUR_AUTH_CODE')
 
@@ -230,7 +232,8 @@ Run all tests using -
 
 The tox tests include code style checks via pep8 and pylint.
 
-The tox tests are configured to run on Python 2.6, 2.7, 3.3, 3.4, and PyPy.
+The tox tests are configured to run on Python 2.6, 2.7, 3.3, 3.4, and
+PyPy.
 
 
 Copyright and License
