@@ -195,7 +195,7 @@ Metadata
     client.file(file_id='SOME_FILE_ID').metadata().get()
 
     # Create metadata
-    client.file(file_id='SOME_FILE_ID').metadata().create({'key', 'value'})
+    client.file(file_id='SOME_FILE_ID').metadata().create({'key': 'value'})
 
     # Update metadata
     metadata = client.file(file_id='SOME_FILE_ID').metadata()
