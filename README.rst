@@ -39,9 +39,11 @@ Get the authorization url
 
     from boxsdk.auth.oauth2 import OAuth2
 
-    oauth = OAuth2(client_id='YOUR_CLIENT_ID',
-                   client_secret='YOUR_CLIENT_SECRET',
-                   store_tokens=your_store_tokens_callback_method)
+    oauth = OAuth2(
+        client_id='YOUR_CLIENT_ID',
+        client_secret='YOUR_CLIENT_SECRET',
+        store_tokens=your_store_tokens_callback_method,
+    )
 
     auth_url, csrf_token = oauth.get_authorization_url('http://YOUR_REDIRECT_URL')
 
