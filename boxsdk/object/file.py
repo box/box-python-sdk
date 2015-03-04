@@ -1,6 +1,9 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
+import json
+
 from boxsdk.config import API
 from .item import Item
 from .metadata import Metadata
@@ -10,6 +13,51 @@ class File(Item):
     """Box API endpoint for interacting with files."""
 
     _item_type = 'file'
+
+    @classmethod
+    def preflight_check(cls, session, size, name=None, file_id=None, parent_id=None):
+        """
+        Make an API call to check if certain file can be uploaded to Box or not.
+        (https://developers.box.com/docs/#files-preflight-check)
+
+        :param session:
+            An instance of :class:`BoxSession` used to make requests.
+        :type session:
+            :class:`BoxSession`
+        :param size:
+            The size of the file in bytes. Specify 0 for unknown file-sizes.
+        :type size:
+            `int`
+        :param name:
+            The name of the file to be uploaded. This is optional if `file_id` is specified.
+            But required for new file uploads.
+        :type name:
+            `unicode`
+        :param file_id:
+            Box id of the file to be uploaded. Not required for new file uploads.
+        :type file_id:
+            `unicode`
+        :param parent_id:
+            The ID of the parent folder. Required only for new file uploads.
+        :type parent_id:
+            `unicode`
+        :raises:
+            :class:`BoxAPIException` when preflight check fails.
+        """
+        args = [file_id] if file_id else []
+        args.append('content')
+        url = cls.get_type_url(*args)
+        data = {'size': size}
+        if name:
+            data['name'] = name
+        if parent_id:
+            data['parent'] = {'id': parent_id}
+
+        session.options(
+            url=url,
+            expect_json_response=False,
+            data=json.dumps(data),
+        )
 
     def content(self):
         """
@@ -38,7 +86,7 @@ class File(Item):
         for chunk in box_response.network_response.response_as_stream.stream(decode_content=True):
             writeable_stream.write(chunk)
 
-    def update_contents_with_stream(self, file_stream, etag=None):
+    def update_contents_with_stream(self, file_stream, preflight_check=False, etag=None):
         """
         Upload a new version of a file, taking the contents from the given file stream.
 
@@ -46,6 +94,11 @@ class File(Item):
             The file-like object containing the bytes
         :type file_stream:
             `file`
+        :param preflight_check:
+            Whether or not makes an extra API call before the update to check if the new file stream can be uploaded.
+            (https://developers.box.com/docs/#files-preflight-check)
+        :type preflight_check:
+            `bool`
         :param etag:
             If specified, instruct the Box API to update the item only if the current version's etag matches.
         :type etag:
@@ -65,13 +118,18 @@ class File(Item):
             response_object=self._session.post(url, expect_json_response=False, files=files, headers=headers).json(),
         )
 
-    def update_contents(self, file_path, etag=None):
+    def update_contents(self, file_path, preflight_check=False, etag=None):
         """Upload a new version of a file. The contents are taken from the given file path.
 
         :param file_path:
             The path of the file that should be uploaded.
         :type file_path:
             `unicode`
+        :param preflight_check:
+            Whether or not makes an extra API call before the update to check if the new file stream can be uploaded.
+            (https://developers.box.com/docs/#files-preflight-check)
+        :type preflight_check:
+            `bool`
         :param etag:
             If specified, instruct the Box API to update the item only if the current version's etag matches.
         :type etag:
@@ -83,7 +141,7 @@ class File(Item):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the file.
         """
         with open(file_path, 'rb') as file_stream:
-            return self.update_contents_with_stream(file_stream, etag)
+            return self.update_contents_with_stream(file_stream, preflight_check, etag)
 
     def lock(self, prevent_download=False):
         """

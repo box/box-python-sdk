@@ -65,14 +65,15 @@ class BaseObject(BaseEndpoint):
         """
         return super(BaseObject, self).get_url('{0}s'.format(self._item_type), self._object_id, *args)
 
-    def get_type_url(self):
+    @classmethod
+    def get_type_url(cls, *args):
         """
-        Return the URL for type of the given resource.
+        Return the URL for type of the given resource, appending any optional parts as specified by args.
 
         :rtype:
             `unicode`
         """
-        return super(BaseObject, self).get_url('{0}s'.format(self._item_type))
+        return super(BaseObject, cls).get_url('{0}s'.format(cls._item_type), *args)
 
     @property
     def object_id(self):

@@ -17,7 +17,8 @@ class BaseEndpoint(object):
         """
         self._session = session
 
-    def get_url(self, endpoint, *args):
+    @classmethod
+    def get_url(cls, endpoint, *args):
         """
         Return the URL used to access the endpoint.
 
