@@ -21,7 +21,7 @@ from boxsdk.object.file import File
             'foo.txt',
             None,
             '0',
-            '{}/files/content'.format(API.BASE_API_URL),
+            '{0}/files/content'.format(API.BASE_API_URL),
             json.dumps({'size': 100, 'name': 'foo.txt', 'parent': {'id': '0'}}),
         ),
         (
@@ -30,7 +30,7 @@ from boxsdk.object.file import File
             None,
             '123456',
             None,
-            '{}/files/123456/content'.format(API.BASE_API_URL),
+            '{0}/files/123456/content'.format(API.BASE_API_URL),
             json.dumps({'size': 100}),
         ),
     ],
