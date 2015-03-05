@@ -4,7 +4,6 @@ from __future__ import print_function, unicode_literals
 import os
 from boxsdk.client import Client
 from boxsdk.object.collaboration import CollaborationRole
-from boxsdk.object.file import File
 from boxsdk.exception import BoxAPIException
 from auth import authenticate
 
