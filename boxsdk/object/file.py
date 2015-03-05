@@ -86,7 +86,7 @@ class File(Item):
         for chunk in box_response.network_response.response_as_stream.stream(decode_content=True):
             writeable_stream.write(chunk)
 
-    def update_contents_with_stream(self, file_stream, preflight_check=False, etag=None):
+    def update_contents_with_stream(self, file_stream, etag=None):
         """
         Upload a new version of a file, taking the contents from the given file stream.
 
@@ -94,11 +94,6 @@ class File(Item):
             The file-like object containing the bytes
         :type file_stream:
             `file`
-        :param preflight_check:
-            Whether or not makes an extra API call before the update to check if the new file stream can be uploaded.
-            (https://developers.box.com/docs/#files-preflight-check)
-        :type preflight_check:
-            `bool`
         :param etag:
             If specified, instruct the Box API to update the item only if the current version's etag matches.
         :type etag:
@@ -118,18 +113,13 @@ class File(Item):
             response_object=self._session.post(url, expect_json_response=False, files=files, headers=headers).json(),
         )
 
-    def update_contents(self, file_path, preflight_check=False, etag=None):
+    def update_contents(self, file_path, etag=None):
         """Upload a new version of a file. The contents are taken from the given file path.
 
         :param file_path:
             The path of the file that should be uploaded.
         :type file_path:
             `unicode`
-        :param preflight_check:
-            Whether or not makes an extra API call before the update to check if the new file stream can be uploaded.
-            (https://developers.box.com/docs/#files-preflight-check)
-        :type preflight_check:
-            `bool`
         :param etag:
             If specified, instruct the Box API to update the item only if the current version's etag matches.
         :type etag:
@@ -141,7 +131,7 @@ class File(Item):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the file.
         """
         with open(file_path, 'rb') as file_stream:
-            return self.update_contents_with_stream(file_stream, preflight_check, etag)
+            return self.update_contents_with_stream(file_stream, etag)
 
     def lock(self, prevent_download=False):
         """
