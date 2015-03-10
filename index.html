@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="Box Python SDK landing page">
+    <meta name="author" content="Lu Pan">
+    <link rel="icon" href="favicon.ico">
+
+    <title>Box Python SDK</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/cover.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="css/prism.css">
+  </head>
+
+  <body data-spy="scroll" data-target="#navbar">
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Box Python SDK</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="#home" class="page-scroll">Home<span class="sr-only">(current)</span></a></li>
+            <li><a href="#features" class="page-scroll">Quickstart</a></li>
+            <li><a href="#github" class="page-scroll">Learn More</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div><!--/.container-fluid -->
+    </nav>
+
+    <div id="home" class="site-wrapper">
+      <div class="site-wrapper-inner">
+        <div class="container-fluid">
+          <div class="inner cover">
+            <h1 class="cover-heading">Introducing the Box Python SDK</h1>
+            <p class="lead">Easy to use. Extensible. Bringing you the power of Box.</p>
+            <p class="lead">
+              <a href="#features" class="btn btn-lg btn-default btn-transparent page-scroll">Get Started</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-wrapper" id="features">
+      <div class="site-wrapper-inner">
+        <div class="container">
+          <div class="col-md-3"></div>
+          <div class="col-md-6">
+            <h1 class="cover-heading">Quickstart</h1>
+            <p class="lead">It's easy to get started. First you can get the SDK by simply typing: </p>
+
+            <pre><code class="language-bash">pip install boxsdk</code></pre>
+            <p class="lead">There's so much you can do with just several lines of code. <a href="https://developers.box.com/">
+              Create your Box Developer Account</a>, paste the client id, client secret, and your developer token into
+              the example below. Give it a try!</p>
+            <pre><code class="language-python">
+oauth = OAuth2(
+  client_id='YOUR_CLIENT_ID',
+  client_secret='YOUT_CLIENT_SECRET',
+  access_token='YOUR_DEVELOPER_TOKEN',
+)
+client = Client(oauth)
+root_folder = client.folder(folder_id='0')
+shared_folder = root_folder.create_subfolder('shared_folder')
+uploaded_file = shared_folder.upload('/path/to/file')
+shared_link = shared_folder.get_shared_link()
+            </code></pre>
+          </div>
+          <div class="col-md-3"></div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-wrapper" id="github">
+      <div class="site-wrapper-inner">
+        <div class="container">
+          <div class="col-md-3"></div>
+          <div class="col-md-6">
+            <h1 class="cover-heading">Learn More</h1>
+            <p class="lead">Box Python SDK is available on <a href="https://github.com/box/box-python-sdk">GitHub</a>.
+              Let us know what you think! Want more features? Open an issue on GitHub or send us a Pull Request!
+            </p>
+            <p>
+              <iframe src="https://ghbtns.com/github-btn.html?user=box&repo=box-python-sdk&type=star&count=true&size=large"
+                      frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+
+              <iframe src="https://ghbtns.com/github-btn.html?user=box&repo=box-python-sdk&type=watch&count=true&size=large&v=2"
+                      frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+
+            </p>
+          </div>
+          <div class="col-md-3"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="bower_components/jquery.easing/js/jquery.easing.min.js"></script>
+    <script src="js/scroll.js"></script>
+    <script src="js/prism.js"></script>
+  </body>
+</html>

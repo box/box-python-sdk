@@ -1,0 +1,21 @@
+{
+  "name": "box-python-sdk-landing-page",
+  "version": "0.0.1",
+  "authors": [
+    "aptxkid <panlu1412@gmail.com>"
+  ],
+  "description": "Box Python SDK landing page",
+  "license": "apache",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "3.3.2",
+    "jquery.easing": "1.3"
+  }
+}

@@ -1,0 +1,51 @@
+/*
+ * Base structure
+ */
+
+html,
+body {
+  height: 100%;
+  background-color: #333;
+}
+body {
+  color: #fff;
+  text-align: center;
+}
+
+/* Extra markup and styles for table-esque vertical and horizontal centering */
+
+.site-wrapper {
+  display: table;
+  width: 100%;
+  height: 100%; /* For at least Firefox */
+  min-height: 100%;
+}
+.site-wrapper-inner {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+/* Padding for spacing */
+.inner {
+  padding: 30px;
+}
+
+#home {
+  background: #1b4075 url("https://developers.box.com/wp-content/themes/box-developers-v2/images/header-bg.png") center center;
+}
+
+#features {
+  background-color: #fff;
+  color: #000;
+}
+
+.btn-transparent,
+.btn-transparent:focus {
+  background-color: transparent;
+  color: #fff;
+}
+
+.btn-transparent:hover {
+  background-color: #fff;
+  color: #000;
+}
