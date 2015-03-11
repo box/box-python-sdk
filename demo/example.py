@@ -2,9 +2,9 @@
 
 from __future__ import print_function, unicode_literals
 import os
-from boxsdk.client import Client
-from boxsdk.object.collaboration import CollaborationRole
+from boxsdk import Client
 from boxsdk.exception import BoxAPIException
+from boxsdk.object.collaboration import CollaborationRole
 from auth import authenticate
 
 
