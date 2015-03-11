@@ -12,8 +12,6 @@ class File(Item):
 
     _item_type = 'file'
 
-
-
     def content(self):
         """
         Get the content of a file on Box.
