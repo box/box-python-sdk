@@ -12,51 +12,6 @@ from boxsdk.object.file import File
 
 # pylint:disable=protected-access
 
-@pytest.mark.parametrize(
-    'size, name, file_id, parent_id, expected_url, expected_data',
-    [
-        (
-            # Testing preflight check of a new file to be uploaded to Box.
-            100,
-            'foo.txt',
-            None,
-            '0',
-            '{0}/files/content'.format(API.BASE_API_URL),
-            json.dumps({'size': 100, 'name': 'foo.txt', 'parent': {'id': '0'}}),
-        ),
-        (
-            # Testing preflight check of updating a file, already on Box.
-            100,
-            None,
-            '123456',
-            None,
-            '{0}/files/123456/content'.format(API.BASE_API_URL),
-            json.dumps({'size': 100}),
-        ),
-    ],
-)
-def test_preflight_check(
-        mock_box_session,
-        size,
-        name,
-        file_id,
-        parent_id,
-        expected_url,
-        expected_data,
-):
-    File.preflight_check(
-        session=mock_box_session,
-        size=size,
-        name=name,
-        file_id=file_id,
-        parent_id=parent_id,
-    )
-    mock_box_session.options.assert_called_once_with(
-        url=expected_url,
-        expect_json_response=False,
-        data=expected_data,
-    )
-
 
 def test_delete_file(test_file, mock_box_session, etag, if_match_header):
     test_file.delete(etag=etag)

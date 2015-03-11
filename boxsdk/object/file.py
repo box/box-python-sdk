@@ -2,8 +2,6 @@
 
 from __future__ import unicode_literals
 
-import json
-
 from boxsdk.config import API
 from .item import Item
 from .metadata import Metadata
@@ -14,50 +12,7 @@ class File(Item):
 
     _item_type = 'file'
 
-    @classmethod
-    def preflight_check(cls, session, size, name=None, file_id=None, parent_id=None):
-        """
-        Make an API call to check if certain file can be uploaded to Box or not.
-        (https://developers.box.com/docs/#files-preflight-check)
 
-        :param session:
-            An instance of :class:`BoxSession` used to make requests.
-        :type session:
-            :class:`BoxSession`
-        :param size:
-            The size of the file in bytes. Specify 0 for unknown file-sizes.
-        :type size:
-            `int`
-        :param name:
-            The name of the file to be uploaded. This is optional if `file_id` is specified.
-            But required for new file uploads.
-        :type name:
-            `unicode`
-        :param file_id:
-            Box id of the file to be uploaded. Not required for new file uploads.
-        :type file_id:
-            `unicode`
-        :param parent_id:
-            The ID of the parent folder. Required only for new file uploads.
-        :type parent_id:
-            `unicode`
-        :raises:
-            :class:`BoxAPIException` when preflight check fails.
-        """
-        args = [file_id] if file_id else []
-        args.append('content')
-        url = cls.get_type_url(*args)
-        data = {'size': size}
-        if name:
-            data['name'] = name
-        if parent_id:
-            data['parent'] = {'id': parent_id}
-
-        session.options(
-            url=url,
-            expect_json_response=False,
-            data=json.dumps(data),
-        )
 
     def content(self):
         """

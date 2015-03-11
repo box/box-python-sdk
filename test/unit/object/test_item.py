@@ -4,6 +4,9 @@ from __future__ import unicode_literals
 import json
 import pytest
 
+from boxsdk.config import API
+from boxsdk.object.item import Item
+
 
 @pytest.fixture(params=('file', 'folder'))
 def test_item_and_response(test_file, test_folder, mock_file_response, mock_folder_response, request):
@@ -105,3 +108,49 @@ def test_get(test_item_and_response, mock_box_session, fields, mock_object_id, e
     mock_box_session.get.assert_called_once_with(expected_url, params=expected_params, headers=if_none_match_header)
     assert isinstance(info, test_item.__class__)
     assert info.id == mock_object_id
+
+
+@pytest.mark.parametrize(
+    'size, name, file_id, parent_id, expected_url, expected_data',
+    [
+        (
+            # Testing preflight check of a new file to be uploaded to Box.
+            100,
+            'foo.txt',
+            None,
+            '0',
+            '{0}/files/content'.format(API.BASE_API_URL),
+            json.dumps({'size': 100, 'name': 'foo.txt', 'parent': {'id': '0'}}),
+        ),
+        (
+            # Testing preflight check of updating a file, already on Box.
+            100,
+            None,
+            '123456',
+            None,
+            '{0}/files/123456/content'.format(API.BASE_API_URL),
+            json.dumps({'size': 100}),
+        ),
+    ],
+)
+def test_preflight_check(
+        mock_box_session,
+        size,
+        name,
+        file_id,
+        parent_id,
+        expected_url,
+        expected_data,
+):
+    Item.preflight_check(
+        session=mock_box_session,
+        size=size,
+        name=name,
+        file_id=file_id,
+        parent_id=parent_id,
+    )
+    mock_box_session.options.assert_called_once_with(
+        url=expected_url,
+        expect_json_response=False,
+        data=expected_data,
+    )
