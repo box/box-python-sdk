@@ -37,7 +37,7 @@ Get the authorization url
 
 .. code-block:: python
 
-    from boxsdk.auth.oauth2 import OAuth2
+    from boxsdk import OAuth2
 
     oauth = OAuth2(
         client_id='YOUR_CLIENT_ID',
@@ -81,7 +81,7 @@ Create an authenticated client
 
 .. code-block:: python
 
-    from boxsdk.client import Client
+    from boxsdk import Client
 
     client = Client(oauth)
 

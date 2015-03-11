@@ -8,7 +8,7 @@ from threading import Thread, Event
 import webbrowser
 from wsgiref.simple_server import WSGIServer, WSGIRequestHandler, make_server
 
-from boxsdk.auth.oauth2 import OAuth2
+from boxsdk import OAuth2
 
 
 CLIENT_ID = ''  # Insert Box client ID here

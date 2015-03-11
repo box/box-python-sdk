@@ -3,6 +3,12 @@
 Release History
 ---------------
 
+1.1.1 (2015-03-11)
+++++++++++++++++++
+
+- A minor change to namespacing. The ``OAuth2`` class can now be imported directly from ``boxsdk``.
+  Demo code has been updated to reflect the change.
+
 1.1.0 (2015-03-02)
 ++++++++++++++++++
 
