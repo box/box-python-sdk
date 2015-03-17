@@ -8,16 +8,16 @@ from boxsdk.util.text_enum import TextEnum
 
 class CollaborationRole(TextEnum):
     """An enum of possible collaboration roles"""
-    EDITOR = 'Editor'
-    VIEWER = 'Viewer'
+    EDITOR = 'editor'
+    VIEWER = 'viewer'
 
     # Available to enterprise accounts:
-    PREVIEWER = 'Previewer'
-    UPLOADER = 'Uploader'
-    PREVIEWER_UPLOADER = 'Previewer-Uploader'
-    VIEWER_UPLOADER = 'Viewer-Uploader'
-    CO_OWNER = 'Co-Owner'
-    OWNER = 'Owner'
+    PREVIEWER = 'previewer'
+    UPLOADER = 'uploader'
+    PREVIEWER_UPLOADER = 'previewer uploader'
+    VIEWER_UPLOADER = 'viewer uploader'
+    CO_OWNER = 'co-owner'
+    OWNER = 'owner'
 
 
 class CollaborationStatus(TextEnum):
