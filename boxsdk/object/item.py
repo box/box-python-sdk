@@ -11,23 +11,18 @@ from boxsdk.config import API
 class Item(BaseObject):
     """Box API endpoint for interacting with files and folders."""
 
-    @classmethod
-    def preflight_check(cls, session, size, name=None, file_id=None, parent_id=None):
+    def _preflight_check(self, size, name=None, file_id=None, parent_id=None):
         """
         Make an API call to check if certain file can be uploaded to Box or not.
         (https://developers.box.com/docs/#files-preflight-check)
 
-        :param session:
-            An instance of :class:`BoxSession` used to make requests.
-        :type session:
-            :class:`BoxSession`
         :param size:
-            The size of the file in bytes. Specify 0 for unknown file-sizes.
+            The size of the file to be uploaded in bytes. Specify 0 for unknown file sizes.
         :type size:
             `int`
         :param name:
-            The name of the file to be uploaded. This is optional if `file_id` is specified.
-            But required for new file uploads.
+            The name of the file to be uploaded. This is optional if `file_id` is specified,
+            but required for new file uploads.
         :type name:
             `unicode`
         :param file_id:
@@ -49,7 +44,7 @@ class Item(BaseObject):
         if parent_id:
             data['parent'] = {'id': parent_id}
 
-        session.options(
+        self._session.options(
             url=url,
             expect_json_response=False,
             data=json.dumps(data),

@@ -12,6 +12,27 @@ class File(Item):
 
     _item_type = 'file'
 
+    def preflight_check(self, size, name=None):
+        """
+        Make an API call to check if the file can be updated with the new name and size of the file.
+
+        :param size:
+            The size of the file in bytes. Specify 0 for unknown file-sizes.
+        :type size:
+            `int`
+        :param name:
+            The name of the file to be updated. It's optional, if the name is not being changed.
+        :type name:
+            `unicode`
+        :raises:
+            :class:`BoxAPIException` when preflight check fails.
+        """
+        self._preflight_check(
+            size=size,
+            name=name,
+            file_id=self._object_id,
+        )
+
     def content(self):
         """
         Get the content of a file on Box.
