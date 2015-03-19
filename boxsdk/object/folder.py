@@ -91,6 +91,27 @@ class Folder(Item):
 
     _item_type = 'folder'
 
+    def preflight_check(self, size, name):
+        """
+        Make an API call to check if a new file with given name and size can be uploaded to this folder.
+
+        :param size:
+            The size of the file in bytes. Specify 0 for unknown file-sizes.
+        :type size:
+            `int`
+        :param name:
+            The name of the file to be uploaded.
+        :type name:
+            `unicode`
+        :raises:
+            :class:`BoxAPIException` when preflight check fails.
+        """
+        self._preflight_check(
+            size=size,
+            name=name,
+            parent_id=self._object_id,
+        )
+
     def get_items(self, limit, offset=0, fields=None):
         """Get the items in a folder.
 

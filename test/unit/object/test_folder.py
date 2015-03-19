@@ -167,3 +167,19 @@ def test_update_sync_state(test_folder, mock_folder_response, mock_box_session, 
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), params=None, headers=None)
     assert isinstance(update_response, Folder)
     assert update_response.object_id == test_folder.object_id
+
+
+def test_preflight(test_folder, mock_object_id, mock_box_session):
+    new_file_size, new_file_name = 100, 'foo.txt'
+    test_folder.preflight_check(size=new_file_size, name=new_file_name)
+    mock_box_session.options.assert_called_once_with(
+        url='{0}/files/content'.format(API.BASE_API_URL),
+        expect_json_response=False,
+        data=json.dumps(
+            {
+                'size': new_file_size,
+                'name': new_file_name,
+                'parent': {'id': mock_object_id},
+            }
+        ),
+    )

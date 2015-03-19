@@ -99,3 +99,43 @@ def test_unlock(test_file, mock_box_session, mock_file_response):
         params=None,
         headers=None,
     )
+
+
+@pytest.mark.parametrize(
+    'size, name, expected_data',
+    [
+        # Test case for specifying the name of the file for preflight
+        (
+            100,
+            'foo.txt',
+            json.dumps({'size': 100, 'name': 'foo.txt'}),
+        ),
+
+        # Test case for omitting the name of the file for preflight
+        (
+            200,
+            None,
+            json.dumps({'size': 200})
+        ),
+    ]
+)
+def test_preflight_check(
+        test_file,
+        mock_object_id,
+        mock_box_session,
+        size,
+        name,
+        expected_data,
+):
+    kwargs = {'size': size}
+    if name:
+        kwargs['name'] = name
+    test_file.preflight_check(**kwargs)
+    mock_box_session.options.assert_called_once_with(
+        url='{0}/files/{1}/content'.format(
+            API.BASE_API_URL,
+            mock_object_id,
+        ),
+        expect_json_response=False,
+        data=expected_data,
+    )
