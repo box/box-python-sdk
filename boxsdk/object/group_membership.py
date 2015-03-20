@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from .base_object import BaseObject
-from .translator import Translator
+from boxsdk.util.translator import Translator
 
 
 class GroupMembership(BaseObject):

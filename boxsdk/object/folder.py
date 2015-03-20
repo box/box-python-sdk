@@ -9,9 +9,9 @@ from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
-from boxsdk.object.translator import Translator
-from boxsdk.util.text_enum import TextEnum
 from boxsdk.object.user import User
+from boxsdk.util.text_enum import TextEnum
+from boxsdk.util.translator import Translator
 
 
 class FolderSyncState(TextEnum):

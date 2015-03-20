@@ -39,4 +39,5 @@ class Translator(object):
         :type type_name:
             `unicode`
         """
-        return self._type_to_class_mapping.get(type_name, None)
+        from boxsdk.object.base_object import BaseObject
+        return self._type_to_class_mapping.get(type_name, BaseObject)

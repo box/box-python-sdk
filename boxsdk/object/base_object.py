@@ -7,7 +7,7 @@ import json
 import six
 
 from boxsdk.object.base_endpoint import BaseEndpoint
-from boxsdk.object.translator import Translator
+from boxsdk.util.translator import Translator
 
 
 class ObjectMeta(ABCMeta):
