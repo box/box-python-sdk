@@ -3,6 +3,14 @@
 Release History
 ---------------
 
+1.1.2 (2015-03-20)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Certain endpoints (e.g. search, get folder items) no longer raise an exception when the response contains items
+  that are neither files nor folders.
+
 1.1.1 (2015-03-11)
 ++++++++++++++++++
 
