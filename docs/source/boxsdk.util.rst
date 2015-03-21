@@ -36,6 +36,14 @@ boxsdk.util.text_enum module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.util.translator module
+-----------------------------
+
+.. automodule:: boxsdk.util.translator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

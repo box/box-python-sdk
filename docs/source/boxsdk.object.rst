@@ -92,14 +92,6 @@ boxsdk.object.search module
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.translator module
--------------------------------
-
-.. automodule:: boxsdk.object.translator
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 boxsdk.object.user module
 -------------------------
 

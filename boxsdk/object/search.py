@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from boxsdk.config import API
 from .base_endpoint import BaseEndpoint
-from .translator import Translator
+from boxsdk.util.translator import Translator
 
 
 class Search(BaseEndpoint):

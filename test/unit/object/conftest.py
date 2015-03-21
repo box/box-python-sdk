@@ -1,33 +1,15 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-import json
 import os
 from mock import Mock
 import pytest
 from six import int2byte, PY2
-from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
-from boxsdk.session.box_session import BoxResponse
-
-
-@pytest.fixture(scope='module')
-def mock_object_id():
-    return '42'
-
-
-@pytest.fixture(scope='module')
-def mock_user_id():
-    return 'fake-user-100'
-
-
-@pytest.fixture(scope='module')
-def mock_group_id():
-    return 'fake-group-99'
 
 
 @pytest.fixture(scope='module')
@@ -45,23 +27,6 @@ def mock_file_path():
     return os.path.join('path', 'to', 'file')
 
 
-@pytest.fixture()
-def make_mock_box_request():
-    def inner(status_code=200, response_ok=True, response=None, content=None):
-        mock_box_response = Mock(BoxResponse)
-        mock_network_response = Mock(DefaultNetworkResponse)
-        mock_box_response.network_response = mock_network_response
-        mock_box_response.status_code = status_code
-        mock_box_response.ok = response_ok
-        if response is not None:
-            mock_box_response.json.return_value = response
-            mock_box_response.content = json.dumps(response).encode()
-        else:
-            mock_box_response.content = content
-        return mock_box_response, mock_network_response
-    return inner
-
-
 @pytest.fixture(scope='function')
 def mock_content_response(make_mock_box_request):
     # pylint:disable=redefined-outer-name
@@ -76,15 +41,6 @@ def mock_upload_response(mock_object_id, make_mock_box_request):
     # pylint:disable=redefined-outer-name
     mock_box_response, _ = make_mock_box_request(
         response={'entries': [{'type': 'file', 'id': mock_object_id}]},
-    )
-    return mock_box_response
-
-
-@pytest.fixture(scope='function')
-def mock_file_response(mock_object_id, make_mock_box_request):
-    # pylint:disable=redefined-outer-name
-    mock_box_response, _ = make_mock_box_request(
-        response={'type': 'file', 'id': mock_object_id},
     )
     return mock_box_response
 
@@ -114,15 +70,6 @@ def test_group(mock_box_session, mock_group_id):
 
 
 @pytest.fixture(scope='function')
-def mock_folder_response(mock_object_id, make_mock_box_request):
-    # pylint:disable=redefined-outer-name
-    mock_box_response, _ = make_mock_box_request(
-        response={'type': 'folder', 'id': mock_object_id},
-    )
-    return mock_box_response
-
-
-@pytest.fixture(scope='function')
 def mock_collab_response(make_mock_box_request, mock_collaboration_id):
     # pylint:disable=redefined-outer-name
     mock_box_response, _ = make_mock_box_request(
@@ -136,15 +83,6 @@ def mock_user(mock_box_session, mock_user_id):
     # pylint:disable=redefined-outer-name
     user = User(mock_box_session, mock_user_id)
     return user
-
-
-@pytest.fixture(scope='function')
-def mock_user_response(mock_user_id, make_mock_box_request):
-    # pylint:disable=redefined-outer-name
-    mock_box_response, _ = make_mock_box_request(
-        response={'type': 'user', 'id': mock_user_id},
-    )
-    return mock_box_response
 
 
 @pytest.fixture(scope='function')
