@@ -137,6 +137,16 @@ def etag(request):
     return request.param
 
 
+@pytest.fixture(params=[True, False])
+def preflight_check(request):
+    return request.param
+
+
+@pytest.fixture(params=[0, 100])
+def file_size(request):
+    return request.param
+
+
 @pytest.fixture()
 def mock_group(mock_box_session, mock_group_id):
     # pylint:disable=redefined-outer-name

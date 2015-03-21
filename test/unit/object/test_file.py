@@ -76,6 +76,44 @@ def test_update_content(
     assert new_file.object_id == mock_upload_response.json()['entries'][0]['id']
 
 
+def test_update_contents_with_stream_does_preflight_check_if_specified(
+        test_file,
+        preflight_check,
+        file_size,
+):
+    with patch.object(File, 'preflight_check', return_value=None):
+        kwargs = {'file_stream': BytesIO(b'some bytes')}
+        if preflight_check:
+            kwargs['preflight_check'] = preflight_check
+            kwargs['size'] = file_size
+        test_file.update_contents_with_stream(**kwargs)
+
+        if preflight_check:
+            assert test_file.preflight_check.called_once_with(size=file_size)
+        else:
+            assert not test_file.preflight_check.called
+
+
+@patch('boxsdk.object.file.open', mock_open(read_data=b'some bytes'), create=True)
+def test_update_contents_does_preflight_check_if_specified(
+        test_file,
+        mock_file_path,
+        preflight_check,
+        file_size,
+):
+    with patch.object(File, 'preflight_check', return_value=None):
+        kwargs = {'file_path': mock_file_path}
+        if preflight_check:
+            kwargs['preflight_check'] = preflight_check
+            kwargs['size'] = file_size
+        test_file.update_contents(**kwargs)
+
+        if preflight_check:
+            assert test_file.preflight_check.called_once_with(size=file_size)
+        else:
+            assert not test_file.preflight_check.called
+
+
 @pytest.mark.parametrize('prevent_download', (True, False))
 def test_lock(test_file, mock_box_session, mock_file_response, prevent_download):
     expected_url = test_file.get_url()
