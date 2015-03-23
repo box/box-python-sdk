@@ -238,6 +238,14 @@ The tox tests are configured to run on Python 2.6, 2.7, 3.3, 3.4, and
 PyPy.
 
 
+Support
+-------
+
+Need to contact us directly? Email oss@box.com and be sure to include the name
+of this project in the subject. For questions, please contact us directly
+rather than opening an issue.
+
+
 Copyright and License
 ---------------------
 
