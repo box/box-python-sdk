@@ -10,6 +10,7 @@ from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
+from boxsdk.object.search import Search
 
 
 @pytest.fixture(scope='module')
@@ -68,6 +69,10 @@ def test_group(mock_box_session, mock_group_id):
     # pylint:disable=redefined-outer-name
     return Group(mock_box_session, mock_group_id)
 
+@pytest.fixture()
+def test_search(mock_box_session):
+    # pylint:disable=redefined-outer-name
+    return Search(mock_box_session)
 
 @pytest.fixture(scope='function')
 def mock_collab_response(make_mock_box_request, mock_collaboration_id):
