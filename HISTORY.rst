@@ -3,6 +3,12 @@
 Release History
 ---------------
 
+1.1.3 (2015-03-26)
+++++++++++++++++++
+
+- Added support for the /shared_items endpoint. `client.get_shared_item` can be used to get information about
+  a shared link. See https://developers.box.com/docs/#shared-items
+
 1.1.2 (2015-03-20)
 ++++++++++++++++++
 

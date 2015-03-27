@@ -105,6 +105,18 @@ def create_group_response():
     return mock_network_response
 
 
+@pytest.fixture(scope='module', params=('file', 'folder'))
+def shared_item_response(request):
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'type': request.param,
+        'id': 1234,
+        'name': 'shared_item',
+    }
+    return mock_network_response
+
+
 @pytest.fixture(scope='module')
 def search_response(file_id, folder_id):
     # pylint:disable=redefined-outer-name
@@ -200,6 +212,24 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
     assert isinstance(new_group, Group)
     assert new_group.object_id == 1234
     assert new_group.name == test_group_name
+
+
+@pytest.mark.parametrize('password', (None, 'p4ssw0rd'))
+def test_get_shared_item_returns_the_correct_item(mock_client, mock_box_session, shared_item_response, password):
+    # pylint:disable=redefined-outer-name
+    shared_link = 'https://cloud.box.com/s/661wcw2iz6q5r7v5xxkm'
+    mock_box_session.request.return_value = shared_item_response
+    item = mock_client.get_shared_item(shared_link, password)
+    assert item.type == shared_item_response.json()['type']
+    mock_box_session.request.assert_called_once_with(
+        'GET',
+        '{0}/shared_items'.format(API.BASE_API_URL),
+        headers={
+            'BoxApi': 'shared_link={0}{1}'.format(
+                shared_link, '&shared_link_password={0}'.format(password) if password is not None else ''
+            ),
+        },
+    )
 
 
 @pytest.mark.parametrize('test_method', [

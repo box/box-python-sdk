@@ -13,6 +13,7 @@ from .object.events import Events
 from .object.file import File
 from .object.group import Group
 from .object.group_membership import GroupMembership
+from .util.translator import Translator
 
 
 class Client(object):
@@ -193,6 +194,34 @@ class Client(object):
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
         return Group(self._session, response['id'], response)
+
+    def get_shared_item(self, shared_link, password=None):
+        """
+        Get information about a Box shared link. https://developers.box.com/docs/#shared-items
+
+        :param shared_link:
+            The shared link.
+        :type shared_link:
+            `unicode`
+        :param password:
+            The password for the shared link.
+        :type password:
+            `unicode`
+        :return:
+            The item referred to by the shared link.
+        :rtype:
+            :class:`Item`
+        :raises:
+            :class:`BoxAPIException` if current user doesn't have permissions to view the shared link.
+        """
+        shared_link_password = '&shared_link_password={0}'.format(password) if password is not None else ''
+        box_api_header = 'shared_link={0}{1}'.format(shared_link, shared_link_password)
+        response = self.make_request(
+            'GET',
+            '{0}/shared_items'.format(API.BASE_API_URL),
+            headers={'BoxApi': box_api_header},
+        ).json()
+        return Translator().translate(response['type'])(self._session, response['id'], response)
 
     def make_request(self, method, url, **kwargs):
         """
