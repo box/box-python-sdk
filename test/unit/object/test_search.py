@@ -23,12 +23,12 @@ def search_offset():
 
 
 @pytest.fixture
-def search_value_based_mdfilters():
-    mdfilters = MetadataSearchFilters()
-    mdfilter = MetadataSearchFilter('properties', 'global')
-    mdfilter.add_value_based_filter('myfield', 'myvalue')
-    mdfilters.add_filter(mdfilter)
-    return mdfilters
+def search_value_based_filters():
+    metadata_filters = MetadataSearchFilters()
+    metadata_filter = MetadataSearchFilter(template_key='mytemplate', scope='enterprise')
+    metadata_filter.add_value_based_filter(field_key='myfield', value='myvalue')
+    metadata_filters.add_filter(metadata_filter)
+    return metadata_filters
 
 
 @pytest.fixture(params=(
@@ -36,14 +36,14 @@ def search_value_based_mdfilters():
     {'lt_value': 'myltvalue'},
     {'gt_value': 'mygtvalue', 'lt_value': 'myltvalue'}
 ))
-def search_range_mdfilters(request):
-    mdfilters = MetadataSearchFilters()
-    mdfilter = MetadataSearchFilter('properties', 'global')
+def search_range_filters(request):
+    metadata_filters = MetadataSearchFilters()
+    metadata_filter = MetadataSearchFilter(template_key='mytemplate', scope='enterprise')
     filter_params = {'field_key': 'myfield'}
     filter_params.update(request.param)
-    mdfilter.add_range_filter(**filter_params)
-    mdfilters.add_filter(mdfilter)
-    return mdfilters
+    metadata_filter.add_range_filter(**filter_params)
+    metadata_filters.add_filter(metadata_filter)
+    return metadata_filters
 
 
 @pytest.fixture
@@ -87,20 +87,20 @@ def compare_params(self, other):
     return True
 
 
-def test_search_with_value_based_mdfilters(
+def test_search_with_value_based_filters(
         mock_box_session,
         make_mock_box_request,
         test_search,
         search_query,
         search_limit,
         search_offset,
-        search_value_based_mdfilters,
+        search_value_based_filters,
         search_response,
         search_entries
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value, _ = make_mock_box_request(response=search_response)
-    response = test_search.search(search_query, limit=search_limit, offset=search_offset, mdfilters=search_value_based_mdfilters)
+    response = test_search.search(search_query, limit=search_limit, offset=search_offset, metadata_filters=search_value_based_filters)
     assert response == [File(mock_box_session, search_entry['id'], search_entry) for search_entry in search_entries]
 
     mock_box_session.get.assert_called_once_with(
@@ -108,26 +108,26 @@ def test_search_with_value_based_mdfilters(
         params=Matcher(compare_params, {
             'query': 'myquery',
             'limit': 20,
-            'mdfilters': json.dumps(search_value_based_mdfilters.as_list()),
+            'mdfilters': json.dumps(search_value_based_filters.as_list()),
             'offset': 0
         })
     )
 
 
-def test_search_with_range_mdfilters(
+def test_search_with_range_filters(
         mock_box_session,
         make_mock_box_request,
         test_search,
         search_query,
         search_limit,
         search_offset,
-        search_range_mdfilters,
+        search_range_filters,
         search_response,
         search_entries
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value, _ = make_mock_box_request(response=search_response)
-    response = test_search.search(search_query, limit=search_limit, offset=search_offset, mdfilters=search_range_mdfilters)
+    response = test_search.search(search_query, limit=search_limit, offset=search_offset, metadata_filters=search_range_filters)
     assert response == [File(mock_box_session, search_entry['id'], search_entry) for search_entry in search_entries]
 
     mock_box_session.get.assert_called_once_with(
@@ -135,7 +135,13 @@ def test_search_with_range_mdfilters(
         params=Matcher(compare_params, {
             'query': 'myquery',
             'limit': 20,
-            'mdfilters': json.dumps(search_range_mdfilters.as_list()),
+            'mdfilters': json.dumps(search_range_filters.as_list()),
             'offset': 0
         })
     )
+
+
+def test_range_filter_without_gt_and_lt_will_fail_validation():
+    metadata_filter = MetadataSearchFilter(template_key='mytemplate', scope='enterprise')
+    with pytest.raises(ValueError):
+        metadata_filter.add_range_filter(field_key='mykey')

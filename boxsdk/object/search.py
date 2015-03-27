@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 
-from boxsdk.config import API
 from .base_endpoint import BaseEndpoint
 from boxsdk.util.translator import Translator
 import json
@@ -81,28 +80,18 @@ class MetadataSearchFilter(object):
             range_part['gt'] = gt_value
         if lt_value:
             range_part['lt'] = lt_value
+        if not range_part:
+            raise ValueError('Should specify gt and/or lt')
         self._field_filters.update({field_key: range_part})
 
 
 class MetadataSearchFilters(object):
     """
-    Helper class to encapsulate a list of search filter params (mdfilters)
+    Helper class to encapsulate a list of metadata search filter params (mdfilters API param)
     See https://developers.box.com/metadata-api/#search for more details
     """
     def __init__(self):
         self._filters = []
-
-    @staticmethod
-    def make_single_mdfilter(template_key, scope):
-        """
-        Make a single :class:`MetadataSearchFilter` that represents a filter on a template
-
-        :return:
-            The new :class:`MetadataSearchFilter`
-        :rtype:
-            :class:`MetadataSearchFilter`
-        """
-        return MetadataSearchFilter(template_key, scope)
 
     def as_list(self):
         """
@@ -131,12 +120,20 @@ class Search(BaseEndpoint):
     """Search Box for files and folders."""
 
     def get_url(self, *args):
+        """
+        Gets the search endpoint URL.
+
+        :return:
+            The search endpoint URL.
+        :rtype:
+            `unicode`
+        """
         return super(Search, self).get_url('search')
 
     @staticmethod
-    def start_mdfilters():
+    def start_metadata_filters():
         """
-        Get a :class:`MetadataSearchFilters` that can make and add single :class:`MetadataSearchFilter`s
+        Get a :class:`MetadataSearchFilters` that represents a set of metadata filters.
 
         :return:
             The new :class:`MetadataSearchFilters`
@@ -145,7 +142,20 @@ class Search(BaseEndpoint):
         """
         return MetadataSearchFilters()
 
-    def search(self, query, limit, offset, ancestor_folders=None, file_extensions=None, mdfilters=None):
+    @staticmethod
+    def make_single_metadata_filter(template_key, scope):
+        """
+        Make a single :class:`MetadataSearchFilter` that represents a filter on a template. It must be
+        added to a :class:`MetadataSearchFilters`.
+
+        :return:
+            The new :class:`MetadataSearchFilter`
+        :rtype:
+            :class:`MetadataSearchFilter`
+        """
+        return MetadataSearchFilter(template_key, scope)
+
+    def search(self, query, limit, offset, ancestor_folders=None, file_extensions=None, metadata_filters=None):
         """
         Search Box for items matching the given query.
 
@@ -164,21 +174,21 @@ class Search(BaseEndpoint):
         :param ancestor_folders:
             Folder ids to limit the search to.
         :type ancestor_folders:
-            `list` of :class:`Folder`
+            `iterable` of :class:`Folder`
         :param file_extensions:
             File extensions to limit the search to.
         :type file_extensions:
-            `list` of `unicode`
-        :param mdfilters:
+            `iterable` of `unicode`
+        :param metadata_filters:
             Filters used for metadata search
-        :type mdfilters:
+        :type metadata_filters:
             :class:`MetadataSearchFilters`
         :return:
             A list of items that match the search query.
         :rtype:
             `list` of :class:`Item`
         """
-        url = '{0}/search'.format(API.BASE_API_URL)
+        url = self.get_url()
         params = {
             'query': query,
             'limit': limit,
@@ -192,9 +202,9 @@ class Search(BaseEndpoint):
             params.update({
                 'file_extensions': ','.join(file_extensions)
             })
-        if mdfilters:
+        if metadata_filters:
             params.update({
-                'mdfilters': json.dumps(mdfilters.as_list())
+                'mdfilters': json.dumps(metadata_filters.as_list())
             })
         box_response = self._session.get(url, params=params)
         response = box_response.json()
