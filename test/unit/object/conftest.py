@@ -69,10 +69,12 @@ def test_group(mock_box_session, mock_group_id):
     # pylint:disable=redefined-outer-name
     return Group(mock_box_session, mock_group_id)
 
+
 @pytest.fixture()
 def test_search(mock_box_session):
     # pylint:disable=redefined-outer-name
     return Search(mock_box_session)
+
 
 @pytest.fixture(scope='function')
 def mock_collab_response(make_mock_box_request, mock_collaboration_id):

@@ -7,6 +7,7 @@ from .base_endpoint import BaseEndpoint
 from boxsdk.util.translator import Translator
 import json
 
+
 class MetadataSearchFilter(object):
     """
     Helper class to encapsulate a single search filter. A search filter can only search against one template,
@@ -58,7 +59,7 @@ class MetadataSearchFilter(object):
         """
         self._field_filters.update({field_key: value})
 
-    def add_range_filter(self, field_key, gt_value = None, lt_value = None):
+    def add_range_filter(self, field_key, gt_value=None, lt_value=None):
         """
         Add a range filter (used for ranged searches on numbers and dates)
 
@@ -112,19 +113,18 @@ class MetadataSearchFilters(object):
         :rtype:
             `list` of `dict`
         """
-        return [filter.as_dict() for filter in self._filters]
+        return [metadata_filter.as_dict() for metadata_filter in self._filters]
 
-
-    def add_filter(self, filter):
+    def add_filter(self, metadata_filter):
         """
         Add a filter to this object. Note that the API only supports one filter.
 
-        :param filter:
+        :param metadata_filter:
             The filter to add
-        :type filter:
+        :type metadata_filter:
             :class:`MetadataSearchFilter`
         """
-        self._filters.append(filter)
+        self._filters.append(metadata_filter)
 
 
 class Search(BaseEndpoint):

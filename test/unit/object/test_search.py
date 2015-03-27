@@ -6,17 +6,21 @@ import json
 from boxsdk.object.file import File
 from boxsdk.object.search import MetadataSearchFilters, MetadataSearchFilter
 
+
 @pytest.fixture
 def search_query():
     return 'myquery'
+
 
 @pytest.fixture
 def search_limit():
     return 20
 
+
 @pytest.fixture
 def search_offset():
     return 0
+
 
 @pytest.fixture
 def search_value_based_mdfilters():
@@ -26,7 +30,12 @@ def search_value_based_mdfilters():
     mdfilters.add_filter(mdfilter)
     return mdfilters
 
-@pytest.fixture(params=({'gt_value':'mygtvalue'},{'lt_value':'myltvalue'},{'gt_value':'mygtvalue','lt_value':'myltvalue'}))
+
+@pytest.fixture(params=(
+    {'gt_value': 'mygtvalue'},
+    {'lt_value': 'myltvalue'},
+    {'gt_value': 'mygtvalue', 'lt_value': 'myltvalue'}
+))
 def search_range_mdfilters(request):
     mdfilters = MetadataSearchFilters()
     mdfilter = MetadataSearchFilter('properties', 'global')
@@ -36,20 +45,23 @@ def search_range_mdfilters(request):
     mdfilters.add_filter(mdfilter)
     return mdfilters
 
+
 @pytest.fixture
 def search_entries():
     return [
         {'id': '1234', 'type': 'file'}
     ]
 
+
 @pytest.fixture
-def search_response(search_entries):
+def search_response():
     return {
-        'entries': search_entries,
+        'entries': search_entries(),
         'total_count': 0,
         'limit': 20,
         'offset': 0
     }
+
 
 class Matcher(object):
     def __init__(self, compare, some_obj):
@@ -59,8 +71,9 @@ class Matcher(object):
     def __eq__(self, other):
         return self.compare(self.some_obj, other)
 
+
 def compare_params(self, other):
-    if not type(self) == type(other):
+    if not isinstance(self, dict) or not isinstance(other, dict):
         return False
     for key in self:
         # We need to ensure that the JSON-encoded mdfilters matches regardless of key order
@@ -92,8 +105,14 @@ def test_search_with_value_based_mdfilters(
 
     mock_box_session.get.assert_called_once_with(
         test_search.get_url(),
-        params=Matcher(compare_params, {'query': 'myquery', 'limit': 20, 'mdfilters': json.dumps(search_value_based_mdfilters.as_list()), 'offset': 0})
+        params=Matcher(compare_params, {
+            'query': 'myquery',
+            'limit': 20,
+            'mdfilters': json.dumps(search_value_based_mdfilters.as_list()),
+            'offset': 0
+        })
     )
+
 
 def test_search_with_range_mdfilters(
         mock_box_session,
@@ -113,5 +132,10 @@ def test_search_with_range_mdfilters(
 
     mock_box_session.get.assert_called_once_with(
         test_search.get_url(),
-        params=Matcher(compare_params, {'query': 'myquery', 'limit': 20, 'mdfilters': json.dumps(search_range_mdfilters.as_list()), 'offset': 0})
+        params=Matcher(compare_params, {
+            'query': 'myquery',
+            'limit': 20,
+            'mdfilters': json.dumps(search_range_mdfilters.as_list()),
+            'offset': 0
+        })
     )
