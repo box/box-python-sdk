@@ -106,7 +106,7 @@ class Client(object):
         response = box_response.json()
         return [User(self._session, item['id'], item) for item in response['entries']]
 
-    def search(self, query, limit, offset, ancestor_folders=None, file_extensions=None):
+    def search(self, query, limit, offset, ancestor_folders=None, file_extensions=None, metadata_filters=None):
         """
         Search Box for items matching the given query.
 
@@ -125,17 +125,26 @@ class Client(object):
         :param ancestor_folders:
             Folder ids to limit the search to.
         :type ancestor_folders:
-            `list` of `unicode`
+            `iterable` of :class:`Folder`
         :param file_extensions:
             File extensions to limit the search to.
         :type file_extensions:
-            `list` of `unicode`
+            `iterable` of `unicode`
+        :param metadata_filters:
+            Filters used for metadata search
+        :type metadata_filters:
+            :class:`MetadataSearchFilters`
         :return:
             A list of items that match the search query.
         :rtype:
             `list` of :class:`Item`
         """
-        return Search(self._session).search(query, limit, offset, ancestor_folders, file_extensions)
+        return Search(self._session).search(query=query,
+                                            limit=limit,
+                                            offset=offset,
+                                            ancestor_folders=ancestor_folders,
+                                            file_extensions=file_extensions,
+                                            metadata_filters=metadata_filters)
 
     def events(self):
         """
