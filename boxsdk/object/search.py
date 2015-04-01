@@ -155,7 +155,18 @@ class Search(BaseEndpoint):
         """
         return MetadataSearchFilter(template_key, scope)
 
-    def search(self, query, limit, offset, ancestor_folders=None, file_extensions=None, metadata_filters=None):
+    def search(
+            self,
+            query,
+            limit=100,
+            offset=0,
+            ancestor_folders=None,
+            file_extensions=None,
+            metadata_filters=None,
+            result_type=None,
+            content_types=None,
+            **kwargs
+    ):
         """
         Search Box for items matching the given query.
 
@@ -174,7 +185,7 @@ class Search(BaseEndpoint):
         :param ancestor_folders:
             Folder ids to limit the search to.
         :type ancestor_folders:
-            `iterable` of :class:`Folder`
+            `Iterable` of :class:`Folder`
         :param file_extensions:
             File extensions to limit the search to.
         :type file_extensions:
@@ -183,6 +194,14 @@ class Search(BaseEndpoint):
             Filters used for metadata search
         :type metadata_filters:
             :class:`MetadataSearchFilters`
+        :param result_type:
+            Which type of result you want. Can be file or folder.
+        :type result_type:
+            `unicode`
+        :param content_types:
+            Which content types to search. Valid types include name, description, file_content, comments, and tags.
+        :type content_types:
+            `Iterable` of `unicode`
         :return:
             A list of items that match the search query.
         :rtype:
@@ -199,13 +218,14 @@ class Search(BaseEndpoint):
                 'ancestor_folder_ids': ','.join([folder.object_id for folder in ancestor_folders])
             })
         if file_extensions:
-            params.update({
-                'file_extensions': ','.join(file_extensions)
-            })
+            params.update({'file_extensions': ','.join(file_extensions)})
         if metadata_filters:
-            params.update({
-                'mdfilters': json.dumps(metadata_filters.as_list())
-            })
+            params.update({'mdfilters': json.dumps(metadata_filters.as_list())})
+        if content_types:
+            params.update({'content_types': ','.join(content_types)})
+        if result_type:
+            params.update({'type': result_type})
+        params.update(kwargs)
         box_response = self._session.get(url, params=params)
         response = box_response.json()
         return [Translator().translate(item['type'])(self._session, item['id'], item) for item in response['entries']]

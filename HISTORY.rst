@@ -3,6 +3,12 @@
 Release History
 ---------------
 
+1.1.4 (2015-04-01)
+++++++++++++++++++
+
+- Added support to the search endpoint for metadata filters.
+- Added support to the search endpoint for filtering based on result type and content types.
+
 1.1.3 (2015-03-26)
 ++++++++++++++++++
 
