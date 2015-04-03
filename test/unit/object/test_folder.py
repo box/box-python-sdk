@@ -3,11 +3,12 @@
 from __future__ import unicode_literals
 import json
 from os.path import basename
-from mock import mock_open, patch, Mock
+from mock import mock_open, patch, Mock, MagicMock
 import pytest
 from six import BytesIO
 from six.moves import zip  # pylint:disable=redefined-builtin,import-error
 from boxsdk.config import API
+from boxsdk.exception import BoxAPIException
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.file import File
 from boxsdk.object.collaboration import Collaboration, CollaborationRole
@@ -146,6 +147,69 @@ def test_upload(
     mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=False, files=mock_files, data=data)
     assert isinstance(new_file, File)
     assert new_file.object_id == mock_upload_response.json()['entries'][0]['id']
+
+
+def test_upload_stream_does_preflight_check_if_specified(
+        mock_box_session,
+        test_folder,
+        preflight_check,
+        preflight_fails,
+        file_size,
+):
+    with patch.object(Folder, 'preflight_check', return_value=None):
+        kwargs = {'file_stream': BytesIO(b'some bytes'), 'file_name': 'foo.txt'}
+        mock_box_session.post = MagicMock()
+        if preflight_check:
+            kwargs['preflight_check'] = preflight_check
+            kwargs['preflight_expected_size'] = file_size
+        if preflight_fails:
+            test_folder.preflight_check.side_effect = BoxAPIException(400)
+            with pytest.raises(BoxAPIException):
+                test_folder.upload_stream(**kwargs)
+        else:
+            test_folder.upload_stream(**kwargs)
+
+        if preflight_check:
+            assert test_folder.preflight_check.called_once_with(size=file_size, name='foo.txt')
+            _assert_post_called_correctly(mock_box_session, preflight_fails)
+        else:
+            assert not test_folder.preflight_check.called
+
+
+def _assert_post_called_correctly(mock_box_session, preflight_fails):
+    if preflight_fails:
+        assert not mock_box_session.post.called
+    else:
+        assert mock_box_session.post.called
+
+
+@patch('boxsdk.object.folder.open', mock_open(read_data=b'some bytes'), create=True)
+def test_upload_does_preflight_check_if_specified(
+        mock_box_session,
+        test_folder,
+        mock_file_path,
+        preflight_check,
+        preflight_fails,
+        file_size,
+):
+    with patch.object(Folder, 'preflight_check', return_value=None):
+        kwargs = {'file_path': mock_file_path, 'file_name': 'foo.txt'}
+        mock_box_session.post = MagicMock()
+        if preflight_check:
+            kwargs['preflight_check'] = preflight_check
+            kwargs['preflight_expected_size'] = file_size
+        if preflight_fails:
+            test_folder.preflight_check.side_effect = BoxAPIException(400)
+            with pytest.raises(BoxAPIException):
+                test_folder.upload(**kwargs)
+        else:
+            test_folder.upload(**kwargs)
+
+        if preflight_check:
+            assert test_folder.preflight_check.called_once_with(size=file_size, name='foo.txt')
+            _assert_post_called_correctly(mock_box_session, preflight_fails)
+        else:
+            assert not test_folder.preflight_check.called
 
 
 def test_create_subfolder(test_folder, mock_box_session, mock_object_id, mock_folder_response):

@@ -6,7 +6,7 @@ from mock import mock_open, patch
 import pytest
 from six import BytesIO
 from boxsdk.config import API
-
+from boxsdk.exception import BoxAPIException
 from boxsdk.object.file import File
 
 
@@ -74,6 +74,66 @@ def test_update_content(
     )
     assert isinstance(new_file, File)
     assert new_file.object_id == mock_upload_response.json()['entries'][0]['id']
+
+
+def test_update_contents_with_stream_does_preflight_check_if_specified(
+        test_file,
+        preflight_check,
+        file_size,
+        preflight_fails,
+        mock_box_session,
+):
+    with patch.object(File, 'preflight_check', return_value=None):
+        kwargs = {'file_stream': BytesIO(b'some bytes')}
+        if preflight_check:
+            kwargs['preflight_check'] = preflight_check
+            kwargs['preflight_expected_size'] = file_size
+        if preflight_fails:
+            test_file.preflight_check.side_effect = BoxAPIException(400)
+            with pytest.raises(BoxAPIException):
+                test_file.update_contents_with_stream(**kwargs)
+        else:
+            test_file.update_contents_with_stream(**kwargs)
+
+        if preflight_check:
+            assert test_file.preflight_check.called_once_with(size=file_size)
+            if preflight_fails:
+                assert not mock_box_session.post.called
+            else:
+                assert mock_box_session.post.called
+        else:
+            assert not test_file.preflight_check.called
+
+
+@patch('boxsdk.object.file.open', mock_open(read_data=b'some bytes'), create=True)
+def test_update_contents_does_preflight_check_if_specified(
+        test_file,
+        mock_file_path,
+        preflight_check,
+        file_size,
+        preflight_fails,
+        mock_box_session,
+):
+    with patch.object(File, 'preflight_check', return_value=None):
+        kwargs = {'file_path': mock_file_path}
+        if preflight_check:
+            kwargs['preflight_check'] = preflight_check
+            kwargs['preflight_expected_size'] = file_size
+        if preflight_fails:
+            test_file.preflight_check.side_effect = BoxAPIException(400)
+            with pytest.raises(BoxAPIException):
+                test_file.update_contents(**kwargs)
+        else:
+            test_file.update_contents(**kwargs)
+
+        if preflight_check:
+            assert test_file.preflight_check.called_once_with(size=file_size)
+            if preflight_fails:
+                assert not mock_box_session.post.called
+            else:
+                assert mock_box_session.post.called
+        else:
+            assert not test_file.preflight_check.called
 
 
 @pytest.mark.parametrize('prevent_download', (True, False))
