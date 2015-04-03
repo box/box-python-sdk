@@ -60,7 +60,7 @@ class File(Item):
         for chunk in box_response.network_response.response_as_stream.stream(decode_content=True):
             writeable_stream.write(chunk)
 
-    def update_contents_with_stream(self, file_stream, etag=None, preflight_check=False, size=0):
+    def update_contents_with_stream(self, file_stream, etag=None, preflight_check=False, preflight_expected_size=0):
         """
         Upload a new version of a file, taking the contents from the given file stream.
 
@@ -76,10 +76,10 @@ class File(Item):
             If specified, preflight check will be performed before actually uploading the file.
         :type preflight_check:
             `bool`
-        :param size:
+        :param preflight_expected_size:
             The size of the file to be uploaded in bytes, which is used for preflight check. The default value is '0',
             which means the file size is unknown.
-        :type size:
+        :type preflight_expected_size:
             `int`
         :returns:
             A new file object
@@ -90,7 +90,7 @@ class File(Item):
             check fails.
         """
         if preflight_check:
-            self.preflight_check(size=size)
+            self.preflight_check(size=preflight_expected_size)
 
         url = self.get_url('content').replace(API.BASE_API_URL, API.UPLOAD_URL)
         files = {'file': ('unused', file_stream)}
@@ -101,7 +101,7 @@ class File(Item):
             response_object=self._session.post(url, expect_json_response=False, files=files, headers=headers).json(),
         )
 
-    def update_contents(self, file_path, etag=None, preflight_check=False, size=0):
+    def update_contents(self, file_path, etag=None, preflight_check=False, preflight_expected_size=0):
         """Upload a new version of a file. The contents are taken from the given file path.
 
         :param file_path:
@@ -116,10 +116,10 @@ class File(Item):
             If specified, preflight check will be performed before actually uploading the file.
         :type preflight_check:
             `bool`
-        :param size:
+        :param preflight_expected_size:
             The size of the file to be uploaded in bytes, which is used for preflight check. The default value is '0',
             which means the file size is unknown.
-        :type size:
+        :type preflight_expected_size:
             `int`
         :returns:
             A new file object
@@ -130,7 +130,12 @@ class File(Item):
             check fails.
         """
         with open(file_path, 'rb') as file_stream:
-            return self.update_contents_with_stream(file_stream, etag, preflight_check, size=size)
+            return self.update_contents_with_stream(
+                file_stream,
+                etag,
+                preflight_check,
+                preflight_expected_size=preflight_expected_size,
+            )
 
     def lock(self, prevent_download=False):
         """

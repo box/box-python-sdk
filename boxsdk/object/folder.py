@@ -143,7 +143,7 @@ class Folder(Item):
         response = box_response.json()
         return [Translator().translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
 
-    def upload_stream(self, file_stream, file_name):
+    def upload_stream(self, file_stream, file_name, preflight_check=False, preflight_expected_size=0):
         """
         Upload a file to the folder.
         The contents are taken from the given file stream, and it will have the given name.
@@ -156,11 +156,23 @@ class Folder(Item):
             The name to give the file on Box.
         :type file_name:
             `unicode`
+        :param preflight_check:
+            If specified, preflight check will be performed before actually uploading the file.
+        :type preflight_check:
+            `bool`
+        :param preflight_expected_size:
+            The size of the file to be uploaded in bytes, which is used for preflight check. The default value is '0',
+            which means the file size is unknown.
+        :type preflight_expected_size:
+            `int`
         :returns:
             The newly uploaded file.
         :rtype:
             :class:`File`
         """
+        if preflight_check:
+            self.preflight_check(size=preflight_expected_size, name=file_name)
+
         url = '{0}/files/content'.format(API.UPLOAD_URL)
         data = {'attributes': json.dumps({
             'name': file_name,
@@ -178,7 +190,7 @@ class Folder(Item):
             response_object=file_response,
         )
 
-    def upload(self, file_path=None, file_name=None):
+    def upload(self, file_path=None, file_name=None, preflight_check=False, preflight_expected_size=0):
         """
         Upload a file to the folder.
         The contents are taken from the given file path, and it will have the given name.
@@ -192,6 +204,15 @@ class Folder(Item):
             The name to give the file on Box. If None, then use the leaf name of file_path
         :type file_name:
             `unicode`
+        :param preflight_check:
+            If specified, preflight check will be performed before actually uploading the file.
+        :type preflight_check:
+            `bool`
+        :param preflight_expected_size:
+            The size of the file to be uploaded in bytes, which is used for preflight check. The default value is '0',
+            which means the file size is unknown.
+        :type preflight_expected_size:
+            `int`
         :returns:
             The newly uploaded file.
         :rtype:
@@ -200,7 +221,12 @@ class Folder(Item):
         if file_name is None:
             file_name = os.path.basename(file_path)
         with open(file_path, 'rb') as file_stream:
-            return self.upload_stream(file_stream, file_name)
+            return self.upload_stream(
+                file_stream,
+                file_name,
+                preflight_check,
+                preflight_expected_size=preflight_expected_size,
+            )
 
     def create_subfolder(self, name):
         """
