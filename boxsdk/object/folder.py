@@ -112,6 +112,17 @@ class Folder(Item):
             parent_id=self._object_id,
         )
 
+    def _get_accelerator_upload_url_fow_new_uploads(self):
+        """
+        Get Accelerator upload url for uploading new files.
+
+        :return:
+            The Accelerator upload url or None if cannot get one
+        :rtype:
+            `unicode` or None
+        """
+        return self._get_accelerator_upload_url()
+
     def get_items(self, limit, offset=0, fields=None):
         """Get the items in a folder.
 
@@ -143,7 +154,14 @@ class Folder(Item):
         response = box_response.json()
         return [Translator().translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
 
-    def upload_stream(self, file_stream, file_name, preflight_check=False, preflight_expected_size=0):
+    def upload_stream(
+            self,
+            file_stream,
+            file_name,
+            preflight_check=False,
+            preflight_expected_size=0,
+            upload_using_accelerator=False,
+    ):
         """
         Upload a file to the folder.
         The contents are taken from the given file stream, and it will have the given name.
@@ -165,6 +183,15 @@ class Folder(Item):
             which means the file size is unknown.
         :type preflight_expected_size:
             `int`
+        :param upload_using_accelerator:
+            If specified, the upload will try to use Box Accelerator to speed up the uploads for big files.
+            It will make an extra API call before the actual upload to get the Accelerator upload url, and then make
+            a POST request to that url instead of the default Box upload url. It falls back to normal upload endpoint,
+            if cannot get the Accelerator upload url.
+
+            Please notice that this is a premium feature, which might not be available to your app.
+        :type upload_using_accelerator:
+            `bool`
         :returns:
             The newly uploaded file.
         :rtype:
@@ -174,6 +201,11 @@ class Folder(Item):
             self.preflight_check(size=preflight_expected_size, name=file_name)
 
         url = '{0}/files/content'.format(API.UPLOAD_URL)
+        if upload_using_accelerator:
+            accelerator_upload_url = self._get_accelerator_upload_url_fow_new_uploads()
+            if accelerator_upload_url:
+                url = accelerator_upload_url
+
         data = {'attributes': json.dumps({
             'name': file_name,
             'parent': {'id': self._object_id},
@@ -190,7 +222,14 @@ class Folder(Item):
             response_object=file_response,
         )
 
-    def upload(self, file_path=None, file_name=None, preflight_check=False, preflight_expected_size=0):
+    def upload(
+            self,
+            file_path=None,
+            file_name=None,
+            preflight_check=False,
+            preflight_expected_size=0,
+            upload_using_accelerator=False,
+    ):
         """
         Upload a file to the folder.
         The contents are taken from the given file path, and it will have the given name.
@@ -213,6 +252,15 @@ class Folder(Item):
             which means the file size is unknown.
         :type preflight_expected_size:
             `int`
+        :param upload_using_accelerator:
+            If specified, the upload will try to use Box Accelerator to speed up the uploads for big files.
+            It will make an extra API call before the actual upload to get the Accelerator upload url, and then make
+            a POST request to that url instead of the default Box upload url. It falls back to normal upload endpoint,
+            if cannot get the Accelerator upload url.
+
+            Please notice that this is a premium feature, which might not be available to your app.
+        :type upload_using_accelerator:
+            `bool`
         :returns:
             The newly uploaded file.
         :rtype:
@@ -226,6 +274,7 @@ class Folder(Item):
                 file_name,
                 preflight_check,
                 preflight_expected_size=preflight_expected_size,
+                upload_using_accelerator=upload_using_accelerator,
             )
 
     def create_subfolder(self, name):

@@ -76,6 +76,19 @@ def upload_file(client):
         print('Delete i-am-a-file.txt succeeded: {0}'.format(a_file.delete()))
 
 
+def upload_accelerator(client):
+    root_folder = client.folder(folder_id='0')
+    file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file.txt')
+    a_file = root_folder.upload(file_path, file_name='i-am-a-file.txt', upload_using_accelerator=True)
+    try:
+        print('{0} uploaded via Accelerator: '.format(a_file.get()['name']))
+        file_v2_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file_v2.txt')
+        a_file = a_file.update_contents(file_v2_path, upload_using_accelerator=True)
+        print('{0} updated via Accelerator: '.format(a_file.get()['name']))
+    finally:
+        print('Delete i-am-a-file.txt succeeded: {0}'.format(a_file.delete()))
+
+
 def rename_file(client):
     root_folder = client.folder(folder_id='0')
     file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file.txt')
@@ -265,13 +278,18 @@ def run_examples(oauth):
     get_events(client)
     get_latest_stream_position(client)
     # long_poll(client)
+
     # Enterprise accounts only
     run_groups_example(client)
     run_metadata_example(client)
 
+    # Premium Apps only
+    upload_accelerator(client)
+
 
 def main():
 
+    # Please notice that you need to put in your client id and client secret in demo/auth.py in order to make this work.
     oauth = authenticate()
     run_examples(oauth)
     os._exit(0)

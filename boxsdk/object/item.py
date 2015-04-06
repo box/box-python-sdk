@@ -6,10 +6,35 @@ import json
 
 from .base_object import BaseObject
 from boxsdk.config import API
+from boxsdk.exception import BoxAPIException
 
 
 class Item(BaseObject):
     """Box API endpoint for interacting with files and folders."""
+
+    def _get_accelerator_upload_url(self, file_id=None):
+        """
+        Make an API call to get the Accelerator upload url for either upload a new file or updating an existing file.
+
+        :param file_id:
+            Box id of the file to be uploaded. Not required for new file uploads.
+        :type file_id:
+            `unicode` or None
+        :return:
+            The Accelerator upload url or None if cannot get the Accelerator upload url.
+        :rtype:
+            `unicode` or None
+        """
+        endpoint = '{0}/content'.format(file_id) if file_id else 'content'
+        url = '{0}/files/{1}'.format(API.BASE_API_URL, endpoint)
+        try:
+            response_json = self._session.options(
+                url=url,
+                expect_json_response=True,
+            ).json()
+            return response_json.get('upload_url', None)
+        except BoxAPIException:
+            return None
 
     def _preflight_check(self, size, name=None, file_id=None, parent_id=None):
         """

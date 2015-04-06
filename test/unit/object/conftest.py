@@ -150,9 +150,19 @@ def preflight_check(request):
 
 
 @pytest.fixture(params=[True, False])
+def upload_using_accelerator(request):
+    return request.param
+
+
+@pytest.fixture(params=[True, False])
 def preflight_fails(preflight_check, request):
     # pylint:disable=redefined-outer-name
     return preflight_check and request.param
+
+
+@pytest.fixture(params=[True, False])
+def upload_using_accelerator_fails(upload_using_accelerator, request):
+    return upload_using_accelerator and request.param
 
 
 @pytest.fixture(params=[0, 100])

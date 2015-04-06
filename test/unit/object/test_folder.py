@@ -20,6 +20,22 @@ from boxsdk.session.box_session import BoxResponse
 
 
 @pytest.fixture()
+def mock_accelerator_upload_url_for_new_uploads():
+    return 'https://upload.box.com/api/2.0/files/content?upload_session_id=123'
+
+
+@pytest.fixture(scope='function')
+def mock_accelerator_response_for_new_uploads(make_mock_box_request, mock_accelerator_upload_url_for_new_uploads):
+    mock_response, _ = make_mock_box_request(
+        response={
+            'upload_url': mock_accelerator_upload_url_for_new_uploads,
+            'upload_token': None,
+        }
+    )
+    return mock_response
+
+
+@pytest.fixture()
 def mock_items(mock_box_session, mock_object_id):
     return [
         {'type': 'file', 'id': mock_object_id},
@@ -130,18 +146,38 @@ def test_upload(
         mock_upload_response,
         mock_file_path,
         mock_object_id,
+        upload_using_accelerator,
+        mock_accelerator_response_for_new_uploads,
+        mock_accelerator_upload_url_for_new_uploads,
+        upload_using_accelerator_fails,
         is_stream,
 ):
     expected_url = '{0}/files/content'.format(API.UPLOAD_URL)
+    if upload_using_accelerator:
+        if upload_using_accelerator_fails:
+            mock_box_session.options.side_effect = BoxAPIException(400)
+        else:
+            mock_box_session.options.return_value = mock_accelerator_response_for_new_uploads
+            expected_url = mock_accelerator_upload_url_for_new_uploads
+
     mock_box_session.post.return_value = mock_upload_response
+
     if is_stream:
         mock_file_stream = BytesIO(mock_content_response.content)
-        new_file = test_folder.upload_stream(mock_file_stream, basename(mock_file_path))
+        new_file = test_folder.upload_stream(
+            mock_file_stream,
+            basename(mock_file_path),
+            upload_using_accelerator=upload_using_accelerator,
+        )
     else:
         mock_file = mock_open(read_data=mock_content_response.content)
         mock_file_stream = mock_file.return_value
         with patch('boxsdk.object.folder.open', mock_file, create=True):
-            new_file = test_folder.upload(mock_file_path)
+            new_file = test_folder.upload(
+                mock_file_path,
+                upload_using_accelerator=upload_using_accelerator,
+            )
+
     mock_files = {'file': ('unused', mock_file_stream)}
     data = {'attributes': json.dumps({'name': basename(mock_file_path), 'parent': {'id': mock_object_id}})}
     mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=False, files=mock_files, data=data)
