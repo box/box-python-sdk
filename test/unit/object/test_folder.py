@@ -17,18 +17,19 @@ from boxsdk.session.box_session import BoxResponse
 
 
 # pylint:disable=protected-access
+# pylint:disable=redefined-outer-name
 
 
 @pytest.fixture()
-def mock_accelerator_upload_url_for_new_uploads():
+def mock_new_upload_accelerator_url():
     return 'https://upload.box.com/api/2.0/files/content?upload_session_id=123'
 
 
 @pytest.fixture(scope='function')
-def mock_accelerator_response_for_new_uploads(make_mock_box_request, mock_accelerator_upload_url_for_new_uploads):
+def mock_accelerator_response_for_new_uploads(make_mock_box_request, mock_new_upload_accelerator_url):
     mock_response, _ = make_mock_box_request(
         response={
-            'upload_url': mock_accelerator_upload_url_for_new_uploads,
+            'upload_url': mock_new_upload_accelerator_url,
             'upload_token': None,
         }
     )
@@ -148,7 +149,7 @@ def test_upload(
         mock_object_id,
         upload_using_accelerator,
         mock_accelerator_response_for_new_uploads,
-        mock_accelerator_upload_url_for_new_uploads,
+        mock_new_upload_accelerator_url,
         upload_using_accelerator_fails,
         is_stream,
 ):
@@ -158,7 +159,7 @@ def test_upload(
             mock_box_session.options.side_effect = BoxAPIException(400)
         else:
             mock_box_session.options.return_value = mock_accelerator_response_for_new_uploads
-            expected_url = mock_accelerator_upload_url_for_new_uploads
+            expected_url = mock_new_upload_accelerator_url
 
     mock_box_session.post.return_value = mock_upload_response
 

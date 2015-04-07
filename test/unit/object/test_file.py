@@ -11,7 +11,7 @@ from boxsdk.object.file import File
 
 
 # pylint:disable=protected-access
-
+# pylint:disable=redefined-outer-name
 
 @pytest.fixture()
 def mock_accelerator_upload_url_for_update():
