@@ -11,6 +11,22 @@ from boxsdk.object.file import File
 
 
 # pylint:disable=protected-access
+# pylint:disable=redefined-outer-name
+
+@pytest.fixture()
+def mock_accelerator_upload_url_for_update():
+    return 'https://upload.box.com/api/2.0/files/fake_file_id/content?upload_session_id=123'
+
+
+@pytest.fixture(scope='function')
+def mock_accelerator_response_for_update(make_mock_box_request, mock_accelerator_upload_url_for_update):
+    mock_response, _ = make_mock_box_request(
+        response={
+            'upload_url': mock_accelerator_upload_url_for_update,
+            'download_url': None,
+        }
+    )
+    return mock_response
 
 
 def test_delete_file(test_file, mock_box_session, etag, if_match_header):
@@ -43,27 +59,46 @@ def test_get_content(test_file, mock_box_session, mock_content_response):
 
 
 @pytest.mark.parametrize('is_stream', (True, False))
-def test_update_content(
+def test_update_contents(
         test_file,
         mock_box_session,
         mock_content_response,
         mock_upload_response,
         mock_file_path,
         etag,
+        upload_using_accelerator,
+        mock_accelerator_response_for_update,
+        mock_accelerator_upload_url_for_update,
+        upload_using_accelerator_fails,
         if_match_header,
         is_stream,
 ):
     expected_url = test_file.get_url('content').replace(API.BASE_API_URL, API.UPLOAD_URL)
+    if upload_using_accelerator:
+        if upload_using_accelerator_fails:
+            mock_box_session.options.side_effect = BoxAPIException(400)
+        else:
+            mock_box_session.options.return_value = mock_accelerator_response_for_update
+            expected_url = mock_accelerator_upload_url_for_update
+
     mock_box_session.post.return_value = mock_upload_response
 
     if is_stream:
         mock_file_stream = BytesIO(mock_content_response.content)
-        new_file = test_file.update_contents_with_stream(mock_file_stream, etag=etag)
+        new_file = test_file.update_contents_with_stream(
+            mock_file_stream,
+            etag=etag,
+            upload_using_accelerator=upload_using_accelerator,
+        )
     else:
         mock_file = mock_open(read_data=mock_content_response.content)
         mock_file_stream = mock_file.return_value
         with patch('boxsdk.object.file.open', mock_file, create=True):
-            new_file = test_file.update_contents(mock_file_path, etag=etag)
+            new_file = test_file.update_contents(
+                mock_file_path,
+                etag=etag,
+                upload_using_accelerator=upload_using_accelerator,
+            )
 
     mock_files = {'file': ('unused', mock_file_stream)}
     mock_box_session.post.assert_called_once_with(

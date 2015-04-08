@@ -33,6 +33,17 @@ class File(Item):
             file_id=self._object_id,
         )
 
+    def _get_accelerator_upload_url_for_update(self):
+        """
+        Get Accelerator upload url for updating the file.
+
+        :return:
+            The Accelerator upload url for updating the file or None if cannot get one
+        :rtype:
+            `unicode` or None
+        """
+        return self._get_accelerator_upload_url(file_id=self._object_id)
+
     def content(self):
         """
         Get the content of a file on Box.
@@ -60,7 +71,14 @@ class File(Item):
         for chunk in box_response.network_response.response_as_stream.stream(decode_content=True):
             writeable_stream.write(chunk)
 
-    def update_contents_with_stream(self, file_stream, etag=None, preflight_check=False, preflight_expected_size=0):
+    def update_contents_with_stream(
+            self,
+            file_stream,
+            etag=None,
+            preflight_check=False,
+            preflight_expected_size=0,
+            upload_using_accelerator=False,
+    ):
         """
         Upload a new version of a file, taking the contents from the given file stream.
 
@@ -81,6 +99,15 @@ class File(Item):
             which means the file size is unknown.
         :type preflight_expected_size:
             `int`
+        :param upload_using_accelerator:
+            If specified, the upload will try to use Box Accelerator to speed up the uploads for big files.
+            It will make an extra API call before the actual upload to get the Accelerator upload url, and then make
+            a POST request to that url instead of the default Box upload url. It falls back to normal upload endpoint,
+            if cannot get the Accelerator upload url.
+
+            Please notice that this is a premium feature, which might not be available to your app.
+        :type upload_using_accelerator:
+            `bool`
         :returns:
             A new file object
         :rtype:
@@ -93,6 +120,11 @@ class File(Item):
             self.preflight_check(size=preflight_expected_size)
 
         url = self.get_url('content').replace(API.BASE_API_URL, API.UPLOAD_URL)
+        if upload_using_accelerator:
+            accelerator_upload_url = self._get_accelerator_upload_url_for_update()
+            if accelerator_upload_url:
+                url = accelerator_upload_url
+
         files = {'file': ('unused', file_stream)}
         headers = {'If-Match': etag} if etag is not None else None
         return File(
@@ -101,7 +133,14 @@ class File(Item):
             response_object=self._session.post(url, expect_json_response=False, files=files, headers=headers).json(),
         )
 
-    def update_contents(self, file_path, etag=None, preflight_check=False, preflight_expected_size=0):
+    def update_contents(
+            self,
+            file_path,
+            etag=None,
+            preflight_check=False,
+            preflight_expected_size=0,
+            upload_using_accelerator=False,
+    ):
         """Upload a new version of a file. The contents are taken from the given file path.
 
         :param file_path:
@@ -121,6 +160,15 @@ class File(Item):
             which means the file size is unknown.
         :type preflight_expected_size:
             `int`
+        :param upload_using_accelerator:
+            If specified, the upload will try to use Box Accelerator to speed up the uploads for big files.
+            It will make an extra API call before the actual upload to get the Accelerator upload url, and then make
+            a POST request to that url instead of the default Box upload url. It falls back to normal upload endpoint,
+            if cannot get the Accelerator upload url.
+
+            Please notice that this is a premium feature, which might not be available to your app.
+        :type upload_using_accelerator:
+            `bool`
         :returns:
             A new file object
         :rtype:
@@ -135,6 +183,7 @@ class File(Item):
                 etag,
                 preflight_check,
                 preflight_expected_size=preflight_expected_size,
+                upload_using_accelerator=upload_using_accelerator,
             )
 
     def lock(self, prevent_download=False):
