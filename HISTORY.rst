@@ -3,6 +3,11 @@
 Release History
 ---------------
 
+1.1.6 (2015-04-17)
+++++++++++++++++++
+
+- Added support for the Box accelerator API for premium accounts.
+
 1.1.5 (2015-04-03)
 ++++++++++++++++++
 
