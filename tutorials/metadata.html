@@ -3,7 +3,7 @@
 <head>
 
 <meta charset="utf-8" />
-<title>Box Python SDK</title>
+<title>Metadata API</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -234,70 +234,43 @@ $(document).ready(function() {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <strong>Box API</strong> provides a great way to securely connect your application to the Box platform.</p>
-<p>The <strong>Box Python SDK</strong> makes consuming the API an easy task. Let's see how easy it is to get started.</p>
-<p>To begin, we need 3 things:</p>
+<p>The Metadata API enables applications to:</p>
 <ul>
-<li>A Box <em>client ID</em> for a Box application</li>
-<li>The corresponding Box <em>client secret</em></li>
-<li>A valid <em>developer token</em> for that application</li>
+<li>CRUD Metadata on a file</li>
+<li>Search by Metadata value</li>
 </ul>
-<p>You can get all 3 at <a href="http://developers.box.com">http://developers.box.com</a> - if you don't already have a Box application, you can sign up for one there.</p>
-<p>For this demo, I wrote these 3 things to a text file called <code>app.cfg</code>, one per line.</p>
-<p>Finally, we need to install the SDK:</p>
-
-<pre><code>pip install boxsdk
-
-</code></pre>
-<p>Now we can start writing some code.</p>
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c"># Import two classes from the boxsdk module - Client and OAuth2</span>
-<span class="kn">from</span> <span class="nn">boxsdk</span> <span class="kn">import</span> <span class="n">Client</span><span class="p">,</span> <span class="n">OAuth2</span>
-
-<span class="c"># Define client ID, client secret, and developer token.</span>
-<span class="n">CLIENT_ID</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="n">CLIENT_SECRET</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="n">ACCESS_TOKEN</span> <span class="o">=</span> <span class="bp">None</span>
-
-<span class="c"># Read app info from text file</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;app.cfg&#39;</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">app_cfg</span><span class="p">:</span>
-    <span class="n">CLIENT_ID</span> <span class="o">=</span> <span class="n">app_cfg</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-    <span class="n">CLIENT_SECRET</span> <span class="o">=</span> <span class="n">app_cfg</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-    <span class="n">ACCESS_TOKEN</span> <span class="o">=</span> <span class="n">app_cfg</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The Python SDK is organized into layers:</p>
+<p>Terminology:</p>
 <ul>
-<li>The <strong>network</strong> layer, responsible for making network calls.</li>
-<li>The <strong>session</strong> layer, responsible for auth and retrying calls.</li>
-<li>The <strong>client</strong> layer, which is the interface to your application.</li>
+<li>Metadata properties are grouped into <strong>Templates</strong> (e.g. Contracts, Invoices)</li>
+<li>Templates are identified by <strong>template key</strong> and <strong>scope</strong></li>
+<li>A metadata <strong>instance</strong> is attached to a file, and conforms to a template’s schema.  A file can have multiple instances, but only one from each template.</li>
 </ul>
-<p>For demonstration purposes, I'm subclassing the default network layer to log network requests and responses.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Setting up our client, we want to subclass the DefaultNetwork to add illustrative logging to our output:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">from</span> <span class="nn">boxsdk.network.default_network</span> <span class="kn">import</span> <span class="n">DefaultNetwork</span>
@@ -305,7 +278,6 @@ $(document).ready(function() {
 
 <span class="k">class</span> <span class="nc">LoggingNetwork</span><span class="p">(</span><span class="n">DefaultNetwork</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">access_token</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Base class override. Pretty-prints outgoing requests and incoming responses. &quot;&quot;&quot;</span>
         <span class="k">print</span> <span class="s">&#39;</span><span class="se">\x1b</span><span class="s">[36m{} {} {}</span><span class="se">\x1b</span><span class="s">[0m&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">pformat</span><span class="p">(</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="n">response</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">LoggingNetwork</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
             <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">access_token</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
@@ -326,105 +298,12 @@ $(document).ready(function() {
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c"># Create OAuth2 object. It&#39;s already authenticated, thanks to the developer token.</span>
-<span class="n">oauth2</span> <span class="o">=</span> <span class="n">OAuth2</span><span class="p">(</span><span class="n">CLIENT_ID</span><span class="p">,</span> <span class="n">CLIENT_SECRET</span><span class="p">,</span> <span class="n">access_token</span><span class="o">=</span><span class="n">ACCESS_TOKEN</span><span class="p">)</span>
-
-<span class="c"># Create the authenticated client</span>
-<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">oauth2</span><span class="p">,</span> <span class="n">LoggingNetwork</span><span class="p">())</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We now have a fully authenticated SDK client!</p>
-<p>Let's try it out.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The SDK's <strong>Client</strong> object contains a collection of methods that allow you to instantiate Box objects and endpoints.</p>
-<ul>
-<li><code>client.folder(folder_id)</code></li>
-<li><code>client.file(file_id)</code></li>
-<li><code>client.events()</code></li>
-<li><code>client.search()</code></li>
-<li><code>client.user(user_id)</code></li>
-</ul>
-<p>Once you have a Box object, you can <code>get()</code> information about it, or do various operations (<code>delete()</code>, or upload/download).</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's look at the <code>User</code> object.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c"># Get information about the logged in user (that&#39;s whoever owns the developer token)</span>
-<span class="n">my</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">user</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s">&#39;me&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-<span class="k">print</span> <span class="n">my</span><span class="o">.</span><span class="n">name</span>
-<span class="k">print</span> <span class="n">my</span><span class="o">.</span><span class="n">login</span>
-<span class="k">print</span> <span class="n">my</span><span class="o">.</span><span class="n">avatar_url</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansicyan">GET https://api.box.com/2.0/users/me {&apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer vMPUC6ZGTD3AlW1HFD5ZAL5RZMdMkrEi\n&apos;},
- &apos;params&apos;: None}</span>
-<span class="ansigreen">{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;234630582&quot;,&quot;name&quot;:&quot;Jeff Boxdev&quot;,&quot;login&quot;:&quot;jrmeadows2+boxdev2015@gmail.com&quot;,&quot;created_at&quot;:&quot;2015-03-22T16:47:53-07:00&quot;,&quot;modified_at&quot;:&quot;2015-04-06T14:08:25-07:00&quot;,&quot;language&quot;:&quot;en&quot;,&quot;timezone&quot;:&quot;America\/Los_Angeles&quot;,&quot;space_amount&quot;:10737418240,&quot;space_used&quot;:0,&quot;max_upload_size&quot;:262144000,&quot;status&quot;:&quot;active&quot;,&quot;job_title&quot;:&quot;&quot;,&quot;phone&quot;:&quot;4126068527&quot;,&quot;address&quot;:&quot;&quot;,&quot;avatar_url&quot;:&quot;https:\/\/app.box.com\/api\/avatar\/large\/234630582&quot;}</span>
-Jeff Boxdev
-jrmeadows2+boxdev2015@gmail.com
-https://app.box.com/api/avatar/large/234630582
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Now let's look at some different objects, like <code>File</code> and <code>Folder</code>.</p>
-<p><code>client.folder('0')</code> is a reference to the root folder ("All Files").</p>
+<p>Fill in your client_id, client_secret, and developer token that you obtained from the <a href="https://app.box.com/developers/services">developers site</a>:</p>
 
 </div>
 </div>
@@ -434,57 +313,13 @@ https://app.box.com/api/avatar/large/234630582
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">root_folder</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">folder</span><span class="p">(</span><span class="s">&#39;0&#39;</span><span class="p">)</span>
-<span class="n">root_folder_with_info</span> <span class="o">=</span> <span class="n">root_folder</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<div class=" highlight hl-ipython2"><pre><span class="kn">from</span> <span class="nn">boxsdk</span> <span class="kn">import</span> <span class="n">OAuth2</span>
+<span class="kn">from</span> <span class="nn">boxsdk</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="n">oauth</span> <span class="o">=</span> <span class="n">OAuth2</span><span class="p">(</span><span class="n">client_id</span><span class="o">=</span><span class="s">&#39;YOUR_CLIENT_ID&#39;</span><span class="p">,</span> <span class="n">client_secret</span><span class="o">=</span><span class="s">&#39;YOUR_CLIENT_SECRET&#39;</span><span class="p">,</span> <span class="n">access_token</span><span class="o">=</span><span class="s">&#39;YOUR_DEVELOPER_TOKEN&#39;</span><span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">oauth</span><span class="p">,</span> <span class="n">LoggingNetwork</span><span class="p">())</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansicyan">GET https://api.box.com/2.0/folders/0 {&apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer vMPUC6ZGTD3AlW1HFD5ZAL5RZMdMkrEi\n&apos;},
- &apos;params&apos;: None}</span>
-<span class="ansigreen">{&quot;type&quot;:&quot;folder&quot;,&quot;id&quot;:&quot;0&quot;,&quot;sequence_id&quot;:null,&quot;etag&quot;:null,&quot;name&quot;:&quot;All Files&quot;,&quot;created_at&quot;:null,&quot;modified_at&quot;:null,&quot;description&quot;:&quot;&quot;,&quot;size&quot;:0,&quot;path_collection&quot;:{&quot;total_count&quot;:0,&quot;entries&quot;:[]},&quot;created_by&quot;:{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;&quot;,&quot;name&quot;:&quot;&quot;,&quot;login&quot;:&quot;&quot;},&quot;modified_by&quot;:{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;234630582&quot;,&quot;name&quot;:&quot;Jeff Boxdev&quot;,&quot;login&quot;:&quot;jrmeadows2+boxdev2015@gmail.com&quot;},&quot;trashed_at&quot;:null,&quot;purged_at&quot;:null,&quot;content_created_at&quot;:null,&quot;content_modified_at&quot;:null,&quot;owned_by&quot;:{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;234630582&quot;,&quot;name&quot;:&quot;Jeff Boxdev&quot;,&quot;login&quot;:&quot;jrmeadows2+boxdev2015@gmail.com&quot;},&quot;shared_link&quot;:null,&quot;folder_upload_email&quot;:null,&quot;parent&quot;:null,&quot;item_status&quot;:&quot;active&quot;,&quot;item_collection&quot;:{&quot;total_count&quot;:0,&quot;entries&quot;:[],&quot;offset&quot;:0,&quot;limit&quot;:100,&quot;order&quot;:[{&quot;by&quot;:&quot;type&quot;,&quot;direction&quot;:&quot;ASC&quot;},{&quot;by&quot;:&quot;name&quot;,&quot;direction&quot;:&quot;ASC&quot;}]}}</span>
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c"># Save time and bandwidth by only asking for the folder owner</span>
-<span class="n">root_folder_with_limited_info</span> <span class="o">=</span> <span class="n">root_folder</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;owned_by&#39;</span><span class="p">])</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansicyan">GET https://api.box.com/2.0/folders/0 {&apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer vMPUC6ZGTD3AlW1HFD5ZAL5RZMdMkrEi\n&apos;},
- &apos;params&apos;: {u&apos;fields&apos;: u&apos;owned_by&apos;}}</span>
-<span class="ansigreen">{&quot;type&quot;:&quot;folder&quot;,&quot;id&quot;:&quot;0&quot;,&quot;etag&quot;:null,&quot;owned_by&quot;:{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;234630582&quot;,&quot;name&quot;:&quot;Jeff Boxdev&quot;,&quot;login&quot;:&quot;jrmeadows2+boxdev2015@gmail.com&quot;}}</span>
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -494,195 +329,8 @@ https://app.box.com/api/avatar/large/234630582
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The SDK makes it very easy to download and upload files.</p>
-<p><code>Folder.upload(file_path ,filename)</code> uploads a file to that folder, and <code>Folder.upload_stream(stream, filename)</code> uploads the contents of a stream as a file to the folder. Both methods return a <code>File</code> object.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c"># Upload a file to Box!</span>
-<span class="kn">from</span> <span class="nn">StringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
-
-<span class="n">stream</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
-<span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;Box Python SDK test!&#39;</span><span class="p">)</span>
-<span class="n">stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">box_file</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">folder</span><span class="p">(</span><span class="s">&#39;0&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">upload_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="s">&#39;box-python-sdk-test.txt&#39;</span><span class="p">)</span>
-<span class="k">print</span> <span class="n">box_file</span><span class="o">.</span><span class="n">name</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansicyan">POST https://upload.box.com/api/2.0/files/content {&apos;data&apos;: {u&apos;attributes&apos;: &apos;{&quot;name&quot;: &quot;box-python-sdk-test.txt&quot;, &quot;parent&quot;: {&quot;id&quot;: &quot;0&quot;}}&apos;},
- &apos;files&apos;: {u&apos;file&apos;: (u&apos;unused&apos;, &lt;StringIO.StringIO instance at 0x106b30b00&gt;)},
- &apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer vMPUC6ZGTD3AlW1HFD5ZAL5RZMdMkrEi\n&apos;}}</span>
-<span class="ansigreen">{&quot;total_count&quot;:1,&quot;entries&quot;:[{&quot;type&quot;:&quot;file&quot;,&quot;id&quot;:&quot;28430517200&quot;,&quot;file_version&quot;:{&quot;type&quot;:&quot;file_version&quot;,&quot;id&quot;:&quot;27041592694&quot;,&quot;sha1&quot;:&quot;30e6d6373e1d275073b5e4b0244368cc40566f98&quot;},&quot;sequence_id&quot;:&quot;0&quot;,&quot;etag&quot;:&quot;0&quot;,&quot;sha1&quot;:&quot;30e6d6373e1d275073b5e4b0244368cc40566f98&quot;,&quot;name&quot;:&quot;box-python-sdk-test.txt&quot;,&quot;description&quot;:&quot;&quot;,&quot;size&quot;:20,&quot;path_collection&quot;:{&quot;total_count&quot;:1,&quot;entries&quot;:[{&quot;type&quot;:&quot;folder&quot;,&quot;id&quot;:&quot;0&quot;,&quot;sequence_id&quot;:null,&quot;etag&quot;:null,&quot;name&quot;:&quot;All Files&quot;}]},&quot;created_at&quot;:&quot;2015-04-06T14:09:26-07:00&quot;,&quot;modified_at&quot;:&quot;2015-04-06T14:09:26-07:00&quot;,&quot;trashed_at&quot;:null,&quot;purged_at&quot;:null,&quot;content_created_at&quot;:&quot;2015-04-06T14:09:26-07:00&quot;,&quot;content_modified_at&quot;:&quot;2015-04-06T14:09:26-07:00&quot;,&quot;created_by&quot;:{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;234630582&quot;,&quot;name&quot;:&quot;Jeff Boxdev&quot;,&quot;login&quot;:&quot;jrmeadows2+boxdev2015@gmail.com&quot;},&quot;modified_by&quot;:{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;234630582&quot;,&quot;name&quot;:&quot;Jeff Boxdev&quot;,&quot;login&quot;:&quot;jrmeadows2+boxdev2015@gmail.com&quot;},&quot;owned_by&quot;:{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;234630582&quot;,&quot;name&quot;:&quot;Jeff Boxdev&quot;,&quot;login&quot;:&quot;jrmeadows2+boxdev2015@gmail.com&quot;},&quot;shared_link&quot;:null,&quot;parent&quot;:{&quot;type&quot;:&quot;folder&quot;,&quot;id&quot;:&quot;0&quot;,&quot;sequence_id&quot;:null,&quot;etag&quot;:null,&quot;name&quot;:&quot;All Files&quot;},&quot;item_status&quot;:&quot;active&quot;}]}</span>
-box-python-sdk-test.txt
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c"># Download the file&#39;s contents from Box</span>
-<span class="k">print</span> <span class="n">box_file</span><span class="o">.</span><span class="n">content</span><span class="p">()</span>
-<span class="k">print</span> <span class="n">box_file</span><span class="o">.</span><span class="n">id</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansicyan">GET https://api.box.com/2.0/files/28430517200/content {&apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer vMPUC6ZGTD3AlW1HFD5ZAL5RZMdMkrEi\n&apos;}}</span>
-<span class="ansigreen">Box Python SDK test!</span>
-Box Python SDK test!
-28430517200
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The SDK provides information when an API call couldn't be completed.</p>
-<p>Let's try to upload the same file again - this time, the upload will fail!
-That's because the name is already in use.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">box_file</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">folder</span><span class="p">(</span><span class="s">&#39;0&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">upload_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="s">&#39;box-python-sdk-test.txt&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansicyan">POST https://upload.box.com/api/2.0/files/content {&apos;data&apos;: {u&apos;attributes&apos;: &apos;{&quot;name&quot;: &quot;box-python-sdk-test.txt&quot;, &quot;parent&quot;: {&quot;id&quot;: &quot;0&quot;}}&apos;},
- &apos;files&apos;: {u&apos;file&apos;: (u&apos;unused&apos;, &lt;StringIO.StringIO instance at 0x106b30b00&gt;)},
- &apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer vMPUC6ZGTD3AlW1HFD5ZAL5RZMdMkrEi\n&apos;}}</span>
-<span class="ansired">409
-{&apos;content-length&apos;: &apos;484&apos;, &apos;age&apos;: &apos;0&apos;, &apos;server&apos;: &apos;ATS&apos;, &apos;connection&apos;: &apos;keep-alive&apos;, &apos;cache-control&apos;: &apos;no-cache, no-store&apos;, &apos;date&apos;: &apos;Mon, 06 Apr 2015 21:09:32 GMT&apos;, &apos;content-type&apos;: &apos;application/json&apos;}
-&apos;{&quot;type&quot;:&quot;error&quot;,&quot;status&quot;:409,&quot;code&quot;:&quot;item_name_in_use&quot;,&quot;context_info&quot;:{&quot;conflicts&quot;:{&quot;type&quot;:&quot;file&quot;,&quot;id&quot;:&quot;28430517200&quot;,&quot;file_version&quot;:{&quot;type&quot;:&quot;file_version&quot;,&quot;id&quot;:&quot;27041592694&quot;,&quot;sha1&quot;:&quot;30e6d6373e1d275073b5e4b0244368cc40566f98&quot;},&quot;sequence_id&quot;:&quot;0&quot;,&quot;etag&quot;:&quot;0&quot;,&quot;sha1&quot;:&quot;30e6d6373e1d275073b5e4b0244368cc40566f98&quot;,&quot;name&quot;:&quot;box-python-sdk-test.txt&quot;}},&quot;help_url&quot;:&quot;http:\\/\\/developers.box.com\\/docs\\/#errors&quot;,&quot;message&quot;:&quot;Item with the same name already exists&quot;,&quot;request_id&quot;:&quot;8098479195522f60c3ff0d&quot;}&apos;</span>
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansired">---------------------------------------------------------------------------</span>
-<span class="ansired">BoxAPIException</span>                           Traceback (most recent call last)
-<span class="ansigreen">&lt;ipython-input-9-10f6336d1b3d&gt;</span> in <span class="ansicyan">&lt;module&gt;</span><span class="ansiblue">()</span>
-<span class="ansigreen">      1</span> stream<span class="ansiblue">.</span>seek<span class="ansiblue">(</span><span class="ansicyan">0</span><span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">----&gt; 2</span><span class="ansired"> </span>box_file <span class="ansiblue">=</span> client<span class="ansiblue">.</span>folder<span class="ansiblue">(</span><span class="ansiblue">&apos;0&apos;</span><span class="ansiblue">)</span><span class="ansiblue">.</span>upload_stream<span class="ansiblue">(</span>stream<span class="ansiblue">,</span> <span class="ansiblue">&apos;box-python-sdk-test.txt&apos;</span><span class="ansiblue">)</span><span class="ansiblue"></span>
-
-<span class="ansigreen">/Users/jmeadows/.virtualenvs/boxdev/lib/python2.7/site-packages/boxsdk/object/folder.pyc</span> in <span class="ansicyan">upload_stream</span><span class="ansiblue">(self, file_stream, file_name, preflight_check, preflight_expected_size)</span>
-<span class="ansigreen">    182</span>             <span class="ansiblue">&apos;file&apos;</span><span class="ansiblue">:</span> <span class="ansiblue">(</span><span class="ansiblue">&apos;unused&apos;</span><span class="ansiblue">,</span> file_stream<span class="ansiblue">)</span><span class="ansiblue">,</span><span class="ansiblue"></span>
-<span class="ansigreen">    183</span>         }
-<span class="ansigreen">--&gt; 184</span><span class="ansired">         </span>box_response <span class="ansiblue">=</span> self<span class="ansiblue">.</span>_session<span class="ansiblue">.</span>post<span class="ansiblue">(</span>url<span class="ansiblue">,</span> data<span class="ansiblue">=</span>data<span class="ansiblue">,</span> files<span class="ansiblue">=</span>files<span class="ansiblue">,</span> expect_json_response<span class="ansiblue">=</span>False<span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">    185</span>         file_response <span class="ansiblue">=</span> box_response<span class="ansiblue">.</span>json<span class="ansiblue">(</span><span class="ansiblue">)</span><span class="ansiblue">[</span><span class="ansiblue">&apos;entries&apos;</span><span class="ansiblue">]</span><span class="ansiblue">[</span><span class="ansicyan">0</span><span class="ansiblue">]</span><span class="ansiblue"></span>
-<span class="ansigreen">    186</span>         file_id <span class="ansiblue">=</span> file_response<span class="ansiblue">[</span><span class="ansiblue">&apos;id&apos;</span><span class="ansiblue">]</span><span class="ansiblue"></span>
-
-<span class="ansigreen">/Users/jmeadows/.virtualenvs/boxdev/lib/python2.7/site-packages/boxsdk/session/box_session.pyc</span> in <span class="ansicyan">post</span><span class="ansiblue">(self, url, **kwargs)</span>
-<span class="ansigreen">    336</span>             <span class="ansiblue">&#96;</span>unicode<span class="ansiblue">&#96;</span><span class="ansiblue"></span>
-<span class="ansigreen">    337</span>         &quot;&quot;&quot;
-<span class="ansigreen">--&gt; 338</span><span class="ansired">         </span>response <span class="ansiblue">=</span> self<span class="ansiblue">.</span>_prepare_and_send_request<span class="ansiblue">(</span><span class="ansiblue">&apos;POST&apos;</span><span class="ansiblue">,</span> url<span class="ansiblue">,</span> <span class="ansiblue">**</span>kwargs<span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">    339</span>         <span class="ansigreen">return</span> BoxResponse<span class="ansiblue">(</span>response<span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">    340</span> <span class="ansiblue"></span>
-
-<span class="ansigreen">/Users/jmeadows/.virtualenvs/boxdev/lib/python2.7/site-packages/boxsdk/session/box_session.pyc</span> in <span class="ansicyan">_prepare_and_send_request</span><span class="ansiblue">(self, method, url, headers, auto_session_renewal, expect_json_response, attempt_number, **kwargs)</span>
-<span class="ansigreen">    236</span>             attempt_number<span class="ansiblue">,</span><span class="ansiblue"></span>
-<span class="ansigreen">    237</span>             file_stream_positions<span class="ansiblue">=</span>file_stream_positions<span class="ansiblue">,</span><span class="ansiblue"></span>
-<span class="ansigreen">--&gt; 238</span><span class="ansired">             </span><span class="ansiblue">**</span>kwargs<span class="ansiblue"></span>
-<span class="ansigreen">    239</span>         )
-<span class="ansigreen">    240</span> <span class="ansiblue"></span>
-
-<span class="ansigreen">/Users/jmeadows/.virtualenvs/boxdev/lib/python2.7/site-packages/boxsdk/session/box_session.pyc</span> in <span class="ansicyan">_make_request</span><span class="ansiblue">(self, method, url, headers, auto_session_renewal, expect_json_response, attempt_number, **kwargs)</span>
-<span class="ansigreen">    313</span>         )
-<span class="ansigreen">    314</span> <span class="ansiblue"></span>
-<span class="ansigreen">--&gt; 315</span><span class="ansired">         </span>self<span class="ansiblue">.</span>_raise_on_unsuccessful_request<span class="ansiblue">(</span>network_response<span class="ansiblue">,</span> expect_json_response<span class="ansiblue">,</span> method<span class="ansiblue">,</span> url<span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">    316</span> <span class="ansiblue"></span>
-<span class="ansigreen">    317</span>         <span class="ansigreen">return</span> network_response<span class="ansiblue"></span>
-
-<span class="ansigreen">/Users/jmeadows/.virtualenvs/boxdev/lib/python2.7/site-packages/boxsdk/session/box_session.pyc</span> in <span class="ansicyan">_raise_on_unsuccessful_request</span><span class="ansiblue">(self, network_response, expect_json_response, method, url)</span>
-<span class="ansigreen">    175</span>                 request_id<span class="ansiblue">=</span>response_json<span class="ansiblue">.</span>get<span class="ansiblue">(</span><span class="ansiblue">&apos;request_id&apos;</span><span class="ansiblue">,</span> None<span class="ansiblue">)</span><span class="ansiblue">,</span><span class="ansiblue"></span>
-<span class="ansigreen">    176</span>                 url<span class="ansiblue">=</span>url<span class="ansiblue">,</span><span class="ansiblue"></span>
-<span class="ansigreen">--&gt; 177</span><span class="ansired">                 </span>method<span class="ansiblue">=</span>method<span class="ansiblue">,</span><span class="ansiblue"></span>
-<span class="ansigreen">    178</span>             )
-<span class="ansigreen">    179</span>         <span class="ansigreen">if</span> expect_json_response <span class="ansigreen">and</span> <span class="ansigreen">not</span> self<span class="ansiblue">.</span>_is_json_response<span class="ansiblue">(</span>network_response<span class="ansiblue">)</span><span class="ansiblue">:</span><span class="ansiblue"></span>
-
-<span class="ansired">BoxAPIException</span>: 
-Message: Item with the same name already exists
-Status: 409
-Code: item_name_in_use
-Request id: 8098479195522f60c3ff0d
-Headers: {&apos;content-length&apos;: &apos;484&apos;, &apos;age&apos;: &apos;0&apos;, &apos;server&apos;: &apos;ATS&apos;, &apos;connection&apos;: &apos;keep-alive&apos;, &apos;cache-control&apos;: &apos;no-cache, no-store&apos;, &apos;date&apos;: &apos;Mon, 06 Apr 2015 21:09:32 GMT&apos;, &apos;content-type&apos;: &apos;application/json&apos;}
-URL: https://upload.box.com/api/2.0/files/content
-Method: POST</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The Pre-flight check API will verify that a file will be accepted by Box before you send all the bytes over the wire. It can be used for both first-time uploads, and uploading new versions of an existing File (on /files/[id]/content). If the call returns a 200, then you can proceed with a standard upload call. Preflight checks verify all permissions as if the file was actually uploaded including:</p>
-<ul>
-<li>Folder upload permission</li>
-<li>File name collisions</li>
-<li>file size caps</li>
-<li>folder and file name restrictions*</li>
-<li>folder and account storage quota</li>
-</ul>
+<p>I'll demonstrate the CRUD abilities of the Metadata API. Using the Python SDK makes the API dead simple to use.</p>
+<p>First, let's assume our account already has a file with ID 28792944858 and a template named "mortgageContarct".  We'll create a metadata instance of that type:</p>
 
 </div>
 </div>
@@ -692,12 +340,8 @@ Method: POST</pre>
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">boxsdk.exception</span> <span class="kn">import</span> <span class="n">BoxAPIException</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">box_file</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">folder</span><span class="p">(</span><span class="s">&#39;0&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">upload_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="s">&#39;box-python-sdk-test.txt&#39;</span><span class="p">,</span> <span class="n">preflight_check</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="k">except</span> <span class="n">BoxAPIException</span><span class="p">:</span>
-    <span class="k">pass</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">metadata</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">file</span><span class="p">(</span><span class="mi">28792944858</span><span class="p">)</span><span class="o">.</span><span class="n">metadata</span><span class="p">(</span><span class="s">&#39;enterprise&#39;</span><span class="p">,</span> <span class="s">&#39;mortgageApplication&#39;</span><span class="p">)</span>
+<span class="n">metadata</span><span class="o">.</span><span class="n">create</span><span class="p">({</span><span class="s">&#39;borrowerName&#39;</span><span class="p">:</span><span class="s">&#39;Alice&#39;</span><span class="p">,</span> <span class="s">&#39;amount&#39;</span><span class="p">:</span><span class="mi">8888888</span><span class="p">,</span> <span class="s">&#39;status&#39;</span><span class="p">:</span><span class="s">&#39;Pending Approval&#39;</span><span class="p">})</span>
 </pre></div>
 
 </div>
@@ -710,33 +354,64 @@ Method: POST</pre>
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansicyan">OPTIONS https://api.box.com/2.0/files/content {&apos;data&apos;: &apos;{&quot;name&quot;: &quot;box-python-sdk-test.txt&quot;, &quot;parent&quot;: {&quot;id&quot;: &quot;0&quot;}, &quot;size&quot;: 0}&apos;,
- &apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer wZrNb8pHQmDpybvrZzYSl243KtOVpUMX&apos;}}</span>
-<span class="ansired">409
-{&apos;content-length&apos;: &apos;485&apos;, &apos;age&apos;: &apos;0&apos;, &apos;server&apos;: &apos;ATS&apos;, &apos;connection&apos;: &apos;keep-alive&apos;, &apos;cache-control&apos;: &apos;no-cache, no-store&apos;, &apos;date&apos;: &apos;Mon, 06 Apr 2015 21:10:33 GMT&apos;, &apos;content-type&apos;: &apos;application/json&apos;}
-&apos;{&quot;type&quot;:&quot;error&quot;,&quot;status&quot;:409,&quot;code&quot;:&quot;item_name_in_use&quot;,&quot;context_info&quot;:{&quot;conflicts&quot;:{&quot;type&quot;:&quot;file&quot;,&quot;id&quot;:&quot;28430517200&quot;,&quot;file_version&quot;:{&quot;type&quot;:&quot;file_version&quot;,&quot;id&quot;:&quot;27041592694&quot;,&quot;sha1&quot;:&quot;30e6d6373e1d275073b5e4b0244368cc40566f98&quot;},&quot;sequence_id&quot;:&quot;0&quot;,&quot;etag&quot;:&quot;0&quot;,&quot;sha1&quot;:&quot;30e6d6373e1d275073b5e4b0244368cc40566f98&quot;,&quot;name&quot;:&quot;box-python-sdk-test.txt&quot;}},&quot;help_url&quot;:&quot;http:\\/\\/developers.box.com\\/docs\\/#errors&quot;,&quot;message&quot;:&quot;Item with the same name already exists&quot;,&quot;request_id&quot;:&quot;13995869325522f6491dd3a&quot;}&apos;</span>
+<pre><span class="ansicyan">POST https://api.box.com/2.0/files/28792944858/metadata/enterprise/mortgageApplication {&apos;data&apos;: &apos;{&quot;status&quot;: &quot;Pending Approval&quot;, &quot;amount&quot;: 8888888, &quot;borrowerName&quot;: &quot;Alice&quot;}&apos;,
+ &apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer bljFP0m8vTdsKK3gWY0pnI2ETkluAAhW&apos;,
+             &apos;Content-Type&apos;: &apos;application/json&apos;}}</span>
+<span class="ansigreen">{&quot;status&quot;:&quot;Pending Approval&quot;,&quot;amount&quot;:8888888,&quot;borrowerName&quot;:&quot;Alice&quot;,&quot;$type&quot;:&quot;mortgageApplication-a2387be8-1279-4249-853b-f4a7cb6e0a54&quot;,&quot;$parent&quot;:&quot;file_28792944858&quot;,&quot;$id&quot;:&quot;657378d4-0617-4a04-9067-7e625076a0c2&quot;}</span>
 </pre>
 </div>
 </div>
 
+<div class="output_area"><div class="prompt output_prompt">Out[12]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{u&apos;$id&apos;: u&apos;657378d4-0617-4a04-9067-7e625076a0c2&apos;,
+ u&apos;$parent&apos;: u&apos;file_28792944858&apos;,
+ u&apos;$type&apos;: u&apos;mortgageApplication-a2387be8-1279-4249-853b-f4a7cb6e0a54&apos;,
+ u&apos;amount&apos;: 8888888,
+ u&apos;borrowerName&apos;: u&apos;Alice&apos;,
+ u&apos;status&apos;: u&apos;Pending Approval&apos;}</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The metadata instance has been created and returned to you.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next, we'll demonstrate the Metadata Search API.  The Metadata Search API allows clients to search for files that match certain metadata values.</p>
+<p>For example, our user's enterprise has a Mortgage Application metadata template, and we've attached an instance of the Mortgage Application template to a file in the user's account.  We can search for this file by a specific field, status. In this example, the template is identified by template_key and scope, and the value itself is identified by the field_key.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c"># See if we can find the file on Box using search (may need to wait for Box to index the file)</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;Box Python SDK test&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">matching_results</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">box_file</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">matching_results</span><span class="p">:</span>
-    <span class="k">print</span> <span class="n">m</span><span class="o">.</span><span class="n">name</span>
-    <span class="k">print</span> <span class="n">m</span><span class="o">.</span><span class="n">created_at</span>
-    <span class="k">break</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="k">print</span> <span class="s">&#39;No match found&#39;</span>
+<div class=" highlight hl-ipython2"><pre><span class="kn">from</span> <span class="nn">boxsdk.object.search</span> <span class="kn">import</span> <span class="n">Search</span>
+<span class="n">metadata_filters</span> <span class="o">=</span> <span class="n">Search</span><span class="o">.</span><span class="n">start_metadata_filters</span><span class="p">()</span>
+<span class="n">metadata_filter</span> <span class="o">=</span> <span class="n">Search</span><span class="o">.</span><span class="n">make_single_metadata_filter</span><span class="p">(</span><span class="n">template_key</span><span class="o">=</span><span class="s">&#39;mortgageApplication&#39;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s">&#39;enterprise&#39;</span><span class="p">)</span>
+<span class="n">metadata_filter</span><span class="o">.</span><span class="n">add_value_based_filter</span><span class="p">(</span><span class="n">field_key</span><span class="o">=</span><span class="s">&#39;status&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s">&#39;Pending Approval&#39;</span><span class="p">)</span>
+<span class="n">metadata_filters</span><span class="o">.</span><span class="n">add_filter</span><span class="p">(</span><span class="n">metadata_filter</span><span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;pdf&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">metadata_filters</span><span class="o">=</span><span class="n">metadata_filters</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -749,12 +424,180 @@ Method: POST</pre>
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansicyan">GET https://api.box.com/2.0/search {&apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer wZrNb8pHQmDpybvrZzYSl243KtOVpUMX&apos;},
- &apos;params&apos;: {u&apos;limit&apos;: 2, u&apos;offset&apos;: 0, u&apos;query&apos;: &apos;Box Python SDK test&apos;}}</span>
-<span class="ansigreen">{&quot;total_count&quot;:1,&quot;entries&quot;:[{&quot;type&quot;:&quot;file&quot;,&quot;id&quot;:&quot;28430517200&quot;,&quot;file_version&quot;:{&quot;type&quot;:&quot;file_version&quot;,&quot;id&quot;:&quot;27041592694&quot;,&quot;sha1&quot;:&quot;30e6d6373e1d275073b5e4b0244368cc40566f98&quot;},&quot;sequence_id&quot;:&quot;0&quot;,&quot;etag&quot;:&quot;0&quot;,&quot;sha1&quot;:&quot;30e6d6373e1d275073b5e4b0244368cc40566f98&quot;,&quot;name&quot;:&quot;box-python-sdk-test.txt&quot;,&quot;description&quot;:&quot;&quot;,&quot;size&quot;:20,&quot;path_collection&quot;:{&quot;total_count&quot;:1,&quot;entries&quot;:[{&quot;type&quot;:&quot;folder&quot;,&quot;id&quot;:&quot;0&quot;,&quot;sequence_id&quot;:null,&quot;etag&quot;:null,&quot;name&quot;:&quot;All Files&quot;}]},&quot;created_at&quot;:&quot;2015-04-06T14:09:26-07:00&quot;,&quot;modified_at&quot;:&quot;2015-04-06T14:09:26-07:00&quot;,&quot;trashed_at&quot;:null,&quot;purged_at&quot;:null,&quot;content_created_at&quot;:&quot;2015-04-06T14:09:26-07:00&quot;,&quot;content_modified_at&quot;:&quot;2015-04-06T14:09:26-07:00&quot;,&quot;created_by&quot;:{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;234630582&quot;,&quot;name&quot;:&quot;Jeff Boxdev&quot;,&quot;login&quot;:&quot;jrmeadows2+boxdev2015@gmail.com&quot;},&quot;modified_by&quot;:{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;234630582&quot;,&quot;name&quot;:&quot;Jeff Boxdev&quot;,&quot;login&quot;:&quot;jrmeadows2+boxdev2015@gmail.com&quot;},&quot;owned_by&quot;:{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;234630582&quot;,&quot;name&quot;:&quot;Jeff Boxdev&quot;,&quot;login&quot;:&quot;jrmeadows2+boxdev2015@gmail.com&quot;},&quot;shared_link&quot;:null,&quot;parent&quot;:{&quot;type&quot;:&quot;folder&quot;,&quot;id&quot;:&quot;0&quot;,&quot;sequence_id&quot;:null,&quot;etag&quot;:null,&quot;name&quot;:&quot;All Files&quot;},&quot;item_status&quot;:&quot;active&quot;}],&quot;limit&quot;:2,&quot;offset&quot;:0}</span>
-box-python-sdk-test.txt
-2015-04-06T14:09:26-07:00
+<pre><span class="ansicyan">GET https://api.box.com/2.0/search {&apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer bljFP0m8vTdsKK3gWY0pnI2ETkluAAhW&apos;},
+ &apos;params&apos;: {u&apos;limit&apos;: 1,
+            u&apos;mdfilters&apos;: &apos;[{&quot;templateKey&quot;: &quot;mortgageApplication&quot;, &quot;scope&quot;: &quot;enterprise&quot;, &quot;filters&quot;: {&quot;status&quot;: &quot;Pending Approval&quot;}}]&apos;,
+            u&apos;offset&apos;: 0,
+            u&apos;query&apos;: &apos;pdf&apos;}}</span>
+<span class="ansigreen">{&quot;total_count&quot;:1,&quot;entries&quot;:[{&quot;type&quot;:&quot;file&quot;,&quot;id&quot;:&quot;28792944858&quot;,&quot;file_version&quot;:{&quot;type&quot;:&quot;file_version&quot;,&quot;id&quot;:&quot;27449889040&quot;,&quot;sha1&quot;:&quot;34a17c1adb83874c40b4e4bb228d5d8299055fc0&quot;},&quot;sequence_id&quot;:&quot;1&quot;,&quot;etag&quot;:&quot;1&quot;,&quot;sha1&quot;:&quot;34a17c1adb83874c40b4e4bb228d5d8299055fc0&quot;,&quot;name&quot;:&quot;Alice Mortgage Application.pdf&quot;,&quot;description&quot;:&quot;&quot;,&quot;size&quot;:382898,&quot;path_collection&quot;:{&quot;total_count&quot;:2,&quot;entries&quot;:[{&quot;type&quot;:&quot;folder&quot;,&quot;id&quot;:&quot;0&quot;,&quot;sequence_id&quot;:null,&quot;etag&quot;:null,&quot;name&quot;:&quot;All Files&quot;},{&quot;type&quot;:&quot;folder&quot;,&quot;id&quot;:&quot;3442170474&quot;,&quot;sequence_id&quot;:&quot;0&quot;,&quot;etag&quot;:&quot;0&quot;,&quot;name&quot;:&quot;Box Dev 2015 Demo&quot;}]},&quot;created_at&quot;:&quot;2015-04-14T22:11:54-07:00&quot;,&quot;modified_at&quot;:&quot;2015-04-14T22:12:39-07:00&quot;,&quot;trashed_at&quot;:null,&quot;purged_at&quot;:null,&quot;content_created_at&quot;:&quot;2015-02-20T20:51:40-08:00&quot;,&quot;content_modified_at&quot;:&quot;2015-02-20T20:51:40-08:00&quot;,&quot;created_by&quot;:{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;236030416&quot;,&quot;name&quot;:&quot;Carol&quot;,&quot;login&quot;:&quot;hieu+metadata-boxdev2015@box.com&quot;},&quot;modified_by&quot;:{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;236030416&quot;,&quot;name&quot;:&quot;Carol&quot;,&quot;login&quot;:&quot;hieu+metadata-boxdev2015@box.com&quot;},&quot;owned_by&quot;:{&quot;type&quot;:&quot;user&quot;,&quot;id&quot;:&quot;236030416&quot;,&quot;name&quot;:&quot;Carol&quot;,&quot;login&quot;:&quot;hieu+metadata-boxdev2015@box.com&quot;},&quot;shared_link&quot;:null,&quot;parent&quot;:{&quot;type&quot;:&quot;folder&quot;,&quot;id&quot;:&quot;3442170474&quot;,&quot;sequence_id&quot;:&quot;0&quot;,&quot;etag&quot;:&quot;0&quot;,&quot;name&quot;:&quot;Box Dev 2015 Demo&quot;},&quot;item_status&quot;:&quot;active&quot;}],&quot;limit&quot;:1,&quot;offset&quot;:0}</span>
 </pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt output_prompt">Out[14]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&lt;boxsdk.object.file.File at 0x10e2e88d0&gt;]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next, we'll update the metadata instance, testing that the value is still what we expect it to be:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="kn">from</span> <span class="nn">boxsdk.object.metadata</span> <span class="kn">import</span> <span class="n">Metadata</span>
+<span class="n">update</span> <span class="o">=</span> <span class="n">Metadata</span><span class="o">.</span><span class="n">start_update</span><span class="p">()</span>
+<span class="n">update</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;/status&#39;</span><span class="p">,</span> <span class="s">&#39;Approved&#39;</span><span class="p">,</span> <span class="s">&#39;Pending Approval&#39;</span><span class="p">)</span>
+<span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">update</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansicyan">PUT https://api.box.com/2.0/files/28792944858/metadata/enterprise/mortgageApplication {&apos;data&apos;: &apos;[{&quot;path&quot;: &quot;/status&quot;, &quot;value&quot;: &quot;Pending Approval&quot;, &quot;op&quot;: &quot;test&quot;}, {&quot;path&quot;: &quot;/status&quot;, &quot;value&quot;: &quot;Approved&quot;, &quot;op&quot;: &quot;replace&quot;}]&apos;,
+ &apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer bljFP0m8vTdsKK3gWY0pnI2ETkluAAhW&apos;,
+             &apos;Content-Type&apos;: &apos;application/json-patch+json&apos;}}</span>
+<span class="ansigreen">{&quot;status&quot;:&quot;Approved&quot;,&quot;amount&quot;:8888888,&quot;borrowerName&quot;:&quot;Alice&quot;,&quot;$type&quot;:&quot;mortgageApplication-a2387be8-1279-4249-853b-f4a7cb6e0a54&quot;,&quot;$parent&quot;:&quot;file_28792944858&quot;,&quot;$id&quot;:&quot;657378d4-0617-4a04-9067-7e625076a0c2&quot;}</span>
+</pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt output_prompt">Out[15]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{u&apos;$id&apos;: u&apos;657378d4-0617-4a04-9067-7e625076a0c2&apos;,
+ u&apos;$parent&apos;: u&apos;file_28792944858&apos;,
+ u&apos;$type&apos;: u&apos;mortgageApplication-a2387be8-1279-4249-853b-f4a7cb6e0a54&apos;,
+ u&apos;amount&apos;: 8888888,
+ u&apos;borrowerName&apos;: u&apos;Alice&apos;,
+ u&apos;status&apos;: u&apos;Approved&apos;}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice the PUT body is an array of 2 operations: test and replace. The PUT body conforms to the <a href="https://tools.ietf.org/html/rfc6902">JSON Patch</a> specification for updating JSON objects.</p>
+<p>If we attempt to issue the same patch again, the operation will fail because the value is not what we expected it to be:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">update</span> <span class="o">=</span> <span class="n">Metadata</span><span class="o">.</span><span class="n">start_update</span><span class="p">()</span>
+<span class="n">update</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;/status&#39;</span><span class="p">,</span> <span class="s">&#39;Approved&#39;</span><span class="p">,</span> <span class="s">&#39;Pending Approval&#39;</span><span class="p">)</span>
+<span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">update</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansicyan">PUT https://api.box.com/2.0/files/28792944858/metadata/enterprise/mortgageApplication {&apos;data&apos;: &apos;[{&quot;path&quot;: &quot;/status&quot;, &quot;value&quot;: &quot;Pending Approval&quot;, &quot;op&quot;: &quot;test&quot;}, {&quot;path&quot;: &quot;/status&quot;, &quot;value&quot;: &quot;Approved&quot;, &quot;op&quot;: &quot;replace&quot;}]&apos;,
+ &apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer bljFP0m8vTdsKK3gWY0pnI2ETkluAAhW&apos;,
+             &apos;Content-Type&apos;: &apos;application/json-patch+json&apos;}}</span>
+<span class="ansired">409
+{&apos;content-length&apos;: &apos;123&apos;, &apos;age&apos;: &apos;1&apos;, &apos;server&apos;: &apos;ATS&apos;, &apos;connection&apos;: &apos;keep-alive&apos;, &apos;date&apos;: &apos;Wed, 22 Apr 2015 16:28:46 GMT&apos;, &apos;content-type&apos;: &apos;application/json&apos;}
+&apos;{&quot;message&quot;:&quot;value differs from expectations&quot;,&quot;code&quot;:&quot;failed_json_patch_application&quot;,&quot;request_id&quot;:&quot;11962628355537cc3dd9baa&quot;}&apos;</span>
+</pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansired">---------------------------------------------------------------------------</span>
+<span class="ansired">BoxAPIException</span>                           Traceback (most recent call last)
+<span class="ansigreen">&lt;ipython-input-16-0e3a050a8302&gt;</span> in <span class="ansicyan">&lt;module&gt;</span><span class="ansiblue">()</span>
+<span class="ansigreen">      1</span> update <span class="ansiblue">=</span> Metadata<span class="ansiblue">.</span>start_update<span class="ansiblue">(</span><span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">      2</span> update<span class="ansiblue">.</span>update<span class="ansiblue">(</span><span class="ansiblue">&apos;/status&apos;</span><span class="ansiblue">,</span> <span class="ansiblue">&apos;Approved&apos;</span><span class="ansiblue">,</span> <span class="ansiblue">&apos;Pending Approval&apos;</span><span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">----&gt; 3</span><span class="ansired"> </span>metadata<span class="ansiblue">.</span>update<span class="ansiblue">(</span>update<span class="ansiblue">)</span><span class="ansiblue"></span>
+
+<span class="ansigreen">/Users/hnguyen/Code/box-python-sdk-hieu/boxsdk/object/metadata.pyc</span> in <span class="ansicyan">update</span><span class="ansiblue">(self, metadata_update)</span>
+<span class="ansigreen">    155</span>             self<span class="ansiblue">.</span>get_url<span class="ansiblue">(</span><span class="ansiblue">)</span><span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">    156</span>             data<span class="ansiblue">=</span>json<span class="ansiblue">.</span>dumps<span class="ansiblue">(</span>metadata_update<span class="ansiblue">.</span>ops<span class="ansiblue">)</span><span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">--&gt; 157</span><span class="ansired">             </span>headers<span class="ansiblue">=</span><span class="ansiblue">{</span><span class="ansiblue">b&apos;Content-Type&apos;</span><span class="ansiblue">:</span> <span class="ansiblue">b&apos;application/json-patch+json&apos;</span><span class="ansiblue">}</span><span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">    158</span>         ).json()
+<span class="ansigreen">    159</span> <span class="ansiblue"></span>
+
+<span class="ansigreen">/Users/hnguyen/Code/box-python-sdk-hieu/boxsdk/session/box_session.pyc</span> in <span class="ansicyan">put</span><span class="ansiblue">(self, url, **kwargs)</span>
+<span class="ansigreen">    347</span>             <span class="ansiblue">&#96;</span>unicode<span class="ansiblue">&#96;</span><span class="ansiblue"></span>
+<span class="ansigreen">    348</span>         &quot;&quot;&quot;
+<span class="ansigreen">--&gt; 349</span><span class="ansired">         </span>response <span class="ansiblue">=</span> self<span class="ansiblue">.</span>_prepare_and_send_request<span class="ansiblue">(</span><span class="ansiblue">&apos;PUT&apos;</span><span class="ansiblue">,</span> url<span class="ansiblue">,</span> <span class="ansiblue">**</span>kwargs<span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">    350</span>         <span class="ansigreen">return</span> BoxResponse<span class="ansiblue">(</span>response<span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">    351</span> <span class="ansiblue"></span>
+
+<span class="ansigreen">/Users/hnguyen/Code/box-python-sdk-hieu/boxsdk/session/box_session.pyc</span> in <span class="ansicyan">_prepare_and_send_request</span><span class="ansiblue">(self, method, url, headers, auto_session_renewal, expect_json_response, attempt_number, **kwargs)</span>
+<span class="ansigreen">    236</span>             attempt_number<span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">    237</span>             file_stream_positions<span class="ansiblue">=</span>file_stream_positions<span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">--&gt; 238</span><span class="ansired">             </span><span class="ansiblue">**</span>kwargs<span class="ansiblue"></span>
+<span class="ansigreen">    239</span>         )
+<span class="ansigreen">    240</span> <span class="ansiblue"></span>
+
+<span class="ansigreen">/Users/hnguyen/Code/box-python-sdk-hieu/boxsdk/session/box_session.pyc</span> in <span class="ansicyan">_make_request</span><span class="ansiblue">(self, method, url, headers, auto_session_renewal, expect_json_response, attempt_number, **kwargs)</span>
+<span class="ansigreen">    313</span>         )
+<span class="ansigreen">    314</span> <span class="ansiblue"></span>
+<span class="ansigreen">--&gt; 315</span><span class="ansired">         </span>self<span class="ansiblue">.</span>_raise_on_unsuccessful_request<span class="ansiblue">(</span>network_response<span class="ansiblue">,</span> expect_json_response<span class="ansiblue">,</span> method<span class="ansiblue">,</span> url<span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">    316</span> <span class="ansiblue"></span>
+<span class="ansigreen">    317</span>         <span class="ansigreen">return</span> network_response<span class="ansiblue"></span>
+
+<span class="ansigreen">/Users/hnguyen/Code/box-python-sdk-hieu/boxsdk/session/box_session.pyc</span> in <span class="ansicyan">_raise_on_unsuccessful_request</span><span class="ansiblue">(self, network_response, expect_json_response, method, url)</span>
+<span class="ansigreen">    175</span>                 request_id<span class="ansiblue">=</span>response_json<span class="ansiblue">.</span>get<span class="ansiblue">(</span><span class="ansiblue">&apos;request_id&apos;</span><span class="ansiblue">,</span> None<span class="ansiblue">)</span><span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">    176</span>                 url<span class="ansiblue">=</span>url<span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">--&gt; 177</span><span class="ansired">                 </span>method<span class="ansiblue">=</span>method<span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">    178</span>             )
+<span class="ansigreen">    179</span>         <span class="ansigreen">if</span> expect_json_response <span class="ansigreen">and</span> <span class="ansigreen">not</span> self<span class="ansiblue">.</span>_is_json_response<span class="ansiblue">(</span>network_response<span class="ansiblue">)</span><span class="ansiblue">:</span><span class="ansiblue"></span>
+
+<span class="ansired">BoxAPIException</span>: 
+Message: value differs from expectations
+Status: 409
+Code: failed_json_patch_application
+Request id: 11962628355537cc3dd9baa
+Headers: {&apos;content-length&apos;: &apos;123&apos;, &apos;age&apos;: &apos;1&apos;, &apos;server&apos;: &apos;ATS&apos;, &apos;connection&apos;: &apos;keep-alive&apos;, &apos;date&apos;: &apos;Wed, 22 Apr 2015 16:28:46 GMT&apos;, &apos;content-type&apos;: &apos;application/json&apos;}
+URL: https://api.box.com/2.0/files/28792944858/metadata/enterprise/mortgageApplication
+Method: PUT</pre>
 </div>
 </div>
 
@@ -767,13 +610,216 @@ box-python-sdk-test.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This notebook is available for download: <a href="http://opensource.box.com/box-python-sdk/tutorials/intro.ipynb">http://opensource.box.com/box-python-sdk/tutorials/intro.ipynb</a></p>
+<p>Now, we'll retrieve the metadata again to demonstrate the GET operation:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansicyan">GET https://api.box.com/2.0/files/28792944858/metadata/enterprise/mortgageApplication {&apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer bljFP0m8vTdsKK3gWY0pnI2ETkluAAhW&apos;}}</span>
+<span class="ansigreen">{&quot;status&quot;:&quot;Approved&quot;,&quot;amount&quot;:8888888,&quot;borrowerName&quot;:&quot;Alice&quot;,&quot;$type&quot;:&quot;mortgageApplication-a2387be8-1279-4249-853b-f4a7cb6e0a54&quot;,&quot;$parent&quot;:&quot;file_28792944858&quot;,&quot;$id&quot;:&quot;657378d4-0617-4a04-9067-7e625076a0c2&quot;}</span>
+</pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt output_prompt">Out[17]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{u&apos;$id&apos;: u&apos;657378d4-0617-4a04-9067-7e625076a0c2&apos;,
+ u&apos;$parent&apos;: u&apos;file_28792944858&apos;,
+ u&apos;$type&apos;: u&apos;mortgageApplication-a2387be8-1279-4249-853b-f4a7cb6e0a54&apos;,
+ u&apos;amount&apos;: 8888888,
+ u&apos;borrowerName&apos;: u&apos;Alice&apos;,
+ u&apos;status&apos;: u&apos;Approved&apos;}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Finally, we'll delete the metadata on the file:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">metadata</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansicyan">DELETE https://api.box.com/2.0/files/28792944858/metadata/enterprise/mortgageApplication {&apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer bljFP0m8vTdsKK3gWY0pnI2ETkluAAhW&apos;}}</span>
+<span class="ansigreen"></span>
+</pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt output_prompt">Out[18]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If we attempt to retrieve the metadata again, then the metadata will not be found:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansicyan">GET https://api.box.com/2.0/files/28792944858/metadata/enterprise/mortgageApplication {&apos;headers&apos;: {u&apos;Authorization&apos;: u&apos;Bearer bljFP0m8vTdsKK3gWY0pnI2ETkluAAhW&apos;}}</span>
+<span class="ansired">404
+{&apos;content-length&apos;: &apos;180&apos;, &apos;content-encoding&apos;: &apos;gzip&apos;, &apos;age&apos;: &apos;0&apos;, &apos;vary&apos;: &apos;Accept-Encoding&apos;, &apos;server&apos;: &apos;ATS&apos;, &apos;connection&apos;: &apos;keep-alive&apos;, &apos;date&apos;: &apos;Wed, 22 Apr 2015 16:28:56 GMT&apos;, &apos;content-type&apos;: &apos;application/json&apos;}
+&apos;{&quot;message&quot;:&quot;Instance not found for \&apos;\\&quot;parented\\&quot;, \\&quot;file_28792944858\\&quot;, \\&quot;mortgageApplication-a2387be8-1279-4249-853b-f4a7cb6e0a54\\&quot;\&apos;&quot;,&quot;code&quot;:&quot;tuple_not_found&quot;,&quot;request_id&quot;:&quot;19099247955537cc48197fe&quot;}&apos;</span>
+</pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansired">---------------------------------------------------------------------------</span>
+<span class="ansired">BoxAPIException</span>                           Traceback (most recent call last)
+<span class="ansigreen">&lt;ipython-input-19-5912b71dad7f&gt;</span> in <span class="ansicyan">&lt;module&gt;</span><span class="ansiblue">()</span>
+<span class="ansigreen">----&gt; 1</span><span class="ansired"> </span>metadata<span class="ansiblue">.</span>get<span class="ansiblue">(</span><span class="ansiblue">)</span><span class="ansiblue"></span>
+
+<span class="ansigreen">/Users/hnguyen/Code/box-python-sdk-hieu/boxsdk/object/metadata.pyc</span> in <span class="ansicyan">get</span><span class="ansiblue">(self)</span>
+<span class="ansigreen">    167</span>             <span class="ansiblue">:</span><span class="ansigreen">class</span><span class="ansiblue">:</span><span class="ansiblue">&#96;</span>Metadata<span class="ansiblue">&#96;</span><span class="ansiblue"></span>
+<span class="ansigreen">    168</span>         &quot;&quot;&quot;
+<span class="ansigreen">--&gt; 169</span><span class="ansired">         </span><span class="ansigreen">return</span> self<span class="ansiblue">.</span>_session<span class="ansiblue">.</span>get<span class="ansiblue">(</span>self<span class="ansiblue">.</span>get_url<span class="ansiblue">(</span><span class="ansiblue">)</span><span class="ansiblue">)</span><span class="ansiblue">.</span>json<span class="ansiblue">(</span><span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">    170</span> <span class="ansiblue"></span>
+<span class="ansigreen">    171</span>     <span class="ansigreen">def</span> delete<span class="ansiblue">(</span>self<span class="ansiblue">)</span><span class="ansiblue">:</span><span class="ansiblue"></span>
+
+<span class="ansigreen">/Users/hnguyen/Code/box-python-sdk-hieu/boxsdk/session/box_session.pyc</span> in <span class="ansicyan">get</span><span class="ansiblue">(self, url, **kwargs)</span>
+<span class="ansigreen">    325</span>             <span class="ansiblue">&#96;</span>unicode<span class="ansiblue">&#96;</span><span class="ansiblue"></span>
+<span class="ansigreen">    326</span>         &quot;&quot;&quot;
+<span class="ansigreen">--&gt; 327</span><span class="ansired">         </span>response <span class="ansiblue">=</span> self<span class="ansiblue">.</span>_prepare_and_send_request<span class="ansiblue">(</span><span class="ansiblue">&apos;GET&apos;</span><span class="ansiblue">,</span> url<span class="ansiblue">,</span> <span class="ansiblue">**</span>kwargs<span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">    328</span>         <span class="ansigreen">return</span> BoxResponse<span class="ansiblue">(</span>response<span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">    329</span> <span class="ansiblue"></span>
+
+<span class="ansigreen">/Users/hnguyen/Code/box-python-sdk-hieu/boxsdk/session/box_session.pyc</span> in <span class="ansicyan">_prepare_and_send_request</span><span class="ansiblue">(self, method, url, headers, auto_session_renewal, expect_json_response, attempt_number, **kwargs)</span>
+<span class="ansigreen">    236</span>             attempt_number<span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">    237</span>             file_stream_positions<span class="ansiblue">=</span>file_stream_positions<span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">--&gt; 238</span><span class="ansired">             </span><span class="ansiblue">**</span>kwargs<span class="ansiblue"></span>
+<span class="ansigreen">    239</span>         )
+<span class="ansigreen">    240</span> <span class="ansiblue"></span>
+
+<span class="ansigreen">/Users/hnguyen/Code/box-python-sdk-hieu/boxsdk/session/box_session.pyc</span> in <span class="ansicyan">_make_request</span><span class="ansiblue">(self, method, url, headers, auto_session_renewal, expect_json_response, attempt_number, **kwargs)</span>
+<span class="ansigreen">    313</span>         )
+<span class="ansigreen">    314</span> <span class="ansiblue"></span>
+<span class="ansigreen">--&gt; 315</span><span class="ansired">         </span>self<span class="ansiblue">.</span>_raise_on_unsuccessful_request<span class="ansiblue">(</span>network_response<span class="ansiblue">,</span> expect_json_response<span class="ansiblue">,</span> method<span class="ansiblue">,</span> url<span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">    316</span> <span class="ansiblue"></span>
+<span class="ansigreen">    317</span>         <span class="ansigreen">return</span> network_response<span class="ansiblue"></span>
+
+<span class="ansigreen">/Users/hnguyen/Code/box-python-sdk-hieu/boxsdk/session/box_session.pyc</span> in <span class="ansicyan">_raise_on_unsuccessful_request</span><span class="ansiblue">(self, network_response, expect_json_response, method, url)</span>
+<span class="ansigreen">    175</span>                 request_id<span class="ansiblue">=</span>response_json<span class="ansiblue">.</span>get<span class="ansiblue">(</span><span class="ansiblue">&apos;request_id&apos;</span><span class="ansiblue">,</span> None<span class="ansiblue">)</span><span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">    176</span>                 url<span class="ansiblue">=</span>url<span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">--&gt; 177</span><span class="ansired">                 </span>method<span class="ansiblue">=</span>method<span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">    178</span>             )
+<span class="ansigreen">    179</span>         <span class="ansigreen">if</span> expect_json_response <span class="ansigreen">and</span> <span class="ansigreen">not</span> self<span class="ansiblue">.</span>_is_json_response<span class="ansiblue">(</span>network_response<span class="ansiblue">)</span><span class="ansiblue">:</span><span class="ansiblue"></span>
+
+<span class="ansired">BoxAPIException</span>: 
+Message: Instance not found for &apos;&quot;parented&quot;, &quot;file_28792944858&quot;, &quot;mortgageApplication-a2387be8-1279-4249-853b-f4a7cb6e0a54&quot;&apos;
+Status: 404
+Code: tuple_not_found
+Request id: 19099247955537cc48197fe
+Headers: {&apos;content-length&apos;: &apos;180&apos;, &apos;content-encoding&apos;: &apos;gzip&apos;, &apos;age&apos;: &apos;0&apos;, &apos;vary&apos;: &apos;Accept-Encoding&apos;, &apos;server&apos;: &apos;ATS&apos;, &apos;connection&apos;: &apos;keep-alive&apos;, &apos;date&apos;: &apos;Wed, 22 Apr 2015 16:28:56 GMT&apos;, &apos;content-type&apos;: &apos;application/json&apos;}
+URL: https://api.box.com/2.0/files/28792944858/metadata/enterprise/mortgageApplication
+Method: GET</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>That's it! Now you'll be able to easily CRUD metadata and search for files with metadata using the Python SDK.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This notebook is available for download: <a href="http://opensource.box.com/box-python-sdk/tutorials/metadata.ipynb">http://opensource.box.com/box-python-sdk/tutorials/metadata.ipynb</a></p>
 <p>Its content is licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>.</p>
 <p>To reproduce the presentation, execute the following commands:</p>
 
-<pre><code>curl -O http://opensource.box.com/box-python-sdk/tutorials/intro.ipynb
+<pre><code>curl -O http://opensource.box.com/box-python-sdk/tutorials/metadata.ipynb
 pip install boxsdk ipython[notebook]
-ipython notebook intro.ipynb</code></pre>
+ipython notebook metadata.ipynb</code></pre>
 
 </div>
 </div>
