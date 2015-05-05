@@ -159,7 +159,7 @@ class Item(BaseObject):
         }
         return self.update_info(data)
 
-    def get_shared_link(self, access=None, etag=None):
+    def get_shared_link(self, access=None, etag=None, unshared_at=None):
         """Get a shared link for the item with the given access permissions.
 
         :param access:
@@ -170,6 +170,11 @@ class Item(BaseObject):
         :param etag:
             If specified, instruct the Box API to create the link only if the current version's etag matches.
         :type etag:
+            `unicode` or None
+        :param unshared_at:
+            The day that this link should be disabled at. Timestamps are rounded off to the given day.
+            This field can only be set if the user is not a free user.
+        :type unshared_at:
             `unicode` or None
         :returns:
             The URL of the shared link.
@@ -182,6 +187,10 @@ class Item(BaseObject):
                 'access': access
             }
         }
+
+        if unshared_at:
+            data['shared_link']['unshared_at'] = unshared_at
+
         item = self.update_info(data, etag=etag)
         return item.shared_link['url']
 

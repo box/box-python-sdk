@@ -55,12 +55,23 @@ def test_move_item(test_item_and_response, mock_box_session, test_folder, mock_o
     assert isinstance(move_response, test_item.__class__)
 
 
-@pytest.mark.parametrize('access,expected_access_data', [(None, {}), ('open', {'access': 'open'})])
+@pytest.mark.parametrize(
+    'shared_link_options',
+    [
+        # get default shared link
+        {},
+        # get 'open' shared link
+        {'access': 'open'},
+        # get 'open' shared link which expires at 2015-05-05T19:36:41.81283Z
+        {'access': 'open', 'unshared_at': '2015-05-05T19:36:41.81283Z'},
+        # get default shared link which expires at 2015-05-05T19:36:41.81283Z
+        {'unshared_at': '2015-05-05T19:36:41.81283Z'},
+    ]
+)
 def test_get_shared_link(
         test_item_and_response,
         mock_box_session,
-        access,
-        expected_access_data,
+        shared_link_options,
         test_url,
         etag,
         if_match_header,
@@ -69,10 +80,10 @@ def test_get_shared_link(
     test_item, _ = test_item_and_response
     expected_url = test_item.get_url()
     mock_box_session.put.return_value.json.return_value = {'shared_link': {'url': test_url}}
-    url = test_item.get_shared_link(access, etag=etag)
+    url = test_item.get_shared_link(etag=etag, **shared_link_options)
     mock_box_session.put.assert_called_once_with(
         expected_url,
-        data=json.dumps({'shared_link': expected_access_data}),
+        data=json.dumps({'shared_link': shared_link_options}),
         headers=if_match_header,
         params=None,
     )
