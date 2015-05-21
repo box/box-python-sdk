@@ -175,6 +175,7 @@ class BoxSession(object):
                 request_id=response_json.get('request_id', None),
                 url=url,
                 method=method,
+                context_info=response_json.get('context_info', None),
             )
         if expect_json_response and not self._is_json_response(network_response):
             raise BoxAPIException(
