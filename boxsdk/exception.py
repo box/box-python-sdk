@@ -124,6 +124,14 @@ class BoxAPIException(BoxException):
         """
         return self._method
 
+    @property
+    def context_info(self):
+        """
+        The context_info returned in the failed response.
+        :rtype: `dict`
+        """
+        return self._context_info
+
 
 class BoxOAuthException(BoxException):
     """
