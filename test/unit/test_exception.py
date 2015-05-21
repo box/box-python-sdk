@@ -12,6 +12,7 @@ def test_box_api_exception():
     headers = {'header': 'value'}
     url = 'https://example.com'
     method = 'GET'
+    context_info = {'context': 'value'}
     box_exception = BoxAPIException(
         status,
         code=code,
@@ -20,6 +21,7 @@ def test_box_api_exception():
         headers=headers,
         url=url,
         method=method,
+        context_info=context_info,
     )
     assert box_exception.status == status
     assert box_exception.code == code
@@ -35,7 +37,8 @@ Code: {2}
 Request id: {3}
 Headers: {4}
 URL: {5}
-Method: {6}'''.format(message, status, code, request_id, headers, url, method)
+Method: {6}
+Context info: {7}'''.format(message, status, code, request_id, headers, url, method, context_info)
 
 
 def test_box_oauth_exception():
