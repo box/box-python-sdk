@@ -57,7 +57,7 @@ def main():
         install_requires.append('ordereddict>=1.1')
     setup(
         name='boxsdk',
-        version='1.1.6',
+        version='1.1.7',
         description='Official Box Python SDK',
         long_description=open(join(base_dir, 'README.rst')).read(),
         author='Box',

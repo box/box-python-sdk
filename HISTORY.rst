@@ -3,6 +3,18 @@
 Release History
 ---------------
 
+1.1.7 (2015-05-28)
+++++++++++++++++++
+
+- Add context_info from failed requests to BoxAPIException instances.
+
+**Bugfixes**
+
+- ``Item.remove_shared_link()`` was trying to return an incorrect (according to its own documentation) value, and was
+  also attempting to calculate that value in a way that made an incorrect assumption about the API response. The latter
+  problem caused invokations of the method to raise TypeError. The method now handles the response correctly, and
+  correctly returns type ``bool``.
+
 1.1.6 (2015-04-17)
 ++++++++++++++++++
 
@@ -18,13 +30,6 @@ Release History
 
 - Added support to the search endpoint for metadata filters.
 - Added support to the search endpoint for filtering based on result type and content types.
-
-1.1.3 (2015-03-26)
-++++++++++++++++++
-
-- Added support for the /shared_items endpoint. `client.get_shared_item` can be used to get information about
-  a shared link. See https://developers.box.com/docs/#shared-items
-
 
 1.1.3 (2015-03-26)
 ++++++++++++++++++
