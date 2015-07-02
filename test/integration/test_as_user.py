@@ -2,9 +2,15 @@
 
 from __future__ import unicode_literals
 from mock import call, patch
+import pytest
 from boxsdk.config import API
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.user import User
+
+
+@pytest.fixture
+def box_api_headers(mock_user_id, access_token):
+    return {'Authorization': 'Bearer {0}'.format(access_token), 'As-User': mock_user_id}
 
 
 def test_client_as_user_causes_as_user_header_to_be_added(
@@ -12,8 +18,9 @@ def test_client_as_user_causes_as_user_header_to_be_added(
         mock_box_network,
         generic_successful_response,
         mock_user_id,
-        access_token,
+        box_api_headers,
 ):
+    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
@@ -22,7 +29,7 @@ def test_client_as_user_causes_as_user_header_to_be_added(
         call(
             'GET',
             '{0}/folders/0'.format(API.BASE_API_URL),
-            headers={'Authorization': 'Bearer {}'.format(access_token), 'As-User': mock_user_id},
+            headers=box_api_headers,
             params=None,
         ),
     ]
@@ -33,8 +40,9 @@ def test_folder_object_as_user_causes_as_user_header_to_be_added(
         mock_box_network,
         generic_successful_response,
         mock_user_id,
-        access_token,
+        box_api_headers,
 ):
+    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
@@ -43,7 +51,7 @@ def test_folder_object_as_user_causes_as_user_header_to_be_added(
         call(
             'GET',
             '{0}/folders/0'.format(API.BASE_API_URL),
-            headers={'Authorization': 'Bearer {}'.format(access_token), 'As-User': mock_user_id},
+            headers=box_api_headers,
             params=None,
         ),
     ]
@@ -54,8 +62,9 @@ def test_group_membership_object_as_user_causes_as_user_header_to_be_added(
         mock_box_network,
         generic_successful_response,
         mock_user_id,
-        access_token,
+        box_api_headers,
 ):
+    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
@@ -66,7 +75,7 @@ def test_group_membership_object_as_user_causes_as_user_header_to_be_added(
         call(
             'GET',
             '{0}/group_memberships/0'.format(API.BASE_API_URL),
-            headers={'Authorization': 'Bearer {}'.format(access_token), 'As-User': mock_user_id},
+            headers=box_api_headers,
             params=None,
         ),
     ]
@@ -77,8 +86,9 @@ def test_events_endpoint_as_user_causes_as_user_header_to_be_added(
         mock_box_network,
         generic_successful_response,
         mock_user_id,
-        access_token,
+        box_api_headers,
 ):
+    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
@@ -89,7 +99,7 @@ def test_events_endpoint_as_user_causes_as_user_header_to_be_added(
         call(
             'GET',
             options['url'],
-            headers={'Authorization': 'Bearer {}'.format(access_token), 'As-User': mock_user_id},
+            headers=box_api_headers,
             timeout=options['retry_timeout'],
             params={'stream_position': stream_position},
         ),
@@ -101,8 +111,9 @@ def test_metadata_endpoint_as_user_causes_as_user_header_to_be_added(
         mock_box_network,
         generic_successful_response,
         mock_user_id,
-        access_token,
+        box_api_headers,
 ):
+    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
@@ -111,6 +122,6 @@ def test_metadata_endpoint_as_user_causes_as_user_header_to_be_added(
         call(
             'GET',
             '{0}/files/0/metadata/global/properties'.format(API.BASE_API_URL),
-            headers={'Authorization': 'Bearer {}'.format(access_token), 'As-User': mock_user_id},
+            headers=box_api_headers,
         ),
     ]

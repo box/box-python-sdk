@@ -19,8 +19,11 @@ def shared_link_password(request):
 
 
 @pytest.fixture
-def box_api_header(shared_link, shared_link_password):
-    return get_shared_link_header(shared_link, shared_link_password)['BoxApi']
+def box_api_headers(shared_link, shared_link_password, access_token):
+    # pylint:disable=redefined-outer-name
+    box_api_header = get_shared_link_header(shared_link, shared_link_password)['BoxApi']
+    return {'Authorization': 'Bearer {0}'.format(access_token), 'BoxApi': box_api_header}
+
 
 def test_client_with_shared_link_causes_box_api_header_to_be_added(
         box_client,
@@ -28,9 +31,9 @@ def test_client_with_shared_link_causes_box_api_header_to_be_added(
         generic_successful_response,
         shared_link,
         shared_link_password,
-        box_api_header,
-        access_token,
+        box_api_headers,
 ):
+    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
@@ -39,7 +42,7 @@ def test_client_with_shared_link_causes_box_api_header_to_be_added(
         call(
             'GET',
             '{0}/folders/0'.format(API.BASE_API_URL),
-            headers={'Authorization': 'Bearer {}'.format(access_token), 'BoxApi': box_api_header},
+            headers=box_api_headers,
             params=None,
         ),
     ]
@@ -51,9 +54,9 @@ def test_folder_object_with_shared_link_causes_box_api_header_to_be_added(
         generic_successful_response,
         shared_link,
         shared_link_password,
-        box_api_header,
-        access_token,
+        box_api_headers,
 ):
+    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
@@ -62,7 +65,7 @@ def test_folder_object_with_shared_link_causes_box_api_header_to_be_added(
         call(
             'GET',
             '{0}/folders/0'.format(API.BASE_API_URL),
-            headers={'Authorization': 'Bearer {}'.format(access_token), 'BoxApi': box_api_header},
+            headers=box_api_headers,
             params=None,
         ),
     ]
@@ -74,9 +77,9 @@ def test_group_membership_object_with_shared_link_causes_box_api_header_to_be_ad
         generic_successful_response,
         shared_link,
         shared_link_password,
-        box_api_header,
-        access_token,
+        box_api_headers,
 ):
+    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
@@ -87,7 +90,7 @@ def test_group_membership_object_with_shared_link_causes_box_api_header_to_be_ad
         call(
             'GET',
             '{0}/group_memberships/0'.format(API.BASE_API_URL),
-            headers={'Authorization': 'Bearer {}'.format(access_token), 'BoxApi': box_api_header},
+            headers=box_api_headers,
             params=None,
         ),
     ]
@@ -99,9 +102,9 @@ def test_events_endpoint_with_shared_link_causes_box_api_header_to_be_added(
         generic_successful_response,
         shared_link,
         shared_link_password,
-        box_api_header,
-        access_token,
+        box_api_headers,
 ):
+    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
@@ -112,7 +115,7 @@ def test_events_endpoint_with_shared_link_causes_box_api_header_to_be_added(
         call(
             'GET',
             options['url'],
-            headers={'Authorization': 'Bearer {}'.format(access_token), 'BoxApi': box_api_header},
+            headers=box_api_headers,
             timeout=options['retry_timeout'],
             params={'stream_position': stream_position},
         ),
@@ -125,9 +128,9 @@ def test_metadata_endpoint_with_shared_link_causes_box_api_header_to_be_added(
         generic_successful_response,
         shared_link,
         shared_link_password,
-        box_api_header,
-        access_token,
+        box_api_headers,
 ):
+    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
@@ -136,6 +139,6 @@ def test_metadata_endpoint_with_shared_link_causes_box_api_header_to_be_added(
         call(
             'GET',
             '{0}/files/0/metadata/global/properties'.format(API.BASE_API_URL),
-            headers={'Authorization': 'Bearer {}'.format(access_token), 'BoxApi': box_api_header},
+            headers=box_api_headers,
         ),
     ]

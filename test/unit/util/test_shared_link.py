@@ -16,6 +16,7 @@ def password(request):
 
 
 def test_get_shared_link_header(shared_link, password):
+    # pylint:disable=redefined-outer-name
     header = get_shared_link_header(shared_link, password)
     assert 'BoxApi' in header
     assert shared_link in header['BoxApi']
