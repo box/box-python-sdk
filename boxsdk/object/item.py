@@ -159,7 +159,7 @@ class Item(BaseObject):
         }
         return self.update_info(data)
 
-    def get_shared_link(self, access=None, etag=None, unshared_at=None):
+    def get_shared_link(self, access=None, etag=None, unshared_at=None, allow_download=None, allow_preview=None):
         """Get a shared link for the item with the given access permissions.
 
         :param access:
@@ -172,10 +172,20 @@ class Item(BaseObject):
         :type etag:
             `unicode` or None
         :param unshared_at:
-            The day that this link should be disabled at. Timestamps are rounded off to the given day.
-            This field can only be set if the user is not a free user.
+            The date on which this link should be disabled. May only be set if the current user is not a free user
+            and has permission to set expiration dates.
         :type unshared_at:
-            `unicode` or None
+            :class:`datetime.date` or None
+        :param allow_download:
+            Whether or not the item being shared can be downloaded when accessed via the shared link.
+            If this parameter is None, the default setting will be used.
+        :type allow_download:
+            `bool` or None
+        :param allow_preview:
+            Whether or not the item being shared can be previewed when accessed via the shared link.
+            If this parameter is None, the default setting will be used.
+        :type allow_preview:
+            `bool` or None
         :returns:
             The URL of the shared link.
         :rtype:
@@ -188,8 +198,15 @@ class Item(BaseObject):
             }
         }
 
-        if unshared_at:
-            data['shared_link']['unshared_at'] = unshared_at
+        if unshared_at is not None:
+            data['shared_link']['unshared_at'] = unshared_at.isoformat()
+
+        if allow_download is not None or allow_preview is not None:
+            data['shared_link']['permissions'] = permissions = {}
+            if allow_download is not None:
+                permissions['can_download'] = allow_download
+            if allow_preview is not None:
+                permissions['can_preview'] = allow_preview
 
         item = self.update_info(data, etag=etag)
         return item.shared_link['url']

@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from datetime import date
 import json
 import pytest
 
@@ -55,23 +56,33 @@ def test_move_item(test_item_and_response, mock_box_session, test_folder, mock_o
     assert isinstance(move_response, test_item.__class__)
 
 
-@pytest.mark.parametrize(
-    'shared_link_options',
-    [
-        # get default shared link
-        {},
-        # get 'open' shared link
-        {'access': 'open'},
-        # get 'open' shared link which expires at 2015-05-05T19:36:41.81283Z
-        {'access': 'open', 'unshared_at': '2015-05-05T19:36:41.81283Z'},
-        # get default shared link which expires at 2015-05-05T19:36:41.81283Z
-        {'unshared_at': '2015-05-05T19:36:41.81283Z'},
-    ]
-)
+@pytest.fixture(params=(True, False, None))
+def shared_link_can_download(request):
+    return request.param
+
+
+@pytest.fixture(params=(True, False, None))
+def shared_link_can_preview(request):
+    return request.param
+
+
+@pytest.fixture(params=('open', None))
+def shared_link_access(request):
+    return request.param
+
+
+@pytest.fixture(params=(date(2015, 5, 5), None))
+def shared_link_unshared_at(request):
+    return request.param
+
+
 def test_get_shared_link(
         test_item_and_response,
         mock_box_session,
-        shared_link_options,
+        shared_link_access,
+        shared_link_unshared_at,
+        shared_link_can_download,
+        shared_link_can_preview,
         test_url,
         etag,
         if_match_header,
@@ -80,10 +91,27 @@ def test_get_shared_link(
     test_item, _ = test_item_and_response
     expected_url = test_item.get_url()
     mock_box_session.put.return_value.json.return_value = {'shared_link': {'url': test_url}}
-    url = test_item.get_shared_link(etag=etag, **shared_link_options)
+    expected_data = {'shared_link': {}}
+    if shared_link_access is not None:
+        expected_data['shared_link']['access'] = shared_link_access
+    if shared_link_unshared_at is not None:
+        expected_data['shared_link']['unshared_at'] = shared_link_unshared_at.isoformat()
+    if shared_link_can_download is not None or shared_link_can_preview is not None:
+        expected_data['shared_link']['permissions'] = permissions = {}
+        if shared_link_can_download is not None:
+            permissions['can_download'] = shared_link_can_download
+        if shared_link_can_preview is not None:
+            permissions['can_preview'] = shared_link_can_preview
+    url = test_item.get_shared_link(
+        etag=etag,
+        access=shared_link_access,
+        unshared_at=shared_link_unshared_at,
+        allow_download=shared_link_can_download,
+        allow_preview=shared_link_can_preview,
+    )
     mock_box_session.put.assert_called_once_with(
         expected_url,
-        data=json.dumps({'shared_link': shared_link_options}),
+        data=json.dumps(expected_data),
         headers=if_match_header,
         params=None,
     )
