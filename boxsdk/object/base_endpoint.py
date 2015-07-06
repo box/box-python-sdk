@@ -50,7 +50,7 @@ class BaseEndpoint(object):
 
     def with_shared_link(self, shared_link, shared_link_password):
         """
-        Returns a new session object with default headers set up to make requests using the shared link for auth.
+        Returns a new endpoint object with default headers set up to make requests using the shared link for auth.
 
         :param shared_link:
             The shared link.
