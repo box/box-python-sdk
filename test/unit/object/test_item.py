@@ -122,15 +122,15 @@ def test_remove_shared_link(test_item_and_response, mock_box_session, etag, if_m
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
     expected_url = test_item.get_url()
-    mock_box_session.put.return_value.json.return_value = {'shared_link': {'url': None}}
-    url = test_item.remove_shared_link(etag=etag)
+    mock_box_session.put.return_value.json.return_value = {'shared_link': None}
+    removed = test_item.remove_shared_link(etag=etag)
     mock_box_session.put.assert_called_once_with(
         expected_url,
         data=json.dumps({'shared_link': None}),
         headers=if_match_header,
         params=None,
     )
-    assert url is None
+    assert removed is True
 
 
 @pytest.mark.parametrize('fields', (None, ['name', 'created_at']))

@@ -226,7 +226,7 @@ class Item(BaseObject):
         """
         data = {'shared_link': None}
         item = self.update_info(data, etag=etag)
-        return item.shared_link['url']
+        return item.shared_link is None
 
     def delete(self, params=None, etag=None):
         """Delete the item.

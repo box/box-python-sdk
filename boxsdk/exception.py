@@ -23,7 +23,7 @@ class BoxAPIException(BoxException):
     """
     Exception raised from the box session layer.
     """
-    def __init__(self, status, code=None, message=None, request_id=None, headers=None, url=None, method=None):
+    def __init__(self, status, code=None, message=None, request_id=None, headers=None, url=None, method=None, context_info=None):
         """
         :param status:
             HTTP status code of the failed response
@@ -53,6 +53,10 @@ class BoxAPIException(BoxException):
             The HTTP verb used to make the request.
         :type method:
             `unicode`
+        :param context_info:
+            The context_info returned in the failed response.
+        :type context_info:
+            `dict`
         """
         super(BoxAPIException, self).__init__()
         self._status = status
@@ -62,9 +66,10 @@ class BoxAPIException(BoxException):
         self._headers = headers
         self._url = url
         self._method = method
+        self._context_info = context_info
 
     def __unicode__(self):
-        return '\nMessage: {0}\nStatus: {1}\nCode: {2}\nRequest id: {3}\nHeaders: {4}\nURL: {5}\nMethod: {6}'.format(
+        return '\nMessage: {0}\nStatus: {1}\nCode: {2}\nRequest id: {3}\nHeaders: {4}\nURL: {5}\nMethod: {6}\nContext info: {7}'.format(
             self._message,
             self._status,
             self._code,
@@ -72,6 +77,7 @@ class BoxAPIException(BoxException):
             self._headers,
             self._url,
             self._method,
+            self._context_info,
         )
 
     @property
@@ -117,6 +123,14 @@ class BoxAPIException(BoxException):
         :rtype: `unicode`
         """
         return self._method
+
+    @property
+    def context_info(self):
+        """
+        The context_info returned in the failed response.
+        :rtype: `dict`
+        """
+        return self._context_info
 
 
 class BoxOAuthException(BoxException):
