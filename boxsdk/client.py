@@ -252,3 +252,31 @@ class Client(object):
             :class:`BoxAPIException`
         """
         return self._session.request(method, url, **kwargs)
+
+    def create_user(self, name, login=None, **user_attributes):
+        """
+        Create a new user. Can only be used if the current user is an enterprise admin, or the current authorization
+        scope is a Box developer edition instance.
+
+        :param name:
+            The user's display name.
+        :type name:
+            `unicode`
+        :param login:
+            The user's email address. Required for an enterprise user, but None for an app user.
+        :type login:
+            `unicode` or None
+        :param user_attributes:
+            Additional attributes for the user. See the documentation at
+            https://box-content.readme.io/#create-an-enterprise-user for enterprise users
+            or https://developers.box.com/developer-edition/ for app users.
+        """
+        url = '{0}/users'.format(API.BASE_API_URL)
+        user_attributes['name'] = name
+        if login is not None:
+            user_attributes['login'] = login
+        else:
+            user_attributes['is_platform_access_only'] = True
+        box_response = self._session.post(url, data=json.dumps(user_attributes))
+        response = box_response.json()
+        return User(self._session, response['id'], response)

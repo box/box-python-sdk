@@ -4,6 +4,14 @@ boxsdk.util package
 Submodules
 ----------
 
+boxsdk.util.compat module
+-------------------------
+
+.. automodule:: boxsdk.util.compat
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.util.lru_cache module
 ----------------------------
 

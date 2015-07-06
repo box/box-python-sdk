@@ -195,7 +195,7 @@ class OAuth2(object):
         ascii_len = len(ascii_alphabet)
         return 'box_csrf_token_' + ''.join(ascii_alphabet[int(system_random.random() * ascii_len)] for _ in range(16))
 
-    def send_token_request(self, data, access_token):
+    def send_token_request(self, data, access_token, expect_refresh_token=True):
         """
         Send the request to acquire or refresh an access token.
 
@@ -226,7 +226,9 @@ class OAuth2(object):
         try:
             response = network_response.json()
             self._access_token = response['access_token']
-            self._refresh_token = response['refresh_token']
+            self._refresh_token = response.get('refresh_token', None)
+            if self._refresh_token is None and expect_refresh_token:
+                raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
         except (ValueError, KeyError):
             raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
         if self._store_tokens:

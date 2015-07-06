@@ -206,6 +206,57 @@ Metadata
     metadata.update(update)
 
 
+Box Developer Edition
+---------------------
+
+The Python SDK supports your
+`Box Developer Edition <https://developers.box.com/developer-edition/>`__ applications.
+
+Instead of instantiating your `Client` with an instance of `OAuth2`,
+instead use an instance of `JWTAuth`.
+
+.. code-block:: python
+
+    from boxsdk import JWTAuth
+
+    auth = JWTAuth(
+        client_id='YOUR_CLIENT_ID',
+        client_secret='YOUR_CLIENT_SECRET',
+        enterprise_token='YOUR_ENTERPRISE_TOKEN',
+        rsa_private_key_file_sys_path='CERT.PEM',
+        store_tokens=your_store_tokens_callback_method,
+    )
+
+    access_token = auth.authenticate_instance()
+
+    from boxsdk import Client
+
+    client = Client(auth)
+
+This client is able to create application users:
+
+.. code-block:: python
+
+    ned_stark_user = client.create_user('Ned Stark')
+
+These users can then be authenticated:
+
+.. code-block:: python
+
+    ned_auth = JWTAuth(
+       client_id='YOUR_CLIENT_ID',
+       client_secret='YOUR_CLIENT_SECRET',
+       enterprise_token='YOUR_ENTERPRISE_TOKEN',
+       rsa_private_key_file_sys_path='CERT.PEM',
+       store_tokens=your_store_tokens_callback_method,
+   )
+   ned_auth.authenticate_app_user(ned_stark_user)
+   ned_client = Client(ned_auth)
+
+Requests made with `ned_client` (or objects returned from `ned_client`'s methods)
+will be performed on behalf of the newly created app user.
+
+
 Contributing
 ------------
 
