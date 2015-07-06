@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from boxsdk.exception import BoxAPIException
+from boxsdk.util.shared_link import get_shared_link_header
 
 
 class BoxResponse(object):
@@ -62,7 +63,7 @@ class BoxSession(object):
     Box API session. Provides auth, automatic retry of failed requests, and session renewal.
     """
 
-    def __init__(self, oauth, network_layer):
+    def __init__(self, oauth, network_layer, default_headers=None):
         """
         :param oauth:
             OAuth2 object used by the session to authorize requests.
@@ -72,9 +73,44 @@ class BoxSession(object):
             Network implementation used by the session to make requests.
         :type network_layer:
             :class:`Network`
+        :param default_headers:
+            A dictionary containing default values to be used as headers when this session makes an API request.
+        :type default_headers:
+            `dict` or None
         """
         self._oauth = oauth
         self._network_layer = network_layer
+        self._default_headers = default_headers or {}
+
+    def as_user(self, user):
+        """
+        Returns a new session object with default headers set up to make requests as the specified user.
+
+        :param user:
+            The user to impersonate when making API requests.
+        :type user:
+            :class:`User`
+        """
+        headers = self._default_headers.copy()
+        headers['As-User'] = user.object_id
+        return self.__class__(self._oauth, self._network_layer, headers)
+
+    def with_shared_link(self, shared_link, shared_link_password=None):
+        """
+        Returns a new session object with default headers set up to make requests using the shared link for auth.
+
+        :param shared_link:
+            The shared link.
+        :type shared_link:
+            `unicode`
+        :param shared_link_password:
+            The password for the shared link.
+        :type shared_link_password:
+            `unicode`
+        """
+        headers = self._default_headers.copy()
+        headers.update(get_shared_link_header(shared_link, shared_link_password))
+        return self.__class__(self._oauth, self._network_layer, headers)
 
     def _renew_session(self, access_token_used):
         """
@@ -282,7 +318,7 @@ class BoxSession(object):
         access_token_will_be_used = self._oauth.access_token
         authorization_header = {'Authorization': 'Bearer {0}'.format(access_token_will_be_used)}
         if headers is None:
-            headers = {}
+            headers = self._default_headers.copy()
         headers.update(authorization_header)
 
         # Reset stream positions to what they were when the request was made so the same data is sent even if this

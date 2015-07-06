@@ -123,6 +123,7 @@ class Metadata(BaseEndpoint):
         self._template = template
 
     def get_url(self, *args):
+        """ Base class override. """
         return self._object.get_url('metadata', self._scope, self._template)
 
     @staticmethod
@@ -197,3 +198,16 @@ class Metadata(BaseEndpoint):
             data=json.dumps(metadata),
             headers={b'Content-Type': b'application/json'},
         ).json()
+
+    def as_user(self, user):
+        """ Base class override. """
+        return self.__class__(self._session.as_user(user), self._object, self._scope, self._template)
+
+    def with_shared_link(self, shared_link, shared_link_password):
+        """ Base class override. """
+        return self.__class__(
+            self._session.with_shared_link(shared_link, shared_link_password),
+            self._object,
+            self._scope,
+            self._template
+        )

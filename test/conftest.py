@@ -144,3 +144,18 @@ def update_file_content(test_file_content):
 @pytest.fixture()
 def test_file_path():
     return 'path/to/file'
+
+
+@pytest.fixture(scope='module')
+def mock_object_id():
+    return '42'
+
+
+@pytest.fixture(scope='module')
+def mock_user_id():
+    return 'fake-user-100'
+
+
+@pytest.fixture(scope='module')
+def mock_group_id():
+    return 'fake-group-99'

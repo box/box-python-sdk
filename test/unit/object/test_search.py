@@ -179,3 +179,18 @@ def test_range_filter_without_gt_and_lt_will_fail_validation():
     metadata_filter = MetadataSearchFilter(template_key='mytemplate', scope='enterprise')
     with pytest.raises(ValueError):
         metadata_filter.add_range_filter(field_key='mykey')
+
+
+def test_start_search_filters(test_search):
+    filters = test_search.start_metadata_filters()
+    assert isinstance(filters, MetadataSearchFilters)
+
+
+def test_make_single_metadata_filter(test_search):
+    template_key = 'mytemplate'
+    scope = 'myscope'
+    metadata_filter = test_search.make_single_metadata_filter(template_key, scope)
+    assert isinstance(metadata_filter, MetadataSearchFilter)
+    filter_as_dict = metadata_filter.as_dict()
+    assert filter_as_dict['templateKey'] == template_key
+    assert filter_as_dict['scope'] == scope
