@@ -105,3 +105,8 @@ def test_update(
         data=json.dumps(metadata_update.ops),
         headers={b'Content-Type': b'application/json-patch+json'},
     )
+
+
+def test_start_update(test_file):
+    update = test_file.metadata().start_update()
+    assert isinstance(update, MetadataUpdate)

@@ -74,3 +74,23 @@ class GroupMembership(BaseObject):
         group = group or Translator().translate(group_info['type'])(session, group_info['id'], group_info)
 
         return user, group
+
+    def as_user(self, user):
+        """ Base class override. """
+        return self.__class__(
+            self._session.as_user(user),
+            self._object_id,
+            self._response_object,
+            self.user,
+            self.group,
+        )
+
+    def with_shared_link(self, shared_link, shared_link_password):
+        """ Base class override. """
+        return self.__class__(
+            self._session.with_shared_link(shared_link, shared_link_password),
+            self._object_id,
+            self._response_object,
+            self.user,
+            self.group,
+        )

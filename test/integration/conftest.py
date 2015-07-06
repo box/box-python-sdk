@@ -28,7 +28,7 @@ def box_oauth(mock_box_network, client_id, client_secret, access_token, refresh_
     )
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture()
 def mock_box_network():
     return MockNetwork()
 

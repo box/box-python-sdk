@@ -30,6 +30,7 @@ def test_box_api_exception():
     assert box_exception._headers == headers  # pylint:disable=protected-access
     assert box_exception.url == url
     assert box_exception.method == method
+    assert box_exception.context_info == context_info
     assert str(box_exception) == '''
 Message: {0}
 Status: {1}
