@@ -2,11 +2,13 @@
 
 from __future__ import unicode_literals
 from contextlib import contextmanager
+from cryptography.hazmat.backends import default_backend
 from datetime import datetime, timedelta
 import json
 from mock import Mock, mock_open, patch, sentinel
 import pytest
 import random
+from six import binary_type
 import string
 from boxsdk.auth.jwt_auth import JWTAuth
 from boxsdk.config import API
@@ -24,6 +26,11 @@ def jwt_algorithm(request):
     return request.param
 
 
+@pytest.fixture(params=(None, 'strong_password'))
+def rsa_passphrase(request):
+    return request.param
+
+
 @pytest.fixture(scope='module')
 def successful_token_response(successful_token_mock, successful_token_json_response):
     # pylint:disable=redefined-outer-name
@@ -37,7 +44,13 @@ def successful_token_response(successful_token_mock, successful_token_json_respo
 
 
 @contextmanager
-def jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algorithm, enterprise_token=None):
+def jwt_auth_init_mocks(
+        mock_network_layer,
+        successful_token_response,
+        jwt_algorithm,
+        rsa_passphrase,
+        enterprise_token=None,
+):
     # pylint:disable=redefined-outer-name
     fake_client_id = 'fake_client_id'
     fake_client_secret = 'fake_client_secret'
@@ -54,13 +67,13 @@ def jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algor
     mock_network_layer.request.return_value = successful_token_response
     key_file = mock_open()
     with patch('boxsdk.auth.jwt_auth.open', key_file, create=True) as jwt_auth_open:
-        with patch('boxsdk.auth.jwt_auth.import_key') as import_key:
+        with patch('cryptography.hazmat.primitives.serialization.load_pem_private_key') as load_pem_private_key:
             oauth = JWTAuth(
                 client_id=fake_client_id,
                 client_secret=fake_client_secret,
                 enterprise_id=enterprise_token,
                 rsa_private_key_file_sys_path=sentinel.rsa_path,
-                rsa_private_key_passphrase=sentinel.rsa_passphrase,
+                rsa_private_key_passphrase=rsa_passphrase,
                 network_layer=mock_network_layer,
                 box_device_name='my_awesome_device',
                 jwt_algorithm=jwt_algorithm,
@@ -68,10 +81,13 @@ def jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algor
 
             jwt_auth_open.assert_called_once_with(sentinel.rsa_path)
             key_file.return_value.read.assert_called_once_with()
-            import_key.assert_called_once_with(key_file.return_value.read.return_value, sentinel.rsa_passphrase)
-            import_key.return_value.exportKey.assert_called_once_with('PEM')
+            load_pem_private_key.assert_called_once_with(
+                key_file.return_value.read.return_value,
+                password=rsa_passphrase and binary_type(rsa_passphrase),
+                backend=default_backend(),
+            )
 
-            yield oauth, assertion, fake_client_id, import_key.return_value.exportKey.return_value
+            yield oauth, assertion, fake_client_id, load_pem_private_key.return_value
 
     mock_network_layer.request.assert_called_once_with(
         'POST',
@@ -121,10 +137,11 @@ def test_authenticate_app_user_sends_post_request_with_correct_params(
         successful_token_response,
         jti_length,
         jwt_algorithm,
+        rsa_passphrase,
 ):
     # pylint:disable=redefined-outer-name
     fake_user_id = 'fake_user_id'
-    with jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algorithm) as params:
+    with jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algorithm, rsa_passphrase) as params:
         with jwt_auth_auth_mocks(jti_length, jwt_algorithm, fake_user_id, 'user', *params) as oauth:
             oauth.authenticate_app_user(User(None, fake_user_id))
 
@@ -134,10 +151,17 @@ def test_authenticate_instance_sends_post_request_with_correct_params(
         successful_token_response,
         jti_length,
         jwt_algorithm,
+        rsa_passphrase,
 ):
     # pylint:disable=redefined-outer-name
     enterprise_token = 'fake_enterprise_token'
-    with jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algorithm, enterprise_token) as params:
+    with jwt_auth_init_mocks(
+        mock_network_layer,
+        successful_token_response,
+        jwt_algorithm,
+        rsa_passphrase,
+        enterprise_token,
+    ) as params:
         with jwt_auth_auth_mocks(jti_length, jwt_algorithm, enterprise_token, 'enterprise', *params) as oauth:
             oauth.authenticate_instance()
 
@@ -147,10 +171,11 @@ def test_refresh_app_user_sends_post_request_with_correct_params(
         successful_token_response,
         jti_length,
         jwt_algorithm,
+        rsa_passphrase,
 ):
     # pylint:disable=redefined-outer-name
     fake_user_id = 'fake_user_id'
-    with jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algorithm) as params:
+    with jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algorithm, rsa_passphrase) as params:
         with jwt_auth_auth_mocks(jti_length, jwt_algorithm, fake_user_id, 'user', *params) as oauth:
             oauth._user_id = fake_user_id  # pylint:disable=protected-access
             oauth.refresh(None)
@@ -161,9 +186,16 @@ def test_refresh_instance_sends_post_request_with_correct_params(
         successful_token_response,
         jti_length,
         jwt_algorithm,
+        rsa_passphrase,
 ):
     # pylint:disable=redefined-outer-name
     enterprise_token = 'fake_enterprise_token'
-    with jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algorithm, enterprise_token) as params:
+    with jwt_auth_init_mocks(
+        mock_network_layer,
+        successful_token_response,
+        jwt_algorithm,
+        rsa_passphrase,
+        enterprise_token,
+    ) as params:
         with jwt_auth_auth_mocks(jti_length, jwt_algorithm, enterprise_token, 'enterprise', *params) as oauth:
             oauth.refresh(None)

@@ -11,10 +11,10 @@ box-python-sdk
     :target: http://box-python-sdk.readthedocs.org/en/latest
     :alt: Documentation Status
 
-.. image:: https://pypip.in/v/boxsdk/badge.png
+.. image:: https://img.shields.io/pypi/v/boxsdk.svg
     :target: https://pypi.python.org/pypi/boxsdk
 
-.. image:: https://pypip.in/d/boxsdk/badge.png
+.. image:: https://img.shields.io/pypi/dm/boxsdk.svg
     :target: https://pypi.python.org/pypi/boxsdk
 
 
@@ -211,6 +211,12 @@ Box Developer Edition
 
 The Python SDK supports your
 `Box Developer Edition <https://developers.box.com/developer-edition/>`__ applications.
+
+Developer Edition support requires some extra dependencies. To get them, simply
+
+.. code-block:: console
+
+    pip install boxsdk[jwt]
 
 Instead of instantiating your `Client` with an instance of `OAuth2`,
 instead use an instance of `JWTAuth`.

@@ -1,10 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
 from datetime import datetime, timedelta
 import jwt
-from Crypto.PublicKey.RSA import importKey as import_key
 import random
+from six import binary_type
 import string
 from .oauth2 import OAuth2
 from boxsdk.util.compat import total_seconds
@@ -87,7 +89,11 @@ class JWTAuth(OAuth2):
             network_layer=network_layer,
         )
         with open(rsa_private_key_file_sys_path) as key_file:
-            self._rsa_private_key = import_key(key_file.read(), rsa_private_key_passphrase).exportKey('PEM')
+            self._rsa_private_key = serialization.load_pem_private_key(
+                key_file.read(),
+                password=rsa_private_key_passphrase and binary_type(rsa_private_key_passphrase),
+                backend=default_backend(),
+            )
         self._enterprise_token = enterprise_id
         self._jwt_algorithm = jwt_algorithm
         self._user_id = None
