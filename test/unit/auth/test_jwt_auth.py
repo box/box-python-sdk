@@ -8,7 +8,6 @@ import json
 from mock import Mock, mock_open, patch, sentinel
 import pytest
 import random
-from six import binary_type
 import string
 from boxsdk.auth.jwt_auth import JWTAuth
 from boxsdk.config import API
@@ -26,7 +25,7 @@ def jwt_algorithm(request):
     return request.param
 
 
-@pytest.fixture(params=(None, 'strong_password'))
+@pytest.fixture(params=(None, b'strong_password'))
 def rsa_passphrase(request):
     return request.param
 
@@ -83,7 +82,7 @@ def jwt_auth_init_mocks(
             key_file.return_value.read.assert_called_once_with()
             load_pem_private_key.assert_called_once_with(
                 key_file.return_value.read.return_value,
-                password=rsa_passphrase and binary_type(rsa_passphrase),
+                password=rsa_passphrase,
                 backend=default_backend(),
             )
 

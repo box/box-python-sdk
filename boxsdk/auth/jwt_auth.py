@@ -6,7 +6,6 @@ from cryptography.hazmat.primitives import serialization
 from datetime import datetime, timedelta
 import jwt
 import random
-from six import binary_type
 import string
 from .oauth2 import OAuth2
 from boxsdk.util.compat import total_seconds
@@ -50,9 +49,9 @@ class JWTAuth(OAuth2):
         :type rsa_private_key_file_sys_path:
             `unicode`
         :param rsa_private_key_passphrase:
-            Passphrase used to unlock the private key.
+            Passphrase used to unlock the private key. Do not pass a unicode string - this must be bytes.
         :type rsa_private_key_passphrase:
-            `unicode`
+            `str` or None
         :param store_tokens:
             Optional callback for getting access to tokens for storing them.
         :type store_tokens:
@@ -91,7 +90,7 @@ class JWTAuth(OAuth2):
         with open(rsa_private_key_file_sys_path) as key_file:
             self._rsa_private_key = serialization.load_pem_private_key(
                 key_file.read(),
-                password=rsa_private_key_passphrase and binary_type(rsa_private_key_passphrase),
+                password=rsa_private_key_passphrase,
                 backend=default_backend(),
             )
         self._enterprise_token = enterprise_id
