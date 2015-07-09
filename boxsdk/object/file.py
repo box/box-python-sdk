@@ -44,17 +44,24 @@ class File(Item):
         """
         return self._get_accelerator_upload_url(file_id=self._object_id)
 
-    def content(self):
+    def content(self, bytes=[]):
         """
         Get the content of a file on Box.
 
+        :peram bytes:
+            A list of two ints. These are the range value in bytes.
+        :type bytes:
+            `[int, int]`
         :returns:
             File content as bytes.
         :rtype:
             `bytes`
         """
+        headers = None
+        if bytes:
+            headers = {'Range': 'bytes=%d-%d' % (bytes[0], bytes[1])}
         url = self.get_url('content')
-        box_response = self._session.get(url, expect_json_response=False)
+        box_response = self._session.get(url, expect_json_response=False, headers=headers)
         return box_response.content
 
     def download_to(self, writeable_stream):
