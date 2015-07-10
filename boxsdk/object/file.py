@@ -44,7 +44,7 @@ class File(Item):
         """
         return self._get_accelerator_upload_url(file_id=self._object_id)
 
-    def content(self, bytes=[]):
+    def content(self, bytes=None):
         """
         Get the content of a file on Box.
 
@@ -64,7 +64,7 @@ class File(Item):
         box_response = self._session.get(url, expect_json_response=False, headers=headers)
         return box_response.content
 
-    def download_to(self, writeable_stream):
+    def download_to(self, writeable_stream, bytes=None):
         """
         Download the file; write it to the given stream.
 
@@ -73,8 +73,11 @@ class File(Item):
         :type writeable_stream:
             `file`
         """
+        headers = None
+        if bytes:
+            headers = {'Range': 'bytes=%d-%d' % (bytes[0], bytes[1])}
         url = self.get_url('content')
-        box_response = self._session.get(url, expect_json_response=False, stream=True)
+        box_response = self._session.get(url, expect_json_response=False, stream=True, headers=headers)
         for chunk in box_response.network_response.response_as_stream.stream(decode_content=True):
             writeable_stream.write(chunk)
 
