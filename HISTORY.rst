@@ -6,6 +6,9 @@ Release History
 Upcoming
 ++++++++
 
+1.2.0 (2015-07-13)
+++++++++++++++++++
+
 - Added support for Box Developer Edition. This includes JWT auth (auth as enterprise or as app user),
   and `create_user` functionality.
 - Added support for setting shared link expiration dates.
