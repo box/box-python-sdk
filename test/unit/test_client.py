@@ -105,6 +105,18 @@ def create_group_response():
     return mock_network_response
 
 
+@pytest.fixture(scope='module')
+def create_user_response():
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'type': 'user',
+        'id': 1234,
+        'name': 'Ned Stark',
+    }
+    return mock_network_response
+
+
 @pytest.fixture(scope='module', params=('file', 'folder'))
 def shared_item_response(request):
     # pylint:disable=redefined-outer-name
@@ -243,3 +255,36 @@ def test_make_request_passes_request_on_to_session(mock_client, mock_box_session
     # pylint:disable=redefined-outer-name
     mock_client.make_request(test_method, 'url')
     assert mock_box_session.request.call_args[0] == (test_method, 'url')
+
+
+def test_create_app_user_returns_the_correct_user_object(mock_client, mock_box_session, create_user_response):
+    # pylint:disable=redefined-outer-name
+    test_user_name = 'Ned Stark'
+    value = json.dumps({'name': test_user_name, 'is_platform_access_only': True})
+    mock_box_session.post.return_value = create_user_response
+    new_user = mock_client.create_user(name=test_user_name)
+
+    assert len(mock_box_session.post.call_args_list) == 1
+
+    assert mock_box_session.post.call_args[0] == ("{0}/users".format(API.BASE_API_URL),)
+    assert mock_box_session.post.call_args[1] == {'data': value}
+    assert isinstance(new_user, User)
+    assert new_user.object_id == 1234
+    assert new_user.name == test_user_name
+
+
+def test_create_enterprise_user_returns_the_correct_user_object(mock_client, mock_box_session, create_user_response):
+    # pylint:disable=redefined-outer-name
+    test_user_name = 'Ned Stark'
+    test_user_login = 'eddard@box.com'
+    value = json.dumps({'name': test_user_name, 'login': test_user_login})
+    mock_box_session.post.return_value = create_user_response
+    new_user = mock_client.create_user(name=test_user_name, login=test_user_login)
+
+    assert len(mock_box_session.post.call_args_list) == 1
+
+    assert mock_box_session.post.call_args[0] == ("{0}/users".format(API.BASE_API_URL),)
+    assert mock_box_session.post.call_args[1] == {'data': value}
+    assert isinstance(new_user, User)
+    assert new_user.object_id == 1234
+    assert new_user.name == test_user_name

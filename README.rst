@@ -11,10 +11,10 @@ box-python-sdk
     :target: http://box-python-sdk.readthedocs.org/en/latest
     :alt: Documentation Status
 
-.. image:: https://pypip.in/v/boxsdk/badge.png
+.. image:: https://img.shields.io/pypi/v/boxsdk.svg
     :target: https://pypi.python.org/pypi/boxsdk
 
-.. image:: https://pypip.in/d/boxsdk/badge.png
+.. image:: https://img.shields.io/pypi/dm/boxsdk.svg
     :target: https://pypi.python.org/pypi/boxsdk
 
 
@@ -224,6 +224,63 @@ See https://box-content.readme.io/#as-user-1 for more information about how this
 
     # Same thing, but using file's as_user method
     client.file(file_id='SOME_FILE_ID').as_user(user).rename('bar-2.txt')
+
+
+Box Developer Edition
+---------------------
+
+The Python SDK supports your
+`Box Developer Edition <https://developers.box.com/developer-edition/>`__ applications.
+
+Developer Edition support requires some extra dependencies. To get them, simply
+
+.. code-block:: console
+
+    pip install boxsdk[jwt]
+
+Instead of instantiating your `Client` with an instance of `OAuth2`,
+instead use an instance of `JWTAuth`.
+
+.. code-block:: python
+
+    from boxsdk import JWTAuth
+
+    auth = JWTAuth(
+        client_id='YOUR_CLIENT_ID',
+        client_secret='YOUR_CLIENT_SECRET',
+        enterprise_token='YOUR_ENTERPRISE_TOKEN',
+        rsa_private_key_file_sys_path='CERT.PEM',
+        store_tokens=your_store_tokens_callback_method,
+    )
+
+    access_token = auth.authenticate_instance()
+
+    from boxsdk import Client
+
+    client = Client(auth)
+
+This client is able to create application users:
+
+.. code-block:: python
+
+    ned_stark_user = client.create_user('Ned Stark')
+
+These users can then be authenticated:
+
+.. code-block:: python
+
+    ned_auth = JWTAuth(
+       client_id='YOUR_CLIENT_ID',
+       client_secret='YOUR_CLIENT_SECRET',
+       enterprise_token='YOUR_ENTERPRISE_TOKEN',
+       rsa_private_key_file_sys_path='CERT.PEM',
+       store_tokens=your_store_tokens_callback_method,
+   )
+   ned_auth.authenticate_app_user(ned_stark_user)
+   ned_client = Client(ned_auth)
+
+Requests made with `ned_client` (or objects returned from `ned_client`'s methods)
+will be performed on behalf of the newly created app user.
 
 
 Contributing

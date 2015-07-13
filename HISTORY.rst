@@ -6,6 +6,8 @@ Release History
 Upcoming
 ++++++++
 
+- Added support for Box Developer Edition. This includes JWT auth (auth as enterprise or as app user),
+  and `create_user` functionality.
 - Added support for setting shared link expiration dates.
 - Added support for setting shared link permissions.
 - Added support for 'As-User' requests. See https://box-content.readme.io/#as-user-1

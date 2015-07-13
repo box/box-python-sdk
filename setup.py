@@ -65,6 +65,7 @@ def main():
         url='http://opensource.box.com',
         packages=find_packages(exclude=['demo', 'docs', 'test']),
         install_requires=install_requires,
+        extras_require={'jwt': ['cryptography>=0.9.2', 'pyjwt>=1.3.0']},
         tests_require=['pytest', 'pytest-xdist', 'mock', 'sqlalchemy', 'bottle', 'jsonpatch'],
         cmdclass={'test': PyTest},
         classifiers=CLASSIFIERS,
