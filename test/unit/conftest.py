@@ -44,21 +44,6 @@ def mock_group_response(mock_group_id, make_mock_box_request):
     return mock_box_response
 
 
-@pytest.fixture(scope='module')
-def mock_object_id():
-    return '42'
-
-
-@pytest.fixture(scope='module')
-def mock_user_id():
-    return 'fake-user-100'
-
-
-@pytest.fixture(scope='module')
-def mock_group_id():
-    return 'fake-group-99'
-
-
 @pytest.fixture()
 def make_mock_box_request():
     def inner(status_code=200, response_ok=True, response=None, content=None):

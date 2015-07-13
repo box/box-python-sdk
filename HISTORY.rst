@@ -8,7 +8,12 @@ Upcoming
 
 - Added support for Box Developer Edition. This includes JWT auth (auth as enterprise or as app user),
   and `create_user` functionality.
-
+- Added support for setting shared link expiration dates.
+- Added support for setting shared link permissions.
+- Added support for 'As-User' requests. See https://box-content.readme.io/#as-user-1
+- Improved support for accessing shared items. Items returned from the `client.get_shared_item` method will
+  remember the shared link (and the optionally provided shared link password) so methods called on the returned
+  items will be properly authorized.
 
 1.1.7 (2015-05-28)
 ++++++++++++++++++
@@ -19,7 +24,7 @@ Upcoming
 
 - ``Item.remove_shared_link()`` was trying to return an incorrect (according to its own documentation) value, and was
   also attempting to calculate that value in a way that made an incorrect assumption about the API response. The latter
-  problem caused invokations of the method to raise TypeError. The method now handles the response correctly, and
+  problem caused invocations of the method to raise TypeError. The method now handles the response correctly, and
   correctly returns type ``bool``.
 
 1.1.6 (2015-04-17)

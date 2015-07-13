@@ -205,6 +205,26 @@ Metadata
     update.add('/key', 'new_value')
     metadata.update(update)
 
+As-User
+~~~~~~~
+
+The `Client` class and all Box objects also have an `as_user` method.
+
+`as-user` returns a copy of the object on which it was called that will make Box API requests
+as though the specified user was making it.
+
+See https://box-content.readme.io/#as-user-1 for more information about how this works via the Box API.
+
+.. code-block:: python
+
+    # Logged in as admin, but rename a file as SOME USER
+    user = client.user(user_id='SOME_USER_ID')
+    client.as_user(user).file(file_id='SOME_FILE_ID').rename('bar-2.txt')
+
+
+    # Same thing, but using file's as_user method
+    client.file(file_id='SOME_FILE_ID').as_user(user).rename('bar-2.txt')
+
 
 Box Developer Edition
 ---------------------

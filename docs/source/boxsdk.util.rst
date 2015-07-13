@@ -28,6 +28,14 @@ boxsdk.util.ordered_dict module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.util.shared_link module
+------------------------------
+
+.. automodule:: boxsdk.util.shared_link
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.util.singleton module
 ----------------------------
 

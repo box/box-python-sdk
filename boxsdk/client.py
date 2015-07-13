@@ -13,12 +13,13 @@ from .object.events import Events
 from .object.file import File
 from .object.group import Group
 from .object.group_membership import GroupMembership
+from .util.shared_link import get_shared_link_header
 from .util.translator import Translator
 
 
 class Client(object):
 
-    def __init__(self, oauth, network_layer=None):
+    def __init__(self, oauth, network_layer=None, session=None):
         """
         :param oauth:
             OAuth2 object used by the session to authorize requests.
@@ -28,9 +29,15 @@ class Client(object):
             The Network layer to use. If none is provided then an instance of :class:`DefaultNetwork` will be used.
         :type network_layer:
             :class:`Network`
+        :param session:
+            The session object to use. If None is provided then an instance of :class:`BoxSession` will be used.
+        :type session:
+            :class:`BoxSession`
         """
         network_layer = network_layer or DefaultNetwork()
-        self._session = BoxSession(oauth=oauth, network_layer=network_layer)
+        self._oauth = oauth
+        self._network = network_layer
+        self._session = session or BoxSession(oauth=oauth, network_layer=network_layer)
 
     def folder(self, folder_id):
         """
@@ -223,14 +230,16 @@ class Client(object):
         :raises:
             :class:`BoxAPIException` if current user doesn't have permissions to view the shared link.
         """
-        shared_link_password = '&shared_link_password={0}'.format(password) if password is not None else ''
-        box_api_header = 'shared_link={0}{1}'.format(shared_link, shared_link_password)
         response = self.make_request(
             'GET',
             '{0}/shared_items'.format(API.BASE_API_URL),
-            headers={'BoxApi': box_api_header},
+            headers=get_shared_link_header(shared_link, password),
         ).json()
-        return Translator().translate(response['type'])(self._session, response['id'], response)
+        return Translator().translate(response['type'])(
+            self._session.with_shared_link(shared_link, password),
+            response['id'],
+            response,
+        )
 
     def make_request(self, method, url, **kwargs):
         """
@@ -280,3 +289,33 @@ class Client(object):
         box_response = self._session.post(url, data=json.dumps(user_attributes))
         response = box_response.json()
         return User(self._session, response['id'], response)
+
+    def as_user(self, user):
+        """
+        Returns a new client object with default headers set up to make requests as the specified user.
+
+        :param user:
+            The user to impersonate when making API requests.
+        :type user:
+            :class:`User`
+        """
+        return self.__class__(self._oauth, self._network, self._session.as_user(user))
+
+    def with_shared_link(self, shared_link, shared_link_password):
+        """
+        Returns a new client object with default headers set up to make requests using the shared link for auth.
+
+        :param shared_link:
+            The shared link.
+        :type shared_link:
+            `unicode`
+        :param shared_link_password:
+            The password for the shared link.
+        :type shared_link_password:
+            `unicode`
+        """
+        return self.__class__(
+            self._oauth,
+            self._network,
+            self._session.with_shared_link(shared_link, shared_link_password),
+        )
