@@ -6,6 +6,13 @@ Release History
 Upcoming
 ++++++++
 
+1.2.1 (2015-07-22)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fixed an ImportError for installs that didn't install the [jwt] extras.
+
 1.2.0 (2015-07-13)
 ++++++++++++++++++
 
