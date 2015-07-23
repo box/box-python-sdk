@@ -113,7 +113,7 @@ class Client(object):
         response = box_response.json()
         return [User(self._session, item['id'], item) for item in response['entries']]
 
-    def search(self, query, limit, offset, ancestor_folders=None, file_extensions=None, metadata_filters=None):
+    def search(self, query, limit, offset, ancestor_folders=None, file_extensions=None, metadata_filters=None, result_type=None, content_types=None):
         """
         Search Box for items matching the given query.
 
@@ -141,6 +141,14 @@ class Client(object):
             Filters used for metadata search
         :type metadata_filters:
             :class:`MetadataSearchFilters`
+        :param result_type:
+            Which type of result you want. Can be file or folder.
+        :type result_type:
+            `unicode`
+        :param content_types:
+            Which content types to search. Valid types include name, description, file_content, comments, and tags.
+        :type content_types:
+            `Iterable` of `unicode`
         :return:
             A list of items that match the search query.
         :rtype:
@@ -151,7 +159,9 @@ class Client(object):
                                             offset=offset,
                                             ancestor_folders=ancestor_folders,
                                             file_extensions=file_extensions,
-                                            metadata_filters=metadata_filters)
+                                            metadata_filters=metadata_filters,
+                                            result_type=result_type,
+                                            content_types=content_types)
 
     def events(self):
         """
