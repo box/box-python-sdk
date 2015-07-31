@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import json
 from mock import Mock
 import pytest
-from requests.packages.urllib3.exceptions import TimeoutError
+from requests.exceptions import Timeout
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.events import Events
 from boxsdk.session.box_session import BoxResponse
@@ -128,7 +128,7 @@ def test_generate_events_with_long_polling(
     mock_box_session.options.return_value = options_response
     mock_box_session.get.side_effect = [
         events_response,  # initial call to get now stream position
-        TimeoutError,
+        Timeout,
         reconnect_long_poll_response,
         max_retries_long_poll_response,
         new_change_long_poll_response,
