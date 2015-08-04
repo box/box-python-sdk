@@ -16,7 +16,7 @@ def test_upload_then_update(box_client, test_file_path, test_file_content, updat
     expected_file_content = test_file_content.encode('utf-8') if isinstance(test_file_content, six.text_type)\
         else test_file_content
     assert file_content == expected_file_content
-    folder_items = box_client.folder('0').get_items(100)
+    folder_items = box_client.folder('0').get_items(100).items
     assert len(folder_items) == 1
     assert folder_items[0].object_id == file_object.object_id
     assert folder_items[0].name == file_object.name
@@ -28,7 +28,7 @@ def test_upload_then_update(box_client, test_file_path, test_file_content, updat
     assert file_object_with_info.name == file_name
     file_content = updated_file_object.content()
     assert file_content == expected_file_content
-    folder_items = box_client.folder('0').get_items(100)
+    folder_items = box_client.folder('0').get_items(100).items
     assert len(folder_items) == 1
     assert folder_items[0].object_id == file_object.object_id
     assert folder_items[0].name == file_object.name

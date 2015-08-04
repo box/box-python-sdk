@@ -113,7 +113,7 @@ Get items in a folder
 
 .. code-block:: python
 
-    items = client.folder(folder_id='0').get_items(limit=100, offset=0)
+    total_count, items = client.folder(folder_id='0').get_items(limit=100, offset=0)
 
 Create subfolder
 ~~~~~~~~~~~~~~~~

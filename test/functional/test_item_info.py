@@ -57,8 +57,8 @@ def _test_create_then_move(box_client, item):
     item = item.get()
     assert item.name == item_name
     assert item.parent['id'] == move_target.object_id
-    assert len(box_client.folder('0').get_items(10)) == 1
-    assert len(move_target.get_items(10)) == 1
+    assert len(box_client.folder('0').get_items(10).items) == 1
+    assert len(move_target.get_items(10).items) == 1
 
 
 def test_create_folder_then_copy(box_client, created_subfolder):
@@ -80,8 +80,8 @@ def _test_create_then_copy(box_client, item):
     assert item.id != copied_item.id
     assert item.name == copied_item.name
     assert copied_item.parent['id'] == copy_target.object_id
-    assert len(box_client.folder('0').get_items(10)) == 2
-    assert len(copy_target.get_items(10)) == 1
+    assert len(box_client.folder('0').get_items(10).items) == 2
+    assert len(copy_target.get_items(10).items) == 1
 
 
 @pytest.mark.parametrize('constructor', [Client.file, Client.folder])

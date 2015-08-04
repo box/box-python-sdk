@@ -57,7 +57,10 @@ def mock_items_response(mock_items):
         mock_box_response = Mock(BoxResponse)
         mock_network_response = Mock(DefaultNetworkResponse)
         mock_box_response.network_response = mock_network_response
-        mock_box_response.json.return_value = mock_json = {'entries': items_json[offset:limit + offset]}
+        mock_box_response.json.return_value = mock_json = {
+            'total_count': len(items),
+            'entries': items_json[offset:limit + offset],
+        }
         mock_box_response.content = json.dumps(mock_json).encode()
         mock_box_response.status_code = 200
         mock_box_response.ok = True
@@ -130,11 +133,12 @@ def test_get_items(test_folder, mock_box_session, mock_items_response, limit, of
     # pylint:disable=redefined-outer-name
     expected_url = test_folder.get_url('items')
     mock_box_session.get.return_value, expected_items = mock_items_response(limit, offset)
-    items = test_folder.get_items(limit, offset, fields)
+    total_count, items = test_folder.get_items(limit, offset, fields)
     expected_params = {'limit': limit, 'offset': offset}
     if fields:
         expected_params['fields'] = ','.join(fields)
     mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
+    assert total_count == 3
     assert items == expected_items
     assert all([i.id == e.object_id for i, e in zip(items, expected_items)])
 
