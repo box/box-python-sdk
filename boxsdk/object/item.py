@@ -176,8 +176,6 @@ class Item(BaseObject):
             and has permission to set expiration dates.
         :type unshared_at:
             :class:`datetime.date` or None
-        :type password:
-            `unicode` or None
         :param allow_download:
             Whether or not the item being shared can be downloaded when accessed via the shared link.
             If this parameter is None, the default setting will be used.
@@ -191,6 +189,8 @@ class Item(BaseObject):
         :param password:
             The password required to view this link. If no password is specified then no password will be set.
             Please notice that this is a premium feature, which might not be available to your app.
+        :type password:
+            `unicode` or None
         :returns:
             The URL of the shared link.
         :rtype:
