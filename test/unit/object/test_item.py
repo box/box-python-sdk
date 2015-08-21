@@ -71,6 +71,11 @@ def shared_link_access(request):
     return request.param
 
 
+@pytest.fixture(params=('hunter2', None))
+def shared_link_password(request):
+    return request.param
+
+
 @pytest.fixture(params=(date(2015, 5, 5), None))
 def shared_link_unshared_at(request):
     return request.param
@@ -81,6 +86,7 @@ def test_get_shared_link(
         mock_box_session,
         shared_link_access,
         shared_link_unshared_at,
+        shared_link_password,
         shared_link_can_download,
         shared_link_can_preview,
         test_url,
@@ -96,6 +102,8 @@ def test_get_shared_link(
         expected_data['shared_link']['access'] = shared_link_access
     if shared_link_unshared_at is not None:
         expected_data['shared_link']['unshared_at'] = shared_link_unshared_at.isoformat()
+    if shared_link_password is not None:
+        expected_data['shared_link']['password'] = shared_link_password
     if shared_link_can_download is not None or shared_link_can_preview is not None:
         expected_data['shared_link']['permissions'] = permissions = {}
         if shared_link_can_download is not None:
@@ -106,6 +114,7 @@ def test_get_shared_link(
         etag=etag,
         access=shared_link_access,
         unshared_at=shared_link_unshared_at,
+        password=shared_link_password,
         allow_download=shared_link_can_download,
         allow_preview=shared_link_can_preview,
     )
