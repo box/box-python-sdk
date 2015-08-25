@@ -159,7 +159,7 @@ class Item(BaseObject):
         }
         return self.update_info(data)
 
-    def get_shared_link(self, access=None, etag=None, unshared_at=None, allow_download=None, allow_preview=None):
+    def get_shared_link(self, access=None, etag=None, unshared_at=None, allow_download=None, allow_preview=None, password=None):
         """Get a shared link for the item with the given access permissions.
 
         :param access:
@@ -186,6 +186,11 @@ class Item(BaseObject):
             If this parameter is None, the default setting will be used.
         :type allow_preview:
             `bool` or None
+        :param password:
+            The password required to view this link. If no password is specified then no password will be set.
+            Please notice that this is a premium feature, which might not be available to your app.
+        :type password:
+            `unicode` or None
         :returns:
             The URL of the shared link.
         :rtype:
@@ -207,6 +212,9 @@ class Item(BaseObject):
                 permissions['can_download'] = allow_download
             if allow_preview is not None:
                 permissions['can_preview'] = allow_preview
+
+        if password is not None:
+            data['shared_link']['password'] = password
 
         item = self.update_info(data, etag=etag)
         return item.shared_link['url']
