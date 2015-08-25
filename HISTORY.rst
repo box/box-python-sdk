@@ -9,6 +9,11 @@ Upcoming
 1.2.1 (2015-07-22)
 ++++++++++++++++++
 
+- The SDK now supports setting a password when creating a shared link.
+
+1.2.1 (2015-07-22)
+++++++++++++++++++
+
 **Bugfixes**
 
 - Fixed an ImportError for installs that didn't install the [jwt] extras.
