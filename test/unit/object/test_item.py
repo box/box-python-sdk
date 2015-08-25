@@ -102,14 +102,14 @@ def test_get_shared_link(
         expected_data['shared_link']['access'] = shared_link_access
     if shared_link_unshared_at is not None:
         expected_data['shared_link']['unshared_at'] = shared_link_unshared_at.isoformat()
-    if shared_link_password is not None:
-        expected_data['shared_link']['password'] = shared_link_password
     if shared_link_can_download is not None or shared_link_can_preview is not None:
         expected_data['shared_link']['permissions'] = permissions = {}
         if shared_link_can_download is not None:
             permissions['can_download'] = shared_link_can_download
         if shared_link_can_preview is not None:
             permissions['can_preview'] = shared_link_can_preview
+    if shared_link_password is not None:
+        expected_data['shared_link']['password'] = shared_link_password
     url = test_item.get_shared_link(
         etag=etag,
         access=shared_link_access,
