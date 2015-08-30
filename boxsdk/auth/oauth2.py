@@ -35,13 +35,13 @@ class OAuth2(object):
             Box API key used for identifying the application the user is authenticating with.
         :type client_id:
             `unicode`
-        :param record_identifier:
-            Local identifier for the store token method.
-        :type record_identifier:
-            `unicode`
         :param client_secret:
             Box API secret used for making OAuth2 requests.
         :type client_secret:
+            `unicode`
+        :param record_identifier:
+            Local identifier for the store token method.
+        :type record_identifier:
             `unicode`
         :param store_tokens:
             Optional callback for getting access to tokens for storing them.
