@@ -22,6 +22,7 @@ class OAuth2(object):
             self,
             client_id,
             client_secret,
+            record_identifier=None,
             store_tokens=None,
             box_device_id='0',
             box_device_name='',
@@ -37,6 +38,10 @@ class OAuth2(object):
         :param client_secret:
             Box API secret used for making OAuth2 requests.
         :type client_secret:
+            `unicode`
+        :param record_identifier:
+            Local identifier for the store token method.
+        :type record_identifier:
             `unicode`
         :param store_tokens:
             Optional callback for getting access to tokens for storing them.
@@ -63,6 +68,7 @@ class OAuth2(object):
         :type network_layer:
             :class:`Network`
         """
+        self._record_identifier = record_identifier
         self._client_id = client_id
         self._client_secret = client_secret
         self._store_tokens = store_tokens
@@ -232,5 +238,8 @@ class OAuth2(object):
         except (ValueError, KeyError):
             raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
         if self._store_tokens:
-            self._store_tokens(self._access_token, self._refresh_token)
+            if self._record_identifier:
+                self._store_tokens(self._access_token, self._refresh_token, self._record_identifier)
+            else:
+                self._store_tokens(self._access_token, self._refresh_token)
         return self._access_token, self._refresh_token
