@@ -274,3 +274,116 @@ def test_token_request_allows_missing_refresh_token(mock_network_layer):
         network_layer=mock_network_layer,
     )
     oauth.send_token_request({}, access_token=None, expect_refresh_token=False)
+
+
+def test_retrieve_tokens_false_refreshes_tokens(
+        mock_network_layer,
+        successful_token_response):
+    # pylint:disable=redefined-outer-name
+    fake_client_id = 'fake_client_id'
+    fake_client_secret = 'fake_client_secret'
+    fake_refresh_token = 'fake_refresh_token'
+    fake_access_token = 'fake_access_token'
+    data = {
+        'grant_type': 'refresh_token',
+        'refresh_token': fake_refresh_token,
+        'client_id': fake_client_id,
+        'client_secret': fake_client_secret,
+        'box_device_id': '0',
+    }
+
+    def retrieve_tokens():
+        return False
+
+    mock_network_layer.request.return_value = successful_token_response
+    oauth = OAuth2(
+        client_id=fake_client_id,
+        client_secret=fake_client_secret,
+        access_token=fake_access_token,
+        refresh_token=fake_refresh_token,
+        network_layer=mock_network_layer,
+        retrieve_tokens=retrieve_tokens,
+    )
+
+    access_token, refresh_token = oauth.refresh(fake_access_token)
+    assert access_token == successful_token_response.json()['access_token']
+    assert refresh_token == successful_token_response.json()['refresh_token']
+    mock_network_layer.request.assert_called_once_with(
+        'POST',
+        '{0}/token'.format(API.OAUTH2_API_URL),
+        data=data,
+        headers={'content-type': 'application/x-www-form-urlencoded'},
+        access_token=fake_access_token,
+    )
+
+
+def test_retrieve_tokens_same_refreshes_tokens(
+        mock_network_layer,
+        successful_token_response):
+    # pylint:disable=redefined-outer-name
+    fake_client_id = 'fake_client_id'
+    fake_client_secret = 'fake_client_secret'
+    fake_refresh_token = 'fake_refresh_token'
+    fake_access_token = 'fake_access_token'
+    different_refresh_token = 'different_refresh_token'
+    data = {
+        'grant_type': 'refresh_token',
+        'refresh_token': different_refresh_token,
+        'client_id': fake_client_id,
+        'client_secret': fake_client_secret,
+        'box_device_id': '0',
+    }
+
+    def retrieve_tokens():
+        return fake_access_token, different_refresh_token
+
+    mock_network_layer.request.return_value = successful_token_response
+    oauth = OAuth2(
+        client_id=fake_client_id,
+        client_secret=fake_client_secret,
+        access_token=fake_access_token,
+        refresh_token=fake_refresh_token,
+        network_layer=mock_network_layer,
+        retrieve_tokens=retrieve_tokens,
+    )
+
+    access_token, refresh_token = oauth.refresh(fake_access_token)
+    assert access_token == successful_token_response.json()['access_token']
+    assert refresh_token == successful_token_response.json()['refresh_token']
+    mock_network_layer.request.assert_called_once_with(
+        'POST',
+        '{0}/token'.format(API.OAUTH2_API_URL),
+        data=data,
+        headers={'content-type': 'application/x-www-form-urlencoded'},
+        access_token=fake_access_token,
+    )
+
+
+def test_retrieve_tokens_different_does_not_refresh_tokens(
+        mock_network_layer,
+        successful_token_response):
+    # pylint:disable=redefined-outer-name
+    fake_client_id = 'fake_client_id'
+    fake_client_secret = 'fake_client_secret'
+    fake_refresh_token = 'fake_refresh_token'
+    fake_access_token = 'fake_access_token'
+    different_access_token = 'different_access_token'
+    different_refresh_token = 'different_refresh_token'
+
+    def retrieve_tokens():
+        return different_access_token, different_refresh_token
+
+    mock_network_layer.request.return_value = successful_token_response
+    oauth = OAuth2(
+        client_id=fake_client_id,
+        client_secret=fake_client_secret,
+        access_token=fake_access_token,
+        refresh_token=fake_refresh_token,
+        network_layer=mock_network_layer,
+        retrieve_tokens=retrieve_tokens,
+    )
+
+    access_token, refresh_token = oauth.refresh(fake_access_token)
+    assert access_token == different_access_token
+    assert refresh_token == different_refresh_token
+    assert not mock_network_layer.request.called
