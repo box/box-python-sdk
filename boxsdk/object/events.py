@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from requests.packages.urllib3.exceptions import TimeoutError
+from requests.exceptions import Timeout
 
 from boxsdk.object.base_endpoint import BaseEndpoint
 from boxsdk.util.lru_cache import LRUCache
@@ -123,7 +123,7 @@ class Events(BaseEndpoint):
             while True:
                 try:
                     long_poll_response = self.long_poll(options, stream_position)
-                except TimeoutError:
+                except Timeout:
                     break
                 else:
                     message = long_poll_response.json()['message']

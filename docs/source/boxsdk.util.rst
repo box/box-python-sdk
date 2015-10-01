@@ -4,6 +4,14 @@ boxsdk.util package
 Submodules
 ----------
 
+boxsdk.util.compat module
+-------------------------
+
+.. automodule:: boxsdk.util.compat
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.util.lru_cache module
 ----------------------------
 
@@ -16,6 +24,14 @@ boxsdk.util.ordered_dict module
 -------------------------------
 
 .. automodule:: boxsdk.util.ordered_dict
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk.util.shared_link module
+------------------------------
+
+.. automodule:: boxsdk.util.shared_link
     :members:
     :undoc-members:
     :show-inheritance:

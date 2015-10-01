@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from os.path import dirname, join
+import platform
 import sys
 from sys import version_info
 
@@ -19,6 +20,7 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3.3',
     'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: Implementation :: CPython',
     'Programming Language :: Python :: Implementation :: PyPy',
     'Operating System :: OS Independent',
@@ -51,13 +53,14 @@ class PyTest(TestCommand):
 def main():
     base_dir = dirname(__file__)
     install_requires = ['requests>=2.4.3', 'six>=1.4.0']
+    jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=0.9.2']
     if version_info < (3, 4):
         install_requires.append('enum34>=1.0.4')
     elif version_info < (2, 7):
         install_requires.append('ordereddict>=1.1')
     setup(
         name='boxsdk',
-        version='1.1.7',
+        version='1.2.2',
         description='Official Box Python SDK',
         long_description=open(join(base_dir, 'README.rst')).read(),
         author='Box',
@@ -65,6 +68,7 @@ def main():
         url='http://opensource.box.com',
         packages=find_packages(exclude=['demo', 'docs', 'test']),
         install_requires=install_requires,
+        extras_require={'jwt': jwt_requires},
         tests_require=['pytest', 'pytest-xdist', 'mock', 'sqlalchemy', 'bottle', 'jsonpatch'],
         cmdclass={'test': PyTest},
         classifiers=CLASSIFIERS,

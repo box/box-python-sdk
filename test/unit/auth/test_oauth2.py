@@ -260,3 +260,17 @@ def test_token_request_raises_box_oauth_exception_when_tokens_are_not_in_the_res
     )
     with pytest.raises(BoxOAuthException):
         test_method(oauth)
+
+
+def test_token_request_allows_missing_refresh_token(mock_network_layer):
+    mock_network_response = Mock()
+    mock_network_response.ok = True
+    mock_network_response.json.return_value = {'access_token': 'fake_token'}
+    mock_network_layer.request.return_value = mock_network_response
+    oauth = OAuth2(
+        client_id='',
+        client_secret='',
+        access_token='fake_access_token',
+        network_layer=mock_network_layer,
+    )
+    oauth.send_token_request({}, access_token=None, expect_refresh_token=False)

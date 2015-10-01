@@ -17,7 +17,7 @@ def test_automatic_refresh(
         successful_token_response,
         generic_successful_response,
     ]
-    box_client.folder(0).get()
+    box_client.folder('0').get()
     assert mock_box_network.session.request.mock_calls == [
         call(
             'GET',

@@ -11,10 +11,10 @@ box-python-sdk
     :target: http://box-python-sdk.readthedocs.org/en/latest
     :alt: Documentation Status
 
-.. image:: https://pypip.in/v/boxsdk/badge.png
+.. image:: https://img.shields.io/pypi/v/boxsdk.svg
     :target: https://pypi.python.org/pypi/boxsdk
 
-.. image:: https://pypip.in/d/boxsdk/badge.png
+.. image:: https://img.shields.io/pypi/dm/boxsdk.svg
     :target: https://pypi.python.org/pypi/boxsdk
 
 
@@ -205,6 +205,83 @@ Metadata
     update.add('/key', 'new_value')
     metadata.update(update)
 
+As-User
+~~~~~~~
+
+The `Client` class and all Box objects also have an `as_user` method.
+
+`as-user` returns a copy of the object on which it was called that will make Box API requests
+as though the specified user was making it.
+
+See https://box-content.readme.io/#as-user-1 for more information about how this works via the Box API.
+
+.. code-block:: python
+
+    # Logged in as admin, but rename a file as SOME USER
+    user = client.user(user_id='SOME_USER_ID')
+    client.as_user(user).file(file_id='SOME_FILE_ID').rename('bar-2.txt')
+
+
+    # Same thing, but using file's as_user method
+    client.file(file_id='SOME_FILE_ID').as_user(user).rename('bar-2.txt')
+
+
+Box Developer Edition
+---------------------
+
+The Python SDK supports your
+`Box Developer Edition <https://developers.box.com/developer-edition/>`__ applications.
+
+Developer Edition support requires some extra dependencies. To get them, simply
+
+.. code-block:: console
+
+    pip install boxsdk[jwt]
+
+Instead of instantiating your `Client` with an instance of `OAuth2`,
+instead use an instance of `JWTAuth`.
+
+.. code-block:: python
+
+    from boxsdk import JWTAuth
+
+    auth = JWTAuth(
+        client_id='YOUR_CLIENT_ID',
+        client_secret='YOUR_CLIENT_SECRET',
+        enterprise_token='YOUR_ENTERPRISE_TOKEN',
+        rsa_private_key_file_sys_path='CERT.PEM',
+        store_tokens=your_store_tokens_callback_method,
+    )
+
+    access_token = auth.authenticate_instance()
+
+    from boxsdk import Client
+
+    client = Client(auth)
+
+This client is able to create application users:
+
+.. code-block:: python
+
+    ned_stark_user = client.create_user('Ned Stark')
+
+These users can then be authenticated:
+
+.. code-block:: python
+
+    ned_auth = JWTAuth(
+       client_id='YOUR_CLIENT_ID',
+       client_secret='YOUR_CLIENT_SECRET',
+       enterprise_token='YOUR_ENTERPRISE_TOKEN',
+       rsa_private_key_file_sys_path='CERT.PEM',
+       store_tokens=your_store_tokens_callback_method,
+   )
+   ned_auth.authenticate_app_user(ned_stark_user)
+   ned_client = Client(ned_auth)
+
+Requests made with `ned_client` (or objects returned from `ned_client`'s methods)
+will be performed on behalf of the newly created app user.
+
 
 Contributing
 ------------
@@ -234,8 +311,8 @@ Run all tests using -
 
 The tox tests include code style checks via pep8 and pylint.
 
-The tox tests are configured to run on Python 2.6, 2.7, 3.3, 3.4, and
-PyPy.
+The tox tests are configured to run on Python 2.6, 2.7, 3.3, 3.4, 3.5, and
+PyPy 2.6.
 
 
 Support
