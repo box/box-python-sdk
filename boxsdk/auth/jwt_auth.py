@@ -93,7 +93,7 @@ class JWTAuth(OAuth2):
                 password=rsa_private_key_passphrase,
                 backend=default_backend(),
             )
-        self._enterprise_token = enterprise_id
+        self._enterprise_id = enterprise_id
         self._jwt_algorithm = jwt_algorithm
         self._user_id = None
 
@@ -170,7 +170,7 @@ class JWTAuth(OAuth2):
         :rtype:
             `unicode`
         """
-        return self._auth_with_jwt(self._enterprise_token, 'enterprise')
+        return self._auth_with_jwt(self._enterprise_id, 'enterprise')
 
     def _refresh(self, access_token):
         """
