@@ -4,7 +4,14 @@ jsonpatch
 mock<=1.0.1
 pep8
 pylint
-pytest
+
+# Temporary version exclusion of the 2.8 release line.
+# <https://github.com/pytest-dev/pytest/issues/1085> breaks pytest on Python 2, only in 2.8.1. Fixed in upcoming 2.8.2.
+# <https://github.com/pytest-dev/pytest/issues/1035> breaks pytest on Python 2.6, on all currently existing 2.8.*
+# releases. Has not yet been fixed in the master branch, so there isn't a guarantee that it will work in the upcoming
+# 2.8.2 release.
+pytest<2.8
+
 pytest-cov
 pytest-xdist
 sphinx
