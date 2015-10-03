@@ -248,7 +248,7 @@ instead use an instance of `JWTAuth`.
     auth = JWTAuth(
         client_id='YOUR_CLIENT_ID',
         client_secret='YOUR_CLIENT_SECRET',
-        enterprise_token='YOUR_ENTERPRISE_TOKEN',
+        enterprise_id='YOUR_ENTERPRISE_ID',
         rsa_private_key_file_sys_path='CERT.PEM',
         store_tokens=your_store_tokens_callback_method,
     )
@@ -272,7 +272,7 @@ These users can then be authenticated:
     ned_auth = JWTAuth(
        client_id='YOUR_CLIENT_ID',
        client_secret='YOUR_CLIENT_SECRET',
-       enterprise_token='YOUR_ENTERPRISE_TOKEN',
+       enterprise_id='YOUR_ENTERPRISE_ID',
        rsa_private_key_file_sys_path='CERT.PEM',
        store_tokens=your_store_tokens_callback_method,
    )

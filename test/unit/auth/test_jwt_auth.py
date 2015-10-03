@@ -48,7 +48,7 @@ def jwt_auth_init_mocks(
         successful_token_response,
         jwt_algorithm,
         rsa_passphrase,
-        enterprise_token=None,
+        enterprise_id=None,
 ):
     # pylint:disable=redefined-outer-name
     fake_client_id = 'fake_client_id'
@@ -70,7 +70,7 @@ def jwt_auth_init_mocks(
             oauth = JWTAuth(
                 client_id=fake_client_id,
                 client_secret=fake_client_secret,
-                enterprise_id=enterprise_token,
+                enterprise_id=enterprise_id,
                 rsa_private_key_file_sys_path=sentinel.rsa_path,
                 rsa_private_key_passphrase=rsa_passphrase,
                 network_layer=mock_network_layer,
@@ -153,15 +153,15 @@ def test_authenticate_instance_sends_post_request_with_correct_params(
         rsa_passphrase,
 ):
     # pylint:disable=redefined-outer-name
-    enterprise_token = 'fake_enterprise_token'
+    enterprise_id = 'fake_enterprise_id'
     with jwt_auth_init_mocks(
         mock_network_layer,
         successful_token_response,
         jwt_algorithm,
         rsa_passphrase,
-        enterprise_token,
+        enterprise_id,
     ) as params:
-        with jwt_auth_auth_mocks(jti_length, jwt_algorithm, enterprise_token, 'enterprise', *params) as oauth:
+        with jwt_auth_auth_mocks(jti_length, jwt_algorithm, enterprise_id, 'enterprise', *params) as oauth:
             oauth.authenticate_instance()
 
 
@@ -188,13 +188,13 @@ def test_refresh_instance_sends_post_request_with_correct_params(
         rsa_passphrase,
 ):
     # pylint:disable=redefined-outer-name
-    enterprise_token = 'fake_enterprise_token'
+    enterprise_id = 'fake_enterprise_id'
     with jwt_auth_init_mocks(
         mock_network_layer,
         successful_token_response,
         jwt_algorithm,
         rsa_passphrase,
-        enterprise_token,
+        enterprise_id,
     ) as params:
-        with jwt_auth_auth_mocks(jti_length, jwt_algorithm, enterprise_token, 'enterprise', *params) as oauth:
+        with jwt_auth_auth_mocks(jti_length, jwt_algorithm, enterprise_id, 'enterprise', *params) as oauth:
             oauth.refresh(None)
