@@ -18,8 +18,8 @@ def run_folder_examples(client):
     root_folder = client.folder(folder_id='0').get()
     print('The root folder is owned by: {0}'.format(root_folder.owned_by['login']))
 
-    items = root_folder.get_items(limit=100, offset=0)
-    print('This is the first 100 items in the root folder:')
+    total_count, items = root_folder.get_items(limit=100, offset=0)
+    print('The root folder has {} items. Here are the first 100 items:'.format(total_count))
     for item in items:
         print("   " + item.name)
 
@@ -137,11 +137,11 @@ def copy_item(client):
         subfolder1 = root_folder.create_subfolder('copy_sub')
         try:
             a_file.copy(subfolder1)
-            print(subfolder1.get_items(limit=10, offset=0))
+            print(subfolder1.get_items(limit=10, offset=0).items)
             subfolder2 = root_folder.create_subfolder('copy_sub2')
             try:
                 subfolder1.copy(subfolder2)
-                print(subfolder2.get_items(limit=10, offset=0))
+                print(subfolder2.get_items(limit=10, offset=0).items)
             finally:
                 subfolder2.delete()
         finally:
@@ -158,11 +158,11 @@ def move_item(client):
         subfolder1 = root_folder.create_subfolder('move_sub')
         try:
             a_file.move(subfolder1)
-            print(subfolder1.get_items(limit=10, offset=0))
+            print(subfolder1.get_items(limit=10, offset=0).items)
             subfolder2 = root_folder.create_subfolder('move_sub2')
             try:
                 subfolder1.move(subfolder2)
-                print(subfolder2.get_items(limit=10, offset=0))
+                print(subfolder2.get_items(limit=10, offset=0).items)
             finally:
                 subfolder2.delete()
         finally:

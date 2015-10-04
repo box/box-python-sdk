@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 import json
+from collections import namedtuple
 import os
 from six import text_type
 from boxsdk.config import API
@@ -123,6 +124,16 @@ class Folder(Item):
         """
         return self._get_accelerator_upload_url()
 
+    _FolderGetItemsResult = namedtuple(
+        'FolderGetItemsResult',
+        [
+            # Total number of items in the folder.
+            'total_count',
+            # List of items in the folder.
+            'items',
+        ],
+    )
+
     def get_items(self, limit, offset=0, fields=None):
         """Get the items in a folder.
 
@@ -139,9 +150,12 @@ class Folder(Item):
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            A list of items in the folder.
+            A namedtuple of (
+                total number of items in the folder,
+                list of items in the folder,
+            )
         :rtype:
-            `list` of :class:`Item`
+            `namedtuple` of ('total_count': `int`, 'items': `list` of :class:`Item`)
         """
         url = self.get_url('items')
         params = {
@@ -152,7 +166,10 @@ class Folder(Item):
             params['fields'] = ','.join(fields)
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        return [Translator().translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
+        return self._FolderGetItemsResult(
+            total_count=int(response['total_count']),
+            items=[Translator().translate(item['type'])(self._session, item['id'], item) for item in response['entries']],
+        )
 
     def upload_stream(
             self,
