@@ -111,7 +111,7 @@ class Client(object):
         url = '{0}/users'.format(API.BASE_API_URL)
         box_response = self._session.get(url)
         response = box_response.json()
-        return [User(self._session, item['id'], item) for item in response['entries']]
+        return [User(self._session, response['entries'][item]['id'], item) for item in response['entries']]
 
     def search(self, query, limit, offset, ancestor_folders=None, file_extensions=None, metadata_filters=None, result_type=None, content_types=None):
         """
@@ -196,7 +196,7 @@ class Client(object):
         url = '{0}/groups'.format(API.BASE_API_URL)
         box_response = self._session.get(url)
         response = box_response.json()
-        return [Group(self._session, item['id'], item) for item in response['entries']]
+        return [Group(self._session, response['entries'][item]['id'], item) for item in response['entries']]
 
     def create_group(self, name):
         """
