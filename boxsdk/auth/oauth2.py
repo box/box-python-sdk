@@ -23,6 +23,7 @@ class OAuth2(object):
             client_id,
             client_secret,
             store_tokens=None,
+            retrieve_tokens=None,
             box_device_id='0',
             box_device_name='',
             access_token=None,
@@ -41,6 +42,10 @@ class OAuth2(object):
         :param store_tokens:
             Optional callback for getting access to tokens for storing them.
         :type store_tokens:
+            `callable`
+        :param retrieve_tokens:
+            Optional callback for retrieving tokens prior to refresh.
+        :type retrieve_tokens:
             `callable`
         :param box_device_id:
             Optional unique ID of this device. Used for applications that want to support device-pinning.
@@ -66,6 +71,7 @@ class OAuth2(object):
         self._client_id = client_id
         self._client_secret = client_secret
         self._store_tokens = store_tokens
+        self._retrieve_tokens = retrieve_tokens
         self._access_token = access_token
         self._refresh_token = refresh_token
         self._network_layer = network_layer if network_layer else DefaultNetwork()
@@ -171,6 +177,12 @@ class OAuth2(object):
         with self._refresh_lock:
             # The lock here is for handling that case that multiple requests fail, due to access token expired, at the
             # same time to avoid multiple session renewals.
+            if self._retrieve_tokens:
+                # If the token retrieving callback returns True-ish, reset the tokens to the result and
+                # proceed with the usual processing flow.
+                tokens = self._retrieve_tokens()
+                if tokens:
+                    self._access_token, self._refresh_token = tokens
             if access_token_to_refresh == self._access_token:
                 # If the active access token is the same as the token needs to be refreshed, we make the request to
                 # refresh the token.
