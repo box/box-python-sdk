@@ -288,11 +288,11 @@ Other Auth Options
 For advanced uses of the SDK, two additional auth classes are provided:
 
 - `RemoteOAuth2`: Allows use of the SDK on clients without access to your application's client secret. Instead, you
-provide a `retrieve_access_token` callback. That callback should perform the token refresh, perhaps on your server
-that does have access to the client secret.
+  provide a `retrieve_access_token` callback. That callback should perform the token refresh, perhaps on your server
+  that does have access to the client secret.
 - `RedisManagedOAuth2`: Stores access and refresh tokens in Redis. This allows multiple processes (possibly spanning
-multiple machines) to share access tokens while synchronizing token refresh. This could be useful for a multiprocess
-web server, for example.
+  multiple machines) to share access tokens while synchronizing token refresh. This could be useful for a multiprocess
+  web server, for example.
 
 Other Network Options
 ---------------------

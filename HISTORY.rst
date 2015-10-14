@@ -12,7 +12,7 @@ Upcoming
 - Added a logging network class that logs requests and responses.
 - Added new options for auth classes, including storing tokens in Redis and storing them on a remote server.
 
-1.2.1 (2015-07-22)
+1.2.2 (2015-07-22)
 ++++++++++++++++++
 
 - The SDK now supports setting a password when creating a shared link.

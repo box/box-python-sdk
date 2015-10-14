@@ -20,6 +20,22 @@ boxsdk.auth.oauth2 module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.auth.redis_managed_oauth2 module
+---------------------------------------
+
+.. automodule:: boxsdk.auth.redis_managed_oauth2
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk.auth.remote_oauth2 module
+--------------------------------
+
+.. automodule:: boxsdk.auth.remote_oauth2
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------
