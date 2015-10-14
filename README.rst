@@ -282,6 +282,30 @@ These users can then be authenticated:
 Requests made with `ned_client` (or objects returned from `ned_client`'s methods)
 will be performed on behalf of the newly created app user.
 
+Other Auth Options
+------------------
+
+For advanced uses of the SDK, two additional auth classes are provided:
+
+- `RemoteOAuth2`: Allows use of the SDK on clients without access to your application's client secret. Instead, you
+provide a `retrieve_access_token` callback. That callback should perform the token refresh, perhaps on your server
+that does have access to the client secret.
+- `RedisManagedOAuth2`: Stores access and refresh tokens in Redis. This allows multiple processes (possibly spanning
+multiple machines) to share access tokens while synchronizing token refresh. This could be useful for a multiprocess
+web server, for example.
+
+Other Network Options
+---------------------
+
+For more insight into the network calls the SDK is making, you can use the `LoggingNetwork` class. This class logs
+information about network requests and responses made to the Box API.
+
+.. code-block:: python
+
+    from boxsdk import Client
+    from boxsdk.network.logging_network import LoggingNetwork
+
+    client = Client(oauth, network_layer=LoggingNetwork())
 
 Contributing
 ------------
