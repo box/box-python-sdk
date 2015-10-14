@@ -48,14 +48,13 @@ class RedisManagedOAuth2Mixin(OAuth2):
         self._update_current_tokens()
         return super(RedisManagedOAuth2Mixin, self)._get_tokens()
 
-    def send_token_request(self, *args, **kwargs):
+    def _store_tokens(self, access_token, refresh_token):
         """
         Base class override.
         Saves the refreshed tokens in redis.
         """
-        tokens = super(RedisManagedOAuth2Mixin, self).send_token_request(*args, **kwargs)
-        self._redis_server.hmset(self._unique_id, {'access': tokens[0], 'refresh': tokens[1]})
-        return tokens
+        super(RedisManagedOAuth2Mixin, self)._store_tokens(access_token, refresh_token)
+        self._redis_server.hmset(self._unique_id, {'access': access_token, 'refresh': refresh_token})
 
 
 class RedisManagedOAuth2(RedisManagedOAuth2Mixin):
