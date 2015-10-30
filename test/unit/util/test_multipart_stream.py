@@ -18,6 +18,7 @@ def multipart_stream_files(request):
 
 
 def test_multipart_stream_orders_data_before_files(multipart_stream_data, multipart_stream_files):
+    # pylint:disable=redefined-outer-name
     if not multipart_stream_data and not multipart_stream_files:
         pytest.xfail('Encoder does not support empty fields.')
     stream = MultipartStream(multipart_stream_data, multipart_stream_files)
