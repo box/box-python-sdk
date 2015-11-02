@@ -28,6 +28,7 @@ class OAuth2(object):
             access_token=None,
             refresh_token=None,
             network_layer=None,
+            refresh_lock=None,
     ):
         """
         :param client_id:
@@ -62,6 +63,10 @@ class OAuth2(object):
             If specified, use it to make network requests. If not, the default network implementation will be used.
         :type network_layer:
             :class:`Network`
+        :param refresh_lock:
+            Lock used to synchronize token refresh. If not specified, then a :class:`threading.Lock` will be used.
+        :type refresh_lock:
+            Context Manager
         """
         self._client_id = client_id
         self._client_secret = client_secret
@@ -69,7 +74,7 @@ class OAuth2(object):
         self._access_token = access_token
         self._refresh_token = refresh_token
         self._network_layer = network_layer if network_layer else DefaultNetwork()
-        self._refresh_lock = Lock()
+        self._refresh_lock = refresh_lock or Lock()
         self._box_device_id = box_device_id
         self._box_device_name = box_device_name
 

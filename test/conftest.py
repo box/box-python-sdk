@@ -75,6 +75,7 @@ def retry_after_response(request):
 def server_error_response(request):
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.status_code = int(request.param)
+    mock_network_response.ok = False
     return mock_network_response
 
 

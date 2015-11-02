@@ -287,6 +287,7 @@ Other Auth Options
 
 For advanced uses of the SDK, two additional auth classes are provided:
 
+- `CooperativelyManagedOAuth2`: Allows multiple auth instances to share tokens.
 - `RemoteOAuth2`: Allows use of the SDK on clients without access to your application's client secret. Instead, you
   provide a `retrieve_access_token` callback. That callback should perform the token refresh, perhaps on your server
   that does have access to the client secret.

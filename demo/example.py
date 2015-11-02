@@ -290,7 +290,7 @@ def run_examples(oauth):
 def main():
 
     # Please notice that you need to put in your client id and client secret in demo/auth.py in order to make this work.
-    oauth = authenticate()
+    oauth, _, _ = authenticate()
     run_examples(oauth)
     os._exit(0)
 

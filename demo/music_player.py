@@ -16,7 +16,7 @@ class MusicPlayer(object):
         shuffle(self._mp3_files)
 
     def _get_client(self):
-        oauth = self._authenticate()
+        oauth, _, _ = self._authenticate()
         return Client(oauth)
 
     def _authenticate(self):

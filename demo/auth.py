@@ -15,7 +15,7 @@ CLIENT_ID = ''  # Insert Box client ID here
 CLIENT_SECRET = ''  # Insert Box client secret here
 
 
-def authenticate():
+def authenticate(oauth_class=OAuth2):
     class StoppableWSGIServer(bottle.ServerAdapter):
         def __init__(self, *args, **kwargs):
             super(StoppableWSGIServer, self).__init__(*args, **kwargs)
@@ -45,7 +45,7 @@ def authenticate():
     server_thread = Thread(target=lambda: local_oauth_redirect.run(server=local_server))
     server_thread.start()
 
-    oauth = OAuth2(
+    oauth = oauth_class(
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
     )
@@ -60,7 +60,7 @@ def authenticate():
     print('access_token: ' + access_token)
     print('refresh_token: ' + refresh_token)
 
-    return oauth
+    return oauth, access_token, refresh_token
 
 
 if __name__ == '__main__':

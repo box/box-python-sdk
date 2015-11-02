@@ -79,9 +79,9 @@ def jwt_auth_init_mocks(
             )
 
             jwt_auth_open.assert_called_once_with(sentinel.rsa_path)
-            key_file.return_value.read.assert_called_once_with()
+            key_file.return_value.read.assert_called_once_with()  # pylint:disable=no-member
             load_pem_private_key.assert_called_once_with(
-                key_file.return_value.read.return_value,
+                key_file.return_value.read.return_value,  # pylint:disable=no-member
                 password=rsa_passphrase,
                 backend=default_backend(),
             )

@@ -10,6 +10,11 @@ class LoggingNetwork(DefaultNetwork):
     """
     SDK Network subclass that logs requests and responses.
     """
+    LOGGER_NAME = 'boxsdk.network'
+    REQUEST_FORMAT = '\x1b[36m%s %s %s\x1b[0m'
+    SUCCESSFUL_RESPONSE_FORMAT = '\x1b[32m%s\x1b[0m'
+    ERROR_RESPONSE_FORMAT = '\x1b[31m%s\n%s\n%s\n\x1b[0m'
+
     def __init__(self, logger=None):
         """
         :param logger:
@@ -19,7 +24,7 @@ class LoggingNetwork(DefaultNetwork):
             :class:`Logger`
         """
         super(LoggingNetwork, self).__init__()
-        self._logger = logger or setup_logging(name='network')
+        self._logger = logger or setup_logging(name=self.LOGGER_NAME)
 
     @property
     def logger(self):
@@ -42,7 +47,7 @@ class LoggingNetwork(DefaultNetwork):
         :type access_token:
             `unicode`
         """
-        self._logger.info('\x1b[36m%s %s %s\x1b[0m', method, url, pformat(kwargs))
+        self._logger.info(self.REQUEST_FORMAT, method, url, pformat(kwargs))
 
     def _log_response(self, response):
         """
@@ -51,10 +56,10 @@ class LoggingNetwork(DefaultNetwork):
         :param response: The Box API response.
         """
         if response.ok:
-            self._logger.info('\x1b[32m%s\x1b[0m', response.content)
+            self._logger.info(self.SUCCESSFUL_RESPONSE_FORMAT, response.content)
         else:
             self._logger.warning(
-                '\x1b[31m%s\n%s\n%s\n\x1b[0m',
+                self.ERROR_RESPONSE_FORMAT,
                 response.status_code,
                 response.headers,
                 pformat(response.content),

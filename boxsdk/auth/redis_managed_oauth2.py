@@ -24,12 +24,15 @@ class RedisManagedOAuth2Mixin(OAuth2):
     def __init__(self, unique_id=uuid4(), redis_server=None, *args, **kwargs):
         self._unique_id = unique_id
         self._redis_server = redis_server or StrictRedis()
-        super(RedisManagedOAuth2Mixin, self).__init__(*args, **kwargs)
+        refresh_lock = Lock(redis=self._redis_server, name='{0}_lock'.format(self._unique_id))
+        super(RedisManagedOAuth2Mixin, self).__init__(*args, refresh_lock=refresh_lock, **kwargs)
         if self._access_token is None:
             self._update_current_tokens()
-        self._refresh_lock = Lock(redis=self._redis_server, name='{0}_lock'.format(self._unique_id))
 
     def _update_current_tokens(self):
+        """
+        Get the latest tokens from redis and store them.
+        """
         self._access_token, self._refresh_token = self._redis_server.hvals(self._unique_id) or (None, None)
 
     @property
