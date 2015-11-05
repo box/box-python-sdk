@@ -6,6 +6,9 @@ Release History
 Upcoming
 ++++++++
 
+1.3.0 (2015-11-05)
+++++++++++++++++++
+
 - CPython 3.5 support.
 - Support for cryptography>=1.0 on PyPy >=2.6.
 - Travis CI testing for CPython 3.5 and PyPy 4.0.
