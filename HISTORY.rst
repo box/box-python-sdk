@@ -10,8 +10,10 @@ Upcoming
 ++++++++++++++++++
 
 - CPython 3.5 support.
-- Support for cryptography>=1.0 on PyPy >=2.6.
-- Travis CI testing for CPython 3.5 and PyPy 4.0.
+- Support for cryptography>=1.0 on PyPy 2.6.
+- Travis CI testing for CPython 3.5 and PyPy 2.6.0.
+- Added a logging network class that logs requests and responses.
+- Added new options for auth classes, including storing tokens in Redis and storing them on a remote server.
 - Stream uploads of files from disk.
 
 1.2.2 (2015-07-22)

@@ -45,16 +45,3 @@ def test_upload_then_download(box_client, test_file_path, test_file_content, fil
     expected_file_content = test_file_content.encode('utf-8') if isinstance(test_file_content, six.text_type)\
         else test_file_content
     assert writeable_stream.getvalue() == expected_file_content
-
-
-if __name__ == '__main__':
-    from test.functional.conftest import box_client, box_oauth, mock_box, Box
-
-    class MonkeyPatch:
-        def setattr(self, target, attr, value):
-            setattr(target, attr, value)
-
-    client_id, client_secret, login = 'client_id', 'client_secret', 'login'
-    box = mock_box(Box(), MonkeyPatch(), client_id, client_secret, 'user', login)
-    client = box_client(box_oauth(client_id, client_secret, login))
-    test_upload_then_update(client, '/path/to/file', 'Hello', 'Goodbye', 'foo.txt')
