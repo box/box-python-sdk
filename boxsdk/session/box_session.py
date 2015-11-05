@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from boxsdk.exception import BoxAPIException
+from boxsdk.util.multipart_stream import MultipartStream
 from boxsdk.util.shared_link import get_shared_link_header
 
 
@@ -323,10 +324,17 @@ class BoxSession(object):
 
         # Reset stream positions to what they were when the request was made so the same data is sent even if this
         # is a retried attempt.
+        request_kwargs = kwargs
         files, file_stream_positions = kwargs.get('files'), kwargs.pop('file_stream_positions')
         if files and file_stream_positions:
+            request_kwargs = kwargs.copy()
             for name, position in file_stream_positions.items():
                 files[name][1].seek(position)
+            data = request_kwargs.pop('data', {})
+            multipart_stream = MultipartStream(data, files)
+            request_kwargs['data'] = multipart_stream
+            del request_kwargs['files']
+            headers['Content-Type'] = multipart_stream.content_type
 
         # send the request
         network_response = self._network_layer.request(
@@ -334,7 +342,7 @@ class BoxSession(object):
             url,
             access_token=access_token_will_be_used,
             headers=headers,
-            **kwargs
+            **request_kwargs
         )
 
         network_response = self._retry_request_if_necessary(

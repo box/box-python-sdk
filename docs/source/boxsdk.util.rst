@@ -28,6 +28,14 @@ boxsdk.util.lru_cache module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.util.multipart_stream module
+-----------------------------------
+
+.. automodule:: boxsdk.util.multipart_stream
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.util.ordered_dict module
 -------------------------------
 
