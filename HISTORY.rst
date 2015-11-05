@@ -9,8 +9,9 @@ Upcoming
 - CPython 3.5 support.
 - Support for cryptography>=1.0 on PyPy >=2.6.
 - Travis CI testing for CPython 3.5 and PyPy 4.0.
+- Stream uploads of files from disk.
 
-1.2.1 (2015-07-22)
+1.2.2 (2015-07-22)
 ++++++++++++++++++
 
 - The SDK now supports setting a password when creating a shared link.

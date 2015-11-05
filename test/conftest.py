@@ -128,8 +128,8 @@ def auth_code():
 
 @pytest.fixture(params=[
     b'Hello',
-    'Goodbye',
-    '42',
+    b'Goodbye',
+    b'42',
 ])
 def test_file_content(request):
     return request.param

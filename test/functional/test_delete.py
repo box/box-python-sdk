@@ -1,14 +1,15 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from mock import patch, mock_open
+from mock import patch
 import pytest
 from boxsdk.client import Client
 from boxsdk.exception import BoxAPIException
+from test.util.streamable_mock_open import streamable_mock_open
 
 
 def test_upload_then_delete(box_client, test_file_path, test_file_content, file_name):
-    with patch('boxsdk.object.folder.open', mock_open(read_data=test_file_content), create=True):
+    with patch('boxsdk.object.folder.open', streamable_mock_open(read_data=test_file_content), create=True):
         file_object = box_client.folder('0').upload(test_file_path, file_name)
     assert file_object.delete()
     assert len(box_client.folder('0').get_items(1)) == 0
