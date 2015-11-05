@@ -23,6 +23,7 @@ def streamable_mock_open(mock=None, read_data=b''):
             handle.position += size
             return data
 
+    # pylint:disable=no-member
     handle.tell.side_effect = tell
     handle.len = len(read_data)
     handle.read.side_effect = read
