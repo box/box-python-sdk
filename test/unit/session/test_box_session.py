@@ -119,8 +119,8 @@ def test_box_session_seeks_file_after_retry(box_session, server_error_response, 
     assert box_response.status_code == 200
     assert box_response.json() == generic_successful_response.json()
     assert box_response.ok == generic_successful_response.ok
-    mock_file_1.tell.assert_called_once_with()
-    mock_file_2.tell.assert_called_once_with()
+    mock_file_1.tell.assert_called_with()
+    mock_file_2.tell.assert_called_with()
     mock_file_1.seek.assert_called_with(0)
     assert mock_file_1.seek.call_count == 2
     assert mock_file_1.seek.has_calls(call(0) * 2)
