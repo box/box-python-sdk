@@ -52,7 +52,7 @@ class PyTest(TestCommand):
 
 def main():
     base_dir = dirname(__file__)
-    install_requires = ['requests>=2.4.3', 'six>=1.4.0']
+    install_requires = ['requests>=2.4.3', 'six>=1.4.0', 'requests-toolbelt>=0.4.0']
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=0.9.2']
     if version_info < (3, 4):
