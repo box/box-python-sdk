@@ -4,6 +4,14 @@ boxsdk.util package
 Submodules
 ----------
 
+boxsdk.util.api_response_decorator module
+-----------------------------------------
+
+.. automodule:: boxsdk.util.api_response_decorator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.util.compat module
 -------------------------
 

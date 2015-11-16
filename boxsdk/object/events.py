@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from requests.exceptions import Timeout
 
 from boxsdk.object.base_endpoint import BaseEndpoint
+from boxsdk.util.api_response_decorator import api_response
 from boxsdk.util.lru_cache import LRUCache
 
 
@@ -14,6 +15,7 @@ class Events(BaseEndpoint):
         """Base class override."""
         return super(Events, self).get_url('events', *args)
 
+    @api_response
     def get_events(self, limit=100, stream_position=0, stream_type='all'):
         """
         Get Box events from a given stream position for a given stream type.
@@ -43,9 +45,16 @@ class Events(BaseEndpoint):
             'stream_position': stream_position,
             'stream_type': stream_type,
         }
-        box_response = self._session.get(url, params=params)
-        return box_response.json()
+        return self._session.get(url, params=params)
 
+    @get_events.translator
+    def get_events(self, response):
+        """
+        Translate the reponse into a dictionary containing event info.
+        """
+        return response.json()
+
+    @api_response
     def get_latest_stream_position(self):
         """
         Get the latest stream position. The return value can be used with :meth:`get_events` or
@@ -60,7 +69,14 @@ class Events(BaseEndpoint):
         params = {
             'stream_position': 'now',
         }
-        return self._session.get(url, params=params).json()['next_stream_position']
+        return self._session.get(url, params=params)
+
+    @get_latest_stream_position.translator
+    def get_latest_stream_position(self, response):
+        """
+        Translate the response into the latest stream position.
+        """
+        return response.json()['next_stream_position']
 
     def _get_all_events_since(self, stream_position):
         next_stream_position = stream_position
@@ -75,6 +91,7 @@ class Events(BaseEndpoint):
             if len(events) < 100:
                 return
 
+    @api_response
     def long_poll(self, options, stream_position):
         """
         Set up a long poll connection at the specified url.
@@ -142,6 +159,7 @@ class Events(BaseEndpoint):
                     else:
                         break
 
+    @api_response
     def get_long_poll_options(self):
         """
         Get the url and retry timeout for setting up a long polling connection.
@@ -160,5 +178,11 @@ class Events(BaseEndpoint):
             `dict`
         """
         url = self.get_url()
-        box_response = self._session.options(url)
-        return box_response.json()['entries'][0]
+        return self._session.options(url)
+
+    @get_long_poll_options.translator
+    def get_long_poll_options(self, response):
+        """
+        Translate the response into the dictionary containing the long poll options.
+        """
+        return response.json()['entries'][0]

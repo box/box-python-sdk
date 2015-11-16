@@ -10,6 +10,7 @@ from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
+from boxsdk.util.api_response_decorator import api_response
 from boxsdk.util.text_enum import TextEnum
 from boxsdk.util.translator import Translator
 
@@ -123,6 +124,7 @@ class Folder(Item):
         """
         return self._get_accelerator_upload_url()
 
+    @api_response
     def get_items(self, limit, offset=0, fields=None):
         """Get the items in a folder.
 
@@ -150,10 +152,17 @@ class Folder(Item):
         }
         if fields:
             params['fields'] = ','.join(fields)
-        box_response = self._session.get(url, params=params)
-        response = box_response.json()
+        return self._session.get(url, params=params)
+
+    @get_items.translator
+    def get_items(self, response):
+        """
+        Translate the response into a list of items.
+        """
+        response = response.json()
         return [Translator().translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
 
+    @api_response
     def upload_stream(
             self,
             file_stream,
@@ -213,8 +222,14 @@ class Folder(Item):
         files = {
             'file': ('unused', file_stream),
         }
-        box_response = self._session.post(url, data=data, files=files, expect_json_response=False)
-        file_response = box_response.json()['entries'][0]
+        return self._session.post(url, data=data, files=files, expect_json_response=False)
+
+    @upload_stream.translator
+    def upload_stream(self, response):
+        """
+        Translate the response into a File object.
+        """
+        file_response = response.json()['entries'][0]
         file_id = file_response['id']
         return File(
             session=self._session,
@@ -277,6 +292,7 @@ class Folder(Item):
                 upload_using_accelerator=upload_using_accelerator,
             )
 
+    @api_response
     def create_subfolder(self, name):
         """
         Create a subfolder with the given name in the folder.
@@ -293,8 +309,14 @@ class Folder(Item):
                 'id': self._object_id,
             }
         }
-        box_response = self._session.post(url, data=json.dumps(data))
-        response = box_response.json()
+        return self._session.post(url, data=json.dumps(data))
+
+    @create_subfolder.translator
+    def create_subfolder(self, response):
+        """
+        Translate the response into a Folder object.
+        """
+        response = response.json()
         return Folder(
             session=self._session,
             object_id=response['id'],
@@ -321,6 +343,7 @@ class Folder(Item):
         }
         return self.update_info(data=data)
 
+    @api_response
     def add_collaborator(self, collaborator, role, notify=False):
         """Add a collaborator to the folder
 
@@ -355,8 +378,14 @@ class Folder(Item):
             'role': role,
         })
         params = {'notify': notify}
-        box_response = self._session.post(url, expect_json_response=True, data=data, params=params)
-        collaboration_response = box_response.json()
+        return self._session.post(url, expect_json_response=True, data=data, params=params)
+
+    @add_collaborator.translator
+    def add_collaborator(self, response):
+        """
+        Translate the response into a Collaboration object.
+        """
+        collaboration_response = response.json()
         collab_id = collaboration_response['id']
         return Collaboration(
             session=self._session,

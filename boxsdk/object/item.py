@@ -7,11 +7,13 @@ import json
 from .base_object import BaseObject
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
+from boxsdk.util.api_response_decorator import api_response
 
 
 class Item(BaseObject):
     """Box API endpoint for interacting with files and folders."""
 
+    @api_response
     def _get_accelerator_upload_url(self, file_id=None):
         """
         Make an API call to get the Accelerator upload url for either upload a new file or updating an existing file.
@@ -28,14 +30,20 @@ class Item(BaseObject):
         endpoint = '{0}/content'.format(file_id) if file_id else 'content'
         url = '{0}/files/{1}'.format(API.BASE_API_URL, endpoint)
         try:
-            response_json = self._session.options(
+            return self._session.options(
                 url=url,
                 expect_json_response=True,
-            ).json()
-            return response_json.get('upload_url', None)
+            )
         except BoxAPIException:
             return None
 
+    @_get_accelerator_upload_url.translator
+    def _get_accelerator_upload_url(self, response):
+        if response is None:
+            return None
+        return response.json().get('upload_url', None)
+
+    @api_response
     def _preflight_check(self, size, name=None, file_id=None, parent_id=None):
         """
         Make an API call to check if certain file can be uploaded to Box or not.
@@ -69,7 +77,7 @@ class Item(BaseObject):
         if parent_id:
             data['parent'] = {'id': parent_id}
 
-        self._session.options(
+        return self._session.options(
             url=url,
             expect_json_response=False,
             data=json.dumps(data),
@@ -125,6 +133,7 @@ class Item(BaseObject):
         headers = {'If-None-Match': etag} if etag is not None else None
         return super(Item, self).get(fields=fields, headers=headers)
 
+    @api_response
     def copy(self, parent_folder):
         """Copy the item to the given folder.
 
@@ -137,8 +146,11 @@ class Item(BaseObject):
         data = {
             'parent': {'id': parent_folder.object_id}
         }
-        box_response = self._session.post(url, data=json.dumps(data))
-        response = box_response.json()
+        return self._session.post(url, data=json.dumps(data))
+
+    @copy.translator
+    def copy(self, response):
+        response = response.json()
         return self.__class__(
             session=self._session,
             object_id=response['id'],
@@ -159,6 +171,7 @@ class Item(BaseObject):
         }
         return self.update_info(data)
 
+    @api_response
     def get_shared_link(self, access=None, etag=None, unshared_at=None, allow_download=None, allow_preview=None, password=None):
         """Get a shared link for the item with the given access permissions.
 
@@ -216,9 +229,16 @@ class Item(BaseObject):
         if password is not None:
             data['shared_link']['password'] = password
 
-        item = self.update_info(data, etag=etag)
+        return self.update_info(data, etag=etag)
+
+    @get_shared_link.translator
+    def get_shared_link(self, item):
+        """
+        Translate the response into the shared link url.
+        """
         return item.shared_link['url']
 
+    @api_response
     def remove_shared_link(self, etag=None):
         """Delete the shared link for the item.
 
@@ -233,7 +253,13 @@ class Item(BaseObject):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
         data = {'shared_link': None}
-        item = self.update_info(data, etag=etag)
+        return self.update_info(data, etag=etag)
+
+    @remove_shared_link.translator
+    def remove_shared_link(self, item):
+        """
+        Translate the response into a bool indicating whether or not the removal was successful.
+        """
         return item.shared_link is None
 
     def delete(self, params=None, etag=None):

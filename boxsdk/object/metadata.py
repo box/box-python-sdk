@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 import json
 from boxsdk.object.base_endpoint import BaseEndpoint
+from boxsdk.util.api_response_decorator import api_response
 
 
 class MetadataUpdate(object):
@@ -98,6 +99,8 @@ class MetadataUpdate(object):
 
 
 class Metadata(BaseEndpoint):
+    _UPDATE_HEADER = {b'Content-Type': b'application/json-patch+json'}
+
     def __init__(self, session, box_object, scope, template):
         """
         :param session:
@@ -138,6 +141,7 @@ class Metadata(BaseEndpoint):
         """
         return MetadataUpdate()
 
+    @api_response
     def update(self, metadata_update):
         """
         Update the key/value pairs associated with this metadata object.
@@ -155,9 +159,17 @@ class Metadata(BaseEndpoint):
         return self._session.put(
             self.get_url(),
             data=json.dumps(metadata_update.ops),
-            headers={b'Content-Type': b'application/json-patch+json'},
-        ).json()
+            headers=self._UPDATE_HEADER,
+        )
 
+    @update.translator
+    def update(self, response):
+        """
+        Translate the response into a dictionary containing the metadata.
+        """
+        return response.json()
+
+    @api_response
     def get(self):
         """
         Get the key/value pairs that make up this metadata instance.
@@ -167,8 +179,16 @@ class Metadata(BaseEndpoint):
         :rtype:
             :class:`Metadata`
         """
-        return self._session.get(self.get_url()).json()
+        return self._session.get(self.get_url())
 
+    @get.translator
+    def get(self, response):
+        """
+        Translate the response into a dictionary containing the metadata.
+        """
+        return response.json()
+
+    @api_response
     def delete(self):
         """
         Delete the metadata object.
@@ -178,8 +198,16 @@ class Metadata(BaseEndpoint):
         :rtype:
             `bool`
         """
-        return self._session.delete(self.get_url()).ok
+        return self._session.delete(self.get_url())
 
+    @delete.translator
+    def delete(self, response):
+        """
+        Translate the response into a bool indicating whether the delete was successful.
+        """
+        return response.ok
+
+    @api_response
     def create(self, metadata):
         """
         Create the metadata instance on Box. If the instance already exists, use :meth:`update` instead.
@@ -197,7 +225,14 @@ class Metadata(BaseEndpoint):
             self.get_url(),
             data=json.dumps(metadata),
             headers={b'Content-Type': b'application/json'},
-        ).json()
+        )
+
+    @create.translator
+    def create(self, response):
+        """
+        Translate the response into a dictionary containing the metadata.
+        """
+        return response.json()
 
     def as_user(self, user):
         """ Base class override. """

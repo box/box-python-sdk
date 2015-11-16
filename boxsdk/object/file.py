@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from boxsdk.config import API
 from .item import Item
 from .metadata import Metadata
+from boxsdk.util.api_response_decorator import api_response
 
 
 class File(Item):
@@ -44,6 +45,7 @@ class File(Item):
         """
         return self._get_accelerator_upload_url(file_id=self._object_id)
 
+    @api_response
     def content(self):
         """
         Get the content of a file on Box.
@@ -54,9 +56,16 @@ class File(Item):
             `bytes`
         """
         url = self.get_url('content')
-        box_response = self._session.get(url, expect_json_response=False)
-        return box_response.content
+        return self._session.get(url, expect_json_response=False)
 
+    @content.translator
+    def content(self, response):
+        """
+        Translate the response into the file content.
+        """
+        return response.content
+
+    @api_response
     def download_to(self, writeable_stream):
         """
         Download the file; write it to the given stream.
@@ -66,11 +75,20 @@ class File(Item):
         :type writeable_stream:
             `file`
         """
+        # pylint:disable=unused-argument
         url = self.get_url('content')
-        box_response = self._session.get(url, expect_json_response=False, stream=True)
-        for chunk in box_response.network_response.response_as_stream.stream(decode_content=True):
+        return self._session.get(url, expect_json_response=False, stream=True)
+
+    @download_to.translator
+    def download_to(self, response):
+        """
+        Translate the response into writing the downloaded chunks to the supplied stream.
+        """
+        for chunk in response.network_response.response_as_stream.stream(decode_content=True):
+            writeable_stream = response.kwargs.pop('writeable_stream', None) or response.args[-1]
             writeable_stream.write(chunk)
 
+    @api_response
     def update_contents_with_stream(
             self,
             file_stream,
@@ -127,10 +145,17 @@ class File(Item):
 
         files = {'file': ('unused', file_stream)}
         headers = {'If-Match': etag} if etag is not None else None
+        return self._session.post(url, expect_json_response=False, files=files, headers=headers)
+
+    @update_contents_with_stream.translator
+    def update_contents_with_stream(self, response):
+        """
+        Translate the response into a File object.
+        """
         return File(
             session=self._session,
             object_id=self._object_id,
-            response_object=self._session.post(url, expect_json_response=False, files=files, headers=headers).json(),
+            response_object=response.json(),
         )
 
     def update_contents(

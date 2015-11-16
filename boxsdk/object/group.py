@@ -7,6 +7,7 @@ import json
 from .base_object import BaseObject
 from boxsdk.config import API
 from boxsdk.object.group_membership import GroupMembership
+from boxsdk.util.api_response_decorator import api_response
 
 
 class Group(BaseObject):
@@ -54,6 +55,7 @@ class Group(BaseObject):
                 group_membership, _, _ = group_membership_tuple
                 yield group_membership
 
+    @api_response
     def add_member(self, user, role):
         """
         Add the given user to this group under the given role
@@ -77,7 +79,13 @@ class Group(BaseObject):
             'group': {'id': self.object_id},
             'role': role,
         }
-        box_response = self._session.post(url, data=json.dumps(body_attributes))
-        response = box_response.json()
+        return self._session.post(url, data=json.dumps(body_attributes))
 
+    @add_member.translator
+    def add_member(self, response):
+        """
+        Translate the response into a GroupMembership object.
+        """
+        user = response.kwargs.get('user', None) or response.args[-2]
+        response = response.json()
         return GroupMembership(self._session, response['id'], response, user=user, group=self)

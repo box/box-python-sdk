@@ -2,9 +2,11 @@
 
 from __future__ import unicode_literals
 
-from .base_endpoint import BaseEndpoint
-from boxsdk.util.translator import Translator
 import json
+
+from .base_endpoint import BaseEndpoint
+from boxsdk.util.api_response_decorator import api_response
+from boxsdk.util.translator import Translator
 
 
 class MetadataSearchFilter(object):
@@ -155,6 +157,7 @@ class Search(BaseEndpoint):
         """
         return MetadataSearchFilter(template_key, scope)
 
+    @api_response
     def search(
             self,
             query,
@@ -226,6 +229,12 @@ class Search(BaseEndpoint):
         if result_type:
             params.update({'type': result_type})
         params.update(kwargs)
-        box_response = self._session.get(url, params=params)
-        response = box_response.json()
+        return self._session.get(url, params=params)
+
+    @search.translator
+    def search(self, response):
+        """
+        Translate the response into a list of items.
+        """
+        response = response.json()
         return [Translator().translate(item['type'])(self._session, item['id'], item) for item in response['entries']]

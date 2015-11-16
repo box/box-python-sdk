@@ -7,6 +7,7 @@ import json
 import six
 
 from boxsdk.object.base_endpoint import BaseEndpoint
+from boxsdk.util.api_response_decorator import api_response
 from boxsdk.util.translator import Translator
 
 
@@ -83,6 +84,7 @@ class BaseObject(BaseEndpoint):
         """
         return self._object_id
 
+    @api_response
     def get(self, fields=None, headers=None):
         """
         Get information about the object, specified by fields. If fields is None, return the default fields.
@@ -102,9 +104,16 @@ class BaseObject(BaseEndpoint):
         """
         url = self.get_url()
         params = {'fields': ','.join(fields)} if fields else None
-        box_response = self._session.get(url, params=params, headers=headers)
-        return self.__class__(self._session, self._object_id, box_response.json())
+        return self._session.get(url, params=params, headers=headers)
 
+    @get.translator
+    def get(self, response):
+        """
+        Translate the response into an object with the requested information.
+        """
+        return self.__class__(self._session, self._object_id, response.json())
+
+    @api_response
     def update_info(self, data, params=None, headers=None, **kwargs):
         """Update information about this object.
 
@@ -140,14 +149,21 @@ class BaseObject(BaseEndpoint):
             :class:`BaseObject`
         """
         url = self.get_url()
-        box_response = self._session.put(url, data=json.dumps(data), params=params, headers=headers, **kwargs)
-        response = box_response.json()
+        return self._session.put(url, data=json.dumps(data), params=params, headers=headers, **kwargs)
+
+    @update_info.translator
+    def update_info(self, response):
+        """
+        Translate the response into an object with the updated information.
+        """
+        response = response.json()
         return self.__class__(
             session=self._session,
             object_id=self._object_id,
             response_object=response,
         )
 
+    @api_response
     def delete(self, params=None, headers=None):
         """ Delete the object.
 
@@ -169,8 +185,14 @@ class BaseObject(BaseEndpoint):
         url = self.get_url()
         # ??? There's a question about why params forces a default to {}, while headers doesn't. Looking for
         # confirmation that the below is correct.
-        box_response = self._session.delete(url, expect_json_response=False, params=params or {}, headers=headers)
-        return box_response.ok
+        return self._session.delete(url, expect_json_response=False, params=params or {}, headers=headers)
+
+    @delete.translator
+    def delete(self, response):
+        """
+        Translate the reponse into a bool representing whether or not the delete was successful.
+        """
+        return response.ok
 
     def __eq__(self, other):
         """Base class override. Equality is determined by object id."""
@@ -218,20 +240,23 @@ class BaseObject(BaseEndpoint):
 
         while True:
             params = {'limit': limit, 'offset': current_index}
-            box_response = self._session.get(url, params=params)
-            response = box_response.json()
+            response = self._session.get(url, params=params)
+            response = response.json()
+            total_count = response['total_count']
 
-            current_page_size = len(response['entries'])
-            for index_in_current_page, item in enumerate(response['entries']):
-                instance_factory = factory
-                if not instance_factory:
-                    instance_factory = Translator().translate(item['type'])
-                instance = instance_factory(self._session, item['id'], item)
-                yield instance, current_page_size, index_in_current_page
+            for item, current_page_size, current_page_index in self._paging_wrapper_translator(response):
+                instance_factory = factory or Translator().translate(item['type'])
+                yield instance_factory(self._session, item['id'], item), current_page_size, current_page_index
 
             current_index += limit
-            if current_index >= response['total_count']:
+            if current_index >= total_count:
                 break
+
+    @staticmethod
+    def _paging_wrapper_translator(response):
+        current_page_size = len(response['entries'])
+        for index_in_current_page, item in enumerate(response['entries']):
+            yield item, current_page_size, index_in_current_page
 
     def as_user(self, user):
         """ Base class override. """
