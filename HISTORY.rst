@@ -6,6 +6,16 @@ Release History
 Upcoming
 ++++++++
 
+1.3.2
+++++++++++++++++++
+
+- Fix ``boxsdk.util.log.setup_logging()`` on Python 3.
+
+1.3.1 (2015-11-06)
+++++++++++++++++++
+
+- Add requests-toolbelt to setup.py (it was accidentally missing from 1.3.0).
+
 1.3.0 (2015-11-05)
 ++++++++++++++++++
 
@@ -32,11 +42,11 @@ Upcoming
 ++++++++++++++++++
 
 - Added support for Box Developer Edition. This includes JWT auth (auth as enterprise or as app user),
-  and `create_user` functionality.
+  and ``create_user`` functionality.
 - Added support for setting shared link expiration dates.
 - Added support for setting shared link permissions.
 - Added support for 'As-User' requests. See https://box-content.readme.io/#as-user-1
-- Improved support for accessing shared items. Items returned from the `client.get_shared_item` method will
+- Improved support for accessing shared items. Items returned from the ``client.get_shared_item`` method will
   remember the shared link (and the optionally provided shared link password) so methods called on the returned
   items will be properly authorized.
 
@@ -71,7 +81,7 @@ Upcoming
 1.1.3 (2015-03-26)
 ++++++++++++++++++
 
-- Added support for the /shared_items endpoint. `client.get_shared_item` can be used to get information about
+- Added support for the /shared_items endpoint. ``client.get_shared_item`` can be used to get information about
   a shared link. See https://developers.box.com/docs/#shared-items
 
 1.1.2 (2015-03-20)
