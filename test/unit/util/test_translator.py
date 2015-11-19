@@ -15,7 +15,6 @@ _response_to_class_mapping = {}
 
 @pytest.fixture
 def bookmark_response(make_mock_box_request, mock_object_id):
-    # pylint:disable=redefined-outer-name
     mock_box_response, _ = make_mock_box_request(
         response={'type': 'bookmark', 'id': mock_object_id},
     )
@@ -24,7 +23,6 @@ def bookmark_response(make_mock_box_request, mock_object_id):
 
 @pytest.fixture
 def box_note_response(make_mock_box_request, mock_object_id):
-    # pylint:disable=redefined-outer-name
     mock_box_response, _ = make_mock_box_request(
         response={'type': 'boxnote', 'id': mock_object_id},
     )
@@ -40,7 +38,6 @@ def translator_response(
         mock_group_response,
         mock_user_response,
 ):
-    # pylint:disable=redefined-outer-name
     _response_to_class_mapping['bookmark'] = (bookmark_response, BaseObject)
     _response_to_class_mapping['box_note'] = (box_note_response, BaseObject)
     _response_to_class_mapping['file'] = (mock_file_response, File)

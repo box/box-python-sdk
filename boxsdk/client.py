@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 import json
 
 from .config import API
-from .session.box_session import BoxSession
 from .network.default_network import DefaultNetwork
 from .object.user import User
 from .object.folder import Folder
@@ -13,6 +12,8 @@ from .object.events import Events
 from .object.file import File
 from .object.group import Group
 from .object.group_membership import GroupMembership
+from .session.box_session import BoxSession
+from .util.api_response_decorator import api_response
 from .util.shared_link import get_shared_link_header
 from .util.translator import Translator
 
@@ -99,6 +100,7 @@ class Client(object):
         """
         return Group(session=self._session, object_id=group_id)
 
+    @api_response
     def users(self):
         """
         Get a list of all users for the Enterprise along with their user_id, public_name, and login.
@@ -109,8 +111,11 @@ class Client(object):
             `list` of :class:`User`
         """
         url = '{0}/users'.format(API.BASE_API_URL)
-        box_response = self._session.get(url)
-        response = box_response.json()
+        return self._session.get(url)
+
+    @users.translator
+    def users(self, response):
+        response = response.json()
         return [User(self._session, item['id'], item) for item in response['entries']]
 
     def search(self, query, limit, offset, ancestor_folders=None, file_extensions=None, metadata_filters=None, result_type=None, content_types=None):
@@ -154,14 +159,16 @@ class Client(object):
         :rtype:
             `list` of :class:`Item`
         """
-        return Search(self._session).search(query=query,
-                                            limit=limit,
-                                            offset=offset,
-                                            ancestor_folders=ancestor_folders,
-                                            file_extensions=file_extensions,
-                                            metadata_filters=metadata_filters,
-                                            result_type=result_type,
-                                            content_types=content_types)
+        return Search(self._session).search(
+            query=query,
+            limit=limit,
+            offset=offset,
+            ancestor_folders=ancestor_folders,
+            file_extensions=file_extensions,
+            metadata_filters=metadata_filters,
+            result_type=result_type,
+            content_types=content_types,
+        )
 
     def events(self):
         """
@@ -184,6 +191,7 @@ class Client(object):
         """
         return GroupMembership(session=self._session, object_id=group_membership_id)
 
+    @api_response
     def groups(self):
         """
         Get a list of all groups for the current user.
@@ -194,10 +202,14 @@ class Client(object):
             `list` of :class:`Group`
         """
         url = '{0}/groups'.format(API.BASE_API_URL)
-        box_response = self._session.get(url)
-        response = box_response.json()
+        return self._session.get(url)
+
+    @groups.translator
+    def groups(self, response):
+        response = response.json()
         return [Group(self._session, item['id'], item) for item in response['entries']]
 
+    @api_response
     def create_group(self, name):
         """
         Create a group with the given name.
@@ -217,10 +229,14 @@ class Client(object):
         body_attributes = {
             'name': name,
         }
-        box_response = self._session.post(url, data=json.dumps(body_attributes))
-        response = box_response.json()
+        return self._session.post(url, data=json.dumps(body_attributes))
+
+    @create_group.translator
+    def create_group(self, response):
+        response = response.json()
         return Group(self._session, response['id'], response)
 
+    @api_response
     def get_shared_item(self, shared_link, password=None):
         """
         Get information about a Box shared link. https://developers.box.com/docs/#shared-items
@@ -240,17 +256,24 @@ class Client(object):
         :raises:
             :class:`BoxAPIException` if current user doesn't have permissions to view the shared link.
         """
-        response = self.make_request(
+        return self.make_request(
             'GET',
             '{0}/shared_items'.format(API.BASE_API_URL),
             headers=get_shared_link_header(shared_link, password),
-        ).json()
+        )
+
+    @get_shared_item.translator
+    def get_shared_item(self, response):
+        shared_link = response.kwargs.get('shared_link', None) or response.args[-2]
+        password = response.kwargs.get('password', None) or response.args[-1]
+        response = response.json()
         return Translator().translate(response['type'])(
             self._session.with_shared_link(shared_link, password),
             response['id'],
             response,
         )
 
+    @api_response
     def make_request(self, method, url, **kwargs):
         """
         Make an authenticated request to the Box API.
@@ -272,6 +295,7 @@ class Client(object):
         """
         return self._session.request(method, url, **kwargs)
 
+    @api_response
     def create_user(self, name, login=None, **user_attributes):
         """
         Create a new user. Can only be used if the current user is an enterprise admin, or the current authorization
@@ -296,8 +320,11 @@ class Client(object):
             user_attributes['login'] = login
         else:
             user_attributes['is_platform_access_only'] = True
-        box_response = self._session.post(url, data=json.dumps(user_attributes))
-        response = box_response.json()
+        return self._session.post(url, data=json.dumps(user_attributes))
+
+    @create_user.translator
+    def create_user(self, response):
+        response = response.json()
         return User(self._session, response['id'], response)
 
     def as_user(self, user):
@@ -329,3 +356,9 @@ class Client(object):
             self._network,
             self._session.with_shared_link(shared_link, shared_link_password),
         )
+
+    def async(self):
+        """
+        Returns a new client object in non-blocking mode.
+        """
+        return self.__class__(self._oauth, self._network, self._session.async())

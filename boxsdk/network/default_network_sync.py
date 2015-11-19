@@ -2,26 +2,29 @@
 
 from __future__ import unicode_literals
 
-from aplus import Promise
-from .default_network_async import DefaultNetworkAsync
+import requests
+import time
+
+from .default_network_response import DefaultNetworkResponse
 from .network_interface import Network
 
 
-class DefaultNetwork(Network):
+class DefaultNetworkSync(Network):
     """Implementation of the network interface using the requests library."""
 
     def __init__(self):
-        super(DefaultNetwork, self).__init__()
-        self._network = DefaultNetworkAsync()
+        super(DefaultNetworkSync, self).__init__()
+        self._session = requests.Session()
 
     def request(self, method, url, access_token, **kwargs):
         """Base class override.
-        Make a network request using the default async network.
+        Make a network request using a requests.Session.
         """
-        return Promise.fulfilled(self._network.request(method, url, access_token, **kwargs))
+        return DefaultNetworkResponse(self._session.request(method, url, **kwargs), access_token)
 
     def retry_after(self, delay, request_method, *args, **kwargs):
         """Base class override.
         Retry after sleeping for delay seconds.
         """
-        return Promise.fulfilled(self._network.retry_after(delay, request_method, *args, **kwargs))
+        time.sleep(delay)
+        return request_method(*args, **kwargs)

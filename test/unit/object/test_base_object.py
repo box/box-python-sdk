@@ -23,7 +23,7 @@ def test_object_and_response(
 
 @pytest.mark.parametrize('params,headers', product(*([[None, {}, {'foo': 'bar'}, {'foo': 'bar', 'num': 4}]] * 2)))
 def test_update_info(test_object_and_response, mock_box_session, params, headers):
-    # pylint:disable=redefined-outer-name, protected-access
+    # pylint:disable=protected-access
     test_object, mock_object_response = test_object_and_response
     expected_url = test_object.get_url()
     mock_box_session.put.return_value = mock_object_response
@@ -40,7 +40,7 @@ def test_update_info(test_object_and_response, mock_box_session, params, headers
     ({'a': 'b'}, None, False),
 ])
 def test_delete_handles_params_and_headers_correctly(mock_box_session, make_mock_box_request, params, headers, success):
-    # pylint:disable=redefined-outer-name, protected-access
+    # pylint:disable=protected-access
     fake_id = 'a_fake_id'
     base_object = BaseObject(mock_box_session, fake_id)
 
@@ -58,7 +58,7 @@ def test_delete_handles_params_and_headers_correctly(mock_box_session, make_mock
 
 
 def test_getattr_and_getitem(test_object_and_response, mock_box_session):
-    # pylint:disable=redefined-outer-name, protected-access
+    # pylint:disable=protected-access
     test_object, mock_object_response = test_object_and_response
     mock_box_session.put.return_value = mock_object_response
     update_response = BaseObject.update_info(test_object, {})
@@ -67,7 +67,7 @@ def test_getattr_and_getitem(test_object_and_response, mock_box_session):
 
 
 def test_get_url(test_object_and_response):
-    # pylint:disable=redefined-outer-name, protected-access
+    # pylint:disable=protected-access
     test_object, _ = test_object_and_response
     url = test_object.get_url()
     assert '{0}'.format(test_object.object_id) in url
@@ -75,7 +75,7 @@ def test_get_url(test_object_and_response):
 
 
 def test_get_type_url(test_object_and_response):
-    # pylint:disable=redefined-outer-name, protected-access
+    # pylint:disable=protected-access
     test_object, _ = test_object_and_response
     url = test_object.get_type_url()
     assert url.endswith('{0}s'.format(test_object._item_type))

@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import json
 from mock import Mock
 import pytest
-from boxsdk.network.default_network import DefaultNetworkResponse
+from boxsdk.network.default_network_response import DefaultNetworkResponse
 
 
 @pytest.fixture(scope='session')
@@ -19,7 +19,6 @@ def generic_successful_response():
 
 @pytest.fixture(scope='session')
 def successful_token_json_response(access_token, refresh_token):
-    # pylint:disable=redefined-outer-name
     return {
         'access_token': access_token,
         'expires_in': 3600,
@@ -31,7 +30,6 @@ def successful_token_json_response(access_token, refresh_token):
 
 @pytest.fixture(scope='session')
 def successful_token_response(successful_token_mock, successful_token_json_response):
-    # pylint:disable=redefined-outer-name
     successful_token_mock.json = Mock(return_value=successful_token_json_response)
     successful_token_mock.ok = True
     successful_token_mock.content = json.dumps(successful_token_json_response)
@@ -138,7 +136,6 @@ def test_file_content(request):
 
 @pytest.fixture()
 def update_file_content(test_file_content):
-    # pylint:disable=redefined-outer-name
     return test_file_content
 
 
@@ -160,3 +157,8 @@ def mock_user_id():
 @pytest.fixture(scope='module')
 def mock_group_id():
     return 'fake-group-99'
+
+
+@pytest.fixture(params=[True, False])
+def async(request):
+    return request.param

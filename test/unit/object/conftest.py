@@ -13,9 +13,6 @@ from boxsdk.object.user import User
 from boxsdk.object.search import Search
 
 
-# pylint:disable=redefined-outer-name
-
-
 @pytest.fixture(scope='module')
 def mock_group_membership_id():
     return 'fake-group-membership-5'

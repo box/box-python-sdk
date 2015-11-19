@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from boxsdk.config import API
 from .item import Item
 from .metadata import Metadata
-from boxsdk.util.api_response_decorator import api_response
+from boxsdk.util.api_response_decorator import api_response, promisify
 
 
 class File(Item):
@@ -134,18 +134,25 @@ class File(Item):
             :class:`BoxAPIException` if the specified etag doesn't match the latest version of the file or preflight
             check fails.
         """
-        if preflight_check:
-            self.preflight_check(size=preflight_expected_size)
-
-        url = self.get_url('content').replace(API.BASE_API_URL, API.UPLOAD_URL)
-        if upload_using_accelerator:
-            accelerator_upload_url = self._get_accelerator_upload_url_for_update()
-            if accelerator_upload_url:
-                url = accelerator_upload_url
-
         files = {'file': ('unused', file_stream)}
         headers = {'If-Match': etag} if etag is not None else None
-        return self._session.post(url, expect_json_response=False, files=files, headers=headers)
+        url = self.get_url('content').replace(API.BASE_API_URL, API.UPLOAD_URL)
+
+        preflight_promise = promisify(not preflight_check or self.preflight_check(size=preflight_expected_size))
+        accelerator_promise = promisify(
+            self._get_accelerator_upload_url_for_update() if upload_using_accelerator else None,
+        )
+
+        def do_upload(accelerator_upload_url):
+            response = self._session.post(
+                accelerator_upload_url or url,
+                expect_json_response=False,
+                files=files,
+                headers=headers,
+            )
+            return promisify(response)
+
+        return preflight_promise.then(lambda _: accelerator_promise).then(do_upload)
 
     @update_contents_with_stream.translator
     def update_contents_with_stream(self, response):

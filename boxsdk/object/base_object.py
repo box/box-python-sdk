@@ -53,7 +53,10 @@ class BaseObject(BaseEndpoint):
 
     def __getattr__(self, item):
         """Base class override. Try to get the attribute from the API response object."""
-        return self._response_object[item]
+        try:
+            return self._response_object[item]
+        except KeyError:
+            raise AttributeError
 
     def __getitem__(self, item):
         """Base class override. Try to get the attribute from the API response object."""
@@ -258,14 +261,8 @@ class BaseObject(BaseEndpoint):
         for index_in_current_page, item in enumerate(response['entries']):
             yield item, current_page_size, index_in_current_page
 
-    def as_user(self, user):
+    def _get_kwargs_for_clone(self):
         """ Base class override. """
-        return self.__class__(self._session.as_user(user), self._object_id, self._response_object)
-
-    def with_shared_link(self, shared_link, shared_link_password):
-        """ Base class override. """
-        return self.__class__(
-            self._session.with_shared_link(shared_link, shared_link_password),
-            self._object_id,
-            self._response_object,
-        )
+        kwargs = super(BaseObject, self)._get_kwargs_for_clone()
+        kwargs.update(object_id=self._object_id, response_object=self._response_object)
+        return kwargs

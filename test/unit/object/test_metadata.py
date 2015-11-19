@@ -33,7 +33,6 @@ def metadata_template():
 
 @pytest.mark.parametrize('success', [True, False])
 def test_delete(mock_box_session, make_mock_box_request, test_file, metadata_scope, metadata_template, success):
-    # pylint:disable=redefined-outer-name
     mock_box_session.delete.return_value, _ = make_mock_box_request(response_ok=success)
     metadata = test_file.metadata(metadata_scope, metadata_template)
     assert metadata.delete() is success
@@ -48,7 +47,6 @@ def test_create(
         metadata_template,
         metadata_response,
 ):
-    # pylint:disable=redefined-outer-name
     mock_box_session.post.return_value, _ = make_mock_box_request(response=metadata_response)
     metadata = test_file.metadata(metadata_scope, metadata_template)
     response = metadata.create(metadata_response)
@@ -68,7 +66,6 @@ def test_get(
         metadata_template,
         metadata_response,
 ):
-    # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value, _ = make_mock_box_request(response=metadata_response)
     metadata = test_file.metadata(metadata_scope, metadata_template)
     response = metadata.get()
@@ -95,7 +92,6 @@ def test_update(
         metadata_response,
         metadata_update,
 ):
-    # pylint:disable=redefined-outer-name
     mock_box_session.put.return_value, _ = make_mock_box_request(response=metadata_response)
     metadata = test_file.metadata(metadata_scope, metadata_template)
     response = metadata.update(metadata_update)

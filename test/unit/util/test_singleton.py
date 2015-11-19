@@ -6,8 +6,6 @@ import pytest
 from six import add_metaclass
 from boxsdk.util.singleton import Singleton
 
-# pylint:disable=redefined-outer-name
-
 
 @pytest.fixture
 def singleton_class():

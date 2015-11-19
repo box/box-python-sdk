@@ -5,14 +5,16 @@ import json
 from mock import Mock
 import pytest
 from boxsdk.auth.oauth2 import DefaultNetwork
-from boxsdk.network import default_network
-from boxsdk.network.default_network import DefaultNetworkResponse
+from boxsdk.network import default_network_sync
+from boxsdk.network.default_network_response import DefaultNetworkResponse
 from boxsdk.session.box_session import BoxResponse, BoxSession
 
 
 @pytest.fixture()
-def mock_box_session():
-    return Mock(BoxSession)
+def mock_box_session(async):
+    session = Mock(BoxSession)
+    session.is_async = async
+    return session
 
 
 @pytest.fixture(scope='function')
@@ -23,12 +25,11 @@ def mock_network_layer():
 
 @pytest.fixture(autouse=True)
 def prevent_tests_from_making_real_network_requests(monkeypatch):
-    monkeypatch.delattr(default_network.requests.Session, 'request')
+    monkeypatch.delattr(default_network_sync.requests.Session, 'request')
 
 
 @pytest.fixture(scope='function')
 def mock_user_response(mock_user_id, make_mock_box_request):
-    # pylint:disable=redefined-outer-name
     mock_box_response, _ = make_mock_box_request(
         response={'type': 'user', 'id': mock_user_id},
     )
@@ -37,7 +38,6 @@ def mock_user_response(mock_user_id, make_mock_box_request):
 
 @pytest.fixture(scope='function')
 def mock_group_response(mock_group_id, make_mock_box_request):
-    # pylint:disable=redefined-outer-name
     mock_box_response, _ = make_mock_box_request(
         response={'type': 'group', 'id': mock_group_id},
     )
@@ -63,7 +63,6 @@ def make_mock_box_request():
 
 @pytest.fixture(scope='function')
 def mock_file_response(mock_object_id, make_mock_box_request):
-    # pylint:disable=redefined-outer-name
     mock_box_response, _ = make_mock_box_request(
         response={'type': 'file', 'id': mock_object_id},
     )
@@ -72,7 +71,6 @@ def mock_file_response(mock_object_id, make_mock_box_request):
 
 @pytest.fixture(scope='function')
 def mock_folder_response(mock_object_id, make_mock_box_request):
-    # pylint:disable=redefined-outer-name
     mock_box_response, _ = make_mock_box_request(
         response={'type': 'folder', 'id': mock_object_id},
     )

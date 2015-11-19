@@ -234,15 +234,8 @@ class Metadata(BaseEndpoint):
         """
         return response.json()
 
-    def as_user(self, user):
+    def _get_kwargs_for_clone(self):
         """ Base class override. """
-        return self.__class__(self._session.as_user(user), self._object, self._scope, self._template)
-
-    def with_shared_link(self, shared_link, shared_link_password):
-        """ Base class override. """
-        return self.__class__(
-            self._session.with_shared_link(shared_link, shared_link_password),
-            self._object,
-            self._scope,
-            self._template
-        )
+        kwargs = super(Metadata, self)._get_kwargs_for_clone()
+        kwargs.update(box_object=self._object, scope=self._scope, template=self._template)
+        return kwargs

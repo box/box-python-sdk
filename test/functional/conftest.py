@@ -16,13 +16,11 @@ from test.util.streamable_mock_open import streamable_mock_open
 
 @pytest.fixture()
 def box_client(box_oauth):
-    # pylint:disable=redefined-outer-name
     return Client(box_oauth)
 
 
 @pytest.fixture()
 def box_oauth(client_id, client_secret, user_login):
-    # pylint:disable=redefined-outer-name
     oauth2 = OAuth2(client_id, client_secret, box_device_name='mock_box functional test')
     url, _ = oauth2.get_authorization_url('http://localhost')
     form = requests.get(url + '&box_login=' + user_login).content.decode('utf-8')
@@ -57,7 +55,6 @@ def mock_box_server(request):
 
 @pytest.fixture(autouse=True)
 def mock_box(mock_box_server, monkeypatch, client_id, client_secret, user_name, user_login):
-    # pylint:disable=redefined-outer-name
     mock_box_server.reset_filesystem([(user_name, user_login)], [(client_id, client_secret, 0)])
     monkeypatch.setattr(API, 'BASE_API_URL', 'http://localhost:{0}'.format(Box.API_PORT))
     monkeypatch.setattr(API, 'UPLOAD_URL', 'http://localhost:{0}'.format(Box.UPLOAD_PORT))
@@ -95,12 +92,10 @@ def user_login():
 
 @pytest.fixture()
 def uploaded_file(box_client, test_file_path, test_file_content, file_name):
-    # pylint:disable=redefined-outer-name
     with patch('boxsdk.object.folder.open', streamable_mock_open(read_data=test_file_content), create=True):
         return box_client.folder('0').upload(test_file_path, file_name)
 
 
 @pytest.fixture()
 def created_subfolder(box_client, folder_name):
-    # pylint:disable=redefined-outer-name
     return box_client.folder('0').create_subfolder(folder_name)

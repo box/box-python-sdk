@@ -7,12 +7,10 @@ from boxsdk.exception import BoxAPIException
 
 
 def test_create_folder_then_update_info(created_subfolder):
-    # pylint:disable=redefined-outer-name
     _test_create_then_update_info(created_subfolder)
 
 
 def test_create_file_then_update_info(uploaded_file):
-    # pylint:disable=redefined-outer-name
     _test_create_then_update_info(uploaded_file)
 
 
@@ -24,12 +22,10 @@ def _test_create_then_update_info(item):
 
 
 def test_create_folder_then_rename(created_subfolder):
-    # pylint:disable=redefined-outer-name
     _test_create_then_rename(created_subfolder)
 
 
 def test_create_file_then_rename(uploaded_file):
-    # pylint:disable=redefined-outer-name
     _test_create_then_rename(uploaded_file)
 
 
@@ -41,12 +37,10 @@ def _test_create_then_rename(item):
 
 
 def test_create_folder_then_move(box_client, created_subfolder):
-    # pylint:disable=redefined-outer-name
     _test_create_then_move(box_client, created_subfolder)
 
 
 def test_create_file_then_move(box_client, uploaded_file):
-    # pylint:disable=redefined-outer-name
     _test_create_then_move(box_client, uploaded_file)
 
 
@@ -62,17 +56,14 @@ def _test_create_then_move(box_client, item):
 
 
 def test_create_folder_then_copy(box_client, created_subfolder):
-    # pylint:disable=redefined-outer-name
     _test_create_then_copy(box_client, created_subfolder)
 
 
 def test_create_file_then_copy(box_client, uploaded_file):
-    # pylint:disable=redefined-outer-name
     _test_create_then_copy(box_client, uploaded_file)
 
 
 def _test_create_then_copy(box_client, item):
-    # pylint:disable=redefined-outer-name
     copy_target = box_client.folder('0').create_subfolder('copy target')
     copied_item = item.copy(copy_target)
     item = item.get()
@@ -93,7 +84,6 @@ def test_get_item_info_for_missing_item(box_client, constructor):
 
 @pytest.mark.parametrize('sync_state', ['synced', 'not_synced'])
 def test_set_sync_state(created_subfolder, sync_state):
-    # pylint:disable=redefined-outer-name
     folder_with_info = created_subfolder.get(fields='sync_state')
     created_subfolder.update_sync_state(sync_state)
     updated_folder_with_info = created_subfolder.get(fields='sync_state')

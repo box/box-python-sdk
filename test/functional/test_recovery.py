@@ -45,7 +45,6 @@ def reset_chaos(mock_box, request):
 
 
 def test_client_retries_on_server_error(box_client, mock_box, error_code, should_apply):
-    # pylint:disable=redefined-outer-name
     should_apply, expected_num_requests = should_apply
     mock_box.get_folder_info.add_chaos(error(error_code), should_apply)
     box_client.folder('0').get()
@@ -53,7 +52,6 @@ def test_client_retries_on_server_error(box_client, mock_box, error_code, should
 
 
 def test_client_retries_on_retry_after(box_client, mock_box, retry_code, should_apply):
-    # pylint:disable=redefined-outer-name
     should_apply, expected_num_requests = should_apply
     mock_box.get_folder_info.add_chaos(error(retry_code, headers={RETRY_AFTER_HEADER: 1}), should_apply)
     box_client.folder('0').get()
@@ -61,7 +59,6 @@ def test_client_retries_on_retry_after(box_client, mock_box, retry_code, should_
 
 
 def test_client_stops_retrying_after_10_server_errors(box_client, mock_box, error_code):
-    # pylint:disable=redefined-outer-name
     mock_box.get_folder_info.add_chaos(error(error_code))
     with pytest.raises(BoxAPIException) as exc_info:
         box_client.folder('0').get()
@@ -71,7 +68,6 @@ def test_client_stops_retrying_after_10_server_errors(box_client, mock_box, erro
 
 @pytest.mark.parametrize('chaos', [html, xml])
 def test_non_json_response_raises(box_client, mock_box, chaos):
-    # pylint:disable=redefined-outer-name
     mock_box.get_folder_info.add_chaos(chaos)
     with pytest.raises(BoxAPIException) as exc_info:
         box_client.folder('0').get()

@@ -15,7 +15,6 @@ def test_item_and_response(test_file, test_folder, mock_file_response, mock_fold
 
 
 def test_update_info(test_item_and_response, mock_box_session, etag, if_match_header):
-    # pylint:disable=redefined-outer-name, protected-access
     test_item, mock_item_response = test_item_and_response
     expected_url = test_item.get_url()
     mock_box_session.put.return_value = mock_item_response
@@ -27,7 +26,6 @@ def test_update_info(test_item_and_response, mock_box_session, etag, if_match_he
 
 
 def test_rename_item(test_item_and_response, mock_box_session):
-    # pylint:disable=redefined-outer-name, protected-access
     test_item, mock_item_response = test_item_and_response
     expected_url = test_item.get_url()
     mock_box_session.put.return_value = mock_item_response
@@ -37,7 +35,6 @@ def test_rename_item(test_item_and_response, mock_box_session):
 
 
 def test_copy_item(test_item_and_response, mock_box_session, test_folder, mock_object_id):
-    # pylint:disable=redefined-outer-name, protected-access
     test_item, mock_item_response = test_item_and_response
     expected_url = test_item.get_url('copy')
     mock_box_session.post.return_value = mock_item_response
@@ -47,7 +44,6 @@ def test_copy_item(test_item_and_response, mock_box_session, test_folder, mock_o
 
 
 def test_move_item(test_item_and_response, mock_box_session, test_folder, mock_object_id):
-    # pylint:disable=redefined-outer-name, protected-access
     test_item, mock_item_response = test_item_and_response
     expected_url = test_item.get_url()
     mock_box_session.put.return_value = mock_item_response
@@ -93,7 +89,6 @@ def test_get_shared_link(
         etag,
         if_match_header,
 ):
-    # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
     expected_url = test_item.get_url()
     mock_box_session.put.return_value.json.return_value = {'shared_link': {'url': test_url}}
@@ -128,7 +123,6 @@ def test_get_shared_link(
 
 
 def test_remove_shared_link(test_item_and_response, mock_box_session, etag, if_match_header):
-    # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
     expected_url = test_item.get_url()
     mock_box_session.put.return_value.json.return_value = {'shared_link': None}
@@ -144,7 +138,6 @@ def test_remove_shared_link(test_item_and_response, mock_box_session, etag, if_m
 
 @pytest.mark.parametrize('fields', (None, ['name', 'created_at']))
 def test_get(test_item_and_response, mock_box_session, fields, mock_object_id, etag, if_none_match_header):
-    # pylint:disable=redefined-outer-name, protected-access
     test_item, mock_item_response = test_item_and_response
     expected_url = test_item.get_url()
     mock_box_session.get.return_value = mock_item_response

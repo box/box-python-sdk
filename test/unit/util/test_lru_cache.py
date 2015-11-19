@@ -16,21 +16,18 @@ def keys():
 
 
 def test_lru_cache_returns_minus_one_for_missing_key(lru_cache, keys):
-    # pylint:disable=redefined-outer-name
     for key in keys:
         with pytest.raises(KeyError):
             lru_cache.get(key)
 
 
 def test_lru_cache_returns_none_for_existing_key(lru_cache, keys):
-    # pylint:disable=redefined-outer-name
     for key in keys:
         lru_cache.set(key)
         assert lru_cache.get(key) is None
 
 
 def test_lru_cache_ejects_least_recently_used_key(lru_cache, keys):
-    # pylint:disable=redefined-outer-name
     lru_cache.capacity = len(keys)
     for key in keys:
         lru_cache.set(key)

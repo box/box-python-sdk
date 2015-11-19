@@ -20,7 +20,6 @@ def test_client_as_user_causes_as_user_header_to_be_added(
         mock_user_id,
         as_user_headers,
 ):
-    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [generic_successful_response]
     box_client.as_user(User(None, mock_user_id)).folder('0').get()
     assert mock_box_network.session.request.mock_calls == [
@@ -40,7 +39,6 @@ def test_folder_object_as_user_causes_as_user_header_to_be_added(
         mock_user_id,
         as_user_headers,
 ):
-    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
@@ -62,7 +60,6 @@ def test_group_membership_object_as_user_causes_as_user_header_to_be_added(
         mock_user_id,
         as_user_headers,
 ):
-    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
@@ -86,7 +83,6 @@ def test_events_endpoint_as_user_causes_as_user_header_to_be_added(
         mock_user_id,
         as_user_headers,
 ):
-    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
@@ -111,7 +107,6 @@ def test_metadata_endpoint_as_user_causes_as_user_header_to_be_added(
         mock_user_id,
         as_user_headers,
 ):
-    # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]

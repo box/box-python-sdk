@@ -16,6 +16,5 @@ def total_seconds_data(request):
 
 
 def test_total_seconds(total_seconds_data):
-    # pylint:disable=redefined-outer-name
     delta, seconds = total_seconds_data
     assert total_seconds(delta) == seconds

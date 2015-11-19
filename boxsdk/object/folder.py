@@ -10,7 +10,7 @@ from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
-from boxsdk.util.api_response_decorator import api_response
+from boxsdk.util.api_response_decorator import api_response, promisify
 from boxsdk.util.text_enum import TextEnum
 from boxsdk.util.translator import Translator
 
@@ -206,15 +206,6 @@ class Folder(Item):
         :rtype:
             :class:`File`
         """
-        if preflight_check:
-            self.preflight_check(size=preflight_expected_size, name=file_name)
-
-        url = '{0}/files/content'.format(API.UPLOAD_URL)
-        if upload_using_accelerator:
-            accelerator_upload_url = self._get_accelerator_upload_url_fow_new_uploads()
-            if accelerator_upload_url:
-                url = accelerator_upload_url
-
         data = {'attributes': json.dumps({
             'name': file_name,
             'parent': {'id': self._object_id},
@@ -222,7 +213,23 @@ class Folder(Item):
         files = {
             'file': ('unused', file_stream),
         }
-        return self._session.post(url, data=data, files=files, expect_json_response=False)
+
+        preflight_promise = promisify(
+            not preflight_check or self.preflight_check(size=preflight_expected_size, name=file_name),
+        )
+        accelerator_promise = promisify(
+            self._get_accelerator_upload_url_fow_new_uploads() if upload_using_accelerator else None
+        )
+
+        def do_upload(accelerator_upload_url):
+            return promisify(self._session.post(
+                accelerator_upload_url or '{0}/files/content'.format(API.UPLOAD_URL),
+                data=data,
+                files=files,
+                expect_json_response=False,
+            ))
+
+        return preflight_promise.then(lambda _: accelerator_promise).then(do_upload)
 
     @upload_stream.translator
     def upload_stream(self, response):

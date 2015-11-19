@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from aplus import Promise
 from functools import partial
 from mock import Mock
 import pytest
@@ -10,7 +11,7 @@ from threading import Thread
 from six.moves.urllib import parse as urlparse  # pylint:disable=import-error,no-name-in-module
 
 from boxsdk.exception import BoxOAuthException
-from boxsdk.network.default_network import DefaultNetworkResponse
+from boxsdk.network.default_network_response import DefaultNetworkResponse
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.config import API
 
@@ -22,7 +23,6 @@ def redirect_url(request):
 
 
 def test_get_correct_authorization_url(redirect_url):
-    # pylint:disable=redefined-outer-name
     fake_client_id = 'fake_client_id'
     fake_client_secret = 'fake_client_secret'
     oauth2 = OAuth2(
@@ -42,7 +42,7 @@ def test_get_correct_authorization_url(redirect_url):
     assert re.match('^box_csrf_token_[A-Za-z0-9]{16}$', csrf_token)
 
 
-def test_authenticate_send_post_request_with_correct_params(mock_network_layer, successful_token_response):
+def test_authenticate_sends_post_request_with_correct_params(mock_network_layer, successful_token_response):
     fake_client_id = 'fake_client_id'
     fake_client_secret = 'fake_client_secret'
     fake_auth_code = 'fake_auth_code'
@@ -54,7 +54,7 @@ def test_authenticate_send_post_request_with_correct_params(mock_network_layer, 
         'box_device_id': '0',
         'box_device_name': 'my_awesome_device',
     }
-    mock_network_layer.request.return_value = successful_token_response
+    mock_network_layer.request.return_value = Promise.fulfilled(successful_token_response)
     oauth = OAuth2(
         client_id=fake_client_id,
         client_secret=fake_client_secret,
@@ -76,7 +76,7 @@ def test_authenticate_send_post_request_with_correct_params(mock_network_layer, 
 
 
 @pytest.mark.parametrize('_', range(10))
-def test_refresh_send_post_request_with_correct_params_and_handles_multiple_requests(
+def test_refresh_sends_post_request_with_correct_params_and_handles_multiple_requests(
         mock_network_layer,
         successful_token_response,
         _,
@@ -93,7 +93,7 @@ def test_refresh_send_post_request_with_correct_params_and_handles_multiple_requ
         'box_device_id': '0',
         'box_device_name': 'my_awesome_device',
     }
-    mock_network_layer.request.return_value = successful_token_response
+    mock_network_layer.request.return_value = Promise.fulfilled(successful_token_response)
     oauth = OAuth2(
         client_id=fake_client_id,
         client_secret=fake_client_secret,
@@ -129,7 +129,7 @@ def test_authenticate_stores_tokens_correctly(mock_network_layer, successful_tok
     fake_client_secret = 'fake_client_secret'
     fake_auth_code = 'fake_auth_code'
 
-    mock_network_layer.request.return_value = successful_token_response
+    mock_network_layer.request.return_value = Promise.fulfilled(successful_token_response)
     mock_token_callback = Mock()
     oauth = OAuth2(
         client_id=fake_client_id,
@@ -152,7 +152,6 @@ def test_refresh_gives_back_the_correct_response_and_handles_multiple_requests(
         network_response_with_missing_tokens,
         _,
 ):
-    # pylint:disable=redefined-outer-name
     fake_client_id = 'fake_client_id'
     fake_client_secret = 'fake_client_secret'
     fake_refresh_token = 'fake_refresh_token'
@@ -160,7 +159,10 @@ def test_refresh_gives_back_the_correct_response_and_handles_multiple_requests(
 
     # Setup the network layer so that if oauth makes more than one request, it will get a malformed response and failed
     # the test.
-    mock_network_layer.request.side_effect = [successful_token_response, network_response_with_missing_tokens]
+    mock_network_layer.request.side_effect = [
+        Promise.fulfilled(successful_token_response),
+        Promise.fulfilled(network_response_with_missing_tokens),
+    ]
     oauth = OAuth2(
         client_id=fake_client_id,
         client_secret=fake_client_secret,
@@ -196,7 +198,7 @@ def test_token_request_raises_box_oauth_exception_when_getting_bad_network_respo
         bad_network_response,
 ):
     with pytest.raises(BoxOAuthException):
-        mock_network_layer.request.return_value = bad_network_response
+        mock_network_layer.request.return_value = Promise.fulfilled(bad_network_response)
         oauth = OAuth2(
             client_id='',
             client_secret='',
@@ -215,7 +217,7 @@ def test_token_request_raises_box_oauth_exception_when_no_json_object_can_be_dec
         mock_network_layer,
         non_json_response,
 ):
-    mock_network_layer.request.return_value = non_json_response
+    mock_network_layer.request.return_value = Promise.fulfilled(non_json_response)
     oauth = OAuth2(
         client_id='',
         client_secret='',
@@ -250,8 +252,7 @@ def test_token_request_raises_box_oauth_exception_when_tokens_are_not_in_the_res
         mock_network_layer,
         network_response_with_missing_tokens,
 ):
-    # pylint:disable=redefined-outer-name
-    mock_network_layer.request.return_value = network_response_with_missing_tokens
+    mock_network_layer.request.return_value = Promise.fulfilled(network_response_with_missing_tokens)
     oauth = OAuth2(
         client_id='',
         client_secret='',
@@ -263,10 +264,10 @@ def test_token_request_raises_box_oauth_exception_when_tokens_are_not_in_the_res
 
 
 def test_token_request_allows_missing_refresh_token(mock_network_layer):
-    mock_network_response = Mock()
+    mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.ok = True
     mock_network_response.json.return_value = {'access_token': 'fake_token'}
-    mock_network_layer.request.return_value = mock_network_response
+    mock_network_layer.request.return_value = Promise.fulfilled(mock_network_response)
     oauth = OAuth2(
         client_id='',
         client_secret='',

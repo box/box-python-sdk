@@ -8,7 +8,7 @@ from operator import sub
 import pytest
 from six.moves import map  # pylint:disable=redefined-builtin,import-error
 
-from boxsdk.network.default_network import DefaultNetworkResponse
+from boxsdk.network.default_network_response import DefaultNetworkResponse
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.config import API
 from boxsdk.session.box_session import BoxResponse
@@ -16,7 +16,6 @@ from boxsdk.session.box_session import BoxResponse
 
 @pytest.fixture(scope='module')
 def delete_group_response():
-    # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.ok = True
     return mock_network_response
@@ -27,7 +26,6 @@ def test_delete_group_return_the_correct_response(
         mock_box_session,
         delete_group_response,
 ):
-    # pylint:disable=redefined-outer-name
     mock_box_session.delete.return_value = delete_group_response
     response = mock_group.delete()
 
@@ -74,7 +72,6 @@ def mock_membership_responses(mock_membership_dict_stream):
     The generator generates a sequence of 'group membership' mock_box_responses each containing page_size
     items, until 'total' entries have been returned
     """
-    # pylint:disable=redefined-outer-name
     def number_entries_per_response(total, page_size, hidden_in_batch):
         if not hidden_in_batch:
             hidden_in_batch = repeat(0)
@@ -115,7 +112,6 @@ def mock_membership_responses(mock_membership_dict_stream):
     (9, 4),
 ])
 def test_membership(test_group, mock_box_session, mock_membership_responses, total, page_size):
-    # pylint:disable=redefined-outer-name
     # Each call the 'get' (the GET next page call) will return the next response
     mock_box_session.get.side_effect = mock_membership_responses(total, page_size)
 
@@ -139,7 +135,6 @@ def test_membership_with_hidden_results(test_group, mock_box_session, mock_membe
     API. The API might indicate that the total_size is X, but in actuality the pages API could return less than X
     because the auth'd user might not have access to all X of the resources.
     """
-    # pylint:disable=redefined-outer-name
     total = 30
     page_size = 10
 
@@ -162,7 +157,6 @@ def test_membership_with_page_info(test_group, mock_box_session, mock_membership
     is correct, thus allowing a client complete knowledge of when another API call
     is going to be triggered.
     """
-    # pylint:disable=redefined-outer-name
     total = 9
     page_size = 3
     hidden_in_batch = 0, 2, 1

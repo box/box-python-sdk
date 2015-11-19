@@ -5,7 +5,7 @@ import json
 from mock import Mock
 import pytest
 from requests.exceptions import Timeout
-from boxsdk.network.default_network import DefaultNetworkResponse
+from boxsdk.network.default_network_response import DefaultNetworkResponse
 from boxsdk.object.events import Events
 from boxsdk.session.box_session import BoxResponse
 
@@ -27,7 +27,6 @@ def initial_stream_position():
 
 @pytest.fixture()
 def empty_events_response(final_stream_position):
-    # pylint:disable=redefined-outer-name
     mock_box_response = Mock(BoxResponse)
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_box_response.network_response = mock_network_response
@@ -50,7 +49,6 @@ def retry_timeout():
 
 @pytest.fixture()
 def options_response(long_poll_url, retry_timeout, make_mock_box_request):
-    # pylint:disable=redefined-outer-name
     mock_box_response, _ = make_mock_box_request(
         response={'entries': [{'url': long_poll_url, 'retry_timeout': retry_timeout}]},
     )
@@ -95,7 +93,6 @@ def mock_event():
 
 @pytest.fixture()
 def events_response(initial_stream_position, mock_event, make_mock_box_request):
-    # pylint:disable=redefined-outer-name
     mock_box_response, _ = make_mock_box_request(
         response={"next_stream_position": initial_stream_position, "entries": [mock_event]},
     )
@@ -103,7 +100,6 @@ def events_response(initial_stream_position, mock_event, make_mock_box_request):
 
 
 def test_get_events(test_events, mock_box_session, events_response):
-    # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = events_response
     events = test_events.get_events()
     assert 'next_stream_position' in events
@@ -123,7 +119,6 @@ def test_generate_events_with_long_polling(
         max_retries_long_poll_response,
         mock_event,
 ):
-    # pylint:disable=redefined-outer-name
     expected_url = test_events.get_url()
     mock_box_session.options.return_value = options_response
     mock_box_session.get.side_effect = [

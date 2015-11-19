@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, absolute_import
+from aplus import Promise
 from functools import update_wrapper
 
 
@@ -47,23 +48,47 @@ class APIResponseWrapper(object):
         self._translator_func = translator_func
         return self.__class__(self._func_that_returns_api_response, translator_func)
 
-    def __get__(self, instance, owner):
+    def _call_translator(self, instance, response, args, kwargs):
+        """
+        Call the translator function on the instance with the Box API response.
+        Make the original call's args and kwargs available to the translator function as attributes of response.
+        """
+        response_args = [instance]
+        if isinstance(response, Promise):
+            def then(value):
+                if value is not None:
+                    value.args = args
+                    value.kwargs = kwargs
+                response_args.append(value)
+                return self._response_translator(*response_args)
+            return response.then(then)
+        else:
+            if response is not None:
+                response.args = args
+                response.kwargs = kwargs
+            response_args.append(response)
+            return self._response_translator(*response_args)
+
+    def __get__(self, _instance, owner):
         def call(*args, **kwargs):
-            # If this is being called as an instance method, then pass the instance as the first arg (self)
+            instance = _instance
+            # If this is being called as a bound method, then pass the instance as the first arg (self)
             if instance is not None:
                 response = self._func_that_returns_api_response(instance, *args, **kwargs)
             else:
                 response = self._func_that_returns_api_response(*args, **kwargs)
-            if response is not None:
-                # Make the original call's args and kwargs available to the translator function
-                response.args = args
-                response.kwargs = kwargs
-            if not isinstance(response, tuple):
-                # Pass the instance as the self arg, if specified.
-                response = [response]
-                if instance is not None:
-                    response.insert(0, instance)
-                elif owner is not None and len(args) > 0 and isinstance(args[0], owner):
-                    response.insert(0, args[0])
-            return self._response_translator(*response)
+            if instance is None:
+                # If called as an unbound method, then the instance is the first arg.
+                if owner is not None and len(args) > 0 and isinstance(args[0], owner):
+                    instance = args[0]
+                else:
+                    raise AttributeError
+            return_value = self._call_translator(instance, response, args, kwargs)
+            if isinstance(return_value, Promise) and not instance._session.is_async:  # pylint:disable=protected-access
+                return_value = return_value.get()
+            return return_value
         return call
+
+
+def promisify(value):
+    return value if isinstance(value, Promise) else Promise.fulfilled(value)

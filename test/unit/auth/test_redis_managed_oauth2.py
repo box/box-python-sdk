@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals, absolute_import
 
+from aplus import Promise
 from mock import Mock, patch
 
 from boxsdk.auth import redis_managed_oauth2
@@ -54,6 +55,6 @@ def test_redis_managed_oauth2_stores_tokens_to_redis_during_refresh(
             redis_server=redis_server,
             network_layer=mock_network_layer,
         )
-    mock_network_layer.request.return_value = successful_token_response
+    mock_network_layer.request.return_value = Promise.fulfilled(successful_token_response)
     oauth2.send_token_request({}, access_token=None, expect_refresh_token=True)
     redis_server.hmset.assert_called_once_with(unique_id, {'access': access_token, 'refresh': refresh_token})

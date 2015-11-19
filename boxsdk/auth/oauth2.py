@@ -240,8 +240,8 @@ class OAuth2(object):
             url,
             data=data,
             headers=headers,
-            access_token=access_token
-        )
+            access_token=access_token,
+        ).get()
         if not network_response.ok:
             raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
         try:

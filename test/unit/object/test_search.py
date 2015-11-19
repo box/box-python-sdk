@@ -112,7 +112,6 @@ def test_search_with_value_based_filters(
         search_result_type,
         search_content_types,
 ):
-    # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value, _ = make_mock_box_request(response=search_response)
     response = test_search.search(
         search_query,
@@ -150,7 +149,6 @@ def test_search_with_range_filters(
         search_result_type,
         search_content_types,
 ):
-    # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value, _ = make_mock_box_request(response=search_response)
     response = test_search.search(
         search_query,

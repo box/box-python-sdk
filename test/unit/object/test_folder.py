@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from aplus import Promise
 import json
 from os.path import basename
 from mock import mock_open, patch, Mock, MagicMock
@@ -9,7 +10,7 @@ from six import BytesIO
 from six.moves import zip  # pylint:disable=redefined-builtin,import-error
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
-from boxsdk.network.default_network import DefaultNetworkResponse
+from boxsdk.network.default_network_response import DefaultNetworkResponse
 from boxsdk.object.file import File
 from boxsdk.object.collaboration import Collaboration, CollaborationRole
 from boxsdk.object.folder import Folder, FolderSyncState
@@ -17,7 +18,6 @@ from boxsdk.session.box_session import BoxResponse
 
 
 # pylint:disable=protected-access
-# pylint:disable=redefined-outer-name
 
 
 @pytest.fixture()
@@ -51,7 +51,6 @@ def mock_items(mock_box_session, mock_object_id):
 
 @pytest.fixture()
 def mock_items_response(mock_items):
-    # pylint:disable=redefined-outer-name
     def get_response(limit, offset):
         items_json, items = mock_items
         mock_box_response = Mock(BoxResponse)
@@ -127,7 +126,6 @@ def test_delete_folder(test_folder, mock_box_session, recursive, etag, if_match_
 
 @pytest.mark.parametrize('limit,offset,fields', [(1, 0, None), (100, 0, ['foo', 'bar']), (1, 1, None)])
 def test_get_items(test_folder, mock_box_session, mock_items_response, limit, offset, fields):
-    # pylint:disable=redefined-outer-name
     expected_url = test_folder.get_url('items')
     mock_box_session.get.return_value, expected_items = mock_items_response(limit, offset)
     items = test_folder.get_items(limit, offset, fields)
@@ -152,6 +150,7 @@ def test_upload(
         mock_new_upload_accelerator_url,
         upload_using_accelerator_fails,
         is_stream,
+        async,
 ):
     expected_url = '{0}/files/content'.format(API.UPLOAD_URL)
     if upload_using_accelerator:
@@ -182,6 +181,8 @@ def test_upload(
     mock_files = {'file': ('unused', mock_file_stream)}
     data = {'attributes': json.dumps({'name': basename(mock_file_path), 'parent': {'id': mock_object_id}})}
     mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=False, files=mock_files, data=data)
+    if async:
+        new_file = new_file.get()
     assert isinstance(new_file, File)
     assert new_file.object_id == mock_upload_response.json()['entries'][0]['id']
 
@@ -192,6 +193,8 @@ def test_upload_stream_does_preflight_check_if_specified(
         preflight_check,
         preflight_fails,
         file_size,
+        async,
+        mock_upload_response,
 ):
     with patch.object(Folder, 'preflight_check', return_value=None):
         kwargs = {'file_stream': BytesIO(b'some bytes'), 'file_name': 'foo.txt'}
@@ -204,6 +207,9 @@ def test_upload_stream_does_preflight_check_if_specified(
             with pytest.raises(BoxAPIException):
                 test_folder.upload_stream(**kwargs)
         else:
+            if not async:
+                test_folder.preflight_check.return_value = Promise.fulfilled(None)
+            mock_box_session.post.return_value = Promise.fulfilled(mock_upload_response)
             test_folder.upload_stream(**kwargs)
 
         if preflight_check:
@@ -228,6 +234,8 @@ def test_upload_does_preflight_check_if_specified(
         preflight_check,
         preflight_fails,
         file_size,
+        async,
+        mock_upload_response,
 ):
     with patch.object(Folder, 'preflight_check', return_value=None):
         kwargs = {'file_path': mock_file_path, 'file_name': 'foo.txt'}
@@ -240,6 +248,9 @@ def test_upload_does_preflight_check_if_specified(
             with pytest.raises(BoxAPIException):
                 test_folder.upload(**kwargs)
         else:
+            if not async:
+                test_folder.preflight_check.return_value = Promise.fulfilled(None)
+            mock_box_session.post.return_value = Promise.fulfilled(mock_upload_response)
             test_folder.upload(**kwargs)
 
         if preflight_check:

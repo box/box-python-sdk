@@ -37,6 +37,17 @@ class BaseEndpoint(object):
         url.extend(['/{0}'.format(x) for x in args])
         return ''.join(url)
 
+    def _get_kwargs_for_clone(self):
+        """
+        Returns a dictionary of arguments that can be passed to the constructor to create a clone of this object.
+
+        :return:
+            A dictionary that can be used as arguments when passed to this class's constructor.
+        :rtype:
+            {`unicode`: `unicode`}
+        """
+        return dict(session=self._session)
+
     def as_user(self, user):
         """
         Returns a new endpoint object with default headers set up to make requests as the specified user.
@@ -46,7 +57,9 @@ class BaseEndpoint(object):
         :type user:
             :class:`User`
         """
-        return self.__class__(self._session.as_user(user))
+        kwargs = self._get_kwargs_for_clone()
+        kwargs.update(session=self._session.as_user(user))
+        return self.__class__(**kwargs)
 
     def with_shared_link(self, shared_link, shared_link_password):
         """
@@ -61,4 +74,14 @@ class BaseEndpoint(object):
         :type shared_link_password:
             `unicode`
         """
-        return self.__class__(self._session.with_shared_link(shared_link, shared_link_password))
+        kwargs = self._get_kwargs_for_clone()
+        kwargs.update(session=self._session.with_shared_link(shared_link, shared_link_password))
+        return self.__class__(**kwargs)
+
+    def async(self):
+        """
+        Returns a new endpoint object in non-blocking mode.
+        """
+        kwargs = self._get_kwargs_for_clone()
+        kwargs.update(session=self._session.async())
+        return self.__class__(**kwargs)

@@ -29,6 +29,10 @@ class Network(object):
             The OAuth2 access token used to authorize the request.
         :type access_token:
             `unicode`
+        :return:
+            Promise that will resolve to a :class:`NetworkResponse`
+        :rtype:
+            :class:`Promise`
         """
         raise NotImplementedError  # pragma: no cover
 
@@ -45,6 +49,10 @@ class Network(object):
             A callable that will execute the request.
         :type request_method:
             `callable`
+        :return:
+            Promise that will resolve to a :class:`NetworkResponse`
+        :rtype:
+            :class:`Promise`
         """
         raise NotImplementedError  # pragma: no cover
 

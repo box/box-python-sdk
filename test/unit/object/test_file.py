@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from aplus import Promise
 import json
 from mock import mock_open, patch
 import pytest
@@ -11,7 +12,6 @@ from boxsdk.object.file import File
 
 
 # pylint:disable=protected-access
-# pylint:disable=redefined-outer-name
 
 @pytest.fixture()
 def mock_accelerator_upload_url_for_update():
@@ -72,6 +72,7 @@ def test_update_contents(
         upload_using_accelerator_fails,
         if_match_header,
         is_stream,
+        async,
 ):
     expected_url = test_file.get_url('content').replace(API.BASE_API_URL, API.UPLOAD_URL)
     if upload_using_accelerator:
@@ -107,6 +108,8 @@ def test_update_contents(
         files=mock_files,
         headers=if_match_header,
     )
+    if async:
+        new_file = new_file.get()
     assert isinstance(new_file, File)
     assert new_file.object_id == mock_upload_response.json()['entries'][0]['id']
 
@@ -117,6 +120,8 @@ def test_update_contents_with_stream_does_preflight_check_if_specified(
         file_size,
         preflight_fails,
         mock_box_session,
+        async,
+        mock_upload_response,
 ):
     with patch.object(File, 'preflight_check', return_value=None):
         kwargs = {'file_stream': BytesIO(b'some bytes')}
@@ -128,6 +133,9 @@ def test_update_contents_with_stream_does_preflight_check_if_specified(
             with pytest.raises(BoxAPIException):
                 test_file.update_contents_with_stream(**kwargs)
         else:
+            if not async:
+                test_file.preflight_check.return_value = Promise.fulfilled(None)
+            mock_box_session.post.return_value = Promise.fulfilled(mock_upload_response)
             test_file.update_contents_with_stream(**kwargs)
 
         if preflight_check:
@@ -148,6 +156,8 @@ def test_update_contents_does_preflight_check_if_specified(
         file_size,
         preflight_fails,
         mock_box_session,
+        async,
+        mock_upload_response,
 ):
     with patch.object(File, 'preflight_check', return_value=None):
         kwargs = {'file_path': mock_file_path}
@@ -159,6 +169,9 @@ def test_update_contents_does_preflight_check_if_specified(
             with pytest.raises(BoxAPIException):
                 test_file.update_contents(**kwargs)
         else:
+            if not async:
+                test_file.preflight_check.return_value = Promise.fulfilled(None)
+            mock_box_session.post.return_value = Promise.fulfilled(mock_upload_response)
             test_file.update_contents(**kwargs)
 
         if preflight_check:

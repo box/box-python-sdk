@@ -16,7 +16,7 @@ from six.moves import zip
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.client import Client
 from boxsdk.config import API
-from boxsdk.network.default_network import DefaultNetworkResponse
+from boxsdk.network.default_network_response import DefaultNetworkResponse
 from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
@@ -56,7 +56,6 @@ def folder_id():
 
 @pytest.fixture(scope='module')
 def users_response(user_id_1, user_id_2):
-    # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {'entries': [
         {'type': 'user', 'id': user_id_1}, {'type': 'user', 'id': user_id_2}
@@ -66,7 +65,6 @@ def users_response(user_id_1, user_id_2):
 
 @pytest.fixture(scope='module')
 def user_response(user_id_1):
-    # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {'type': 'user', 'id': user_id_1}
     return mock_network_response
@@ -84,7 +82,6 @@ def group_id_2():
 
 @pytest.fixture(scope='module')
 def groups_response(group_id_1, group_id_2):
-    # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {'entries': [
         {'type': 'group', 'id': group_id_1, 'name': text_type(group_id_1)},
@@ -95,7 +92,6 @@ def groups_response(group_id_1, group_id_2):
 
 @pytest.fixture(scope='module')
 def create_group_response():
-    # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'type': 'group',
@@ -107,7 +103,6 @@ def create_group_response():
 
 @pytest.fixture(scope='module')
 def create_user_response():
-    # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'type': 'user',
@@ -119,7 +114,6 @@ def create_user_response():
 
 @pytest.fixture(scope='module', params=('file', 'folder'))
 def shared_item_response(request):
-    # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'type': request.param,
@@ -131,7 +125,6 @@ def shared_item_response(request):
 
 @pytest.fixture(scope='module')
 def search_response(file_id, folder_id):
-    # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {'entries': [
         {'type': 'file', 'id': file_id}, {'type': 'folder', 'id': folder_id}
@@ -148,7 +141,6 @@ def search_response(file_id, folder_id):
 ])
 def test_factory_returns_the_correct_object(mock_client, test_class, factory_method_name):
     """ Tests the various id-only factory methods in the Client class """
-    # pylint:disable=redefined-outer-name
     fake_id = 'fake_id'
 
     factory_method = getattr(mock_client, factory_method_name)
@@ -160,7 +152,6 @@ def test_factory_returns_the_correct_object(mock_client, test_class, factory_met
 
 
 def test_users_return_the_correct_user_objects(mock_client, mock_box_session, users_response, user_id_1, user_id_2):
-    # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = users_response
     users = mock_client.users()
     assert users[0].object_id == user_id_1
@@ -174,7 +165,6 @@ def test_search_instantiates_search_and_calls_search(
         file_id,
         folder_id,
 ):
-    # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = search_response
     search_term = 'lolcatz'
     search_result = mock_client.search(
@@ -189,7 +179,6 @@ def test_search_instantiates_search_and_calls_search(
 
 
 def test_events_returns_event_object(mock_client):
-    # pylint:disable=redefined-outer-name
     assert isinstance(mock_client.events(), Events)
 
 
@@ -200,7 +189,6 @@ def test_groups_return_the_correct_group_objects(
         group_id_1,
         group_id_2,
 ):
-    # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = groups_response
     groups = mock_client.groups()
     for group, expected_id in zip(groups, [group_id_1, group_id_2]):
@@ -211,7 +199,6 @@ def test_groups_return_the_correct_group_objects(
 
 
 def test_create_group_returns_the_correct_group_object(mock_client, mock_box_session, create_group_response):
-    # pylint:disable=redefined-outer-name
     test_group_name = 'test_group_name'
     value = json.dumps({'name': test_group_name})
     mock_box_session.post.return_value = create_group_response
@@ -228,7 +215,6 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
 
 @pytest.mark.parametrize('password', (None, 'p4ssw0rd'))
 def test_get_shared_item_returns_the_correct_item(mock_client, mock_box_session, shared_item_response, password):
-    # pylint:disable=redefined-outer-name
     shared_link = 'https://cloud.box.com/s/661wcw2iz6q5r7v5xxkm'
     mock_box_session.request.return_value = shared_item_response
     item = mock_client.get_shared_item(shared_link, password)
@@ -252,13 +238,11 @@ def test_get_shared_item_returns_the_correct_item(mock_client, mock_box_session,
     'options',
 ])
 def test_make_request_passes_request_on_to_session(mock_client, mock_box_session, test_method):
-    # pylint:disable=redefined-outer-name
     mock_client.make_request(test_method, 'url')
     assert mock_box_session.request.call_args[0] == (test_method, 'url')
 
 
 def test_create_app_user_returns_the_correct_user_object(mock_client, mock_box_session, create_user_response):
-    # pylint:disable=redefined-outer-name
     test_user_name = 'Ned Stark'
     value = json.dumps({'name': test_user_name, 'is_platform_access_only': True})
     mock_box_session.post.return_value = create_user_response
@@ -274,7 +258,6 @@ def test_create_app_user_returns_the_correct_user_object(mock_client, mock_box_s
 
 
 def test_create_enterprise_user_returns_the_correct_user_object(mock_client, mock_box_session, create_user_response):
-    # pylint:disable=redefined-outer-name
     test_user_name = 'Ned Stark'
     test_user_login = 'eddard@box.com'
     value = json.dumps({'name': test_user_name, 'login': test_user_login})

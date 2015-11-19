@@ -64,7 +64,7 @@ class BoxSession(object):
     Box API session. Provides auth, automatic retry of failed requests, and session renewal.
     """
 
-    def __init__(self, oauth, network_layer, default_headers=None):
+    def __init__(self, oauth, network_layer, default_headers=None, async=False):
         """
         :param oauth:
             OAuth2 object used by the session to authorize requests.
@@ -78,10 +78,15 @@ class BoxSession(object):
             A dictionary containing default values to be used as headers when this session makes an API request.
         :type default_headers:
             `dict` or None
+        :param async:
+            Whether or not this session should be async, or non-blocking.
+        :type async:
+            `bool`
         """
         self._oauth = oauth
         self._network_layer = network_layer
         self._default_headers = default_headers or {}
+        self._async = async
 
     def as_user(self, user):
         """
@@ -112,6 +117,18 @@ class BoxSession(object):
         headers = self._default_headers.copy()
         headers.update(get_shared_link_header(shared_link, shared_link_password))
         return self.__class__(self._oauth, self._network_layer, headers)
+
+    def async(self):
+        """
+        Returns a new session object with the async flag set to True.
+        The async session will not wait for network response promises to be fulfilled before returning.
+        This turns the session to non-blocking mode.
+        """
+        return self.__class__(self._oauth, self._network_layer, self._default_headers, async=True)
+
+    @property
+    def is_async(self):
+        return self._async
 
     def _renew_session(self, access_token_used):
         """
@@ -222,6 +239,7 @@ class BoxSession(object):
                 url=url,
                 method=method,
             )
+        return network_response
 
     def _prepare_and_send_request(
             self,
@@ -337,15 +355,13 @@ class BoxSession(object):
             headers['Content-Type'] = multipart_stream.content_type
 
         # send the request
-        network_response = self._network_layer.request(
+        return self._network_layer.request(
             method,
             url,
             access_token=access_token_will_be_used,
             headers=headers,
             **request_kwargs
-        )
-
-        network_response = self._retry_request_if_necessary(
+        ).then(lambda network_response: self._retry_request_if_necessary(
             network_response,
             attempt_number,
             method,
@@ -355,11 +371,12 @@ class BoxSession(object):
             expect_json_response=expect_json_response,
             file_stream_positions=file_stream_positions,
             **kwargs
-        )
-
-        self._raise_on_unsuccessful_request(network_response, expect_json_response, method, url)
-
-        return network_response
+        )).then(lambda network_response: self._raise_on_unsuccessful_request(
+            network_response,
+            expect_json_response,
+            method,
+            url,
+        )).then(BoxResponse)
 
     def get(self, url, **kwargs):
         """Make a GET request to the Box API.
@@ -369,8 +386,7 @@ class BoxSession(object):
         :type url:
             `unicode`
         """
-        response = self._prepare_and_send_request('GET', url, **kwargs)
-        return BoxResponse(response)
+        return self.request('GET', url, **kwargs)
 
     def post(self, url, **kwargs):
         """Make a POST request to the Box API.
@@ -380,8 +396,7 @@ class BoxSession(object):
         :type url:
             `unicode`
         """
-        response = self._prepare_and_send_request('POST', url, **kwargs)
-        return BoxResponse(response)
+        return self.request('POST', url, **kwargs)
 
     def put(self, url, **kwargs):
         """Make a PUT request to the Box API.
@@ -391,8 +406,7 @@ class BoxSession(object):
         :type url:
             `unicode`
         """
-        response = self._prepare_and_send_request('PUT', url, **kwargs)
-        return BoxResponse(response)
+        return self.request('PUT', url, **kwargs)
 
     def delete(self, url, **kwargs):
         """Make a DELETE request to the Box API.
@@ -404,8 +418,7 @@ class BoxSession(object):
         """
         if 'expect_json_response' not in kwargs:
             kwargs['expect_json_response'] = False
-        response = self._prepare_and_send_request('DELETE', url, **kwargs)
-        return BoxResponse(response)
+        return self.request('DELETE', url, **kwargs)
 
     def options(self, url, **kwargs):
         """Make an OPTIONS request to the Box API.
@@ -415,8 +428,7 @@ class BoxSession(object):
         :type url:
             `unicode`
         """
-        response = self._prepare_and_send_request('OPTIONS', url, **kwargs)
-        return BoxResponse(response)
+        return self.request('OPTIONS', url, **kwargs)
 
     def request(self, method, url, **kwargs):
         """Make a request to the Box API.
@@ -430,5 +442,7 @@ class BoxSession(object):
         :type url:
             `unicode`
         """
-        response = self._prepare_and_send_request(method, url, **kwargs)
-        return BoxResponse(response)
+        response_promise = self._prepare_and_send_request(method, url, **kwargs)
+        if not self._async:
+            response_promise.wait()
+        return response_promise

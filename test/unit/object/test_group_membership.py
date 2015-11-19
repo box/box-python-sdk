@@ -23,7 +23,6 @@ def test_group_membership_initialization(
         mock_group_membership_dict_or_none,
         mock_user_and_group_or_none,
 ):
-    # pylint:disable=redefined-outer-name
     fake_id = "fake_membership_id"
     response_object = mock_group_membership_dict_or_none
 

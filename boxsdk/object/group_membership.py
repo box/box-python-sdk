@@ -75,22 +75,8 @@ class GroupMembership(BaseObject):
 
         return user, group
 
-    def as_user(self, user):
+    def _get_kwargs_for_clone(self):
         """ Base class override. """
-        return self.__class__(
-            self._session.as_user(user),
-            self._object_id,
-            self._response_object,
-            self.user,
-            self.group,
-        )
-
-    def with_shared_link(self, shared_link, shared_link_password):
-        """ Base class override. """
-        return self.__class__(
-            self._session.with_shared_link(shared_link, shared_link_password),
-            self._object_id,
-            self._response_object,
-            self.user,
-            self.group,
-        )
+        kwargs = super(GroupMembership, self)._get_kwargs_for_clone()
+        kwargs.update(user=self.user, group=self.group)
+        return kwargs
