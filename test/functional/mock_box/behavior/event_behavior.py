@@ -3,9 +3,10 @@
 from __future__ import division, unicode_literals
 
 from datetime import datetime, timedelta
+from threading import Event
+
 from bottle import request
 from sqlalchemy import event
-from threading import Event
 
 from test.functional.mock_box.db_model.event_model import EventModel
 from test.functional.mock_box.db_model.file_model import FileModel

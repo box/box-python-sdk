@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 import re
+
 from mock import patch
 import pytest
 import requests
