@@ -1,11 +1,14 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from bottle import request, redirect
+
 from datetime import datetime, timedelta
 import json
-from sqlalchemy.orm.exc import NoResultFound
 from uuid import uuid4
+
+from bottle import request, redirect
+from sqlalchemy.orm.exc import NoResultFound
+
 from test.functional.mock_box.db_model.application_model import ApplicationModel
 from test.functional.mock_box.db_model.token_model import TokenModel
 from test.functional.mock_box.db_model.user_model import UserModel
