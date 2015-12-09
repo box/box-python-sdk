@@ -1,9 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
+from threading import Event, Thread
 import pytest
 import requests
-from threading import Event, Thread
+
 from boxsdk.object.folder import FolderSyncState
 
 

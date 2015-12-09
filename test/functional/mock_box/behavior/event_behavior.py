@@ -1,10 +1,12 @@
 # coding: utf-8
 
 from __future__ import division, unicode_literals
-from bottle import request
+
 from datetime import datetime, timedelta
+from bottle import request
 from sqlalchemy import event
 from threading import Event
+
 from test.functional.mock_box.db_model.event_model import EventModel
 from test.functional.mock_box.db_model.file_model import FileModel
 from test.functional.mock_box.db_model.folder_model import FolderModel

@@ -92,7 +92,7 @@ class OAuth2(object):
 
     def get_authorization_url(self, redirect_url):
         """
-        Get the authorization url based on the client id and the redirect url, passed in
+        Get the authorization url based on the client id and the redirect url passed in
 
         :param redirect_url:
             An HTTPS URI or custom URL scheme where the response will be redirected. Optional if the redirect URI is
@@ -100,7 +100,7 @@ class OAuth2(object):
         :type redirect_url:
             `unicode` or None
         :return:
-            A tuple of the URL of Box’s authorization page and the CSRF token.
+            A tuple of the URL of Box's authorization page and the CSRF token.
             This is the URL that your application should forward the user to in first leg of OAuth 2.
         :rtype:
             (`unicode`, `unicode`)
