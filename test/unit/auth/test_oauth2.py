@@ -1,13 +1,14 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from aplus import Promise
+
 from functools import partial
-from mock import Mock
-import pytest
 import re
 from threading import Thread
 
+from aplus import Promise
+from mock import Mock
+import pytest
 from six.moves.urllib import parse as urlparse  # pylint:disable=import-error,no-name-in-module
 
 from boxsdk.exception import BoxOAuthException

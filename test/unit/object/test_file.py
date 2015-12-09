@@ -1,11 +1,14 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from aplus import Promise
+
 import json
+
+from aplus import Promise
 from mock import mock_open, patch
 import pytest
 from six import BytesIO
+
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.object.file import File

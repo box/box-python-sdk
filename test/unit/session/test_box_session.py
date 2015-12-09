@@ -2,11 +2,12 @@
 
 from __future__ import unicode_literals
 
-from aplus import Promise
 from functools import partial
 from io import IOBase
-from mock import MagicMock, Mock, call
 from numbers import Number
+
+from aplus import Promise
+from mock import MagicMock, Mock, call
 import pytest
 
 from boxsdk.auth.oauth2 import OAuth2

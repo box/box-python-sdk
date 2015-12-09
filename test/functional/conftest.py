@@ -1,12 +1,15 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
+import re
+
 from mock import patch
 import pytest
-import re
 import requests
 import six
 from six.moves.urllib import parse  # pylint:disable=import-error, no-name-in-module
+
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.config import API
 from boxsdk.client import Client

@@ -1,8 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-import pytest
+
 import json
+
+import pytest
+
 from boxsdk.object.file import File
 from boxsdk.object.search import MetadataSearchFilters, MetadataSearchFilter
 

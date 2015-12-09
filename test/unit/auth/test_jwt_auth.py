@@ -1,15 +1,18 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from aplus import Promise
+
 from contextlib import contextmanager
-from cryptography.hazmat.backends import default_backend
 from datetime import datetime, timedelta
 import json
-from mock import Mock, mock_open, patch, sentinel
-import pytest
 import random
 import string
+
+from aplus import Promise
+from cryptography.hazmat.backends import default_backend
+from mock import Mock, mock_open, patch, sentinel
+import pytest
+
 from boxsdk.auth.jwt_auth import JWTAuth
 from boxsdk.config import API
 from boxsdk.object.user import User

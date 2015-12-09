@@ -16,6 +16,14 @@ def test_logging_network_calls_setup_logging_if_logger_is_none():
         assert network.logger is setup_logging.return_value
 
 
+def test_logging_network_can_be_initialized_if_logger_is_none():
+    with patch('logging.getLogger') as get_logger:
+        get_logger.return_value = Mock(Logger)
+        network = LoggingNetwork()
+        assert network.logger is get_logger.return_value
+        get_logger.assert_called_once_with(LoggingNetwork.LOGGER_NAME)
+
+
 def test_logging_network_does_not_call_setup_logging_if_logger_is_not_none():
     logger = Mock(Logger)
     with patch.object(logging_network, 'setup_logging') as setup_logging:

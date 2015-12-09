@@ -1,9 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
 from bottle import request, response
 from sqlalchemy.orm import make_transient
 from sqlalchemy.orm.exc import NoResultFound
+
 from boxsdk.object.folder import FolderSyncState
 from test.functional.mock_box.behavior.item_behavior import ItemBehavior
 from test.functional.mock_box.db_model.event_model import EventModel

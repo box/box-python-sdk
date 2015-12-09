@@ -1,8 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, absolute_import
-from aplus import spawn
+
 from functools import partial
+
+from aplus import spawn
+
 from .default_network_sync import DefaultNetworkSync
 from .network_interface import Network
 

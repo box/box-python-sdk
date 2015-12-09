@@ -1,10 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
 from itertools import chain, islice, repeat, count
 import json
-from mock import Mock
 from operator import sub
+
+from mock import Mock
 import pytest
 from six.moves import map  # pylint:disable=redefined-builtin,import-error
 

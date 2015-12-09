@@ -2,8 +2,9 @@
 
 from __future__ import unicode_literals
 
-import requests
 import time
+
+import requests
 
 from .default_network_response import DefaultNetworkResponse
 from .network_interface import Network

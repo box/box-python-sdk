@@ -1,12 +1,15 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
+
 from datetime import datetime, timedelta
-import jwt
 import random
 import string
+
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+import jwt
+
 from .oauth2 import OAuth2
 from boxsdk.util.compat import total_seconds
 

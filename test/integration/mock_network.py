@@ -1,9 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from aplus import Promise
+
 from six.moves.queue import Queue  # pylint:disable=import-error,no-name-in-module
 from threading import Thread
+
+from aplus import Promise
+
 from boxsdk.network.default_network_response import DefaultNetworkResponse
 from boxsdk.network.network_interface import Network
 

@@ -1,8 +1,10 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, absolute_import
-from aplus import Promise
+
 from functools import update_wrapper
+
+from aplus import Promise
 
 
 def api_response(func):

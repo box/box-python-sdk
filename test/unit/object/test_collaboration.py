@@ -1,9 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from boxsdk.object.collaboration import CollaborationRole, CollaborationStatus
+
 import json
+
 import pytest
+
+from boxsdk.object.collaboration import CollaborationRole, CollaborationStatus
 
 
 @pytest.mark.parametrize('data', [
