@@ -44,20 +44,27 @@ class File(Item):
         """
         return self._get_accelerator_upload_url(file_id=self._object_id)
 
-    def content(self):
+    def content(self, byte_range=None):
         """
         Get the content of a file on Box.
 
+        :param byte_range:
+            A list of two ints. These are the range value in bytes.
+        :type byte_range:
+            `[int, int]`
         :returns:
             File content as bytes.
         :rtype:
             `bytes`
         """
+        headers = None
+        if byte_range and len(byte_range) > 1:
+            headers = {'Range': 'bytes=%d-%d' % (byte_range[0], byte_range[1])}
         url = self.get_url('content')
-        box_response = self._session.get(url, expect_json_response=False)
+        box_response = self._session.get(url, expect_json_response=False, headers=headers)
         return box_response.content
 
-    def download_to(self, writeable_stream):
+    def download_to(self, writeable_stream, byte_range=None):
         """
         Download the file; write it to the given stream.
 
@@ -65,9 +72,16 @@ class File(Item):
             A file-like object where bytes can be written into.
         :type writeable_stream:
             `file`
+        :param byte_range:
+            A list of two ints. These are the range value in bytes.
+        :type byte_range:
+            `[int, int]`
         """
+        headers = None
+        if byte_range and len(byte_range) > 1:
+            headers = {'Range': 'bytes=%d-%d' % (byte_range[0], byte_range[1])}
         url = self.get_url('content')
-        box_response = self._session.get(url, expect_json_response=False, stream=True)
+        box_response = self._session.get(url, expect_json_response=False, stream=True, headers=headers)
         for chunk in box_response.network_response.response_as_stream.stream(decode_content=True):
             writeable_stream.write(chunk)
 
