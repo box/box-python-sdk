@@ -31,9 +31,8 @@ def setup_logging(stream_or_file=None, debug=False, name=None):
     """
     logger = logging.getLogger(name)
     if isinstance(stream_or_file, string_types):
-        handler = logging.FileHandler(stream_or_file, mode='w')
+        logger.addHandler(logging.FileHandler(stream_or_file, mode='w'))
     else:
-        handler = logging.StreamHandler(stream_or_file or sys.stdout)
-    logger.addHandler(handler)
+        logger.addHandler(logging.StreamHandler(stream_or_file or sys.stdout))
     logger.setLevel(logging.DEBUG if debug else logging.INFO)
     return logger

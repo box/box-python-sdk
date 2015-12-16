@@ -1,9 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from bottle import response, request
+
 from hashlib import sha1
+
+from bottle import response, request
 from sqlalchemy.orm import make_transient
+
 from test.functional.mock_box.behavior.item_behavior import ItemBehavior
 from test.functional.mock_box.db_model.event_model import EventModel
 from test.functional.mock_box.db_model.file_model import FileModel

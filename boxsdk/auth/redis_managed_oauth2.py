@@ -1,9 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
+from uuid import uuid4
+
 from redis import StrictRedis
 from redis.lock import Lock
-from uuid import uuid4
+
 from boxsdk import JWTAuth, OAuth2
 
 

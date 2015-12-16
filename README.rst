@@ -63,8 +63,8 @@ Authenticate (get access/refresh token)
 
 If you navigate the user to the auth_url, the user will eventually get
 redirected to http://YOUR_REDIRECT_URL?code=YOUR_AUTH_CODE.  After
-getting the code, you will be able to use the code to exchange for
-access token and fresh token.
+getting the code, you will be able to use the code to exchange for an
+access token and refresh token.
 
 The SDK handles all the work for you; all you need to do is run:
 

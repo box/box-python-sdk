@@ -4,8 +4,9 @@ from __future__ import unicode_literals
 
 from functools import partial
 from io import IOBase
-from mock import MagicMock, Mock, call
 from numbers import Number
+
+from mock import MagicMock, Mock, call
 import pytest
 
 from boxsdk.auth.oauth2 import OAuth2
