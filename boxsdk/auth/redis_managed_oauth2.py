@@ -7,7 +7,8 @@ from uuid import uuid4
 from redis import StrictRedis
 from redis.lock import Lock
 
-from boxsdk import JWTAuth, OAuth2
+from .jwt_auth import JWTAuth
+from .oauth2 import OAuth2
 
 
 class RedisManagedOAuth2Mixin(OAuth2):

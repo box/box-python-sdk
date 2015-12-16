@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 import json
 
+from .auth import DeveloperTokenAuth
 from .config import API
 from .session.box_session import BoxSession
 from .network.default_network import DefaultNetwork
@@ -329,3 +330,8 @@ class Client(object):
             self._network,
             self._session.with_shared_link(shared_link, shared_link_password),
         )
+
+
+class DeveloperTokenClient(Client):
+    def __init__(self, oauth=None, network_layer=None, session=None):
+        super(DeveloperTokenClient, self).__init__(oauth or DeveloperTokenAuth(), network_layer, session)
