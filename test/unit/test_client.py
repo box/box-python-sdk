@@ -159,10 +159,40 @@ def test_factory_returns_the_correct_object(mock_client, test_class, factory_met
     assert obj.object_id == fake_id
 
 
-def test_users_return_the_correct_user_objects(mock_client, mock_box_session, users_response, user_id_1, user_id_2):
+@pytest.fixture(scope='module', params=(None, 'user1'))
+def users_filter_term(request):
+    return request.param
+
+
+@pytest.fixture(scope='module', params=(0, 10))
+def users_offset(request):
+    return request.param
+
+
+@pytest.fixture(scope='module', params=(0, 10))
+def users_limit(request):
+    return request.param
+
+
+def test_users_return_the_correct_user_objects(
+        mock_client,
+        mock_box_session,
+        users_response,
+        user_id_1,
+        user_id_2,
+        users_filter_term,
+        users_offset,
+        users_limit,
+):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = users_response
-    users = mock_client.users()
+    users = mock_client.users(users_limit, users_offset, users_filter_term)
+    expected_params = {'offset': users_offset}
+    if users_limit is not None:
+        expected_params['limit'] = users_limit
+    if users_filter_term is not None:
+        expected_params['filter_term'] = users_filter_term
+    mock_box_session.get.assert_called_once_with('{0}/users'.format(API.BASE_API_URL), params=expected_params)
     assert users[0].object_id == user_id_1
     assert users[1].object_id == user_id_2
 

@@ -6,7 +6,17 @@ Release History
 Upcoming
 ++++++++
 
-1.3.2
+1.3.3 (2015-12-22)
+++++++++++++++++++
+
+- Added a new class, ``DeveloperTokenClient`` that makes it easy to get started using the SDK with a Box developer
+  token. It uses another new class, ``DeveloperTokenAuth`` for auth.
+
+**Bugfixes**
+
+- Added limit, offset, and filter_term parameters to ``client.users()`` to match up with the Box API.
+
+1.3.2 (2015-11-16)
 ++++++++++++++++++
 
 - Fix ``boxsdk.util.log.setup_logging()`` on Python 3.
