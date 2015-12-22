@@ -154,6 +154,33 @@ class Folder(Item):
         response = box_response.json()
         return [Translator().translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
 
+    def get_items_iterator(self, batch_size=100, fields=None):
+        """Returns an iterator over the folder items. This is equivalent of iterating over the folder pages manually
+
+        :param batch_size:
+            Number of items in each request.
+        :type batch_size:
+            `int`
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            A generator of items in the folder.
+        :rtype:
+            `generator` of :class:`Item`
+        """
+        total_count = self.get().item_collection.get('total_count')
+        items = self.get_items(batch_size, fields=fields)
+        offset = 0
+        while items:
+            for item in items:
+                yield item
+            if offset + len(items) >= total_count:
+                break
+            offset += batch_size
+            items = self.get_items(batch_size, offset)
+
     def upload_stream(
             self,
             file_stream,
