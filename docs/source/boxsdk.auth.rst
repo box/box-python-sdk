@@ -12,6 +12,14 @@ boxsdk.auth.cooperatively_managed_oauth2 module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.auth.developer_token_auth module
+---------------------------------------
+
+.. automodule:: boxsdk.auth.developer_token_auth
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.auth.jwt_auth module
 ---------------------------
 

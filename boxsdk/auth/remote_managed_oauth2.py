@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from boxsdk import OAuth2
+from .oauth2 import OAuth2
 
 
 class RemoteOAuth2Mixin(OAuth2):
