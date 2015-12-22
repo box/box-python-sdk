@@ -6,6 +6,13 @@ Release History
 Upcoming
 ++++++++
 
+- Added a new class, ``DeveloperTokenClient`` that makes it easy to get started using the SDK with a Box developer
+  token. It uses another new class, ``DeveloperTokenAuth`` for auth.
+
+**Bugfixes**
+
+- Added limit, offset, and filter_term parameters to ``client.users()`` to match up with the Box API.
+
 1.3.2
 ++++++++++++++++++
 
