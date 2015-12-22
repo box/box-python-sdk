@@ -61,7 +61,7 @@ def main():
         install_requires.append('ordereddict>=1.1')
     setup(
         name='boxsdk',
-        version='1.3.2',
+        version='1.3.3',
         description='Official Box Python SDK',
         long_description=open(join(base_dir, 'README.rst')).read(),
         author='Box',
@@ -69,7 +69,7 @@ def main():
         url='http://opensource.box.com',
         packages=find_packages(exclude=['demo', 'docs', 'test']),
         install_requires=install_requires,
-        extras_require={'jwt': jwt_requires, 'redis': redis_requires},
+        extras_require={'jwt': jwt_requires, 'redis': redis_requires, 'all': jwt_requires + redis_requires},
         tests_require=['pytest', 'pytest-xdist', 'mock', 'sqlalchemy', 'bottle', 'jsonpatch'],
         cmdclass={'test': PyTest},
         classifiers=CLASSIFIERS,
