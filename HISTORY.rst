@@ -6,6 +6,15 @@ Release History
 Upcoming
 ++++++++
 
+1.3.3 (2016-01-04)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fixed import error for installations that don't have redis installed.
+- Fixed use of ``raw_input`` in the developer token auth for py3 compatibility.
+
+
 1.3.3 (2015-12-22)
 ++++++++++++++++++
 

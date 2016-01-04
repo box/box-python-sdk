@@ -7,7 +7,6 @@ from uuid import uuid4
 from redis import StrictRedis
 from redis.lock import Lock
 
-from .jwt_auth import JWTAuth
 from .oauth2 import OAuth2
 
 
@@ -69,14 +68,3 @@ class RedisManagedOAuth2(RedisManagedOAuth2Mixin):
     OAuth2 subclass which uses Redis to manage tokens.
     """
     pass
-
-
-class RedisManagedJWTAuth(RedisManagedOAuth2Mixin, JWTAuth):
-    """
-    JWT Auth subclass which uses Redis to manage access tokens.
-    """
-    def _auth_with_jwt(self, sub, sub_type):
-        """
-        Base class override. Returns the access token in a tuple to match the OAuth2 interface.
-        """
-        return super(RedisManagedJWTAuth, self)._auth_with_jwt(sub, sub_type), None

@@ -2,6 +2,8 @@
 
 from __future__ import unicode_literals, absolute_import
 
+from six.moves import input  # pylint:disable=redefined-builtin
+
 from .oauth2 import OAuth2
 
 
@@ -21,7 +23,7 @@ class DeveloperTokenAuth(OAuth2):
         if self._get_new_token is not None:
             return self._get_new_token()
         else:
-            return raw_input(self.ENTER_TOKEN_PROMPT)
+            return input(self.ENTER_TOKEN_PROMPT)
 
     def _refresh(self, access_token):
         """
