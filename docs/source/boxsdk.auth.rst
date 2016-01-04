@@ -36,6 +36,14 @@ boxsdk.auth.oauth2 module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.auth.redis_managed_jwt_auth module
+-----------------------------------------
+
+.. automodule:: boxsdk.auth.redis_managed_jwt_auth
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.auth.redis_managed_oauth2 module
 ---------------------------------------
 
