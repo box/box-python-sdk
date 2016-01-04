@@ -19,7 +19,7 @@ def test_developer_token_auth_calls_callback_during_init_and_refresh(access_toke
 
 
 def test_developer_token_auth_uses_raw_input_by_default(access_token):
-    with patch('boxsdk.auth.developer_token_auth.raw_input', create=True) as mock_raw_input:
+    with patch('boxsdk.auth.developer_token_auth.input', create=True) as mock_raw_input:
         mock_raw_input.return_value = access_token
         auth = developer_token_auth.DeveloperTokenAuth()
         mock_raw_input.assert_called_once_with(auth.ENTER_TOKEN_PROMPT)
