@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals, absolute_import
 
-from six.moves import input
+from six.moves import input  # pylint:disable=redefined-builtin
 
 from .oauth2 import OAuth2
 
