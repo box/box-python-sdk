@@ -228,7 +228,8 @@ class File(Item):
         :type scope:
             `unicode`
         :param template:
-            The name of the metadata template. See https://developers.box.com/metadata-api/#basics for more details.
+            The name of the metadata template.
+            See https://box-content.readme.io/reference#metadata-object for more details.
         :type template:
             `unicode`
         :return:

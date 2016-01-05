@@ -39,7 +39,7 @@ class Item(BaseObject):
     def _preflight_check(self, size, name=None, file_id=None, parent_id=None):
         """
         Make an API call to check if certain file can be uploaded to Box or not.
-        (https://developers.box.com/docs/#files-preflight-check)
+        (https://box-content.readme.io/reference#preflight-check)
 
         :param size:
             The size of the file to be uploaded in bytes. Specify 0 for unknown file sizes.
