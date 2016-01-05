@@ -63,8 +63,8 @@ Authenticate (get access/refresh token)
 
 If you navigate the user to the auth_url, the user will eventually get
 redirected to http://YOUR_REDIRECT_URL?code=YOUR_AUTH_CODE.  After
-getting the code, you will be able to use the code to exchange for
-access token and fresh token.
+getting the code, you will be able to use the code to exchange for an
+access token and refresh token.
 
 The SDK handles all the work for you; all you need to do is run:
 
@@ -248,7 +248,7 @@ instead use an instance of `JWTAuth`.
     auth = JWTAuth(
         client_id='YOUR_CLIENT_ID',
         client_secret='YOUR_CLIENT_SECRET',
-        enterprise_token='YOUR_ENTERPRISE_TOKEN',
+        enterprise_id='YOUR_ENTERPRISE_ID',
         rsa_private_key_file_sys_path='CERT.PEM',
         store_tokens=your_store_tokens_callback_method,
     )
@@ -272,7 +272,7 @@ These users can then be authenticated:
     ned_auth = JWTAuth(
        client_id='YOUR_CLIENT_ID',
        client_secret='YOUR_CLIENT_SECRET',
-       enterprise_token='YOUR_ENTERPRISE_TOKEN',
+       enterprise_id='YOUR_ENTERPRISE_ID',
        rsa_private_key_file_sys_path='CERT.PEM',
        store_tokens=your_store_tokens_callback_method,
    )
@@ -282,6 +282,31 @@ These users can then be authenticated:
 Requests made with `ned_client` (or objects returned from `ned_client`'s methods)
 will be performed on behalf of the newly created app user.
 
+Other Auth Options
+------------------
+
+For advanced uses of the SDK, two additional auth classes are provided:
+
+- `CooperativelyManagedOAuth2`: Allows multiple auth instances to share tokens.
+- `RemoteOAuth2`: Allows use of the SDK on clients without access to your application's client secret. Instead, you
+  provide a `retrieve_access_token` callback. That callback should perform the token refresh, perhaps on your server
+  that does have access to the client secret.
+- `RedisManagedOAuth2`: Stores access and refresh tokens in Redis. This allows multiple processes (possibly spanning
+  multiple machines) to share access tokens while synchronizing token refresh. This could be useful for a multiprocess
+  web server, for example.
+
+Other Network Options
+---------------------
+
+For more insight into the network calls the SDK is making, you can use the `LoggingNetwork` class. This class logs
+information about network requests and responses made to the Box API.
+
+.. code-block:: python
+
+    from boxsdk import Client
+    from boxsdk.network.logging_network import LoggingNetwork
+
+    client = Client(oauth, network_layer=LoggingNetwork())
 
 Contributing
 ------------
@@ -312,7 +337,7 @@ Run all tests using -
 The tox tests include code style checks via pep8 and pylint.
 
 The tox tests are configured to run on Python 2.6, 2.7, 3.3, 3.4, 3.5, and
-PyPy 2.6.
+PyPy (our CI is configured to run PyPy tests on PyPy 4.0).
 
 
 Support

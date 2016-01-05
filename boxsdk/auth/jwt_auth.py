@@ -1,12 +1,15 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
+
 from datetime import datetime, timedelta
-import jwt
 import random
 import string
+
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+import jwt
+
 from .oauth2 import OAuth2
 from boxsdk.util.compat import total_seconds
 
@@ -98,7 +101,7 @@ class JWTAuth(OAuth2):
                 password=rsa_private_key_passphrase,
                 backend=default_backend(),
             )
-        self._enterprise_token = enterprise_id
+        self._enterprise_id = enterprise_id
         self._jwt_algorithm = jwt_algorithm
         self._jwt_key_id = jwt_key_id
         self._user_id = None
@@ -179,7 +182,7 @@ class JWTAuth(OAuth2):
         :rtype:
             `unicode`
         """
-        return self._auth_with_jwt(self._enterprise_token, 'enterprise')
+        return self._auth_with_jwt(self._enterprise_id, 'enterprise')
 
     def _refresh(self, access_token):
         """

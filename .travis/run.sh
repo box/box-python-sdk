@@ -14,7 +14,7 @@ else
         export PYENV_ROOT="$PWD/.pyenv"
         export PATH="$PYENV_ROOT/bin:$PATH"
         eval "$(pyenv init -)"
-        pyenv global pypy-2.6.0
+        pyenv global "pypy-${PYPY_VERSION}"
     fi
 fi
 source $PWD/.venv/bin/activate

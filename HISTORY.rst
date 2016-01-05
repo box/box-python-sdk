@@ -6,11 +6,46 @@ Release History
 Upcoming
 ++++++++
 
+1.3.3 (2016-01-04)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fixed import error for installations that don't have redis installed.
+- Fixed use of ``raw_input`` in the developer token auth for py3 compatibility.
+
+
+1.3.3 (2015-12-22)
+++++++++++++++++++
+
+- Added a new class, ``DeveloperTokenClient`` that makes it easy to get started using the SDK with a Box developer
+  token. It uses another new class, ``DeveloperTokenAuth`` for auth.
+
+**Bugfixes**
+
+- Added limit, offset, and filter_term parameters to ``client.users()`` to match up with the Box API.
+
+1.3.2 (2015-11-16)
+++++++++++++++++++
+
+- Fix ``boxsdk.util.log.setup_logging()`` on Python 3.
+
+1.3.1 (2015-11-06)
+++++++++++++++++++
+
+- Add requests-toolbelt to setup.py (it was accidentally missing from 1.3.0).
+
+1.3.0 (2015-11-05)
+++++++++++++++++++
+
 - CPython 3.5 support.
 - Support for cryptography>=1.0 on PyPy 2.6.
 - Travis CI testing for CPython 3.5 and PyPy 2.6.0.
+- Added a logging network class that logs requests and responses.
+- Added new options for auth classes, including storing tokens in Redis and storing them on a remote server.
+- Stream uploads of files from disk.
 
-1.2.1 (2015-07-22)
+1.2.2 (2015-07-22)
 ++++++++++++++++++
 
 - The SDK now supports setting a password when creating a shared link.
@@ -26,11 +61,11 @@ Upcoming
 ++++++++++++++++++
 
 - Added support for Box Developer Edition. This includes JWT auth (auth as enterprise or as app user),
-  and `create_user` functionality.
+  and ``create_user`` functionality.
 - Added support for setting shared link expiration dates.
 - Added support for setting shared link permissions.
 - Added support for 'As-User' requests. See https://box-content.readme.io/#as-user-1
-- Improved support for accessing shared items. Items returned from the `client.get_shared_item` method will
+- Improved support for accessing shared items. Items returned from the ``client.get_shared_item`` method will
   remember the shared link (and the optionally provided shared link password) so methods called on the returned
   items will be properly authorized.
 
@@ -65,7 +100,7 @@ Upcoming
 1.1.3 (2015-03-26)
 ++++++++++++++++++
 
-- Added support for the /shared_items endpoint. `client.get_shared_item` can be used to get information about
+- Added support for the /shared_items endpoint. ``client.get_shared_item`` can be used to get information about
   a shared link. See https://developers.box.com/docs/#shared-items
 
 1.1.2 (2015-03-20)

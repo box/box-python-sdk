@@ -28,6 +28,7 @@ class OAuth2(object):
             access_token=None,
             refresh_token=None,
             network_layer=None,
+            refresh_lock=None,
     ):
         """
         :param client_id:
@@ -62,14 +63,18 @@ class OAuth2(object):
             If specified, use it to make network requests. If not, the default network implementation will be used.
         :type network_layer:
             :class:`Network`
+        :param refresh_lock:
+            Lock used to synchronize token refresh. If not specified, then a :class:`threading.Lock` will be used.
+        :type refresh_lock:
+            Context Manager
         """
         self._client_id = client_id
         self._client_secret = client_secret
-        self._store_tokens = store_tokens
+        self._store_tokens_callback = store_tokens
         self._access_token = access_token
         self._refresh_token = refresh_token
         self._network_layer = network_layer if network_layer else DefaultNetwork()
-        self._refresh_lock = Lock()
+        self._refresh_lock = refresh_lock or Lock()
         self._box_device_id = box_device_id
         self._box_device_name = box_device_name
 
@@ -87,7 +92,7 @@ class OAuth2(object):
 
     def get_authorization_url(self, redirect_url):
         """
-        Get the authorization url based on the client id and the redirect url, passed in
+        Get the authorization url based on the client id and the redirect url passed in
 
         :param redirect_url:
             An HTTPS URI or custom URL scheme where the response will be redirected. Optional if the redirect URI is
@@ -95,7 +100,7 @@ class OAuth2(object):
         :type redirect_url:
             `unicode` or None
         :return:
-            A tuple of the URL of Box’s authorization page and the CSRF token.
+            A tuple of the URL of Box's authorization page and the CSRF token.
             This is the URL that your application should forward the user to in first leg of OAuth 2.
         :rtype:
             (`unicode`, `unicode`)
@@ -158,6 +163,17 @@ class OAuth2(object):
 
         return self.send_token_request(data, access_token)
 
+    def _get_tokens(self):
+        """
+        Get the current access and refresh tokens.
+
+        :return:
+            Tuple containing the current access token and refresh token.
+        :rtype:
+            `tuple` of (`unicode`, `unicode`)
+        """
+        return self._access_token, self._refresh_token
+
     def refresh(self, access_token_to_refresh):
         """
         Refresh the access token and the refresh token and return the access_token, refresh_token tuple. The access
@@ -169,16 +185,17 @@ class OAuth2(object):
             `unicode`
         """
         with self._refresh_lock:
+            access_token, refresh_token = self._get_tokens()
             # The lock here is for handling that case that multiple requests fail, due to access token expired, at the
             # same time to avoid multiple session renewals.
-            if access_token_to_refresh == self._access_token:
+            if access_token_to_refresh == access_token:
                 # If the active access token is the same as the token needs to be refreshed, we make the request to
                 # refresh the token.
                 return self._refresh(access_token_to_refresh)
             else:
                 # If the active access token (self._access_token) is not the same as the token needs to be refreshed,
                 # it means the expired token has already been refreshed. Simply return the current active tokens.
-                return self._access_token, self._refresh_token
+                return access_token, refresh_token
 
     @staticmethod
     def _get_state_csrf_token():
@@ -194,6 +211,10 @@ class OAuth2(object):
         ascii_alphabet = string.ascii_letters + string.digits
         ascii_len = len(ascii_alphabet)
         return 'box_csrf_token_' + ''.join(ascii_alphabet[int(system_random.random() * ascii_len)] for _ in range(16))
+
+    def _store_tokens(self, access_token, refresh_token):
+        if self._store_tokens_callback is not None:
+            self._store_tokens_callback(access_token, refresh_token)
 
     def send_token_request(self, data, access_token, expect_refresh_token=True):
         """
@@ -231,6 +252,5 @@ class OAuth2(object):
                 raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
         except (ValueError, KeyError):
             raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
-        if self._store_tokens:
-            self._store_tokens(self._access_token, self._refresh_token)
+        self._store_tokens(self._access_token, self._refresh_token)
         return self._access_token, self._refresh_token

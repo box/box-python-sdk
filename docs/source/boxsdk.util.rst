@@ -12,10 +12,26 @@ boxsdk.util.compat module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.util.log module
+----------------------
+
+.. automodule:: boxsdk.util.log
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.util.lru_cache module
 ----------------------------
 
 .. automodule:: boxsdk.util.lru_cache
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk.util.multipart_stream module
+-----------------------------------
+
+.. automodule:: boxsdk.util.multipart_stream
     :members:
     :undoc-members:
     :show-inheritance:

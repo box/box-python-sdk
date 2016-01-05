@@ -52,7 +52,8 @@ class PyTest(TestCommand):
 
 def main():
     base_dir = dirname(__file__)
-    install_requires = ['requests>=2.4.3', 'six>=1.4.0']
+    install_requires = ['requests>=2.4.3', 'six>=1.4.0', 'requests-toolbelt>=0.4.0']
+    redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=0.9.2']
     if version_info < (3, 4):
         install_requires.append('enum34>=1.0.4')
@@ -60,7 +61,7 @@ def main():
         install_requires.append('ordereddict>=1.1')
     setup(
         name='boxsdk',
-        version='1.2.2',
+        version='1.3.4',
         description='Official Box Python SDK',
         long_description=open(join(base_dir, 'README.rst')).read(),
         author='Box',
@@ -68,7 +69,7 @@ def main():
         url='http://opensource.box.com',
         packages=find_packages(exclude=['demo', 'docs', 'test']),
         install_requires=install_requires,
-        extras_require={'jwt': jwt_requires},
+        extras_require={'jwt': jwt_requires, 'redis': redis_requires, 'all': jwt_requires + redis_requires},
         tests_require=['pytest', 'pytest-xdist', 'mock', 'sqlalchemy', 'bottle', 'jsonpatch'],
         cmdclass={'test': PyTest},
         classifiers=CLASSIFIERS,

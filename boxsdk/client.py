@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 import json
 
+from .auth import DeveloperTokenAuth
 from .config import API
 from .session.box_session import BoxSession
 from .network.default_network import DefaultNetwork
@@ -99,21 +100,48 @@ class Client(object):
         """
         return Group(session=self._session, object_id=group_id)
 
-    def users(self):
+    def users(self, limit=None, offset=0, filter_term=None):
         """
         Get a list of all users for the Enterprise along with their user_id, public_name, and login.
 
+        :param limit:
+            The maximum number of users to return. If not specified, the Box API will determine an appropriate limit.
+        :type limit:
+            `int` or None
+        :param offset:
+            The user index at which to start the response.
+        :type offset:
+            `int`
+        :param filter_term:
+            Filters the results to only users starting with the filter_term in either the name or the login.
+        :type filter_term:
+            `unicode` or None
         :return:
             The list of all users in the enterprise.
         :rtype:
             `list` of :class:`User`
         """
         url = '{0}/users'.format(API.BASE_API_URL)
-        box_response = self._session.get(url)
+        params = dict(offset=offset)
+        if limit is not None:
+            params['limit'] = limit
+        if filter_term is not None:
+            params['filter_term'] = filter_term
+        box_response = self._session.get(url, params=params)
         response = box_response.json()
         return [User(self._session, item['id'], item) for item in response['entries']]
 
-    def search(self, query, limit, offset, ancestor_folders=None, file_extensions=None, metadata_filters=None, result_type=None, content_types=None):
+    def search(
+            self,
+            query,
+            limit,
+            offset,
+            ancestor_folders=None,
+            file_extensions=None,
+            metadata_filters=None,
+            result_type=None,
+            content_types=None
+    ):
         """
         Search Box for items matching the given query.
 
@@ -154,14 +182,16 @@ class Client(object):
         :rtype:
             `list` of :class:`Item`
         """
-        return Search(self._session).search(query=query,
-                                            limit=limit,
-                                            offset=offset,
-                                            ancestor_folders=ancestor_folders,
-                                            file_extensions=file_extensions,
-                                            metadata_filters=metadata_filters,
-                                            result_type=result_type,
-                                            content_types=content_types)
+        return Search(self._session).search(
+            query=query,
+            limit=limit,
+            offset=offset,
+            ancestor_folders=ancestor_folders,
+            file_extensions=file_extensions,
+            metadata_filters=metadata_filters,
+            result_type=result_type,
+            content_types=content_types,
+        )
 
     def events(self):
         """
@@ -329,3 +359,11 @@ class Client(object):
             self._network,
             self._session.with_shared_link(shared_link, shared_link_password),
         )
+
+
+class DeveloperTokenClient(Client):
+    """
+    Box client subclass which authorizes with a developer token.
+    """
+    def __init__(self, oauth=None, network_layer=None, session=None):
+        super(DeveloperTokenClient, self).__init__(oauth or DeveloperTokenAuth(), network_layer, session)

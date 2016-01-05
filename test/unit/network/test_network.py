@@ -15,11 +15,6 @@ def mock_request(monkeypatch):
     return session.request
 
 
-@pytest.fixture(params=('GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'))
-def http_verb(request):
-    return request.param
-
-
 def test_default_network_response_properties_pass_through_to_session_response_properties(access_token):
     mock_session_response = Mock(Response)
     mock_session_response.status_code = 200

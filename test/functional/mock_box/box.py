@@ -1,9 +1,11 @@
 # coding: utf-8
 
 from __future__ import division, unicode_literals
-from bottle import Bottle, debug, request, response, view, TEMPLATE_PATH
+
 from datetime import datetime
 from os.path import dirname, join
+
+from bottle import Bottle, debug, request, response, view, TEMPLATE_PATH
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool

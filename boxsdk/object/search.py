@@ -2,9 +2,10 @@
 
 from __future__ import unicode_literals
 
+import json
+
 from .base_endpoint import BaseEndpoint
 from boxsdk.util.translator import Translator
-import json
 
 
 class MetadataSearchFilter(object):

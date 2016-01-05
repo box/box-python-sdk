@@ -1,16 +1,20 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from mock import mock_open, patch
-import pytest
+
 import re
+
+from mock import patch
+import pytest
 import requests
 import six
 from six.moves.urllib import parse  # pylint:disable=import-error, no-name-in-module
+
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.config import API
 from boxsdk.client import Client
 from test.functional.mock_box.box import Box
+from test.util.streamable_mock_open import streamable_mock_open
 
 
 @pytest.fixture()
@@ -95,7 +99,7 @@ def user_login():
 @pytest.fixture()
 def uploaded_file(box_client, test_file_path, test_file_content, file_name):
     # pylint:disable=redefined-outer-name
-    with patch('boxsdk.object.folder.open', mock_open(read_data=test_file_content), create=True):
+    with patch('boxsdk.object.folder.open', streamable_mock_open(read_data=test_file_content), create=True):
         return box_client.folder('0').upload(test_file_path, file_name)
 
 
