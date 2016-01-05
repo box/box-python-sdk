@@ -25,6 +25,7 @@ class JWTAuth(OAuth2):
             client_id,
             client_secret,
             enterprise_id,
+            jwt_key_id,
             rsa_private_key_file_sys_path,
             rsa_private_key_passphrase=None,
             store_tokens=None,
@@ -46,6 +47,10 @@ class JWTAuth(OAuth2):
         :param enterprise_id:
             The ID of the Box Developer Edition enterprise.
         :type enterprise_id:
+            `unicode`
+        :param jwt_key_id:
+            Key ID for the JWT assertion.
+        :type jwt_key_id:
             `unicode`
         :param rsa_private_key_file_sys_path:
             Path to an RSA private key file, used for signing the JWT assertion.
@@ -98,6 +103,7 @@ class JWTAuth(OAuth2):
             )
         self._enterprise_id = enterprise_id
         self._jwt_algorithm = jwt_algorithm
+        self._jwt_key_id = jwt_key_id
         self._user_id = None
 
     def _auth_with_jwt(self, sub, sub_type):
@@ -135,6 +141,9 @@ class JWTAuth(OAuth2):
             },
             self._rsa_private_key,
             algorithm=self._jwt_algorithm,
+            headers={
+                'kid': self._jwt_key_id,
+            },
         )
         data = {
             'grant_type': self._GRANT_TYPE,
