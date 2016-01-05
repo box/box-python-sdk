@@ -6,6 +6,12 @@ Release History
 Upcoming
 ++++++++
 
+1.4.0 (2016-01-05)
+++++++++++++++++++
+
+- Added key id parameter to JWT Auth.
+
+
 1.3.3 (2016-01-04)
 ++++++++++++++++++
 
