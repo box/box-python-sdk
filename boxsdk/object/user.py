@@ -12,9 +12,9 @@ class User(BaseObject):
 
     _item_type = 'user'
 
-    def groups(self, starting_index=0, limit=100, include_page_info=False):
+    def membership(self, starting_index=0, limit=100, include_page_info=False):
         """
-        A generator over all of the Groups that this User is a member of.
+        A generator over all of the GroupMemberships that this User is a member of.
 
         :param starting_index:
             The index at which to begin.
