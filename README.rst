@@ -173,6 +173,22 @@ Search
 
     client.search('some_query', limit=100, offset=0)
 
+Metadata Search
+~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    from boxsdk.object.search import MetadataSearchFilter, MetadataSearchFilters
+
+    metadata_search_filter = MetadataSearchFilter(template_key='marketingCollateral', scope='enterprise')
+    metadata_search_filter.add_value_based_filter(field_key='documentType', value='datasheet')
+    metadata_search_filter.add_value_based_filter(field_key='clientNumber', value='a123')
+
+    metadata_search_filters = MetadataSearchFilters()
+    metadata_search_filters.add_filter(metadata_search_filter)
+
+    client.search('some_query', limit=100, offset=0, metadata_filters=metadata_search_filters)
+
 Events
 ~~~~~~
 
