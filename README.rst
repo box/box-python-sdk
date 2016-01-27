@@ -18,6 +18,11 @@ box-python-sdk
     :target: https://pypi.python.org/pypi/boxsdk
 
 
+
+.. contents:: :depth: 1
+
+
+
 Installing
 ----------
 
@@ -224,9 +229,9 @@ Metadata
 As-User
 ~~~~~~~
 
-The `Client` class and all Box objects also have an `as_user` method.
+The ``Client`` class and all Box objects also have an ``as_user`` method.
 
-`as-user` returns a copy of the object on which it was called that will make Box API requests
+``as-user`` returns a copy of the object on which it was called that will make Box API requests
 as though the specified user was making it.
 
 See https://box-content.readme.io/#as-user-1 for more information about how this works via the Box API.
@@ -254,8 +259,8 @@ Developer Edition support requires some extra dependencies. To get them, simply
 
     pip install boxsdk[jwt]
 
-Instead of instantiating your `Client` with an instance of `OAuth2`,
-instead use an instance of `JWTAuth`.
+Instead of instantiating your ``Client`` with an instance of ``OAuth2``,
+instead use an instance of ``JWTAuth``.
 
 .. code-block:: python
 
@@ -295,7 +300,7 @@ These users can then be authenticated:
    ned_auth.authenticate_app_user(ned_stark_user)
    ned_client = Client(ned_auth)
 
-Requests made with `ned_client` (or objects returned from `ned_client`'s methods)
+Requests made with ``ned_client`` (or objects returned from ``ned_client``'s methods)
 will be performed on behalf of the newly created app user.
 
 Other Auth Options
@@ -303,18 +308,18 @@ Other Auth Options
 
 For advanced uses of the SDK, two additional auth classes are provided:
 
-- `CooperativelyManagedOAuth2`: Allows multiple auth instances to share tokens.
-- `RemoteOAuth2`: Allows use of the SDK on clients without access to your application's client secret. Instead, you
-  provide a `retrieve_access_token` callback. That callback should perform the token refresh, perhaps on your server
+- ``CooperativelyManagedOAuth2``: Allows multiple auth instances to share tokens.
+- ``RemoteOAuth2``: Allows use of the SDK on clients without access to your application's client secret. Instead, you
+  provide a ``retrieve_access_token`` callback. That callback should perform the token refresh, perhaps on your server
   that does have access to the client secret.
-- `RedisManagedOAuth2`: Stores access and refresh tokens in Redis. This allows multiple processes (possibly spanning
+- ``RedisManagedOAuth2``: Stores access and refresh tokens in Redis. This allows multiple processes (possibly spanning
   multiple machines) to share access tokens while synchronizing token refresh. This could be useful for a multiprocess
   web server, for example.
 
 Other Network Options
 ---------------------
 
-For more insight into the network calls the SDK is making, you can use the `LoggingNetwork` class. This class logs
+For more insight into the network calls the SDK is making, you can use the ``LoggingNetwork`` class. This class logs
 information about network requests and responses made to the Box API.
 
 .. code-block:: python
