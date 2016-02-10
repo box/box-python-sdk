@@ -234,3 +234,43 @@ def test_preflight_check(
         expect_json_response=False,
         data=expected_data,
     )
+
+
+def test_get_shared_link_download_url(
+        test_file,
+        mock_box_session,
+        shared_link_access,
+        shared_link_unshared_at,
+        shared_link_password,
+        shared_link_can_preview,
+        test_url,
+        etag,
+        if_match_header,
+):
+    # pylint:disable=redefined-outer-name, protected-access
+    expected_url = test_file.get_url()
+    mock_box_session.put.return_value.json.return_value = {'shared_link': {'url': None, 'download_url': test_url}}
+    expected_data = {'shared_link': {}}
+    if shared_link_access is not None:
+        expected_data['shared_link']['access'] = shared_link_access
+    if shared_link_unshared_at is not None:
+        expected_data['shared_link']['unshared_at'] = shared_link_unshared_at.isoformat()
+    if shared_link_can_preview is not None:
+        expected_data['shared_link']['permissions'] = permissions = {}
+        permissions['can_preview'] = shared_link_can_preview
+    if shared_link_password is not None:
+        expected_data['shared_link']['password'] = shared_link_password
+    url = test_file.get_shared_link_download_url(
+        etag=etag,
+        access=shared_link_access,
+        unshared_at=shared_link_unshared_at,
+        password=shared_link_password,
+        allow_preview=shared_link_can_preview,
+    )
+    mock_box_session.put.assert_called_once_with(
+        expected_url,
+        data=json.dumps(expected_data),
+        headers=if_match_header,
+        params=None,
+    )
+    assert url == test_url

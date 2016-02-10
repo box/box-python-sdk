@@ -159,8 +159,86 @@ class Item(BaseObject):
         }
         return self.update_info(data)
 
-    def get_shared_link(self, access=None, etag=None, unshared_at=None, allow_download=None, allow_preview=None, password=None):
-        """Get a shared link for the item with the given access permissions.
+    def create_shared_link(
+            self,
+            access=None,
+            etag=None,
+            unshared_at=None,
+            allow_download=None,
+            allow_preview=None,
+            password=None,
+    ):
+        """
+        Create a shared link for the item with the given access permissions.
+
+        :param access:
+            Determines who can access the shared link. May be open, company, or collaborators. If no access is
+            specified, the default access will be used.
+        :type access:
+            `unicode` or None
+        :param etag:
+            If specified, instruct the Box API to create the link only if the current version's etag matches.
+        :type etag:
+            `unicode` or None
+        :param unshared_at:
+            The date on which this link should be disabled. May only be set if the current user is not a free user
+            and has permission to set expiration dates.
+        :type unshared_at:
+            :class:`datetime.date` or None
+        :param allow_download:
+            Whether or not the item being shared can be downloaded when accessed via the shared link.
+            If this parameter is None, the default setting will be used.
+        :type allow_download:
+            `bool` or None
+        :param allow_preview:
+            Whether or not the item being shared can be previewed when accessed via the shared link.
+            If this parameter is None, the default setting will be used.
+        :type allow_preview:
+            `bool` or None
+        :param password:
+            The password required to view this link. If no password is specified then no password will be set.
+            Please notice that this is a premium feature, which might not be available to your app.
+        :type password:
+            `unicode` or None
+        :return:
+            The updated object with s shared link.
+            Returns a new object of the same type, without modifying the original object passed as self.
+        :rtype:
+            :class:`Item`
+        :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
+        """
+        data = {
+            'shared_link': {} if not access else {
+                'access': access
+            }
+        }
+
+        if unshared_at is not None:
+            data['shared_link']['unshared_at'] = unshared_at.isoformat()
+
+        if allow_download is not None or allow_preview is not None:
+            data['shared_link']['permissions'] = permissions = {}
+            if allow_download is not None:
+                permissions['can_download'] = allow_download
+            if allow_preview is not None:
+                permissions['can_preview'] = allow_preview
+
+        if password is not None:
+            data['shared_link']['password'] = password
+
+        return self.update_info(data, etag=etag)
+
+    def get_shared_link(
+            self,
+            access=None,
+            etag=None,
+            unshared_at=None,
+            allow_download=None,
+            allow_preview=None,
+            password=None,
+    ):
+        """
+        Get a shared link for the item with the given access permissions.
 
         :param access:
             Determines who can access the shared link. May be open, company, or collaborators. If no access is
@@ -197,26 +275,14 @@ class Item(BaseObject):
             `unicode`
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
-        data = {
-            'shared_link': {} if not access else {
-                'access': access
-            }
-        }
-
-        if unshared_at is not None:
-            data['shared_link']['unshared_at'] = unshared_at.isoformat()
-
-        if allow_download is not None or allow_preview is not None:
-            data['shared_link']['permissions'] = permissions = {}
-            if allow_download is not None:
-                permissions['can_download'] = allow_download
-            if allow_preview is not None:
-                permissions['can_preview'] = allow_preview
-
-        if password is not None:
-            data['shared_link']['password'] = password
-
-        item = self.update_info(data, etag=etag)
+        item = self.create_shared_link(
+            access=access,
+            etag=etag,
+            unshared_at=unshared_at,
+            allow_download=allow_download,
+            allow_preview=allow_preview,
+            password=password,
+        )
         return item.shared_link['url']
 
     def remove_shared_link(self, etag=None):

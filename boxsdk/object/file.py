@@ -237,3 +237,53 @@ class File(Item):
             :class:`Metadata`
         """
         return Metadata(self._session, self, scope, template)
+
+    def get_shared_link_download_url(
+            self,
+            access=None,
+            etag=None,
+            unshared_at=None,
+            allow_preview=None,
+            password=None,
+    ):
+        """
+        Get a shared link download url for the file with the given access permissions.
+
+        :param access:
+            Determines who can access the shared link. May be open, company, or collaborators. If no access is
+            specified, the default access will be used.
+        :type access:
+            `unicode` or None
+        :param etag:
+            If specified, instruct the Box API to create the link only if the current version's etag matches.
+        :type etag:
+            `unicode` or None
+        :param unshared_at:
+            The date on which this link should be disabled. May only be set if the current user is not a free user
+            and has permission to set expiration dates.
+        :type unshared_at:
+            :class:`datetime.date` or None
+        :param allow_preview:
+            Whether or not the item being shared can be previewed when accessed via the shared link.
+            If this parameter is None, the default setting will be used.
+        :type allow_preview:
+            `bool` or None
+        :param password:
+            The password required to view this link. If no password is specified then no password will be set.
+            Please notice that this is a premium feature, which might not be available to your app.
+        :type password:
+            `unicode` or None
+        :returns:
+            The URL of the shared link that allows direct download.
+        :rtype:
+            `unicode`
+        :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
+        """
+        item = self.create_shared_link(
+            access=access,
+            etag=etag,
+            unshared_at=unshared_at,
+            allow_preview=allow_preview,
+            password=password,
+        )
+        return item.shared_link['download_url']

@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from datetime import date
 import json
 import pytest
 
@@ -54,31 +53,6 @@ def test_move_item(test_item_and_response, mock_box_session, test_folder, mock_o
     move_response = test_item.move(test_folder)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps({'parent': {'id': mock_object_id}}), params=None, headers=None)
     assert isinstance(move_response, test_item.__class__)
-
-
-@pytest.fixture(params=(True, False, None))
-def shared_link_can_download(request):
-    return request.param
-
-
-@pytest.fixture(params=(True, False, None))
-def shared_link_can_preview(request):
-    return request.param
-
-
-@pytest.fixture(params=('open', None))
-def shared_link_access(request):
-    return request.param
-
-
-@pytest.fixture(params=('hunter2', None))
-def shared_link_password(request):
-    return request.param
-
-
-@pytest.fixture(params=(date(2015, 5, 5), None))
-def shared_link_unshared_at(request):
-    return request.param
 
 
 def test_get_shared_link(
