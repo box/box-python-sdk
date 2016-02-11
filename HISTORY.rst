@@ -6,6 +6,11 @@ Release History
 Upcoming
 ++++++++
 
+1.4.1 (2016-02-11)
+++++++++++++++++++
+
+- Files now support getting a direct download url.
+
 1.4.0 (2016-01-05)
 ++++++++++++++++++
 
