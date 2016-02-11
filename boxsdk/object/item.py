@@ -239,6 +239,7 @@ class Item(BaseObject):
     ):
         """
         Get a shared link for the item with the given access permissions.
+        This url leads to a Box.com shared link page, where the item can be previewed, downloaded, etc.
 
         :param access:
             Determines who can access the shared link. May be open, company, or collaborators. If no access is

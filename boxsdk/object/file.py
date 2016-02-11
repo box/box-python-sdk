@@ -248,6 +248,7 @@ class File(Item):
     ):
         """
         Get a shared link download url for the file with the given access permissions.
+        This url is a direct download url for the file.
 
         :param access:
             Determines who can access the shared link. May be open, company, or collaborators. If no access is
