@@ -128,12 +128,19 @@ Create subfolder
     # creates folder structure /L1/L2/L3
     client.folder(folder_id='0').create_subfolder('L1').create_subfolder('L2').create_subfolder('L3')
 
-Get shared link
-~~~~~~~~~~~~~~~
+Get shared link (file or folder)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
     shared_link = client.folder(folder_id='SOME_FOLDER_ID').get_shared_link()
+
+Get shared link direct download URL (files only)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    download_url = client.file(file_id='SOME_FILE_ID').get_shared_link_download_url()
 
 Get file name
 ~~~~~~~~~~~~~~~
