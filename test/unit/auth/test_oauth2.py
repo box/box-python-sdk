@@ -8,7 +8,7 @@ from threading import Thread
 
 from mock import Mock
 import pytest
-from six.moves.urllib import parse as urlparse  # pylint:disable=import-error,no-name-in-module
+from six.moves.urllib import parse as urlparse  # pylint:disable=import-error,no-name-in-module,wrong-import-order
 
 from boxsdk.exception import BoxOAuthException
 from boxsdk.network.default_network import DefaultNetworkResponse

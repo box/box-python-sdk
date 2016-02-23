@@ -6,6 +6,25 @@ Release History
 Upcoming
 ++++++++
 
+1.4.2 (2016-02-23)
+++++++++++++++++++
+
+- Make sure that ``__all__`` is only defined once, as a list of ``str``. Some
+  programs (e.g. PyInstaller) naively parse __init__.py files, and if
+  ``__all__`` is defined twice, the second one will be ignored. This can cause
+  ``__all__`` to appear as a list of ``unicode`` on Python 2.
+- Create wheel with correct conditional dependencies and license file.
+- Change the ``license`` meta-data from the full license text, to just a short
+  string, as specified in [1][2].
+
+  [1] <https://docs.python.org/3.5/distutils/setupscript.html#additional-meta-data>
+
+  [2] <https://www.python.org/dev/peps/pep-0459/#license>
+
+- Include entire test/ directory in source distribution. test/__init__.py was
+  previously missing.
+- Update documentation.
+
 1.4.1 (2016-02-11)
 ++++++++++++++++++
 

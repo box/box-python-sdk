@@ -9,6 +9,8 @@ class BoxException(Exception):
     Base class exception for all errors raised from the SDK.
     """
     def __str__(self):
+        # pylint:disable=no-member
+        # <https://github.com/box/box-python-sdk/issues/117>
         return self.__unicode__().encode('utf-8') if PY2 else self.__unicode__()
 
 
