@@ -253,7 +253,7 @@ class Client(object):
 
     def get_shared_item(self, shared_link, password=None):
         """
-        Get information about a Box shared link. https://developers.box.com/docs/#shared-items
+        Get information about a Box shared link. https://box-content.readme.io/reference#get-a-shared-item
 
         :param shared_link:
             The shared link.
@@ -318,7 +318,7 @@ class Client(object):
         :param user_attributes:
             Additional attributes for the user. See the documentation at
             https://box-content.readme.io/#create-an-enterprise-user for enterprise users
-            or https://developers.box.com/developer-edition/ for app users.
+            or https://box-content.readme.io/docs/app-users for app users.
         """
         url = '{0}/users'.format(API.BASE_API_URL)
         user_attributes['name'] = name

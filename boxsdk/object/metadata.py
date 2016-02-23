@@ -8,7 +8,7 @@ from boxsdk.object.base_endpoint import BaseEndpoint
 class MetadataUpdate(object):
     """
     Helper class for updating Box metadata.
-    See https://developers.box.com/metadata-api/#update for more details.
+    See https://box-content.readme.io/reference#update-metadata for more details.
     See http://jsonpatch.com/ for details about JSON patch.
     """
     def __init__(self):
@@ -113,7 +113,8 @@ class Metadata(BaseEndpoint):
         :type scope:
             `unicode`
         :param template:
-            The name of the metadata template. See https://developers.box.com/metadata-api/#basics for more details.
+            The name of the metadata template.
+            See https://box-content.readme.io/reference#metadata-object for more details.
         :type template:
             `unicode`
         """
@@ -141,7 +142,7 @@ class Metadata(BaseEndpoint):
     def update(self, metadata_update):
         """
         Update the key/value pairs associated with this metadata object.
-        See https://developers.box.com/metadata-api/#update for more details.
+        See https://box-content.readme.io/reference#update-metadata for more details.
 
         :param metadata_update:
             A metadata update object containing the changes that should be made to the metadata.
