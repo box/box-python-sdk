@@ -2,19 +2,7 @@
 
 from __future__ import unicode_literals
 
-import six
+from six.moves import map   # pylint:disable=redefined-builtin
 
 
-__all__ = [
-    'collaboration',
-    'events',
-    'file',
-    'folder',
-    'group',
-    'group_membership',
-    'search',
-    'user',
-]
-
-if six.PY2:
-    __all__ = [unicode.encode(x, 'utf-8') for x in __all__]
+__all__ = list(map(str, ['collaboration', 'events', 'file', 'folder', 'group', 'group_membership', 'search', 'user']))

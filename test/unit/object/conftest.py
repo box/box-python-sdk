@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from datetime import date
 import os
 from mock import Mock
 import pytest
@@ -162,3 +163,28 @@ def file_size(request):
 def mock_group(mock_box_session, mock_group_id):
     group = Group(mock_box_session, mock_group_id)
     return group
+
+
+@pytest.fixture(params=(True, False, None))
+def shared_link_can_download(request):
+    return request.param
+
+
+@pytest.fixture(params=(True, False, None))
+def shared_link_can_preview(request):
+    return request.param
+
+
+@pytest.fixture(params=('open', None))
+def shared_link_access(request):
+    return request.param
+
+
+@pytest.fixture(params=('hunter2', None))
+def shared_link_password(request):
+    return request.param
+
+
+@pytest.fixture(params=(date(2015, 5, 5), None))
+def shared_link_unshared_at(request):
+    return request.param

@@ -18,6 +18,11 @@ box-python-sdk
     :target: https://pypi.python.org/pypi/boxsdk
 
 
+
+.. contents:: :depth: 1
+
+
+
 Installing
 ----------
 
@@ -123,12 +128,19 @@ Create subfolder
     # creates folder structure /L1/L2/L3
     client.folder(folder_id='0').create_subfolder('L1').create_subfolder('L2').create_subfolder('L3')
 
-Get shared link
-~~~~~~~~~~~~~~~
+Get shared link (file or folder)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
     shared_link = client.folder(folder_id='SOME_FOLDER_ID').get_shared_link()
+
+Get shared link direct download URL (files only)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    download_url = client.file(file_id='SOME_FILE_ID').get_shared_link_download_url()
 
 Get file name
 ~~~~~~~~~~~~~
@@ -173,6 +185,22 @@ Search
 
     client.search('some_query', limit=100, offset=0)
 
+Metadata Search
+~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    from boxsdk.object.search import MetadataSearchFilter, MetadataSearchFilters
+
+    metadata_search_filter = MetadataSearchFilter(template_key='marketingCollateral', scope='enterprise')
+    metadata_search_filter.add_value_based_filter(field_key='documentType', value='datasheet')
+    metadata_search_filter.add_value_based_filter(field_key='clientNumber', value='a123')
+
+    metadata_search_filters = MetadataSearchFilters()
+    metadata_search_filters.add_filter(metadata_search_filter)
+
+    client.search('some_query', limit=100, offset=0, metadata_filters=metadata_search_filters)
+
 Events
 ~~~~~~
 
@@ -208,9 +236,9 @@ Metadata
 As-User
 ~~~~~~~
 
-The `Client` class and all Box objects also have an `as_user` method.
+The ``Client`` class and all Box objects also have an ``as_user`` method.
 
-`as-user` returns a copy of the object on which it was called that will make Box API requests
+``as-user`` returns a copy of the object on which it was called that will make Box API requests
 as though the specified user was making it.
 
 See https://box-content.readme.io/#as-user-1 for more information about how this works via the Box API.
@@ -225,6 +253,30 @@ See https://box-content.readme.io/#as-user-1 for more information about how this
     # Same thing, but using file's as_user method
     client.file(file_id='SOME_FILE_ID').as_user(user).rename('bar-2.txt')
 
+Other Requests
+~~~~~~~~~~~~~~
+
+The Box API is continually evolving. As such, there are API endpoints available that are not specifically
+supported by the SDK. You can still use these endpoints by using the ``make_request`` method of the ``Client``.
+
+.. code-block:: python
+
+    # https://box-content.readme.io/reference#get-metadata-schema
+    from boxsdk.config import API
+    # Returns a Python dictionary containing the result of the API request
+    json_response = client.make_request(
+        'GET',
+        '{0}/metadata_templates/enterprise/customer/schema'.format(API.BASE_API_URL),
+    ).json()
+
+``make_request()`` takes two parameters:
+
+- ``method`` -an HTTP verb like ``GET`` or ``POST``
+- ``url`` - the URL of the requested API endpoint
+
+``boxsdk.config.API`` is an object specifying which URLs to use in order to access the Box API. It can be used for
+formatting the URLs to use with ``make_request``. Box objects also have a ``get_url`` method. Pass it an endpoint
+to get the correct URL for use with that object and endpoint.
 
 Box Developer Edition
 ---------------------
@@ -238,8 +290,8 @@ Developer Edition support requires some extra dependencies. To get them, simply
 
     pip install boxsdk[jwt]
 
-Instead of instantiating your `Client` with an instance of `OAuth2`,
-instead use an instance of `JWTAuth`.
+Instead of instantiating your ``Client`` with an instance of ``OAuth2``,
+instead use an instance of ``JWTAuth``.
 
 .. code-block:: python
 
@@ -279,7 +331,7 @@ These users can then be authenticated:
    ned_auth.authenticate_app_user(ned_stark_user)
    ned_client = Client(ned_auth)
 
-Requests made with `ned_client` (or objects returned from `ned_client`'s methods)
+Requests made with ``ned_client`` (or objects returned from ``ned_client``'s methods)
 will be performed on behalf of the newly created app user.
 
 Other Auth Options
@@ -287,18 +339,18 @@ Other Auth Options
 
 For advanced uses of the SDK, two additional auth classes are provided:
 
-- `CooperativelyManagedOAuth2`: Allows multiple auth instances to share tokens.
-- `RemoteOAuth2`: Allows use of the SDK on clients without access to your application's client secret. Instead, you
-  provide a `retrieve_access_token` callback. That callback should perform the token refresh, perhaps on your server
+- ``CooperativelyManagedOAuth2``: Allows multiple auth instances to share tokens.
+- ``RemoteOAuth2``: Allows use of the SDK on clients without access to your application's client secret. Instead, you
+  provide a ``retrieve_access_token`` callback. That callback should perform the token refresh, perhaps on your server
   that does have access to the client secret.
-- `RedisManagedOAuth2`: Stores access and refresh tokens in Redis. This allows multiple processes (possibly spanning
+- ``RedisManagedOAuth2``: Stores access and refresh tokens in Redis. This allows multiple processes (possibly spanning
   multiple machines) to share access tokens while synchronizing token refresh. This could be useful for a multiprocess
   web server, for example.
 
 Other Network Options
 ---------------------
 
-For more insight into the network calls the SDK is making, you can use the `LoggingNetwork` class. This class logs
+For more insight into the network calls the SDK is making, you can use the ``LoggingNetwork`` class. This class logs
 information about network requests and responses made to the Box API.
 
 .. code-block:: python
