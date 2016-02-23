@@ -117,7 +117,7 @@ class BaseObject(BaseEndpoint):
             Update the object attributes in data.keys(). The semantics of the
             values depends on the the type and attributes of the object being
             updated. For details on particular semantics, refer to the Box
-            developer API documentation <developers.box.com/docs>.
+            developer API documentation <https://box-content.readme.io/docs/>.
         :type data:
             `dict`
         :param params:

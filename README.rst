@@ -143,7 +143,7 @@ Get shared link direct download URL (files only)
     download_url = client.file(file_id='SOME_FILE_ID').get_shared_link_download_url()
 
 Get file name
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -157,7 +157,7 @@ Rename an item
     client.file(file_id='SOME_FILE_ID').rename('bar-2.txt')
 
 Move an item
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -282,7 +282,7 @@ Box Developer Edition
 ---------------------
 
 The Python SDK supports your
-`Box Developer Edition <https://developers.box.com/developer-edition/>`__ applications.
+`Box Developer Edition <https://box-content.readme.io/docs/app-users/>`__ applications.
 
 Developer Edition support requires some extra dependencies. To get them, simply
 
