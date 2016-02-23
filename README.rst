@@ -301,6 +301,7 @@ instead use an instance of ``JWTAuth``.
         client_id='YOUR_CLIENT_ID',
         client_secret='YOUR_CLIENT_SECRET',
         enterprise_id='YOUR_ENTERPRISE_ID',
+        jwt_key_id='YOUR_JWT_KEY_ID',
         rsa_private_key_file_sys_path='CERT.PEM',
         store_tokens=your_store_tokens_callback_method,
     )
@@ -322,14 +323,15 @@ These users can then be authenticated:
 .. code-block:: python
 
     ned_auth = JWTAuth(
-       client_id='YOUR_CLIENT_ID',
-       client_secret='YOUR_CLIENT_SECRET',
-       enterprise_id='YOUR_ENTERPRISE_ID',
-       rsa_private_key_file_sys_path='CERT.PEM',
-       store_tokens=your_store_tokens_callback_method,
-   )
-   ned_auth.authenticate_app_user(ned_stark_user)
-   ned_client = Client(ned_auth)
+        client_id='YOUR_CLIENT_ID',
+        client_secret='YOUR_CLIENT_SECRET',
+        enterprise_id='YOUR_ENTERPRISE_ID',
+        jwt_key_id='YOUR_JWT_KEY_ID',
+        rsa_private_key_file_sys_path='CERT.PEM',
+        store_tokens=your_store_tokens_callback_method,
+    )
+    ned_auth.authenticate_app_user(ned_stark_user)
+    ned_client = Client(ned_auth)
 
 Requests made with ``ned_client`` (or objects returned from ``ned_client``'s methods)
 will be performed on behalf of the newly created app user.

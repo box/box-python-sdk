@@ -8,7 +8,7 @@ from mock import patch
 import pytest
 import requests
 import six
-from six.moves.urllib import parse  # pylint:disable=import-error, no-name-in-module
+from six.moves.urllib import parse  # pylint:disable=import-error, no-name-in-module,wrong-import-order
 
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.config import API
