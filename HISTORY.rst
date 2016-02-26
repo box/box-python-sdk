@@ -6,6 +6,20 @@ Release History
 Upcoming
 ++++++++
 
+
+1.5.0 (2016-02-26)
+++++++++++++++++++
+
+- Added a new class, ``LoggingClient``. It's a ``Client`` that uses the ``LoggingNetwork`` class so that
+  requests to the Box API and its responses are logged.
+- Added a new class, ``DevelopmentClient`` that combines ``LoggingClient`` with the existing
+  ``DeveloperTokenClient``. This client is ideal for exploring the Box API or for use when developing your application.
+- Made the ``oauth`` parameter to ``Client`` optional. The constructor now accepts new parameters that it will use
+  to construct the ``OAuth2`` instance it needs to auth with the Box API.
+- Changed the default User Agent string sent with requests to the Box API. It is now 'box-python-sdk-<version>'.
+
+
+
 1.4.2 (2016-02-23)
 ++++++++++++++++++
 

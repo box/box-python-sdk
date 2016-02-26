@@ -3,24 +3,33 @@
 from __future__ import unicode_literals
 import json
 
-from .auth import DeveloperTokenAuth
-from .config import API
-from .session.box_session import BoxSession
-from .network.default_network import DefaultNetwork
-from .object.user import User
-from .object.folder import Folder
-from .object.search import Search
-from .object.events import Events
-from .object.file import File
-from .object.group import Group
-from .object.group_membership import GroupMembership
-from .util.shared_link import get_shared_link_header
-from .util.translator import Translator
+from ..auth import OAuth2
+from ..config import API
+from ..session.box_session import BoxSession
+from ..network.default_network import DefaultNetwork
+from ..object.user import User
+from ..object.folder import Folder
+from ..object.search import Search
+from ..object.events import Events
+from ..object.file import File
+from ..object.group import Group
+from ..object.group_membership import GroupMembership
+from ..util.shared_link import get_shared_link_header
+from ..util.translator import Translator
 
 
 class Client(object):
 
-    def __init__(self, oauth, network_layer=None, session=None):
+    def __init__(
+            self,
+            oauth=None,
+            network_layer=None,
+            session=None,
+            client_id=None,
+            client_secret=None,
+            store_tokens=None,
+            **kwargs
+    ):
         """
         :param oauth:
             OAuth2 object used by the session to authorize requests.
@@ -34,11 +43,36 @@ class Client(object):
             The session object to use. If None is provided then an instance of :class:`BoxSession` will be used.
         :type session:
             :class:`BoxSession`
+        :param client_id:
+            Box API key used for identifying the application the user is authenticating with.
+            Ignored if oauth instance is passed into this constructor.
+        :type client_id:
+            `unicode`
+        :param client_secret:
+            Box API secret used for making OAuth2 requests.
+            Ignored if oauth instance is passed into this constructor.
+        :type client_secret:
+            `unicode`
+        :param store_tokens:
+            Optional callback for getting access to tokens for storing them.
+            Ignored if oauth instance is passed into this constructor.
+        :type store_tokens:
+            `callable`
         """
         network_layer = network_layer or DefaultNetwork()
-        self._oauth = oauth
+        self._oauth = oauth or OAuth2(client_id, client_secret, store_tokens=store_tokens, **kwargs)
         self._network = network_layer
         self._session = session or BoxSession(oauth=oauth, network_layer=network_layer)
+
+    @property
+    def auth(self):
+        """
+        Get the :class:`OAuth2` instance the client is using for auth to Box.
+
+        :rtype:
+            :class:`OAuth2`
+        """
+        return self._oauth
 
     def folder(self, folder_id):
         """
@@ -359,11 +393,3 @@ class Client(object):
             self._network,
             self._session.with_shared_link(shared_link, shared_link_password),
         )
-
-
-class DeveloperTokenClient(Client):
-    """
-    Box client subclass which authorizes with a developer token.
-    """
-    def __init__(self, oauth=None, network_layer=None, session=None):
-        super(DeveloperTokenClient, self).__init__(oauth or DeveloperTokenAuth(), network_layer, session)

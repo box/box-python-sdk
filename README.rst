@@ -349,18 +349,47 @@ For advanced uses of the SDK, two additional auth classes are provided:
   multiple machines) to share access tokens while synchronizing token refresh. This could be useful for a multiprocess
   web server, for example.
 
-Other Network Options
----------------------
+Other Client Options
+--------------------
 
-For more insight into the network calls the SDK is making, you can use the ``LoggingNetwork`` class. This class logs
+Logging Client
+~~~~~~~~~~~~~~
+
+For more insight into the network calls the SDK is making, you can use the ``LoggingClient`` class. This class logs
 information about network requests and responses made to the Box API.
 
-.. code-block:: python
+.. code-block:: pycon
+
+    >>> from boxsdk import LoggingClient
+    >>> client = LoggingClient()
+    >>> client.user().get()
+    GET https://api.box.com/2.0/users/me {'headers': {u'Authorization': u'Bearer ---------------------------kBjp',
+                 u'User-Agent': u'box-python-sdk-1.5.0'},
+     'params': None}
+    {"type":"user","id":"..","name":"Jeffrey Meadows","login":"..",..}
+    <boxsdk.object.user.User at 0x10615b8d0>
+
+For more control over how the information is logged, use the ``LoggingNetwork`` class directly.
+
+.. code-block:: pycon
 
     from boxsdk import Client
     from boxsdk.network.logging_network import LoggingNetwork
 
-    client = Client(oauth, network_layer=LoggingNetwork())
+    # Use a custom logger
+    client = Client(oauth, network_layer=LoggingNetwork(logger))
+
+Development Client
+~~~~~~~~~~~~~~~~~~
+
+For exploring the Box API, or to quickly get going using the SDK, the ``DevelopmentClient`` class combines the
+``LoggingClient`` with the ``DeveloperTokenClient``.
+
+Developer Token Client
+~~~~~~~~~~~~~~~~~~~~~~
+
+The Box Developer Console allows for the creation of short-lived developer tokens. The SDK makes it easy to use these
+tokens. Use the
 
 Contributing
 ------------

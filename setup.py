@@ -10,6 +10,8 @@ import sys
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
+from boxsdk.config import Version
+
 
 CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable',
@@ -82,7 +84,7 @@ def main():
             extra_requires[key].append(requirement)
     setup(
         name='boxsdk',
-        version='1.4.2',
+        version=Version.VERSION,
         description='Official Box Python SDK',
         long_description=open(join(base_dir, 'README.rst'), encoding='utf-8').read(),
         author='Box',

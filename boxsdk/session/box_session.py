@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 
+from boxsdk.config import Version
 from boxsdk.exception import BoxAPIException
 from boxsdk.util.multipart_stream import MultipartStream
 from boxsdk.util.shared_link import get_shared_link_header
@@ -81,7 +82,7 @@ class BoxSession(object):
         """
         self._oauth = oauth
         self._network_layer = network_layer
-        self._default_headers = default_headers or {}
+        self._default_headers = default_headers or {'User-Agent': Version.USER_AGENT_STRING}
 
     def as_user(self, user):
         """
