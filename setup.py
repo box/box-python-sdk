@@ -5,12 +5,11 @@ from __future__ import unicode_literals
 from codecs import open   # pylint:disable=redefined-builtin
 from collections import defaultdict
 from os.path import dirname, join
+import re
 import sys
 
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
-
-from boxsdk.config import Version
 
 
 CLASSIFIERS = [
@@ -82,9 +81,11 @@ def main():
             python_conditional = 'python_version=="{0}"'.format(python_version)
             key = ':{0}'.format(python_conditional)
             extra_requires[key].append(requirement)
+    with open('boxsdk/config.py', 'r', 'utf-8') as config_py:
+        version = re.search(r'^\s+VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE).group(1)
     setup(
         name='boxsdk',
-        version=Version.VERSION,
+        version=version,
         description='Official Box Python SDK',
         long_description=open(join(base_dir, 'README.rst'), encoding='utf-8').read(),
         author='Box',

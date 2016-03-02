@@ -13,5 +13,5 @@ class API(object):
 
 class Version(object):
     """Configuration object containing the package version and user agent string."""
-    VERSION = '1.4.3'
+    VERSION = '1.5.0'
     USER_AGENT_STRING = 'box-python-sdk-{0}'.format(VERSION)

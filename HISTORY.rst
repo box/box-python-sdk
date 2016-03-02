@@ -7,7 +7,7 @@ Upcoming
 ++++++++
 
 
-1.5.0 (2016-02-26)
+1.5.0 (2016-03-02)
 ++++++++++++++++++
 
 - Added a new class, ``LoggingClient``. It's a ``Client`` that uses the ``LoggingNetwork`` class so that
