@@ -53,7 +53,7 @@ To add an upstream source for this project, type:
 
     git remote add upstream git@github.com:box/box-python-sdk.git
 
-This will come in useful later.
+This will become useful later.
 
 Step 4: Create a feature branch
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -103,3 +103,7 @@ a description that lets us know what work you did.
 Keep in mind that we like to see one issue addressed per pull request,
 as this helps keep our git history clean and we can more easily track
 down issues.
+
+Finally, please add a note in HISTORY.rst under the Upcoming section detailing what's new in your change.
+These will become the release notes for the next release.
+In addition, feel free to add yourself to AUTHORS.rst if you aren't already listed.
