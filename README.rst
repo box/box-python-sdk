@@ -262,11 +262,10 @@ supported by the SDK. You can still use these endpoints by using the ``make_requ
 .. code-block:: python
 
     # https://box-content.readme.io/reference#get-metadata-schema
-    from boxsdk.config import API
     # Returns a Python dictionary containing the result of the API request
     json_response = client.make_request(
         'GET',
-        '{0}/metadata_templates/enterprise/customer/schema'.format(API.BASE_API_URL),
+        client.get_url('metadata_templates', 'enterprise', 'customer', 'schema'),
     ).json()
 
 ``make_request()`` takes two parameters:
@@ -274,8 +273,7 @@ supported by the SDK. You can still use these endpoints by using the ``make_requ
 - ``method`` -an HTTP verb like ``GET`` or ``POST``
 - ``url`` - the URL of the requested API endpoint
 
-``boxsdk.config.API`` is an object specifying which URLs to use in order to access the Box API. It can be used for
-formatting the URLs to use with ``make_request``. Box objects also have a ``get_url`` method. Pass it an endpoint
+The ``Client`` class and Box objects have a ``get_url`` method. Pass it an endpoint
 to get the correct URL for use with that object and endpoint.
 
 Box Developer Edition

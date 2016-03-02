@@ -16,6 +16,7 @@ from ..object.group import Group
 from ..object.group_membership import GroupMembership
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
+from ..util.url import get_url
 
 
 class Client(object):
@@ -393,3 +394,21 @@ class Client(object):
             self._network,
             self._session.with_shared_link(shared_link, shared_link_password),
         )
+
+    def get_url(self, endpoint, *args):
+        """
+        Return the URL for the given Box API endpoint.
+
+        :param endpoint:
+            The name of the endpoint.
+        :type endpoint:
+            `url`
+        :param args:
+            Additional parts of the endpoint URL.
+        :type args:
+            `Iterable`
+        :rtype:
+            `unicode`
+        """
+        # pylint:disable=no-self-use
+        return get_url(endpoint, *args)
