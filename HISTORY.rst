@@ -6,6 +6,10 @@ Release History
 Upcoming
 ++++++++
 
+- Box objects have an improved ``__repr__``, making them easier to identify during debugging sessions.
+- Box objects now implement ``__dir__``, making them easier to explore. When created with a Box API response,
+  these objects will now include the API response fields as attributes.
+
 
 1.5.0 (2016-03-02)
 ++++++++++++++++++
