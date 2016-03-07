@@ -63,7 +63,7 @@ def test_getattr_and_getitem(test_object_and_response, mock_box_session):
     mock_box_session.put.return_value = mock_object_response
     update_response = BaseObject.update_info(test_object, {})
     assert isinstance(update_response, test_object.__class__)
-    assert update_response.object_id == update_response.id == update_response['id']
+    assert update_response.object_id == update_response.id == update_response['id']  # pylint:disable=no-member
 
 
 def test_get_url(test_object_and_response):

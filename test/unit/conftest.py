@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 import json
-from mock import Mock
+from mock import Mock, MagicMock
 import pytest
 from boxsdk.auth.oauth2 import DefaultNetwork
 from boxsdk.network import default_network
@@ -12,7 +12,7 @@ from boxsdk.session.box_session import BoxResponse, BoxSession
 
 @pytest.fixture()
 def mock_box_session():
-    return Mock(BoxSession)
+    return MagicMock(BoxSession)
 
 
 @pytest.fixture(scope='function')

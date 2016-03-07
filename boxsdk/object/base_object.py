@@ -57,7 +57,7 @@ class BaseObject(BaseEndpoint):
 
     def __repr__(self):
         """Base class override. Return a human-readable representation using the Box ID or name of the object."""
-        description = self.name if 'name' in self._response_object else self.object_id
+        description = self.name if 'name' in self._response_object else self.object_id  # pylint:disable=no-member
         return '<Box {0} ({1})>'.format(self.__class__.__name__, description)
 
     def get_url(self, *args):
