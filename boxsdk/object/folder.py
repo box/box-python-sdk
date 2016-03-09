@@ -154,6 +154,19 @@ class Folder(Item):
         response = box_response.json()
         return [Translator().translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
 
+    def get_collaborators(self):
+        """Get the collaborators of a folder.
+
+        :returns:
+            A list of all the collaborations on a folder i.e. all of the users that have access to that folder.
+        :rtype:
+            `list` of :class:`Collaboration`
+        """
+        url = self.get_url('collaborations')
+        box_response = self._session.get(url)
+        response = box_response.json()
+        return [Translator().translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
+
     def upload_stream(
             self,
             file_stream,
