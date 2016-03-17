@@ -32,6 +32,14 @@ boxsdk.exception module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.version module
+---------------------
+
+.. automodule:: boxsdk.version
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

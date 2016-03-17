@@ -84,14 +84,6 @@ boxsdk.util.translator module
     :undoc-members:
     :show-inheritance:
 
-boxsdk.util.url module
-----------------------
-
-.. automodule:: boxsdk.util.url
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------

@@ -377,17 +377,18 @@ For more control over how the information is logged, use the ``LoggingNetwork`` 
     # Use a custom logger
     client = Client(oauth, network_layer=LoggingNetwork(logger))
 
+Developer Token Client
+~~~~~~~~~~~~~~~~~~~~~~
+
+The Box Developer Console allows for the creation of short-lived developer tokens. The SDK makes it easy to use these
+tokens. Use the ``get_new_token_callback`` parameter to control how the client will get new developer tokens as
+needed. The default is to prompt standard input for a token.
+
 Development Client
 ~~~~~~~~~~~~~~~~~~
 
 For exploring the Box API, or to quickly get going using the SDK, the ``DevelopmentClient`` class combines the
 ``LoggingClient`` with the ``DeveloperTokenClient``.
-
-Developer Token Client
-~~~~~~~~~~~~~~~~~~~~~~
-
-The Box Developer Console allows for the creation of short-lived developer tokens. The SDK makes it easy to use these
-tokens. Use the
 
 Contributing
 ------------

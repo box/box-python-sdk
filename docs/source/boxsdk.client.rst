@@ -20,6 +20,14 @@ boxsdk.client.developer_token_client module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.client.development_client module
+---------------------------------------
+
+.. automodule:: boxsdk.client.development_client
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.client.logging_client module
 -----------------------------------
 

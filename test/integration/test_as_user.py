@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from mock import call, patch
 import pytest
-from boxsdk.config import API, Version
+from boxsdk.config import API, Client
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.user import User
 
@@ -13,7 +13,7 @@ def as_user_headers(mock_user_id, access_token):
     return {
         'Authorization': 'Bearer {0}'.format(access_token),
         'As-User': mock_user_id,
-        'User-Agent': Version.USER_AGENT_STRING,
+        'User-Agent': Client.USER_AGENT_STRING,
     }
 
 

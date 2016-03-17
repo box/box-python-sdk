@@ -1,9 +1,8 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 import json
 
-from ..auth import OAuth2
 from ..config import API
 from ..session.box_session import BoxSession
 from ..network.default_network import DefaultNetwork
@@ -16,7 +15,6 @@ from ..object.group import Group
 from ..object.group_membership import GroupMembership
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
-from ..util.url import get_url
 
 
 class Client(object):
@@ -26,10 +24,6 @@ class Client(object):
             oauth=None,
             network_layer=None,
             session=None,
-            client_id=None,
-            client_secret=None,
-            store_tokens=None,
-            **kwargs
     ):
         """
         :param oauth:
@@ -44,24 +38,9 @@ class Client(object):
             The session object to use. If None is provided then an instance of :class:`BoxSession` will be used.
         :type session:
             :class:`BoxSession`
-        :param client_id:
-            Box API key used for identifying the application the user is authenticating with.
-            Ignored if oauth instance is passed into this constructor.
-        :type client_id:
-            `unicode`
-        :param client_secret:
-            Box API secret used for making OAuth2 requests.
-            Ignored if oauth instance is passed into this constructor.
-        :type client_secret:
-            `unicode`
-        :param store_tokens:
-            Optional callback for getting access to tokens for storing them.
-            Ignored if oauth instance is passed into this constructor.
-        :type store_tokens:
-            `callable`
         """
         network_layer = network_layer or DefaultNetwork()
-        self._oauth = oauth or OAuth2(client_id, client_secret, store_tokens=store_tokens, **kwargs)
+        self._oauth = oauth
         self._network = network_layer
         self._session = session or BoxSession(oauth=oauth, network_layer=network_layer)
 
@@ -411,4 +390,4 @@ class Client(object):
             `unicode`
         """
         # pylint:disable=no-self-use
-        return get_url(endpoint, *args)
+        return self._session.get_url(endpoint, *args)

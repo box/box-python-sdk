@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from boxsdk.config import Version
+from boxsdk.config import API, Client
 from boxsdk.exception import BoxAPIException
 from boxsdk.util.multipart_stream import MultipartStream
 from boxsdk.util.shared_link import get_shared_link_header
@@ -82,7 +82,29 @@ class BoxSession(object):
         """
         self._oauth = oauth
         self._network_layer = network_layer
-        self._default_headers = default_headers or {'User-Agent': Version.USER_AGENT_STRING}
+        self._default_headers = {'User-Agent': Client.USER_AGENT_STRING}
+        if default_headers:
+            self._default_headers.update(default_headers)
+
+    def get_url(self, endpoint, *args):
+        """
+        Return the URL for the given Box API endpoint.
+
+        :param endpoint:
+            The name of the endpoint.
+        :type endpoint:
+            `url`
+        :param args:
+            Additional parts of the endpoint URL.
+        :type args:
+            `Iterable`
+        :rtype:
+            `unicode`
+        """
+        # pylint:disable=no-self-use
+        url = ['{0}/{1}'.format(API.BASE_API_URL, endpoint)]
+        url.extend(['/{0}'.format(x) for x in args])
+        return ''.join(url)
 
     def as_user(self, user):
         """

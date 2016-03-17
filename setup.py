@@ -81,8 +81,8 @@ def main():
             python_conditional = 'python_version=="{0}"'.format(python_version)
             key = ':{0}'.format(python_conditional)
             extra_requires[key].append(requirement)
-    with open('boxsdk/config.py', 'r', 'utf-8') as config_py:
-        version = re.search(r'^\s+VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE).group(1)
+    with open('boxsdk/version.py', 'r', encoding='utf-8') as config_py:
+        version = re.search(r'^\s+__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE).group(1)
     setup(
         name='boxsdk',
         version=version,

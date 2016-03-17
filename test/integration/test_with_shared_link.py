@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from mock import call, patch
 import pytest
-from boxsdk.config import API, Version
+from boxsdk.config import API, Client
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.util.shared_link import get_shared_link_header
 
@@ -25,7 +25,7 @@ def box_api_headers(shared_link, shared_link_password, access_token):
     return {
         'Authorization': 'Bearer {0}'.format(access_token),
         'BoxApi': box_api_header,
-        'User-Agent': Version.USER_AGENT_STRING,
+        'User-Agent': Client.USER_AGENT_STRING,
     }
 
 
