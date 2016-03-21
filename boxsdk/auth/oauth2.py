@@ -213,6 +213,8 @@ class OAuth2(object):
         return 'box_csrf_token_' + ''.join(ascii_alphabet[int(system_random.random() * ascii_len)] for _ in range(16))
 
     def _store_tokens(self, access_token, refresh_token):
+        self._access_token = access_token
+        self._refresh_token = refresh_token
         if self._store_tokens_callback is not None:
             self._store_tokens_callback(access_token, refresh_token)
 
@@ -240,17 +242,40 @@ class OAuth2(object):
             url,
             data=data,
             headers=headers,
-            access_token=access_token
+            access_token=access_token,
         )
         if not network_response.ok:
             raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
         try:
             response = network_response.json()
-            self._access_token = response['access_token']
-            self._refresh_token = response.get('refresh_token', None)
-            if self._refresh_token is None and expect_refresh_token:
+            access_token = response['access_token']
+            refresh_token = response.get('refresh_token', None)
+            if refresh_token is None and expect_refresh_token:
                 raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
         except (ValueError, KeyError):
             raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
-        self._store_tokens(self._access_token, self._refresh_token)
+        self._store_tokens(access_token, refresh_token)
         return self._access_token, self._refresh_token
+
+    def revoke(self):
+        """
+        Revoke the authorization for the current access/refresh token pair.
+        """
+        with self._refresh_lock:
+            token_to_revoke, _ = self._get_tokens()
+            if token_to_revoke is None:
+                return
+            url = '{base_auth_url}/revoke'.format(base_auth_url=API.OAUTH2_API_URL)
+            network_response = self._network_layer.request(
+                'POST',
+                url,
+                data={
+                    'client_id': self._client_id,
+                    'client_secret': self._client_secret,
+                    'token': token_to_revoke,
+                },
+                access_token=token_to_revoke,
+            )
+            if not network_response.ok:
+                raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
+            self._store_tokens(None, None)

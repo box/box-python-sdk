@@ -275,3 +275,28 @@ def test_token_request_allows_missing_refresh_token(mock_network_layer):
         network_layer=mock_network_layer,
     )
     oauth.send_token_request({}, access_token=None, expect_refresh_token=False)
+
+
+def test_revoke_sends_revoke_request(client_id, client_secret, mock_network_layer):
+    fake_access_token = 'fake_access_token'
+    mock_network_response = Mock()
+    mock_network_response.ok = True
+    mock_network_layer.request.return_value = mock_network_response
+    oauth = OAuth2(
+        client_id=client_id,
+        client_secret=client_secret,
+        access_token=fake_access_token,
+        network_layer=mock_network_layer,
+    )
+    oauth.revoke()
+    mock_network_layer.request.assert_called_once_with(
+        'POST',
+        '{0}/revoke'.format(API.OAUTH2_API_URL),
+        data={
+            'client_id': client_id,
+            'client_secret': client_secret,
+            'token': fake_access_token,
+        },
+        access_token=fake_access_token,
+    )
+    assert oauth.access_token is None
