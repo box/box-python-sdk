@@ -12,6 +12,14 @@ boxsdk.util.compat module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.util.enum module
+-----------------------
+
+.. automodule:: boxsdk.util.enum
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.util.log module
 ----------------------
 

@@ -284,7 +284,7 @@ class Item(BaseObject):
             allow_preview=allow_preview,
             password=password,
         )
-        return item.shared_link['url']
+        return item.shared_link['url']  # pylint:disable=no-member
 
     def remove_shared_link(self, etag=None):
         """Delete the shared link for the item.
@@ -301,7 +301,7 @@ class Item(BaseObject):
         """
         data = {'shared_link': None}
         item = self.update_info(data, etag=etag)
-        return item.shared_link is None
+        return item.shared_link is None  # pylint:disable=no-member
 
     def delete(self, params=None, etag=None):
         """Delete the item.

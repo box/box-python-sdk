@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from boxsdk.config import API
 
 
 class BaseEndpoint(object):
@@ -33,9 +32,7 @@ class BaseEndpoint(object):
             `unicode`
         """
         # pylint:disable=no-self-use
-        url = ['{0}/{1}'.format(API.BASE_API_URL, endpoint)]
-        url.extend(['/{0}'.format(x) for x in args])
-        return ''.join(url)
+        return self._session.get_url(endpoint, *args)
 
     def as_user(self, user):
         """

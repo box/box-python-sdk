@@ -1,26 +1,30 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 import json
 
-from .auth import DeveloperTokenAuth
-from .config import API
-from .session.box_session import BoxSession
-from .network.default_network import DefaultNetwork
-from .object.user import User
-from .object.folder import Folder
-from .object.search import Search
-from .object.events import Events
-from .object.file import File
-from .object.group import Group
-from .object.group_membership import GroupMembership
-from .util.shared_link import get_shared_link_header
-from .util.translator import Translator
+from ..config import API
+from ..session.box_session import BoxSession
+from ..network.default_network import DefaultNetwork
+from ..object.user import User
+from ..object.folder import Folder
+from ..object.search import Search
+from ..object.events import Events
+from ..object.file import File
+from ..object.group import Group
+from ..object.group_membership import GroupMembership
+from ..util.shared_link import get_shared_link_header
+from ..util.translator import Translator
 
 
 class Client(object):
 
-    def __init__(self, oauth, network_layer=None, session=None):
+    def __init__(
+            self,
+            oauth=None,
+            network_layer=None,
+            session=None,
+    ):
         """
         :param oauth:
             OAuth2 object used by the session to authorize requests.
@@ -39,6 +43,16 @@ class Client(object):
         self._oauth = oauth
         self._network = network_layer
         self._session = session or BoxSession(oauth=oauth, network_layer=network_layer)
+
+    @property
+    def auth(self):
+        """
+        Get the :class:`OAuth2` instance the client is using for auth to Box.
+
+        :rtype:
+            :class:`OAuth2`
+        """
+        return self._oauth
 
     def folder(self, folder_id):
         """
@@ -360,10 +374,20 @@ class Client(object):
             self._session.with_shared_link(shared_link, shared_link_password),
         )
 
+    def get_url(self, endpoint, *args):
+        """
+        Return the URL for the given Box API endpoint.
 
-class DeveloperTokenClient(Client):
-    """
-    Box client subclass which authorizes with a developer token.
-    """
-    def __init__(self, oauth=None, network_layer=None, session=None):
-        super(DeveloperTokenClient, self).__init__(oauth or DeveloperTokenAuth(), network_layer, session)
+        :param endpoint:
+            The name of the endpoint.
+        :type endpoint:
+            `url`
+        :param args:
+            Additional parts of the endpoint URL.
+        :type args:
+            `Iterable`
+        :rtype:
+            `unicode`
+        """
+        # pylint:disable=no-self-use
+        return self._session.get_url(endpoint, *args)
