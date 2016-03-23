@@ -311,6 +311,6 @@ def test_revoke_sends_revoke_request(
             'client_secret': client_secret,
             'token': expected_token_to_revoke,
         },
-        access_token=expected_token_to_revoke,
+        access_token=access_token,
     )
     assert oauth.access_token is None

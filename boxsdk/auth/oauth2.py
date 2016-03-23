@@ -275,7 +275,7 @@ class OAuth2(object):
                     'client_secret': self._client_secret,
                     'token': token_to_revoke,
                 },
-                access_token=token_to_revoke,
+                access_token=access_token,
             )
             if not network_response.ok:
                 raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
