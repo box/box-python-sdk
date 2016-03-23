@@ -277,15 +277,29 @@ def test_token_request_allows_missing_refresh_token(mock_network_layer):
     oauth.send_token_request({}, access_token=None, expect_refresh_token=False)
 
 
-def test_revoke_sends_revoke_request(client_id, client_secret, mock_network_layer):
-    fake_access_token = 'fake_access_token'
+@pytest.mark.parametrize(
+    'access_token,refresh_token,expected_token_to_revoke',
+    (
+        ('fake_access_token', 'fake_refresh_token', 'fake_access_token'),
+        (None, 'fake_refresh_token', 'fake_refresh_token')
+    )
+)
+def test_revoke_sends_revoke_request(
+        client_id,
+        client_secret,
+        mock_network_layer,
+        access_token,
+        refresh_token,
+        expected_token_to_revoke,
+):
     mock_network_response = Mock()
     mock_network_response.ok = True
     mock_network_layer.request.return_value = mock_network_response
     oauth = OAuth2(
         client_id=client_id,
         client_secret=client_secret,
-        access_token=fake_access_token,
+        access_token=access_token,
+        refresh_token=refresh_token,
         network_layer=mock_network_layer,
     )
     oauth.revoke()
@@ -295,8 +309,8 @@ def test_revoke_sends_revoke_request(client_id, client_secret, mock_network_laye
         data={
             'client_id': client_id,
             'client_secret': client_secret,
-            'token': fake_access_token,
+            'token': expected_token_to_revoke,
         },
-        access_token=fake_access_token,
+        access_token=expected_token_to_revoke,
     )
     assert oauth.access_token is None

@@ -262,7 +262,8 @@ class OAuth2(object):
         Revoke the authorization for the current access/refresh token pair.
         """
         with self._refresh_lock:
-            token_to_revoke, _ = self._get_tokens()
+            access_token, refresh_token = self._get_tokens()
+            token_to_revoke = access_token or refresh_token
             if token_to_revoke is None:
                 return
             url = '{base_auth_url}/revoke'.format(base_auth_url=API.OAUTH2_API_URL)
