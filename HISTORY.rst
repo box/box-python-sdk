@@ -6,6 +6,10 @@ Release History
 Upcoming
 ++++++++
 
+1.5.1 (2016-03-23)
+++++++++++++++++++
+
+- Added a ``revoke()`` method to the ``OAuth2`` class. Calling it will revoke the current access/refresh token pair.
 
 
 1.5.0 (2016-03-17)
