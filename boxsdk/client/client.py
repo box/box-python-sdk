@@ -270,6 +270,7 @@ class Client(Cloneable):
 
     @api_call
     def groups(self):
+    def groups(self, offset=0, limit=100):
         """
         Get a list of all groups for the current user.
 
@@ -279,7 +280,10 @@ class Client(Cloneable):
             `list` of :class:`Group`
         """
         url = '{0}/groups'.format(API.BASE_API_URL)
-        box_response = self._session.get(url)
+        params = dict(offset=offset)
+        if limit is not None:
+            params['limit'] = limit
+        box_response = self._session.get(url, params=params)
         response = box_response.json()
         group_class = self.translator.translate('group')
         return [group_class(
