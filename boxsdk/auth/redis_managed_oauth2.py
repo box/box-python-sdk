@@ -30,13 +30,7 @@ class RedisManagedOAuth2Mixin(OAuth2):
         refresh_lock = Lock(redis=self._redis_server, name='{0}_lock'.format(self._unique_id))
         super(RedisManagedOAuth2Mixin, self).__init__(*args, refresh_lock=refresh_lock, **kwargs)
         if self._access_token is None:
-            self._update_current_tokens()
-
-    def _update_current_tokens(self):
-        """
-        Get the latest tokens from redis and store them.
-        """
-        self._access_token, self._refresh_token = self._redis_server.hvals(self._unique_id) or (None, None)
+            self._get_and_update_current_tokens()
 
     @property
     def unique_id(self):
@@ -51,8 +45,7 @@ class RedisManagedOAuth2Mixin(OAuth2):
         Base class override.
         Gets the latest tokens from redis before returning them.
         """
-        self._update_current_tokens()
-        return super(RedisManagedOAuth2Mixin, self)._get_tokens()
+        return self._redis_server.hvals(self._unique_id) or (None, None)
 
     def _store_tokens(self, access_token, refresh_token):
         """

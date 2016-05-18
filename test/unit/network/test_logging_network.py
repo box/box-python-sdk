@@ -28,7 +28,7 @@ def test_logging_network_does_not_call_setup_logging_if_logger_is_not_none():
     logger = Mock(Logger)
     with patch.object(logging_network, 'setup_logging') as setup_logging:
         network = LoggingNetwork(logger)
-        setup_logging.assert_never_called()
+        setup_logging.assert_not_called()
         assert network.logger is logger
 
 

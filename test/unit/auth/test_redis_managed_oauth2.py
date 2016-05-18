@@ -2,6 +2,8 @@
 
 from __future__ import unicode_literals, absolute_import
 
+import uuid
+
 from mock import Mock, patch
 
 from boxsdk.auth import redis_managed_oauth2
@@ -21,19 +23,24 @@ def test_redis_managed_oauth2_gets_tokens_from_redis_on_init(access_token, refre
     assert oauth2.unique_id is unique_id
 
 
-def test_redis_managed_oauth2_gets_tokens_from_redis_during_refresh(access_token, refresh_token):
+def test_redis_managed_oauth2_gets_tokens_from_redis_during_refresh(access_token, refresh_token, new_access_token):
+    new_refresh_token = uuid.uuid4().hex
     redis_server = Mock(redis_managed_oauth2.StrictRedis)
-    redis_server.hvals.return_value = access_token, refresh_token
+    redis_server.hvals.return_value = new_access_token, new_refresh_token
     unique_id = Mock()
-    with patch.object(redis_managed_oauth2.RedisManagedOAuth2Mixin, '_update_current_tokens'):
-        oauth2 = redis_managed_oauth2.RedisManagedOAuth2(
-            client_id=None,
-            client_secret=None,
-            unique_id=unique_id,
-            redis_server=redis_server,
-        )
+    oauth2 = redis_managed_oauth2.RedisManagedOAuth2(
+        access_token=access_token,
+        refresh_token=refresh_token,
+        client_id=None,
+        client_secret=None,
+        unique_id=unique_id,
+        redis_server=redis_server,
+    )
+    assert oauth2.access_token == access_token
+    redis_server.hvals.assert_not_called()
 
-    assert oauth2.refresh('bogus_access_token') == (access_token, refresh_token)
+    assert oauth2.refresh('bogus_access_token') == (new_access_token, new_refresh_token)
+    assert oauth2.access_token == new_access_token
     redis_server.hvals.assert_called_once_with(unique_id)
 
 
