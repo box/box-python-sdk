@@ -167,10 +167,17 @@ class OAuth2(object):
         """
         Get the current access and refresh tokens.
 
+        This is a protected method that can be overridden to look up tokens
+        from an external source (the inverse of the `store_tokens` callback).
+
+        This method does not need to update this object's private token
+        attributes. Its caller in :class:`OAuth2` is responsible for that.
+
         :return:
             Tuple containing the current access token and refresh token.
+            One or both of them may be `None`, if they aren't set.
         :rtype:
-            `tuple` of (`unicode`, `unicode`)
+            `tuple` of ((`unicode` or `None`), (`unicode` or `None`))
         """
         return self._access_token, self._refresh_token
 
@@ -181,16 +188,24 @@ class OAuth2(object):
 
         :param access_token_to_refresh:
             The expired access token, which needs to be refreshed.
+            Pass `None` if you don't have the access token.
         :type access_token_to_refresh:
-            `unicode`
+            `unicode` or `None`
+        :return:
+            Tuple containing the new access token and refresh token.
+            The refresh token may be `None`, if the authentication scheme
+            doesn't use one, or keeps it hidden from this client.
+        :rtype:
+            `tuple` of (`unicode`, (`unicode` or `None`))
         """
         with self._refresh_lock:
-            access_token, refresh_token = self._get_tokens()
+            access_token, refresh_token = self._get_and_update_current_tokens()
             # The lock here is for handling that case that multiple requests fail, due to access token expired, at the
             # same time to avoid multiple session renewals.
-            if access_token_to_refresh == access_token:
-                # If the active access token is the same as the token needs to be refreshed, we make the request to
-                # refresh the token.
+            if (access_token is None) or (access_token_to_refresh == access_token):
+                # If the active access token is the same as the token needs to
+                # be refreshed, or if we don't currently have any active access
+                # token, we make the request to refresh the token.
                 return self._refresh(access_token_to_refresh)
             else:
                 # If the active access token (self._access_token) is not the same as the token needs to be refreshed,
@@ -213,10 +228,36 @@ class OAuth2(object):
         return 'box_csrf_token_' + ''.join(ascii_alphabet[int(system_random.random() * ascii_len)] for _ in range(16))
 
     def _store_tokens(self, access_token, refresh_token):
-        self._access_token = access_token
-        self._refresh_token = refresh_token
+        self._update_current_tokens(access_token, refresh_token)
         if self._store_tokens_callback is not None:
             self._store_tokens_callback(access_token, refresh_token)
+
+    def _get_and_update_current_tokens(self):
+        """Get the current access and refresh tokens, while also storing them in this object's private attributes.
+
+        :return:
+            Same as for :meth:`_get_tokens()`.
+        """
+        tokens = self._get_tokens()
+        self._update_current_tokens(*tokens)
+        return tokens
+
+    def _update_current_tokens(self, access_token, refresh_token):
+        """Store the latest tokens in this object's private attributes.
+
+        :param access_token:
+            The latest access token.
+            May be `None`, if it hasn't been provided.
+        :type access_token:
+            `unicode` or `None`
+        :param refresh_token:
+            The latest refresh token.
+            May be `None`, if the authentication scheme doesn't use one, or if
+            it hasn't been provided.
+        :type refresh_token:
+            `unicode` or `None`
+        """
+        self._access_token, self._refresh_token = access_token, refresh_token
 
     def send_token_request(self, data, access_token, expect_refresh_token=True):
         """
@@ -262,7 +303,7 @@ class OAuth2(object):
         Revoke the authorization for the current access/refresh token pair.
         """
         with self._refresh_lock:
-            access_token, refresh_token = self._get_tokens()
+            access_token, refresh_token = self._get_and_update_current_tokens()
             token_to_revoke = access_token or refresh_token
             if token_to_revoke is None:
                 return

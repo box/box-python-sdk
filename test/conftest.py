@@ -103,6 +103,12 @@ def access_token():
 
 
 @pytest.fixture(scope='session')
+def new_access_token():
+    # Must be distinct from access_token.
+    return 'ZFoWjFHvNbvVqHjlT9cE5asGnuyYCCqI'
+
+
+@pytest.fixture(scope='session')
 def refresh_token():
     return 'J7rxTiWOHMoSC1isKZKBZWizoRXjkQzig5C6jFgCVJ9bUnsUfGMinKBDLZWP9BgRb'
 

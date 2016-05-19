@@ -6,6 +6,11 @@ Release History
 Upcoming
 ++++++++
 
+1.5.2
+++++++++++++++++++
+
+- Bugfix so that ``OAuth2`` always has the correct tokens after a call to ``refresh()``.
+
 1.5.1 (2016-03-23)
 ++++++++++++++++++
 
