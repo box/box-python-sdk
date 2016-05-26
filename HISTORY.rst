@@ -6,7 +6,12 @@ Release History
 Upcoming
 ++++++++
 
-1.5.2
+1.5.3
+++++++++++++++++++
+
+- Bugfix so that ``JWTAuth`` opens the PEM private key file in ``'rb'`` mode.
+
+1.5.2 (2016-05-19)
 ++++++++++++++++++
 
 - Bugfix so that ``OAuth2`` always has the correct tokens after a call to ``refresh()``.

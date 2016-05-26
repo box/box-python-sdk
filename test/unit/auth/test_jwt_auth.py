@@ -73,7 +73,7 @@ def jwt_auth_init_mocks(
     }
 
     mock_network_layer.request.return_value = successful_token_response
-    key_file_read_data = 'key_file_read_data'
+    key_file_read_data = b'key_file_read_data'
     with patch('boxsdk.auth.jwt_auth.open', mock_open(read_data=key_file_read_data), create=True) as jwt_auth_open:
         with patch('cryptography.hazmat.primitives.serialization.load_pem_private_key') as load_pem_private_key:
             oauth = JWTAuth(
@@ -88,7 +88,7 @@ def jwt_auth_init_mocks(
                 jwt_key_id=jwt_key_id,
             )
 
-            jwt_auth_open.assert_called_once_with(sentinel.rsa_path)
+            jwt_auth_open.assert_called_once_with(sentinel.rsa_path, 'rb')
             jwt_auth_open.return_value.read.assert_called_once_with()  # pylint:disable=no-member
             load_pem_private_key.assert_called_once_with(
                 key_file_read_data,

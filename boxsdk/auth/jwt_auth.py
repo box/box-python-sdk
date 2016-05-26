@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 from datetime import datetime, timedelta
 import random
@@ -95,7 +95,7 @@ class JWTAuth(OAuth2):
             refresh_token=None,
             network_layer=network_layer,
         )
-        with open(rsa_private_key_file_sys_path) as key_file:
+        with open(rsa_private_key_file_sys_path, 'rb') as key_file:
             self._rsa_private_key = serialization.load_pem_private_key(
                 key_file.read(),
                 password=rsa_private_key_passphrase,
@@ -182,6 +182,7 @@ class JWTAuth(OAuth2):
         :rtype:
             `unicode`
         """
+        self._user_id = None
         return self._auth_with_jwt(self._enterprise_id, 'enterprise')
 
     def _refresh(self, access_token):
