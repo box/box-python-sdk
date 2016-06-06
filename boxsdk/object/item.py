@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 import json
 
+from boxsdk.object.metadata import Metadata
 from .base_object import BaseObject
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
@@ -322,3 +323,23 @@ class Item(BaseObject):
         """
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).delete(params, headers)
+
+    def metadata(self, scope='global', template='properties'):
+        """
+        Instantiate a :class:`Metadata` object associated with this file.
+
+        :param scope:
+            Scope of the metadata. Must be either 'global' or 'enterprise'.
+        :type scope:
+            `unicode`
+        :param template:
+            The name of the metadata template.
+            See https://box-content.readme.io/reference#metadata-object for more details.
+        :type template:
+            `unicode`
+        :return:
+            A new metadata instance associated with this file.
+        :rtype:
+            :class:`Metadata`
+        """
+        return Metadata(self._session, self, scope, template)
