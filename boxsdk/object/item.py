@@ -326,7 +326,7 @@ class Item(BaseObject):
 
     def metadata(self, scope='global', template='properties'):
         """
-        Instantiate a :class:`Metadata` object associated with this file.
+        Instantiate a :class:`Metadata` object associated with this item.
 
         :param scope:
             Scope of the metadata. Must be either 'global' or 'enterprise'.
@@ -338,7 +338,7 @@ class Item(BaseObject):
         :type template:
             `unicode`
         :return:
-            A new metadata instance associated with this file.
+            A new metadata instance associated with this item.
         :rtype:
             :class:`Metadata`
         """
