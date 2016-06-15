@@ -9,6 +9,7 @@ from boxsdk.object.base_endpoint import BaseEndpoint
 from boxsdk.util.enum import ExtendableEnumMeta
 from boxsdk.util.lru_cache import LRUCache
 from boxsdk.util.text_enum import TextEnum
+from boxsdk.util.translator import Translator
 
 
 # pylint:disable=too-many-ancestors
@@ -79,8 +80,7 @@ class Events(BaseEndpoint):
         :type stream_type:
             :enum:`EventsStreamType`
         :returns:
-            JSON response from the Box /events endpoint. Contains the next stream position to use for the next call,
-            along with some number of events.
+            Dictionary containing the next stream position along with a list of some number of events.
         :rtype:
             `dict`
         """
@@ -91,7 +91,10 @@ class Events(BaseEndpoint):
             'stream_type': stream_type,
         }
         box_response = self._session.get(url, params=params)
-        return box_response.json()
+        response = box_response.json().copy()
+        if 'entries' in response:
+            response['entries'] = [Translator().translate(item['type'])(self._session, item['event_id'], item) for item in response['entries']]
+        return response
 
     def get_latest_stream_position(self, stream_type=UserEventsStreamType.ALL):
         """

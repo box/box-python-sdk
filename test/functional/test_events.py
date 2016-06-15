@@ -8,6 +8,7 @@ import pytest
 import requests
 
 from boxsdk.object.folder import FolderSyncState
+from boxsdk.object.event import Event as BoxEvent
 
 
 @pytest.fixture
@@ -36,6 +37,7 @@ def assert_event(box_events):
         assert event['event_type'] == event_type
         assert event['source']['name'] == item.name
         assert event['source']['id'] == item.id
+        assert isinstance(event, BoxEvent)
 
     return helper
 

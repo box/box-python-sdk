@@ -13,6 +13,7 @@ from six.moves.urllib.parse import urlencode, urlunsplit  # pylint:disable=impor
 
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.events import Events, EventsStreamType, UserEventsStreamType
+from boxsdk.object.event import Event
 from boxsdk.session.box_session import BoxResponse
 from boxsdk.util.ordered_dict import OrderedDict
 
@@ -181,6 +182,18 @@ def mock_event():
 
 
 @pytest.fixture()
+def mock_event_object(mock_box_session):
+    return Event(mock_box_session, "f82c3ba03e41f7e8a7608363cc6c0390183c3f83", {
+        "type": "event",
+        "event_id": "f82c3ba03e41f7e8a7608363cc6c0390183c3f83",
+        "source": {
+            "type": "folder",
+            "id": "11446498",
+            }
+        })
+
+
+@pytest.fixture()
 def events_response(initial_stream_position, mock_event, make_mock_box_request):
     # pylint:disable=redefined-outer-name
     mock_box_response, _ = make_mock_box_request(
@@ -195,6 +208,7 @@ def test_get_events(
         events_response,
         stream_type_kwargs,
         expected_stream_type_params,
+        mock_event_object
 ):
     # pylint:disable=redefined-outer-name
     expected_url = test_events.get_url()
@@ -205,6 +219,12 @@ def test_get_events(
         expected_url,
         params=dict(limit=100, stream_position=0, **expected_stream_type_params),
     )
+    event_entries = events['entries']
+    assert len(event_entries) == len(events_response.json.return_value['entries'])
+    if len(event_entries):
+        event = event_entries[0]
+        assert isinstance(event, Event)
+        assert event.event_id == mock_event_object['event_id']
 
 
 def test_get_long_poll_options(
@@ -234,7 +254,7 @@ def test_generate_events_with_long_polling(
         new_change_long_poll_response,
         reconnect_long_poll_response,
         max_retries_long_poll_response,
-        mock_event,
+        mock_event_object,
         stream_type_kwargs,
         expected_stream_type,
         expected_stream_type_params,
@@ -253,7 +273,7 @@ def test_generate_events_with_long_polling(
         empty_events_response,
     ]
     events = test_events.generate_events_with_long_polling(**stream_type_kwargs)
-    assert next(events) == mock_event
+    assert next(events) == mock_event_object
     with pytest.raises(StopIteration):
         next(events)
     events.close()
