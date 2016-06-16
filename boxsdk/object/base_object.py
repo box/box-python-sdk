@@ -21,7 +21,6 @@ class ObjectMeta(ABCMeta):
         super(ObjectMeta, cls).__init__(name, bases, attrs)
         item_type = attrs.get('_item_type', None)
         if item_type is not None:
-            print "registering " + item_type
             Translator().register(item_type, cls)
 
 
