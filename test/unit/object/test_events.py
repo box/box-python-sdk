@@ -170,7 +170,7 @@ def max_retries_long_poll_response(make_mock_box_request):
 
 
 @pytest.fixture()
-def mock_event():
+def mock_event_json():
     return {
         "type": "event",
         "event_id": "f82c3ba03e41f7e8a7608363cc6c0390183c3f83",
@@ -182,26 +182,10 @@ def mock_event():
 
 
 @pytest.fixture()
-def mock_event_object(mock_box_session):
-    return Event(
-        mock_box_session,
-        "f82c3ba03e41f7e8a7608363cc6c0390183c3f83",
-        {
-            "type": "event",
-            "event_id": "f82c3ba03e41f7e8a7608363cc6c0390183c3f83",
-            "source":
-            {
-                "type": "folder",
-                "id": "11446498",
-            },
-        },)
-
-
-@pytest.fixture()
-def events_response(initial_stream_position, mock_event, make_mock_box_request):
+def events_response(initial_stream_position, mock_event_json, make_mock_box_request):
     # pylint:disable=redefined-outer-name
     mock_box_response, _ = make_mock_box_request(
-        response={"next_stream_position": initial_stream_position, "entries": [mock_event]},
+        response={"next_stream_position": initial_stream_position, "entries": [mock_event_json]},
     )
     return mock_box_response
 
@@ -212,7 +196,6 @@ def test_get_events(
         events_response,
         stream_type_kwargs,
         expected_stream_type_params,
-        mock_event_object
 ):
     # pylint:disable=redefined-outer-name
     expected_url = test_events.get_url()
@@ -225,10 +208,8 @@ def test_get_events(
     )
     event_entries = events['entries']
     assert len(event_entries) == len(events_response.json.return_value['entries'])
-    if len(event_entries):
-        event = event_entries[0]
+    for event in event_entries:
         assert isinstance(event, Event)
-        assert event.event_id == mock_event_object['event_id']
 
 
 def test_get_long_poll_options(
@@ -258,7 +239,7 @@ def test_generate_events_with_long_polling(
         new_change_long_poll_response,
         reconnect_long_poll_response,
         max_retries_long_poll_response,
-        mock_event_object,
+        mock_event_json,
         stream_type_kwargs,
         expected_stream_type,
         expected_stream_type_params,
@@ -277,7 +258,7 @@ def test_generate_events_with_long_polling(
         empty_events_response,
     ]
     events = test_events.generate_events_with_long_polling(**stream_type_kwargs)
-    assert next(events) == mock_event_object
+    assert next(events) == Event(mock_box_session, "f82c3ba03e41f7e8a7608363cc6c0390183c3f83", mock_event_json)
     with pytest.raises(StopIteration):
         next(events)
     events.close()
