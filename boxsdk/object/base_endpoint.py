@@ -2,11 +2,14 @@
 
 from __future__ import unicode_literals
 
+from boxsdk.object.base_api_json_object import BaseAPIJSONObject
 
-class BaseEndpoint(object):
+
+class BaseEndpoint(BaseAPIJSONObject):
     """A Box API endpoint."""
 
-    def __init__(self, session):
+    def __init__(self, session, object_id=None, response_object=None):
+    # def __init__(self, session):
         """
 
         :param session:
@@ -15,6 +18,7 @@ class BaseEndpoint(object):
             :class:`BoxSession`
         """
         self._session = session
+        super(BaseEndpoint, self).__init__(object_id, response_object)
 
     def get_url(self, endpoint, *args):
         """
