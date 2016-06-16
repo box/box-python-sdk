@@ -17,5 +17,3 @@ class Event(BaseObject):
         Disallow this method for this subclass, should not access Event by event_id.
         """
         raise AttributeError("'Event' class has no method 'get_url'")
-
-
