@@ -1,30 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-# from abc import ABCMeta
 import json
-
-import six
 
 from boxsdk.object.base_endpoint import BaseEndpoint
 from boxsdk.util.translator import Translator
 
 
-# class ObjectMeta(ABCMeta):
-#     """
-#     Metaclass for Box API objects. Registers classes so that API responses can be translated to the correct type.
-#     Relies on the _item_type field defined on the classes to match the type property of the response json.
-#     But the type-class mapping will only be registered if the module of the class is imported.
-#     So it's also important to add the module name to __all__ in object/__init__.py.
-#     """
-#     def __init__(cls, name, bases, attrs):
-#         super(ObjectMeta, cls).__init__(name, bases, attrs)
-#         item_type = attrs.get('_item_type', None)
-#         if item_type is not None:
-#             Translator().register(item_type, cls)
-#
-#
-# @six.add_metaclass(ObjectMeta)
 class BaseObject(BaseEndpoint):
     """
     A Box API endpoint for interacting with a Box object.
@@ -47,29 +29,28 @@ class BaseObject(BaseEndpoint):
             :class:`BoxResponse`
         """
         super(BaseObject, self).__init__(session, object_id, response_object)
-        # super(BaseObject, self).__init__(session)
-        # self._object_id = object_id
-        # self._response_object = response_object or {}
-        # self.__dict__.update(self._response_object)
 
-    # def __getitem__(self, item):
-    #     """Base class override. Try to get the attribute from the API response object."""
-    #     return self._response_object[item]
+    def get(self, fields=None, headers=None):
+        """
+        Get information about the object, specified by fields. If fields is None, return the default fields.
 
-    # def __repr__(self):
-    #     """Base class override. Return a human-readable representation using the Box ID or name of the object."""
-    #     description = '<Box {0} - {1}>'.format(self.__class__.__name__, self._description)
-    #     if six.PY2:
-    #         return description.encode('utf-8')
-    #     else:
-    #         return description
-
-    # @property
-    # def _description(self):
-    #     if 'name' in self._response_object:
-    #         return '{0} ({1})'.format(self._object_id, self.name)  # pylint:disable=no-member
-    #     else:
-    #         return '{0}'.format(self._object_id)
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :param headers:
+            Additional headers to send with the request.
+        :type headers:
+            `dict`
+        :return:
+            An object of the same type that has the requested information.
+        :rtype:
+            :class:`BaseObject`
+        """
+        url = self.get_url()
+        params = {'fields': ','.join(fields)} if fields else None
+        box_response = self._session.get(url, params=params, headers=headers)
+        return self.__class__(self._session, self._object_id, box_response.json())
 
     def get_url(self, *args):
         """
@@ -86,37 +67,6 @@ class BaseObject(BaseEndpoint):
             `unicode`
         """
         return super(BaseObject, self).get_url('{0}s'.format(self._item_type))
-
-    # @property
-    # def object_id(self):
-    #     """Return the Box ID for the object.
-    #
-    #     :rtype:
-    #         `unicode`
-    #     """
-    #     return self._object_id
-
-    # def get(self, fields=None, headers=None):
-    #     """
-    #     Get information about the object, specified by fields. If fields is None, return the default fields.
-    #
-    #     :param fields:
-    #         List of fields to request.
-    #     :type fields:
-    #         `Iterable` of `unicode`
-    #     :param headers:
-    #         Additional headers to send with the request.
-    #     :type headers:
-    #         `dict`
-    #     :return:
-    #         An object of the same type that has the requested information.
-    #     :rtype:
-    #         :class:`BaseObject`
-    #     """
-    #     url = self.get_url()
-    #     params = {'fields': ','.join(fields)} if fields else None
-    #     box_response = self._session.get(url, params=params, headers=headers)
-    #     return self.__class__(self._session, self._object_id, box_response.json())
 
     def update_info(self, data, params=None, headers=None, **kwargs):
         """Update information about this object.
@@ -184,10 +134,6 @@ class BaseObject(BaseEndpoint):
         # confirmation that the below is correct.
         box_response = self._session.delete(url, expect_json_response=False, params=params or {}, headers=headers)
         return box_response.ok
-
-    # def __eq__(self, other):
-    #     """Base class override. Equality is determined by object id."""
-    #     return self._object_id == other.object_id
 
     def _paging_wrapper(self, url, starting_index, limit, factory=None):
         """

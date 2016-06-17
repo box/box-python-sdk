@@ -9,7 +9,6 @@ class BaseEndpoint(BaseAPIJSONObject):
     """A Box API endpoint."""
 
     def __init__(self, session, object_id=None, response_object=None):
-    # def __init__(self, session):
         """
 
         :param session:

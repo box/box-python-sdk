@@ -7,7 +7,6 @@ from boxsdk.object.event import Event
 
 def test_init_event(mock_box_session):
     event = Event(
-        mock_box_session,
         "f82c3ba03e41f7e8a7608363cc6c0390183c3f83",
         {
             "type": "event",

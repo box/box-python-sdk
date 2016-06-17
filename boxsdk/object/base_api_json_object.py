@@ -24,7 +24,8 @@ class BaseAPIJSONObjectMeta(ABCMeta):
 
 @six.add_metaclass(BaseAPIJSONObjectMeta)
 class BaseAPIJSONObject(object):
-    # pass
+    """Base class containing basic logic shared between true REST objects and other objects (such as an Event)"""
+
     def __init__(self, object_id=None, response_object=None):
         self._object_id = object_id or ''
         self._response_object = response_object or {}
@@ -61,25 +62,3 @@ class BaseAPIJSONObject(object):
     def __eq__(self, other):
         """Base class override. Equality is determined by object id."""
         return self._object_id == other.object_id
-
-    def get(self, fields=None, headers=None):
-        """
-        Get information about the object, specified by fields. If fields is None, return the default fields.
-
-        :param fields:
-            List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
-        :param headers:
-            Additional headers to send with the request.
-        :type headers:
-            `dict`
-        :return:
-            An object of the same type that has the requested information.
-        :rtype:
-            :class:`BaseObject`
-        """
-        url = self.get_url()
-        params = {'fields': ','.join(fields)} if fields else None
-        box_response = self._session.get(url, params=params, headers=headers)
-        return self.__class__(self._session, self._object_id, box_response.json())
