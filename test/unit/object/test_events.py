@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 from itertools import chain
 import json
@@ -258,7 +258,7 @@ def test_generate_events_with_long_polling(
         empty_events_response,
     ]
     events = test_events.generate_events_with_long_polling(**stream_type_kwargs)
-    assert next(events) == Event("f82c3ba03e41f7e8a7608363cc6c0390183c3f83", mock_event_json)
+    assert next(events) == Event(mock_event_json)
     with pytest.raises(StopIteration):
         next(events)
     events.close()

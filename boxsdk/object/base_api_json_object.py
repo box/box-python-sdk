@@ -1,14 +1,13 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-from abc import ABCMeta
+from __future__ import unicode_literals, absolute_import
 
 import six
 
-from boxsdk.util.translator import Translator
+from ..util.translator import Translator
 
 
-class BaseAPIJSONObjectMeta(ABCMeta):
+class BaseAPIJSONObjectMeta(type):
     """
     Metaclass for Box API objects. Registers classes so that API responses can be translated to the correct type.
     Relies on the _item_type field defined on the classes to match the type property of the response json.
@@ -26,8 +25,13 @@ class BaseAPIJSONObjectMeta(ABCMeta):
 class BaseAPIJSONObject(object):
     """Base class containing basic logic shared between true REST objects and other objects (such as an Event)"""
 
-    def __init__(self, object_id=None, response_object=None):
-        self._object_id = object_id or ''
+    def __init__(self, response_object=None):
+        """
+        :param response_object:
+            The Box API response representing the object.
+        :type response_object:
+            :class:`BoxResponse`
+        """
         self._response_object = response_object or {}
         self.__dict__.update(self._response_object)
 
@@ -37,7 +41,8 @@ class BaseAPIJSONObject(object):
 
     def __repr__(self):
         """Base class override. Return a human-readable representation using the Box ID or name of the object."""
-        description = '<Box {0} - {1}>'.format(self.__class__.__name__, self._description)
+        extra_description = ' - {0}'.format(self._description) if self._description else ''
+        description = '<Box {0}{1}'.format(self.__class__.__name__, extra_description)
         if six.PY2:
             return description.encode('utf-8')
         else:
@@ -45,20 +50,4 @@ class BaseAPIJSONObject(object):
 
     @property
     def _description(self):
-        if 'name' in self._response_object:
-            return '{0} ({1})'.format(self._object_id, self.name)  # pylint:disable=no-member
-        else:
-            return '{0}'.format(self._object_id)
-
-    @property
-    def object_id(self):
-        """Return the Box ID for the object.
-
-        :rtype:
-            `unicode`
-        """
-        return self._object_id
-
-    def __eq__(self, other):
-        """Base class override. Equality is determined by object id."""
-        return self._object_id == other.object_id
+        return ""

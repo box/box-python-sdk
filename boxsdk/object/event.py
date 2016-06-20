@@ -1,11 +1,11 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
-from boxsdk.object.base_api_json_object import BaseAPIJSONObject
+from .api_json_object import APIJSONObject
 
 
-class Event(BaseAPIJSONObject):
-    """Represents a single Box event"""
+class Event(APIJSONObject):
+    """Represents a single Box event."""
 
     _item_type = 'event'

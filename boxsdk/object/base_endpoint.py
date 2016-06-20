@@ -1,23 +1,23 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
-from boxsdk.object.base_api_json_object import BaseAPIJSONObject
+from __future__ import unicode_literals, absolute_import
 
 
-class BaseEndpoint(BaseAPIJSONObject):
+class BaseEndpoint(object):
     """A Box API endpoint."""
 
-    def __init__(self, session, object_id=None, response_object=None):
+    def __init__(self, session, response_object=None):
         """
-
         :param session:
             The Box session used to make requests.
         :type session:
             :class:`BoxSession`
+        :param response_object:
+            The Box API response representing the object.
+        :type response_object:
+            :class:`BoxResponse`
         """
         self._session = session
-        super(BaseEndpoint, self).__init__(object_id, response_object)
 
     def get_url(self, endpoint, *args):
         """

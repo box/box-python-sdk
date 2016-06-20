@@ -1,16 +1,18 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 import json
 
-from boxsdk.object.base_endpoint import BaseEndpoint
-from boxsdk.util.translator import Translator
+from .base_endpoint import BaseEndpoint
+from.base_api_json_object import BaseAPIJSONObject
+from ..util.translator import Translator
 
 
-class BaseObject(BaseEndpoint):
-    """
-    A Box API endpoint for interacting with a Box object.
-    """
+class BaseObject(BaseEndpoint, BaseAPIJSONObject):
+    """A Box API endpoint for interacting with a Box object."""
+
+    # Question:
+    # Should this item type be a part of other objects?
     _item_type = None
 
     def __init__(self, session, object_id, response_object=None):
@@ -28,7 +30,30 @@ class BaseObject(BaseEndpoint):
         :type response_object:
             :class:`BoxResponse`
         """
-        super(BaseObject, self).__init__(session, object_id, response_object)
+        self._object_id = object_id
+        # super(BaseObject, self).__init__(session, response_object)
+        BaseEndpoint.__init__(self, session, response_object)
+        BaseAPIJSONObject.__init__(self, response_object)
+
+    def __eq__(self, other):
+        """Equality is determined by object id"""
+        return self._object_id == other.object_id
+
+    @property
+    def _description(self):
+        if 'name' in self._response_object:
+            return '{0} ({1})'.format(self._object_id, self.name)  # pylint:disable=no-member
+        else:
+            return '{0}'.format(self._object_id)
+
+    @property
+    def object_id(self):
+        """Return the Box ID for the object.
+
+        :rtype:
+            `unicode`
+        """
+        return self._object_id
 
     def get(self, fields=None, headers=None):
         """

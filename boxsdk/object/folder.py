@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import json
 import os
 from six import text_type
+
 from boxsdk.config import API
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.file import File
