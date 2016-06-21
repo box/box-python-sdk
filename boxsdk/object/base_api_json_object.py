@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, absolute_import
-
 import six
 
 from ..util.translator import Translator
@@ -25,24 +24,39 @@ class BaseAPIJSONObjectMeta(type):
 class BaseAPIJSONObject(object):
     """Base class containing basic logic shared between true REST objects and other objects (such as an Event)"""
 
-    def __init__(self, response_object=None):
+    _item_type = None
+
+    def __init__(self, response_object=None, **kwargs):
         """
         :param response_object:
-            The Box API response representing the object.
+            A JSON object representing the object returned from a Box API request.
         :type response_object:
-            :class:`BoxResponse`
+            :`dict`
+        :param kwargs:
+            Keyword arguments for base class constructors.
+        :type kwargs:
+            :`dict`
         """
         self._response_object = response_object or {}
         self.__dict__.update(self._response_object)
+        super(BaseAPIJSONObject, self).__init__(**kwargs)
 
     def __getitem__(self, item):
-        """Base class override. Try to get the attribute from the API response object."""
+        """
+        Try to get the attribute from the API response object.
+        :param item:
+            The attribute to retrieve from the API response object.
+        :type item:
+            `unicode`
+        :rtype:
+            `unicode`
+        """
         return self._response_object[item]
 
     def __repr__(self):
         """Base class override. Return a human-readable representation using the Box ID or name of the object."""
         extra_description = ' - {0}'.format(self._description) if self._description else ''
-        description = '<Box {0}{1}'.format(self.__class__.__name__, extra_description)
+        description = '<Box {0}{1}>'.format(self.__class__.__name__, extra_description)
         if six.PY2:
             return description.encode('utf-8')
         else:
@@ -50,4 +64,5 @@ class BaseAPIJSONObject(object):
 
     @property
     def _description(self):
+        """Return a description if the object if one exists."""
         return ""

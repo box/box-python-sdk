@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, absolute_import
-
 from requests.exceptions import Timeout
 from six import with_metaclass
 

@@ -4,16 +4,12 @@ from __future__ import unicode_literals, absolute_import
 import json
 
 from .base_endpoint import BaseEndpoint
-from.base_api_json_object import BaseAPIJSONObject
+from .base_api_json_object import BaseAPIJSONObject
 from ..util.translator import Translator
 
 
 class BaseObject(BaseEndpoint, BaseAPIJSONObject):
     """A Box API endpoint for interacting with a Box object."""
-
-    # Question:
-    # Should this item type be a part of other objects?
-    _item_type = None
 
     def __init__(self, session, object_id, response_object=None):
         """
@@ -26,25 +22,36 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         :type object_id:
             `unicode`
         :param response_object:
-            The Box API response representing the object.
+            A JSON object representing the object returned from a Box API request.
         :type response_object:
-            :class:`BoxResponse`
+            :`dict`
         """
         self._object_id = object_id
-        # super(BaseObject, self).__init__(session, response_object)
-        BaseEndpoint.__init__(self, session, response_object)
-        BaseAPIJSONObject.__init__(self, response_object)
-
-    def __eq__(self, other):
-        """Equality is determined by object id"""
-        return self._object_id == other.object_id
+        super(BaseObject, self).__init__(session=session, response_object=response_object)
 
     @property
     def _description(self):
+        """Base class override.  Return a description for the object."""
         if 'name' in self._response_object:
             return '{0} ({1})'.format(self._object_id, self.name)  # pylint:disable=no-member
         else:
             return '{0}'.format(self._object_id)
+
+    def get_url(self, *args):
+        """
+        Base class override.
+        Return the given object's URL, appending any optional parts as specified by args.
+        """
+        return super(BaseObject, self).get_url('{0}s'.format(self._item_type), self._object_id, *args)
+
+    def get_type_url(self):
+        """
+        Return the URL for type of the given resource.
+
+        :rtype:
+            `unicode`
+        """
+        return super(BaseObject, self).get_url('{0}s'.format(self._item_type))
 
     @property
     def object_id(self):
@@ -76,22 +83,6 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         params = {'fields': ','.join(fields)} if fields else None
         box_response = self._session.get(url, params=params, headers=headers)
         return self.__class__(self._session, self._object_id, box_response.json())
-
-    def get_url(self, *args):
-        """
-        Base class override.
-        Return the given object's URL, appending any optional parts as specified by args.
-        """
-        return super(BaseObject, self).get_url('{0}s'.format(self._item_type), self._object_id, *args)
-
-    def get_type_url(self):
-        """
-        Return the URL for type of the given resource.
-
-        :rtype:
-            `unicode`
-        """
-        return super(BaseObject, self).get_url('{0}s'.format(self._item_type))
 
     def update_info(self, data, params=None, headers=None, **kwargs):
         """Update information about this object.
@@ -159,6 +150,10 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         # confirmation that the below is correct.
         box_response = self._session.delete(url, expect_json_response=False, params=params or {}, headers=headers)
         return box_response.ok
+
+    def __eq__(self, other):
+        """Equality as determined by object id"""
+        return self._object_id == other.object_id
 
     def _paging_wrapper(self, url, starting_index, limit, factory=None):
         """
