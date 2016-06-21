@@ -31,7 +31,7 @@ class BaseAPIJSONObject(object):
         :param response_object:
             A JSON object representing the object returned from a Box API request.
         :type response_object:
-            :`dict`
+            `dict`
         """
         super(BaseAPIJSONObject, self).__init__(**kwargs)
         self._response_object = response_object or {}

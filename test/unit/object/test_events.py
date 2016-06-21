@@ -207,7 +207,7 @@ def test_get_events(
         params=dict(limit=100, stream_position=0, **expected_stream_type_params),
     )
     event_entries = events['entries']
-    assert len(event_entries) == len(events_response.json.return_value['entries'])
+    assert event_entries == events_response.json.return_value['entries']
     for event in event_entries:
         assert isinstance(event, Event)
 
