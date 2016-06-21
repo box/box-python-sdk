@@ -1,19 +1,23 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 
 class BaseEndpoint(object):
     """A Box API endpoint."""
 
-    def __init__(self, session):
+    def __init__(self, session, **kwargs):
         """
-
         :param session:
             The Box session used to make requests.
         :type session:
             :class:`BoxSession`
+        :param kwargs:
+            Keyword arguments for base class constructors.
+        :type kwargs:
+            `dict`
         """
+        super(BaseEndpoint, self).__init__(**kwargs)
         self._session = session
 
     def get_url(self, endpoint, *args):

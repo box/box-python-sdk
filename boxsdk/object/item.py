@@ -1,7 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
+from __future__ import unicode_literals, absolute_import
 import json
 
 from .base_object import BaseObject
@@ -111,6 +110,10 @@ class Item(BaseObject):
     def get(self, fields=None, etag=None):
         """Base class override.
 
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
         :param etag:
             If specified, instruct the Box API to get the info only if the current version's etag doesn't match.
         :type etag:

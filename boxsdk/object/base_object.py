@@ -1,35 +1,15 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-from abc import ABCMeta
+from __future__ import unicode_literals, absolute_import
 import json
 
-import six
-
-from boxsdk.object.base_endpoint import BaseEndpoint
-from boxsdk.util.translator import Translator
-
-
-class ObjectMeta(ABCMeta):
-    """
-    Metaclass for Box API objects. Registers classes so that API responses can be translated to the correct type.
-    Relies on the _item_type field defined on the classes to match the type property of the response json.
-    But the type-class mapping will only be registered if the module of the class is imported.
-    So it's also important to add the module name to __all__ in object/__init__.py.
-    """
-    def __init__(cls, name, bases, attrs):
-        super(ObjectMeta, cls).__init__(name, bases, attrs)
-        item_type = attrs.get('_item_type', None)
-        if item_type is not None:
-            Translator().register(item_type, cls)
+from .base_endpoint import BaseEndpoint
+from .base_api_json_object import BaseAPIJSONObject
+from ..util.translator import Translator
 
 
-@six.add_metaclass(ObjectMeta)
-class BaseObject(BaseEndpoint):
-    """
-    A Box API endpoint for interacting with a Box object.
-    """
-    _item_type = None
+class BaseObject(BaseEndpoint, BaseAPIJSONObject):
+    """A Box API endpoint for interacting with a Box object."""
 
     def __init__(self, session, object_id, response_object=None):
         """
@@ -42,29 +22,16 @@ class BaseObject(BaseEndpoint):
         :type object_id:
             `unicode`
         :param response_object:
-            The Box API response representing the object.
+            A JSON object representing the object returned from a Box API request.
         :type response_object:
-            :class:`BoxResponse`
+            `dict`
         """
-        super(BaseObject, self).__init__(session)
+        super(BaseObject, self).__init__(session=session, response_object=response_object)
         self._object_id = object_id
-        self._response_object = response_object or {}
-        self.__dict__.update(self._response_object)
-
-    def __getitem__(self, item):
-        """Base class override. Try to get the attribute from the API response object."""
-        return self._response_object[item]
-
-    def __repr__(self):
-        """Base class override. Return a human-readable representation using the Box ID or name of the object."""
-        description = '<Box {0} - {1}>'.format(self.__class__.__name__, self._description)
-        if six.PY2:
-            return description.encode('utf-8')
-        else:
-            return description
 
     @property
     def _description(self):
+        """Base class override.  Return a description for the object."""
         if 'name' in self._response_object:
             return '{0} ({1})'.format(self._object_id, self.name)  # pylint:disable=no-member
         else:
@@ -185,7 +152,7 @@ class BaseObject(BaseEndpoint):
         return box_response.ok
 
     def __eq__(self, other):
-        """Base class override. Equality is determined by object id."""
+        """Equality as determined by object id"""
         return self._object_id == other.object_id
 
     def _paging_wrapper(self, url, starting_index, limit, factory=None):
