@@ -15,10 +15,10 @@ class BaseEndpoint(object):
         :param kwargs:
             Keyword arguments for base class constructors.
         :type kwargs:
-            :`dict`
+            `dict`
         """
-        self._session = session
         super(BaseEndpoint, self).__init__(**kwargs)
+        self._session = session
 
     def get_url(self, endpoint, *args):
         """

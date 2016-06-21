@@ -9,7 +9,10 @@ from .base_api_json_object import BaseAPIJSONObject, BaseAPIJSONObjectMeta
 
 
 class APIJSONObjectMeta(BaseAPIJSONObjectMeta, ABCMeta):
-    """Avoid conflicting metaclass definitions for APIJSONObject"""
+    """
+    Avoid conflicting metaclass definitions for APIJSONObject.
+    http://code.activestate.com/recipes/204197-solving-the-metaclass-conflict/
+    """
     pass
 
 

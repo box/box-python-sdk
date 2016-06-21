@@ -32,23 +32,18 @@ class BaseAPIJSONObject(object):
             A JSON object representing the object returned from a Box API request.
         :type response_object:
             :`dict`
-        :param kwargs:
-            Keyword arguments for base class constructors.
-        :type kwargs:
-            :`dict`
         """
+        super(BaseAPIJSONObject, self).__init__(**kwargs)
         self._response_object = response_object or {}
         self.__dict__.update(self._response_object)
-        super(BaseAPIJSONObject, self).__init__(**kwargs)
 
     def __getitem__(self, item):
         """
         Try to get the attribute from the API response object.
+
         :param item:
             The attribute to retrieve from the API response object.
         :type item:
-            `unicode`
-        :rtype:
             `unicode`
         """
         return self._response_object[item]
@@ -64,5 +59,5 @@ class BaseAPIJSONObject(object):
 
     @property
     def _description(self):
-        """Return a description if the object if one exists."""
+        """Return a description of the object if one exists."""
         return ""

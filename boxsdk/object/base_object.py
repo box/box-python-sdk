@@ -24,10 +24,10 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         :param response_object:
             A JSON object representing the object returned from a Box API request.
         :type response_object:
-            :`dict`
+            `dict`
         """
-        self._object_id = object_id
         super(BaseObject, self).__init__(session=session, response_object=response_object)
+        self._object_id = object_id
 
     @property
     def _description(self):
