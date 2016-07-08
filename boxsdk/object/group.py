@@ -1,12 +1,12 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 from functools import partial
 import json
 
 from .base_object import BaseObject
-from boxsdk.config import API
-from boxsdk.util.translator import Translator
+from ..config import API
+from ..util.translator import Translator
 
 
 class Group(BaseObject):
