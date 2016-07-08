@@ -4,8 +4,8 @@ from __future__ import unicode_literals, absolute_import
 import json
 
 from .base_object import BaseObject
-from boxsdk.config import API
-from boxsdk.exception import BoxAPIException
+from ..config import API
+from ..exception import BoxAPIException
 
 
 class Item(BaseObject):

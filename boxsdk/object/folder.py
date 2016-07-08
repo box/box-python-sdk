@@ -6,8 +6,6 @@ import os
 from six import text_type
 
 from boxsdk.config import API
-from boxsdk.object.collaboration import Collaboration
-from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
@@ -217,7 +215,7 @@ class Folder(Item):
         box_response = self._session.post(url, data=data, files=files, expect_json_response=False)
         file_response = box_response.json()['entries'][0]
         file_id = file_response['id']
-        return File(
+        return Translator().translate(file_response['type'])(
             session=self._session,
             object_id=file_id,
             response_object=file_response,
@@ -296,7 +294,7 @@ class Folder(Item):
         }
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
-        return Folder(
+        return self.__class__(
             session=self._session,
             object_id=response['id'],
             response_object=response,
@@ -359,7 +357,7 @@ class Folder(Item):
         box_response = self._session.post(url, expect_json_response=True, data=data, params=params)
         collaboration_response = box_response.json()
         collab_id = collaboration_response['id']
-        return Collaboration(
+        return Translator().translate(collaboration_response['type'])(
             session=self._session,
             object_id=collab_id,
             response_object=collaboration_response,

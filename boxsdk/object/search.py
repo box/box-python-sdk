@@ -1,11 +1,11 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 import json
 
 from .base_endpoint import BaseEndpoint
-from boxsdk.util.translator import Translator
+from ..util.translator import Translator
 
 
 class MetadataSearchFilter(object):
