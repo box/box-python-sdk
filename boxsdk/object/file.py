@@ -127,7 +127,7 @@ class File(Item):
 
         files = {'file': ('unused', file_stream)}
         headers = {'If-Match': etag} if etag is not None else None
-        return File(
+        return self.__class__(
             session=self._session,
             object_id=self._object_id,
             response_object=self._session.post(url, expect_json_response=False, files=files, headers=headers).json(),
