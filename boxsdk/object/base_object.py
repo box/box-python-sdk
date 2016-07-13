@@ -153,7 +153,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
 
     def __eq__(self, other):
         """Equality as determined by object id"""
-        return self._object_id == other.object_id
+        return (other != None) and (self._object_id == other.object_id)
 
     def _paging_wrapper(self, url, starting_index, limit, factory=None):
         """
