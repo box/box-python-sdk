@@ -6,13 +6,8 @@ import json
 from ..config import API
 from ..session.box_session import BoxSession
 from ..network.default_network import DefaultNetwork
-from ..object.user import User
-from ..object.folder import Folder
 from ..object.search import Search
 from ..object.events import Events
-from ..object.file import File
-from ..object.group import Group
-from ..object.group_membership import GroupMembership
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
@@ -67,7 +62,7 @@ class Client(object):
         :rtype:
             :class:`Folder`
         """
-        return Folder(session=self._session, object_id=folder_id)
+        return Translator().translate('folder')(session=self._session, object_id=folder_id)
 
     def file(self, file_id):
         """
@@ -82,7 +77,7 @@ class Client(object):
         :rtype:
             :class:`File`
         """
-        return File(session=self._session, object_id=file_id)
+        return Translator().translate('file')(session=self._session, object_id=file_id)
 
     def user(self, user_id='me'):
         """
@@ -97,7 +92,7 @@ class Client(object):
         :rtype:
             :class:`User`
         """
-        return User(session=self._session, object_id=user_id)
+        return Translator().translate('user')(session=self._session, object_id=user_id)
 
     def group(self, group_id):
         """
@@ -112,7 +107,7 @@ class Client(object):
         :rtype:
             :class:`Group`
         """
-        return Group(session=self._session, object_id=group_id)
+        return Translator().translate('group')(session=self._session, object_id=group_id)
 
     def users(self, limit=None, offset=0, filter_term=None):
         """
@@ -143,7 +138,11 @@ class Client(object):
             params['filter_term'] = filter_term
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        return [User(self._session, item['id'], item) for item in response['entries']]
+        return [Translator().translate('user')(
+            session=self._session,
+            object_id=item['id'],
+            response_object=item,
+        ) for item in response['entries']]
 
     def search(
             self,
@@ -226,7 +225,10 @@ class Client(object):
         :rtype:
             :class:`GroupMembership`
         """
-        return GroupMembership(session=self._session, object_id=group_membership_id)
+        return Translator().translate('group_membership')(
+            session=self._session,
+            object_id=group_membership_id,
+        )
 
     def groups(self):
         """
@@ -240,7 +242,11 @@ class Client(object):
         url = '{0}/groups'.format(API.BASE_API_URL)
         box_response = self._session.get(url)
         response = box_response.json()
-        return [Group(self._session, item['id'], item) for item in response['entries']]
+        return [Translator().translate('group')(
+            session=self._session,
+            object_id=item['id'],
+            response_object=item
+        ) for item in response['entries']]
 
     def create_group(self, name):
         """
@@ -263,7 +269,11 @@ class Client(object):
         }
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
-        return Group(self._session, response['id'], response)
+        return Translator().translate('group')(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
 
     def get_shared_item(self, shared_link, password=None):
         """
@@ -290,9 +300,9 @@ class Client(object):
             headers=get_shared_link_header(shared_link, password),
         ).json()
         return Translator().translate(response['type'])(
-            self._session.with_shared_link(shared_link, password),
-            response['id'],
-            response,
+            session=self._session.with_shared_link(shared_link, password),
+            object_id=response['id'],
+            response_object=response,
         )
 
     def make_request(self, method, url, **kwargs):
@@ -342,7 +352,11 @@ class Client(object):
             user_attributes['is_platform_access_only'] = True
         box_response = self._session.post(url, data=json.dumps(user_attributes))
         response = box_response.json()
-        return User(self._session, response['id'], response)
+        return Translator().translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
 
     def as_user(self, user):
         """
