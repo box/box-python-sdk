@@ -6,6 +6,7 @@ import json
 
 from .base_endpoint import BaseEndpoint
 from boxsdk.util.translator import Translator
+from ..util.api_call_decorator import api_call
 
 
 class MetadataSearchFilter(object):
@@ -156,6 +157,7 @@ class Search(BaseEndpoint):
         """
         return MetadataSearchFilter(template_key, scope)
 
+    @api_call
     def search(
             self,
             query,

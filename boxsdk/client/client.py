@@ -13,11 +13,12 @@ from ..object.events import Events
 from ..object.file import File
 from ..object.group import Group
 from ..object.group_membership import GroupMembership
+from ..object.base_endpoint import Cloneable
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
 
-class Client(object):
+class Client(Cloneable):
 
     def __init__(
             self,
@@ -39,6 +40,7 @@ class Client(object):
         :type session:
             :class:`BoxSession`
         """
+        super(Client, self).__init__()
         network_layer = network_layer or DefaultNetwork()
         self._oauth = oauth
         self._network = network_layer
@@ -373,6 +375,10 @@ class Client(object):
             self._network,
             self._session.with_shared_link(shared_link, shared_link_password),
         )
+
+    def clone(self, session=None):
+        """Base class override."""
+        return self.__class__(self._oauth, self._network, session or self._session)
 
     def get_url(self, endpoint, *args):
         """

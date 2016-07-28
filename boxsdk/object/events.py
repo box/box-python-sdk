@@ -5,6 +5,7 @@ from requests.exceptions import Timeout
 from six import with_metaclass
 
 from .base_endpoint import BaseEndpoint
+from ..util.api_call_decorator import api_call
 from ..util.enum import ExtendableEnumMeta
 from ..util.lru_cache import LRUCache
 from ..util.text_enum import TextEnum
@@ -57,6 +58,7 @@ class Events(BaseEndpoint):
         """Base class override."""
         return super(Events, self).get_url('events', *args)
 
+    @api_call
     def get_events(self, limit=100, stream_position=0, stream_type=UserEventsStreamType.ALL):
         """
         Get Box events from a given stream position for a given stream type.
@@ -95,6 +97,7 @@ class Events(BaseEndpoint):
             response['entries'] = [Translator().translate(item['type'])(item) for item in response['entries']]
         return response
 
+    @api_call
     def get_latest_stream_position(self, stream_type=UserEventsStreamType.ALL):
         """
         Get the latest stream position. The return value can be used with :meth:`get_events` or
@@ -136,6 +139,7 @@ class Events(BaseEndpoint):
             if len(events) < 100:
                 return
 
+    @api_call
     def long_poll(self, options, stream_position):
         """
         Set up a long poll connection at the specified url.
@@ -163,6 +167,7 @@ class Events(BaseEndpoint):
         )
         return long_poll_response
 
+    @api_call
     def generate_events_with_long_polling(self, stream_position=None, stream_type=UserEventsStreamType.ALL):
         """
         Subscribe to events from the given stream position.
@@ -212,6 +217,7 @@ class Events(BaseEndpoint):
                     else:
                         break
 
+    @api_call
     def get_long_poll_options(self, stream_type=UserEventsStreamType.ALL):
         """
         Get the url and retry timeout for setting up a long polling connection.

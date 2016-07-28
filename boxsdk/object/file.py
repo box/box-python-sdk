@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from boxsdk.config import API
 from .item import Item
 from .metadata import Metadata
+from ..util.api_call_decorator import api_call
 
 
 class File(Item):
@@ -44,6 +45,7 @@ class File(Item):
         """
         return self._get_accelerator_upload_url(file_id=self._object_id)
 
+    @api_call
     def content(self):
         """
         Get the content of a file on Box.
@@ -57,6 +59,7 @@ class File(Item):
         box_response = self._session.get(url, expect_json_response=False)
         return box_response.content
 
+    @api_call
     def download_to(self, writeable_stream):
         """
         Download the file; write it to the given stream.
@@ -71,6 +74,7 @@ class File(Item):
         for chunk in box_response.network_response.response_as_stream.stream(decode_content=True):
             writeable_stream.write(chunk)
 
+    @api_call
     def update_contents_with_stream(
             self,
             file_stream,
@@ -133,6 +137,7 @@ class File(Item):
             response_object=self._session.post(url, expect_json_response=False, files=files, headers=headers).json(),
         )
 
+    @api_call
     def update_contents(
             self,
             file_path,
@@ -186,6 +191,7 @@ class File(Item):
                 upload_using_accelerator=upload_using_accelerator,
             )
 
+    @api_call
     def lock(self, prevent_download=False):
         """
         Lock a file, preventing others from modifying (or possibly even downloading) it.
@@ -207,6 +213,7 @@ class File(Item):
         }
         return self.update_info(data)
 
+    @api_call
     def unlock(self):
         """
         Unlock a file, releasing any restrictions that the lock maintained.
@@ -219,6 +226,7 @@ class File(Item):
         data = {'lock': None}
         return self.update_info(data)
 
+    @api_call
     def metadata(self, scope='global', template='properties'):
         """
         Instantiate a :class:`Metadata` object associated with this file.
@@ -239,6 +247,7 @@ class File(Item):
         """
         return Metadata(self._session, self, scope, template)
 
+    @api_call
     def get_shared_link_download_url(
             self,
             access=None,
