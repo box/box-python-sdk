@@ -3,6 +3,7 @@
 from __future__ import unicode_literals, absolute_import
 import json
 from boxsdk.object.base_endpoint import BaseEndpoint
+from ..util.api_call_decorator import api_call
 
 
 class MetadataUpdate(object):
@@ -139,6 +140,7 @@ class Metadata(BaseEndpoint):
         """
         return MetadataUpdate()
 
+    @api_call
     def update(self, metadata_update):
         """
         Update the key/value pairs associated with this metadata object.
@@ -159,6 +161,7 @@ class Metadata(BaseEndpoint):
             headers={b'Content-Type': b'application/json-patch+json'},
         ).json()
 
+    @api_call
     def get(self):
         """
         Get the key/value pairs that make up this metadata instance.
@@ -170,6 +173,7 @@ class Metadata(BaseEndpoint):
         """
         return self._session.get(self.get_url()).json()
 
+    @api_call
     def delete(self):
         """
         Delete the metadata object.
@@ -181,6 +185,7 @@ class Metadata(BaseEndpoint):
         """
         return self._session.delete(self.get_url()).ok
 
+    @api_call
     def create(self, metadata):
         """
         Create the metadata instance on Box. If the instance already exists, use :meth:`update` instead.
@@ -200,15 +205,6 @@ class Metadata(BaseEndpoint):
             headers={b'Content-Type': b'application/json'},
         ).json()
 
-    def as_user(self, user):
+    def clone(self, session=None):
         """ Base class override. """
-        return self.__class__(self._session.as_user(user), self._object, self._scope, self._template)
-
-    def with_shared_link(self, shared_link, shared_link_password):
-        """ Base class override. """
-        return self.__class__(
-            self._session.with_shared_link(shared_link, shared_link_password),
-            self._object,
-            self._scope,
-            self._template
-        )
+        return self.__class__(session or self._session, self._object, self._scope, self._template)

@@ -75,20 +75,10 @@ class GroupMembership(BaseObject):
 
         return user, group
 
-    def as_user(self, user):
-        """ Base class override. """
+    def clone(self, session=None):
+        """Base class override."""
         return self.__class__(
-            self._session.as_user(user),
-            self._object_id,
-            self._response_object,
-            self.user,
-            self.group,
-        )
-
-    def with_shared_link(self, shared_link, shared_link_password):
-        """ Base class override. """
-        return self.__class__(
-            self._session.with_shared_link(shared_link, shared_link_password),
+            session or self._session,
             self._object_id,
             self._response_object,
             self.user,

@@ -7,6 +7,7 @@ import json
 from .base_object import BaseObject
 from ..config import API
 from ..util.translator import Translator
+from ..util.api_call_decorator import api_call
 
 
 class Group(BaseObject):
@@ -14,6 +15,7 @@ class Group(BaseObject):
 
     _item_type = 'group'
 
+    @api_call
     def membership(self, starting_index=0, limit=100, include_page_info=False):
         """
         A generator over all the members of this Group. The paging in the API is transparently implemented
@@ -54,6 +56,7 @@ class Group(BaseObject):
                 group_membership, _, _ = group_membership_tuple
                 yield group_membership
 
+    @api_call
     def add_member(self, user, role):
         """
         Add the given user to this group under the given role
