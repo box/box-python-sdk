@@ -65,7 +65,7 @@ class BoxSession(object):
     Box API session. Provides auth, automatic retry of failed requests, and session renewal.
     """
 
-    def __init__(self, oauth, network_layer, default_headers=None):
+    def __init__(self, oauth, network_layer, default_headers=None, default_network_request_kwargs=None):
         """
         :param oauth:
             OAuth2 object used by the session to authorize requests.
@@ -79,12 +79,19 @@ class BoxSession(object):
             A dictionary containing default values to be used as headers when this session makes an API request.
         :type default_headers:
             `dict` or None
-        """
+        :param default_network_request_kwargs:
+            A dictionary containing default values to be passed to the network layer
+            when this session makes an API request.
+        :type default_network_request_kwargs:
+            `dict` or None        """
         self._oauth = oauth
         self._network_layer = network_layer
         self._default_headers = {'User-Agent': Client.USER_AGENT_STRING}
+        self._default_network_request_kwargs = {}
         if default_headers:
             self._default_headers.update(default_headers)
+        if default_network_request_kwargs:
+            self._default_network_request_kwargs.update(default_network_request_kwargs)
 
     def get_url(self, endpoint, *args):
         """
@@ -117,7 +124,7 @@ class BoxSession(object):
         """
         headers = self._default_headers.copy()
         headers['As-User'] = user.object_id
-        return self.__class__(self._oauth, self._network_layer, headers)
+        return self.__class__(self._oauth, self._network_layer, headers, self._default_network_request_kwargs.copy())
 
     def with_shared_link(self, shared_link, shared_link_password=None):
         """
@@ -134,7 +141,10 @@ class BoxSession(object):
         """
         headers = self._default_headers.copy()
         headers.update(get_shared_link_header(shared_link, shared_link_password))
-        return self.__class__(self._oauth, self._network_layer, headers)
+        return self.__class__(self._oauth, self._network_layer, headers, self._default_network_request_kwargs.copy())
+
+    def with_default_network_request_kwargs(self, **kwargs):
+        return self.__class__(self._oauth, self._network_layer, self._default_headers.copy(), kwargs)
 
     def _renew_session(self, access_token_used):
         """
@@ -347,10 +357,10 @@ class BoxSession(object):
 
         # Reset stream positions to what they were when the request was made so the same data is sent even if this
         # is a retried attempt.
-        request_kwargs = kwargs
         files, file_stream_positions = kwargs.get('files'), kwargs.pop('file_stream_positions')
+        request_kwargs = self._default_network_request_kwargs.copy()
+        request_kwargs.update(kwargs)
         if files and file_stream_positions:
-            request_kwargs = kwargs.copy()
             for name, position in file_stream_positions.items():
                 files[name][1].seek(position)
             data = request_kwargs.pop('data', {})
