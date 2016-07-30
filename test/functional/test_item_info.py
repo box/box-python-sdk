@@ -84,6 +84,23 @@ def _test_create_then_copy(box_client, item):
     assert len(copy_target.get_items(10)) == 1
 
 
+# def test(mock_network_layer, mock_file_response):
+#     mock_oauth = Mock(OAuth2)
+#     client = Client(oauth=mock_oauth, network_layer=mock_network_layer)
+#     folder = client.folder(folder_id='0')
+#     folder.rename('folder')
+#     assert False
+
+
+# def test_api_call_wrapper(box_client, uploaded_file):
+#     print uploaded_file._object_id
+#     response = uploaded_file.content(request_data={'timeout': 0})
+#     print response
+#     # need network layer to be mock?
+#     print box_client._session._default_network_request_kwargs
+#     assert False
+
+
 @pytest.mark.parametrize('constructor', [Client.file, Client.folder])
 def test_get_item_info_for_missing_item(box_client, constructor):
     with pytest.raises(BoxAPIException) as exc_info:
