@@ -2,12 +2,15 @@
 
 from __future__ import unicode_literals
 import json
-from mock import mock_open, patch
+from mock import mock_open, patch, Mock
 import pytest
 from six import BytesIO
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.object.file import File
+
+from boxsdk.client import Client
+from boxsdk.auth import OAuth2
 
 
 # pylint:disable=protected-access

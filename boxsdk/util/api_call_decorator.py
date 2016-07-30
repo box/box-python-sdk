@@ -21,6 +21,7 @@ def api_call(func):
     :rtype:
         :class:`APICallWrapper`
     """
+    print "api_call"
     wrapper = APICallWrapper(func)
     update_wrapper(wrapper, func)
     return wrapper
@@ -47,6 +48,7 @@ class APICallWrapper(object):
             if request_data:
                 # If request_data is specified, then clone the instance, and specify it as the default network args.
                 # pylint: disable=protected-access
+                print "ABOUT TO CLONE"
                 instance = instance.clone(instance._session.with_default_network_request_kwargs(**request_data))
                 # pylint: enable=protected-access
             response = self._func_that_makes_an_api_call(instance, *args, **kwargs)
