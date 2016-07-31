@@ -6,6 +6,7 @@ import json
 from .base_endpoint import BaseEndpoint
 from .base_api_json_object import BaseAPIJSONObject
 from ..util.translator import Translator
+from ..util.api_call_decorator import api_call
 
 
 class BaseObject(BaseEndpoint, BaseAPIJSONObject):
@@ -127,6 +128,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
             response_object=response,
         )
 
+    @api_call
     def delete(self, params=None, headers=None):
         """ Delete the object.
 
