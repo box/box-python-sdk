@@ -63,6 +63,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         """
         return self._object_id
 
+    @api_call
     def get(self, fields=None, headers=None):
         """
         Get information about the object, specified by fields. If fields is None, return the default fields.
@@ -85,6 +86,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         box_response = self._session.get(url, params=params, headers=headers)
         return self.__class__(self._session, self._object_id, box_response.json())
 
+    @api_call
     def update_info(self, data, params=None, headers=None, **kwargs):
         """Update information about this object.
 
