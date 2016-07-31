@@ -14,6 +14,7 @@ from ..object.file import File
 from ..object.group import Group
 from ..object.group_membership import GroupMembership
 from ..object.cloneable import Cloneable
+from ..util.api_call_decorator import api_call
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
@@ -116,6 +117,7 @@ class Client(Cloneable):
         """
         return Group(session=self._session, object_id=group_id)
 
+    @api_call
     def users(self, limit=None, offset=0, filter_term=None):
         """
         Get a list of all users for the Enterprise along with their user_id, public_name, and login.
@@ -147,6 +149,7 @@ class Client(Cloneable):
         response = box_response.json()
         return [User(self._session, item['id'], item) for item in response['entries']]
 
+    @api_call
     def search(
             self,
             query,
@@ -230,6 +233,7 @@ class Client(Cloneable):
         """
         return GroupMembership(session=self._session, object_id=group_membership_id)
 
+    @api_call
     def groups(self):
         """
         Get a list of all groups for the current user.
@@ -244,6 +248,7 @@ class Client(Cloneable):
         response = box_response.json()
         return [Group(self._session, item['id'], item) for item in response['entries']]
 
+    @api_call
     def create_group(self, name):
         """
         Create a group with the given name.
@@ -267,6 +272,7 @@ class Client(Cloneable):
         response = box_response.json()
         return Group(self._session, response['id'], response)
 
+    @api_call
     def get_shared_item(self, shared_link, password=None):
         """
         Get information about a Box shared link. https://box-content.readme.io/reference#get-a-shared-item
@@ -297,6 +303,7 @@ class Client(Cloneable):
             response,
         )
 
+    @api_call
     def make_request(self, method, url, **kwargs):
         """
         Make an authenticated request to the Box API.
@@ -318,6 +325,7 @@ class Client(Cloneable):
         """
         return self._session.request(method, url, **kwargs)
 
+    @api_call
     def create_user(self, name, login=None, **user_attributes):
         """
         Create a new user. Can only be used if the current user is an enterprise admin, or the current authorization
