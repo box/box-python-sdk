@@ -17,6 +17,13 @@ def mock_box_session():
     return mock_session
 
 
+@pytest.fixture()
+def mock_box_session_2():
+    mock_session = MagicMock(BoxSession)
+    mock_session.get_url.side_effect = lambda *args, **kwargs: BoxSession.get_url(mock_session, *args, **kwargs)
+    return mock_session
+
+
 @pytest.fixture(scope='function')
 def mock_network_layer():
     mock_network = Mock(DefaultNetwork)
