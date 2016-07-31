@@ -13,7 +13,7 @@ from ..object.events import Events
 from ..object.file import File
 from ..object.group import Group
 from ..object.group_membership import GroupMembership
-from ..object.base_endpoint import Cloneable
+from ..object.cloneable import Cloneable
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
