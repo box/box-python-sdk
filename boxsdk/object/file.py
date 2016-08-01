@@ -226,7 +226,6 @@ class File(Item):
         data = {'lock': None}
         return self.update_info(data)
 
-    @api_call
     def metadata(self, scope='global', template='properties'):
         """
         Instantiate a :class:`Metadata` object associated with this file.
