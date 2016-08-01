@@ -138,7 +138,8 @@ class Client(object):
             params['filter_term'] = filter_term
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        return [Translator().translate('user')(
+        User = Translator().translate('user')
+        return [User(
             session=self._session,
             object_id=item['id'],
             response_object=item,
@@ -242,10 +243,11 @@ class Client(object):
         url = '{0}/groups'.format(API.BASE_API_URL)
         box_response = self._session.get(url)
         response = box_response.json()
-        return [Translator().translate('group')(
+        Group = Translator().translate('group')
+        return [Group(
             session=self._session,
             object_id=item['id'],
-            response_object=item
+            response_object=item,
         ) for item in response['entries']]
 
     def create_group(self, name):
@@ -352,7 +354,7 @@ class Client(object):
             user_attributes['is_platform_access_only'] = True
         box_response = self._session.post(url, data=json.dumps(user_attributes))
         response = box_response.json()
-        return Translator().translate(response['type'])(
+        return Translator().translate('user')(
             session=self._session,
             object_id=response['id'],
             response_object=response,
