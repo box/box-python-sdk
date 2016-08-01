@@ -138,8 +138,8 @@ class Client(object):
             params['filter_term'] = filter_term
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        User = Translator().translate('user')
-        return [User(
+        user_class = Translator().translate('user')
+        return [user_class(
             session=self._session,
             object_id=item['id'],
             response_object=item,
@@ -243,8 +243,8 @@ class Client(object):
         url = '{0}/groups'.format(API.BASE_API_URL)
         box_response = self._session.get(url)
         response = box_response.json()
-        Group = Translator().translate('group')
-        return [Group(
+        group_class = Translator().translate('group')
+        return [group_class(
             session=self._session,
             object_id=item['id'],
             response_object=item,
