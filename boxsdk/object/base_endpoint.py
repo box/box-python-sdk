@@ -76,4 +76,3 @@ class BaseEndpoint(Cloneable):
             :class:`BoxSession`
         """
         return self.__class__(session or self._session)
-
