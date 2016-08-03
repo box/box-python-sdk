@@ -71,3 +71,7 @@ class DefaultNetworkResponse(NetworkResponse):
     def access_token_used(self):
         """Base class override."""
         return self._access_token_used
+
+    @property
+    def request_response(self):
+        return self._request_response

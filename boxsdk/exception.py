@@ -25,7 +25,19 @@ class BoxAPIException(BoxException):
     """
     Exception raised from the box session layer.
     """
-    def __init__(self, status, code=None, message=None, request_id=None, headers=None, url=None, method=None, context_info=None):
+    def __init__(
+        self,
+        status,
+        code=None,
+        message=None,
+        request_id=None,
+        headers=None,
+        url=None,
+        method=None,
+        context_info=None,
+        request_response=None,
+        access_token_used=None
+    ):
         """
         :param status:
             HTTP status code of the failed response
@@ -69,6 +81,8 @@ class BoxAPIException(BoxException):
         self._url = url
         self._method = method
         self._context_info = context_info
+        self._request_response = request_response
+        self._access_token_used = access_token_used
 
     def __unicode__(self):
         return '\nMessage: {0}\nStatus: {1}\nCode: {2}\nRequest id: {3}\nHeaders: {4}\nURL: {5}\nMethod: {6}\nContext info: {7}'.format(
@@ -133,6 +147,22 @@ class BoxAPIException(BoxException):
         :rtype: `dict`
         """
         return self._context_info
+
+    @property
+    def request_response(self):
+        """
+        The response returned from the Requests library.
+        :rtype: `Response`
+        """
+        return self._request_response
+
+    @property
+    def access_token_used(self):
+        """
+        The access token that was used for the failed request.
+        :rtype:  `unicode`
+        """
+        return self._access_token_used
 
 
 class BoxOAuthException(BoxException):
