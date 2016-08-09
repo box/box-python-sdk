@@ -6,14 +6,14 @@ import json
 from ..config import API
 from ..session.box_session import BoxSession
 from ..network.default_network import DefaultNetwork
-from ..object.user import User
+from ..object.cloneable import Cloneable
 from ..object.folder import Folder
 from ..object.search import Search
 from ..object.events import Events
 from ..object.file import File
 from ..object.group import Group
 from ..object.group_membership import GroupMembership
-from ..object.cloneable import Cloneable
+from ..object.user import User
 from ..util.api_call_decorator import api_call
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator

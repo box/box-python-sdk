@@ -27,7 +27,6 @@ def api_call(func):
 
 
 class APICallWrapper(object):
-    _NOT_PRESENT = object()
 
     def __init__(self, func_that_makes_an_api_call):
         super(APICallWrapper, self).__init__()
