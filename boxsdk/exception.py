@@ -71,6 +71,14 @@ class BoxAPIException(BoxException):
             The context_info returned in the failed response.
         :type context_info:
             `dict`
+        :param request_response:
+            The failed response
+        :type request_response:
+            Requests `Response`
+        :param access_token_used
+            The access token used to make the request
+        :type access_token_used
+            `unicode`
         """
         super(BoxAPIException, self).__init__()
         self._status = status
