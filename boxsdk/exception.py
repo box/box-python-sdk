@@ -26,17 +26,17 @@ class BoxAPIException(BoxException):
     Exception raised from the box session layer.
     """
     def __init__(
-        self,
-        status,
-        code=None,
-        message=None,
-        request_id=None,
-        headers=None,
-        url=None,
-        method=None,
-        context_info=None,
-        request_response=None,
-        access_token_used=None
+            self,
+            status,
+            code=None,
+            message=None,
+            request_id=None,
+            headers=None,
+            url=None,
+            method=None,
+            context_info=None,
+            request_response=None,
+            access_token_used=None
     ):
         """
         :param status:
