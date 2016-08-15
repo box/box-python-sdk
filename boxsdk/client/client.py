@@ -109,6 +109,21 @@ class Client(object):
         """
         return Translator().translate('group')(session=self._session, object_id=group_id)
 
+    def collaboration(self, collab_id):
+        """
+        Initialize a :class:`Collaboration` object, whose box id is collab_id.
+
+        :param collab_id:
+            The box id of the :class:`Collaboration` object.
+        :type collab_id:
+            `unicode`
+        :return:
+            A :class:`Collaboration` object with the given group id.
+        :rtype:
+            :class:`Collaboration`
+        """
+        return Translator().translate('collaboration')(session=self._session, object_id=collab_id)
+
     def users(self, limit=None, offset=0, filter_term=None):
         """
         Get a list of all users for the Enterprise along with their user_id, public_name, and login.
