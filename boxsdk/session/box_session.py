@@ -83,7 +83,9 @@ class BoxSession(object):
             A dictionary containing default values to be passed to the network layer
             when this session makes an API request.
         :type default_network_request_kwargs:
-            `dict` or None        """
+            `dict` or None
+        """
+        super(BoxSession, self).__init__()
         self._oauth = oauth
         self._network_layer = network_layer
         self._default_headers = {'User-Agent': Client.USER_AGENT_STRING}
@@ -143,8 +145,8 @@ class BoxSession(object):
         headers.update(get_shared_link_header(shared_link, shared_link_password))
         return self.__class__(self._oauth, self._network_layer, headers, self._default_network_request_kwargs.copy())
 
-    def with_default_network_request_kwargs(self, **kwargs):
-        return self.__class__(self._oauth, self._network_layer, self._default_headers.copy(), kwargs)
+    def with_default_network_request_kwargs(self, extra_network_parameters):
+        return self.__class__(self._oauth, self._network_layer, self._default_headers.copy(), extra_network_parameters)
 
     def _renew_session(self, access_token_used):
         """

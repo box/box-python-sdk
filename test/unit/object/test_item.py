@@ -32,9 +32,9 @@ def test_update_info_with_default_request_kwargs(test_item_and_response, mock_bo
     mock_box_session.with_default_network_request_kwargs.return_value = mock_box_session_2
     mock_box_session_2.put.return_value = mock_item_response
     data = {'foo': 'bar', 'baz': {'foo': 'bar'}, 'num': 4}
-    request_data = {'timeout': 1}
-    update_response = test_item.update_info(data, request_data=request_data)
-    mock_box_session.with_default_network_request_kwargs.assert_called_once_with(timeout=1)
+    extra_network_parameters = {'timeout': 1}
+    update_response = test_item.update_info(data, extra_network_parameters=extra_network_parameters)
+    mock_box_session.with_default_network_request_kwargs.assert_called_once_with({'timeout':1})
     mock_box_session_2.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
     assert isinstance(update_response, test_item.__class__)
     assert update_response.object_id == test_item.object_id
