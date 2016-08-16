@@ -52,6 +52,16 @@ class Client(Cloneable):
         """
         return self._oauth
 
+    @property
+    def session(self):
+        """
+        Get the :class:`BoxSession` instance the client is using.
+
+        :rtype:
+            :class:`BoxSession`
+        """
+        return self._session
+
     def folder(self, folder_id):
         """
         Initialize a :class:`Folder` object, whose box id is folder_id.
@@ -383,36 +393,6 @@ class Client(Cloneable):
             session=self._session,
             object_id=response['id'],
             response_object=response,
-        )
-
-    def as_user(self, user):
-        """
-        Returns a new client object with default headers set up to make requests as the specified user.
-
-        :param user:
-            The user to impersonate when making API requests.
-        :type user:
-            :class:`User`
-        """
-        return self.__class__(self._oauth, self._network, self._session.as_user(user))
-
-    def with_shared_link(self, shared_link, shared_link_password):
-        """
-        Returns a new client object with default headers set up to make requests using the shared link for auth.
-
-        :param shared_link:
-            The shared link.
-        :type shared_link:
-            `unicode`
-        :param shared_link_password:
-            The password for the shared link.
-        :type shared_link_password:
-            `unicode`
-        """
-        return self.__class__(
-            self._oauth,
-            self._network,
-            self._session.with_shared_link(shared_link, shared_link_password),
         )
 
     def clone(self, session=None):

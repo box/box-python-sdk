@@ -17,7 +17,7 @@ class Cloneable(object):
         :type user:
             :class:`User`
         """
-        raise NotImplementedError
+        return self.clone(self.session.as_user(user))
 
     def with_shared_link(self, shared_link, shared_link_password):
         """
@@ -31,7 +31,7 @@ class Cloneable(object):
         :type shared_link_password:
             `unicode`
         """
-        raise NotImplementedError
+        return self.clone(self.session.with_shared_link(shared_link, shared_link_password))
 
     def clone(self, session=None):
         """
@@ -39,6 +39,16 @@ class Cloneable(object):
         :param session:
             The Box session used to make requests.
         :type session:
+            :class:`BoxSession`
+        """
+        raise NotImplementedError
+
+    @property
+    def session(self):
+        """
+        Return the Box session being used to make requests.
+
+        :rtype:
             :class:`BoxSession`
         """
         raise NotImplementedError

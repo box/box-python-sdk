@@ -22,6 +22,16 @@ class BaseEndpoint(Cloneable):
         super(BaseEndpoint, self).__init__(**kwargs)
         self._session = session
 
+    @property
+    def session(self):
+        """
+        Get the :class:`BoxSession` instance the object is using.
+
+        :rtype:
+            :class:`BoxSession`
+        """
+        return self._session
+
     def get_url(self, endpoint, *args):
         """
         Return the URL used to access the endpoint.
@@ -39,32 +49,6 @@ class BaseEndpoint(Cloneable):
         """
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
-
-    def as_user(self, user):
-        """
-        Returns a new endpoint object with default headers set up to make requests as the specified user.
-
-        :param user:
-            The user to impersonate when making API requests.
-        :type user:
-            :class:`User`
-        """
-        return self.clone(self._session.as_user(user))
-
-    def with_shared_link(self, shared_link, shared_link_password):
-        """
-        Returns a new endpoint object with default headers set up to make requests using the shared link for auth.
-
-        :param shared_link:
-            The shared link.
-        :type shared_link:
-            `unicode`
-        :param shared_link_password:
-            The password for the shared link.
-        :type shared_link_password:
-            `unicode`
-        """
-        return self.clone(self._session.with_shared_link(shared_link, shared_link_password))
 
     def clone(self, session=None):
         """
