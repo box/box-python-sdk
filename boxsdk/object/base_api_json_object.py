@@ -15,7 +15,7 @@ class BaseAPIJSONObjectMeta(type):
     """
     def __init__(cls, name, bases, attrs):
         super(BaseAPIJSONObjectMeta, cls).__init__(name, bases, attrs)
-        item_type = attrs.get('_item_type', None)
+        item_type = getattr(cls, '_item_type', None)
         if item_type is not None:
             Translator().register(item_type, cls)
 

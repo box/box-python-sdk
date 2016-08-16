@@ -10,8 +10,8 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 import jwt
 
-from boxsdk.util.compat import total_seconds
 from .oauth2 import OAuth2
+from ..util.compat import total_seconds
 
 
 class JWTAuth(OAuth2):

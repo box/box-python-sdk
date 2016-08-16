@@ -7,14 +7,9 @@ from ..config import API
 from ..session.box_session import BoxSession
 from ..network.default_network import DefaultNetwork
 from ..object.cloneable import Cloneable
-from ..object.folder import Folder
+from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
-from ..object.file import File
-from ..object.group import Group
-from ..object.group_membership import GroupMembership
-from ..object.user import User
-from ..util.api_call_decorator import api_call
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
@@ -70,7 +65,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Folder`
         """
-        return Folder(session=self._session, object_id=folder_id)
+        return Translator().translate('folder')(session=self._session, object_id=folder_id)
 
     def file(self, file_id):
         """
@@ -85,7 +80,7 @@ class Client(Cloneable):
         :rtype:
             :class:`File`
         """
-        return File(session=self._session, object_id=file_id)
+        return Translator().translate('file')(session=self._session, object_id=file_id)
 
     def user(self, user_id='me'):
         """
@@ -100,7 +95,7 @@ class Client(Cloneable):
         :rtype:
             :class:`User`
         """
-        return User(session=self._session, object_id=user_id)
+        return Translator().translate('user')(session=self._session, object_id=user_id)
 
     def group(self, group_id):
         """
@@ -115,7 +110,22 @@ class Client(Cloneable):
         :rtype:
             :class:`Group`
         """
-        return Group(session=self._session, object_id=group_id)
+        return Translator().translate('group')(session=self._session, object_id=group_id)
+
+    def collaboration(self, collab_id):
+        """
+        Initialize a :class:`Collaboration` object, whose box id is collab_id.
+
+        :param collab_id:
+            The box id of the :class:`Collaboration` object.
+        :type collab_id:
+            `unicode`
+        :return:
+            A :class:`Collaboration` object with the given group id.
+        :rtype:
+            :class:`Collaboration`
+        """
+        return Translator().translate('collaboration')(session=self._session, object_id=collab_id)
 
     @api_call
     def users(self, limit=None, offset=0, filter_term=None):
@@ -147,7 +157,12 @@ class Client(Cloneable):
             params['filter_term'] = filter_term
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        return [User(self._session, item['id'], item) for item in response['entries']]
+        user_class = Translator().translate('user')
+        return [user_class(
+            session=self._session,
+            object_id=item['id'],
+            response_object=item,
+        ) for item in response['entries']]
 
     @api_call
     def search(
@@ -231,7 +246,10 @@ class Client(Cloneable):
         :rtype:
             :class:`GroupMembership`
         """
-        return GroupMembership(session=self._session, object_id=group_membership_id)
+        return Translator().translate('group_membership')(
+            session=self._session,
+            object_id=group_membership_id,
+        )
 
     @api_call
     def groups(self):
@@ -246,7 +264,12 @@ class Client(Cloneable):
         url = '{0}/groups'.format(API.BASE_API_URL)
         box_response = self._session.get(url)
         response = box_response.json()
-        return [Group(self._session, item['id'], item) for item in response['entries']]
+        group_class = Translator().translate('group')
+        return [group_class(
+            session=self._session,
+            object_id=item['id'],
+            response_object=item,
+        ) for item in response['entries']]
 
     @api_call
     def create_group(self, name):
@@ -270,7 +293,11 @@ class Client(Cloneable):
         }
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
-        return Group(self._session, response['id'], response)
+        return Translator().translate('group')(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
 
     @api_call
     def get_shared_item(self, shared_link, password=None):
@@ -298,9 +325,9 @@ class Client(Cloneable):
             headers=get_shared_link_header(shared_link, password),
         ).json()
         return Translator().translate(response['type'])(
-            self._session.with_shared_link(shared_link, password),
-            response['id'],
-            response,
+            session=self._session.with_shared_link(shared_link, password),
+            object_id=response['id'],
+            response_object=response,
         )
 
     @api_call
@@ -352,7 +379,11 @@ class Client(Cloneable):
             user_attributes['is_platform_access_only'] = True
         box_response = self._session.post(url, data=json.dumps(user_attributes))
         response = box_response.json()
-        return User(self._session, response['id'], response)
+        return Translator().translate('user')(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
 
     def as_user(self, user):
         """
