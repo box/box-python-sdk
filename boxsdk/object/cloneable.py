@@ -9,9 +9,6 @@ class Cloneable(object):
     different session member if desired.
     """
 
-    def __init__(self, *args, **kwargs):
-        super(Cloneable, self).__init__(*args, **kwargs)
-
     def as_user(self, user):
         """
         Returns a new endpoint object with default headers set up to make requests as the specified user.
