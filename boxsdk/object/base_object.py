@@ -6,6 +6,7 @@ import json
 from .base_endpoint import BaseEndpoint
 from .base_api_json_object import BaseAPIJSONObject
 from ..util.translator import Translator
+from ..util.api_call_decorator import api_call
 
 
 class BaseObject(BaseEndpoint, BaseAPIJSONObject):
@@ -62,6 +63,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         """
         return self._object_id
 
+    @api_call
     def get(self, fields=None, headers=None):
         """
         Get information about the object, specified by fields. If fields is None, return the default fields.
@@ -84,6 +86,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         box_response = self._session.get(url, params=params, headers=headers)
         return self.__class__(self._session, self._object_id, box_response.json())
 
+    @api_call
     def update_info(self, data, params=None, headers=None, **kwargs):
         """Update information about this object.
 
@@ -127,6 +130,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
             response_object=response,
         )
 
+    @api_call
     def delete(self, params=None, headers=None):
         """ Delete the object.
 
@@ -212,14 +216,10 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
             if current_index >= response['total_count']:
                 break
 
-    def as_user(self, user):
-        """ Base class override. """
-        return self.__class__(self._session.as_user(user), self._object_id, self._response_object)
-
-    def with_shared_link(self, shared_link, shared_link_password):
-        """ Base class override. """
+    def clone(self, session=None):
+        """Base class override."""
         return self.__class__(
-            self._session.with_shared_link(shared_link, shared_link_password),
+            session or self._session,
             self._object_id,
             self._response_object,
         )

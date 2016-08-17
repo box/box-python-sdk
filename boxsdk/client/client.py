@@ -6,13 +6,15 @@ import json
 from ..config import API
 from ..session.box_session import BoxSession
 from ..network.default_network import DefaultNetwork
+from ..object.cloneable import Cloneable
+from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
 
-class Client(object):
+class Client(Cloneable):
 
     def __init__(
             self,
@@ -34,6 +36,7 @@ class Client(object):
         :type session:
             :class:`BoxSession`
         """
+        super(Client, self).__init__()
         network_layer = network_layer or DefaultNetwork()
         self._oauth = oauth
         self._network = network_layer
@@ -48,6 +51,16 @@ class Client(object):
             :class:`OAuth2`
         """
         return self._oauth
+
+    @property
+    def session(self):
+        """
+        Get the :class:`BoxSession` instance the client is using.
+
+        :rtype:
+            :class:`BoxSession`
+        """
+        return self._session
 
     def folder(self, folder_id):
         """
@@ -124,6 +137,7 @@ class Client(object):
         """
         return Translator().translate('collaboration')(session=self._session, object_id=collab_id)
 
+    @api_call
     def users(self, limit=None, offset=0, filter_term=None):
         """
         Get a list of all users for the Enterprise along with their user_id, public_name, and login.
@@ -160,6 +174,7 @@ class Client(object):
             response_object=item,
         ) for item in response['entries']]
 
+    @api_call
     def search(
             self,
             query,
@@ -246,6 +261,7 @@ class Client(object):
             object_id=group_membership_id,
         )
 
+    @api_call
     def groups(self):
         """
         Get a list of all groups for the current user.
@@ -265,6 +281,7 @@ class Client(object):
             response_object=item,
         ) for item in response['entries']]
 
+    @api_call
     def create_group(self, name):
         """
         Create a group with the given name.
@@ -292,6 +309,7 @@ class Client(object):
             response_object=response,
         )
 
+    @api_call
     def get_shared_item(self, shared_link, password=None):
         """
         Get information about a Box shared link. https://box-content.readme.io/reference#get-a-shared-item
@@ -322,6 +340,7 @@ class Client(object):
             response_object=response,
         )
 
+    @api_call
     def make_request(self, method, url, **kwargs):
         """
         Make an authenticated request to the Box API.
@@ -343,6 +362,7 @@ class Client(object):
         """
         return self._session.request(method, url, **kwargs)
 
+    @api_call
     def create_user(self, name, login=None, **user_attributes):
         """
         Create a new user. Can only be used if the current user is an enterprise admin, or the current authorization
@@ -375,35 +395,9 @@ class Client(object):
             response_object=response,
         )
 
-    def as_user(self, user):
-        """
-        Returns a new client object with default headers set up to make requests as the specified user.
-
-        :param user:
-            The user to impersonate when making API requests.
-        :type user:
-            :class:`User`
-        """
-        return self.__class__(self._oauth, self._network, self._session.as_user(user))
-
-    def with_shared_link(self, shared_link, shared_link_password):
-        """
-        Returns a new client object with default headers set up to make requests using the shared link for auth.
-
-        :param shared_link:
-            The shared link.
-        :type shared_link:
-            `unicode`
-        :param shared_link_password:
-            The password for the shared link.
-        :type shared_link_password:
-            `unicode`
-        """
-        return self.__class__(
-            self._oauth,
-            self._network,
-            self._session.with_shared_link(shared_link, shared_link_password),
-        )
+    def clone(self, session=None):
+        """Base class override."""
+        return self.__class__(self._oauth, self._network, session or self._session)
 
     def get_url(self, endpoint, *args):
         """

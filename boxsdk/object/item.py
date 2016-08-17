@@ -6,6 +6,7 @@ import json
 from .base_object import BaseObject
 from ..config import API
 from ..exception import BoxAPIException
+from ..util.api_call_decorator import api_call
 
 
 class Item(BaseObject):
@@ -74,6 +75,7 @@ class Item(BaseObject):
             data=json.dumps(data),
         )
 
+    @api_call
     def update_info(self, data, etag=None):
         """Baseclass override.
 
@@ -93,6 +95,7 @@ class Item(BaseObject):
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).update_info(data, headers=headers)
 
+    @api_call
     def rename(self, name):
         """
         Rename the item to a new name.
@@ -107,6 +110,7 @@ class Item(BaseObject):
         }
         return self.update_info(data)
 
+    @api_call
     def get(self, fields=None, etag=None):
         """Base class override.
 
@@ -128,6 +132,7 @@ class Item(BaseObject):
         headers = {'If-None-Match': etag} if etag is not None else None
         return super(Item, self).get(fields=fields, headers=headers)
 
+    @api_call
     def copy(self, parent_folder):
         """Copy the item to the given folder.
 
@@ -148,6 +153,7 @@ class Item(BaseObject):
             response_object=response,
         )
 
+    @api_call
     def move(self, parent_folder):
         """
         Move the item to the given folder.
@@ -162,6 +168,7 @@ class Item(BaseObject):
         }
         return self.update_info(data)
 
+    @api_call
     def create_shared_link(
             self,
             access=None,
@@ -231,6 +238,7 @@ class Item(BaseObject):
 
         return self.update_info(data, etag=etag)
 
+    @api_call
     def get_shared_link(
             self,
             access=None,
@@ -289,6 +297,7 @@ class Item(BaseObject):
         )
         return item.shared_link['url']  # pylint:disable=no-member
 
+    @api_call
     def remove_shared_link(self, etag=None):
         """Delete the shared link for the item.
 
@@ -306,6 +315,7 @@ class Item(BaseObject):
         item = self.update_info(data, etag=etag)
         return item.shared_link is None  # pylint:disable=no-member
 
+    @api_call
     def delete(self, params=None, etag=None):
         """Delete the item.
 

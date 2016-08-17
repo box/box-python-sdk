@@ -2,8 +2,10 @@
 
 from __future__ import unicode_literals, absolute_import
 
+from .cloneable import Cloneable
 
-class BaseEndpoint(object):
+
+class BaseEndpoint(Cloneable):
     """A Box API endpoint."""
 
     def __init__(self, session, **kwargs):
@@ -19,6 +21,16 @@ class BaseEndpoint(object):
         """
         super(BaseEndpoint, self).__init__(**kwargs)
         self._session = session
+
+    @property
+    def session(self):
+        """
+        Get the :class:`BoxSession` instance the object is using.
+
+        :rtype:
+            :class:`BoxSession`
+        """
+        return self._session
 
     def get_url(self, endpoint, *args):
         """
@@ -38,28 +50,13 @@ class BaseEndpoint(object):
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
 
-    def as_user(self, user):
+    def clone(self, session=None):
         """
-        Returns a new endpoint object with default headers set up to make requests as the specified user.
+        Returns a copy of this cloneable object using the specified session.
 
-        :param user:
-            The user to impersonate when making API requests.
-        :type user:
-            :class:`User`
+        :param session:
+            The Box session used to make requests.
+        :type session:
+            :class:`BoxSession`
         """
-        return self.__class__(self._session.as_user(user))
-
-    def with_shared_link(self, shared_link, shared_link_password):
-        """
-        Returns a new endpoint object with default headers set up to make requests using the shared link for auth.
-
-        :param shared_link:
-            The shared link.
-        :type shared_link:
-            `unicode`
-        :param shared_link_password:
-            The password for the shared link.
-        :type shared_link_password:
-            `unicode`
-        """
-        return self.__class__(self._session.with_shared_link(shared_link, shared_link_password))
+        return self.__class__(session or self._session)

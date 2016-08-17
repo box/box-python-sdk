@@ -9,6 +9,7 @@ from boxsdk.config import API
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
+from boxsdk.util.api_call_decorator import api_call
 from boxsdk.util.text_enum import TextEnum
 from boxsdk.util.translator import Translator
 
@@ -122,6 +123,7 @@ class Folder(Item):
         """
         return self._get_accelerator_upload_url()
 
+    @api_call
     def get_items(self, limit, offset=0, fields=None):
         """Get the items in a folder.
 
@@ -153,6 +155,7 @@ class Folder(Item):
         response = box_response.json()
         return [Translator().translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
 
+    @api_call
     def upload_stream(
             self,
             file_stream,
@@ -221,6 +224,7 @@ class Folder(Item):
             response_object=file_response,
         )
 
+    @api_call
     def upload(
             self,
             file_path=None,
@@ -276,6 +280,7 @@ class Folder(Item):
                 upload_using_accelerator=upload_using_accelerator,
             )
 
+    @api_call
     def create_subfolder(self, name):
         """
         Create a subfolder with the given name in the folder.
@@ -300,6 +305,7 @@ class Folder(Item):
             response_object=response,
         )
 
+    @api_call
     def update_sync_state(self, sync_state):
         """Update the ``sync_state`` attribute of this folder.
 
@@ -320,6 +326,7 @@ class Folder(Item):
         }
         return self.update_info(data=data)
 
+    @api_call
     def add_collaborator(self, collaborator, role, notify=False):
         """Add a collaborator to the folder
 
@@ -363,6 +370,7 @@ class Folder(Item):
             response_object=collaboration_response,
         )
 
+    @api_call
     def delete(self, recursive=True, etag=None):
         """Base class override. Delete the folder.
 
