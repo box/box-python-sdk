@@ -299,7 +299,6 @@ class Folder(Item):
         }
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
-        print response
         return self.__class__(
             session=self._session,
             object_id=response['id'],
