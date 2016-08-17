@@ -61,3 +61,8 @@ class BaseAPIJSONObject(object):
     def _description(self):
         """Return a description of the object if one exists."""
         return ""
+
+    @property
+    def response_object(self):
+        """Return the JSON object representing the object returned from a Box API request."""
+        return self._response_object
