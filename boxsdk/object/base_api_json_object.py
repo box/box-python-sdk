@@ -1,8 +1,8 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, absolute_import
-import six
 import copy
+import six
 
 from ..util.translator import Translator
 
