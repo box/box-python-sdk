@@ -6,6 +6,29 @@ Release History
 Upcoming
 ++++++++
 
+New Release?
+++++++++++++++++++
+
+**Breaking Changes**
+
+- ``Events.get_events(...)`` return value now contains a list of ``Event``s rather than a list of ``dicts``s
+  representing ``Event``s.  ``Event`` inherits from ``Mapping`` but will not have all the same capabilities as ``dict``.
+
+**Features**
+
+- Added ability to create custom subclasses of SDK objects with ``_item_type`` defined.
+- Added an ``Event`` class.
+
+**Other**
+
+- Added extra information to ``BoxAPIExceptions``s.
+- Added ``collaboration()`` method to ``Client``.a
+- Reworked the class hierarchy.  Previously, ``BaseEndpoint`` was the parent of ``BaseObject`` which was the parent
+  of all smart objects.  Now ``BaseObject`` is a child of both ``BaseEndpoint`` and ``BaseAPIJSONObject``.
+  ``BaseObject`` is the parent of all objects that are a part of the REST API.  Another subclass of
+  ``BaseAPIJSONObject``, ``APIJSONObject``, was created to represent pseudo-smart objects such as ``Event`` that are not
+  directly accesible through an API endpoint.
+
 1.5.3
 ++++++++++++++++++
 
