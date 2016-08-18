@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals, absolute_import
 import six
+import copy
 
 from ..util.translator import Translator
 
@@ -65,4 +66,4 @@ class BaseAPIJSONObject(object):
     @property
     def response_object(self):
         """Return the JSON object representing the object returned from a Box API request."""
-        return self._response_object
+        return copy.deepcopy(self._response_object)
