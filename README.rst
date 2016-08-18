@@ -410,7 +410,7 @@ Custom subclasses of any SDK object with an ``_item_type`` field can be defined:
     folder = client.folder('0')
 
     >>> print folder
-    >>> <Box MyFolder - 0>
+    >>> <Box MyFolderSubclass - 0>
 
 If a subclass of an SDK object with an ``_item_type`` field is defined, instances of this subclass will be
 returned from all SDK methods that previously returned an instance of the parent.  See ``BaseAPIJSONObjectMeta``
