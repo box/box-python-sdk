@@ -65,5 +65,9 @@ class BaseAPIJSONObject(object):
 
     @property
     def response_object(self):
-        """Return the JSON object representing the object returned from a Box API request."""
+        """
+        Return the JSON object representing the object returned from a Box API request.
+        :rtype:
+            `dict`
+        """
         return copy.deepcopy(self._response_object)
