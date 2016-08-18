@@ -248,8 +248,7 @@ class BoxSession(object):
                 url=url,
                 method=method,
                 context_info=response_json.get('context_info', None),
-                request_response=network_response.request_response,
-                access_token_used=network_response.access_token_used
+                network_response=network_response
             )
         if expect_json_response and not self._is_json_response(network_response):
             raise BoxAPIException(
@@ -258,6 +257,7 @@ class BoxSession(object):
                 message='Non-json response received, while expecting json response.',
                 url=url,
                 method=method,
+                network_response=network_response
             )
 
     def _prepare_and_send_request(
