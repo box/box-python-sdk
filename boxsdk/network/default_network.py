@@ -74,4 +74,8 @@ class DefaultNetworkResponse(NetworkResponse):
 
     @property
     def request_response(self):
+        """
+        The response returned from the Requests library.
+        :rtype: `Response`
+        """
         return self._request_response

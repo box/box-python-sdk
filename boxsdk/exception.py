@@ -35,8 +35,7 @@ class BoxAPIException(BoxException):
             url=None,
             method=None,
             context_info=None,
-            request_response=None,
-            access_token_used=None
+            network_response=None,
     ):
         """
         :param status:
@@ -71,14 +70,10 @@ class BoxAPIException(BoxException):
             The context_info returned in the failed response.
         :type context_info:
             `dict`
-        :param request_response:
+        :param network_response:
             The failed response
-        :type request_response:
+        :type network_response:
             Requests `Response`
-        :param access_token_used
-            The access token used to make the request
-        :type access_token_used
-            `unicode`
         """
         super(BoxAPIException, self).__init__()
         self._status = status
@@ -89,8 +84,7 @@ class BoxAPIException(BoxException):
         self._url = url
         self._method = method
         self._context_info = context_info
-        self._request_response = request_response
-        self._access_token_used = access_token_used
+        self._network_response = network_response
 
     def __unicode__(self):
         return '\nMessage: {0}\nStatus: {1}\nCode: {2}\nRequest id: {3}\nHeaders: {4}\nURL: {5}\nMethod: {6}\nContext info: {7}'.format(
@@ -157,20 +151,12 @@ class BoxAPIException(BoxException):
         return self._context_info
 
     @property
-    def request_response(self):
+    def network_response(self):
         """
-        The response returned from the Requests library.
-        :rtype: `Response`
+        The response returned from the network.
+        :rtype: `NetworkResponse`
         """
-        return self._request_response
-
-    @property
-    def access_token_used(self):
-        """
-        The access token that was used for the failed request.
-        :rtype:  `unicode`
-        """
-        return self._access_token_used
+        return self._network_response
 
 
 class BoxOAuthException(BoxException):
