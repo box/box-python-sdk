@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, absolute_import
+import copy
 import six
 
 from ..util.translator import Translator
@@ -61,3 +62,12 @@ class BaseAPIJSONObject(object):
     def _description(self):
         """Return a description of the object if one exists."""
         return ""
+
+    @property
+    def response_object(self):
+        """
+        Return the JSON object representing the object returned from a Box API request.
+        :rtype:
+            `dict`
+        """
+        return copy.deepcopy(self._response_object)
