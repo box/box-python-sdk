@@ -71,3 +71,11 @@ class DefaultNetworkResponse(NetworkResponse):
     def access_token_used(self):
         """Base class override."""
         return self._access_token_used
+
+    @property
+    def request_response(self):
+        """
+        The response returned from the Requests library.
+        :rtype: `Response`
+        """
+        return self._request_response
