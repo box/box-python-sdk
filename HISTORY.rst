@@ -11,8 +11,8 @@ New Release?
 
 **Breaking Changes**
 
-- ``Events.get_events(...)`` now returns a list of ``Event`` instances rather than a list of ``dict`` s
-  representing ``Event`` s.  ``Event`` inherits from ``Mapping`` but will not have all the same capabilities as
+- ``Events.get_events(...)`` now returns a list of ``Event`` instances rather than a list of ``dict``
+  representing ``Event``s.  ``Event`` inherits from ``Mapping`` but will not have all the same capabilities as
   ``dict``.
 
   + Your code is affected if you use ``Events.get_events(...)`` and expect a list of ``dict`` rather than a list of
