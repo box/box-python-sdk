@@ -390,6 +390,32 @@ Development Client
 For exploring the Box API, or to quickly get going using the SDK, the ``DevelopmentClient`` class combines the
 ``LoggingClient`` with the ``DeveloperTokenClient``.
 
+Customization
+-------------
+
+Custom Subclasses
+~~~~~~~~~~~~~~~~~
+
+Custom subclasses of any SDK object with an ``_item_type`` field can be defined:
+
+.. code-block:: pycon
+
+    from boxsdk import Client
+    from boxsdk import Folder
+
+    class MyFolderSubclass(Folder):
+        pass
+
+    client = Client(oauth)
+    folder = client.folder('0')
+
+    >>> print folder
+    >>> <Box MyFolderSubclass - 0>
+
+If a subclass of an SDK object with an ``_item_type`` field is defined, instances of this subclass will be
+returned from all SDK methods that previously returned an instance of the parent.  See ``BaseAPIJSONObjectMeta``
+and ``Translator`` to see how the SDK performs dynamic lookups to determine return types.
+
 Contributing
 ------------
 

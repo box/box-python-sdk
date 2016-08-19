@@ -6,6 +6,40 @@ Release History
 Upcoming
 ++++++++
 
+New Release?
+++++++++++++++++++
+
+**Breaking Changes**
+
+- ``Events.get_events(...)`` now returns a list of ``Event`` instances rather than a list of ``dict``
+  representing events.  ``Event`` inherits from ``Mapping`` but will not have all the same capabilities as
+  ``dict``.
+
+  + Your code is affected if you use ``Events.get_events(...)`` and expect a list of ``dict`` rather than a list of
+    ``Mapping``.  For example, if you use ``__setitem__`` (``event['key'] = value``), ``update()``, ``copy()``, or
+    if your code depends on the ``str`` or ``repr`` of the ``Event``.  Use of ``__getitem__`` (``event['key']``),
+    ``get()``, and other ``Mapping`` methods is unaffected.  See
+    https://docs.python.org/2.7/library/collections.html#collections-abstract-base-classes for methods supported on
+    ``Mapping`` instances.
+
+  + Migration: If you still need to treat an ``Event`` as a ``dict``, you can get a deepcopy of the original ``dict``
+    using the new property on ``BaseAPIJSONObject``, ``response_object``.
+
+**Features**
+
+- Added ability to create custom subclasses of SDK objects with ``_item_type`` defined.
+- Added an ``Event`` class.
+
+**Other**
+
+- Added extra information to ``BoxAPIException``.
+- Added ``collaboration()`` method to ``Client``.
+- Reworked the class hierarchy.  Previously, ``BaseEndpoint`` was the parent of ``BaseObject`` which was the parent
+  of all smart objects.  Now ``BaseObject`` is a child of both ``BaseEndpoint`` and ``BaseAPIJSONObject``.
+  ``BaseObject`` is the parent of all objects that are a part of the REST API.  Another subclass of
+  ``BaseAPIJSONObject``, ``APIJSONObject``, was created to represent pseudo-smart objects such as ``Event`` that are not
+  directly accessible through an API endpoint.
+
 1.5.3
 ++++++++++++++++++
 
