@@ -12,6 +12,7 @@ class Cloneable(object):
     def as_user(self, user):
         """
         Returns a new endpoint object with default headers set up to make requests as the specified user.
+
         :param user:
             The user to impersonate when making API requests.
         :type user:
@@ -22,6 +23,7 @@ class Cloneable(object):
     def with_shared_link(self, shared_link, shared_link_password):
         """
         Returns a new endpoint object with default headers set up to make requests using the shared link for auth.
+
         :param shared_link:
             The shared link.
         :type shared_link:
@@ -36,6 +38,7 @@ class Cloneable(object):
     def clone(self, session=None):
         """
         Returns a copy of this cloneable object using the specified session.
+
         :param session:
             The Box session used to make requests.
         :type session:

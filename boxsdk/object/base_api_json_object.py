@@ -67,6 +67,7 @@ class BaseAPIJSONObject(object):
     def response_object(self):
         """
         Return the JSON object representing the object returned from a Box API request.
+
         :rtype:
             `dict`
         """

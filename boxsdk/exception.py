@@ -102,6 +102,7 @@ class BoxAPIException(BoxException):
     def status(self):
         """
         The status code of the network response that is responsible for the exception.
+
         :rtype: `int`
         """
         return self._status
@@ -110,18 +111,25 @@ class BoxAPIException(BoxException):
     def code(self):
         """
         The explanation of the status code of the network response that is responsible for the exception.
+
         :rtype: `int`
         """
         return self._code
 
     @property
     def message(self):
+        """
+        The message associated with the exception, e.g. 'message' field of the json in the failed response.
+
+        :rtype:   `unicode`
+        """
         return self._message
 
     @property
     def request_id(self):
         """
         The id the network request that is responsible for the exception.
+
         :rtype: `unicode`
         """
         return self._request_id
@@ -130,6 +138,7 @@ class BoxAPIException(BoxException):
     def url(self):
         """
         The URL of the network request that is responsible for the exception.
+
         :rtype: `unicode`
         """
         return self._url
@@ -138,6 +147,7 @@ class BoxAPIException(BoxException):
     def method(self):
         """
         The HTTP verb of the request that is responsible for the exception.
+
         :rtype: `unicode`
         """
         return self._method
@@ -146,6 +156,7 @@ class BoxAPIException(BoxException):
     def context_info(self):
         """
         The context_info returned in the failed response.
+
         :rtype: `dict`
         """
         return self._context_info
@@ -154,6 +165,7 @@ class BoxAPIException(BoxException):
     def network_response(self):
         """
         The response returned from the network.
+
         :rtype: `NetworkResponse`
         """
         return self._network_response
