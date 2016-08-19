@@ -11,7 +11,7 @@ New Release?
 
 **Breaking Changes**
 
-- ``Events.get_events(...)`` now returns a list of ``Event`` instances rather than a list of ``dicts`` s
+- ``Events.get_events(...)`` now returns a list of ``Event`` instances rather than a list of ``dicts``
   representing ``Event`` s.  ``Event`` inherits from ``Mapping`` but will not have all the same capabilities as
   ``dict`` .
 
@@ -22,8 +22,8 @@ New Release?
 
 **Other**
 
-- Added extra information to ``BoxAPIExceptions``s.
-- Added ``collaboration()`` method to ``Client``.a
+- Added extra information to ``BoxAPIException``.
+- Added ``collaboration()`` method to ``Client``.
 - Reworked the class hierarchy.  Previously, ``BaseEndpoint`` was the parent of ``BaseObject`` which was the parent
   of all smart objects.  Now ``BaseObject`` is a child of both ``BaseEndpoint`` and ``BaseAPIJSONObject``.
   ``BaseObject`` is the parent of all objects that are a part of the REST API.  Another subclass of
