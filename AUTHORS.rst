@@ -7,3 +7,4 @@ used to interact with the Box API. This is a list of contributors.
 - `@hnguyen08 <https://github.com/hnguyen08>`_
 - `@potrebic <https://github.com/potrebic>`_
 - `@nsundareswaran <https://github.com/nsundareswaran>`_
+- `@kelseymorris95 <https://github.com/kelseymorris95>`_

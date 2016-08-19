@@ -3,11 +3,8 @@
 Release History
 ---------------
 
-Upcoming
-++++++++
-
-New Release?
-++++++++++++++++++
+2.0.0 (Upcoming)
+++++++++++++++++
 
 **Breaking Changes**
 
@@ -40,7 +37,7 @@ New Release?
   ``BaseAPIJSONObject``, ``APIJSONObject``, was created to represent pseudo-smart objects such as ``Event`` that are not
   directly accessible through an API endpoint.
 
-1.5.3
+1.5.3 (2016-05-26)
 ++++++++++++++++++
 
 - Bugfix so that ``JWTAuth`` opens the PEM private key file in ``'rb'`` mode.
