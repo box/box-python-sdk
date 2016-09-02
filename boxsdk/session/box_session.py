@@ -6,6 +6,7 @@ from boxsdk.config import API, Client
 from boxsdk.exception import BoxAPIException
 from boxsdk.util.multipart_stream import MultipartStream
 from boxsdk.util.shared_link import get_shared_link_header
+from ..util.translator import Translator
 
 
 class BoxResponse(object):
@@ -65,7 +66,7 @@ class BoxSession(object):
     Box API session. Provides auth, automatic retry of failed requests, and session renewal.
     """
 
-    def __init__(self, oauth, network_layer, default_headers=None, default_network_request_kwargs=None):
+    def __init__(self, oauth, network_layer, default_headers=None, translator=None, default_network_request_kwargs=None):
         """
         :param oauth:
             OAuth2 object used by the session to authorize requests.
@@ -79,21 +80,38 @@ class BoxSession(object):
             A dictionary containing default values to be used as headers when this session makes an API request.
         :type default_headers:
             `dict` or None
+        :param translator:
+            (optional) The translator to use for translating Box API JSON
+            responses into :class:`BaseAPIJSONObject` smart objects.
+            Defaults to a new :class:`Translator` that inherits the
+            registrations of the default translator.
+        :type translator:   :class:`Translator`
         :param default_network_request_kwargs:
             A dictionary containing default values to be passed to the network layer
             when this session makes an API request.
         :type default_network_request_kwargs:
             `dict` or None
         """
+        if translator is None:
+            translator = Translator(extend_default_translator=True, new_child=True)
         super(BoxSession, self).__init__()
         self._oauth = oauth
         self._network_layer = network_layer
         self._default_headers = {'User-Agent': Client.USER_AGENT_STRING}
+        self._translator = translator
         self._default_network_request_kwargs = {}
         if default_headers:
             self._default_headers.update(default_headers)
         if default_network_request_kwargs:
             self._default_network_request_kwargs.update(default_network_request_kwargs)
+
+    @property
+    def translator(self):
+        """The translator used for translating Box API JSON responses into `BaseAPIJSONObject` smart objects.
+
+        :rtype:   :class:`Translator`
+        """
+        return self._translator
 
     def get_url(self, endpoint, *args):
         """
@@ -126,7 +144,13 @@ class BoxSession(object):
         """
         headers = self._default_headers.copy()
         headers['As-User'] = user.object_id
-        return self.__class__(self._oauth, self._network_layer, headers, self._default_network_request_kwargs.copy())
+        return self.__class__(
+            self._oauth,
+            self._network_layer,
+            default_headers=headers,
+            translator=self._translator,
+            default_network_request_kwargs=self._default_network_request_kwargs.copy(),
+        )
 
     def with_shared_link(self, shared_link, shared_link_password=None):
         """
@@ -143,10 +167,22 @@ class BoxSession(object):
         """
         headers = self._default_headers.copy()
         headers.update(get_shared_link_header(shared_link, shared_link_password))
-        return self.__class__(self._oauth, self._network_layer, headers, self._default_network_request_kwargs.copy())
+        return self.__class__(
+            self._oauth,
+            self._network_layer,
+            default_headers=headers,
+            translator=self._translator,
+            default_network_request_kwargs=self._default_network_request_kwargs.copy(),
+        )
 
     def with_default_network_request_kwargs(self, extra_network_parameters):
-        return self.__class__(self._oauth, self._network_layer, self._default_headers.copy(), extra_network_parameters)
+        return self.__class__(
+            self._oauth,
+            self._network_layer,
+            default_headers=self._default_headers.copy(),
+            translator=self._translator,
+            default_network_request_kwargs=extra_network_parameters,
+        )
 
     def _renew_session(self, access_token_used):
         """

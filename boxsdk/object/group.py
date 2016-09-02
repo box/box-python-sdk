@@ -6,7 +6,6 @@ import json
 
 from .base_object import BaseObject
 from ..config import API
-from ..util.translator import Translator
 from ..util.api_call_decorator import api_call
 
 
@@ -48,7 +47,7 @@ class Group(BaseObject):
         """
         url = self.get_url('memberships')
 
-        membership_factory = partial(Translator().translate("group_membership"), group=self)
+        membership_factory = partial(self._session.translator.translate("group_membership"), group=self)
         for group_membership_tuple in self._paging_wrapper(url, starting_index, limit, membership_factory):
             if include_page_info:
                 yield group_membership_tuple
@@ -83,4 +82,4 @@ class Group(BaseObject):
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
 
-        return Translator().translate(response['type'])(self._session, response['id'], response, user=user, group=self)
+        return self._session.translator.translate(response['type'])(self._session, response['id'], response, user=user, group=self)
