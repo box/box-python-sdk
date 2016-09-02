@@ -5,9 +5,10 @@ from __future__ import absolute_import, unicode_literals
 from functools import wraps
 
 
-__all__ = [str('ChainMap')]
+__all__ = list(map(str, ['ChainMap']))
 
 
+# pylint:disable=unused-import
 try:
     from collections import ChainMap
 except ImportError:

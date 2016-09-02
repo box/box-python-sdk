@@ -63,6 +63,10 @@ class Client(Cloneable):
 
     @property
     def translator(self):
+        """The translator used for translating Box API JSON responses into `BaseAPIJSONObject` smart objects.
+
+        :rtype:   :class:`Translator`
+        """
         return self._session.translator
 
     def folder(self, folder_id):

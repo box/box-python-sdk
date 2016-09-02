@@ -152,7 +152,7 @@ class Folder(Item):
             params['fields'] = ','.join(fields)
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        return [self._session.translator.translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
+        return [self.translator.translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
 
     @api_call
     def upload_stream(
@@ -217,7 +217,7 @@ class Folder(Item):
         box_response = self._session.post(url, data=data, files=files, expect_json_response=False)
         file_response = box_response.json()['entries'][0]
         file_id = file_response['id']
-        return self._session.translator.translate(file_response['type'])(
+        return self.translator.translate(file_response['type'])(
             session=self._session,
             object_id=file_id,
             response_object=file_response,
@@ -363,7 +363,7 @@ class Folder(Item):
         box_response = self._session.post(url, expect_json_response=True, data=data, params=params)
         collaboration_response = box_response.json()
         collab_id = collaboration_response['id']
-        return self._session.translator.translate(collaboration_response['type'])(
+        return self.translator.translate(collaboration_response['type'])(
             session=self._session,
             object_id=collab_id,
             response_object=collaboration_response,

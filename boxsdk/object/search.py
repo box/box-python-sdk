@@ -230,4 +230,4 @@ class Search(BaseEndpoint):
         params.update(kwargs)
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        return [self._session.translator.translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
+        return [self.translator.translate(item['type'])(self._session, item['id'], item) for item in response['entries']]

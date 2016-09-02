@@ -47,7 +47,7 @@ class Group(BaseObject):
         """
         url = self.get_url('memberships')
 
-        membership_factory = partial(self._session.translator.translate("group_membership"), group=self)
+        membership_factory = partial(self.translator.translate("group_membership"), group=self)
         for group_membership_tuple in self._paging_wrapper(url, starting_index, limit, membership_factory):
             if include_page_info:
                 yield group_membership_tuple
@@ -82,4 +82,4 @@ class Group(BaseObject):
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
 
-        return self._session.translator.translate(response['type'])(self._session, response['id'], response, user=user, group=self)
+        return self.translator.translate(response['type'])(self._session, response['id'], response, user=user, group=self)

@@ -32,6 +32,14 @@ class BaseEndpoint(Cloneable):
         """
         return self._session
 
+    @property
+    def translator(self):
+        """The translator used for translating Box API JSON responses into `BaseAPIJSONObject` smart objects.
+
+        :rtype:   :class:`Translator`
+        """
+        return self._session.translator
+
     def get_url(self, endpoint, *args):
         """
         Return the URL used to access the endpoint.

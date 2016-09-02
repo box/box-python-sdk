@@ -56,4 +56,4 @@ def test_meta_overrides_registration_if_subclass_redefines_item_type(default_tra
         _item_type = 'folder'
 
     assert default_translator.translate('folder') is FolderSubclass
-    assert default_translator.keys() == original_default_translator.keys()
+    assert set(default_translator.keys()) == set(original_default_translator.keys())

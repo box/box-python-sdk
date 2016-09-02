@@ -38,7 +38,7 @@ def default_translator(original_default_translator):
 
 
 @pytest.fixture(scope='function')
-def translator(default_translator):
+def translator(default_translator):   # pylint:disable=unused-argument
     return Translator(extend_default_translator=True, new_child=True)
 
 

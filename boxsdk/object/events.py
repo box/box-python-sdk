@@ -93,7 +93,7 @@ class Events(BaseEndpoint):
         box_response = self._session.get(url, params=params)
         response = box_response.json().copy()
         if 'entries' in response:
-            response['entries'] = [self._session.translator.translate(item['type'])(item) for item in response['entries']]
+            response['entries'] = [self.translator.translate(item['type'])(item) for item in response['entries']]
         return response
 
     @api_call

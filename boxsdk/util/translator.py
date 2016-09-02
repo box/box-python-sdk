@@ -5,7 +5,7 @@ from __future__ import absolute_import, unicode_literals
 from .chain_map import ChainMap
 
 
-__all__ = [str('Translator')]
+__all__ = list(map(str, ['Translator']))
 
 
 class Translator(ChainMap):

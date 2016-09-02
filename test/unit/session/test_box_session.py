@@ -16,7 +16,7 @@ from boxsdk.session.box_session import BoxSession, BoxResponse, Translator
 
 
 @pytest.fixture(scope='function', params=[False, True])
-def translator(default_translator, request):
+def translator(default_translator, request):  # pylint:disable=unused-argument
     if request.param:
         return Translator(extend_default_translator=True, new_child=True)
     return None
