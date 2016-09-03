@@ -169,3 +169,7 @@ def test_len(EnumBaseWithSubclassesDefined, enum_members):
 def test_reversed(EnumBaseWithSubclassesDefined):
     EnumBase = EnumBaseWithSubclassesDefined
     assert list(reversed(list(reversed(EnumBase)))) == list(EnumBase)
+
+
+def test_dir(EnumBaseWithSubclassesDefined):
+    assert set(enum_member_names).issubset(dir(EnumBaseWithSubclassesDefined))

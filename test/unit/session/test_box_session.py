@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 from functools import partial
 from io import IOBase
@@ -12,17 +12,24 @@ import pytest
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.exception import BoxAPIException
 from boxsdk.network.default_network import DefaultNetwork, DefaultNetworkResponse
-from boxsdk.session.box_session import BoxSession, BoxResponse
+from boxsdk.session.box_session import BoxSession, BoxResponse, Translator
+
+
+@pytest.fixture(scope='function', params=[False, True])
+def translator(default_translator, request):  # pylint:disable=unused-argument
+    if request.param:
+        return Translator(extend_default_translator=True, new_child=True)
+    return None
 
 
 @pytest.fixture
-def box_session():
+def box_session(translator):
     mock_oauth = Mock(OAuth2)
     mock_oauth.access_token = 'fake_access_token'
 
     mock_network_layer = Mock(DefaultNetwork)
 
-    return BoxSession(mock_oauth, mock_network_layer)
+    return BoxSession(mock_oauth, mock_network_layer, translator=translator)
 
 
 @pytest.mark.parametrize('test_method', [
@@ -165,3 +172,23 @@ def test_box_response_properties_pass_through_to_network_response_properties():
     assert box_result.ok == mock_network_response.ok
     assert box_result.status_code == mock_network_response.status_code
     assert box_result.network_response == mock_network_response
+
+
+def test_translator(box_session, translator, default_translator, original_default_translator):
+    assert isinstance(box_session.translator, Translator)
+    assert box_session.translator == default_translator
+    if translator:
+        assert box_session.translator is translator
+
+    # Test that adding new registrations works.
+
+    class Foo(object):
+        pass
+
+    item_type = u'ƒøø'
+    box_session.translator.register(item_type, Foo)
+    assert box_session.translator.translate(item_type) is Foo
+
+    # Test that adding new registrations does not affect global state.
+    assert default_translator == original_default_translator
+    assert (set(box_session.translator) - set(default_translator)) == set([item_type])
