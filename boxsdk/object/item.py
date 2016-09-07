@@ -6,6 +6,7 @@ import json
 from .base_object import BaseObject
 from ..config import API
 from ..exception import BoxAPIException
+from .metadata import Metadata
 from ..util.api_call_decorator import api_call
 
 
@@ -335,3 +336,23 @@ class Item(BaseObject):
         """
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).delete(params, headers)
+
+    def metadata(self, scope='global', template='properties'):
+        """
+        Instantiate a :class:`Metadata` object associated with this item.
+
+        :param scope:
+            Scope of the metadata. Must be either 'global' or 'enterprise'.
+        :type scope:
+            `unicode`
+        :param template:
+            The name of the metadata template.
+            See https://docs.box.com/reference#metadata-object for more details.
+        :type template:
+            `unicode`
+        :return:
+            A new metadata instance associated with this item.
+        :rtype:
+            :class:`Metadata`
+        """
+        return Metadata(self._session, self, scope, template)
