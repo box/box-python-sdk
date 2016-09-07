@@ -56,7 +56,10 @@ class LoggingNetwork(DefaultNetwork):
         :param response: The Box API response.
         """
         if response.ok:
-            self._logger.info(self.SUCCESSFUL_RESPONSE_FORMAT, response.content)
+            if response.request_response.raw is not None:
+                self._logger.info(self.SUCCESSFUL_RESPONSE_FORMAT, '<File download contents unavailable for logging>')
+            else:
+                self._logger.info(self.SUCCESSFUL_RESPONSE_FORMAT, response.content)
         else:
             self._logger.warning(
                 self.ERROR_RESPONSE_FORMAT,
