@@ -26,6 +26,7 @@ Release History
 
 - Added ability to create custom subclasses of SDK objects with ``_item_type`` defined.
 - Added an ``Event`` class.
+- Moved `metadata` method to `Item` so it's now available for `Folder` as well as `File`.
 
 **Other**
 
