@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 from boxsdk.config import API
 from .item import Item
-from .metadata import Metadata
 from ..util.api_call_decorator import api_call
 
 
@@ -225,26 +224,6 @@ class File(Item):
         """
         data = {'lock': None}
         return self.update_info(data)
-
-    def metadata(self, scope='global', template='properties'):
-        """
-        Instantiate a :class:`Metadata` object associated with this file.
-
-        :param scope:
-            Scope of the metadata. Must be either 'global' or 'enterprise'.
-        :type scope:
-            `unicode`
-        :param template:
-            The name of the metadata template.
-            See https://box-content.readme.io/reference#metadata-object for more details.
-        :type template:
-            `unicode`
-        :return:
-            A new metadata instance associated with this file.
-        :rtype:
-            :class:`Metadata`
-        """
-        return Metadata(self._session, self, scope, template)
 
     @api_call
     def get_shared_link_download_url(

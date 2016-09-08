@@ -36,6 +36,7 @@ Release History
     default ``Translator``.
 
 - Added an ``Event`` class.
+- Moved `metadata` method to `Item` so it's now available for `Folder` as well as `File`.
 
 **Other**
 

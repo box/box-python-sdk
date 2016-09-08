@@ -26,16 +26,24 @@ def metadata_scope(request):
     return request.param
 
 
-@pytest.fixture
-def metadata_template():
-    return 'properties'
+@pytest.fixture(params=['properties', 'custom'])
+def metadata_template(request):
+    return request.param
+
+
+@pytest.fixture(params=['file', 'folder'])
+def test_object(test_file, test_folder, request):
+    if request.param == 'file':
+        return test_file
+    else:
+        return test_folder
 
 
 @pytest.mark.parametrize('success', [True, False])
-def test_delete(mock_box_session, make_mock_box_request, test_file, metadata_scope, metadata_template, success):
+def test_delete(mock_box_session, make_mock_box_request, test_object, metadata_scope, metadata_template, success):
     # pylint:disable=redefined-outer-name
     mock_box_session.delete.return_value, _ = make_mock_box_request(response_ok=success)
-    metadata = test_file.metadata(metadata_scope, metadata_template)
+    metadata = test_object.metadata(metadata_scope, metadata_template)
     assert metadata.delete() is success
     mock_box_session.delete.assert_called_once_with(metadata.get_url())
 
@@ -43,14 +51,14 @@ def test_delete(mock_box_session, make_mock_box_request, test_file, metadata_sco
 def test_create(
         mock_box_session,
         make_mock_box_request,
-        test_file,
+        test_object,
         metadata_scope,
         metadata_template,
         metadata_response,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.post.return_value, _ = make_mock_box_request(response=metadata_response)
-    metadata = test_file.metadata(metadata_scope, metadata_template)
+    metadata = test_object.metadata(metadata_scope, metadata_template)
     response = metadata.create(metadata_response)
     assert response is metadata_response
     mock_box_session.post.assert_called_once_with(
@@ -63,14 +71,14 @@ def test_create(
 def test_get(
         mock_box_session,
         make_mock_box_request,
-        test_file,
+        test_object,
         metadata_scope,
         metadata_template,
         metadata_response,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value, _ = make_mock_box_request(response=metadata_response)
-    metadata = test_file.metadata(metadata_scope, metadata_template)
+    metadata = test_object.metadata(metadata_scope, metadata_template)
     response = metadata.get()
     assert response is metadata_response
     mock_box_session.get.assert_called_once_with(metadata.get_url())
@@ -89,7 +97,7 @@ def metadata_update():
 def test_update(
         mock_box_session,
         make_mock_box_request,
-        test_file,
+        test_object,
         metadata_scope,
         metadata_template,
         metadata_response,
@@ -97,7 +105,7 @@ def test_update(
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.put.return_value, _ = make_mock_box_request(response=metadata_response)
-    metadata = test_file.metadata(metadata_scope, metadata_template)
+    metadata = test_object.metadata(metadata_scope, metadata_template)
     response = metadata.update(metadata_update)
     assert response is metadata_response
     mock_box_session.put.assert_called_once_with(
@@ -107,6 +115,6 @@ def test_update(
     )
 
 
-def test_start_update(test_file):
-    update = test_file.metadata().start_update()
+def test_start_update(test_object):
+    update = test_object.metadata().start_update()
     assert isinstance(update, MetadataUpdate)
