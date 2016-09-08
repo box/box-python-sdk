@@ -99,7 +99,7 @@ class ExtendableEnumMeta(EnumMeta):
         return any(map(in_, cls.__subclasses__()))
 
     def __dir__(cls):
-        return list(set(super(ExtendableEnumMeta, cls).__dir__()).union(set(map(dir, cls.__subclasses__()))))
+        return list(set(super(ExtendableEnumMeta, cls).__dir__()).union(*map(dir, cls.__subclasses__())))
 
     def __getitem__(cls, name):
         try:

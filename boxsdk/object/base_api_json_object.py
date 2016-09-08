@@ -9,22 +9,68 @@ from ..util.translator import Translator
 
 class BaseAPIJSONObjectMeta(type):
     """
-    Metaclass for Box API objects. Registers classes so that API responses can be translated to the correct type.
-    Relies on the _item_type field defined on the classes to match the type property of the response json.
-    But the type-class mapping will only be registered if the module of the class is imported.
-    So it's also important to add the module name to __all__ in object/__init__.py.
+    Metaclass for Box API objects.
+
+    Registers classes with the default translator, so that API responses can be
+    translated to the correct type. This relies on the _item_type field, which
+    must be defined in the class's namespace dict (and must be re-defined, in
+    order to register a custom subclass), to match the 'type' field of the
+    response json.  But the type-class mapping will only be registered if the
+    module of the class is imported.
+
+    For example, events returned from the API look like
+
+    .. code-block:: json
+
+        {'type': 'event', ...}
+
+    so a class for that type could be created and registered with the default
+    translator like this:
+
+    .. code-block:: python
+
+        class Event(BaseAPIJSONObject):
+            _item_type = 'event'
+            ...
+
+    NOTE: The default translator registration functionality is a private
+    implementation detail of the SDK, to make it easy to register the default
+    API object classes with the default translator. For convenience and
+    backwards-compatability, developers are allowed to re-define the _item_type
+    field in their own custom subclasses in order to take advantage of this
+    functionality, but are encouraged not to. Since this is a private
+    implementation detail, it may change or be removed in any major or minor
+    release. Additionally, it has the usual hazards of mutable global state.
+    The supported and recommended ways for registering custom subclasses are:
+
+    - Constructing a new :class:`Translator`, calling `Translator.register()`
+      as necessary, and passing it to the :class:`BoxSession` constructor.
+    - Calling `session.translator.register()` on an existing
+      :class:`BoxSession`.
+    - Calling `client.translator.register()` on an existing :class:`Client`.
     """
+
     def __init__(cls, name, bases, attrs):
         super(BaseAPIJSONObjectMeta, cls).__init__(name, bases, attrs)
-        item_type = getattr(cls, '_item_type', None)
+        item_type = attrs.get('_item_type', None)
         if item_type is not None:
-            Translator().register(item_type, cls)
+            Translator._default_translator.register(item_type, cls)   # pylint:disable=protected-access
 
 
 @six.add_metaclass(BaseAPIJSONObjectMeta)
 class BaseAPIJSONObject(object):
     """Base class containing basic logic shared between true REST objects and other objects (such as an Event)"""
 
+    # :attr _item_type:
+    #     (protected) The Box resource type that this class represents.
+    #     For API object/resource classes this should equal the expected value
+    #     of the 'type' field in API JSON responses. Otherwise, this should be
+    #     `None`.
+    # :type _item_type:   `unicode` or `None`
+    #
+    # NOTE: When defining a leaf class with an _item_type in this SDK, it's
+    # also important to add the module name to __all__ in object/__init__.py,
+    # so that it will be imported and registered with the default translator.
     _item_type = None
 
     def __init__(self, response_object=None, **kwargs):

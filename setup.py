@@ -72,6 +72,7 @@ def main():
         #
         # [1] <https://www.python.org/dev/peps/pep-0426/#environment-markers>
         # [2] <https://www.python.org/dev/peps/pep-0345/#environment-markers>
+        'chainmap>=1.0.2': ['2.6', '2.7'],  # <'3.3'
         'enum34>=1.0.4': ['2.6', '2.7', '3.3'],   # <'3.4'
         'ordereddict>=1.1': ['2.6'],   # <'2.7'
     }

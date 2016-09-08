@@ -14,6 +14,7 @@ class LoggingNetwork(DefaultNetwork):
     REQUEST_FORMAT = '\x1b[36m%s %s %s\x1b[0m'
     SUCCESSFUL_RESPONSE_FORMAT = '\x1b[32m%s\x1b[0m'
     ERROR_RESPONSE_FORMAT = '\x1b[31m%s\n%s\n%s\n\x1b[0m'
+    STREAM_CONTENT_NOT_LOGGED = '<File download contents unavailable for logging>'
 
     def __init__(self, logger=None):
         """
@@ -56,7 +57,10 @@ class LoggingNetwork(DefaultNetwork):
         :param response: The Box API response.
         """
         if response.ok:
-            self._logger.info(self.SUCCESSFUL_RESPONSE_FORMAT, response.content)
+            if response.request_response.raw is not None:
+                self._logger.info(self.SUCCESSFUL_RESPONSE_FORMAT, self.STREAM_CONTENT_NOT_LOGGED)
+            else:
+                self._logger.info(self.SUCCESSFUL_RESPONSE_FORMAT, response.content)
         else:
             self._logger.warning(
                 self.ERROR_RESPONSE_FORMAT,

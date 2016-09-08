@@ -24,7 +24,17 @@ Release History
 
 **Features**
 
-- Added ability to create custom subclasses of SDK objects with ``_item_type`` defined.
+- Added more flexibility to the object translation system:
+
+  - Can create non-global ``Translator`` instances, which can extend or
+    not-extend the global default ``Translator``.
+  - Can initialize ``BoxSession`` with a custom ``Translator``.
+  - Can register custom subclasses on the ``Translator`` which is associated
+    with a ``BoxSession`` or a ``Client``.
+  - All translation of API responses now use the ``Translator`` that is
+    referenced by the ``BoxSession``, instead of directly using the global
+    default ``Translator``.
+
 - Added an ``Event`` class.
 - Moved `metadata` method to `Item` so it's now available for `Folder` as well as `File`.
 
@@ -37,6 +47,7 @@ Release History
   ``BaseObject`` is the parent of all objects that are a part of the REST API.  Another subclass of
   ``BaseAPIJSONObject``, ``APIJSONObject``, was created to represent pseudo-smart objects such as ``Event`` that are not
   directly accessible through an API endpoint.
+- Fixed an exception that was being raised from ``ExtendableEnumMeta.__dir__()``.
 
 1.5.3 (2016-05-26)
 ++++++++++++++++++

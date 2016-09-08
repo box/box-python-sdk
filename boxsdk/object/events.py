@@ -9,7 +9,6 @@ from ..util.api_call_decorator import api_call
 from ..util.enum import ExtendableEnumMeta
 from ..util.lru_cache import LRUCache
 from ..util.text_enum import TextEnum
-from ..util.translator import Translator
 
 
 # pylint:disable=too-many-ancestors
@@ -94,7 +93,7 @@ class Events(BaseEndpoint):
         box_response = self._session.get(url, params=params)
         response = box_response.json().copy()
         if 'entries' in response:
-            response['entries'] = [Translator().translate(item['type'])(item) for item in response['entries']]
+            response['entries'] = [self.translator.translate(item['type'])(item) for item in response['entries']]
         return response
 
     @api_call
