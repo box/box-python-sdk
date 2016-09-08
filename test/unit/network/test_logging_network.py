@@ -62,7 +62,7 @@ def test_logging_network_does_not_log_download_content(http_verb, test_url, acce
         super_request.return_value = generic_successful_response
         network.request(http_verb, test_url, access_token)
         super_request.assert_called_once_with(http_verb, test_url, access_token)
-    logger.info.assert_called_with(network.SUCCESSFUL_RESPONSE_FORMAT, network.DOWNLOAD_CONTENT_NOT_LOGGED_MESSAGE)
+    logger.info.assert_called_with(network.SUCCESSFUL_RESPONSE_FORMAT, network.STREAM_CONTENT_NOT_LOGGED)
 
 
 def test_logging_network_logs_non_successful_responses(http_verb, test_url, access_token, server_error_response):

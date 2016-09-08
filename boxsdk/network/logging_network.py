@@ -14,7 +14,7 @@ class LoggingNetwork(DefaultNetwork):
     REQUEST_FORMAT = '\x1b[36m%s %s %s\x1b[0m'
     SUCCESSFUL_RESPONSE_FORMAT = '\x1b[32m%s\x1b[0m'
     ERROR_RESPONSE_FORMAT = '\x1b[31m%s\n%s\n%s\n\x1b[0m'
-    DOWNLOAD_CONTENT_NOT_LOGGED_MESSAGE = '<File download contents unavailable for logging>'
+    STREAM_CONTENT_NOT_LOGGED = '<File download contents unavailable for logging>'
 
     def __init__(self, logger=None):
         """
@@ -58,7 +58,7 @@ class LoggingNetwork(DefaultNetwork):
         """
         if response.ok:
             if response.request_response.raw is not None:
-                self._logger.info(self.SUCCESSFUL_RESPONSE_FORMAT, self.DOWNLOAD_CONTENT_NOT_LOGGED_MESSAGE)
+                self._logger.info(self.SUCCESSFUL_RESPONSE_FORMAT, self.STREAM_CONTENT_NOT_LOGGED)
             else:
                 self._logger.info(self.SUCCESSFUL_RESPONSE_FORMAT, response.content)
         else:

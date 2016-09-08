@@ -1,8 +1,8 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, absolute_import
-from boxsdk.object.folder import FolderSyncState
 import pytest
+from boxsdk.object.folder import FolderSyncState
 
 
 @pytest.fixture()
