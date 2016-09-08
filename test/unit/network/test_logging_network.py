@@ -54,6 +54,17 @@ def test_logging_network_logs_successful_responses(http_verb, test_url, access_t
     logger.info.assert_called_with(network.SUCCESSFUL_RESPONSE_FORMAT, generic_successful_response.content)
 
 
+def test_logging_network_does_not_log_download_content(http_verb, test_url, access_token, generic_successful_response):
+    logger = Mock(Logger)
+    network = LoggingNetwork(logger)
+    generic_successful_response.request_response.raw = Mock()
+    with patch.object(default_network.DefaultNetwork, 'request') as super_request:
+        super_request.return_value = generic_successful_response
+        network.request(http_verb, test_url, access_token)
+        super_request.assert_called_once_with(http_verb, test_url, access_token)
+    logger.info.assert_called_with(network.SUCCESSFUL_RESPONSE_FORMAT, network.STREAM_CONTENT_NOT_LOGGED)
+
+
 def test_logging_network_logs_non_successful_responses(http_verb, test_url, access_token, server_error_response):
     logger = Mock(Logger)
     network = LoggingNetwork(logger)

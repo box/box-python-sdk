@@ -7,13 +7,15 @@ import pytest
 from boxsdk.network.default_network import DefaultNetworkResponse
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture()
 def generic_successful_response():
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.content = b'{"message": "success"}'
     mock_network_response.status_code = 200
     mock_network_response.ok = True
     mock_network_response.raw = Mock()
+    mock_network_response.request_response = Mock()
+    mock_network_response.request_response.raw = None
     return mock_network_response
 
 
