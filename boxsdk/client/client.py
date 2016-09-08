@@ -11,7 +11,6 @@ from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
 from ..util.shared_link import get_shared_link_header
-from ..util.translator import Translator
 
 
 class Client(Cloneable):
@@ -62,6 +61,14 @@ class Client(Cloneable):
         """
         return self._session
 
+    @property
+    def translator(self):
+        """The translator used for translating Box API JSON responses into `BaseAPIJSONObject` smart objects.
+
+        :rtype:   :class:`Translator`
+        """
+        return self._session.translator
+
     def folder(self, folder_id):
         """
         Initialize a :class:`Folder` object, whose box id is folder_id.
@@ -75,7 +82,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Folder`
         """
-        return Translator().translate('folder')(session=self._session, object_id=folder_id)
+        return self.translator.translate('folder')(session=self._session, object_id=folder_id)
 
     def file(self, file_id):
         """
@@ -90,7 +97,7 @@ class Client(Cloneable):
         :rtype:
             :class:`File`
         """
-        return Translator().translate('file')(session=self._session, object_id=file_id)
+        return self.translator.translate('file')(session=self._session, object_id=file_id)
 
     def user(self, user_id='me'):
         """
@@ -105,7 +112,7 @@ class Client(Cloneable):
         :rtype:
             :class:`User`
         """
-        return Translator().translate('user')(session=self._session, object_id=user_id)
+        return self.translator.translate('user')(session=self._session, object_id=user_id)
 
     def group(self, group_id):
         """
@@ -120,7 +127,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Group`
         """
-        return Translator().translate('group')(session=self._session, object_id=group_id)
+        return self.translator.translate('group')(session=self._session, object_id=group_id)
 
     def collaboration(self, collab_id):
         """
@@ -135,7 +142,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Collaboration`
         """
-        return Translator().translate('collaboration')(session=self._session, object_id=collab_id)
+        return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
 
     @api_call
     def users(self, limit=None, offset=0, filter_term=None):
@@ -167,7 +174,7 @@ class Client(Cloneable):
             params['filter_term'] = filter_term
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        user_class = Translator().translate('user')
+        user_class = self.translator.translate('user')
         return [user_class(
             session=self._session,
             object_id=item['id'],
@@ -256,7 +263,7 @@ class Client(Cloneable):
         :rtype:
             :class:`GroupMembership`
         """
-        return Translator().translate('group_membership')(
+        return self.translator.translate('group_membership')(
             session=self._session,
             object_id=group_membership_id,
         )
@@ -274,7 +281,7 @@ class Client(Cloneable):
         url = '{0}/groups'.format(API.BASE_API_URL)
         box_response = self._session.get(url)
         response = box_response.json()
-        group_class = Translator().translate('group')
+        group_class = self.translator.translate('group')
         return [group_class(
             session=self._session,
             object_id=item['id'],
@@ -303,7 +310,7 @@ class Client(Cloneable):
         }
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
-        return Translator().translate('group')(
+        return self.translator.translate('group')(
             session=self._session,
             object_id=response['id'],
             response_object=response,
@@ -334,7 +341,7 @@ class Client(Cloneable):
             '{0}/shared_items'.format(API.BASE_API_URL),
             headers=get_shared_link_header(shared_link, password),
         ).json()
-        return Translator().translate(response['type'])(
+        return self.translator.translate(response['type'])(
             session=self._session.with_shared_link(shared_link, password),
             object_id=response['id'],
             response_object=response,
@@ -389,7 +396,7 @@ class Client(Cloneable):
             user_attributes['is_platform_access_only'] = True
         box_response = self._session.post(url, data=json.dumps(user_attributes))
         response = box_response.json()
-        return Translator().translate('user')(
+        return self.translator.translate('user')(
             session=self._session,
             object_id=response['id'],
             response_object=response,

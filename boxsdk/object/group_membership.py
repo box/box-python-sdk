@@ -3,7 +3,6 @@
 from __future__ import unicode_literals, absolute_import
 
 from .base_object import BaseObject
-from ..util.translator import Translator
 
 
 class GroupMembership(BaseObject):
@@ -70,8 +69,8 @@ class GroupMembership(BaseObject):
         user_info = response_object.get('user')
         group_info = response_object.get('group')
 
-        user = user or Translator().translate(user_info['type'])(session, user_info['id'], user_info)
-        group = group or Translator().translate(group_info['type'])(session, group_info['id'], group_info)
+        user = user or session.translator.translate(user_info['type'])(session, user_info['id'], user_info)
+        group = group or session.translator.translate(group_info['type'])(session, group_info['id'], group_info)
 
         return user, group
 

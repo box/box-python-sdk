@@ -1,19 +1,52 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
+import copy
 import json
+
 from mock import Mock, MagicMock
 import pytest
 from boxsdk.auth.oauth2 import DefaultNetwork
 from boxsdk.network import default_network
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.session.box_session import BoxResponse, BoxSession
+from boxsdk.util.translator import Translator
 
 
-@pytest.fixture()
-def mock_box_session():
+@pytest.fixture(scope='function', autouse=True)
+def original_default_translator():
+    """A reference to the default translator, before the reference is changed by `default_translator` below."""
+    return Translator._default_translator   # pylint:disable=protected-access
+
+
+@pytest.yield_fixture(scope='function', autouse=True)
+def default_translator(original_default_translator):
+    """The default translator to use during the test.
+
+    We don't want global state to mutate across tests. So before each test
+    (because of autouse=True), we make a copy of the default translator, and
+    assign this copy to Translator._default_translator. At the end of the test,
+    we reset the reference.
+    """
+    try:
+        translator = Translator(dict(copy.deepcopy(original_default_translator)), extend_default_translator=False, new_child=False)
+        Translator._default_translator = translator   # pylint:disable=protected-access
+        yield translator
+    finally:
+        Translator._default_translator = original_default_translator  # pylint:disable=protected-access
+
+
+@pytest.fixture(scope='function')
+def translator(default_translator):   # pylint:disable=unused-argument
+    return Translator(extend_default_translator=True, new_child=True)
+
+
+@pytest.fixture(scope='function')
+def mock_box_session(translator):
     mock_session = MagicMock(BoxSession)
     mock_session.get_url.side_effect = lambda *args, **kwargs: BoxSession.get_url(mock_session, *args, **kwargs)
+    mock_session.translator = translator
     return mock_session
 
 
