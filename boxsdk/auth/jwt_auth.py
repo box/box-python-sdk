@@ -40,10 +40,9 @@ class JWTAuth(OAuth2):
     ):
         """Extends baseclass method.
 
-        At most one of `enterprise_id` and `user` may be non-`None`. If they
-        are both `None`, then the caller is required to manually call either
-        `authenticate_user()` or `authenticate_instance()` with the desired
-        `sub` claim in order to begin using this auth object.
+        If both `enterprise_id` and `user` are non-`None`, the `user` takes
+        precedence when `refresh()` is called. This can be overruled with a
+        call to `authenticate_instance()`.
 
         :param client_id:
             Box API key used for identifying the application the user is authenticating with.
@@ -59,7 +58,9 @@ class JWTAuth(OAuth2):
             May be `None`, if the caller knows that it will not be
             authenticating as an enterprise instance / service account.
 
-            Must be `None` if `user` is passed.
+            If `user` is passed, this value is not used, unless
+            `authenticate_instance()` is called to clear the user and
+            authenticate as the enterprise instance.
         :type enterprise_id:
             `unicode` or `None`
         :param jwt_key_id:
@@ -82,7 +83,10 @@ class JWTAuth(OAuth2):
             will be auto-authenticated at the time of the first API call or
             when calling `authenticate_user()` without any arguments.
 
-            Must be `None` if `enterprise_id` is passed.
+            Should be `None` if the intention is to authenticate as the
+            enterprise instance / service account. If both `enterprise_id` and
+            `user` are non-`None`, the `user` takes precedense when `refresh()`
+            is called.
 
             May be one of this application's created App User. Depending on the
             configured User Access Level, may also be any other App User or
@@ -117,8 +121,6 @@ class JWTAuth(OAuth2):
         :type jwt_algorithm:
             `unicode`
         """
-        if enterprise_id and user:
-            raise TypeError("Cannot pass both 'enterprise_id' and 'user'.")
         user_id = self._normalize_user_id(user)
         super(JWTAuth, self).__init__(
             client_id,

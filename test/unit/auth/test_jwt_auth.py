@@ -111,18 +111,10 @@ def jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algor
     return _jwt_auth_init_mocks
 
 
-def test_jwt_auth_constructor_raises_type_error_if_enterprise_id_and_user_both_passed(jwt_auth_init_mocks):
-    enterprise_id = 'fake_enterprise_id'
+def test_refresh_authenticates_with_user_if_enterprise_id_and_user_both_passed_to_constructor(jwt_auth_init_and_auth_mocks):
     user = 'fake_user_id'
-
-    # Make sure that constructing the `JWTAuth` object works when `user` is not
-    # passed.
-    with jwt_auth_init_mocks(enterprise_id=enterprise_id, assert_authed=False):
-        pass
-
-    with pytest.raises(TypeError):
-        with jwt_auth_init_mocks(enterprise_id=enterprise_id, user=user):
-            assert False
+    with jwt_auth_init_and_auth_mocks(sub=user, sub_type='user', enterprise_id='fake_enterprise_id', user=user) as oauth:
+        oauth.refresh(None)
 
 
 @pytest.mark.parametrize('jwt_auth_method_name', ['authenticate_user', 'authenticate_instance'])
