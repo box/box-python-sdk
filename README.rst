@@ -323,12 +323,12 @@ These users can then be authenticated:
     ned_auth = JWTAuth(
         client_id='YOUR_CLIENT_ID',
         client_secret='YOUR_CLIENT_SECRET',
-        enterprise_id='YOUR_ENTERPRISE_ID',
+        user=ned_stark_user,
         jwt_key_id='YOUR_JWT_KEY_ID',
         rsa_private_key_file_sys_path='CERT.PEM',
         store_tokens=your_store_tokens_callback_method,
     )
-    ned_auth.authenticate_app_user(ned_stark_user)
+    ned_auth.authenticate_user()
     ned_client = Client(ned_auth)
 
 Requests made with ``ned_client`` (or objects returned from ``ned_client``'s methods)
@@ -396,7 +396,7 @@ Customization
 Custom Subclasses
 ~~~~~~~~~~~~~~~~~
 
-Custom subclasses of any SDK object with an ``_item_type`` field can be defined:
+Custom object subclasses can be defined:
 
 .. code-block:: pycon
 
@@ -407,12 +407,13 @@ Custom subclasses of any SDK object with an ``_item_type`` field can be defined:
         pass
 
     client = Client(oauth)
+    client.translator.register('folder', MyFolderSubclass)
     folder = client.folder('0')
 
     >>> print folder
     >>> <Box MyFolderSubclass - 0>
 
-If a subclass of an SDK object with an ``_item_type`` field is defined, instances of this subclass will be
+If an object subclass is registered in this way, instances of this subclass will be
 returned from all SDK methods that previously returned an instance of the parent.  See ``BaseAPIJSONObjectMeta``
 and ``Translator`` to see how the SDK performs dynamic lookups to determine return types.
 
