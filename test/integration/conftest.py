@@ -1,10 +1,11 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-import json
+from __future__ import absolute_import, unicode_literals
+
 from mock import Mock
 import pytest
 from requests import Response
+
 from boxsdk import Client
 from boxsdk.auth.oauth2 import OAuth2
 from test.integration.mock_network import MockNetwork
@@ -33,21 +34,14 @@ def mock_box_network():
     return MockNetwork()
 
 
-@pytest.fixture(scope='session')
-def generic_successful_response():
-    mock_network_response = Mock(Response)
-    content = '{"message": "success"}'
-    mock_network_response.content = content.encode('utf-8')
-    mock_network_response.status_code = 200
-    mock_network_response.ok = True
-    mock_network_response.raw = Mock()
-    mock_network_response.json.return_value = json.loads(content)
-    return mock_network_response
+@pytest.fixture
+def generic_successful_response(generic_successful_request_response):
+    return generic_successful_request_response
 
 
-@pytest.fixture(scope='session')
-def successful_token_mock():
-    return Mock(Response)
+@pytest.fixture
+def successful_token_mock(successful_token_request_response):
+    return successful_token_request_response
 
 
 @pytest.fixture(scope='session')
