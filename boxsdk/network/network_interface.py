@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 from six import add_metaclass
 
 
@@ -29,6 +29,7 @@ class Network(object):
             The OAuth2 access token used to authorize the request.
         :type access_token:
             `unicode`
+        :rtype:   :class:`NetworkResponse`
         """
         raise NotImplementedError  # pragma: no cover
 
@@ -45,8 +46,29 @@ class Network(object):
             A callable that will execute the request.
         :type request_method:
             `callable`
+        :rtype:   :class:`NetworkResponse`
         """
         raise NotImplementedError  # pragma: no cover
+
+    @property
+    def network_response_constructor(self):
+        """The constructor to use for creating NetworkResponse instances.
+
+        This is not implemented by default, and is not a required part of the
+        interface.
+
+        It is recommended that implementations of `request()` call this to
+        construct their responses, rather than hard-coding the construction.
+        That way, subclasses of the implementation can easily extend the
+        construction of :class:`NetworkResponse` instances, by overriding this
+        property, instead of needing to override `request()`.
+
+        :return:
+            A callable that returns an instance of :class:`NetworkResponse`.
+            Most commonly, this will be a subclass of :class:`NetworkResponse`.
+        :rtype:   `type` or `callable`
+        """
+        return NetworkResponse
 
 
 @add_metaclass(ABCMeta)
@@ -62,7 +84,7 @@ class NetworkResponse(object):
         """
         raise NotImplementedError  # pragma: no cover
 
-    @abstractmethod
+    @abstractproperty
     def content(self):
         """Return the content of the response body.
 
@@ -71,7 +93,7 @@ class NetworkResponse(object):
         """
         raise NotImplementedError  # pragma: no cover
 
-    @abstractmethod
+    @abstractproperty
     def status_code(self):
         """Return the HTTP status code of the response.
 
@@ -80,7 +102,7 @@ class NetworkResponse(object):
         """
         raise NotImplementedError  # pragma: no cover
 
-    @abstractmethod
+    @abstractproperty
     def ok(self):
         """Return whether or not the request was successful.
 
@@ -90,7 +112,7 @@ class NetworkResponse(object):
         # pylint:disable=invalid-name
         raise NotImplementedError  # pragma: no cover
 
-    @abstractmethod
+    @abstractproperty
     def headers(self):
         """Return the response headers.
 
@@ -99,7 +121,7 @@ class NetworkResponse(object):
         """
         raise NotImplementedError  # pragma: no cover
 
-    @abstractmethod
+    @abstractproperty
     def response_as_stream(self):
         """Return a stream containing the raw network response.
 
@@ -108,7 +130,7 @@ class NetworkResponse(object):
         """
         raise NotImplementedError  # pragma: no cover
 
-    @abstractmethod
+    @abstractproperty
     def access_token_used(self):
         """Return the access token used to make the request.
 

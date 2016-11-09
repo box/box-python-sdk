@@ -20,7 +20,10 @@ class DefaultNetwork(Network):
         """Base class override.
         Make a network request using a requests.Session.
         """
-        return DefaultNetworkResponse(self._session.request(method, url, **kwargs), access_token)
+        return self.network_response_constructor(
+            request_response=self._session.request(method, url, **kwargs),
+            access_token_used=access_token,
+        )
 
     def retry_after(self, delay, request_method, *args, **kwargs):
         """Base class override.
@@ -28,6 +31,16 @@ class DefaultNetwork(Network):
         """
         time.sleep(delay)
         return request_method(*args, **kwargs)
+
+    @property
+    def network_response_constructor(self):
+        """Baseclass override.
+
+        A callable that accepts `request_response` and `access_token_used`
+        keyword arguments for the :class:`DefaultNetworkResponse` constructor,
+        and returns an instance of :class:`DefaultNetworkResponse`.
+        """
+        return DefaultNetworkResponse
 
 
 class DefaultNetworkResponse(NetworkResponse):

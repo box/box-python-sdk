@@ -40,7 +40,7 @@ def rsa_passphrase(request):
     return request.param
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='function')
 def successful_token_response(successful_token_mock, successful_token_json_response):
     # pylint:disable=redefined-outer-name
     response = successful_token_json_response.copy()
