@@ -45,6 +45,26 @@ class File(Item):
         return self._get_accelerator_upload_url(file_id=self._object_id)
 
     @api_call
+    def comments(self, fields=None):
+        """
+        Get the comments for a file.
+
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :return
+            The comments for this file.
+        @:rtype
+            `list` of :class:`Comment`
+        """
+        url = self.get_url('comments')
+        params = {'fields': ','.join(fields)} if fields else None
+        box_response = self._session.get(url, params=params)
+        response = box_response.json()
+        return [self.translator.translate('comment')(self._session, item['id'], item) for item in response['entries']]
+
+    @api_call
     def content(self):
         """
         Get the content of a file on Box.
@@ -276,3 +296,23 @@ class File(Item):
             password=password,
         )
         return item.shared_link['download_url']
+
+    @api_call
+    def tasks(self, fields=None):
+        """
+        Get the tasks associated with this file.
+
+        :param fields:
+            List of fields to request.
+        :type:
+            `Iterable` of `unicode`
+        :return
+            The tasks associated with this file.
+        @:rtype
+            `list` of :class:`Task`
+        """
+        url = self.get_url('tasks')
+        params = {'fields': ','.join(fields)} if fields else None
+        box_response = self._session.get(url, params=params)
+        response = box_response.json()
+        return [self.translator.translate('task')(self._session, item['id'], item) for item in response['entries']]

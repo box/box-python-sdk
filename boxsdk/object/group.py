@@ -35,6 +35,10 @@ class Group(BaseObject):
             The maximum number of items to return in a page.
         :type limit:
             `int`
+        :param include_page_info:
+            Whether or not include page info in response.
+        :type include_page_info:
+            `bool`
         :returns:
             A generator of GroupMembership instances. Or, if include_page_info
             is True, it is a generator of 3-tuples, where each tuple is

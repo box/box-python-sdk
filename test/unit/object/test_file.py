@@ -8,6 +8,8 @@ from six import BytesIO
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.object.file import File
+from boxsdk.object.comment import Comment
+from boxsdk.object.task import Task
 
 
 # pylint:disable=protected-access
@@ -50,12 +52,34 @@ def test_download_to(test_file, mock_box_session, mock_content_response):
     mock_box_session.get.assert_called_once_with(expected_url, expect_json_response=False, stream=True)
 
 
+def test_get_comments(test_file, mock_box_session, mock_comments_response):
+    expected_url = test_file.get_url('comments')
+    assert expected_url == '{0}/files/{1}/comments'.format(API.BASE_API_URL, test_file.object_id)
+    mock_box_session.get.return_value = mock_comments_response
+    comments = test_file.comments()
+    assert len(comments) == 1
+    assert all(isinstance(m, Comment) for m in comments)
+    comment = comments[0]
+    assert comment['type'] == 'comment'
+
+
 def test_get_content(test_file, mock_box_session, mock_content_response):
     expected_url = test_file.get_url('content')
     mock_box_session.get.return_value = mock_content_response
     file_content = test_file.content()
     assert file_content == mock_content_response.content
     mock_box_session.get.assert_called_once_with(expected_url, expect_json_response=False)
+
+
+def test_get_tasks(test_file, mock_box_session, mock_tasks_response):
+    expected_url = test_file.get_url('tasks')
+    assert expected_url == '{0}/files/{1}/tasks'.format(API.BASE_API_URL, test_file.object_id)
+    mock_box_session.get.return_value = mock_tasks_response
+    tasks = test_file.tasks()
+    assert len(tasks) == 1
+    assert all(isinstance(m, Task) for m in tasks)
+    task = tasks[0]
+    assert task['type'] == 'task'
 
 
 @pytest.mark.parametrize('is_stream', (True, False))
