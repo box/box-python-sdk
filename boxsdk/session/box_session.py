@@ -193,7 +193,8 @@ class BoxSession(object):
         :type access_token_used:
             `unicode`
         """
-        self._oauth.refresh(access_token_used)
+        new_access_token, _ = self._oauth.refresh(access_token_used)
+        return new_access_token
 
     @staticmethod
     def _is_json_response(network_response):
@@ -390,6 +391,9 @@ class BoxSession(object):
         # Since there can be session renewal happening in the middle of preparing the request, it's important to be
         # consistent with the access_token being used in the request.
         access_token_will_be_used = self._oauth.access_token
+        if auto_session_renewal and (access_token_will_be_used is None):
+            access_token_will_be_used = self._renew_session(None)
+            auto_session_renewal = False
         authorization_header = {'Authorization': 'Bearer {0}'.format(access_token_will_be_used)}
         if headers is None:
             headers = self._default_headers.copy()
