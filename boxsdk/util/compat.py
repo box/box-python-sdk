@@ -69,9 +69,9 @@ def with_metaclass(meta, *bases, **with_metaclass_kwargs):
     temporary_class = six.with_metaclass(meta, *bases, **with_metaclass_kwargs)
     temporary_metaclass = type(temporary_class)
 
-    class temporary_meta_subclass(temporary_metaclass):
+    class TemporaryMetaSubclass(temporary_metaclass):
         @classmethod
-        def __prepare__(this_metacls, name, this_bases, **kwds):
+        def __prepare__(cls, name, this_bases, **kwds):  # pylint:disable=unused-argument
             return meta.__prepare__(name, bases, **kwds)
 
-    return type.__new__(temporary_meta_subclass, str('temporary_class'), bases, {})
+    return type.__new__(TemporaryMetaSubclass, str('temporary_class'), bases, {})

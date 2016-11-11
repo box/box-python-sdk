@@ -48,5 +48,5 @@ def test_with_metaclass():
     class Subclass(temporary_class):
         pass
 
-    assert type(Subclass) is Meta
+    assert type(Subclass) is Meta   # pylint:disable=unidiomatic-typecheck
     assert Subclass.__bases__ == bases
