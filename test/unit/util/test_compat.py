@@ -35,7 +35,7 @@ def test_with_metaclass():
         @classmethod
         def __prepare__(metacls, name, this_bases, **kwds):
             assert this_bases == bases
-            return super(Meta, metacls).__prepare__(name, this_bases, **kwds)
+            return {}
 
         def __new__(metacls, name, this_bases, namespace, **kwds):
             assert this_bases == bases
