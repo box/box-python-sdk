@@ -43,35 +43,33 @@ Release History
   - All translation of API responses now use the ``Translator`` that is
     referenced by the ``BoxSession``, instead of directly using the global
     default ``Translator``.
-  - When the ``auto_session_renewal`` is ``True`` when calling any of the
-    request methods on ``BoxSession``, if there is no access token,
-    ``BoxSession`` will renew the token _before_ making the request. This saves
-    an API call.
-  - Various enhancements to the ``JWTAuth`` baseclass:
 
-    + The ``authenticate_app_user()`` method is renamed to
-      ``authenticate_user()``, to reflect that it may now be used to
-      authenticate managed users as well. See the method docstring for
-      details. ``authenticate_app_user()`` is now an alias of
-      ``authenticate_user()``, in order to not introduce an unnecessary
-      backwards-incompatibility.
-    + The ``user`` argument to ``authenticate_user()`` may now be either a user
-      ID string or a ``User`` instance. Before it had to be a ``User``
-      instance.
-    + The constructor now accepts an optional ``user`` keyword argument, which
-      may be a user ID string or a ``User`` instance. When this is passed,
-      ``authenticate_user()`` and can be called without passing a value for the
-      ``user`` argument. More importantly, this means that ``refresh()`` can be
-      called immediately after construction, with no need for a manual call to
-      ``authenticate_user()``. Combined with the aforementioned improvement to
-      the ``auto_session_renewal`` functionality of ``BoxSession``, this means
-      that authentication for ``JWTAuth`` objects can be done completely
-      automatically, at the time of first API call.
-    + Document that the ``enterprise_id`` argument to ``JWTAuth`` is allowed to
-      be ``None``.
-    + ``authenticate_instance()`` now accepts an ``enterprise`` argument, which
-      can be used to set and authenticate as the enterprise service account
-      user, if ``None`` was passed for ``enterprise_id`` at construction time.
+- When the ``auto_session_renewal`` is ``True`` when calling any of the request
+  methods on ``BoxSession``, if there is no access token, ``BoxSession`` will
+  renew the token _before_ making the request. This saves an API call.
+- Various enhancements to the ``JWTAuth`` baseclass:
+
+  - The ``authenticate_app_user()`` method is renamed to
+    ``authenticate_user()``, to reflect that it may now be used to authenticate
+    managed users as well. See the method docstring for details.
+    ``authenticate_app_user()`` is now an alias of ``authenticate_user()``, in
+    order to not introduce an unnecessary backwards-incompatibility.
+  - The ``user`` argument to ``authenticate_user()`` may now be either a user
+    ID string or a ``User`` instance. Before it had to be a ``User`` instance.
+  - The constructor now accepts an optional ``user`` keyword argument, which
+    may be a user ID string or a ``User`` instance. When this is passed,
+    ``authenticate_user()`` and can be called without passing a value for the
+    ``user`` argument. More importantly, this means that ``refresh()`` can be
+    called immediately after construction, with no need for a manual call to
+    ``authenticate_user()``. Combined with the aforementioned improvement to
+    the ``auto_session_renewal`` functionality of ``BoxSession``, this means
+    that authentication for ``JWTAuth`` objects can be done completely
+    automatically, at the time of first API call.
+  - Document that the ``enterprise_id`` argument to ``JWTAuth`` is allowed to
+    be ``None``.
+  - ``authenticate_instance()`` now accepts an ``enterprise`` argument, which
+    can be used to set and authenticate as the enterprise service account user,
+    if ``None`` was passed for ``enterprise_id`` at construction time.
 
 - Added an ``Event`` class.
 - Moved ``metadata()`` method to ``Item`` so it's now available for ``Folder``
