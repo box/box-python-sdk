@@ -33,7 +33,7 @@ def test_with_metaclass():
 
     class Meta(type):
         @classmethod
-        def __prepare__(metacls, name, this_bases, **kwds):
+        def __prepare__(metacls, name, this_bases, **kwds):   # pylint:disable=unused-argument
             assert this_bases == bases
             return {}
 
