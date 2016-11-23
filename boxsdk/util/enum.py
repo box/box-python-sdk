@@ -20,7 +20,9 @@ class ExtendableEnumMeta(EnumMeta):
 
     This allows you to define hierarchies such as this:
 
-        class EnumBase(six.with_metaclass(ExtendableEnumMeta, Enum)): pass
+        from box.util.compat import with_metaclass
+
+        class EnumBase(with_metaclass(ExtendableEnumMeta, Enum)): pass
 
         class Enum1(EnumBase):
             A = 'A'

@@ -1,11 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, absolute_import
+
 from collections import Mapping
 from abc import ABCMeta
-import six
 
 from .base_api_json_object import BaseAPIJSONObject, BaseAPIJSONObjectMeta
+from ..util.compat import with_metaclass
 
 
 class APIJSONObjectMeta(BaseAPIJSONObjectMeta, ABCMeta):
@@ -16,7 +17,7 @@ class APIJSONObjectMeta(BaseAPIJSONObjectMeta, ABCMeta):
     pass
 
 
-class APIJSONObject(six.with_metaclass(APIJSONObjectMeta, BaseAPIJSONObject, Mapping)):
+class APIJSONObject(with_metaclass(APIJSONObjectMeta, BaseAPIJSONObject, Mapping)):
     """Class representing objects that are not part of the REST API."""
 
     def __len__(self):

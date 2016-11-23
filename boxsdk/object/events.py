@@ -2,10 +2,10 @@
 
 from __future__ import unicode_literals, absolute_import
 from requests.exceptions import Timeout
-from six import with_metaclass
 
 from .base_endpoint import BaseEndpoint
 from ..util.api_call_decorator import api_call
+from ..util.compat import with_metaclass
 from ..util.enum import ExtendableEnumMeta
 from ..util.lru_cache import LRUCache
 from ..util.text_enum import TextEnum

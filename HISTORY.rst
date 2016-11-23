@@ -22,6 +22,15 @@ Release History
   + Migration: If you still need to treat an ``Event`` as a ``dict``, you can get a deepcopy of the original ``dict``
     using the new property on ``BaseAPIJSONObject``, ``response_object``.
 
+- The logging format strings in ``LoggingNetwork`` have changed in a way that
+  will break logging for any applications that have overridden any of these
+  strings. They now use keyword format placeholders instead of positional
+  placeholders. All custom format strings will now have to use the same keyword
+  format placeholders. Though this is a breaking change, the good news is that
+  using keyword format placeholders means that any future changes will be
+  automatically backwards-compatibile (as long as there aren't any changes to
+  change/remove any of the keywords).
+
 **Features**
 
 - Added more flexibility to the object translation system:
@@ -35,8 +44,36 @@ Release History
     referenced by the ``BoxSession``, instead of directly using the global
     default ``Translator``.
 
+- When the ``auto_session_renewal`` is ``True`` when calling any of the request
+  methods on ``BoxSession``, if there is no access token, ``BoxSession`` will
+  renew the token _before_ making the request. This saves an API call.
+- Various enhancements to the ``JWTAuth`` baseclass:
+
+  - The ``authenticate_app_user()`` method is renamed to
+    ``authenticate_user()``, to reflect that it may now be used to authenticate
+    managed users as well. See the method docstring for details.
+    ``authenticate_app_user()`` is now an alias of ``authenticate_user()``, in
+    order to not introduce an unnecessary backwards-incompatibility.
+  - The ``user`` argument to ``authenticate_user()`` may now be either a user
+    ID string or a ``User`` instance. Before it had to be a ``User`` instance.
+  - The constructor now accepts an optional ``user`` keyword argument, which
+    may be a user ID string or a ``User`` instance. When this is passed,
+    ``authenticate_user()`` and can be called without passing a value for the
+    ``user`` argument. More importantly, this means that ``refresh()`` can be
+    called immediately after construction, with no need for a manual call to
+    ``authenticate_user()``. Combined with the aforementioned improvement to
+    the ``auto_session_renewal`` functionality of ``BoxSession``, this means
+    that authentication for ``JWTAuth`` objects can be done completely
+    automatically, at the time of first API call.
+  - Document that the ``enterprise_id`` argument to ``JWTAuth`` is allowed to
+    be ``None``.
+  - ``authenticate_instance()`` now accepts an ``enterprise`` argument, which
+    can be used to set and authenticate as the enterprise service account user,
+    if ``None`` was passed for ``enterprise_id`` at construction time.
+
 - Added an ``Event`` class.
-- Moved `metadata` method to `Item` so it's now available for `Folder` as well as `File`.
+- Moved ``metadata()`` method to ``Item`` so it's now available for ``Folder``
+  as well as ``File``.
 
 **Other**
 
@@ -47,7 +84,20 @@ Release History
   ``BaseObject`` is the parent of all objects that are a part of the REST API.  Another subclass of
   ``BaseAPIJSONObject``, ``APIJSONObject``, was created to represent pseudo-smart objects such as ``Event`` that are not
   directly accessible through an API endpoint.
+- Added ``network_response_constructor`` as an optional property on the
+  ``Network`` interface. Implementations are encouraged to override this
+  property, and use it to construct ``NetworkResponse`` instances. That way,
+  subclass implementations can easily extend the functionality of the
+  ``NetworkResponse``, by re-overriding this property. This property is defined
+  and used in the ``DefaultNetwork`` implementation.
+- Move response logging to a new ``LoggingNetworkResponse`` class (which is
+  made possible by the aforementioned ``network_response_constructor``
+  property). Now the SDK decides whether to log the response body, based on
+  whether the caller reads or streams the content.
+- Add more information to the request/response logs from ``LoggingNetwork``.
+- Add logging for request exceptions in ``LoggingNetwork``.
 - Fixed an exception that was being raised from ``ExtendableEnumMeta.__dir__()``.
+- CPython 3.6 support.
 
 1.5.3 (2016-05-26)
 ++++++++++++++++++
