@@ -33,6 +33,13 @@ def test_contains(base_api_json_object):
     assert 'some_key_that_doesnt_exist' not in test_object
 
 
+def test_iter(base_api_json_object):
+    dictionary_response, test_object = base_api_json_object
+    all_test_object_keys = [key for key in test_object]
+    all_dictionary_response_keys = [key for key in dictionary_response]
+    assert set(all_test_object_keys) == set(all_dictionary_response_keys)
+
+
 def test_meta_registers_new_item_type_in_default_translator(default_translator, original_default_translator):
     item_type = u'ƒøø'
 
