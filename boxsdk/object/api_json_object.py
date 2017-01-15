@@ -22,6 +22,3 @@ class APIJSONObject(with_metaclass(APIJSONObjectMeta, BaseAPIJSONObject, Mapping
 
     def __len__(self):
         return len(self._response_object)
-
-    def __iter__(self):
-        return iter(self._response_object)

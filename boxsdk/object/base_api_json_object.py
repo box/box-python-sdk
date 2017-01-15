@@ -95,6 +95,23 @@ class BaseAPIJSONObject(object):
         """
         return self._response_object[item]
 
+    def __contains__(self, item):
+        """
+        Does the response object contains this item attribute?
+
+        :param item:
+            The attribute to check for in the API response object.
+        :type item:
+            `unicode`
+        """
+        return item in self._response_object
+
+    def __iter__(self):
+        """
+        Get all of the keys of the API response object.
+        """
+        return iter(self._response_object)
+
     def __repr__(self):
         """Base class override. Return a human-readable representation using the Box ID or name of the object."""
         extra_description = ' - {0}'.format(self._description) if self._description else ''
