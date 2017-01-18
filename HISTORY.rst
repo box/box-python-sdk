@@ -74,6 +74,10 @@ Release History
 - Added an ``Event`` class.
 - Moved ``metadata()`` method to ``Item`` so it's now available for ``Folder``
   as well as ``File``.
+- The ``BaseAPIJSONObject`` baseclass (which is a superclass of all API
+  response objects) now supports ``__contains__`` and ``__iter__``. They behave
+  the same as for ``Mapping``. That is, ``__contains__`` checks for JSON keys
+  in the object, and ``__iter__`` yields all of the object's keys.
 
 **Other**
 
