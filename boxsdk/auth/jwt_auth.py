@@ -192,7 +192,7 @@ class JWTAuth(OAuth2):
             data['box_device_id'] = self._box_device_id
         if self._box_device_name:
             data['box_device_name'] = self._box_device_name
-        return self.send_token_request(data, access_token=None, expect_refresh_token=False)[0]
+        return self.send_token_request(data, access_token=None, expect_refresh_token=False)
 
     def authenticate_user(self, user=None):
         """
