@@ -14,7 +14,7 @@ from six.moves import zip
 # pylint:enable=import-error
 
 from boxsdk.auth.oauth2 import OAuth2
-from boxsdk.client import Client
+from boxsdk.client import Client, DeveloperTokenClient, DevelopmentClient, LoggingClient
 from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.events import Events
@@ -25,10 +25,16 @@ from boxsdk.object.user import User
 from boxsdk.object.group_membership import GroupMembership
 
 
-@pytest.fixture()
-def mock_client(mock_box_session):
+@pytest.fixture
+def developer_token_input(monkeypatch):
+    monkeypatch.setattr('boxsdk.auth.developer_token_auth.input', lambda prompt: 'developer_token')
+
+
+@pytest.fixture(params=[Client, DeveloperTokenClient, DevelopmentClient, LoggingClient])
+def mock_client(mock_box_session, developer_token_input, request):
+    # pylint:disable=redefined-outer-name, unused-argument
     mock_oauth = Mock(OAuth2)
-    client = Client(mock_oauth)
+    client = request.param(mock_oauth)
     # pylint:disable=protected-access
     client._session = mock_box_session
     return client

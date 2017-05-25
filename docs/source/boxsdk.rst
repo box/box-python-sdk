@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
 
     boxsdk.auth
+    boxsdk.client
     boxsdk.network
     boxsdk.object
     boxsdk.session
@@ -14,14 +15,6 @@ Subpackages
 
 Submodules
 ----------
-
-boxsdk.client module
---------------------
-
-.. automodule:: boxsdk.client
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 boxsdk.config module
 --------------------
@@ -35,6 +28,14 @@ boxsdk.exception module
 -----------------------
 
 .. automodule:: boxsdk.exception
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk.version module
+---------------------
+
+.. automodule:: boxsdk.version
     :members:
     :undoc-members:
     :show-inheritance:

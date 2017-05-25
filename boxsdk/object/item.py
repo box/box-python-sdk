@@ -1,12 +1,13 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
+from __future__ import unicode_literals, absolute_import
 import json
 
 from .base_object import BaseObject
-from boxsdk.config import API
-from boxsdk.exception import BoxAPIException
+from ..config import API
+from ..exception import BoxAPIException
+from .metadata import Metadata
+from ..util.api_call_decorator import api_call
 
 
 class Item(BaseObject):
@@ -75,6 +76,7 @@ class Item(BaseObject):
             data=json.dumps(data),
         )
 
+    @api_call
     def update_info(self, data, etag=None):
         """Baseclass override.
 
@@ -94,6 +96,7 @@ class Item(BaseObject):
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).update_info(data, headers=headers)
 
+    @api_call
     def rename(self, name):
         """
         Rename the item to a new name.
@@ -108,9 +111,14 @@ class Item(BaseObject):
         }
         return self.update_info(data)
 
+    @api_call
     def get(self, fields=None, etag=None):
         """Base class override.
 
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
         :param etag:
             If specified, instruct the Box API to get the info only if the current version's etag doesn't match.
         :type etag:
@@ -125,6 +133,7 @@ class Item(BaseObject):
         headers = {'If-None-Match': etag} if etag is not None else None
         return super(Item, self).get(fields=fields, headers=headers)
 
+    @api_call
     def copy(self, parent_folder):
         """Copy the item to the given folder.
 
@@ -145,6 +154,7 @@ class Item(BaseObject):
             response_object=response,
         )
 
+    @api_call
     def move(self, parent_folder):
         """
         Move the item to the given folder.
@@ -159,6 +169,7 @@ class Item(BaseObject):
         }
         return self.update_info(data)
 
+    @api_call
     def create_shared_link(
             self,
             access=None,
@@ -228,6 +239,7 @@ class Item(BaseObject):
 
         return self.update_info(data, etag=etag)
 
+    @api_call
     def get_shared_link(
             self,
             access=None,
@@ -284,8 +296,9 @@ class Item(BaseObject):
             allow_preview=allow_preview,
             password=password,
         )
-        return item.shared_link['url']
+        return item.shared_link['url']  # pylint:disable=no-member
 
+    @api_call
     def remove_shared_link(self, etag=None):
         """Delete the shared link for the item.
 
@@ -301,8 +314,9 @@ class Item(BaseObject):
         """
         data = {'shared_link': None}
         item = self.update_info(data, etag=etag)
-        return item.shared_link is None
+        return item.shared_link is None  # pylint:disable=no-member
 
+    @api_call
     def delete(self, params=None, etag=None):
         """Delete the item.
 
@@ -322,3 +336,23 @@ class Item(BaseObject):
         """
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).delete(params, headers)
+
+    def metadata(self, scope='global', template='properties'):
+        """
+        Instantiate a :class:`Metadata` object associated with this item.
+
+        :param scope:
+            Scope of the metadata. Must be either 'global' or 'enterprise'.
+        :type scope:
+            `unicode`
+        :param template:
+            The name of the metadata template.
+            See https://docs.box.com/reference#metadata-object for more details.
+        :type template:
+            `unicode`
+        :return:
+            A new metadata instance associated with this item.
+        :rtype:
+            :class:`Metadata`
+        """
+        return Metadata(self._session, self, scope, template)

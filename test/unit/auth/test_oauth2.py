@@ -5,9 +5,11 @@ from __future__ import unicode_literals
 from functools import partial
 import re
 from threading import Thread
+import uuid
 
 from mock import Mock
 import pytest
+from six.moves import range   # pylint:disable=redefined-builtin
 from six.moves.urllib import parse as urlparse  # pylint:disable=import-error,no-name-in-module,wrong-import-order
 
 from boxsdk.exception import BoxOAuthException
@@ -275,3 +277,80 @@ def test_token_request_allows_missing_refresh_token(mock_network_layer):
         network_layer=mock_network_layer,
     )
     oauth.send_token_request({}, access_token=None, expect_refresh_token=False)
+
+
+@pytest.mark.parametrize(
+    'access_token,refresh_token,expected_token_to_revoke',
+    (
+        ('fake_access_token', 'fake_refresh_token', 'fake_access_token'),
+        (None, 'fake_refresh_token', 'fake_refresh_token')
+    )
+)
+def test_revoke_sends_revoke_request(
+        client_id,
+        client_secret,
+        mock_network_layer,
+        access_token,
+        refresh_token,
+        expected_token_to_revoke,
+):
+    mock_network_response = Mock()
+    mock_network_response.ok = True
+    mock_network_layer.request.return_value = mock_network_response
+    oauth = OAuth2(
+        client_id=client_id,
+        client_secret=client_secret,
+        access_token=access_token,
+        refresh_token=refresh_token,
+        network_layer=mock_network_layer,
+    )
+    oauth.revoke()
+    mock_network_layer.request.assert_called_once_with(
+        'POST',
+        '{0}/revoke'.format(API.OAUTH2_API_URL),
+        data={
+            'client_id': client_id,
+            'client_secret': client_secret,
+            'token': expected_token_to_revoke,
+        },
+        access_token=access_token,
+    )
+    assert oauth.access_token is None
+
+
+def test_tokens_get_updated_after_noop_refresh(client_id, client_secret, access_token, new_access_token, refresh_token, mock_network_layer):
+    """`OAuth2` object should update its state with new tokens, after no-op refresh.
+
+    If the protected method `_get_tokens()` returns new tokens, refresh is
+    skipped, and those tokens are used.
+
+    This is a regression test for issue #128 [1]. We would return the new
+    tokens without updating the object state. Subsequent uses of the `OAuth2`
+    object would use the old tokens.
+
+    [1] <https://github.com/box/box-python-sdk/issues/128>
+    """
+    new_refresh_token = uuid.uuid4().hex
+    new_tokens = (new_access_token, new_refresh_token)
+
+    class GetTokensOAuth2(OAuth2):
+        def _get_tokens(self):
+            """Return a new set of tokens, without updating any state.
+
+            In order for the test to pass, the `OAuth2` object must be
+            correctly programmed to take this return value and use it to update
+            its state.
+            """
+            return new_tokens
+
+    oauth = GetTokensOAuth2(
+        client_id=client_id,
+        client_secret=client_secret,
+        access_token=access_token,
+        refresh_token=refresh_token,
+        network_layer=mock_network_layer,
+    )
+    assert oauth.access_token == access_token
+
+    assert oauth.refresh(access_token) == new_tokens
+    assert oauth.access_token == new_access_token

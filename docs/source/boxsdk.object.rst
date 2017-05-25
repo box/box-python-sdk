@@ -4,6 +4,22 @@ boxsdk.object package
 Submodules
 ----------
 
+boxsdk.object.api_json_object module
+------------------------------------
+
+.. automodule:: boxsdk.object.api_json_object
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk.object.base_api_json_object module
+-----------------------------------------
+
+.. automodule:: boxsdk.object.base_api_json_object
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.object.base_endpoint module
 ----------------------------------
 
@@ -20,10 +36,26 @@ boxsdk.object.base_object module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.object.cloneable module
+------------------------------
+
+.. automodule:: boxsdk.object.cloneable
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.object.collaboration module
 ----------------------------------
 
 .. automodule:: boxsdk.object.collaboration
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk.object.event module
+--------------------------
+
+.. automodule:: boxsdk.object.event
     :members:
     :undoc-members:
     :show-inheritance:

@@ -20,7 +20,9 @@ class ExtendableEnumMeta(EnumMeta):
 
     This allows you to define hierarchies such as this:
 
-        class EnumBase(six.with_metaclass(ExtendableEnumMeta, Enum)): pass
+        from box.util.compat import with_metaclass
+
+        class EnumBase(with_metaclass(ExtendableEnumMeta, Enum)): pass
 
         class Enum1(EnumBase):
             A = 'A'
@@ -99,7 +101,7 @@ class ExtendableEnumMeta(EnumMeta):
         return any(map(in_, cls.__subclasses__()))
 
     def __dir__(cls):
-        return list(set(super(ExtendableEnumMeta, cls).__dir__()).union(set(map(dir, cls.__subclasses__()))))
+        return list(set(super(ExtendableEnumMeta, cls).__dir__()).union(*map(dir, cls.__subclasses__())))
 
     def __getitem__(cls, name):
         try:

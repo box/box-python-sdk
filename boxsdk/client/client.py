@@ -1,26 +1,26 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 import json
 
-from .auth import DeveloperTokenAuth
-from .config import API
-from .session.box_session import BoxSession
-from .network.default_network import DefaultNetwork
-from .object.user import User
-from .object.folder import Folder
-from .object.search import Search
-from .object.events import Events
-from .object.file import File
-from .object.group import Group
-from .object.group_membership import GroupMembership
-from .util.shared_link import get_shared_link_header
-from .util.translator import Translator
+from ..config import API
+from ..session.box_session import BoxSession
+from ..network.default_network import DefaultNetwork
+from ..object.cloneable import Cloneable
+from ..util.api_call_decorator import api_call
+from ..object.search import Search
+from ..object.events import Events
+from ..util.shared_link import get_shared_link_header
 
 
-class Client(object):
+class Client(Cloneable):
 
-    def __init__(self, oauth, network_layer=None, session=None):
+    def __init__(
+            self,
+            oauth=None,
+            network_layer=None,
+            session=None,
+    ):
         """
         :param oauth:
             OAuth2 object used by the session to authorize requests.
@@ -35,10 +35,39 @@ class Client(object):
         :type session:
             :class:`BoxSession`
         """
+        super(Client, self).__init__()
         network_layer = network_layer or DefaultNetwork()
         self._oauth = oauth
         self._network = network_layer
         self._session = session or BoxSession(oauth=oauth, network_layer=network_layer)
+
+    @property
+    def auth(self):
+        """
+        Get the :class:`OAuth2` instance the client is using for auth to Box.
+
+        :rtype:
+            :class:`OAuth2`
+        """
+        return self._oauth
+
+    @property
+    def session(self):
+        """
+        Get the :class:`BoxSession` instance the client is using.
+
+        :rtype:
+            :class:`BoxSession`
+        """
+        return self._session
+
+    @property
+    def translator(self):
+        """The translator used for translating Box API JSON responses into `BaseAPIJSONObject` smart objects.
+
+        :rtype:   :class:`Translator`
+        """
+        return self._session.translator
 
     def folder(self, folder_id):
         """
@@ -53,7 +82,7 @@ class Client(object):
         :rtype:
             :class:`Folder`
         """
-        return Folder(session=self._session, object_id=folder_id)
+        return self.translator.translate('folder')(session=self._session, object_id=folder_id)
 
     def file(self, file_id):
         """
@@ -68,7 +97,7 @@ class Client(object):
         :rtype:
             :class:`File`
         """
-        return File(session=self._session, object_id=file_id)
+        return self.translator.translate('file')(session=self._session, object_id=file_id)
 
     def user(self, user_id='me'):
         """
@@ -83,7 +112,7 @@ class Client(object):
         :rtype:
             :class:`User`
         """
-        return User(session=self._session, object_id=user_id)
+        return self.translator.translate('user')(session=self._session, object_id=user_id)
 
     def group(self, group_id):
         """
@@ -98,8 +127,24 @@ class Client(object):
         :rtype:
             :class:`Group`
         """
-        return Group(session=self._session, object_id=group_id)
+        return self.translator.translate('group')(session=self._session, object_id=group_id)
 
+    def collaboration(self, collab_id):
+        """
+        Initialize a :class:`Collaboration` object, whose box id is collab_id.
+
+        :param collab_id:
+            The box id of the :class:`Collaboration` object.
+        :type collab_id:
+            `unicode`
+        :return:
+            A :class:`Collaboration` object with the given group id.
+        :rtype:
+            :class:`Collaboration`
+        """
+        return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
+
+    @api_call
     def users(self, limit=None, offset=0, filter_term=None):
         """
         Get a list of all users for the Enterprise along with their user_id, public_name, and login.
@@ -129,8 +174,14 @@ class Client(object):
             params['filter_term'] = filter_term
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        return [User(self._session, item['id'], item) for item in response['entries']]
+        user_class = self.translator.translate('user')
+        return [user_class(
+            session=self._session,
+            object_id=item['id'],
+            response_object=item,
+        ) for item in response['entries']]
 
+    @api_call
     def search(
             self,
             query,
@@ -212,8 +263,12 @@ class Client(object):
         :rtype:
             :class:`GroupMembership`
         """
-        return GroupMembership(session=self._session, object_id=group_membership_id)
+        return self.translator.translate('group_membership')(
+            session=self._session,
+            object_id=group_membership_id,
+        )
 
+    @api_call
     def groups(self):
         """
         Get a list of all groups for the current user.
@@ -226,8 +281,14 @@ class Client(object):
         url = '{0}/groups'.format(API.BASE_API_URL)
         box_response = self._session.get(url)
         response = box_response.json()
-        return [Group(self._session, item['id'], item) for item in response['entries']]
+        group_class = self.translator.translate('group')
+        return [group_class(
+            session=self._session,
+            object_id=item['id'],
+            response_object=item,
+        ) for item in response['entries']]
 
+    @api_call
     def create_group(self, name):
         """
         Create a group with the given name.
@@ -249,8 +310,13 @@ class Client(object):
         }
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
-        return Group(self._session, response['id'], response)
+        return self.translator.translate('group')(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
 
+    @api_call
     def get_shared_item(self, shared_link, password=None):
         """
         Get information about a Box shared link. https://box-content.readme.io/reference#get-a-shared-item
@@ -275,12 +341,13 @@ class Client(object):
             '{0}/shared_items'.format(API.BASE_API_URL),
             headers=get_shared_link_header(shared_link, password),
         ).json()
-        return Translator().translate(response['type'])(
-            self._session.with_shared_link(shared_link, password),
-            response['id'],
-            response,
+        return self.translator.translate(response['type'])(
+            session=self._session.with_shared_link(shared_link, password),
+            object_id=response['id'],
+            response_object=response,
         )
 
+    @api_call
     def make_request(self, method, url, **kwargs):
         """
         Make an authenticated request to the Box API.
@@ -302,6 +369,7 @@ class Client(object):
         """
         return self._session.request(method, url, **kwargs)
 
+    @api_call
     def create_user(self, name, login=None, **user_attributes):
         """
         Create a new user. Can only be used if the current user is an enterprise admin, or the current authorization
@@ -328,42 +396,30 @@ class Client(object):
             user_attributes['is_platform_access_only'] = True
         box_response = self._session.post(url, data=json.dumps(user_attributes))
         response = box_response.json()
-        return User(self._session, response['id'], response)
-
-    def as_user(self, user):
-        """
-        Returns a new client object with default headers set up to make requests as the specified user.
-
-        :param user:
-            The user to impersonate when making API requests.
-        :type user:
-            :class:`User`
-        """
-        return self.__class__(self._oauth, self._network, self._session.as_user(user))
-
-    def with_shared_link(self, shared_link, shared_link_password):
-        """
-        Returns a new client object with default headers set up to make requests using the shared link for auth.
-
-        :param shared_link:
-            The shared link.
-        :type shared_link:
-            `unicode`
-        :param shared_link_password:
-            The password for the shared link.
-        :type shared_link_password:
-            `unicode`
-        """
-        return self.__class__(
-            self._oauth,
-            self._network,
-            self._session.with_shared_link(shared_link, shared_link_password),
+        return self.translator.translate('user')(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
         )
 
+    def clone(self, session=None):
+        """Base class override."""
+        return self.__class__(self._oauth, self._network, session or self._session)
 
-class DeveloperTokenClient(Client):
-    """
-    Box client subclass which authorizes with a developer token.
-    """
-    def __init__(self, oauth=None, network_layer=None, session=None):
-        super(DeveloperTokenClient, self).__init__(oauth or DeveloperTokenAuth(), network_layer, session)
+    def get_url(self, endpoint, *args):
+        """
+        Return the URL for the given Box API endpoint.
+
+        :param endpoint:
+            The name of the endpoint.
+        :type endpoint:
+            `url`
+        :param args:
+            Additional parts of the endpoint URL.
+        :type args:
+            `Iterable`
+        :rtype:
+            `unicode`
+        """
+        # pylint:disable=no-self-use
+        return self._session.get_url(endpoint, *args)

@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from codecs import open   # pylint:disable=redefined-builtin
 from collections import defaultdict
 from os.path import dirname, join
+import re
 import sys
 
 from setuptools import setup, find_packages
@@ -21,6 +22,7 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.3',
     'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: Implementation :: CPython',
     'Programming Language :: Python :: Implementation :: PyPy',
     'Operating System :: OS Independent',
@@ -71,6 +73,7 @@ def main():
         #
         # [1] <https://www.python.org/dev/peps/pep-0426/#environment-markers>
         # [2] <https://www.python.org/dev/peps/pep-0345/#environment-markers>
+        'chainmap>=1.0.2': ['2.6', '2.7'],  # <'3.3'
         'enum34>=1.0.4': ['2.6', '2.7', '3.3'],   # <'3.4'
         'ordereddict>=1.1': ['2.6'],   # <'2.7'
     }
@@ -80,9 +83,11 @@ def main():
             python_conditional = 'python_version=="{0}"'.format(python_version)
             key = ':{0}'.format(python_conditional)
             extra_requires[key].append(requirement)
+    with open('boxsdk/version.py', 'r', encoding='utf-8') as config_py:
+        version = re.search(r'^\s+__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE).group(1)
     setup(
         name='boxsdk',
-        version='1.4.2',
+        version=version,
         description='Official Box Python SDK',
         long_description=open(join(base_dir, 'README.rst'), encoding='utf-8').read(),
         author='Box',

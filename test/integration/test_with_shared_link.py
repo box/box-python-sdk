@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from mock import call, patch
 import pytest
-from boxsdk.config import API
+from boxsdk.config import API, Client
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.util.shared_link import get_shared_link_header
 
@@ -22,7 +22,11 @@ def shared_link_password(request):
 def box_api_headers(shared_link, shared_link_password, access_token):
     # pylint:disable=redefined-outer-name
     box_api_header = get_shared_link_header(shared_link, shared_link_password)['BoxApi']
-    return {'Authorization': 'Bearer {0}'.format(access_token), 'BoxApi': box_api_header}
+    return {
+        'Authorization': 'Bearer {0}'.format(access_token),
+        'BoxApi': box_api_header,
+        'User-Agent': Client.USER_AGENT_STRING,
+    }
 
 
 def test_client_with_shared_link_causes_box_api_header_to_be_added(

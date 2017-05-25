@@ -262,11 +262,10 @@ supported by the SDK. You can still use these endpoints by using the ``make_requ
 .. code-block:: python
 
     # https://box-content.readme.io/reference#get-metadata-schema
-    from boxsdk.config import API
     # Returns a Python dictionary containing the result of the API request
     json_response = client.make_request(
         'GET',
-        '{0}/metadata_templates/enterprise/customer/schema'.format(API.BASE_API_URL),
+        client.get_url('metadata_templates', 'enterprise', 'customer', 'schema'),
     ).json()
 
 ``make_request()`` takes two parameters:
@@ -274,8 +273,7 @@ supported by the SDK. You can still use these endpoints by using the ``make_requ
 - ``method`` -an HTTP verb like ``GET`` or ``POST``
 - ``url`` - the URL of the requested API endpoint
 
-``boxsdk.config.API`` is an object specifying which URLs to use in order to access the Box API. It can be used for
-formatting the URLs to use with ``make_request``. Box objects also have a ``get_url`` method. Pass it an endpoint
+The ``Client`` class and Box objects have a ``get_url`` method. Pass it an endpoint
 to get the correct URL for use with that object and endpoint.
 
 Box Developer Edition
@@ -325,12 +323,12 @@ These users can then be authenticated:
     ned_auth = JWTAuth(
         client_id='YOUR_CLIENT_ID',
         client_secret='YOUR_CLIENT_SECRET',
-        enterprise_id='YOUR_ENTERPRISE_ID',
+        user=ned_stark_user,
         jwt_key_id='YOUR_JWT_KEY_ID',
         rsa_private_key_file_sys_path='CERT.PEM',
         store_tokens=your_store_tokens_callback_method,
     )
-    ned_auth.authenticate_app_user(ned_stark_user)
+    ned_auth.authenticate_user()
     ned_client = Client(ned_auth)
 
 Requests made with ``ned_client`` (or objects returned from ``ned_client``'s methods)
@@ -349,18 +347,75 @@ For advanced uses of the SDK, two additional auth classes are provided:
   multiple machines) to share access tokens while synchronizing token refresh. This could be useful for a multiprocess
   web server, for example.
 
-Other Network Options
----------------------
+Other Client Options
+--------------------
 
-For more insight into the network calls the SDK is making, you can use the ``LoggingNetwork`` class. This class logs
+Logging Client
+~~~~~~~~~~~~~~
+
+For more insight into the network calls the SDK is making, you can use the ``LoggingClient`` class. This class logs
 information about network requests and responses made to the Box API.
 
-.. code-block:: python
+.. code-block:: pycon
+
+    >>> from boxsdk import LoggingClient
+    >>> client = LoggingClient()
+    >>> client.user().get()
+    GET https://api.box.com/2.0/users/me {'headers': {u'Authorization': u'Bearer ---------------------------kBjp',
+                 u'User-Agent': u'box-python-sdk-1.5.0'},
+     'params': None}
+    {"type":"user","id":"..","name":"Jeffrey Meadows","login":"..",..}
+    <boxsdk.object.user.User at 0x10615b8d0>
+
+For more control over how the information is logged, use the ``LoggingNetwork`` class directly.
+
+.. code-block:: pycon
 
     from boxsdk import Client
     from boxsdk.network.logging_network import LoggingNetwork
 
-    client = Client(oauth, network_layer=LoggingNetwork())
+    # Use a custom logger
+    client = Client(oauth, network_layer=LoggingNetwork(logger))
+
+Developer Token Client
+~~~~~~~~~~~~~~~~~~~~~~
+
+The Box Developer Console allows for the creation of short-lived developer tokens. The SDK makes it easy to use these
+tokens. Use the ``get_new_token_callback`` parameter to control how the client will get new developer tokens as
+needed. The default is to prompt standard input for a token.
+
+Development Client
+~~~~~~~~~~~~~~~~~~
+
+For exploring the Box API, or to quickly get going using the SDK, the ``DevelopmentClient`` class combines the
+``LoggingClient`` with the ``DeveloperTokenClient``.
+
+Customization
+-------------
+
+Custom Subclasses
+~~~~~~~~~~~~~~~~~
+
+Custom object subclasses can be defined:
+
+.. code-block:: pycon
+
+    from boxsdk import Client
+    from boxsdk import Folder
+
+    class MyFolderSubclass(Folder):
+        pass
+
+    client = Client(oauth)
+    client.translator.register('folder', MyFolderSubclass)
+    folder = client.folder('0')
+
+    >>> print folder
+    >>> <Box MyFolderSubclass - 0>
+
+If an object subclass is registered in this way, instances of this subclass will be
+returned from all SDK methods that previously returned an instance of the parent.  See ``BaseAPIJSONObjectMeta``
+and ``Translator`` to see how the SDK performs dynamic lookups to determine return types.
 
 Contributing
 ------------
@@ -390,7 +445,7 @@ Run all tests using -
 
 The tox tests include code style checks via pep8 and pylint.
 
-The tox tests are configured to run on Python 2.6, 2.7, 3.3, 3.4, 3.5, and
+The tox tests are configured to run on Python 2.6, 2.7, 3.3, 3.4, 3.5, 3.6, and
 PyPy (our CI is configured to run PyPy tests on PyPy 4.0).
 
 

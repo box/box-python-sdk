@@ -1,12 +1,12 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 from functools import partial
 import json
 
 from .base_object import BaseObject
-from boxsdk.config import API
-from boxsdk.object.group_membership import GroupMembership
+from ..config import API
+from ..util.api_call_decorator import api_call
 
 
 class Group(BaseObject):
@@ -14,6 +14,7 @@ class Group(BaseObject):
 
     _item_type = 'group'
 
+    @api_call
     def membership(self, starting_index=0, limit=100, include_page_info=False):
         """
         A generator over all the members of this Group. The paging in the API is transparently implemented
@@ -46,7 +47,7 @@ class Group(BaseObject):
         """
         url = self.get_url('memberships')
 
-        membership_factory = partial(GroupMembership, group=self)
+        membership_factory = partial(self.translator.translate("group_membership"), group=self)
         for group_membership_tuple in self._paging_wrapper(url, starting_index, limit, membership_factory):
             if include_page_info:
                 yield group_membership_tuple
@@ -54,6 +55,7 @@ class Group(BaseObject):
                 group_membership, _, _ = group_membership_tuple
                 yield group_membership
 
+    @api_call
     def add_member(self, user, role):
         """
         Add the given user to this group under the given role
@@ -80,4 +82,4 @@ class Group(BaseObject):
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
 
-        return GroupMembership(self._session, response['id'], response, user=user, group=self)
+        return self.translator.translate(response['type'])(self._session, response['id'], response, user=user, group=self)

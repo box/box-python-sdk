@@ -4,10 +4,34 @@ boxsdk.util package
 Submodules
 ----------
 
+boxsdk.util.api_call_decorator module
+-------------------------------------
+
+.. automodule:: boxsdk.util.api_call_decorator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk.util.chain_map module
+----------------------------
+
+.. automodule:: boxsdk.util.chain_map
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.util.compat module
 -------------------------
 
 .. automodule:: boxsdk.util.compat
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk.util.enum module
+-----------------------
+
+.. automodule:: boxsdk.util.enum
     :members:
     :undoc-members:
     :show-inheritance:
@@ -48,14 +72,6 @@ boxsdk.util.shared_link module
 ------------------------------
 
 .. automodule:: boxsdk.util.shared_link
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-boxsdk.util.singleton module
-----------------------------
-
-.. automodule:: boxsdk.util.singleton
     :members:
     :undoc-members:
     :show-inheritance:

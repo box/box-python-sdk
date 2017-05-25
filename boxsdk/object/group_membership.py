@@ -1,9 +1,8 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 from .base_object import BaseObject
-from boxsdk.util.translator import Translator
 
 
 class GroupMembership(BaseObject):
@@ -70,25 +69,15 @@ class GroupMembership(BaseObject):
         user_info = response_object.get('user')
         group_info = response_object.get('group')
 
-        user = user or Translator().translate(user_info['type'])(session, user_info['id'], user_info)
-        group = group or Translator().translate(group_info['type'])(session, group_info['id'], group_info)
+        user = user or session.translator.translate(user_info['type'])(session, user_info['id'], user_info)
+        group = group or session.translator.translate(group_info['type'])(session, group_info['id'], group_info)
 
         return user, group
 
-    def as_user(self, user):
-        """ Base class override. """
+    def clone(self, session=None):
+        """Base class override."""
         return self.__class__(
-            self._session.as_user(user),
-            self._object_id,
-            self._response_object,
-            self.user,
-            self.group,
-        )
-
-    def with_shared_link(self, shared_link, shared_link_password):
-        """ Base class override. """
-        return self.__class__(
-            self._session.with_shared_link(shared_link, shared_link_password),
+            session or self._session,
             self._object_id,
             self._response_object,
             self.user,

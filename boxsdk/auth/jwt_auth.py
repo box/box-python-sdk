@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 from datetime import datetime, timedelta
 import random
@@ -9,9 +9,11 @@ import string
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 import jwt
+from six import string_types, text_type
 
 from .oauth2 import OAuth2
-from boxsdk.util.compat import total_seconds
+from ..object.user import User
+from ..util.compat import total_seconds
 
 
 class JWTAuth(OAuth2):
@@ -28,6 +30,7 @@ class JWTAuth(OAuth2):
             jwt_key_id,
             rsa_private_key_file_sys_path,
             rsa_private_key_passphrase=None,
+            user=None,
             store_tokens=None,
             box_device_id='0',
             box_device_name='',
@@ -35,7 +38,12 @@ class JWTAuth(OAuth2):
             network_layer=None,
             jwt_algorithm='RS256',
     ):
-        """
+        """Extends baseclass method.
+
+        If both `enterprise_id` and `user` are non-`None`, the `user` takes
+        precedence when `refresh()` is called. This can be overruled with a
+        call to `authenticate_instance()`.
+
         :param client_id:
             Box API key used for identifying the application the user is authenticating with.
         :type client_id:
@@ -46,8 +54,15 @@ class JWTAuth(OAuth2):
             `unicode`
         :param enterprise_id:
             The ID of the Box Developer Edition enterprise.
+
+            May be `None`, if the caller knows that it will not be
+            authenticating as an enterprise instance / service account.
+
+            If `user` is passed, this value is not used, unless
+            `authenticate_instance()` is called to clear the user and
+            authenticate as the enterprise instance.
         :type enterprise_id:
-            `unicode`
+            `unicode` or `None`
         :param jwt_key_id:
             Key ID for the JWT assertion.
         :type jwt_key_id:
@@ -60,6 +75,27 @@ class JWTAuth(OAuth2):
             Passphrase used to unlock the private key. Do not pass a unicode string - this must be bytes.
         :type rsa_private_key_passphrase:
             `str` or None
+        :param user:
+            (optional) The user to authenticate, expressed as a Box User ID or
+            as a :class:`User` instance.
+
+            This value is not required. But if it is provided, then the user
+            will be auto-authenticated at the time of the first API call or
+            when calling `authenticate_user()` without any arguments.
+
+            Should be `None` if the intention is to authenticate as the
+            enterprise instance / service account. If both `enterprise_id` and
+            `user` are non-`None`, the `user` takes precedense when `refresh()`
+            is called.
+
+            May be one of this application's created App User. Depending on the
+            configured User Access Level, may also be any other App User or
+            Managed User in the enterprise.
+
+            <https://docs.box.com/docs/configuring-box-platform#section-3-enabling-app-auth-and-app-users>
+            <https://docs.box.com/docs/authentication#section-choosing-an-authentication-type>
+        :type user:
+            `unicode` or :class:`User` or `None`
         :param store_tokens:
             Optional callback for getting access to tokens for storing them.
         :type store_tokens:
@@ -85,6 +121,7 @@ class JWTAuth(OAuth2):
         :type jwt_algorithm:
             `unicode`
         """
+        user_id = self._normalize_user_id(user)
         super(JWTAuth, self).__init__(
             client_id,
             client_secret,
@@ -95,7 +132,7 @@ class JWTAuth(OAuth2):
             refresh_token=None,
             network_layer=network_layer,
         )
-        with open(rsa_private_key_file_sys_path) as key_file:
+        with open(rsa_private_key_file_sys_path, 'rb') as key_file:
             self._rsa_private_key = serialization.load_pem_private_key(
                 key_file.read(),
                 password=rsa_private_key_passphrase,
@@ -104,12 +141,12 @@ class JWTAuth(OAuth2):
         self._enterprise_id = enterprise_id
         self._jwt_algorithm = jwt_algorithm
         self._jwt_key_id = jwt_key_id
-        self._user_id = None
+        self._user_id = user_id
 
     def _auth_with_jwt(self, sub, sub_type):
         """
         Get an access token for use with Box Developer Edition. Pass an enterprise ID to get an enterprise token
-        (which can be used to provision/deprovision users), or a user ID to get an app user token.
+        (which can be used to provision/deprovision users), or a user ID to get a user token.
 
         :param sub:
             The enterprise ID or user ID to auth.
@@ -157,31 +194,93 @@ class JWTAuth(OAuth2):
             data['box_device_name'] = self._box_device_name
         return self.send_token_request(data, access_token=None, expect_refresh_token=False)[0]
 
-    def authenticate_app_user(self, user):
+    def authenticate_user(self, user=None):
         """
-        Get an access token for an App User (part of Box Developer Edition).
+        Get an access token for a User.
+
+        May be one of this application's created App User. Depending on the
+        configured User Access Level, may also be any other App User or Managed
+        User in the enterprise.
+
+        <https://docs.box.com/docs/configuring-box-platform#section-3-enabling-app-auth-and-app-users>
+        <https://docs.box.com/docs/authentication#section-choosing-an-authentication-type>
 
         :param user:
-            The user to authenticate.
+            (optional) The user to authenticate, expressed as a Box User ID or
+            as a :class:`User` instance.
+
+            If not given, then the most recently provided user ID, if
+            available, will be used.
         :type user:
-            :class:`User`
+            `unicode` or :class:`User`
+        :raises:
+            :exc:`ValueError` if no user ID was passed and the object is not
+            currently configured with one.
         :return:
-            The access token for the app user.
+            The access token for the user.
         :rtype:
             `unicode`
         """
-        sub = self._user_id = user.object_id
+        sub = self._normalize_user_id(user) or self._user_id
+        if not sub:
+            raise ValueError("authenticate_user: Requires the user ID, but it was not provided.")
+        self._user_id = sub
         return self._auth_with_jwt(sub, 'user')
 
-    def authenticate_instance(self):
+    authenticate_app_user = authenticate_user
+
+    @classmethod
+    def _normalize_user_id(cls, user):
+        """Get a Box user ID from a selection of supported param types.
+
+        :param user:
+            An object representing the user or user ID.
+
+            Currently supported types are `unicode` (which represents the user
+            ID) and :class:`User`.
+
+            If `None`, returns `None`.
+        :raises:  :exc:`TypeError` for unsupported types.
+        :rtype:   `unicode` or `None`
+        """
+        if user is None:
+            return None
+        if isinstance(user, User):
+            return user.object_id
+        if isinstance(user, string_types):
+            return text_type(user)
+        raise TypeError("Got unsupported type {0!r} for user.".format(user.__class__.__name__))
+
+    def authenticate_instance(self, enterprise=None):
         """
         Get an access token for a Box Developer Edition enterprise.
 
+        :param enterprise:
+            The ID of the Box Developer Edition enterprise.
+
+            Optional if the value was already given to `__init__`,
+            otherwise required.
+        :type enterprise:   `unicode` or `None`
+        :raises:
+            :exc:`ValueError` if `None` was passed for the enterprise ID here
+            and in `__init__`, or if the non-`None` value passed here does not
+            match the non-`None` value passed to `__init__`.
         :return:
             The access token for the enterprise which can provision/deprovision app users.
         :rtype:
             `unicode`
         """
+        enterprises = [enterprise, self._enterprise_id]
+        if not any(enterprises):
+            raise ValueError("authenticate_instance: Requires the enterprise ID, but it was not provided.")
+        if all(enterprises) and (enterprise != self._enterprise_id):
+            raise ValueError(
+                "authenticate_instance: Given enterprise ID {given_enterprise!r}, but {auth} already has ID {existing_enterprise!r}"
+                .format(auth=self, given_enterprise=enterprise, existing_enterprise=self._enterprise_id)
+            )
+        if not self._enterprise_id:
+            self._enterprise_id = enterprise
+        self._user_id = None
         return self._auth_with_jwt(self._enterprise_id, 'enterprise')
 
     def _refresh(self, access_token):
@@ -194,4 +293,4 @@ class JWTAuth(OAuth2):
         if self._user_id is None:
             return self.authenticate_instance()
         else:
-            return self._auth_with_jwt(self._user_id, 'user')
+            return self.authenticate_user()

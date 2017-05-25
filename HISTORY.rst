@@ -3,8 +3,137 @@
 Release History
 ---------------
 
-Upcoming
-++++++++
+2.0.0 (Upcoming)
+++++++++++++++++
+
+**Breaking Changes**
+
+- ``Events.get_events(...)`` now returns a list of ``Event`` instances rather than a list of ``dict``
+  representing events.  ``Event`` inherits from ``Mapping`` but will not have all the same capabilities as
+  ``dict``.
+
+  + Your code is affected if you use ``Events.get_events(...)`` and expect a list of ``dict`` rather than a list of
+    ``Mapping``.  For example, if you use ``__setitem__`` (``event['key'] = value``), ``update()``, ``copy()``, or
+    if your code depends on the ``str`` or ``repr`` of the ``Event``.  Use of ``__getitem__`` (``event['key']``),
+    ``get()``, and other ``Mapping`` methods is unaffected.  See
+    https://docs.python.org/2.7/library/collections.html#collections-abstract-base-classes for methods supported on
+    ``Mapping`` instances.
+
+  + Migration: If you still need to treat an ``Event`` as a ``dict``, you can get a deepcopy of the original ``dict``
+    using the new property on ``BaseAPIJSONObject``, ``response_object``.
+
+- The logging format strings in ``LoggingNetwork`` have changed in a way that
+  will break logging for any applications that have overridden any of these
+  strings. They now use keyword format placeholders instead of positional
+  placeholders. All custom format strings will now have to use the same keyword
+  format placeholders. Though this is a breaking change, the good news is that
+  using keyword format placeholders means that any future changes will be
+  automatically backwards-compatibile (as long as there aren't any changes to
+  change/remove any of the keywords).
+
+**Features**
+
+- Added more flexibility to the object translation system:
+
+  - Can create non-global ``Translator`` instances, which can extend or
+    not-extend the global default ``Translator``.
+  - Can initialize ``BoxSession`` with a custom ``Translator``.
+  - Can register custom subclasses on the ``Translator`` which is associated
+    with a ``BoxSession`` or a ``Client``.
+  - All translation of API responses now use the ``Translator`` that is
+    referenced by the ``BoxSession``, instead of directly using the global
+    default ``Translator``.
+
+- When the ``auto_session_renewal`` is ``True`` when calling any of the request
+  methods on ``BoxSession``, if there is no access token, ``BoxSession`` will
+  renew the token _before_ making the request. This saves an API call.
+- Various enhancements to the ``JWTAuth`` baseclass:
+
+  - The ``authenticate_app_user()`` method is renamed to
+    ``authenticate_user()``, to reflect that it may now be used to authenticate
+    managed users as well. See the method docstring for details.
+    ``authenticate_app_user()`` is now an alias of ``authenticate_user()``, in
+    order to not introduce an unnecessary backwards-incompatibility.
+  - The ``user`` argument to ``authenticate_user()`` may now be either a user
+    ID string or a ``User`` instance. Before it had to be a ``User`` instance.
+  - The constructor now accepts an optional ``user`` keyword argument, which
+    may be a user ID string or a ``User`` instance. When this is passed,
+    ``authenticate_user()`` and can be called without passing a value for the
+    ``user`` argument. More importantly, this means that ``refresh()`` can be
+    called immediately after construction, with no need for a manual call to
+    ``authenticate_user()``. Combined with the aforementioned improvement to
+    the ``auto_session_renewal`` functionality of ``BoxSession``, this means
+    that authentication for ``JWTAuth`` objects can be done completely
+    automatically, at the time of first API call.
+  - Document that the ``enterprise_id`` argument to ``JWTAuth`` is allowed to
+    be ``None``.
+  - ``authenticate_instance()`` now accepts an ``enterprise`` argument, which
+    can be used to set and authenticate as the enterprise service account user,
+    if ``None`` was passed for ``enterprise_id`` at construction time.
+
+- Added an ``Event`` class.
+- Moved ``metadata()`` method to ``Item`` so it's now available for ``Folder``
+  as well as ``File``.
+- The ``BaseAPIJSONObject`` baseclass (which is a superclass of all API
+  response objects) now supports ``__contains__`` and ``__iter__``. They behave
+  the same as for ``Mapping``. That is, ``__contains__`` checks for JSON keys
+  in the object, and ``__iter__`` yields all of the object's keys.
+
+**Other**
+
+- Added extra information to ``BoxAPIException``.
+- Added ``collaboration()`` method to ``Client``.
+- Reworked the class hierarchy.  Previously, ``BaseEndpoint`` was the parent of ``BaseObject`` which was the parent
+  of all smart objects.  Now ``BaseObject`` is a child of both ``BaseEndpoint`` and ``BaseAPIJSONObject``.
+  ``BaseObject`` is the parent of all objects that are a part of the REST API.  Another subclass of
+  ``BaseAPIJSONObject``, ``APIJSONObject``, was created to represent pseudo-smart objects such as ``Event`` that are not
+  directly accessible through an API endpoint.
+- Added ``network_response_constructor`` as an optional property on the
+  ``Network`` interface. Implementations are encouraged to override this
+  property, and use it to construct ``NetworkResponse`` instances. That way,
+  subclass implementations can easily extend the functionality of the
+  ``NetworkResponse``, by re-overriding this property. This property is defined
+  and used in the ``DefaultNetwork`` implementation.
+- Move response logging to a new ``LoggingNetworkResponse`` class (which is
+  made possible by the aforementioned ``network_response_constructor``
+  property). Now the SDK decides whether to log the response body, based on
+  whether the caller reads or streams the content.
+- Add more information to the request/response logs from ``LoggingNetwork``.
+- Add logging for request exceptions in ``LoggingNetwork``.
+- Fixed an exception that was being raised from ``ExtendableEnumMeta.__dir__()``.
+- CPython 3.6 support.
+
+1.5.3 (2016-05-26)
+++++++++++++++++++
+
+- Bugfix so that ``JWTAuth`` opens the PEM private key file in ``'rb'`` mode.
+
+1.5.2 (2016-05-19)
+++++++++++++++++++
+
+- Bugfix so that ``OAuth2`` always has the correct tokens after a call to ``refresh()``.
+
+1.5.1 (2016-03-23)
+++++++++++++++++++
+
+- Added a ``revoke()`` method to the ``OAuth2`` class. Calling it will revoke the current access/refresh token pair.
+
+
+1.5.0 (2016-03-17)
+++++++++++++++++++
+
+- Added a new class, ``LoggingClient``. It's a ``Client`` that uses the ``LoggingNetwork`` class so that
+  requests to the Box API and its responses are logged.
+- Added a new class, ``DevelopmentClient`` that combines ``LoggingClient`` with the existing
+  ``DeveloperTokenClient``. This client is ideal for exploring the Box API or for use when developing your application.
+- Made the ``oauth`` parameter to ``Client`` optional. The constructor now accepts new parameters that it will use
+  to construct the ``OAuth2`` instance it needs to auth with the Box API.
+- Changed the default User Agent string sent with requests to the Box API. It is now 'box-python-sdk-<version>'.
+- Box objects have an improved ``__repr__``, making them easier to identify during debugging sessions.
+- Box objects now implement ``__dir__``, making them easier to explore. When created with a Box API response,
+  these objects will now include the API response fields as attributes.
+
+
 
 1.4.2 (2016-02-23)
 ++++++++++++++++++

@@ -1,20 +1,65 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
+
 import json
+import logging
+import sys
+
 from mock import Mock
 import pytest
+import requests
+from six import binary_type
+
 from boxsdk.network.default_network import DefaultNetworkResponse
 
 
-@pytest.fixture(scope='session')
-def generic_successful_response():
+@pytest.fixture(autouse=True, scope='session')
+def logger():
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    return logging.getLogger(__name__.split('.')[0])
+
+
+def _set_content_and_json_from_json(mock_response, json_value):
+    mock_response.json.return_value = json_value
+    mock_response.content = content = json.dumps(json_value).encode('utf-8')
+    mock_response.headers['Content-Length'] = str(len(content))
+
+
+def _set_content_and_json_from_content(mock_response, content):
+    if not isinstance(content, binary_type):
+        raise TypeError("Expected 'content' to be byte string, got {!r}.".format(content.__class__.__name__))
+    mock_response.content = content
+    mock_response.headers['Content-Length'] = str(len(content))
+    try:
+        mock_response.json.return_value = json.loads(content.decode('utf-8'))
+    except ValueError as exc:
+        mock_response.json.side_effect = exc
+
+
+@pytest.fixture()
+def generic_successful_request_response():
+    mock_request_response = Mock(requests.Response(), headers=dict([('header{0}'.format(i), 'value{0}'.format(i)) for i in range(4)]))
+    _set_content_and_json_from_json(mock_request_response, json_value=dict([('key{0}'.format(i), 'value{0}'.format(i)) for i in range(8)]))
+    mock_request_response.status_code = 200
+    mock_request_response.ok = True
+    return mock_request_response
+
+
+def _network_response_mock_from_request_response(request_response):
     mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.content = b'{"message": "success"}'
-    mock_network_response.status_code = 200
-    mock_network_response.ok = True
-    mock_network_response.raw = Mock()
+    mock_network_response.request_response = request_response
+    mock_network_response.json.side_effect = request_response.json
+    mock_network_response.content = request_response.content
+    mock_network_response.headers = request_response.headers
+    mock_network_response.status_code = request_response.status_code
+    mock_network_response.ok = request_response.ok
     return mock_network_response
+
+
+@pytest.fixture()
+def generic_successful_response(generic_successful_request_response):
+    return _network_response_mock_from_request_response(generic_successful_request_response)
 
 
 @pytest.fixture(scope='session')
@@ -29,70 +74,118 @@ def successful_token_json_response(access_token, refresh_token):
     }
 
 
-@pytest.fixture(scope='session')
-def successful_token_response(successful_token_mock, successful_token_json_response):
+@pytest.fixture()
+def successful_token_request_response(successful_token_json_response):
     # pylint:disable=redefined-outer-name
-    successful_token_mock.json = Mock(return_value=successful_token_json_response)
+    successful_token_mock = Mock(requests.Response(), headers={})
+    _set_content_and_json_from_json(successful_token_mock, json_value=successful_token_json_response)
     successful_token_mock.ok = True
-    successful_token_mock.content = json.dumps(successful_token_json_response)
     successful_token_mock.status_code = 200
     return successful_token_mock
 
 
-@pytest.fixture(scope='session')
-def successful_token_mock():
-    return Mock(DefaultNetworkResponse)
+@pytest.fixture()
+def successful_token_response(successful_token_request_response):
+    return _network_response_mock_from_request_response(successful_token_request_response)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture()
+def successful_token_mock(successful_token_response):
+    return successful_token_response
+
+
+@pytest.fixture()
 def unauthorized_response():
-    res = Mock(DefaultNetworkResponse)
-    res.content = b''
+    res = Mock(DefaultNetworkResponse, headers={})
+    _set_content_and_json_from_content(res, content=b'')
     res.status_code = 401
     res.ok = False
     return res
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture()
 def non_json_response():
-    mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.content = b''
+    mock_network_response = Mock(DefaultNetworkResponse, headers={})
+    _set_content_and_json_from_content(mock_network_response, content=b'')
     mock_network_response.ok = True
     mock_network_response.status_code = 200
-    mock_network_response.json.side_effect = ValueError('No JSON object could be decoded')
     return mock_network_response
 
 
-@pytest.fixture(scope='session', params=[202, 429])
-def retry_after_response(request):
-    mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.status_code = int(request.param)
-    mock_network_response.headers = {'Retry-After': '1'}
+def _retry_after_response(status_code):
+    mock_network_response = Mock(DefaultNetworkResponse, headers={})
+    mock_network_response.status_code = status_code
+    mock_network_response.headers.update({'Retry-After': '1'})
     return mock_network_response
 
 
-@pytest.fixture(scope='session', params=[502, 503])
-def server_error_response(request):
-    mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.status_code = int(request.param)
-    mock_network_response.ok = False
-    return mock_network_response
+@pytest.fixture()
+def retry_after_response_202():
+    return _retry_after_response(202)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture()
+def retry_after_response_429():
+    return _retry_after_response(429)
+
+
+@pytest.fixture(params=[202, 429])
+def retry_after_response(retry_after_response_202, retry_after_response_429, request):
+    if request.param == 202:
+        return retry_after_response_202
+    elif request.param == 429:
+        return retry_after_response_429
+    else:
+        raise ValueError
+
+
+def _server_error_request_response(status_code):
+    mock_request_response = Mock(requests.Response(), headers=dict([('header{0}'.format(i), 'value{0}'.format(i)) for i in range(4)]))
+    _set_content_and_json_from_json(mock_request_response, json_value=dict([('key{0}'.format(i), 'value{0}'.format(i)) for i in range(8)]))
+    mock_request_response.status_code = status_code
+    mock_request_response.ok = False
+    return mock_request_response
+
+
+@pytest.fixture()
+def server_error_request_response_502():
+    return _server_error_request_response(502)
+
+
+@pytest.fixture()
+def server_error_request_response_503():
+    return _server_error_request_response(503)
+
+
+@pytest.fixture(params=[502, 503])
+def server_error_request_response(server_error_request_response_502, server_error_request_response_503, request):
+    if request.param == 502:
+        return server_error_request_response_502
+    elif request.param == 503:
+        return server_error_request_response_503
+    else:
+        raise ValueError
+
+
+@pytest.fixture
+def server_error_response(server_error_request_response):
+    return _network_response_mock_from_request_response(server_error_request_response)
+
+
+@pytest.fixture()
 def bad_network_response():
-    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response = Mock(DefaultNetworkResponse, headers={})
     mock_network_response.status_code = 404
-    mock_network_response.json.return_value = {'code': 404, 'message': 'Not Found'}
+    _set_content_and_json_from_json(mock_network_response, json_value={'code': 404, 'message': 'Not Found'})
     mock_network_response.ok = False
     return mock_network_response
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture()
 def failed_non_json_response():
-    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response = Mock(DefaultNetworkResponse, headers={})
     mock_network_response.status_code = 404
-    mock_network_response.json.side_effect = ValueError('No JSON object could be decoded')
+    _set_content_and_json_from_content(mock_network_response, content=b'')
     mock_network_response.ok = False
     return mock_network_response
 
@@ -100,6 +193,12 @@ def failed_non_json_response():
 @pytest.fixture(scope='session')
 def access_token():
     return 'T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl'
+
+
+@pytest.fixture(scope='session')
+def new_access_token():
+    # Must be distinct from access_token.
+    return 'ZFoWjFHvNbvVqHjlT9cE5asGnuyYCCqI'
 
 
 @pytest.fixture(scope='session')

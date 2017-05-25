@@ -32,3 +32,9 @@ class DeveloperTokenAuth(OAuth2):
         """
         self._access_token = self._refresh_developer_token()
         return self._access_token, None
+
+    def revoke(self):
+        """
+        Base class override.
+        Do nothing; developer tokens can't be revoked without client ID and secret.
+        """
