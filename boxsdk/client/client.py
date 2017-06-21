@@ -269,7 +269,6 @@ class Client(Cloneable):
         )
 
     @api_call
-    def groups(self):
     def groups(self, offset=0, limit=100):
         """
         Get a list of all groups for the current user.
