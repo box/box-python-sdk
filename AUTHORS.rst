@@ -9,3 +9,4 @@ used to interact with the Box API. This is a list of contributors.
 - `@nsundareswaran <https://github.com/nsundareswaran>`_
 - `@kelseymorris95 <https://github.com/kelseymorris95>`_
 - `@sp4x <https://github.com/sp4x>`_
+- `@josephroque <https://github.com/josephroque>`_
