@@ -7,6 +7,7 @@ from mock import Mock
 import pytest
 from six import int2byte, PY2
 from boxsdk.object.collaboration import Collaboration
+from boxsdk.object.collection import Collection
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
@@ -52,6 +53,9 @@ def mock_upload_response(mock_object_id, make_mock_box_request):
 def test_collaboration(mock_box_session, mock_collaboration_id):
     return Collaboration(mock_box_session, mock_collaboration_id)
 
+@pytest.fixture()
+def test_collection(mock_box_session, mock_collection_id):
+    return Collection(mock_box_session, mock_collection_id)
 
 @pytest.fixture()
 def test_file(mock_box_session, mock_object_id):

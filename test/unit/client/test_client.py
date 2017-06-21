@@ -59,6 +59,35 @@ def file_id():
 def folder_id():
     return '1022'
 
+@pytest.fixture(scope='module')
+def collection_id():
+    return 'fake-collection'
+
+@pytest.fixture(scope='module')
+def collections_response(collection_id):
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {'entries': [
+        {'type': 'collection', 'id': collection_id, 'collection_type': 'favorites'}
+    ]}
+    return mock_network_response
+
+@pytest.fixture(scope='module')
+def bad_collections_response(collection_id):
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {'entries': []}
+    return mock_network_response
+
+@pytest.fixture(scope='module')
+def favorites_response(file_id, folder_id):
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {'entries': [
+        {'type': 'file', 'id': file_id},
+        {'type': 'folder', 'id': folder_id}
+    ]}
+    return mock_network_response
 
 @pytest.fixture(scope='module')
 def users_response(user_id_1, user_id_2):
@@ -202,6 +231,18 @@ def test_users_return_the_correct_user_objects(
     assert users[0].object_id == user_id_1
     assert users[1].object_id == user_id_2
 
+def test_collections_return_the_correct_collection_objects(
+        mock_client,
+        mock_box_session,
+        collections_response,
+        collection_id,
+):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value = collections_response
+    collections = mock_client.collections()
+    mock_box_session.get.assert_called_once_with('{0}/collections'.format(API.BASE_API_URL))
+    assert collections[0].object_id == collection_id
+
 
 def test_search_instantiates_search_and_calls_search(
         mock_client,
@@ -278,6 +319,38 @@ def test_get_shared_item_returns_the_correct_item(mock_client, mock_box_session,
             ),
         },
     )
+
+
+def test_get_favorites_return_the_correct_items(
+        mock_client,
+        mock_box_session,
+        collections_response,
+        favorites_response,
+        collection_id,
+        file_id,
+        folder_id,
+):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.side_effect = [collections_response, favorites_response]
+    favorites = mock_client.get_favorites()
+    mock_box_session.get.assert_any_call('{0}/collections'.format(API.BASE_API_URL))
+    expected_params = {'limit': 100, 'offset': 0}
+    mock_box_session.get.assert_called_with('{0}/collections/{1}/items'.format(API.BASE_API_URL, collection_id), params=expected_params)
+    assert favorites[0].object_id == file_id
+    assert favorites[1].object_id == folder_id
+
+
+def test_get_favorites_missing_collection_returns_empty_array(
+        mock_client,
+        mock_box_session,
+        bad_collections_response,
+        favorites_response,
+):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.side_effect = [bad_collections_response, favorites_response]
+    favorites = mock_client.get_favorites()
+    mock_box_session.get.assert_called_once_with('{0}/collections'.format(API.BASE_API_URL))
+    assert len(favorites) == 0
 
 
 @pytest.mark.parametrize('test_method', [

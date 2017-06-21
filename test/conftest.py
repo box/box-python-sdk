@@ -252,6 +252,11 @@ def mock_object_id():
 
 
 @pytest.fixture(scope='module')
+def mock_collection_id():
+    return 'fake-collection'
+
+
+@pytest.fixture(scope='module')
 def mock_user_id():
     return 'fake-user-100'
 
