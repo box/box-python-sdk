@@ -2,14 +2,13 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from test.integration.mock_network import MockNetwork
-
-import pytest
 from mock import Mock
+import pytest
 from requests import Response
 
 from boxsdk import Client
 from boxsdk.auth.oauth2 import OAuth2
+from test.integration.mock_network import MockNetwork
 
 
 @pytest.fixture()

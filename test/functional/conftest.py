@@ -3,20 +3,20 @@
 from __future__ import unicode_literals
 
 import re
-from test.functional.mock_box.box import Box
-from test.util.streamable_mock_open import streamable_mock_open
 
+from mock import patch
 import pytest
 import requests
 import six
-from mock import patch
+from six.moves.urllib import parse  # pylint:disable=import-error, no-name-in-module,wrong-import-order
 
 from boxsdk.auth.oauth2 import OAuth2
-from boxsdk.client import LoggingClient
 from boxsdk.config import API
+from boxsdk.client import LoggingClient
 from boxsdk.network.logging_network import LoggingNetwork
 from boxsdk.session.box_session import BoxSession
-from six.moves.urllib import parse  # pylint:disable=import-error,ungrouped-imports
+from test.functional.mock_box.box import Box
+from test.util.streamable_mock_open import streamable_mock_open
 
 
 @pytest.fixture(scope='session')
