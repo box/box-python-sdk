@@ -1,9 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from mock import patch
-import six
+
 from test.util.streamable_mock_open import streamable_mock_open
+
+import six
+from mock import patch
 
 
 def test_upload_then_update(box_client, test_file_path, test_file_content, update_file_content, file_name):
