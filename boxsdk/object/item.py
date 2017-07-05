@@ -316,6 +316,7 @@ class Item(BaseObject):
         item = self.update_info(data, etag=etag)
         return item.shared_link is None  # pylint:disable=no-member
 
+    # pylint:disable=arguments-differ
     @api_call
     def delete(self, params=None, etag=None):
         """Delete the item.

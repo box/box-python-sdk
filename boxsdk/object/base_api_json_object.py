@@ -118,8 +118,7 @@ class BaseAPIJSONObject(object):
         description = '<Box {0}{1}>'.format(self.__class__.__name__, extra_description)
         if six.PY2:
             return description.encode('utf-8')
-        else:
-            return description
+        return description
 
     @property
     def _description(self):

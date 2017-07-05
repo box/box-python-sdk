@@ -34,9 +34,9 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         """Base class override.  Return a description for the object."""
         if 'name' in self._response_object:
             return '{0} ({1})'.format(self._object_id, self.name)  # pylint:disable=no-member
-        else:
-            return '{0}'.format(self._object_id)
+        return '{0}'.format(self._object_id)
 
+    # pylint:disable=arguments-differ
     def get_url(self, *args):
         """
         Base class override.

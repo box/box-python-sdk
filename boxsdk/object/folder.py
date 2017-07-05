@@ -369,6 +369,7 @@ class Folder(Item):
             response_object=collaboration_response,
         )
 
+    # pylint:disable=arguments-differ
     @api_call
     def delete(self, recursive=True, etag=None):
         """Base class override. Delete the folder.

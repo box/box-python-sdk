@@ -120,6 +120,7 @@ class MetadataSearchFilters(object):
 class Search(BaseEndpoint):
     """Search Box for files and folders."""
 
+    # pylint:disable=arguments-differ
     def get_url(self, *args):
         """
         Gets the search endpoint URL.

@@ -41,7 +41,7 @@ class APICallWrapper(object):
             instance = _instance
             if instance is None:
                 # If this is being called as an unbound method, the instance is the first arg.
-                if owner is not None and len(args) > 0 and isinstance(args[0], owner):
+                if owner is not None and args and isinstance(args[0], owner):
                     instance = args[0]
                     args = args[1:]
                 else:
