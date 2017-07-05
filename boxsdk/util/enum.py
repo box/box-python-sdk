@@ -1,4 +1,5 @@
 # coding: utf-8
+# pylint:disable=no-value-for-parameter
 
 from __future__ import absolute_import, unicode_literals
 
@@ -131,7 +132,7 @@ class ExtendableEnumMeta(EnumMeta):
                 # and __getitem__ have the same behavior. And __getitem__ has
                 # the advantage of never grabbing anything other than enum
                 # members.
-                return cls[name]
+                return cls[name]  # pylint:disable=unsubscriptable-object
             except KeyError:
                 pass
             # This needs to be `reraise()`, and not just `raise`. Otherwise,
