@@ -53,9 +53,9 @@ class EnterpriseEventsStreamType(EventsStreamType):
 class Events(BaseEndpoint):
     """Box API endpoint for subscribing to changes in a Box account."""
 
-    # pylint:disable=arguments-differ
     def get_url(self, *args):
         """Base class override."""
+        # pylint:disable=arguments-differ
         return super(Events, self).get_url('events', *args)
 
     @api_call

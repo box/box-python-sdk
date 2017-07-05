@@ -124,9 +124,9 @@ class Metadata(BaseEndpoint):
         self._scope = scope
         self._template = template
 
-    # pylint:disable=arguments-differ
     def get_url(self, *args):
         """ Base class override. """
+        # pylint:disable=arguments-differ
         return self._object.get_url('metadata', self._scope, self._template)
 
     @staticmethod

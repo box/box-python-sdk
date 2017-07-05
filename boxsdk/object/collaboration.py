@@ -32,7 +32,6 @@ class Collaboration(BaseObject):
     """An object that represents a collaboration between a folder and an individual or group"""
     _item_type = 'collaboration'
 
-    # pylint:disable=arguments-differ
     @api_call
     def update_info(self, role=None, status=None):
         """Edit an existing collaboration on Box
@@ -53,6 +52,7 @@ class Collaboration(BaseObject):
         :raises:
             :class:`BoxAPIException` if current user doesn't have permissions to edit the collaboration.
         """
+        # pylint:disable=arguments-differ
         data = {}
         if role:
             data['role'] = role

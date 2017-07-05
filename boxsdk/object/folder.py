@@ -369,7 +369,6 @@ class Folder(Item):
             response_object=collaboration_response,
         )
 
-    # pylint:disable=arguments-differ
     @api_call
     def delete(self, recursive=True, etag=None):
         """Base class override. Delete the folder.
@@ -388,4 +387,5 @@ class Folder(Item):
             `bool`
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
+        # pylint:disable=arguments-differ
         return super(Folder, self).delete({'recursive': recursive}, etag)
