@@ -292,5 +292,4 @@ class JWTAuth(OAuth2):
         # pylint:disable=unused-argument
         if self._user_id is None:
             return self.authenticate_instance()
-        else:
-            return self.authenticate_user()
+        return self.authenticate_user()

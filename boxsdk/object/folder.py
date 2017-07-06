@@ -387,4 +387,5 @@ class Folder(Item):
             `bool`
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
+        # pylint:disable=arguments-differ
         return super(Folder, self).delete({'recursive': recursive}, etag)

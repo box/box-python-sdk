@@ -55,6 +55,7 @@ class Events(BaseEndpoint):
 
     def get_url(self, *args):
         """Base class override."""
+        # pylint:disable=arguments-differ
         return super(Events, self).get_url('events', *args)
 
     @api_call

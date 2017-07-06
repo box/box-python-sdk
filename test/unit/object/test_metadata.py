@@ -35,8 +35,7 @@ def metadata_template(request):
 def test_object(test_file, test_folder, request):
     if request.param == 'file':
         return test_file
-    else:
-        return test_folder
+    return test_folder
 
 
 @pytest.mark.parametrize('success', [True, False])

@@ -7,6 +7,6 @@ pylint
 pytest>=2.8.3
 pytest-cov
 pytest-xdist
-sphinx
+sphinx>=1.5,<1.6
 sqlalchemy
 tox

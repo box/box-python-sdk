@@ -129,6 +129,7 @@ class Search(BaseEndpoint):
         :rtype:
             `unicode`
         """
+        # pylint:disable=arguments-differ
         return super(Search, self).get_url('search')
 
     @staticmethod

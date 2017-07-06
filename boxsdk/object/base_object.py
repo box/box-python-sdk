@@ -34,14 +34,14 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         """Base class override.  Return a description for the object."""
         if 'name' in self._response_object:
             return '{0} ({1})'.format(self._object_id, self.name)  # pylint:disable=no-member
-        else:
-            return '{0}'.format(self._object_id)
+        return '{0}'.format(self._object_id)
 
     def get_url(self, *args):
         """
         Base class override.
         Return the given object's URL, appending any optional parts as specified by args.
         """
+        # pylint:disable=arguments-differ
         return super(BaseObject, self).get_url('{0}s'.format(self._item_type), self._object_id, *args)
 
     def get_type_url(self):

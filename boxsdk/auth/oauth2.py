@@ -207,10 +207,10 @@ class OAuth2(object):
                 # be refreshed, or if we don't currently have any active access
                 # token, we make the request to refresh the token.
                 return self._refresh(access_token_to_refresh)
-            else:
-                # If the active access token (self._access_token) is not the same as the token needs to be refreshed,
-                # it means the expired token has already been refreshed. Simply return the current active tokens.
-                return access_token, refresh_token
+
+            # If the active access token (self._access_token) is not the same as the token needs to be refreshed,
+            # it means the expired token has already been refreshed. Simply return the current active tokens.
+            return access_token, refresh_token
 
     @staticmethod
     def _get_state_csrf_token():
