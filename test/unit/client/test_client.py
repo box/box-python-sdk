@@ -145,6 +145,15 @@ def search_response(file_id, folder_id):
     return mock_network_response
 
 
+@pytest.fixture(scope='module')
+def recent_items_response(file_id):
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {'entries': [
+        {'type': 'recent_item', 'item': {'type': 'file', 'id': file_id}}
+    ]}
+    return mock_network_response
+
+
 @pytest.mark.parametrize('test_class, factory_method_name', [
     (Folder, 'folder'),
     (File, 'file'),
@@ -260,6 +269,12 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
     assert isinstance(new_group, Group)
     assert new_group.object_id == 1234
     assert new_group.name == test_group_name
+
+
+def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_session, recent_items_response, file_id):
+    mock_box_session.get.return_value = recent_items_response
+    recent_items = mock_client.get_recent_items()
+    assert recent_items[0].item.object_id == file_id
 
 
 @pytest.mark.parametrize('password', (None, 'p4ssw0rd'))

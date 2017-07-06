@@ -317,6 +317,39 @@ class Client(Cloneable):
         )
 
     @api_call
+    def get_recent_items(self, limit=100, offset=0, fields=None):
+        """
+        Get the user's recently accessed items.
+
+        :param: limit
+            The maximum number of items to return
+        :type: limit
+            `int`
+        :param offset:
+            The index at which to start returning items.
+        :type offset:
+            `int`
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            A list of the user's recently accessed items.
+        :rtype:
+            `list` of :class:`Item`
+        """
+        url = '{0}/recent_items'.format(API.BASE_API_URL)
+        params = {
+            'limit': limit,
+            'offset': offset,
+        }
+        if fields:
+            params['fields'] = ','.join(fields)
+        box_response = self._session.get(url, params=params)
+        response = box_response.json()
+        return [self.translator.translate(item['type'])(self._session, item) for item in response['entries']]
+
+    @api_call
     def get_shared_item(self, shared_link, password=None):
         """
         Get information about a Box shared link. https://box-content.readme.io/reference#get-a-shared-item
