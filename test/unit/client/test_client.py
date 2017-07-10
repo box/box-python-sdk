@@ -277,15 +277,17 @@ def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_sessio
     assert recent_items[0].item.object_id == file_id
 
 
-def test_get_recent_items_sends_get_with_correct_params(mock_client, mock_box_session, recent_items_response, file_id):
+def test_get_recent_items_sends_get_with_correct_params(mock_client, mock_box_session, recent_items_response):
+    limit = 50
+    offset = 10
     fields = ['modified_at', 'name']
     expected_params = {
-        'limit': 100,
-        'offset': 0,
+        'limit': limit,
+        'offset': offset,
         'fields': ','.join(fields),
     }
     mock_box_session.get.return_value = recent_items_response
-    recent_items = mock_client.get_recent_items(fields=fields)
+    mock_client.get_recent_items(limit=limit, offset=offset, fields=fields)
     mock_box_session.get.assert_called_once_with('{0}/recent_items'.format(API.BASE_API_URL), params=expected_params)
 
 
