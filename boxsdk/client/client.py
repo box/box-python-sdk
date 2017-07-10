@@ -347,7 +347,7 @@ class Client(Cloneable):
             params['fields'] = ','.join(fields)
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        return [self.translator.translate(item['type'])(self._session, item) for item in response['entries']]
+        return [self.translator.translate(item['type'])(session=self._session, response_object=item) for item in response['entries']]
 
     @api_call
     def get_shared_item(self, shared_link, password=None):
