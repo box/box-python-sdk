@@ -259,3 +259,18 @@ def mock_user_id():
 @pytest.fixture(scope='module')
 def mock_group_id():
     return 'fake-group-99'
+
+
+@pytest.fixture(scope='module')
+def mock_comment_id():
+    return 'fake-comment-100'
+
+
+@pytest.fixture(scope='module')
+def mock_task_id():
+    return 'fake-task-100'
+
+
+@pytest.fixture(scope='module')
+def mock_task_assignment_id():
+    return 'fake-task-assignment-100'

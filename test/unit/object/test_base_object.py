@@ -8,15 +8,19 @@ from boxsdk.config import API
 from boxsdk.object.base_object import BaseObject
 
 
-@pytest.fixture(params=('file', 'folder', 'user'))
+@pytest.fixture(params=('file', 'folder', 'user', 'comment', 'task', 'task_assignment'))
 def test_object_and_response(
-        test_file, test_folder, mock_user,
-        mock_file_response, mock_folder_response, mock_user_response,
+        test_file, test_folder, mock_user, test_comment, test_task, test_task_assignment,
+        mock_file_response, mock_folder_response, mock_user_response, mock_comment_response,
+        mock_task_response, mock_task_assignment_response,
         request):
     test_objects_and_responses = {
         'file': (test_file, mock_file_response),
         'folder': (test_folder, mock_folder_response),
         'user': (mock_user, mock_user_response),
+        'comment': (test_comment, mock_comment_response),
+        'task': (test_task, mock_task_response),
+        'task_assignment': (test_task_assignment, mock_task_assignment_response),
     }
     return test_objects_and_responses[request.param]
 

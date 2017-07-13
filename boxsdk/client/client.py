@@ -99,6 +99,51 @@ class Client(Cloneable):
         """
         return self.translator.translate('file')(session=self._session, object_id=file_id)
 
+    def comment(self, comment_id):
+        """
+        Initialize a :class:`Comment` object, whose box id is comment_id.
+
+        :param comment_id:
+            The box id of the :class:`Comment` object.
+        :type comment_id:
+            `unicode`
+        :return:
+            A :class:`Comment` object with the given comment id.
+        :rtype:
+            :class:`Comment`
+        """
+        return self.translator.translate('comment')(session=self._session, object_id=comment_id)
+
+    def task(self, task_id):
+        """
+        Initialize a :class:`Task` object, whose box id is task_id.
+
+        :param task_id:
+            The box id of the :class:`Task` object.
+        :type task_id:
+            `unicode`
+        :return:
+            A :class:`Task` object with the given task id.
+        :rtype:
+            :class:`Task`
+        """
+        return self.translator.translate('task')(session=self._session, object_id=task_id)
+
+    def task_assignment(self, task_assignment_id):
+        """
+        Initialize a :class:`TaskAssignment` object, whose box id is task_assignment_id.
+
+        :param task_assignment_id:
+            The box id of the :class:`TaskAssignment` object.
+        :type task_assignment_id:
+            `unicode`
+        :return:
+            A :class:`TaskAssignment` object with the given task assignment id.
+        :rtype:
+            :class:`TaskAssignment`
+        """
+        return self.translator.translate('task_assignment')(session=self._session, object_id=task_assignment_id)
+
     def user(self, user_id='me'):
         """
         Initialize a :class:`User` object, whose box id is user_id.

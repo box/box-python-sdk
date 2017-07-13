@@ -119,3 +119,30 @@ def mock_folder_response(mock_object_id, make_mock_box_request):
         response={'type': 'folder', 'id': mock_object_id},
     )
     return mock_box_response
+
+
+@pytest.fixture(scope='function')
+def mock_comment_response(mock_comment_id, make_mock_box_request):
+    # pylint:disable=redefined-outer-name
+    mock_box_response, _ = make_mock_box_request(
+        response={'type': 'comment', 'id': mock_comment_id},
+    )
+    return mock_box_response
+
+
+@pytest.fixture(scope='function')
+def mock_task_response(mock_task_id, make_mock_box_request):
+    # pylint:disable=redefined-outer-name
+    mock_box_response, _ = make_mock_box_request(
+        response={'type': 'task', 'id': mock_task_id},
+    )
+    return mock_box_response
+
+
+@pytest.fixture(scope='function')
+def mock_task_assignment_response(mock_task_assignment_id, make_mock_box_request):
+    # pylint:disable=redefined-outer-name
+    mock_box_response, _ = make_mock_box_request(
+        response={'type': 'task_assignment', 'id': mock_task_assignment_id},
+    )
+    return mock_box_response

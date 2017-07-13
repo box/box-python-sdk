@@ -1,18 +1,23 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from datetime import date
+
 import os
-from mock import Mock
-import pytest
+from datetime import date
 from six import int2byte, PY2
+
+import pytest
+from mock import Mock
+
 from boxsdk.object.collaboration import Collaboration
+from boxsdk.object.comment import Comment
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
-from boxsdk.object.user import User
 from boxsdk.object.search import Search
-
+from boxsdk.object.task import Task
+from boxsdk.object.task_assignment import TaskAssignment
+from boxsdk.object.user import User
 
 # pylint:disable=redefined-outer-name
 
@@ -37,6 +42,30 @@ def mock_content_response(make_mock_box_request):
     mock_box_response, mock_network_response = make_mock_box_request(content=b'Contents of a text file.')
     mock_network_response.response_as_stream = raw = Mock()
     raw.stream.return_value = (b if PY2 else int2byte(b) for b in mock_box_response.content)
+    return mock_box_response
+
+
+@pytest.fixture(scope='function')
+def mock_comments_response(mock_object_id, make_mock_box_request):
+    mock_box_response, _ = make_mock_box_request(
+        response={'entries': [{'type': 'comment', 'id': mock_object_id}]},
+    )
+    return mock_box_response
+
+
+@pytest.fixture(scope='function')
+def mock_tasks_response(mock_object_id, make_mock_box_request):
+    mock_box_response, _ = make_mock_box_request(
+        response={'entries': [{'type': 'task', 'id': mock_object_id}]},
+    )
+    return mock_box_response
+
+
+@pytest.fixture(scope='function')
+def mock_task_assignments_response(mock_task_id, make_mock_box_request):
+    mock_box_response, _ = make_mock_box_request(
+        response={'entries': [{'type': 'task_assignment', 'id': mock_task_id}]},
+    )
     return mock_box_response
 
 
@@ -85,6 +114,21 @@ def mock_collab_response(make_mock_box_request, mock_collaboration_id):
 def mock_user(mock_box_session, mock_user_id):
     user = User(mock_box_session, mock_user_id)
     return user
+
+
+@pytest.fixture()
+def test_comment(mock_box_session, mock_comment_id):
+    return Comment(mock_box_session, mock_comment_id)
+
+
+@pytest.fixture()
+def test_task(mock_box_session, mock_task_id):
+    return Task(mock_box_session, mock_task_id)
+
+
+@pytest.fixture()
+def test_task_assignment(mock_box_session, mock_task_assignment_id):
+    return TaskAssignment(mock_box_session, mock_task_assignment_id)
 
 
 @pytest.fixture(scope='function')
