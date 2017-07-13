@@ -13,8 +13,9 @@ from boxsdk.util.translator import Translator
 class BoxObjectCollectionTestBase(object):
     NUM_ENTRIES = 25
 
+    @staticmethod
     @pytest.fixture()
-    def translator(self):
+    def translator():
         return Translator()
 
     @pytest.fixture()
@@ -51,7 +52,8 @@ class BoxObjectCollectionTestBase(object):
         """
         raise NotImplementedError
 
-    def _assert_items_dict_and_objects_same(self, expected_items_dict, returned_item_objects):
+    @staticmethod
+    def _assert_items_dict_and_objects_same(expected_items_dict, returned_item_objects):
         """
         A fixture very specific to this test class. Asserts that the list of items in dictionary form are the
         same (at least in name, and in quantity) as a list of BaseObjects.

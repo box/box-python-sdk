@@ -20,14 +20,15 @@ class TestMarkerBasedObjectCollection(BoxObjectCollectionTestBase):
 
     NO_NEXT_MARKER = object()
 
+    @staticmethod
     @pytest.fixture(params=['', None, NO_NEXT_MARKER])
-    def next_marker_value_for_last_page(self, request):
+    def next_marker_value_for_last_page(request):
         return request.param
 
     @pytest.fixture()
     def mock_items_response(self, entries, next_marker_value_for_last_page):
         """Baseclass override."""
-        # pylint:disable=redefined-outer-name
+        # pylint:disable=redefined-outer-name,arguments-differ
         def get_response(limit, marker):
             mock_box_response = Mock(BoxResponse)
             mock_network_response = Mock(DefaultNetworkResponse)
