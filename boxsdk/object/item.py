@@ -317,6 +317,52 @@ class Item(BaseObject):
         return item.shared_link is None  # pylint:disable=no-member
 
     @api_call
+    def add_to_collection(self, collection, etag=None):
+        """
+        Add this item to a collection.
+
+        :param collection:
+            The collection the item will be added to.
+        :type collection:
+            :class:`Collection`
+        :param etag:
+            If specified, instruct the Box API to add to the collection only if the current version's etag matches.
+        :type etag:
+            `unicode` or None
+        :returns:
+            The update object
+        :rtype:
+            :class:`Item`
+        """
+        data = {
+            'collections': [{ 'id': collection.object_id }]
+        }
+        return self.update_info(data, etag)
+
+    @api_call
+    def remove_from_collection(self, collection, etag=None):
+        """
+        Remove this item from a collection. Only the favorites collection is supported, so all collections are removed.
+
+        :param collection:
+            The collection the item will be removed from.
+        :type collection:
+            :class:`Collection`
+        :param etag:
+            If specified, instruct the Box API to remove from the collection only if the current version's etag matches.
+        :type etag:
+            `unicode` or None
+        :returns:
+            The update object
+        :rtype:
+            :class:`Item`
+        """
+        data = {
+            'collections': []
+        }
+        return self.update_info(data, etag)
+
+    @api_call
     def delete(self, params=None, etag=None):
         """Delete the item.
 

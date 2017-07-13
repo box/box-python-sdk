@@ -317,6 +317,26 @@ class Client(Cloneable):
         )
 
     @api_call
+    def collections(self):
+        """
+        Get a list of all collectios for the current user. Only the favorites collection is supported.
+
+        :return:
+            The list of all collections
+        :rtype:
+            `list` of :class:`Collection`
+        """
+        url = '{0}/collections'.format(API.BASE_API_URL)
+        box_response = self._session.get(url)
+        response = box_response.json()
+        collection_class = self.translator.translate('collection')
+        return [collection_class(
+            session=self._session,
+            object_id=item['id'],
+            response_object=item,
+        ) for item in response['entries']]
+
+    @api_call
     def get_shared_item(self, shared_link, password=None):
         """
         Get information about a Box shared link. https://box-content.readme.io/reference#get-a-shared-item
@@ -346,6 +366,16 @@ class Client(Cloneable):
             object_id=response['id'],
             response_object=response,
         )
+
+    @api_call
+    def get_favorites(self, limit=100, offset=0, fields=None):
+        collections = self.collections()
+        try:
+            favorite_collection = next(c for c in collections if c['collection_type'] == 'favorites')
+            return favorite_collection.get_items(limit=limit, offset=offset, fields=fields)
+        except StopIteration:
+            pass
+        return []
 
     @api_call
     def make_request(self, method, url, **kwargs):

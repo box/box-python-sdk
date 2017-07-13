@@ -70,6 +70,26 @@ def test_move_item(test_item_and_response, mock_box_session, test_folder, mock_o
     assert isinstance(move_response, test_item.__class__)
 
 
+def test_add_to_collection(test_item_and_response, mock_box_session, test_collection, mock_collection_id):
+    # pylint:disable=redefined-outer-name, protected-access
+    test_item, mock_item_response = test_item_and_response
+    expected_url = test_item.get_url()
+    mock_box_session.put.return_value = mock_item_response
+    add_to_collection_response = test_item.add_to_collection(test_collection)
+    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps({'collections': [{'id': mock_collection_id}]}), headers=None, params=None)
+    assert isinstance(add_to_collection_response, test_item.__class__)
+
+
+def test_remove_from_collection(test_item_and_response, mock_box_session, test_collection, mock_collection_id):
+    # pylint:disable=redefined-outer-name, protected-access
+    test_item, mock_item_response = test_item_and_response
+    expected_url = test_item.get_url()
+    mock_box_session.put.return_value = mock_item_response
+    add_to_collection_response = test_item.remove_from_collection(test_collection)
+    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps({'collections': []}), headers=None, params=None)
+    assert isinstance(add_to_collection_response, test_item.__class__)
+
+
 def test_get_shared_link(
         test_item_and_response,
         mock_box_session,
