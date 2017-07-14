@@ -23,6 +23,7 @@ from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.group_membership import GroupMembership
+from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
 @pytest.fixture
@@ -58,6 +59,11 @@ def file_id():
 @pytest.fixture(scope='module')
 def folder_id():
     return '1022'
+
+
+@pytest.fixture(scope='module')
+def marker_id():
+    return 'marker_1'
 
 
 @pytest.fixture(scope='module')
@@ -146,11 +152,15 @@ def search_response(file_id, folder_id):
 
 
 @pytest.fixture(scope='module')
-def recent_items_response(file_id):
+def recent_items_response(file_id, marker_id):
     mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.json.return_value = {'entries': [
-        {'type': 'recent_item', 'item': {'type': 'file', 'id': file_id}}
-    ]}
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'recent_item', 'item': {'type': 'file', 'id': file_id}}
+        ],
+        'next_marker': marker_id,
+        'limit': 100,
+    }
     return mock_network_response
 
 
@@ -271,23 +281,28 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
     assert new_group.name == test_group_name
 
 
-def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_session, recent_items_response, file_id):
+def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_session, recent_items_response, file_id, marker_id):
     mock_box_session.get.return_value = recent_items_response
     recent_items = mock_client.get_recent_items()
-    assert recent_items[0].item.object_id == file_id
+    assert isinstance(recent_items, MarkerBasedObjectCollection)
+    page = recent_items.next()
+    assert page[0].item.object_id == file_id
+    next_pointer = recent_items.next_pointer()
+    assert next_pointer == marker_id
 
 
-def test_get_recent_items_sends_get_with_correct_params(mock_client, mock_box_session, recent_items_response):
+def test_get_recent_items_sends_get_with_correct_params(mock_client, mock_box_session, recent_items_response, marker_id):
     limit = 50
-    offset = 10
+    marker = marker_id
     fields = ['modified_at', 'name']
     expected_params = {
         'limit': limit,
-        'offset': offset,
+        'marker': marker_id,
         'fields': ','.join(fields),
     }
     mock_box_session.get.return_value = recent_items_response
-    mock_client.get_recent_items(limit=limit, offset=offset, fields=fields)
+    object_collection = mock_client.get_recent_items(limit=limit, marker=marker, fields=fields)
+    object_collection.next()
     mock_box_session.get.assert_called_once_with('{0}/recent_items'.format(API.BASE_API_URL), params=expected_params)
 
 
