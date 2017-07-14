@@ -10,6 +10,7 @@ from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 
 
@@ -317,37 +318,38 @@ class Client(Cloneable):
         )
 
     @api_call
-    def get_recent_items(self, limit=100, offset=0, fields=None):
+    def get_recent_items(self, limit=None, marker=None, fields=None):
         """
         Get the user's recently accessed items.
 
         :param: limit
-            The maximum number of items to return
+            The maximum number of items to return. If limit is set to None, then the default
+            limit (returned by Box in the response) is used. See https://developer.box.com/reference#get-recent-items
+            for default.
         :type: limit
-            `int`
-        :param offset:
+            `int` or None
+        :param marker:
             The index at which to start returning items.
-        :type offset:
-            `int`
+        :type marker:
+            `str` or None
         :param fields:
-            List of fields to request.
+            List of fields to request on the file or folder which the `RecentItem` references.
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            A list of the user's recently accessed items.
+            An iterator on the user's recent items
         :rtype:
-            `list` of :class:`Item`
+            :class:`MarkerBasedObjectCollection`
         """
-        url = '{0}/recent_items'.format(API.BASE_API_URL)
-        params = {
-            'limit': limit,
-            'offset': offset,
-        }
-        if fields:
-            params['fields'] = ','.join(fields)
-        box_response = self._session.get(url, params=params)
-        response = box_response.json()
-        return [self.translator.translate(item['type'])(session=self._session, response_object=item) for item in response['entries']]
+        return MarkerBasedObjectCollection(
+            self.session,
+            self.get_url('recent_items'),
+            limit=limit,
+            fields=fields,
+            marker=marker,
+            return_full_pages=True,
+            supports_limit_offset_paging=False,
+        )
 
     @api_call
     def get_shared_item(self, shared_link, password=None):

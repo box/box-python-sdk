@@ -11,7 +11,7 @@ class RecentItem(BaseEndpoint, BaseAPIJSONObject):
 
     _item_type = 'recent_item'
 
-    def __init__(self, session, response_object=None):
+    def __init__(self, session, response_object=None, **kwargs):
         """
         :param session:
             The Box session used to make requests.

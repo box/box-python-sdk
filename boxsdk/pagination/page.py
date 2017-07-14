@@ -61,7 +61,7 @@ class Page(Sequence, object):
         item_class = self._translator.translate(item_json['type'])
         item = item_class(
             session=self._session,
-            object_id=item_json['id'],
+            object_id=item_json['id'] if 'id' in item_json else None,
             response_object=item_json,
         )
         return item
