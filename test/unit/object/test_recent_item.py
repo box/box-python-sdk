@@ -14,3 +14,4 @@ def test_init_recent_item(mock_box_session, mock_object_id):
         })
     assert recent_item['type'] == 'recent_item'
     assert recent_item.item.object_id == mock_object_id
+    assert recent_item.item.session is mock_box_session

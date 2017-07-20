@@ -318,7 +318,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def get_recent_items(self, limit=None, marker=None, fields=None, **kwargs):
+    def get_recent_items(self, limit=None, marker=None, fields=None, **collection_kwargs):
         """
         Get the user's recently accessed items.
 
@@ -336,6 +336,10 @@ class Client(Cloneable):
             List of fields to request on the file or folder which the `RecentItem` references.
         :type fields:
             `Iterable` of `unicode`
+        :param **collection_kwargs:
+            Keyword arguments passed to `MarkerBasedObjectCollection`.
+        :type **collection_args:
+            `dict`
         :returns:
             An iterator on the user's recent items
         :rtype:
@@ -347,7 +351,7 @@ class Client(Cloneable):
             limit=limit,
             fields=fields,
             marker=marker,
-            **kwargs
+            **collection_kwargs
         )
 
     @api_call
