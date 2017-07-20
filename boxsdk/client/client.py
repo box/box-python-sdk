@@ -10,6 +10,7 @@ from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 
 
@@ -314,6 +315,43 @@ class Client(Cloneable):
             session=self._session,
             object_id=response['id'],
             response_object=response,
+        )
+
+    @api_call
+    def get_recent_items(self, limit=None, marker=None, fields=None, **collection_kwargs):
+        """
+        Get the user's recently accessed items.
+
+        :param: limit
+            The maximum number of items to return. If limit is set to None, then the default
+            limit (returned by Box in the response) is used. See https://developer.box.com/reference#get-recent-items
+            for default.
+        :type: limit
+            `int` or None
+        :param marker:
+            The index at which to start returning items.
+        :type marker:
+            `str` or None
+        :param fields:
+            List of fields to request on the file or folder which the `RecentItem` references.
+        :type fields:
+            `Iterable` of `unicode`
+        :param **collection_kwargs:
+            Keyword arguments passed to `MarkerBasedObjectCollection`.
+        :type **collection_args:
+            `dict`
+        :returns:
+            An iterator on the user's recent items
+        :rtype:
+            :class:`MarkerBasedObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            self.session,
+            self.get_url('recent_items'),
+            limit=limit,
+            fields=fields,
+            marker=marker,
+            **collection_kwargs
         )
 
     @api_call

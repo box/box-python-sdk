@@ -5,6 +5,9 @@ from __future__ import unicode_literals, absolute_import
 from collections import Sequence
 import copy
 
+from boxsdk.object.base_object import BaseObject
+from boxsdk.object.base_endpoint import BaseEndpoint
+
 
 class Page(Sequence, object):
     """
@@ -59,11 +62,13 @@ class Page(Sequence, object):
         """
         item_json = self._response_object[self._item_entries_key_name][key]
         item_class = self._translator.translate(item_json['type'])
-        item = item_class(
-            session=self._session,
-            object_id=item_json['id'],
-            response_object=item_json,
-        )
+        kwargs = {}
+        if issubclass(item_class, BaseObject):
+            kwargs['object_id'] = item_json['id']
+        if issubclass(item_class, BaseEndpoint):
+            kwargs['session'] = self._session
+
+        item = item_class(response_object=item_json, **kwargs)
         return item
 
     def __len__(self):
