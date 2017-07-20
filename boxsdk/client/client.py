@@ -318,7 +318,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def get_recent_items(self, limit=None, marker=None, fields=None):
+    def get_recent_items(self, limit=None, marker=None, fields=None, **kwargs):
         """
         Get the user's recently accessed items.
 
@@ -347,8 +347,7 @@ class Client(Cloneable):
             limit=limit,
             fields=fields,
             marker=marker,
-            return_full_pages=True,
-            supports_limit_offset_paging=False,
+            **kwargs
         )
 
     @api_call

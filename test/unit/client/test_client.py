@@ -152,13 +152,13 @@ def search_response(file_id, folder_id):
 
 
 @pytest.fixture(scope='module')
-def recent_items_response(file_id, marker_id):
+def recent_items_response(file_id):
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'entries': [
             {'type': 'recent_item', 'item': {'type': 'file', 'id': file_id}}
         ],
-        'next_marker': marker_id,
+        'next_marker': None,
         'limit': 100,
     }
     return mock_network_response
@@ -281,14 +281,14 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
     assert new_group.name == test_group_name
 
 
-def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_session, recent_items_response, file_id, marker_id):
+def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_session, recent_items_response, file_id):
     mock_box_session.get.return_value = recent_items_response
     recent_items = mock_client.get_recent_items()
     assert isinstance(recent_items, MarkerBasedObjectCollection)
-    page = recent_items.next()
-    assert page[0].item.object_id == file_id
+    recent_item = recent_items.next()
+    assert recent_item.item.object_id == file_id
     next_pointer = recent_items.next_pointer()
-    assert next_pointer == marker_id
+    assert next_pointer is None
 
 
 def test_get_recent_items_sends_get_with_correct_params(mock_client, mock_box_session, recent_items_response, marker_id):

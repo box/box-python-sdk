@@ -7,8 +7,8 @@ from boxsdk.object.recent_item import RecentItem
 
 def test_init_recent_item(mock_box_session, mock_object_id):
     recent_item = RecentItem(
-        mock_box_session,
-        {
+        session=mock_box_session,
+        response_object={
             "type": "recent_item",
             "item": {"type": "file", "id": mock_object_id}
         })
