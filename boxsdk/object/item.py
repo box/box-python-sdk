@@ -334,6 +334,7 @@ class Item(BaseObject):
             `bool`
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
+        # pylint:disable=arguments-differ
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).delete(params, headers)
 

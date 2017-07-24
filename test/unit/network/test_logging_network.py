@@ -49,8 +49,8 @@ def assert_logger_called_once_with(logger, logger_method_names):
         getattr(logger, method_name).assert_called_once_with(*args, **kwargs)
         method_names = set(logger_method_names)
         method_names.discard(method_name)
-        for method_name in method_names:
-            getattr(logger, method_name).assert_not_called()
+        for name in method_names:
+            getattr(logger, name).assert_not_called()
 
     return _assert_logger_called_once_with
 

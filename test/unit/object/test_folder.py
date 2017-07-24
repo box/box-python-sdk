@@ -13,6 +13,8 @@ from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.file import File
 from boxsdk.object.collaboration import Collaboration, CollaborationRole
 from boxsdk.object.folder import Folder, FolderSyncState
+from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from boxsdk.session.box_session import BoxResponse
 
 
@@ -137,6 +139,16 @@ def test_get_items(test_folder, mock_box_session, mock_items_response, limit, of
     mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
     assert items == expected_items
     assert all([i.id == e.object_id for i, e in zip(items, expected_items)])
+
+
+def test_get_items_marker_returns_marker_instance(test_folder):
+    limit_offset_object_collection = test_folder.get_items_limit_offset()
+    assert isinstance(limit_offset_object_collection, LimitOffsetBasedObjectCollection)
+
+
+def test_get_items_limit_offset_returns_limit_offset_instance(test_folder):
+    marker_object_collection = test_folder.get_items_marker()
+    assert isinstance(marker_object_collection, MarkerBasedObjectCollection)
 
 
 @pytest.mark.parametrize('is_stream', (True, False))
