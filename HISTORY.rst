@@ -79,6 +79,14 @@ Release History
   the same as for ``Mapping``. That is, ``__contains__`` checks for JSON keys
   in the object, and ``__iter__`` yields all of the object's keys.
 
+- Added a ``RecentItem`` class.
+- Added ``client.get_recent_items()`` to retrieve a user's recently accessed items on Box.
+- Added ``BoxObjectCollection`` and subclasses ``LimitOffsetBasedObjectCollection`` and
+  ``MarkerBasedObjectCollection`` to more easily manage paging of objects from an endpoint.
+  These classes manage the logic of constructing requests to an endpoint and storing the results,
+  then provide ``__next__`` to easily iterate over the results. The option to return results one
+  by one or as a ``Page`` of results is also provided.
+
 **Other**
 
 - Added extra information to ``BoxAPIException``.
