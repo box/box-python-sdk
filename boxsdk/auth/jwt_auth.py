@@ -291,5 +291,7 @@ class JWTAuth(OAuth2):
         """
         # pylint:disable=unused-argument
         if self._user_id is None:
-            return self.authenticate_instance()
-        return self.authenticate_user()
+            new_access_token = self.authenticate_instance()
+        else:
+            new_access_token = self.authenticate_user()
+        return new_access_token, None
