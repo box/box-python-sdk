@@ -203,14 +203,13 @@ class OAuth2(object):
             # The lock here is for handling that case that multiple requests fail, due to access token expired, at the
             # same time to avoid multiple session renewals.
             if (access_token is None) or (access_token_to_refresh == access_token):
-                # If the active access token is the same as the token needs to
+                # If the active access token is the same as the token that needs to
                 # be refreshed, or if we don't currently have any active access
                 # token, we make the request to refresh the token.
-                return self._refresh(access_token_to_refresh)
-            else:
-                # If the active access token (self._access_token) is not the same as the token needs to be refreshed,
-                # it means the expired token has already been refreshed. Simply return the current active tokens.
-                return access_token, refresh_token
+                access_token, refresh_token = self._refresh(access_token_to_refresh)
+            # Else, if the active access token (self._access_token) is not the same as the token needs to be refreshed,
+            # it means the expired token has already been refreshed. Simply return the current active tokens.
+            return access_token, refresh_token
 
     @staticmethod
     def _get_state_csrf_token():
