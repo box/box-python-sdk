@@ -3,7 +3,12 @@ bottle
 jsonpatch
 mock>=2.0.0
 pep8
-pylint
+
+# Pin to an old version so that new errors don't start appearing on the
+# bugfix-only 1.5 branch. Don't propagate this pinned version to the master
+# branch.
+pylint==1.5.5
+
 pytest>=2.8.3
 pytest-cov
 pytest-xdist
