@@ -1,14 +1,13 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
+from __future__ import unicode_literals, absolute_import
 from requests.exceptions import Timeout
-from six import with_metaclass
 
-from boxsdk.object.base_endpoint import BaseEndpoint
-from boxsdk.util.enum import ExtendableEnumMeta
-from boxsdk.util.lru_cache import LRUCache
-from boxsdk.util.text_enum import TextEnum
+from .base_endpoint import BaseEndpoint
+from ..util.compat import with_metaclass
+from ..util.enum import ExtendableEnumMeta
+from ..util.lru_cache import LRUCache
+from ..util.text_enum import TextEnum
 
 
 # pylint:disable=too-many-ancestors
@@ -55,6 +54,7 @@ class Events(BaseEndpoint):
 
     def get_url(self, *args):
         """Base class override."""
+        # pylint:disable=arguments-differ
         return super(Events, self).get_url('events', *args)
 
     def get_events(self, limit=100, stream_position=0, stream_type=UserEventsStreamType.ALL):

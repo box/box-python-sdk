@@ -6,7 +6,18 @@ Release History
 Upcoming
 ++++++++
 
-1.5.3
+1.5.4
+++++++++++++++++++
+
+- Bugfix so that the return value of ``JWTAuth.refresh()`` correctly matches
+  that of the auth interface (by returning a tuple of
+  ((access token), (refresh token or None)), instead of just the access token).
+  In particular, this fixes an exception in ``BoxSession`` that always occurred
+  when it tried to refresh any ``JWTAuth`` object.
+- Fixed an exception that was being raised from ``ExtendableEnumMeta.__dir__()``.
+- CPython 3.6 support.
+
+1.5.3 (2016-05-26)
 ++++++++++++++++++
 
 - Bugfix so that ``JWTAuth`` opens the PEM private key file in ``'rb'`` mode.

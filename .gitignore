@@ -11,7 +11,7 @@ __pycache__/
 # Distribution / packaging
 bin/
 .Python
-env/
+env*/
 build/
 develop-eggs/
 dist/
@@ -27,8 +27,10 @@ var/
 *.egg
 MANIFEST
 .eggs/
+.env*/
 .pyenv/
-.venv/
+venv*/
+.venv*/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
