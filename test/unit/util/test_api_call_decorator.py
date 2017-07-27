@@ -27,6 +27,7 @@ def api_call_method_fixture(api_call_result):
 def cloneable_subclass_with_api_call_method(api_call_method):
     api_call_method_fixture = api_call_method
 
+    # pylint:disable=abstract-method
     class CloneableSubclass(Cloneable):
         api_call_method = api_call_method_fixture
 
@@ -36,6 +37,7 @@ def cloneable_subclass_with_api_call_method(api_call_method):
 @pytest.fixture
 def mock_cloneable(cloneable_subclass_with_api_call_method):
 
+    # pylint:disable=abstract-method
     class MockCloneable(cloneable_subclass_with_api_call_method, NonCallableMock):
         pass
 
@@ -75,6 +77,7 @@ def test_api_call_decorated_method_must_be_a_cloneable_method():
 
 
 def test_api_call_decorated_method_must_be_bound_to_an_instance_of_the_owner(mock_cloneable, api_call_method):
+    # pylint:disable=abstract-method
     class CloneableSubclass2(Cloneable):
         pass
 
@@ -82,7 +85,7 @@ def test_api_call_decorated_method_must_be_bound_to_an_instance_of_the_owner(moc
         api_call_method.__get__(mock_cloneable, CloneableSubclass2)
 
 
-def test_api_call_decorated_method_returns_itself_when_bound_to_None(api_call_method, cloneable_subclass_with_api_call_method):
+def test_api_call_decorated_method_returns_itself_when_bound_to_none(api_call_method, cloneable_subclass_with_api_call_method):
     assert api_call_method.__get__(None, Cloneable) is api_call_method
     assert not hasattr(api_call_method.__get__(None, Cloneable), '__self__')
     assert cloneable_subclass_with_api_call_method.api_call_method is api_call_method
