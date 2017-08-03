@@ -4,6 +4,8 @@ from __future__ import unicode_literals, absolute_import
 
 from functools import update_wrapper, wraps
 
+from ..object.cloneable import Cloneable
+
 
 def api_call(method):
     """
@@ -33,26 +35,42 @@ class APICallWrapper(object):
     def __init__(self, func_that_makes_an_api_call):
         super(APICallWrapper, self).__init__()
         self._func_that_makes_an_api_call = func_that_makes_an_api_call
+        self.__name__ = func_that_makes_an_api_call.__name__
         update_wrapper(self, func_that_makes_an_api_call)
 
+    def __call__(self, cloneable_instance, *args, **kwargs):
+        return self.__get__(cloneable_instance, type(cloneable_instance))(*args, **kwargs)
+
     def __get__(self, _instance, owner):
+        # `APICallWrapper` is imitating a function. For native functions,
+        # ```func.__get__(None, cls)``` always returns `func`.
+        if _instance is None:
+            return self
+
+        if isinstance(owner, type) and not issubclass(owner, Cloneable):
+            raise TypeError(
+                "descriptor {name!r} must be owned by a 'Cloneable' subclass, not {owner.__name__}"
+                .format(name=self.__name__, owner=owner)
+            )
+        expected_type = owner or Cloneable
+        if not isinstance(_instance, expected_type):
+            raise TypeError(
+                "descriptor {name!r} for {expected_type.__name__!r} objects doesn't apply to {instance.__class__.__name__!r} object"
+                .format(name=self.__name__, expected_type=expected_type, instance=_instance)
+            )
+
         @wraps(self._func_that_makes_an_api_call)
-        def call(*args, **kwargs):
-            instance = _instance
-            if instance is None:
-                # If this is being called as an unbound method, the instance is the first arg.
-                if owner is not None and args and isinstance(args[0], owner):
-                    instance = args[0]
-                    args = args[1:]
-                else:
-                    raise TypeError
+        def call(instance, *args, **kwargs):
             extra_network_parameters = kwargs.pop('extra_network_parameters', None)
             if extra_network_parameters:
                 # If extra_network_parameters is specified, then clone the instance, and specify the parameters
                 # as the defaults to be used.
-                # pylint: disable=protected-access
-                instance = instance.clone(instance._session.with_default_network_request_kwargs(extra_network_parameters))
-                # pylint: enable=protected-access
-            response = self._func_that_makes_an_api_call(instance, *args, **kwargs)
-            return response
-        return call
+                instance = instance.clone(instance.session.with_default_network_request_kwargs(extra_network_parameters))
+
+            method = self._func_that_makes_an_api_call.__get__(instance, owner)
+            return method(*args, **kwargs)
+
+        # Since the caller passed a non-`None` instance to `__get__()`, they
+        # want a bound method back, not an unbound function. Thus, we must bind
+        # `call()` to `_instance` and then return that bound method.
+        return call.__get__(_instance, owner)
