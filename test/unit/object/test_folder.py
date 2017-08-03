@@ -195,7 +195,11 @@ def test_upload(
     data = {'attributes': json.dumps({'name': basename(mock_file_path), 'parent': {'id': mock_object_id}})}
     mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=False, files=mock_files, data=data)
     assert isinstance(new_file, File)
-    assert new_file.object_id == mock_upload_response.json()['entries'][0]['id']
+    assert new_file.object_id == mock_object_id
+    assert 'id' in new_file
+    assert new_file['id'] == mock_object_id
+    assert not hasattr(new_file, 'entries')
+    assert 'entries' not in new_file
 
 
 def test_upload_stream_does_preflight_check_if_specified(
