@@ -31,6 +31,12 @@ Release History
   automatically backwards-compatibile (as long as there aren't any changes to
   change/remove any of the keywords).
 
+- ``File.update_contents()`` and ``File.update_contents_with_stream()`` now
+  correctly return a ``File`` object with the correct internal JSON structure.
+  Previously it would return a ``File`` object where the file JSON is hidden
+  inside ``file['entries'][0]``. This is a bugfix, but will be a breaking
+  change for any clients that have already written code to handle the bug.
+
 **Features**
 
 - Added more flexibility to the object translation system:
