@@ -108,7 +108,11 @@ def test_update_contents(
         headers=if_match_header,
     )
     assert isinstance(new_file, File)
-    assert new_file.object_id == mock_upload_response.json()['entries'][0]['id']
+    assert new_file.object_id == test_file.object_id
+    assert 'id' in new_file
+    assert new_file['id'] == test_file.object_id
+    assert not hasattr(new_file, 'entries')
+    assert 'entries' not in new_file
 
 
 def test_update_contents_with_stream_does_preflight_check_if_specified(

@@ -40,11 +40,22 @@ def mock_content_response(make_mock_box_request):
     return mock_box_response
 
 
+@pytest.fixture(scope='function', params=[False, True])
+def mock_upload_response_contains_entries(request):
+    """Is the upload response formatted as {"type": "file", "id": "123", ...}, or as {"entries": [{...}]}.
+
+    The v2.0 API does the latter, but future versions might do the former. So
+    we'll test both.
+    """
+    return request.param
+
+
 @pytest.fixture(scope='function')
-def mock_upload_response(mock_object_id, make_mock_box_request):
-    mock_box_response, _ = make_mock_box_request(
-        response={'entries': [{'type': 'file', 'id': mock_object_id}]},
-    )
+def mock_upload_response(mock_object_id, make_mock_box_request, mock_upload_response_contains_entries):
+    response = {'type': 'file', 'id': mock_object_id}
+    if mock_upload_response_contains_entries:
+        response = {'entries': [response]}
+    mock_box_response, _ = make_mock_box_request(response=response)
     return mock_box_response
 
 

@@ -279,8 +279,9 @@ class Folder(Item):
         files = {
             'file': ('unused', file_stream),
         }
-        box_response = self._session.post(url, data=data, files=files, expect_json_response=False)
-        file_response = box_response.json()['entries'][0]
+        file_response = self._session.post(url, data=data, files=files, expect_json_response=False).json()
+        if 'entries' in file_response:
+            file_response = file_response['entries'][0]
         file_id = file_response['id']
         return self.translator.translate(file_response['type'])(
             session=self._session,

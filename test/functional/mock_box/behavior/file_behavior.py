@@ -37,7 +37,7 @@ class FileBehavior(ItemBehavior):
         file_object.size = len(content)
         self._db_session.add(EventModel(event_type='ITEM_UPLOAD', source_id=file_object.file_id, source_type='file'))
         self._db_session.commit()
-        return json.dumps(file_object)
+        return json.dumps({'entries': [file_object]})
 
     def upload_file(self):
         """
