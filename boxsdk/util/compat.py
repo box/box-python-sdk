@@ -7,6 +7,9 @@ from datetime import timedelta
 import six
 
 
+NoneType = type(None)
+
+
 if not hasattr(timedelta, 'total_seconds'):
     def total_seconds(delta):
         """

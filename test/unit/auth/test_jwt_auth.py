@@ -4,15 +4,18 @@ from __future__ import absolute_import, unicode_literals
 
 from contextlib import contextmanager
 from datetime import datetime, timedelta
+import io
 from itertools import product
 import json
 import random
 import string
 
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, generate_private_key as generate_rsa_private_key
+from cryptography.hazmat.primitives import serialization
 from mock import Mock, mock_open, patch, sentinel
 import pytest
-from six import string_types, text_type
+from six import binary_type, string_types, text_type
 
 from boxsdk.auth.jwt_auth import JWTAuth
 from boxsdk.config import API
@@ -35,9 +38,24 @@ def jwt_key_id():
     return 'jwt_key_id_1'
 
 
+@pytest.fixture(scope='module')
+def rsa_private_key_object():
+    return generate_rsa_private_key(public_exponent=65537, key_size=4096, backend=default_backend())
+
+
 @pytest.fixture(params=(None, b'strong_password'))
 def rsa_passphrase(request):
     return request.param
+
+
+@pytest.fixture
+def rsa_private_key_bytes(rsa_private_key_object, rsa_passphrase):
+    encryption = serialization.BestAvailableEncryption(rsa_passphrase) if rsa_passphrase else serialization.NoEncryption()
+    return rsa_private_key_object.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=encryption,
+    )
 
 
 @pytest.fixture(scope='function')
@@ -52,8 +70,76 @@ def successful_token_response(successful_token_mock, successful_token_json_respo
     return successful_token_mock
 
 
+@pytest.mark.parametrize(('key_file', 'key_data'), [(None, None), ('fake sys path', 'fake key data')])
+@pytest.mark.parametrize('rsa_passphrase', [None])
+def test_jwt_auth_init_raises_type_error_unless_exactly_one_of_rsa_private_key_file_or_data_is_given(key_file, key_data, rsa_private_key_bytes):
+    kwargs = dict(
+        rsa_private_key_data=rsa_private_key_bytes,
+        client_id=None,
+        client_secret=None,
+        jwt_key_id=None,
+        enterprise_id=None,
+    )
+    JWTAuth(**kwargs)
+    kwargs.update(rsa_private_key_file_sys_path=key_file, rsa_private_key_data=key_data)
+    with pytest.raises(TypeError):
+        JWTAuth(**kwargs)
+
+
+@pytest.mark.parametrize('key_data', [object(), u'ƒøø'])
+@pytest.mark.parametrize('rsa_passphrase', [None])
+def test_jwt_auth_init_raises_type_error_if_rsa_private_key_data_has_unexpected_type(key_data, rsa_private_key_bytes):
+    kwargs = dict(
+        rsa_private_key_data=rsa_private_key_bytes,
+        client_id=None,
+        client_secret=None,
+        jwt_key_id=None,
+        enterprise_id=None,
+    )
+    JWTAuth(**kwargs)
+    kwargs.update(rsa_private_key_data=key_data)
+    with pytest.raises(TypeError):
+        JWTAuth(**kwargs)
+
+
+@pytest.mark.parametrize('rsa_private_key_data_type', [io.BytesIO, text_type, binary_type, RSAPrivateKey])
+def test_jwt_auth_init_accepts_rsa_private_key_data(rsa_private_key_bytes, rsa_passphrase, rsa_private_key_data_type):
+    if rsa_private_key_data_type is text_type:
+        rsa_private_key_data = text_type(rsa_private_key_bytes.decode('ascii'))
+    elif rsa_private_key_data_type is RSAPrivateKey:
+        rsa_private_key_data = serialization.load_pem_private_key(
+            rsa_private_key_bytes,
+            password=rsa_passphrase,
+            backend=default_backend(),
+        )
+    else:
+        rsa_private_key_data = rsa_private_key_data_type(rsa_private_key_bytes)
+    JWTAuth(
+        rsa_private_key_data=rsa_private_key_data,
+        rsa_private_key_passphrase=rsa_passphrase,
+        client_id=None,
+        client_secret=None,
+        jwt_key_id=None,
+        enterprise_id=None,
+    )
+
+
+@pytest.fixture(params=[False, True])
+def pass_private_key_by_path(request):
+    """For jwt_auth_init_mocks, whether to pass the private key via sys_path (True) or pass the data directly (False)."""
+    return request.param
+
+
 @pytest.fixture
-def jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algorithm, jwt_key_id, rsa_passphrase):
+def jwt_auth_init_mocks(
+        mock_network_layer,
+        successful_token_response,
+        jwt_algorithm,
+        jwt_key_id,
+        rsa_passphrase,
+        rsa_private_key_bytes,
+        pass_private_key_by_path,
+):
     # pylint:disable=redefined-outer-name
 
     @contextmanager
@@ -70,15 +156,14 @@ def jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algor
             'box_device_id': '0',
             'box_device_name': 'my_awesome_device',
         }
-
         mock_network_layer.request.return_value = successful_token_response
-        key_file_read_data = b'key_file_read_data'
-        with patch('boxsdk.auth.jwt_auth.open', mock_open(read_data=key_file_read_data), create=True) as jwt_auth_open:
+        with patch('boxsdk.auth.jwt_auth.open', mock_open(read_data=rsa_private_key_bytes), create=True) as jwt_auth_open:
             with patch('cryptography.hazmat.primitives.serialization.load_pem_private_key') as load_pem_private_key:
                 oauth = JWTAuth(
                     client_id=fake_client_id,
                     client_secret=fake_client_secret,
-                    rsa_private_key_file_sys_path=sentinel.rsa_path,
+                    rsa_private_key_file_sys_path=(sentinel.rsa_path if pass_private_key_by_path else None),
+                    rsa_private_key_data=(None if pass_private_key_by_path else rsa_private_key_bytes),
                     rsa_private_key_passphrase=rsa_passphrase,
                     network_layer=mock_network_layer,
                     box_device_name='my_awesome_device',
@@ -87,11 +172,13 @@ def jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algor
                     enterprise_id=kwargs.pop('enterprise_id', None),
                     **kwargs
                 )
-
-                jwt_auth_open.assert_called_once_with(sentinel.rsa_path, 'rb')
-                jwt_auth_open.return_value.read.assert_called_once_with()  # pylint:disable=no-member
+                if pass_private_key_by_path:
+                    jwt_auth_open.assert_called_once_with(sentinel.rsa_path, 'rb')
+                    jwt_auth_open.return_value.read.assert_called_once_with()  # pylint:disable=no-member
+                else:
+                    jwt_auth_open.assert_not_called()
                 load_pem_private_key.assert_called_once_with(
-                    key_file_read_data,
+                    rsa_private_key_bytes,
                     password=rsa_passphrase,
                     backend=default_backend(),
                 )

@@ -71,6 +71,11 @@ Release History
     the ``auto_session_renewal`` functionality of ``BoxSession``, this means
     that authentication for ``JWTAuth`` objects can be done completely
     automatically, at the time of first API call.
+  - The constructor now supports passing the RSA private key in two different
+    ways: by file system path (existing functionality), or by passing the key
+    data directly (new functionality). The ``rsa_private_key_file_sys_path``
+    parameter is now optional, but it is required to pass exactly one of
+    ``rsa_private_key_file_sys_path`` or ``rsa_private_key_data``.
   - Document that the ``enterprise_id`` argument to ``JWTAuth`` is allowed to
     be ``None``.
   - ``authenticate_instance()`` now accepts an ``enterprise`` argument, which
