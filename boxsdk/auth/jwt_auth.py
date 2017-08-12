@@ -338,7 +338,7 @@ class JWTAuth(OAuth2):
             'rsa_private_key_data must be binary data (bytes/str), '
             'a file-like object with a read() method, '
             'or an instance of RSAPrivateKey, '
-            'but got {!r}'
+            'but got {0!r}'
             .format(data.__class__.__name__)
         )
 
@@ -354,7 +354,7 @@ class JWTAuth(OAuth2):
                 )
         if not isinstance(passphrase, (binary_type, NoneType)):
             raise TypeError(
-                "rsa_private_key_passphrase must contain binary data (bytes/str), got {!r}"
+                "rsa_private_key_passphrase must contain binary data (bytes/str), got {0!r}"
                 .format(passphrase.__class__.__name__)
             )
         return passphrase
