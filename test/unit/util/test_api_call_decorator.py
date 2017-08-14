@@ -66,12 +66,12 @@ def test_api_call_decorated_function_must_be_a_method():
 
 def test_api_call_decorated_method_must_be_a_cloneable_method():
 
-    class Cls(object):
+    class NonCloneable(object):
         @api_call
         def func(self):
             pass
 
-    obj = Cls()
+    obj = NonCloneable()
     with pytest.raises(TypeError):
         obj.func()
 
