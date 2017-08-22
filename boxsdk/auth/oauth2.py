@@ -2,10 +2,13 @@
 
 from __future__ import unicode_literals
 
+from contextlib import contextmanager
 from threading import Lock
 import random
 import string  # pylint:disable=deprecated-module
+import sys
 
+import six
 from six.moves.urllib.parse import urlencode, urlunsplit  # pylint:disable=import-error,no-name-in-module
 
 from boxsdk.network.default_network import DefaultNetwork
@@ -16,6 +19,11 @@ from boxsdk.exception import BoxOAuthException
 class OAuth2(object):
     """
     Responsible for handling OAuth2 for the Box API. Can authenticate and refresh tokens.
+
+    Can be used as a closeable resource, similar to a file. When `close()` is
+    called, the current tokens are revoked, and the object is put into a state
+    where it can no longer request new tokens. This action can also be managed
+    with the `closing()` context manager method.
     """
 
     def __init__(
@@ -77,6 +85,7 @@ class OAuth2(object):
         self._refresh_lock = refresh_lock or Lock()
         self._box_device_id = box_device_id
         self._box_device_name = box_device_name
+        self._closed = False
 
     @property
     def access_token(self):
@@ -89,6 +98,16 @@ class OAuth2(object):
             `unicode`
         """
         return self._access_token
+
+    @property
+    def closed(self):
+        """True iff the auth object has been closed.
+
+        When in the closed state, it can no longer request new tokens.
+
+        :rtype:   `bool`
+        """
+        return self._closed
 
     def get_authorization_url(self, redirect_url):
         """
@@ -198,7 +217,9 @@ class OAuth2(object):
         :rtype:
             `tuple` of (`unicode`, (`unicode` or `None`))
         """
+        self._check_closed()
         with self._refresh_lock:
+            self._check_closed()
             access_token, refresh_token = self._get_and_update_current_tokens()
             # The lock here is for handling that case that multiple requests fail, due to access token expired, at the
             # same time to avoid multiple session renewals.
@@ -275,6 +296,7 @@ class OAuth2(object):
         :rtype:
             (`unicode`, `unicode`)
         """
+        self._check_closed()
         url = '{base_auth_url}/token'.format(base_auth_url=API.OAUTH2_API_URL)
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         network_response = self._network_layer.request(
@@ -320,3 +342,72 @@ class OAuth2(object):
             if not network_response.ok:
                 raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
             self._store_tokens(None, None)
+
+    def close(self, revoke=True):
+        """Close the auth object.
+
+        After this action is performed, the auth object can no longer request
+        new tokens.
+
+        This method may be called even if the auth object is already closed.
+
+        :param revoke:
+            (optional) Whether the current tokens should be revoked, via `revoke()`.
+            Defaults to `True` as a security precaution, so that the tokens aren't usable
+            by any adversaries after you are done with them.
+            Note that the revoke isn't guaranteed to succeed (the network connection might
+            fail, or the API call might respond with a non-200 HTTP response), so this
+            isn't a fool-proof security mechanism.
+            If the revoke fails, an exception is raised.
+            The auth object is still considered to be closed, even if the revoke fails.
+        :type revoke:   `bool`
+        """
+        self._closed = True
+        if revoke:
+            self.revoke()
+
+    @contextmanager
+    def closing(self, **close_kwargs):
+        """Context manager to close the auth object on exit.
+
+        The behavior is somewhat similar to `contextlib.closing(self)`, but has
+        some differences.
+
+        The context manager cannot be entered if the auth object is closed.
+
+        If a non-`Exception` (e.g. `KeyboardInterrupt`) is caught from the
+        block, this context manager prioritizes re-raising the exception as
+        fast as possible, without blocking. Thus, in this case, the tokens will
+        not be revoked, even if `revoke=True` was passed to this method.
+
+        If exceptions are raised both from the block and from `close()`, the
+        exception from the block will be reraised, and the exception from
+        `close()` will be swallowed. The assumption is that the exception from
+        the block is more relevant to the client, especially since the revoke
+        can fail if the network is unavailable.
+
+        :param **close_kwargs:  Keyword arguments to pass to `close()`.
+        """
+        self._check_closed()
+        exc_infos = []
+
+        # pylint:disable=broad-except
+        try:
+            yield self
+        except Exception:
+            exc_infos.append(sys.exc_info())
+        except BaseException:
+            exc_infos.append(sys.exc_info())
+            close_kwargs['revoke'] = False
+
+        try:
+            self.close(**close_kwargs)
+        except Exception:
+            exc_infos.append(sys.exc_info())
+
+        if exc_infos:
+            six.reraise(*exc_infos[0])
+
+    def _check_closed(self):
+        if self.closed:
+            raise ValueError("operation on a closed auth object")

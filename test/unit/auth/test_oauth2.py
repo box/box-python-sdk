@@ -7,7 +7,7 @@ import re
 from threading import Thread
 import uuid
 
-from mock import Mock
+from mock import Mock, patch
 import pytest
 from six.moves import range   # pylint:disable=redefined-builtin
 from six.moves.urllib import parse as urlparse  # pylint:disable=import-error,no-name-in-module,wrong-import-order
@@ -16,6 +16,14 @@ from boxsdk.exception import BoxOAuthException
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.config import API
+
+
+class MyError(Exception):
+    pass
+
+
+class MyBaseException(BaseException):
+    pass
 
 
 @pytest.fixture(params=('https://url.com/foo?bar=baz', 'https://ȕŕľ.com/ƒőő?Ƅȁŕ=Ƅȁż', None))
@@ -354,3 +362,94 @@ def test_tokens_get_updated_after_noop_refresh(client_id, client_secret, access_
 
     assert oauth.refresh(access_token) == new_tokens
     assert oauth.access_token == new_access_token
+
+
+def test_closed_is_false_after_init(client_id, client_secret, mock_network_layer):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+    assert auth.closed is False
+
+
+def test_closed_is_true_after_close(client_id, client_secret, mock_network_layer):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+    auth.close()
+    assert auth.closed is True
+
+
+def test_token_requests_fail_after_close(client_id, client_secret, mock_network_layer):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+    auth.close()
+    with pytest.raises(ValueError):
+        auth.refresh(auth.access_token)
+
+
+@pytest.mark.parametrize('raise_exception', [False, True])
+def test_context_manager_closes_auth_object(client_id, client_secret, mock_network_layer, raise_exception):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+    try:
+        with auth.closing():
+            if raise_exception:
+                raise MyError
+    except MyError:
+        pass
+    assert auth.closed is True
+
+
+def test_context_manager_fails_after_close(client_id, client_secret, mock_network_layer):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+    with auth.closing():
+        pass
+    with pytest.raises(ValueError):
+        with auth.closing():
+            assert False
+
+
+@pytest.mark.parametrize(('close_args', 'close_kwargs'), [((), {}), ((True,), {}), ((), dict(revoke=True))])
+def test_revoke_on_close(client_id, client_secret, access_token, mock_network_layer, close_args, close_kwargs):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, access_token=access_token, network_layer=mock_network_layer)
+    with patch.object(auth, 'revoke') as mock_revoke:
+        auth.close(*close_args, **close_kwargs)
+    mock_revoke.assert_called_once_with()
+
+
+def test_auth_object_is_closed_even_if_revoke_fails(client_id, client_secret, access_token, mock_network_layer):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, access_token=access_token, network_layer=mock_network_layer)
+    with patch.object(auth, 'revoke', side_effect=BoxOAuthException(status=500)) as mock_revoke:
+        with pytest.raises(BoxOAuthException):
+            auth.close(revoke=True)
+    assert auth.closed is True
+
+
+@pytest.mark.parametrize(('close_args', 'close_kwargs'), [((False,), {}), ((), dict(revoke=False))])
+def test_revoke_on_close_can_be_skipped(client_id, client_secret, access_token, mock_network_layer, close_args, close_kwargs):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, access_token=access_token, network_layer=mock_network_layer)
+    with patch.object(auth, 'revoke') as mock_revoke:
+        auth.close(*close_args, **close_kwargs)
+    mock_revoke.assert_not_called()
+
+
+@pytest.mark.parametrize(('raise_from_block', 'raise_from_close', 'expected_exception'), [
+    (MyError, None, MyError),
+    (None, BoxOAuthException(status=500), BoxOAuthException),
+    (MyError, BoxOAuthException(status=500), MyError),
+])
+@pytest.mark.parametrize('close_kwargs', [{}, dict(revoke=False), dict(revoke=True)])
+def test_context_manager_reraises_first_exception_after_close(
+        client_id, client_secret, mock_network_layer, close_kwargs, raise_from_block, raise_from_close, expected_exception,
+):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+    with patch.object(auth, 'close', side_effect=raise_from_close) as mock_close:
+        with pytest.raises(expected_exception):
+            with auth.closing(**close_kwargs):
+                if raise_from_block:
+                    raise raise_from_block
+    mock_close.assert_called_once_with(**close_kwargs)
+
+
+@pytest.mark.parametrize('close_kwargs', [{}, dict(revoke=False), dict(revoke=True)])
+def test_context_manager_skips_revoke_on_base_exception(client_id, client_secret, mock_network_layer, close_kwargs):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+    with patch.object(auth, 'close') as mock_close:
+        with pytest.raises(MyBaseException):
+            with auth.closing(**close_kwargs):
+                raise MyBaseException
+    mock_close.assert_called_once_with(revoke=False)
