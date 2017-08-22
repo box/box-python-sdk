@@ -413,7 +413,7 @@ def test_revoke_on_close(client_id, client_secret, access_token, mock_network_la
 
 def test_auth_object_is_closed_even_if_revoke_fails(client_id, client_secret, access_token, mock_network_layer):
     auth = OAuth2(client_id=client_id, client_secret=client_secret, access_token=access_token, network_layer=mock_network_layer)
-    with patch.object(auth, 'revoke', side_effect=BoxOAuthException(status=500)) as mock_revoke:
+    with patch.object(auth, 'revoke', side_effect=BoxOAuthException(status=500)):
         with pytest.raises(BoxOAuthException):
             auth.close(revoke=True)
     assert auth.closed is True
