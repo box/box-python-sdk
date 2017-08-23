@@ -53,6 +53,11 @@ Release History
 - When the ``auto_session_renewal`` is ``True`` when calling any of the request
   methods on ``BoxSession``, if there is no access token, ``BoxSession`` will
   renew the token _before_ making the request. This saves an API call.
+- Auth objects can now be closed, which prevents them from being used to
+  request new tokens. This will also revoke any existing tokens (though that
+  feature can be disabled by passing ``revoke=False``). Also introduces a
+  ``closing()`` context manager method, which will auto-close the auth object
+  on exit.
 - Various enhancements to the ``JWTAuth`` baseclass:
 
   - The ``authenticate_app_user()`` method is renamed to
