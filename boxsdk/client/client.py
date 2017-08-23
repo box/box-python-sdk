@@ -37,10 +37,8 @@ class Client(Cloneable):
             :class:`BoxSession`
         """
         super(Client, self).__init__()
-        network_layer = network_layer or DefaultNetwork()
         self._oauth = oauth
-        self._network = network_layer
-        self._session = session or BoxSession(oauth=oauth, network_layer=network_layer)
+        self._session = session or BoxSession(oauth=oauth, network_layer=(network_layer or DefaultNetwork()))
 
     @property
     def auth(self):
@@ -442,7 +440,7 @@ class Client(Cloneable):
 
     def clone(self, session=None):
         """Base class override."""
-        return self.__class__(self._oauth, self._network, session or self._session)
+        return self.__class__(oauth=self._oauth, session=(session or self._session))
 
     def get_url(self, endpoint, *args):
         """
