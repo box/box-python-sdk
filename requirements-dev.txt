@@ -1,3 +1,4 @@
+-e .[pytest]
 -r requirements.txt
 betamax
 bottle

@@ -116,6 +116,9 @@ Release History
   ``DefaultNetwork`` as an alias for backwards-compatibility), and added an
   optional ``session`` argument, for clients to pass a custom
   ``requests.Session`` object.
+- Added a pytest plugin (which can be installed with ``pip install
+  boxsdk[pytest]``) that defines ``betamax``-powered fixtures that clients can
+  use to test their ``boxsdk``-based applications.
 - Added ``network_response_constructor`` as an optional property on the
   ``Network`` interface. Implementations are encouraged to override this
   property, and use it to construct ``NetworkResponse`` instances. That way,

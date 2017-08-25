@@ -4,16 +4,17 @@ from __future__ import absolute_import, unicode_literals
 
 import json
 import logging
-import os
 import sys
 
-from betamax import Betamax
 from mock import Mock
 import pytest
 import requests
 from six import binary_type
 
-from boxsdk.network.default_network import DefaultNetworkResponse, RequestsSessionNetwork
+from boxsdk.network.default_network import DefaultNetworkResponse
+
+
+pytest_plugins = ['boxsdk']   # pylint:disable=invalid-name
 
 
 class RealRequestsSession(requests.Session):
@@ -278,63 +279,3 @@ def mock_user_id():
 @pytest.fixture(scope='module')
 def mock_group_id():
     return 'fake-group-99'
-
-
-# betamax integration
-
-
-@pytest.fixture(scope='module')
-def betamax_cassette_library_dir(request):
-    """Each directory test/foo/bar that uses betamax has a directory test/foo/bar/cassettes to hold cassettes."""
-    return os.path.join(request.fspath.dirname, 'cassettes')
-
-
-@pytest.fixture
-def configure_betamax(betamax_cassette_library_dir):
-    with Betamax.configure() as config:
-        config.cassette_library_dir = betamax_cassette_library_dir
-        config.default_cassette_options['re_record_interval'] = 100
-        config.default_cassette_options['record'] = 'none' if os.environ.get('IS_CI') else 'once'
-
-
-@pytest.fixture
-def betamax_cassette_name(request):
-    """The betamax cassette name to use for the test.
-
-    The name is the same as the pytest nodeid (e.g.
-    module_path::parametrized_test_name or
-    module_path::class_name::parametrized_test_name), but replacing the full
-    module-path with just the base filename, e.g. test_foo::test_bar[0].
-    """
-    node_ids = request.node.nodeid.split('::')
-    node_ids[0] = request.fspath.purebasename
-    return '::'.join(node_ids)
-
-
-@pytest.fixture(scope='module')
-def betamax_use_cassette_kwargs():
-    return {}
-
-
-@pytest.fixture
-def betamax_recorder(configure_betamax, real_requests_session):   # pylint:disable=unused-argument
-    return Betamax(real_requests_session)
-
-
-@pytest.fixture
-def betamax_cassette_recorder(betamax_recorder, betamax_cassette_name, betamax_use_cassette_kwargs):
-    """Including this fixture causes the test to use a betamax cassette for network requests."""
-    with betamax_recorder.use_cassette(betamax_cassette_name, **betamax_use_cassette_kwargs) as cassette_recorder:
-        yield cassette_recorder
-
-
-@pytest.fixture
-def betamax_session(betamax_cassette_recorder):
-    """A betamax-enabled requests.Session instance."""
-    return betamax_cassette_recorder.session
-
-
-@pytest.fixture
-def betamax_network(betamax_session):
-    """A betamax-enabled boxsdk.Network instance."""
-    return RequestsSessionNetwork(session=betamax_session)

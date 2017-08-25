@@ -80,7 +80,7 @@ def test_requests_session_network_accepts_custom_session():
     mock_requests_session.request.assert_called_once_with('method', 'url')
 
 
-def test_requests_session_network_works_with_betamax(betamax_network):
-    response = betamax_network.request(method='GET', url='https://api.box.com/2.0/users/me', access_token='access_token')
+def test_requests_session_network_works_with_betamax(betamax_boxsdk_network):
+    response = betamax_boxsdk_network.request(method='GET', url='https://api.box.com/2.0/users/me', access_token='access_token')
     assert response.ok is False
     assert response.status_code == 401
