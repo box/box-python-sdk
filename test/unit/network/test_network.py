@@ -2,11 +2,11 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from mock import DEFAULT, Mock, patch
+from mock import DEFAULT, Mock, NonCallableMock, patch
 import pytest
-from requests import Response
+from requests import Response, Session
 
-from boxsdk.network.default_network import DefaultNetworkResponse, DefaultNetwork
+from boxsdk.network.default_network import DefaultNetworkResponse, DefaultNetwork, RequestsSessionNetwork
 
 
 @pytest.fixture
@@ -69,3 +69,18 @@ def test_network_response_constructor(make_network_request):
     network = DefaultNetworkSubclass()
     response = make_network_request(network)
     assert isinstance(response, DefaultNetworkResponseSubclass)
+
+
+def test_requests_session_network_accepts_custom_session():
+    mock_requests_session = NonCallableMock(spec_set=Session, name='requests_session')
+    network = RequestsSessionNetwork(session=mock_requests_session)
+    network.request(method='method', url='url', access_token='access_token')
+    assert len(mock_requests_session.mock_calls) == 1
+    assert mock_requests_session.request.call_count == 1
+    mock_requests_session.request.assert_called_once_with('method', 'url')
+
+
+def test_requests_session_network_works_with_betamax(betamax_network):
+    response = betamax_network.request(method='GET', url='https://api.box.com/2.0/users/me', access_token='access_token')
+    assert response.ok is False
+    assert response.status_code == 401

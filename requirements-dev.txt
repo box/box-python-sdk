@@ -1,4 +1,5 @@
 -r requirements.txt
+betamax
 bottle
 jsonpatch
 mock>=2.0.0

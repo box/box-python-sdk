@@ -112,6 +112,10 @@ Release History
   ``BaseObject`` is the parent of all objects that are a part of the REST API.  Another subclass of
   ``BaseAPIJSONObject``, ``APIJSONObject``, was created to represent pseudo-smart objects such as ``Event`` that are not
   directly accessible through an API endpoint.
+- Renamed ``DefaultNetwork`` to ``RequestsSessionNetwork`` (keeping
+  ``DefaultNetwork`` as an alias for backwards-compatibility), and added an
+  optional ``session`` argument, for clients to pass a custom
+  ``requests.Session`` object.
 - Added ``network_response_constructor`` as an optional property on the
   ``Network`` interface. Implementations are encouraged to override this
   property, and use it to construct ``NetworkResponse`` instances. That way,
