@@ -61,7 +61,7 @@ def main():
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=0.9.2']
     extra_requires = defaultdict(list)
     extra_requires.update({'jwt': jwt_requires, 'redis': redis_requires, 'all': jwt_requires + redis_requires})
-    extra_requires['pytest'] = ['betamax', 'pytest>=3.0.0']
+    extra_requires['pytest'] = ['betamax', 'betamax-serializers', 'pytest>=3.0.0']
     conditional_dependencies = {
         # Newer versions of pip and wheel, which support PEP 426, allow
         # environment markers for conditional dependencies to use operators
@@ -97,7 +97,7 @@ def main():
         packages=find_packages(exclude=['demo', 'docs', 'test', 'test*', '*test', '*test*']),
         install_requires=install_requires,
         extras_require=extra_requires,
-        tests_require=['betamax', 'pytest', 'pytest-xdist', 'mock', 'sqlalchemy', 'bottle', 'jsonpatch'],
+        tests_require=['betamax', 'betamax-serializers', 'pytest', 'pytest-xdist', 'mock', 'sqlalchemy', 'bottle', 'jsonpatch'],
         entry_points={
             'pytest11': [
                 # pytest fixtures that can help with testing boxsdk-powered applications.

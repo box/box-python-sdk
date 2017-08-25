@@ -5,6 +5,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 
 from betamax import Betamax
+from betamax_serializers import pretty_json
 import pytest
 import requests
 
@@ -31,6 +32,7 @@ def betamax_cassette_library_dir(request):
 def configure_betamax(betamax_cassette_library_dir):
     if not os.path.exists(betamax_cassette_library_dir):
         os.makedirs(betamax_cassette_library_dir)
+    Betamax.register_serializer(pretty_json.PrettyJSONSerializer)
     with Betamax.configure() as config:
         config.cassette_library_dir = betamax_cassette_library_dir
         config.default_cassette_options['re_record_interval'] = 100
@@ -64,6 +66,7 @@ def betamax_recorder(configure_betamax, real_requests_session):   # pylint:disab
 @pytest.fixture
 def betamax_cassette_recorder(betamax_recorder, betamax_cassette_name, betamax_use_cassette_kwargs):
     """Including this fixture causes the test to use a betamax cassette for network requests."""
+    betamax_use_cassette_kwargs.setdefault('serialize_with', 'prettyjson')
     with betamax_recorder.use_cassette(betamax_cassette_name, **betamax_use_cassette_kwargs) as cassette_recorder:
         yield cassette_recorder
 
@@ -87,7 +90,11 @@ def betamax_boxsdk_session(betamax_boxsdk_network, betamax_boxsdk_auth):
     Requires an implementation of the abstract `betamax_boxsdk_auth` fixture,
     of type `boxsdk.OAuth2`.
     """
-    return BoxSession(oauth=betamax_boxsdk_auth, network_layer=betamax_boxsdk_network)
+    return BoxSession(
+        oauth=betamax_boxsdk_auth,
+        network_layer=betamax_boxsdk_network,
+        default_headers={'Accept-Encoding': ' '},  # Turn off gzip so that raw JSON responses are recorded.
+    )
 
 
 @pytest.fixture
