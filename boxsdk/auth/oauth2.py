@@ -14,6 +14,17 @@ from six.moves.urllib.parse import urlencode, urlunsplit  # pylint:disable=impor
 from boxsdk.network.default_network import DefaultNetwork
 from boxsdk.config import API
 from boxsdk.exception import BoxOAuthException
+from boxsdk.util.text_enum import TextEnum
+
+
+class TokenScope(TextEnum):
+    ITEM_READ = 'item_read'
+    ITEM_READWRITE = 'item_readwrite'
+    ITEM_PREVIEW = 'item_preview'
+    ITEM_UPLOAD = 'item_upload'
+    ITEM_SHARE = 'item_share'
+    ITEM_DELETE = 'item_delete'
+    ITEM_DOWNLOAD = 'item_download'
 
 
 class OAuth2(object):
@@ -342,6 +353,57 @@ class OAuth2(object):
             if not network_response.ok:
                 raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
             self._store_tokens(None, None)
+
+    def downscope_token(self, scopes, item=None, additional_data=None):
+        """
+        Get a downscoped token for the provided file or folder with the provided scopes
+
+        :param scope:
+            The scope(s) to apply to the resulting token
+        :type scopes:
+            `list` of :class:`TokenScope`
+        :param item:
+            The file or folder to get a downscoped token for
+        :type item:
+            :class:`Item`
+        :param additional_data:
+            Optional key value pairs which can be used to add/update the default data values in the request
+        :type additional_data:
+            `dict`
+        :return:
+            The downscoped token
+        :rtype:
+            `unicode`
+        """
+        self._check_closed()
+        with self._refresh_lock:
+            self._check_closed()
+            url = '{base_auth_url}/token'.format(base_auth_url=API.OAUTH2_API_URL)
+            access_token, _ = self._get_and_update_current_tokens()
+            data = {
+                'subject_token': access_token,
+                'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
+                'scope': ' '.join(scopes),
+                'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
+            }
+            if item:
+                data['resource'] = item.get_url()
+            if additional_data:
+                data.update(additional_data)
+            network_response = self._network_layer.request(
+                'POST',
+                url,
+                data=data,
+                access_token=access_token,
+            )
+            if not network_response.ok:
+                raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
+        try:
+            response = network_response.json()
+            access_token = response['access_token']
+        except (ValueError, KeyError):
+            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
+        return access_token
 
     def close(self, revoke=True):
         """Close the auth object.
