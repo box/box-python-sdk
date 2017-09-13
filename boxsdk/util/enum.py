@@ -1,4 +1,5 @@
 # coding: utf-8
+# pylint:disable=no-value-for-parameter
 
 from __future__ import absolute_import, unicode_literals
 
@@ -20,7 +21,9 @@ class ExtendableEnumMeta(EnumMeta):
 
     This allows you to define hierarchies such as this:
 
-        class EnumBase(six.with_metaclass(ExtendableEnumMeta, Enum)): pass
+        from box.util.compat import with_metaclass
+
+        class EnumBase(with_metaclass(ExtendableEnumMeta, Enum)): pass
 
         class Enum1(EnumBase):
             A = 'A'
@@ -99,7 +102,7 @@ class ExtendableEnumMeta(EnumMeta):
         return any(map(in_, cls.__subclasses__()))
 
     def __dir__(cls):
-        return list(set(super(ExtendableEnumMeta, cls).__dir__()).union(set(map(dir, cls.__subclasses__()))))
+        return list(set(super(ExtendableEnumMeta, cls).__dir__()).union(*map(dir, cls.__subclasses__())))
 
     def __getitem__(cls, name):
         try:
@@ -129,7 +132,7 @@ class ExtendableEnumMeta(EnumMeta):
                 # and __getitem__ have the same behavior. And __getitem__ has
                 # the advantage of never grabbing anything other than enum
                 # members.
-                return cls[name]
+                return cls[name]  # pylint:disable=unsubscriptable-object
             except KeyError:
                 pass
             # This needs to be `reraise()`, and not just `raise`. Otherwise,

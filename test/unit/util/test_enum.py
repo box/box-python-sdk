@@ -4,8 +4,8 @@ from __future__ import absolute_import, unicode_literals
 
 from enum import Enum
 import pytest
-from six import with_metaclass
 
+from boxsdk.util.compat import with_metaclass
 from boxsdk.util.enum import ExtendableEnumMeta
 from boxsdk.util.ordered_dict import OrderedDict
 
@@ -169,3 +169,7 @@ def test_len(EnumBaseWithSubclassesDefined, enum_members):
 def test_reversed(EnumBaseWithSubclassesDefined):
     EnumBase = EnumBaseWithSubclassesDefined
     assert list(reversed(list(reversed(EnumBase)))) == list(EnumBase)
+
+
+def test_dir(EnumBaseWithSubclassesDefined):
+    assert set(enum_member_names).issubset(dir(EnumBaseWithSubclassesDefined))
