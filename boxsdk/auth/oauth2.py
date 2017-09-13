@@ -14,6 +14,21 @@ from six.moves.urllib.parse import urlencode, urlunsplit  # pylint:disable=impor
 from boxsdk.network.default_network import DefaultNetwork
 from boxsdk.config import API
 from boxsdk.exception import BoxOAuthException
+from boxsdk.util.text_enum import TextEnum
+
+
+class TokenScope(TextEnum):
+    """ Scopes used for a downscope token request.
+
+    See https://developer.box.com/reference#token-exchange.
+    """
+    ITEM_READ = 'item_read'
+    ITEM_READWRITE = 'item_readwrite'
+    ITEM_PREVIEW = 'item_preview'
+    ITEM_UPLOAD = 'item_upload'
+    ITEM_SHARE = 'item_share'
+    ITEM_DELETE = 'item_delete'
+    ITEM_DOWNLOAD = 'item_download'
 
 
 class OAuth2(object):
@@ -279,7 +294,7 @@ class OAuth2(object):
         """
         self._access_token, self._refresh_token = access_token, refresh_token
 
-    def send_token_request(self, data, access_token, expect_refresh_token=True):
+    def _send_token_request_without_storing_tokens(self, data, access_token, expect_refresh_token=True):
         """
         Send the request to acquire or refresh an access token.
 
@@ -316,6 +331,27 @@ class OAuth2(object):
                 raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
         except (ValueError, KeyError):
             raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
+
+        return access_token, refresh_token
+
+    def send_token_request(self, data, access_token, expect_refresh_token=True):
+        """
+        Send the request to acquire or refresh an access token, and store the tokens.
+
+        :param data:
+            Dictionary containing the request parameters as specified by the Box API.
+        :type data:
+            `dict`
+        :param access_token:
+            The current access token.
+        :type access_token:
+            `unicode` or None
+        :return:
+            The access token and refresh token.
+        :rtype:
+            (`unicode`, `unicode`)
+        """
+        access_token, refresh_token = self._send_token_request_without_storing_tokens(data, access_token, expect_refresh_token)
         self._store_tokens(access_token, refresh_token)
         return self._access_token, self._refresh_token
 
@@ -342,6 +378,46 @@ class OAuth2(object):
             if not network_response.ok:
                 raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
             self._store_tokens(None, None)
+
+    def downscope_token(self, scopes, item=None, additional_data=None):
+        """
+        Get a downscoped token for the provided file or folder with the provided scopes.
+
+        :param scope:
+            The scope(s) to apply to the resulting token.
+        :type scopes:
+            `Iterable` of :class:`TokenScope`
+        :param item:
+            (Optional) The file or folder to get a downscoped token for. If None, the resulting token will
+            not be scoped down to just a single item.
+        :type item:
+            :class:`Item`
+        :param additional_data:
+            (Optional) Key value pairs which can be used to add/update the default data values in the request.
+        :type additional_data:
+            `dict`
+        :return:
+            The downscoped token
+        :rtype:
+            `unicode`
+        """
+        self._check_closed()
+        with self._refresh_lock:
+            self._check_closed()
+            access_token, _ = self._get_and_update_current_tokens()
+            data = {
+                'subject_token': access_token,
+                'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
+                'scope': ' '.join(scopes),
+                'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
+            }
+            if item:
+                data['resource'] = item.get_url()
+            if additional_data:
+                data.update(additional_data)
+
+            access_token, _ = self._send_token_request_without_storing_tokens(data, access_token, expect_refresh_token=False)
+        return access_token
 
     def close(self, revoke=True):
         """Close the auth object.

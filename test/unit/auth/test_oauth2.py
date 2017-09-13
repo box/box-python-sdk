@@ -14,8 +14,10 @@ from six.moves.urllib import parse as urlparse  # pylint:disable=import-error,no
 
 from boxsdk.exception import BoxOAuthException
 from boxsdk.network.default_network import DefaultNetworkResponse
-from boxsdk.auth.oauth2 import OAuth2
+from boxsdk.auth.oauth2 import OAuth2, TokenScope
 from boxsdk.config import API
+from boxsdk.object.file import File
+from boxsdk.object.folder import Folder
 
 
 class MyError(Exception):
@@ -197,12 +199,25 @@ def test_refresh_gives_back_the_correct_response_and_handles_multiple_requests(
         thread.join()
 
 
-@pytest.mark.parametrize('test_method', [
-    partial(OAuth2.refresh, access_token_to_refresh='fake_access_token'),
-    partial(OAuth2.authenticate, auth_code='fake_code')
-])
+@pytest.fixture()
+def token_method(request, mock_box_session, mock_object_id):
+    """ Fixture that returns a partial method based on the method provided in request.param"""
+    if request.param == OAuth2.refresh:
+        return partial(OAuth2.refresh, access_token_to_refresh='fake_access_token')
+    elif request.param == OAuth2.authenticate:
+        return partial(OAuth2.authenticate, auth_code='fake_code')
+    elif request.param == OAuth2.downscope_token:
+        item = File(mock_box_session, mock_object_id)
+        return partial(OAuth2.downscope_token, scopes=[TokenScope.ITEM_READ], item=item)
+
+
+@pytest.mark.parametrize(
+    'token_method',
+    [OAuth2.refresh, OAuth2.authenticate, OAuth2.downscope_token],
+    indirect=True,
+)
 def test_token_request_raises_box_oauth_exception_when_getting_bad_network_response(
-        test_method,
+        token_method,
         mock_network_layer,
         bad_network_response,
 ):
@@ -214,15 +229,16 @@ def test_token_request_raises_box_oauth_exception_when_getting_bad_network_respo
             access_token='fake_access_token',
             network_layer=mock_network_layer,
         )
-        test_method(oauth)
+        token_method(oauth)
 
 
-@pytest.mark.parametrize('test_method', [
-    partial(OAuth2.refresh, access_token_to_refresh='fake_access_token'),
-    partial(OAuth2.authenticate, auth_code='fake_code')
-])
+@pytest.mark.parametrize(
+    'token_method',
+    [OAuth2.refresh, OAuth2.authenticate, OAuth2.downscope_token],
+    indirect=True,
+)
 def test_token_request_raises_box_oauth_exception_when_no_json_object_can_be_decoded(
-        test_method,
+        token_method,
         mock_network_layer,
         non_json_response,
 ):
@@ -234,7 +250,7 @@ def test_token_request_raises_box_oauth_exception_when_no_json_object_can_be_dec
         network_layer=mock_network_layer,
     )
     with pytest.raises(BoxOAuthException):
-        test_method(oauth)
+        token_method(oauth)
 
 
 @pytest.fixture(params=[
@@ -287,6 +303,17 @@ def test_token_request_allows_missing_refresh_token(mock_network_layer):
     oauth.send_token_request({}, access_token=None, expect_refresh_token=False)
 
 
+@pytest.fixture()
+def oauth(client_id, client_secret, access_token, refresh_token, mock_network_layer):
+    return OAuth2(
+        client_id=client_id,
+        client_secret=client_secret,
+        access_token=access_token,
+        refresh_token=refresh_token,
+        network_layer=mock_network_layer,
+    )
+
+
 @pytest.mark.parametrize(
     'access_token,refresh_token,expected_token_to_revoke',
     (
@@ -299,19 +326,12 @@ def test_revoke_sends_revoke_request(
         client_secret,
         mock_network_layer,
         access_token,
-        refresh_token,
+        oauth,
         expected_token_to_revoke,
 ):
     mock_network_response = Mock()
     mock_network_response.ok = True
     mock_network_layer.request.return_value = mock_network_response
-    oauth = OAuth2(
-        client_id=client_id,
-        client_secret=client_secret,
-        access_token=access_token,
-        refresh_token=refresh_token,
-        network_layer=mock_network_layer,
-    )
     oauth.revoke()
     mock_network_layer.request.assert_called_once_with(
         'POST',
@@ -324,6 +344,84 @@ def test_revoke_sends_revoke_request(
         access_token=access_token,
     )
     assert oauth.access_token is None
+
+
+@pytest.mark.parametrize(
+    'item_class,scopes,expected_scopes',
+    [
+        (File, [TokenScope.ITEM_READWRITE], 'item_readwrite'),
+        (Folder, [TokenScope.ITEM_PREVIEW, TokenScope.ITEM_SHARE], 'item_preview item_share'),
+        (File, [TokenScope.ITEM_READ, TokenScope.ITEM_SHARE, TokenScope.ITEM_DELETE], 'item_read item_share item_delete'),
+        (None, [TokenScope.ITEM_DOWNLOAD], 'item_download'),
+    ],
+)
+def test_downscope_token_sends_downscope_request(
+        oauth,
+        access_token,
+        mock_network_layer,
+        mock_box_session,
+        mock_object_id,
+        make_mock_box_request,
+        item_class,
+        scopes,
+        expected_scopes,
+):
+    mock_downscoped_token = 'mock_downscoped_token'
+    mock_network_response, _ = make_mock_box_request(response={'access_token': mock_downscoped_token})
+    mock_network_layer.request.return_value = mock_network_response
+
+    item = item_class(mock_box_session, mock_object_id) if item_class else None
+    downscoped_token = oauth.downscope_token(scopes, item)
+
+    assert downscoped_token == mock_downscoped_token
+    expected_data = {
+        'subject_token': access_token,
+        'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
+        'scope': expected_scopes,
+        'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
+    }
+    if item:
+        expected_data['resource'] = item.get_url()
+    mock_network_layer.request.assert_called_once_with(
+        'POST',
+        '{0}/token'.format(API.OAUTH2_API_URL),
+        data=expected_data,
+        headers={'content-type': 'application/x-www-form-urlencoded'},
+        access_token=access_token,
+    )
+
+
+def test_downscope_token_sends_downscope_request_with_additional_data(
+        oauth,
+        access_token,
+        mock_network_layer,
+        mock_box_session,
+        mock_object_id,
+        make_mock_box_request,
+):
+    mock_downscoped_token = 'mock_downscoped_token'
+    mock_network_response, _ = make_mock_box_request(response={'access_token': mock_downscoped_token})
+    mock_network_layer.request.return_value = mock_network_response
+
+    item = File(mock_box_session, mock_object_id)
+    additional_data = {'grant_type': 'new_grant_type', 'extra_data_key': 'extra_data_value'}
+    downscoped_token = oauth.downscope_token([TokenScope.ITEM_READWRITE], item, additional_data)
+
+    assert downscoped_token == mock_downscoped_token
+    mock_network_layer.request.assert_called_once_with(
+        'POST',
+        '{0}/token'.format(API.OAUTH2_API_URL),
+        data={
+            'subject_token': access_token,
+            'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
+            'scope': 'item_readwrite',
+            'resource': item.get_url(),
+            'grant_type': 'new_grant_type',
+            'extra_data_key': 'extra_data_value',
+        },
+        headers={'content-type': 'application/x-www-form-urlencoded'},
+        access_token=access_token,
+    )
 
 
 def test_tokens_get_updated_after_noop_refresh(client_id, client_secret, access_token, new_access_token, refresh_token, mock_network_layer):
