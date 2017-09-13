@@ -62,5 +62,5 @@ def test_redis_managed_oauth2_stores_tokens_to_redis_during_refresh(
             network_layer=mock_network_layer,
         )
     mock_network_layer.request.return_value = successful_token_response
-    oauth2.send_token_request({}, access_token=None, expect_refresh_token=True)
+    oauth2.send_token_request_and_store_tokens({}, access_token=None, expect_refresh_token=True)
     redis_server.hmset.assert_called_once_with(unique_id, {'access': access_token, 'refresh': refresh_token})

@@ -300,7 +300,7 @@ def test_token_request_allows_missing_refresh_token(mock_network_layer):
         access_token='fake_access_token',
         network_layer=mock_network_layer,
     )
-    oauth.send_token_request({}, access_token=None, expect_refresh_token=False)
+    oauth.send_token_request_and_store_tokens({}, access_token=None, expect_refresh_token=False)
 
 
 @pytest.fixture()
@@ -386,6 +386,7 @@ def test_downscope_token_sends_downscope_request(
         'POST',
         '{0}/token'.format(API.OAUTH2_API_URL),
         data=expected_data,
+        headers={'content-type': 'application/x-www-form-urlencoded'},
         access_token=access_token,
     )
 
@@ -418,6 +419,7 @@ def test_downscope_token_sends_downscope_request_with_additional_data(
             'grant_type': 'new_grant_type',
             'extra_data_key': 'extra_data_value',
         },
+        headers={'content-type': 'application/x-www-form-urlencoded'},
         access_token=access_token,
     )
 
