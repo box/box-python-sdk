@@ -34,6 +34,7 @@ class JWTAuth(OAuth2):
             access_token=None,
             network_layer=None,
             jwt_algorithm='RS256',
+            **kwargs
     ):
         """
         :param client_id:
@@ -94,6 +95,7 @@ class JWTAuth(OAuth2):
             access_token=access_token,
             refresh_token=None,
             network_layer=network_layer,
+            **kwargs
         )
         with open(rsa_private_key_file_sys_path, 'rb') as key_file:
             self._rsa_private_key = serialization.load_pem_private_key(
