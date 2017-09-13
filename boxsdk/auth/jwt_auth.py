@@ -39,6 +39,7 @@ class JWTAuth(OAuth2):
             network_layer=None,
             jwt_algorithm='RS256',
             rsa_private_key_data=None,
+            **kwargs
     ):
         """Extends baseclass method.
 
@@ -148,6 +149,7 @@ class JWTAuth(OAuth2):
             access_token=access_token,
             refresh_token=None,
             network_layer=network_layer,
+            **kwargs
         )
         self._rsa_private_key = rsa_private_key
         self._enterprise_id = enterprise_id
