@@ -300,7 +300,7 @@ def test_token_request_allows_missing_refresh_token(mock_network_layer):
         access_token='fake_access_token',
         network_layer=mock_network_layer,
     )
-    oauth.send_token_request_and_store_tokens({}, access_token=None, expect_refresh_token=False)
+    oauth.send_token_request({}, access_token=None, expect_refresh_token=False)
 
 
 @pytest.fixture()

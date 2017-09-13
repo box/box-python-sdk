@@ -181,7 +181,7 @@ class OAuth2(object):
             data['box_device_id'] = self._box_device_id
         if self._box_device_name:
             data['box_device_name'] = self._box_device_name
-        return self.send_token_request_and_store_tokens(data, access_token=None)
+        return self.send_token_request(data, access_token=None)
 
     def _refresh(self, access_token):
         data = {
@@ -195,7 +195,7 @@ class OAuth2(object):
         if self._box_device_name:
             data['box_device_name'] = self._box_device_name
 
-        return self.send_token_request_and_store_tokens(data, access_token)
+        return self.send_token_request(data, access_token)
 
     def _get_tokens(self):
         """
@@ -294,7 +294,7 @@ class OAuth2(object):
         """
         self._access_token, self._refresh_token = access_token, refresh_token
 
-    def _send_token_request(self, data, access_token, expect_refresh_token=True):
+    def _send_token_request_without_storing_tokens(self, data, access_token, expect_refresh_token=True):
         """
         Send the request to acquire or refresh an access token.
 
@@ -334,7 +334,7 @@ class OAuth2(object):
 
         return access_token, refresh_token
 
-    def send_token_request_and_store_tokens(self, data, access_token, expect_refresh_token=True):
+    def send_token_request(self, data, access_token, expect_refresh_token=True):
         """
         Send the request to acquire or refresh an access token, and store the tokens.
 
@@ -351,7 +351,7 @@ class OAuth2(object):
         :rtype:
             (`unicode`, `unicode`)
         """
-        access_token, refresh_token = self._send_token_request(data, access_token, expect_refresh_token)
+        access_token, refresh_token = self._send_token_request_without_storing_tokens(data, access_token, expect_refresh_token)
         self._store_tokens(access_token, refresh_token)
         return self._access_token, self._refresh_token
 
@@ -416,7 +416,7 @@ class OAuth2(object):
             if additional_data:
                 data.update(additional_data)
 
-            access_token, _ = self._send_token_request(data, access_token, expect_refresh_token=False)
+            access_token, _ = self._send_token_request_without_storing_tokens(data, access_token, expect_refresh_token=False)
         return access_token
 
     def close(self, revoke=True):
