@@ -392,7 +392,7 @@ class Folder(Item):
         return self.update_info(data=data)
 
     @api_call
-    def add_collaborator(self, collaborator, role, notify=False):
+    def add_collaborator(self, collaborator, role, notify=False, can_view_path=False):
         """Add a collaborator to the folder
 
         :param collaborator:
@@ -407,6 +407,10 @@ class Folder(Item):
             Whether to send a notification email to the collaborator
         :type notify:
             `bool`
+        :param can_view_path:
+            Whether view path collaboration feature is enabled or not
+        :type can_view_path:
+            `bool`
         :return:
             The new collaboration
         :rtype:
@@ -418,13 +422,16 @@ class Folder(Item):
         access_key, access_value = collaborator_helper.access
         accessible_by = {
             access_key: access_value,
-            'type': collaborator_helper.type
+            'type': collaborator_helper.type,
         }
-        data = json.dumps({
+        body_params = {
             'item': item,
             'accessible_by': accessible_by,
             'role': role,
-        })
+        }
+        if can_view_path:
+            body_params['can_view_path'] = True
+        data = json.dumps(body_params)
         params = {'notify': notify}
         box_response = self._session.post(url, expect_json_response=True, data=data, params=params)
         collaboration_response = box_response.json()

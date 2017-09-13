@@ -67,47 +67,37 @@ def mock_items_response(mock_items):
     return get_response
 
 
-def _assert_collaborator_added(test_folder, collaborator, mock_box_session, mock_collab_response, notify, role, data):
+def _assert_collaborator_added(test_folder, collaborator, mock_box_session, mock_collab_response, notify, role, can_view_path, data):
     mock_box_session.post.return_value = mock_collab_response
-    collaboration = test_folder.add_collaborator(collaborator, role, notify)
+    collaboration = test_folder.add_collaborator(collaborator, role, notify, can_view_path)
     assert isinstance(collaboration, Collaboration)
     expected_url = API.BASE_API_URL + '/collaborations'
     params = {'notify': notify}
     mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=True, data=data, params=params)
 
 
+@pytest.mark.parametrize('accessible_by', ['user', 'group', 'email'])
 @pytest.mark.parametrize('notify', [True, False])
 @pytest.mark.parametrize('role', iter(CollaborationRole))
-def test_add_user_collaborator(test_folder, mock_user, mock_box_session, mock_collab_response, notify, role):
-    data = json.dumps({
+@pytest.mark.parametrize('can_view_path', [True, False])
+def test_add_collaborator(test_folder, mock_user, mock_group, mock_box_session, mock_collab_response, accessible_by, notify, role, can_view_path):
+    accessible_dict = {
+        'user': (mock_user, {'id': mock_user.object_id, 'type': 'user'}),
+        'group': (mock_group, {'id': mock_group.object_id, 'type': 'group'}),
+        'email': ('foo@example.com', {'login': 'foo@example.com', 'type': 'user'}),
+    }
+
+    invitee, mock_accessible_by = accessible_dict[accessible_by]
+
+    body_parems = {
         'item': {'id': test_folder.object_id, 'type': 'folder'},
-        'accessible_by': {'id': mock_user.object_id, 'type': 'user'},
+        'accessible_by': mock_accessible_by,
         'role': role,
-    })
-    _assert_collaborator_added(test_folder, mock_user, mock_box_session, mock_collab_response, notify, role, data)
-
-
-@pytest.mark.parametrize('notify', [True, False])
-@pytest.mark.parametrize('role', iter(CollaborationRole))
-def test_add_group_collaborator(test_folder, mock_group, mock_box_session, mock_collab_response, notify, role):
-    data = json.dumps({
-        'item': {'id': test_folder.object_id, 'type': 'folder'},
-        'accessible_by': {'id': mock_group.object_id, 'type': 'group'},
-        'role': role,
-    })
-    _assert_collaborator_added(test_folder, mock_group, mock_box_session, mock_collab_response, notify, role, data)
-
-
-@pytest.mark.parametrize('notify', [True, False])
-@pytest.mark.parametrize('role', iter(CollaborationRole))
-def test_add_email_collaborator(test_folder, mock_box_session, mock_collab_response, notify, role):
-    email_address = 'foo@example.com'
-    data = json.dumps({
-        'item': {'id': test_folder.object_id, 'type': 'folder'},
-        'accessible_by': {'login': email_address, 'type': 'user'},
-        'role': role,
-    })
-    _assert_collaborator_added(test_folder, email_address, mock_box_session, mock_collab_response, notify, role, data)
+    }
+    if can_view_path:
+        body_parems['can_view_path'] = True
+    data = json.dumps(body_parems)
+    _assert_collaborator_added(test_folder, invitee, mock_box_session, mock_collab_response, notify, role, can_view_path, data)
 
 
 def test_add_collaborator_raises_for_bad_type(test_folder):
