@@ -408,7 +408,8 @@ class Folder(Item):
         :type notify:
             `bool`
         :param can_view_path:
-            Whether view path collaboration feature is enabled or not
+            Whether view path collaboration feature is enabled or not. Note - only
+            folder owners can create collaborations with can_view_path.
         :type can_view_path:
             `bool`
         :return:

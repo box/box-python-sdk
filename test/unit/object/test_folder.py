@@ -89,14 +89,14 @@ def test_add_collaborator(test_folder, mock_user, mock_group, mock_box_session, 
 
     invitee, mock_accessible_by = accessible_dict[accessible_by]
 
-    body_parems = {
+    body_params = {
         'item': {'id': test_folder.object_id, 'type': 'folder'},
         'accessible_by': mock_accessible_by,
         'role': role,
     }
     if can_view_path:
-        body_parems['can_view_path'] = True
-    data = json.dumps(body_parems)
+        body_params['can_view_path'] = True
+    data = json.dumps(body_params)
     _assert_collaborator_added(test_folder, invitee, mock_box_session, mock_collab_response, notify, role, can_view_path, data)
 
 
