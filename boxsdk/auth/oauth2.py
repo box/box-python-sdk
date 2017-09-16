@@ -300,7 +300,7 @@ class OAuth2(object):
         """
         self._access_token, self._refresh_token = access_token, refresh_token
 
-    def execute_token_request(self, data, access_token, expect_refresh_token=True):
+    def _execute_token_request(self, data, access_token, expect_refresh_token=True):
         """
         Send the request to acquire or refresh an access token.
 
@@ -356,7 +356,8 @@ class OAuth2(object):
         :rtype:
             (`unicode`, `unicode`)
         """
-        token_response = self.execute_token_request(data, access_token, expect_refresh_token)
+        token_response = self._execute_token_request(data, access_token, expect_refresh_token)
+        # pylint:disable=no-member
         refresh_token = token_response.refresh_token if 'refresh_token' in token_response else None
         self._store_tokens(token_response.access_token, refresh_token)
         return self._access_token, self._refresh_token
@@ -422,9 +423,7 @@ class OAuth2(object):
             if additional_data:
                 data.update(additional_data)
 
-            token_response = self.execute_token_request(data, access_token, expect_refresh_token=False)
-
-        return token_response
+            return self._execute_token_request(data, access_token, expect_refresh_token=False)
 
     def close(self, revoke=True):
         """Close the auth object.
