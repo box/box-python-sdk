@@ -11,9 +11,10 @@ import sys
 import six
 from six.moves.urllib.parse import urlencode, urlunsplit  # pylint:disable=import-error,no-name-in-module
 
-from boxsdk.network.default_network import DefaultNetwork
 from boxsdk.config import API
 from boxsdk.exception import BoxOAuthException
+from boxsdk.network.default_network import DefaultNetwork
+from boxsdk.object.base_api_json_object import BaseAPIJSONObject
 from boxsdk.util.text_enum import TextEnum
 
 
@@ -29,6 +30,11 @@ class TokenScope(TextEnum):
     ITEM_SHARE = 'item_share'
     ITEM_DELETE = 'item_delete'
     ITEM_DOWNLOAD = 'item_download'
+
+
+class TokenResponse(BaseAPIJSONObject):
+    """ Represents the response for a token request. """
+    pass
 
 
 class OAuth2(object):
@@ -294,7 +300,7 @@ class OAuth2(object):
         """
         self._access_token, self._refresh_token = access_token, refresh_token
 
-    def _send_token_request_without_storing_tokens(self, data, access_token, expect_refresh_token=True):
+    def execute_token_request(self, data, access_token, expect_refresh_token=True):
         """
         Send the request to acquire or refresh an access token.
 
@@ -307,9 +313,9 @@ class OAuth2(object):
         :type access_token:
             `unicode` or None
         :return:
-            The access token and refresh token.
+            The response for the token request.
         :rtype:
-            (`unicode`, `unicode`)
+            :class:`TokenResponse`
         """
         self._check_closed()
         url = '{base_auth_url}/token'.format(base_auth_url=API.OAUTH2_API_URL)
@@ -324,15 +330,14 @@ class OAuth2(object):
         if not network_response.ok:
             raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
         try:
-            response = network_response.json()
-            access_token = response['access_token']
-            refresh_token = response.get('refresh_token', None)
-            if refresh_token is None and expect_refresh_token:
-                raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
-        except (ValueError, KeyError):
+            token_response = TokenResponse(network_response.json())
+        except ValueError:
             raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
 
-        return access_token, refresh_token
+        if ('access_token' not in token_response) or (expect_refresh_token and 'refresh_token' not in token_response):
+            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
+
+        return token_response
 
     def send_token_request(self, data, access_token, expect_refresh_token=True):
         """
@@ -351,8 +356,9 @@ class OAuth2(object):
         :rtype:
             (`unicode`, `unicode`)
         """
-        access_token, refresh_token = self._send_token_request_without_storing_tokens(data, access_token, expect_refresh_token)
-        self._store_tokens(access_token, refresh_token)
+        token_response = self.execute_token_request(data, access_token, expect_refresh_token)
+        refresh_token = token_response.refresh_token if 'refresh_token' in token_response else None
+        self._store_tokens(token_response.access_token, refresh_token)
         return self._access_token, self._refresh_token
 
     def revoke(self):
@@ -381,7 +387,7 @@ class OAuth2(object):
 
     def downscope_token(self, scopes, item=None, additional_data=None):
         """
-        Get a downscoped token for the provided file or folder with the provided scopes.
+        Generate a downscoped token for the provided file or folder with the provided scopes.
 
         :param scope:
             The scope(s) to apply to the resulting token.
@@ -397,9 +403,9 @@ class OAuth2(object):
         :type additional_data:
             `dict`
         :return:
-            The downscoped token
+            The response for the downscope token request.
         :rtype:
-            `unicode`
+            :class:`TokenResponse`
         """
         self._check_closed()
         with self._refresh_lock:
@@ -416,8 +422,9 @@ class OAuth2(object):
             if additional_data:
                 data.update(additional_data)
 
-            access_token, _ = self._send_token_request_without_storing_tokens(data, access_token, expect_refresh_token=False)
-        return access_token
+            token_response = self.execute_token_request(data, access_token, expect_refresh_token=False)
+
+        return token_response
 
     def close(self, revoke=True):
         """Close the auth object.
