@@ -5,7 +5,7 @@ from __future__ import absolute_import, division, unicode_literals
 from datetime import timedelta
 
 import six
-from six.moves import map
+from six.moves import map   # pylint:disable=redefined-builtin
 
 
 if not hasattr(timedelta, 'total_seconds'):
@@ -78,7 +78,7 @@ def with_metaclass(meta, *bases, **with_metaclass_kwargs):
             # six<1.11.0, __prepare__ is not defined on the temporary metaclass.
 
             @classmethod
-            def __prepare__(mcs, name, this_bases, **kwds):  # pylint:disable=unused-argument,arguments-differ
+            def __prepare__(mcs, name, this_bases, **kwds):  # pylint:disable=unused-argument,arguments-differ,bad-classmethod-argument
                 return meta.__prepare__(name, bases, **kwds)
 
     return type.__new__(TemporaryMetaSubclass, str('temporary_class'), bases, {})
