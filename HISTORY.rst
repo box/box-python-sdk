@@ -134,6 +134,7 @@ Release History
   when it tried to refresh any ``JWTAuth`` object.
 - Fixed an exception that was being raised from ``ExtendableEnumMeta.__dir__()``.
 - CPython 3.6 support.
+- Increased required minimum version of six to 1.9.0.
 
 1.5.3 (2016-05-26)
 ++++++++++++++++++
