@@ -87,14 +87,6 @@ def with_metaclass(meta, *bases, **with_metaclass_kwargs):
     return type.__new__(TemporaryMetaSubclass, str('temporary_class'), bases, {})
 
 
-def raise_from(value, _):   # pylint:disable=unused-argument
-    """Fallback for six.raise_from(), when using six<1.9.0."""
-    raise value
-
-
-raise_from = getattr(six, 'raise_from', raise_from)   # pylint:disable=invalid-name
-
-
 def _most_derived_metaclass(meta, bases):
     """Selects the most derived metaclass of all the given metaclasses.
 
