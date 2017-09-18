@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from datetime import datetime, timedelta
 import pytest
-from boxsdk.util.compat import total_seconds, with_metaclass
+from boxsdk.util.compat import raise_from, total_seconds, with_metaclass
 
 
 @pytest.fixture(params=(
@@ -50,3 +50,28 @@ def test_with_metaclass():
 
     assert type(Subclass) is Meta   # pylint:disable=unidiomatic-typecheck
     assert Subclass.__bases__ == bases
+
+
+class MyError1(Exception):
+    pass
+
+
+class MyError2(Exception):
+    pass
+
+
+class MyError3(Exception):
+    pass
+
+
+@pytest.mark.parametrize('custom_context', [None, False, True])
+def test_raise_from(custom_context):
+    try:
+        raise MyError1
+    except MyError1 as context:
+        if custom_context is False:
+            custom_context = context
+        elif custom_context is True:
+            custom_context = MyError2()
+    with pytest.raises(MyError3):
+        raise_from(MyError3(), custom_context)

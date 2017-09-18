@@ -10,11 +10,11 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 import jwt
-from six import binary_type, string_types, raise_from, text_type
+from six import binary_type, string_types, text_type
 
 from .oauth2 import OAuth2
 from ..object.user import User
-from ..util.compat import NoneType, total_seconds
+from ..util.compat import NoneType, raise_from, total_seconds
 
 
 class JWTAuth(OAuth2):
