@@ -5,6 +5,7 @@ from __future__ import absolute_import, division, unicode_literals
 from datetime import timedelta
 
 import six
+from six.moves import map
 
 
 NoneType = type(None)
@@ -62,19 +63,58 @@ def with_metaclass(meta, *bases, **with_metaclass_kwargs):
     ``bases``, then errors might occur. For example, this was a problem when
     used with ``enum.EnumMeta`` in Python 3.6. Here we make sure that
     ``__prepare__()`` is defined on the temporary metaclass, and pass ``bases``
-    to ``meta.__prepare__()``.
+    to ``meta.__prepare__()``. This is fixed in six>=1.11.0 by PR #178 [1].
 
     Since ``temporary_class`` doesn't have the correct bases, in theory this
     could cause other problems, besides the previous one, in certain edge
     cases. To make sure that doesn't become a problem, we make sure that
     ``temporary_class`` has ``bases`` as its bases, just like the final class.
+
+    [1] <https://github.com/benjaminp/six/pull/178>
     """
     temporary_class = six.with_metaclass(meta, *bases, **with_metaclass_kwargs)
     temporary_metaclass = type(temporary_class)
 
-    class TemporaryMetaSubclass(temporary_metaclass):
-        @classmethod
-        def __prepare__(cls, name, this_bases, **kwds):  # pylint:disable=unused-argument
-            return meta.__prepare__(name, bases, **kwds)
+    class TemporaryMetaSubclass(temporary_metaclass, _most_derived_metaclass(meta, bases)):
+
+        if '__prepare__' not in temporary_metaclass.__dict__:
+            # six<1.11.0, __prepare__ is not defined on the temporary metaclass.
+
+            @classmethod
+            def __prepare__(mcs, name, this_bases, **kwds):  # pylint:disable=unused-argument,arguments-differ
+                return meta.__prepare__(name, bases, **kwds)
 
     return type.__new__(TemporaryMetaSubclass, str('temporary_class'), bases, {})
+
+
+def _most_derived_metaclass(meta, bases):
+    """Selects the most derived metaclass of all the given metaclasses.
+
+    This will be the same metaclass that is selected by
+
+    .. code-block:: python
+
+        class temporary_class(*bases, metaclass=meta): pass
+
+    or equivalently by
+
+    .. code-block:: python
+
+        types.prepare_class('temporary_class', bases, metaclass=meta)
+
+    "Most derived" means the item in {meta, type(bases[0]), type(bases[1]), ...}
+    which is a non-strict subclass of every item in that set.
+
+    If no such item exists, then :exc:`TypeError` is raised.
+
+    :type meta:   `type`
+    :type bases:  :class:`Iterable` of `type`
+    """
+    most_derived_metaclass = meta
+    for base_type in map(type, bases):
+        if issubclass(base_type, most_derived_metaclass):
+            most_derived_metaclass = base_type
+        elif not issubclass(most_derived_metaclass, base_type):
+            # Raises TypeError('metaclass conflict: ...')
+            return type.__new__(meta, str('temporary_class'), bases, {})
+    return most_derived_metaclass
