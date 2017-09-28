@@ -200,20 +200,17 @@ def test_refresh_gives_back_the_correct_response_and_handles_multiple_requests(
 
 
 @pytest.fixture()
-def token_method(request, mock_box_session, mock_object_id):
+def token_method(request):
     """ Fixture that returns a partial method based on the method provided in request.param"""
     if request.param == OAuth2.refresh:
         return partial(OAuth2.refresh, access_token_to_refresh='fake_access_token')
     elif request.param == OAuth2.authenticate:
         return partial(OAuth2.authenticate, auth_code='fake_code')
-    elif request.param == OAuth2.downscope_token:
-        item = File(mock_box_session, mock_object_id)
-        return partial(OAuth2.downscope_token, scopes=[TokenScope.ITEM_READ], item=item)
 
 
 @pytest.mark.parametrize(
     'token_method',
-    [OAuth2.refresh, OAuth2.authenticate, OAuth2.downscope_token],
+    [OAuth2.refresh, OAuth2.authenticate],
     indirect=True,
 )
 def test_token_request_raises_box_oauth_exception_when_getting_bad_network_response(
@@ -234,7 +231,7 @@ def test_token_request_raises_box_oauth_exception_when_getting_bad_network_respo
 
 @pytest.mark.parametrize(
     'token_method',
-    [OAuth2.refresh, OAuth2.authenticate, OAuth2.downscope_token],
+    [OAuth2.refresh, OAuth2.authenticate],
     indirect=True,
 )
 def test_token_request_raises_box_oauth_exception_when_no_json_object_can_be_decoded(
@@ -344,85 +341,6 @@ def test_revoke_sends_revoke_request(
         access_token=access_token,
     )
     assert oauth.access_token is None
-
-
-@pytest.fixture
-def check_downscope_token_request(
-        oauth,
-        mock_network_layer,
-        mock_box_session,
-        mock_object_id,
-        make_mock_box_request,
-):
-    def do_check(access_token, item_class, scopes, additional_data, expected_data):
-        dummy_downscoped_token = 'dummy_downscoped_token'
-        dummy_expires_in = 1234
-        mock_network_response, _ = make_mock_box_request(
-            response={'access_token': dummy_downscoped_token, 'expires_in': dummy_expires_in},
-        )
-        mock_network_layer.request.return_value = mock_network_response
-
-        item = item_class(mock_box_session, mock_object_id) if item_class else None
-
-        if additional_data:
-            downscoped_token_response = oauth.downscope_token(scopes, item, additional_data)
-        else:
-            downscoped_token_response = oauth.downscope_token(scopes, item)
-
-        assert downscoped_token_response.access_token == dummy_downscoped_token
-        assert downscoped_token_response.expires_in == dummy_expires_in
-
-        if item:
-            expected_data['resource'] = item.get_url()
-        mock_network_layer.request.assert_called_once_with(
-            'POST',
-            '{0}/token'.format(API.OAUTH2_API_URL),
-            data=expected_data,
-            headers={'content-type': 'application/x-www-form-urlencoded'},
-            access_token=access_token,
-        )
-
-    return do_check
-
-
-@pytest.mark.parametrize(
-    'item_class,scopes,expected_scopes',
-    [
-        (File, [TokenScope.ITEM_READWRITE], 'item_readwrite'),
-        (Folder, [TokenScope.ITEM_PREVIEW, TokenScope.ITEM_SHARE], 'item_preview item_share'),
-        (File, [TokenScope.ITEM_READ, TokenScope.ITEM_SHARE, TokenScope.ITEM_DELETE], 'item_read item_share item_delete'),
-        (None, [TokenScope.ITEM_DOWNLOAD], 'item_download'),
-    ],
-)
-def test_downscope_token_sends_downscope_request(
-        access_token,
-        check_downscope_token_request,
-        item_class,
-        scopes,
-        expected_scopes,
-):
-    expected_data = {
-        'subject_token': access_token,
-        'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
-        'scope': expected_scopes,
-        'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
-    }
-    check_downscope_token_request(access_token, item_class, scopes, {}, expected_data)
-
-
-def test_downscope_token_sends_downscope_request_with_additional_data(
-        access_token,
-        check_downscope_token_request,
-):
-    additional_data = {'grant_type': 'new_grant_type', 'extra_data_key': 'extra_data_value'}
-    expected_data = {
-        'subject_token': access_token,
-        'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
-        'scope': 'item_readwrite',
-        'grant_type': 'new_grant_type',
-        'extra_data_key': 'extra_data_value',
-    }
-    check_downscope_token_request(access_token, File, [TokenScope.ITEM_READWRITE], additional_data, expected_data)
 
 
 def test_tokens_get_updated_after_noop_refresh(client_id, client_secret, access_token, new_access_token, refresh_token, mock_network_layer):

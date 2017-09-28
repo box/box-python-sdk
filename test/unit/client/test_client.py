@@ -13,7 +13,7 @@ from six.moves import zip
 # pylint:enable=redefined-builtin
 # pylint:enable=import-error
 
-from boxsdk.auth.oauth2 import OAuth2
+from boxsdk.auth.oauth2 import OAuth2, TokenScope
 from boxsdk.client import Client, DeveloperTokenClient, DevelopmentClient, LoggingClient
 from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
@@ -368,3 +368,78 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
+
+
+@pytest.fixture
+def check_downscope_token_request(
+        mock_client,
+        mock_box_session,
+        mock_object_id,
+        make_mock_box_request,
+):
+    def do_check(item_class, scopes, additional_data, expected_data):
+        dummy_downscoped_token = 'dummy_downscoped_token'
+        dummy_expires_in = 1234
+        mock_box_response, _ = make_mock_box_request(
+            response={'access_token': dummy_downscoped_token, 'expires_in': dummy_expires_in},
+        )
+        mock_box_session.post.return_value = mock_box_response
+
+        item = item_class(mock_box_session, mock_object_id) if item_class else None
+
+        if additional_data:
+            downscoped_token_response = mock_client.downscope_token(scopes, item, additional_data)
+        else:
+            downscoped_token_response = mock_client.downscope_token(scopes, item)
+
+        assert downscoped_token_response.access_token == dummy_downscoped_token
+        assert downscoped_token_response.expires_in == dummy_expires_in
+
+        if item:
+            expected_data['resource'] = item.get_url()
+        mock_box_session.post.assert_called_once_with(
+            '{0}/token'.format(API.OAUTH2_API_URL),
+            data=expected_data,
+        )
+
+    return do_check
+
+
+@pytest.mark.parametrize(
+    'item_class,scopes,expected_scopes',
+    [
+        (File, [TokenScope.ITEM_READWRITE], 'item_readwrite'),
+        (Folder, [TokenScope.ITEM_PREVIEW, TokenScope.ITEM_SHARE], 'item_preview item_share'),
+        (File, [TokenScope.ITEM_READ, TokenScope.ITEM_SHARE, TokenScope.ITEM_DELETE], 'item_read item_share item_delete'),
+        (None, [TokenScope.ITEM_DOWNLOAD], 'item_download'),
+    ],
+)
+def test_downscope_token_sends_downscope_request(
+        mock_client,
+        check_downscope_token_request,
+        item_class,
+        scopes,
+        expected_scopes,
+):
+    expected_data = {
+        'subject_token': mock_client.auth.access_token,
+        'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
+        'scope': expected_scopes,
+        'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
+    }
+    check_downscope_token_request(item_class, scopes, {}, expected_data)
+
+
+def test_downscope_token_sends_downscope_request_with_additional_data(
+        mock_client,
+        check_downscope_token_request,
+):
+    additional_data = {'grant_type': 'new_grant_type', 'extra_data_key': 'extra_data_value'}
+    expected_data = {
+        'subject_token': mock_client.auth.access_token,
+        'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
+        'scope': 'item_readwrite',
+        'grant_type': 'new_grant_type',
+        'extra_data_key': 'extra_data_value',
+    }
+    check_downscope_token_request(File, [TokenScope.ITEM_READWRITE], additional_data, expected_data)
