@@ -371,6 +371,7 @@ def jwt_subclass_that_just_stores_params():
     class StoreParamJWTAuth(JWTAuth):
         def __init__(self, **kwargs):
             self.kwargs = kwargs
+            super(StoreParamJWTAuth, self).__init__(**kwargs)
 
     return StoreParamJWTAuth
 
@@ -399,7 +400,7 @@ def app_config_json_content(
         rsa_private_key_bytes,
         rsa_passphrase,
 ):
-    return r"""
+    template = br"""
 {{
   "boxAppSettings": {{
     "clientID": "{client_id}",
@@ -407,17 +408,18 @@ def app_config_json_content(
     "appAuth": {{
       "publicKeyID": "{jwt_key_id}",
       "privateKey": "{private_key}",
-      "passphrase": "{passphrase}"
+      "passphrase": {passphrase}
     }}
   }},
-  "enterpriseID": "{enterprise_id}"
-}}""".format(
+  "enterpriseID": {enterprise_id}
+}}"""
+    return template.format(
         client_id=fake_client_id,
         client_secret=fake_client_secret,
         jwt_key_id=jwt_key_id,
-        private_key=rsa_private_key_bytes.replace("\n", ''),
-        passphrase=rsa_passphrase,
-        enterprise_id=fake_enterprise_id,
+        private_key=rsa_private_key_bytes.replace(b"\n", b"\\n"),
+        passphrase=json.dumps(rsa_passphrase),
+        enterprise_id=json.dumps(fake_enterprise_id),
     )
 
 
@@ -435,8 +437,8 @@ def assert_jwt_kwargs_expected(
         assert jwt_auth.kwargs['client_secret'] == fake_client_secret
         assert jwt_auth.kwargs['enterprise_id'] == fake_enterprise_id
         assert jwt_auth.kwargs['jwt_key_id'] == jwt_key_id
-        assert jwt_auth.kwargs['rsa_private_key_data'] == rsa_private_key_bytes.replace("\n", '')
-        assert jwt_auth.kwargs['rsa_private_key_passphrase'] == text_type(rsa_passphrase)
+        assert jwt_auth.kwargs['rsa_private_key_data'] == rsa_private_key_bytes
+        assert jwt_auth.kwargs['rsa_private_key_passphrase'] == rsa_passphrase
 
     return _assert_jwt_kwargs_expected
 
@@ -452,11 +454,10 @@ def test_from_config_file(
         assert_jwt_kwargs_expected(jwt_auth_from_config_file)
 
 
-def test_from_config_dictionary(
+def test_from_settings_dictionary(
         jwt_subclass_that_just_stores_params,
         app_config_json_content,
         assert_jwt_kwargs_expected,
 ):
-    jwt_auth_from_dictionary = jwt_subclass_that_just_stores_params.from_config_dictionary(json.loads(app_config_json_content))
+    jwt_auth_from_dictionary = jwt_subclass_that_just_stores_params.from_settings_dictionary(json.loads(app_config_json_content))
     assert_jwt_kwargs_expected(jwt_auth_from_dictionary)
-

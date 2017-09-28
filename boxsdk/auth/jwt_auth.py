@@ -363,23 +363,12 @@ class JWTAuth(OAuth2):
         return passphrase
 
     @classmethod
-    def from_config_dictionary(cls, config_dictionary):
+    def from_settings_dictionary(cls, config_dictionary, **kwargs):
         """
-        Create an auth instance as defined by the given configuration dictionary.
+        Create an auth instance as defined by the given settings dictionary.
 
-        The dictionary should have the following structure:
-        {
-            "boxAppSettings": {
-                "clientID": "<client ID>",
-                "clientSecret": "<client secret>",
-                "appAuth": {
-                    "publicKeyID": "<public key ID>",
-                    "privateKey": "<RSA private key data>",
-                    "passphrase": "<private key passphrase>",
-                }
-            },
-            "enterpriseID": "<enterprise ID>",
-        }
+        The dictionary should have the structure of the JSON file downloaded from the Box Developer Console.
+
         :param config_dictionary:       Dictionary containing settings for configuring app auth.
         :type config_dictionary:        `dict`
         :return:                        Auth instance configured as specified by the config dictionary.
@@ -390,16 +379,18 @@ class JWTAuth(OAuth2):
         return cls(
             client_id=config_dictionary['boxAppSettings']['clientID'],
             client_secret=config_dictionary['boxAppSettings']['clientSecret'],
-            enterprise_id=config_dictionary.get('enterpriseID'),
-            jwt_key_id=config_dictionary['boxAppSettings']['appAuth']['publicKeyID'],
-            rsa_private_key_data=config_dictionary['boxAppSettings']['appAuth']['privateKey'],
-            rsa_private_key_passphrase=config_dictionary['boxAppSettings']['appAuth']['passphrase'],
+            enterprise_id=config_dictionary.get('enterpriseID', None),
+            jwt_key_id=config_dictionary['boxAppSettings']['appAuth'].get('publicKeyID', None),
+            rsa_private_key_data=config_dictionary['boxAppSettings']['appAuth'].get('privateKey', None),
+            rsa_private_key_passphrase=config_dictionary['boxAppSettings']['appAuth'].get('passphrase', None),
+            **kwargs
         )
 
     @classmethod
-    def from_config_file(cls, config_file_sys_path):
+    def from_config_file(cls, config_file_sys_path, **kwargs):
         """
         Create an auth instance as defined by a JSON file downloaded from the Box Developer Console.
+        See https://developer.box.com/v2.0/docs/authentication-with-jwt for more information.
 
         :param config_file_sys_path:    Path to the JSON file containing the configuration.
         :type config_file_sys_path:     `unicode`
@@ -408,4 +399,4 @@ class JWTAuth(OAuth2):
         """
         with open(config_file_sys_path) as config_file:
             config_dictionary = json.load(config_file)
-            return cls.from_config_dictionary(config_dictionary)
+            return cls.from_settings_dictionary(config_dictionary, **kwargs)
