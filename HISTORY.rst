@@ -105,6 +105,8 @@ Release History
 - Added a ``downscope_token()`` method to the ``OAuth2`` class. This generates a token that
   has its permissions reduced to the provided scopes and for the optionally provided 
   ``File`` or ``Folder``.
+- Added methods for configuring `JWTAuth` from config file: `JWTAuth.from_config_file` and
+  `JWTAuth.from_config_dictionary`.
 
 **Other**
 
