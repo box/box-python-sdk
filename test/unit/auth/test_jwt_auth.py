@@ -364,3 +364,100 @@ def test_refresh_instance_sends_post_request_with_correct_params(jwt_auth_init_a
     enterprise_id = 'fake_enterprise_id'
     with jwt_auth_init_and_auth_mocks(enterprise_id, 'enterprise', enterprise_id=enterprise_id) as oauth:
         oauth.refresh(None)
+
+
+@pytest.fixture()
+def jwt_subclass_that_just_stores_params():
+    class StoreParamJWTAuth(JWTAuth):
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+            super(StoreParamJWTAuth, self).__init__(**kwargs)
+
+    return StoreParamJWTAuth
+
+
+@pytest.fixture
+def fake_client_id():
+    return 'fake_client_id'
+
+
+@pytest.fixture
+def fake_client_secret():
+    return 'fake_client_secret'
+
+
+@pytest.fixture
+def fake_enterprise_id():
+    return 'fake_enterprise_id'
+
+
+@pytest.fixture
+def app_config_json_content(
+        fake_client_id,
+        fake_client_secret,
+        fake_enterprise_id,
+        jwt_key_id,
+        rsa_private_key_bytes,
+        rsa_passphrase,
+):
+    template = r"""
+{{
+  "boxAppSettings": {{
+    "clientID": "{client_id}",
+    "clientSecret": "{client_secret}",
+    "appAuth": {{
+      "publicKeyID": "{jwt_key_id}",
+      "privateKey": "{private_key}",
+      "passphrase": {passphrase}
+    }}
+  }},
+  "enterpriseID": {enterprise_id}
+}}"""
+    return template.format(
+        client_id=fake_client_id,
+        client_secret=fake_client_secret,
+        jwt_key_id=jwt_key_id,
+        private_key=rsa_private_key_bytes.replace(b"\n", b"\\n").decode(),
+        passphrase=json.dumps(rsa_passphrase and rsa_passphrase.decode()),
+        enterprise_id=json.dumps(fake_enterprise_id),
+    )
+
+
+@pytest.fixture()
+def assert_jwt_kwargs_expected(
+        fake_client_id,
+        fake_client_secret,
+        fake_enterprise_id,
+        jwt_key_id,
+        rsa_private_key_bytes,
+        rsa_passphrase,
+):
+    def _assert_jwt_kwargs_expected(jwt_auth):
+        assert jwt_auth.kwargs['client_id'] == fake_client_id
+        assert jwt_auth.kwargs['client_secret'] == fake_client_secret
+        assert jwt_auth.kwargs['enterprise_id'] == fake_enterprise_id
+        assert jwt_auth.kwargs['jwt_key_id'] == jwt_key_id
+        assert jwt_auth.kwargs['rsa_private_key_data'] == rsa_private_key_bytes.decode()
+        assert jwt_auth.kwargs['rsa_private_key_passphrase'] == (rsa_passphrase and rsa_passphrase.decode())
+
+    return _assert_jwt_kwargs_expected
+
+
+def test_from_config_file(
+        jwt_subclass_that_just_stores_params,
+        app_config_json_content,
+        assert_jwt_kwargs_expected,
+):
+    # pylint:disable=redefined-outer-name
+    with patch('boxsdk.auth.jwt_auth.open', mock_open(read_data=app_config_json_content), create=True):
+        jwt_auth_from_config_file = jwt_subclass_that_just_stores_params.from_settings_file('fake_config_file_sys_path')
+        assert_jwt_kwargs_expected(jwt_auth_from_config_file)
+
+
+def test_from_settings_dictionary(
+        jwt_subclass_that_just_stores_params,
+        app_config_json_content,
+        assert_jwt_kwargs_expected,
+):
+    jwt_auth_from_dictionary = jwt_subclass_that_just_stores_params.from_settings_dictionary(json.loads(app_config_json_content))
+    assert_jwt_kwargs_expected(jwt_auth_from_dictionary)
