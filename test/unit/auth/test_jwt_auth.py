@@ -417,7 +417,7 @@ def app_config_json_content(
         client_id=fake_client_id,
         client_secret=fake_client_secret,
         jwt_key_id=jwt_key_id,
-        private_key=rsa_private_key_bytes.replace(b"\n", b"\\n"),
+        private_key=rsa_private_key_bytes.replace(b"\n", b"\\n").decode(),
         passphrase=json.dumps(rsa_passphrase and rsa_passphrase.decode()),
         enterprise_id=json.dumps(fake_enterprise_id),
     )
