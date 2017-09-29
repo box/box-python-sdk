@@ -437,8 +437,8 @@ def assert_jwt_kwargs_expected(
         assert jwt_auth.kwargs['client_secret'] == fake_client_secret
         assert jwt_auth.kwargs['enterprise_id'] == fake_enterprise_id
         assert jwt_auth.kwargs['jwt_key_id'] == jwt_key_id
-        assert jwt_auth.kwargs['rsa_private_key_data'] == rsa_private_key_bytes
-        assert jwt_auth.kwargs['rsa_private_key_passphrase'] == rsa_passphrase
+        assert jwt_auth.kwargs['rsa_private_key_data'] == rsa_private_key_bytes.decode()
+        assert jwt_auth.kwargs['rsa_private_key_passphrase'] == (rsa_passphrase and rsa_passphrase.decode())
 
     return _assert_jwt_kwargs_expected
 
@@ -450,7 +450,7 @@ def test_from_config_file(
 ):
     # pylint:disable=redefined-outer-name
     with patch('boxsdk.auth.jwt_auth.open', mock_open(read_data=app_config_json_content), create=True):
-        jwt_auth_from_config_file = jwt_subclass_that_just_stores_params.from_config_file('fake_config_file_sys_path')
+        jwt_auth_from_config_file = jwt_subclass_that_just_stores_params.from_settings_file('fake_config_file_sys_path')
         assert_jwt_kwargs_expected(jwt_auth_from_config_file)
 
 
