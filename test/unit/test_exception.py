@@ -47,14 +47,17 @@ def test_box_oauth_exception():
     message = 'message'
     url = 'https://example.com'
     method = 'GET'
+    network_response = object()
     box_exception = BoxOAuthException(
         status,
         message=message,
         url=url,
         method=method,
+        network_response=network_response,
     )
     assert str(box_exception) == '''
 Message: {0}
 Status: {1}
 URL: {2}
 Method: {3}'''.format(message, status, url, method)
+    assert box_exception.network_response == network_response

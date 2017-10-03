@@ -175,7 +175,7 @@ class BoxOAuthException(BoxException):
     """
     Exception raised during auth.
     """
-    def __init__(self, status, message=None, url=None, method=None):
+    def __init__(self, status, message=None, url=None, method=None, network_response=None):
         """
         :param status:
             HTTP status code of the auth response
@@ -193,12 +193,28 @@ class BoxOAuthException(BoxException):
             The HTTP verb used to make the request.
         :type method:
             `unicode`
+        :param network_response:
+            The network response for the request.
+        :type network_response:
+            :class:`NetworkResponse`
         """
         super(BoxOAuthException, self).__init__()
         self._status = status
         self._message = message
         self._url = url
         self._method = method
+        self._network_response = network_response
+
+    @property
+    def network_response(self):
+        """The response for the request.
+
+        :return network_response:
+            The network response for the request.
+        :rtype network_response:
+            :class:`NetworkResponse`
+        """
+        return self._network_response
 
     def __unicode__(self):
         return '\nMessage: {0}\nStatus: {1}\nURL: {2}\nMethod: {3}'.format(
