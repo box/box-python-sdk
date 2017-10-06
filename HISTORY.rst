@@ -107,6 +107,7 @@ Release History
   ``File`` or ``Folder``.
 - Added methods for configuring ``JWTAuth`` from config file: ``JWTAuth.from_settings_file`` and
   ``JWTAuth.from_settings_dictionary``.
+- Added ``network_response`` property to ``BoxOAuthException``.
 
 **Other**
 

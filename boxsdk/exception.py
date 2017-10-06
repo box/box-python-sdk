@@ -207,19 +207,18 @@ class BoxOAuthException(BoxException):
 
     @property
     def network_response(self):
-        """The response for the request.
+        """
+        The response returned from the network.
 
-        :return network_response:
-            The network response for the request.
-        :rtype network_response:
-            :class:`NetworkResponse`
+        :rtype: :class:`NetworkResponse`
         """
         return self._network_response
 
     def __unicode__(self):
-        return '\nMessage: {0}\nStatus: {1}\nURL: {2}\nMethod: {3}'.format(
+        return '\nMessage: {0}\nStatus: {1}\nURL: {2}\nMethod: {3}\nHeaders: {4}'.format(
             self._message,
             self._status,
             self._url,
             self._method,
+            self.network_response.headers if self.network_response else 'N/A',
         )

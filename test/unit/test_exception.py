@@ -1,7 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
+from mock import Mock
+import pytest
+
 from boxsdk.exception import BoxAPIException, BoxOAuthException
+from boxsdk.network.default_network import DefaultNetworkResponse
 
 
 def test_box_api_exception():
@@ -42,12 +47,14 @@ Method: {6}
 Context info: {7}'''.format(message, status, code, request_id, headers, url, method, context_info)
 
 
-def test_box_oauth_exception():
+@pytest.mark.parametrize('has_network_response', [True, False])
+def test_box_oauth_exception(has_network_response):
     status = 'status'
     message = 'message'
     url = 'https://example.com'
     method = 'GET'
-    network_response = object()
+    headers = {'header': 'value'}
+    network_response = Mock(DefaultNetworkResponse, headers=headers) if has_network_response else None
     box_exception = BoxOAuthException(
         status,
         message=message,
@@ -59,5 +66,6 @@ def test_box_oauth_exception():
 Message: {0}
 Status: {1}
 URL: {2}
-Method: {3}'''.format(message, status, url, method)
-    assert box_exception.network_response == network_response
+Method: {3}
+Headers: {4}'''.format(message, status, url, method, headers if has_network_response else 'N/A')
+    assert box_exception.network_response is network_response
