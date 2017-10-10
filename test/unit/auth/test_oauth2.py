@@ -14,10 +14,8 @@ from six.moves.urllib import parse as urlparse  # pylint:disable=import-error,no
 
 from boxsdk.exception import BoxOAuthException
 from boxsdk.network.default_network import DefaultNetworkResponse
-from boxsdk.auth.oauth2 import OAuth2, TokenScope
+from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.config import API
-from boxsdk.object.file import File
-from boxsdk.object.folder import Folder
 
 
 class MyError(Exception):
