@@ -328,14 +328,14 @@ class OAuth2(object):
             access_token=access_token,
         )
         if not network_response.ok:
-            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
+            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST', network_response)
         try:
             token_response = TokenResponse(network_response.json())
         except ValueError:
-            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
+            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST', network_response)
 
         if ('access_token' not in token_response) or (expect_refresh_token and 'refresh_token' not in token_response):
-            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
+            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST', network_response)
 
         return token_response
 
@@ -383,7 +383,7 @@ class OAuth2(object):
                 access_token=access_token,
             )
             if not network_response.ok:
-                raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
+                raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST', network_response)
             self._store_tokens(None, None)
 
     def close(self, revoke=True):
