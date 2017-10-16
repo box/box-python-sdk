@@ -386,45 +386,6 @@ class OAuth2(object):
                 raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
             self._store_tokens(None, None)
 
-    def downscope_token(self, scopes, item=None, additional_data=None):
-        """
-        Generate a downscoped token for the provided file or folder with the provided scopes.
-
-        :param scope:
-            The scope(s) to apply to the resulting token.
-        :type scopes:
-            `Iterable` of :class:`TokenScope`
-        :param item:
-            (Optional) The file or folder to get a downscoped token for. If None, the resulting token will
-            not be scoped down to just a single item.
-        :type item:
-            :class:`Item`
-        :param additional_data:
-            (Optional) Key value pairs which can be used to add/update the default data values in the request.
-        :type additional_data:
-            `dict`
-        :return:
-            The response for the downscope token request.
-        :rtype:
-            :class:`TokenResponse`
-        """
-        self._check_closed()
-        with self._refresh_lock:
-            self._check_closed()
-            access_token, _ = self._get_and_update_current_tokens()
-            data = {
-                'subject_token': access_token,
-                'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
-                'scope': ' '.join(scopes),
-                'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
-            }
-            if item:
-                data['resource'] = item.get_url()
-            if additional_data:
-                data.update(additional_data)
-
-            return self._execute_token_request(data, access_token, expect_refresh_token=False)
-
     def close(self, revoke=True):
         """Close the auth object.
 

@@ -3,6 +3,7 @@
 from __future__ import unicode_literals, absolute_import
 import json
 
+from ..auth.oauth2 import TokenResponse
 from ..config import API
 from ..session.box_session import BoxSession
 from ..network.default_network import DefaultNetwork
@@ -437,6 +438,43 @@ class Client(Cloneable):
             object_id=response['id'],
             response_object=response,
         )
+
+    def downscope_token(self, scopes, item=None, additional_data=None):
+        """
+        Generate a downscoped token for the provided file or folder with the provided scopes.
+
+        :param scope:
+            The scope(s) to apply to the resulting token.
+        :type scopes:
+            `Iterable` of :class:`TokenScope`
+        :param item:
+            (Optional) The file or folder to get a downscoped token for. If None, the resulting token will
+            not be scoped down to just a single item.
+        :type item:
+            :class:`Item`
+        :param additional_data:
+            (Optional) Key value pairs which can be used to add/update the default data values in the request.
+        :type additional_data:
+            `dict`
+        :return:
+            The response for the downscope token request.
+        :rtype:
+            :class:`TokenResponse`
+        """
+        url = '{base_auth_url}/token'.format(base_auth_url=API.OAUTH2_API_URL)
+        data = {
+            'subject_token': self.auth.access_token,
+            'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
+            'scope': ' '.join(scopes),
+            'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
+        }
+        if item:
+            data['resource'] = item.get_url()
+        if additional_data:
+            data.update(additional_data)
+
+        box_response = self._session.post(url, data=data)
+        return TokenResponse(box_response.json())
 
     def clone(self, session=None):
         """Base class override."""

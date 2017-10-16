@@ -102,7 +102,7 @@ Release History
   These classes manage the logic of constructing requests to an endpoint and storing the results,
   then provide ``__next__`` to easily iterate over the results. The option to return results one
   by one or as a ``Page`` of results is also provided.
-- Added a ``downscope_token()`` method to the ``OAuth2`` class. This generates a token that
+- Added a ``downscope_token()`` method to the ``Client`` class. This generates a token that
   has its permissions reduced to the provided scopes and for the optionally provided 
   ``File`` or ``Folder``.
 - Added methods for configuring ``JWTAuth`` from config file: ``JWTAuth.from_settings_file`` and
