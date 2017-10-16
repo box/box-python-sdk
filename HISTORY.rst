@@ -97,6 +97,7 @@ Release History
 
 - Added a ``RecentItem`` class.
 - Added ``client.get_recent_items()`` to retrieve a user's recently accessed items on Box.
+- Added support for the ``can_view_path`` parameter when creating new collaborations.
 - Added ``BoxObjectCollection`` and subclasses ``LimitOffsetBasedObjectCollection`` and
   ``MarkerBasedObjectCollection`` to more easily manage paging of objects from an endpoint.
   These classes manage the logic of constructing requests to an endpoint and storing the results,
