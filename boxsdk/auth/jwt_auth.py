@@ -243,18 +243,56 @@ class JWTAuth(OAuth2):
             return self._construct_and_send_jwt_auth(sub, sub_type)
         except BoxOAuthException as ex:
             error_response = ex.network_response
+            box_datetime = self._get_date_header(error_response)
+            if box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(error_response):
+                return self._construct_and_send_jwt_auth(sub, sub_type, box_datetime)
+        raise
+
+    @staticmethod
+    def _get_date_header(network_response):
+        """
+        Get datetime object for Date header, if the Date header is available.
+
+        :param network_response:
+            The response from the Box API that should include a Date header.
+        :type network_response:
+            :class:`Response`
+        :return:
+            The datetime parsed from the Date header, or None if the header is absent or if it couldn't be parsed.
+        :rtype:
+            `datetime` or `None`
+        """
+        box_date_header = network_response.headers.get('Date', None)
+        if box_date_header is not None:
             try:
-                status_code = error_response.status_code
-                json_response = error_response.json()
-                error_description = json_response['error_description']
-                box_date_header = error_response.headers['date']
-                box_datetime = datetime.strptime(box_date_header, '%a, %d %b %Y %H:%M:%S %Z')
-            except Exception:  # pylint:disable=broad-except
+                return datetime.strptime(box_date_header, '%a, %d %b %Y %H:%M:%S %Z')
+            except ValueError:
                 pass
-            else:
-                if status_code == 400 and 'exp' in error_description:
-                    return self._construct_and_send_jwt_auth(sub, sub_type, box_datetime)
-            raise ex
+        return None
+
+    @staticmethod
+    def _was_exp_claim_rejected_due_to_clock_skew(network_response):
+        """
+        Determine whether the network response indicates that the authorization request was rejected because of
+        the exp claim. This can happen if the current system time is too different from the Box server time.
+
+        Returns True if the status code is 400, the error code is invalid_grant, and the error description indicates
+        a problem with the exp claim; False, otherwise.
+
+        :param network_response:
+        :type network_response:
+            :class:`Response`
+        :rtype:
+            `bool`
+        """
+        status_code = network_response.status_code
+        try:
+            json_response = network_response.json()
+        except ValueError:
+            return False
+        error_code = json_response.get('error', '')
+        error_description = json_response.get('error_description', '')
+        return status_code == 400 and error_code == 'invalid_grant' and 'exp' in error_description
 
     def authenticate_user(self, user=None):
         """
