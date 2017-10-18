@@ -86,6 +86,11 @@ Release History
   - ``authenticate_instance()`` now accepts an ``enterprise`` argument, which
     can be used to set and authenticate as the enterprise service account user,
     if ``None`` was passed for ``enterprise_id`` at construction time.
+  - Authentications that fail due to the expiration time not falling within the
+    correct window of time are now automatically retried using the time given
+    in the Date header of the Box API response. This can happen naturally when
+    the system time of the machine running the Box SDK doesn't agree with the
+    system time of the Box API servers.
 
 - Added an ``Event`` class.
 - Moved ``metadata()`` method to ``Item`` so it's now available for ``Folder``

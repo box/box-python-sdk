@@ -7,17 +7,20 @@ from datetime import datetime, timedelta
 import io
 from itertools import product
 import json
+import pytz
 import random
 import string
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, generate_private_key as generate_rsa_private_key
 from cryptography.hazmat.primitives import serialization
-from mock import Mock, mock_open, patch, sentinel
+from mock import Mock, mock_open, patch, sentinel, call
 import pytest
+import requests
 from six import binary_type, string_types, text_type
 
 from boxsdk.auth.jwt_auth import JWTAuth
+from boxsdk.exception import BoxOAuthException
 from boxsdk.config import API
 from boxsdk.object.user import User
 from boxsdk.util.compat import total_seconds
@@ -461,3 +464,53 @@ def test_from_settings_dictionary(
 ):
     jwt_auth_from_dictionary = jwt_subclass_that_just_stores_params.from_settings_dictionary(json.loads(app_config_json_content))
     assert_jwt_kwargs_expected(jwt_auth_from_dictionary)
+
+
+@pytest.fixture
+def expect_auth_retry(status_code, error_description, include_date_header):
+    return status_code == 400 and 'exp' in error_description and include_date_header
+
+
+@pytest.fixture
+def box_datetime():
+    return datetime.now(tz=pytz.utc) - timedelta(100)
+
+
+@pytest.fixture
+def unsuccessful_jwt_response(box_datetime, status_code, error_description, include_date_header):
+    headers = {'date': box_datetime.strftime('%a, %d %b %Y %H:%M:%S %Z')} if include_date_header else {}
+    unsuccessful_response = Mock(requests.Response(), headers=headers)
+    unsuccessful_response.json.return_value = {'error_description': error_description}
+    unsuccessful_response.status_code = status_code
+    unsuccessful_response.ok = False
+    return unsuccessful_response
+
+
+@pytest.mark.parametrize('jwt_algorithm', ('RS512',))
+@pytest.mark.parametrize('rsa_passphrase', (None,))
+@pytest.mark.parametrize('pass_private_key_by_path', (False,))
+@pytest.mark.parametrize('status_code', (400, 401, 429, 500))
+@pytest.mark.parametrize('error_description', ('invalid box_sub_type claim', 'invalid kid', "check the 'exp' claim"))
+@pytest.mark.parametrize('include_date_header', (True, False))
+def test_auth_retry_for_invalid_exp_claim(
+        jwt_auth_init_mocks,
+        expect_auth_retry,
+        unsuccessful_jwt_response,
+        box_datetime,
+):
+    # pylint:disable=redefined-outer-name
+    enterprise_id = 'fake_enterprise_id'
+    with jwt_auth_init_mocks(assert_authed=False) as params:
+        auth = params[0]
+        with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
+            mock_send_jwt.side_effect = [BoxOAuthException(400, network_response=unsuccessful_jwt_response), 'jwt_token']
+            if not expect_auth_retry:
+                with pytest.raises(BoxOAuthException):
+                    auth.authenticate_instance(enterprise_id)
+            else:
+                auth.authenticate_instance(enterprise_id)
+            expected_calls = [call(enterprise_id, 'enterprise')]
+            if expect_auth_retry:
+                expected_calls.append(call(enterprise_id, 'enterprise', box_datetime.replace(microsecond=0, tzinfo=None)))
+            assert len(mock_send_jwt.mock_calls) == len(expected_calls)
+            mock_send_jwt.assert_has_calls(expected_calls)
