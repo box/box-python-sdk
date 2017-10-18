@@ -249,7 +249,7 @@ class JWTAuth(OAuth2):
                 error_description = json_response['error_description']
                 box_date_header = error_response.headers['date']
                 box_datetime = datetime.strptime(box_date_header, '%a, %d %b %Y %H:%M:%S %Z')
-            except:  # pylint:disable=broad-except
+            except Exception:  # pylint:disable=broad-except
                 pass
             else:
                 if status_code == 400 and 'exp' in error_description:
