@@ -246,7 +246,7 @@ class JWTAuth(OAuth2):
             box_datetime = self._get_date_header(error_response)
             if box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(error_response):
                 return self._construct_and_send_jwt_auth(sub, sub_type, box_datetime)
-        raise
+            raise
 
     @staticmethod
     def _get_date_header(network_response):
