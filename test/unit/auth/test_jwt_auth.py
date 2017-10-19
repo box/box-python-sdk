@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 import io
 from itertools import product
 import json
-import pytz
 import random
 import string
 
@@ -16,6 +15,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, generat
 from cryptography.hazmat.primitives import serialization
 from mock import Mock, mock_open, patch, sentinel, call
 import pytest
+import pytz
 import requests
 from six import binary_type, string_types, text_type
 
