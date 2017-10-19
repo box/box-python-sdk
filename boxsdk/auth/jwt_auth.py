@@ -13,6 +13,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 import jwt
 from six import binary_type, string_types, raise_from, text_type
 
+from ..exception import BoxOAuthException
 from .oauth2 import OAuth2
 from ..object.user import User
 from ..util.compat import NoneType, total_seconds
@@ -158,10 +159,11 @@ class JWTAuth(OAuth2):
         self._jwt_key_id = jwt_key_id
         self._user_id = user_id
 
-    def _auth_with_jwt(self, sub, sub_type):
+    def _construct_and_send_jwt_auth(self, sub, sub_type, now_time=None):
         """
-        Get an access token for use with Box Developer Edition. Pass an enterprise ID to get an enterprise token
-        (which can be used to provision/deprovision users), or a user ID to get a user token.
+        Construct the claims used for JWT auth and send a request to get a JWT.
+        Pass an enterprise ID to get an enterprise token (which can be used to provision/deprovision users),
+        or a user ID to get a user token.
 
         :param sub:
             The enterprise ID or user ID to auth.
@@ -171,6 +173,11 @@ class JWTAuth(OAuth2):
             Either 'enterprise' or 'user'
         :type sub_type:
             `unicode`
+        :param now_time:
+            Optional. The current UTC time is needed in order to construct the expiration time of the JWT claim.
+            If None, `datetime.utcnow()` will be used.
+        :type now_time:
+            `datetime` or None
         :return:
             The access token for the enterprise or app user.
         :rtype:
@@ -181,7 +188,9 @@ class JWTAuth(OAuth2):
         ascii_alphabet = string.ascii_letters + string.digits
         ascii_len = len(ascii_alphabet)
         jti = ''.join(ascii_alphabet[int(system_random.random() * ascii_len)] for _ in range(jti_length))
-        now_plus_30 = datetime.utcnow() + timedelta(seconds=30)
+        if now_time is None:
+            now_time = datetime.utcnow()
+        now_plus_30 = now_time + timedelta(seconds=30)
         assertion = jwt.encode(
             {
                 'iss': self._client_id,
@@ -208,6 +217,82 @@ class JWTAuth(OAuth2):
         if self._box_device_name:
             data['box_device_name'] = self._box_device_name
         return self.send_token_request(data, access_token=None, expect_refresh_token=False)[0]
+
+    def _auth_with_jwt(self, sub, sub_type):
+        """
+        Auth with JWT.
+        If authorization fails because the expiration time is out of sync with the Box servers,
+        retry using the time returned in the error response.
+        Pass an enterprise ID to get an enterprise token (which can be used to provision/deprovision users),
+        or a user ID to get a user token.
+
+        :param sub:
+            The enterprise ID or user ID to auth.
+        :type sub:
+            `unicode`
+        :param sub_type:
+            Either 'enterprise' or 'user'
+        :type sub_type:
+            `unicode`
+        :return:
+            The access token for the enterprise or app user.
+        :rtype:
+            `unicode`
+        """
+        try:
+            return self._construct_and_send_jwt_auth(sub, sub_type)
+        except BoxOAuthException as ex:
+            error_response = ex.network_response
+            box_datetime = self._get_date_header(error_response)
+            if box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(error_response):
+                return self._construct_and_send_jwt_auth(sub, sub_type, box_datetime)
+            raise
+
+    @staticmethod
+    def _get_date_header(network_response):
+        """
+        Get datetime object for Date header, if the Date header is available.
+
+        :param network_response:
+            The response from the Box API that should include a Date header.
+        :type network_response:
+            :class:`Response`
+        :return:
+            The datetime parsed from the Date header, or None if the header is absent or if it couldn't be parsed.
+        :rtype:
+            `datetime` or `None`
+        """
+        box_date_header = network_response.headers.get('Date', None)
+        if box_date_header is not None:
+            try:
+                return datetime.strptime(box_date_header, '%a, %d %b %Y %H:%M:%S %Z')
+            except ValueError:
+                pass
+        return None
+
+    @staticmethod
+    def _was_exp_claim_rejected_due_to_clock_skew(network_response):
+        """
+        Determine whether the network response indicates that the authorization request was rejected because of
+        the exp claim. This can happen if the current system time is too different from the Box server time.
+
+        Returns True if the status code is 400, the error code is invalid_grant, and the error description indicates
+        a problem with the exp claim; False, otherwise.
+
+        :param network_response:
+        :type network_response:
+            :class:`Response`
+        :rtype:
+            `bool`
+        """
+        status_code = network_response.status_code
+        try:
+            json_response = network_response.json()
+        except ValueError:
+            return False
+        error_code = json_response.get('error', '')
+        error_description = json_response.get('error_description', '')
+        return status_code == 400 and error_code == 'invalid_grant' and 'exp' in error_description
 
     def authenticate_user(self, user=None):
         """
