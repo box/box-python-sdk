@@ -14,6 +14,26 @@ from six import binary_type
 from boxsdk.network.default_network import DefaultNetworkResponse
 
 
+pytest_plugins = ['boxsdk']   # pylint:disable=invalid-name
+
+
+class RealRequestsSession(requests.Session):
+    """A real, functioning subclass of requests.Session.
+
+    Instances of this class will always be able to make real network calls,
+    even if the implementation of `requests.Session.request()` is replaced or
+    removed via monkey patching.
+    """
+
+    # Grab the necessary references before they are replaced or removed.
+    request = requests.Session.request
+
+
+@pytest.fixture
+def real_requests_session():
+    return RealRequestsSession()
+
+
 @pytest.fixture(autouse=True, scope='session')
 def logger():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)

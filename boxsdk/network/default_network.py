@@ -9,12 +9,19 @@ import requests
 from .network_interface import Network, NetworkResponse
 
 
-class DefaultNetwork(Network):
+class RequestsSessionNetwork(Network):
     """Implementation of the network interface using the requests library."""
 
-    def __init__(self):
-        super(DefaultNetwork, self).__init__()
-        self._session = requests.Session()
+    def __init__(self, session=None):
+        """Extends baseclass method.
+
+        :param session:
+            (optional) A specific session to use.
+            If not given, a default instance will be constructed and used.
+        :type session:  :class:`requests.Session`
+        """
+        super(RequestsSessionNetwork, self).__init__()
+        self._session = session or requests.Session()
 
     def request(self, method, url, access_token, **kwargs):
         """Base class override.
@@ -41,6 +48,9 @@ class DefaultNetwork(Network):
         and returns an instance of :class:`DefaultNetworkResponse`.
         """
         return DefaultNetworkResponse
+
+
+DefaultNetwork = RequestsSessionNetwork
 
 
 class DefaultNetworkResponse(NetworkResponse):

@@ -63,9 +63,21 @@ def mock_network_layer():
     return mock_network
 
 
+def _requests_session_request_monkeypatch(*args, **kwargs):   # pylint:disable=unused-argument
+    raise NotImplementedError('request() is disallowed during unit testing')
+
+
 @pytest.fixture(autouse=True)
 def prevent_tests_from_making_real_network_requests(monkeypatch):
-    monkeypatch.delattr(default_network.requests.Session, 'request')
+    """Prevent real network requests by monkey patching requests.
+
+    This monkey patch is bypassed for betamax tests, which may make real
+    network requests when recording a cassette.
+
+    Set a dummy implementation of `requests.Session.request()`, rather than
+    deleting it, so that `mock.Mock` objects know about its existence.
+    """
+    monkeypatch.setattr(default_network.requests.Session, 'request', _requests_session_request_monkeypatch)
 
 
 @pytest.fixture(scope='function')
