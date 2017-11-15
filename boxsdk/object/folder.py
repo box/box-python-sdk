@@ -5,12 +5,14 @@ import json
 import os
 from six import text_type
 
+from boxsdk.exception import BoxAPIException
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
 from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from boxsdk.util.api_call_decorator import api_call
+from boxsdk.util.chunked_upload_manager import ChunkedUploadManager
 from boxsdk.util.text_enum import TextEnum
 
 
@@ -226,6 +228,7 @@ class Folder(Item):
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            upload_chunked=False,
     ):
         """
         Upload a file to the folder.
@@ -257,6 +260,10 @@ class Folder(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param upload_chunked:
+            Whether or not to use the chunked upload API to do this upload.
+        :type upload_chunked:
+            `bool`
         :returns:
             The newly uploaded file.
         :rtype:
@@ -265,6 +272,15 @@ class Folder(Item):
         if preflight_check:
             self.preflight_check(size=preflight_expected_size, name=file_name)
 
+        if upload_chunked:
+            try:
+                upload_session = self.create_chunked_upload_session(preflight_expected_size, file_name)
+            except BoxAPIException as ex:
+                if ex.code != 'file_size_too_small':
+                    raise
+            else:
+                upload_manager = ChunkedUploadManager(upload_session, file_stream, preflight_expected_size)
+                return upload_manager.start()
         url = '{0}/files/content'.format(self._session.api_config.UPLOAD_URL)
         if upload_using_accelerator:
             accelerator_upload_url = self._get_accelerator_upload_url_fow_new_uploads()
@@ -296,6 +312,7 @@ class Folder(Item):
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            upload_chunked=False,
     ):
         """
         Upload a file to the folder.
@@ -328,6 +345,10 @@ class Folder(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param upload_chunked:
+            Whether or not to use the chunked upload API to do this upload.
+        :type upload_chunked:
+            `bool`
         :returns:
             The newly uploaded file.
         :rtype:
@@ -342,6 +363,7 @@ class Folder(Item):
                 preflight_check,
                 preflight_expected_size=preflight_expected_size,
                 upload_using_accelerator=upload_using_accelerator,
+                upload_chunked=upload_chunked,
             )
 
     @api_call
@@ -462,3 +484,19 @@ class Folder(Item):
         """
         # pylint:disable=arguments-differ
         return super(Folder, self).delete({'recursive': recursive}, etag)
+
+    @api_call
+    def create_chunked_upload_session(self, file_size, file_name):
+        """
+        Create a new chunked upload session for uploading a new file.
+
+        :param file_size:       The size of the file that will be uploaded.
+        :param file_name:       The name of the file that will be uploaded.
+        :rtype:                 :class:`ChunkedUploadSession`
+        """
+        url = '{0}/files/upload_sessions'.format(self._session.api_config.UPLOAD_URL)
+        response = self.session.post(
+            url,
+            data=json.dumps({'folder_id': self._object_id, 'file_size': file_size, 'file_name': file_name}),
+        ).json()
+        return self.translator.translate(response['type'])(self.session, response['id'], response_object=response)

@@ -2,8 +2,12 @@
 
 from __future__ import unicode_literals
 
+import json
+
+from ..exception import BoxAPIException
 from .item import Item
 from ..util.api_call_decorator import api_call
+from ..util.chunked_upload_manager import ChunkedUploadManager
 
 
 class File(Item):
@@ -80,6 +84,7 @@ class File(Item):
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            upload_chunked=False,
     ):
         """
         Upload a new version of a file, taking the contents from the given file stream.
@@ -110,6 +115,10 @@ class File(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param upload_chunked:
+            Whether or not to use the chunked upload API to do this upload.
+        :type upload_chunked:
+            `bool`
         :returns:
             A new file object
         :rtype:
@@ -120,6 +129,16 @@ class File(Item):
         """
         if preflight_check:
             self.preflight_check(size=preflight_expected_size)
+
+        if upload_chunked:
+            try:
+                upload_session = self.create_chunked_upload_session(preflight_expected_size)
+            except BoxAPIException as ex:
+                if ex.code != 'file_size_too_small':
+                    raise
+            else:
+                upload_manager = ChunkedUploadManager(upload_session, file_stream, preflight_expected_size)
+                return upload_manager.start()
 
         url = self.get_url('content').replace(
             self._session.api_config.BASE_API_URL,
@@ -149,6 +168,7 @@ class File(Item):
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            upload_chunked=False,
     ):
         """Upload a new version of a file. The contents are taken from the given file path.
 
@@ -178,6 +198,10 @@ class File(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param upload_chunked:
+            Whether or not to use the chunked upload API to do this upload.
+        :type upload_chunked:
+            `bool`
         :returns:
             A new file object
         :rtype:
@@ -193,6 +217,7 @@ class File(Item):
                 preflight_check,
                 preflight_expected_size=preflight_expected_size,
                 upload_using_accelerator=upload_using_accelerator,
+                upload_chunked=upload_chunked,
             )
 
     @api_call
@@ -281,3 +306,19 @@ class File(Item):
             password=password,
         )
         return item.shared_link['download_url']  # pylint:disable=no-member
+
+    @api_call
+    def create_chunked_upload_session(self, file_size):
+        """
+        
+        :param file_size:
+        :return:
+        """
+        response = self.session.post(
+            self.get_url('{0}s'.format('upload_session')).replace(
+                self._session.api_config.BASE_API_URL,
+                self._session.api_config.UPLOAD_URL,
+            ),
+            data=json.dumps({'file_id': self.object_id, 'file_size': file_size}),
+        ).json()
+        return self.translator.translate(response['type'])(self.session, response['id'], response_object=response)
