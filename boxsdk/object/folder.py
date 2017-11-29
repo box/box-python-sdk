@@ -166,7 +166,7 @@ class Folder(Item):
         url = self.get_url('collaborations')
         box_response = self._session.get(url)
         response = box_response.json()
-        return [Translator().translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
+        return [self.translator.translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
 
     def upload_stream(
             self,
