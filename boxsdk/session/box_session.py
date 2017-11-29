@@ -189,6 +189,7 @@ class BoxSession(object):
         :return:                        Number of seconds to wait before retrying.
         :rtype:                         `Number`
         """
+        # pylint:disable=no-self-use
         if retry_after_header is not None:
             return float(retry_after_header)
         return 2 ** attempt_number
