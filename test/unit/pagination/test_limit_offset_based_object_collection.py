@@ -7,7 +7,8 @@ import pytest
 
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
-from boxsdk.session.box_session import BoxResponse, BoxSession
+from boxsdk.session.box_response import BoxResponse
+from boxsdk.session.box_session import BoxSession
 from .box_object_collection_test_base import BoxObjectCollectionTestBase
 
 

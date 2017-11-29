@@ -12,7 +12,8 @@ import pytest
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.exception import BoxAPIException
 from boxsdk.network.default_network import DefaultNetwork, DefaultNetworkResponse
-from boxsdk.session.box_session import BoxSession, BoxResponse, Translator
+from boxsdk.session.box_response import BoxResponse
+from boxsdk.session.box_session import BoxSession, Translator
 
 
 @pytest.fixture(scope='function', params=[False, True])

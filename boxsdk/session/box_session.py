@@ -1,64 +1,16 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
-from boxsdk.config import API, Client
-from boxsdk.exception import BoxAPIException
-from boxsdk.util.multipart_stream import MultipartStream
-from boxsdk.util.shared_link import get_shared_link_header
+from functools import partial
+
+from .box_request import BoxRequest as _BoxRequest
+from .box_response import BoxResponse as _BoxResponse
+from ..config import API, Client
+from ..exception import BoxAPIException
+from ..util.multipart_stream import MultipartStream
+from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
-
-
-class BoxResponse(object):
-    """Represents a response to a Box API request."""
-
-    def __init__(self, network_response):
-        self._network_response = network_response
-
-    def json(self):
-        """Return the parsed JSON response.
-
-        :rtype:
-            `dict` or `list` or `str` or `int` or `float`
-        """
-        return self._network_response.json()
-
-    @property
-    def content(self):
-        """Return the content of the response body.
-
-        :rtype:
-            varies
-        """
-        return self._network_response.content
-
-    @property
-    def ok(self):
-        """Return whether or not the request was successful.
-
-        :rtype:
-            `bool`
-        """
-        # pylint:disable=invalid-name
-        return self._network_response.ok
-
-    @property
-    def status_code(self):
-        """Return the HTTP status code of the response.
-
-        :rtype:
-            `int`
-        """
-        return self._network_response.status_code
-
-    @property
-    def network_response(self):
-        """Return the underlying network response.
-
-        :rtype:
-            :class:`NetworkResponse`
-        """
-        return self._network_response
 
 
 class BoxSession(object):
@@ -104,6 +56,16 @@ class BoxSession(object):
             self._default_headers.update(default_headers)
         if default_network_request_kwargs:
             self._default_network_request_kwargs.update(default_network_request_kwargs)
+
+    @property
+    def box_request_constructor(self):
+        """Get the constructor for the container class representing an API request"""
+        return _BoxRequest
+
+    @property
+    def box_response_constructor(self):
+        """Get the constructor for the container class representing an API response"""
+        return _BoxResponse
 
     @property
     def translator(self):
@@ -191,7 +153,7 @@ class BoxSession(object):
         :param access_token_used:
             The access token that's currently being used by the session, that needs to be refreshed.
         :type access_token_used:
-            `unicode`
+            `unicode` or None
         """
         new_access_token, _ = self._oauth.refresh(access_token_used)
         return new_access_token
@@ -211,13 +173,36 @@ class BoxSession(object):
         except ValueError:
             return False
 
-    def _retry_request_if_necessary(self, network_response, attempt_number, *args, **kwargs):
+    def _get_retry_after_time(self, attempt_number, retry_after_header):
         """
-        Retry a request for certain types of failure.
+        Get the amount of time to wait before retrying the API request.
+
+        If the Retry-After header is supplied, use it; otherwise, use exponential backoff
+        For 202 Accepted (thumbnail or file not ready) and 429 (too many requests), retry later, after a delay
+        specified by the Retry-After header.
+        For 5xx Server Error, retry later, after a delay; use exponential backoff to determine the delay.
+
+        :param attempt_number:          How many attempts at this request have already been tried.
+        :type attempt_number:           `int`
+        :param retry_after_header:      Value of the 'Retry-After` response header.
+        :type retry_after_header:       `unicode` or None
+        :return:                        Number of seconds to wait before retrying.
+        :rtype:                         `Number`
+        """
+        if retry_after_header is not None:
+            return float(retry_after_header)
+        return 2 ** attempt_number
+
+    def _get_retry_request_callable(self, network_response, attempt_number, request):
+        """
+        Get a callable that retries a request for certain types of failure.
+
         For 401 Unauthorized responses, renew the session by refreshing the access token; then retry.
         For 202 Accepted (thumbnail or file not ready) and 429 (too many requests), retry later, after a delay
         specified by the Retry-After header.
         For 5xx Server Error, retry later, after a delay; use exponential backoff to determine the delay.
+
+        Otherwise, return None.
 
         :param network_response:
             The response from the Box API.
@@ -227,29 +212,28 @@ class BoxSession(object):
             How many attempts at this request have already been tried. Used for exponential backoff calculations.
         :type attempt_number:
             `int`
+        :param request:
+            The API request that could require retrying.
+        :type request:
+            :class:`BoxRequest`
+        :return:
+            Callable that, when called, will retry the request. Takes the same parameters as :meth:`_send_request`.
+        :rtype:
+            `callable`
         """
-        if network_response.status_code == 401 and kwargs['auto_session_renewal']:
+        code = network_response.status_code
+        if code == 401 and request.auto_session_renewal:
             self._renew_session(network_response.access_token_used)
-            kwargs['auto_session_renewal'] = False
-            return self._make_request(*args, **kwargs)
-        elif network_response.status_code == 202 or network_response.status_code == 429:
-            return self._network_layer.retry_after(
-                float(network_response.headers['Retry-After']),
-                self._make_request,
-                *args,
-                **kwargs
+            request.auto_session_renewal = False
+            return self._send_request
+        elif code in (202, 429) or code >= 500:
+            return partial(
+                self._network_layer.retry_after,
+                self._get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)),
+                self._send_request,
             )
-        elif network_response.status_code >= 500 and attempt_number < 10:
-            return self._network_layer.retry_after(
-                2 ** attempt_number,
-                self._make_request,
-                *args,
-                attempt_number=attempt_number + 1,
-                **kwargs
-            )
-        return network_response
 
-    def _raise_on_unsuccessful_request(self, network_response, expect_json_response, method, url):
+    def _raise_on_unsuccessful_request(self, network_response, request):
         """
         Raise an exception if the request was unsuccessful.
 
@@ -257,18 +241,10 @@ class BoxSession(object):
             The network response which is being tested for success.
         :type network_response:
             :class:`NetworkResponse`
-        :param expect_json_response:
-            Whether or not the response content should be json.
-        :type expect_json_response:
-            `bool`
-        :param method:
-            The HTTP verb used to make the request.
-        :type method:
-            `unicode`
-        :param url:
-            The request URL.
-        :type url:
-            `unicode`
+        :param request:
+            The API request that could be unsuccessful.
+        :type request:
+            :class:`BoxRequest`
         """
         if not network_response.ok:
             response_json = {}
@@ -282,19 +258,19 @@ class BoxSession(object):
                 code=response_json.get('code', None),
                 message=response_json.get('message', None),
                 request_id=response_json.get('request_id', None),
-                url=url,
-                method=method,
+                url=request.url,
+                method=request.method,
                 context_info=response_json.get('context_info', None),
                 network_response=network_response
             )
-        if expect_json_response and not self._is_json_response(network_response):
+        if request.expect_json_response and not self._is_json_response(network_response):
             raise BoxAPIException(
                 status=network_response.status_code,
                 headers=network_response.headers,
                 message='Non-json response received, while expecting json response.',
-                url=url,
-                method=method,
-                network_response=network_response
+                url=request.url,
+                method=request.method,
+                network_response=network_response,
             )
 
     def _prepare_and_send_request(
@@ -304,7 +280,6 @@ class BoxSession(object):
             headers=None,
             auto_session_renewal=True,
             expect_json_response=True,
-            attempt_number=0,
             **kwargs
     ):
         """
@@ -336,68 +311,57 @@ class BoxSession(object):
             `int`
         """
         files = kwargs.get('files')
-        file_stream_positions = None
+        kwargs['file_stream_positions'] = None
         if files:
-            file_stream_positions = dict((name, file_tuple[1].tell()) for name, file_tuple in files.items())
-        return self._make_request(
-            method,
-            url,
-            headers,
-            auto_session_renewal,
-            expect_json_response,
-            attempt_number,
-            file_stream_positions=file_stream_positions,
-            **kwargs
+            kwargs['file_stream_positions'] = dict((name, file_tuple[1].tell()) for name, file_tuple in files.items())
+        attempt_number = 0
+
+        request = self.box_request_constructor(
+            url=url,
+            method=method,
+            headers=headers,
+            auto_session_renewal=auto_session_renewal,
+            expect_json_response=expect_json_response,
         )
 
-    def _make_request(
-            self,
-            method,
-            url,
-            headers=None,
-            auto_session_renewal=True,
-            expect_json_response=True,
-            attempt_number=0,
-            **kwargs
-    ):
+        network_response = self._send_request(request, **kwargs)
+
+        while True:
+            retry = self._get_retry_request_callable(network_response, attempt_number, request)
+
+            if retry is None or attempt_number >= 10:
+                break
+
+            attempt_number += 1
+            network_response = retry(request, **kwargs)
+
+        self._raise_on_unsuccessful_request(network_response, request)
+
+        return network_response
+
+    def _send_request(self, request, **kwargs):
         """
         Make a request to the Box API.
 
-        :param method:
-            The HTTP verb to use to make the request.
-        :type method:
-            `unicode`
-        :param url:
-            The request URL.
-        :type url:
-            `unicode`
-        :param headers:
-            Headers to include with the request.
-        :type headers:
-            `dict`
-        :param auto_session_renewal:
-            Whether or not to automatically renew the session if the request fails due to an expired access token.
-        :type auto_session_renewal:
-            `bool`
+        :param request:
+            The API request to send.
+        :type request:
+            :class:`BoxRequest`
         :param expect_json_response:
             Whether or not the response content should be json.
         :type expect_json_response:
             `bool`
-        :param attempt_number:
-            How many attempts at this request have already been tried. Used for exponential backoff calculations.
-        :type attempt_number:
-            `int`
         """
         # Since there can be session renewal happening in the middle of preparing the request, it's important to be
         # consistent with the access_token being used in the request.
-        access_token_will_be_used = self._oauth.access_token
-        if auto_session_renewal and (access_token_will_be_used is None):
-            access_token_will_be_used = self._renew_session(None)
-            auto_session_renewal = False
-        authorization_header = {'Authorization': 'Bearer {0}'.format(access_token_will_be_used)}
-        if headers is None:
-            headers = self._default_headers.copy()
-        headers.update(authorization_header)
+        access_token = self._oauth.access_token
+        if request.auto_session_renewal and access_token is None:
+            access_token = self._renew_session(None)
+            request.auto_session_renewal = False
+        authorization_header = {'Authorization': 'Bearer {0}'.format(access_token)}
+        if request.headers is None:
+            request.headers = self._default_headers.copy()
+        request.headers.update(authorization_header)
 
         # Reset stream positions to what they were when the request was made so the same data is sent even if this
         # is a retried attempt.
@@ -411,30 +375,16 @@ class BoxSession(object):
             multipart_stream = MultipartStream(data, files)
             request_kwargs['data'] = multipart_stream
             del request_kwargs['files']
-            headers['Content-Type'] = multipart_stream.content_type
+            request.headers['Content-Type'] = multipart_stream.content_type
 
         # send the request
         network_response = self._network_layer.request(
-            method,
-            url,
-            access_token=access_token_will_be_used,
-            headers=headers,
+            request.method,
+            request.url,
+            access_token=access_token,
+            headers=request.headers,
             **request_kwargs
         )
-
-        network_response = self._retry_request_if_necessary(
-            network_response,
-            attempt_number,
-            method,
-            url,
-            headers=headers,
-            auto_session_renewal=auto_session_renewal,
-            expect_json_response=expect_json_response,
-            file_stream_positions=file_stream_positions,
-            **kwargs
-        )
-
-        self._raise_on_unsuccessful_request(network_response, expect_json_response, method, url)
 
         return network_response
 
@@ -446,8 +396,7 @@ class BoxSession(object):
         :type url:
             `unicode`
         """
-        response = self._prepare_and_send_request('GET', url, **kwargs)
-        return BoxResponse(response)
+        return self.request('GET', url, **kwargs)
 
     def post(self, url, **kwargs):
         """Make a POST request to the Box API.
@@ -457,8 +406,7 @@ class BoxSession(object):
         :type url:
             `unicode`
         """
-        response = self._prepare_and_send_request('POST', url, **kwargs)
-        return BoxResponse(response)
+        return self.request('POST', url, **kwargs)
 
     def put(self, url, **kwargs):
         """Make a PUT request to the Box API.
@@ -468,8 +416,7 @@ class BoxSession(object):
         :type url:
             `unicode`
         """
-        response = self._prepare_and_send_request('PUT', url, **kwargs)
-        return BoxResponse(response)
+        return self.request('PUT', url, **kwargs)
 
     def delete(self, url, **kwargs):
         """Make a DELETE request to the Box API.
@@ -481,8 +428,7 @@ class BoxSession(object):
         """
         if 'expect_json_response' not in kwargs:
             kwargs['expect_json_response'] = False
-        response = self._prepare_and_send_request('DELETE', url, **kwargs)
-        return BoxResponse(response)
+        return self.request('DELETE', url, **kwargs)
 
     def options(self, url, **kwargs):
         """Make an OPTIONS request to the Box API.
@@ -492,8 +438,7 @@ class BoxSession(object):
         :type url:
             `unicode`
         """
-        response = self._prepare_and_send_request('OPTIONS', url, **kwargs)
-        return BoxResponse(response)
+        return self.request('OPTIONS', url, **kwargs)
 
     def request(self, method, url, **kwargs):
         """Make a request to the Box API.
@@ -508,4 +453,4 @@ class BoxSession(object):
             `unicode`
         """
         response = self._prepare_and_send_request(method, url, **kwargs)
-        return BoxResponse(response)
+        return self.box_response_constructor(response)

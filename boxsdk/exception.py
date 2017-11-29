@@ -45,15 +45,15 @@ class BoxAPIException(BoxException):
         :param code:
             The 'code' field of the failed response
         :type code:
-            `unicode`
+            `unicode` or None
         :param message:
             A message to associate with the exception, e.g. 'message' field of the json in the failed response
         :type message:
-            `unicode`
+            `unicode` or None
         :param request_id:
             The 'request_id' field of the json in the failed response
         :type request_id:
-            `unicode`
+            `unicode` or None
         :param headers:
             The HTTP headers in the failed response
         :type headers:
@@ -69,7 +69,7 @@ class BoxAPIException(BoxException):
         :param context_info:
             The context_info returned in the failed response.
         :type context_info:
-            `dict`
+            `dict` or None
         :param network_response:
             The failed response
         :type network_response:

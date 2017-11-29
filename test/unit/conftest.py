@@ -10,7 +10,8 @@ import pytest
 from boxsdk.auth.oauth2 import DefaultNetwork
 from boxsdk.network import default_network
 from boxsdk.network.default_network import DefaultNetworkResponse
-from boxsdk.session.box_session import BoxResponse, BoxSession
+from boxsdk.session.box_response import BoxResponse
+from boxsdk.session.box_session import BoxSession
 from boxsdk.util.translator import Translator
 
 
