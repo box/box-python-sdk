@@ -56,7 +56,7 @@ class PyTest(TestCommand):
 
 def main():
     base_dir = dirname(__file__)
-    install_requires = ['requests>=2.4.3', 'six>=1.9.0', 'requests-toolbelt>=0.4.0', 'attrs>=17.3.0']
+    install_requires = ['requests>=2.4.3', 'six>=1.9.0', 'requests-toolbelt>=0.4.0']
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=0.9.2']
     extra_requires = defaultdict(list)
@@ -95,10 +95,13 @@ def main():
         'pytz',
     ]
     # pytest>=3.3.0 has dropped support for python 2.6 and 3.3; we pin lower than 3.3.0 for those python versions
+    # we require attrs >= 16.0.0 but newer versions have also dropped support for 2.6 and 3.3, so we pin to 16.0.0
     if sys.version_info[:2] <= (2, 6) or (sys.version_info[0] == 3 and sys.version_info[1] <= 3):
         test_requires.append('pytest>=2.8.3,<3.3.0')
+        install_requires.append('attrs==16.0.0')
     else:
         test_requires.append('pytest>=2.8.3')
+        install_requires.append('attrs>=16.0.0')
     extra_requires['test'] = test_requires
     with open('boxsdk/version.py', 'r', encoding='utf-8') as config_py:
         version = re.search(r'^\s+__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE).group(1)
