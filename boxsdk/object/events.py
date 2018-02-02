@@ -92,6 +92,54 @@ class Events(BaseEndpoint):
         }
         box_response = self._session.get(url, params=params)
         return box_response.json()
+    @api_call
+    def get_events_by_date(self,created_after,created_before,stream_position=0, limit=100, stream_type=UserEventsStreamType.ALL):
+        """
+        Get Box events from a given date to a given date with/without stream position mentioned for a given streamtype.
+
+        :param limit:
+            Maximum number of events to return.
+        :type limit:
+            `int`
+        :param stream_position:
+            The location in the stream from which to start getting events. 0 is the beginning of time. 'now' will
+            return no events and just current stream position.
+
+            NOTE: Currently, 'now' is only valid for user events stream types. The request will fail if an
+            enterprise events stream type is passed.
+        :type stream_position:
+            `unicode`
+        :param stream_type:
+            (optional) Which type of events to return.
+            Defaults to `UserEventsStreamType.ALL`.
+        :type stream_type:
+            :enum:`EventsStreamType`
+        :param created_after:
+            TimeStamp/Date after which events are to be returned
+        :type created_after:
+            TimeStamp/Date in box acceptable format ( '2018-01-01T09:00:00+00:00' or '2018-01-01' )
+        :type created_before
+            TimeStamp/Date before which events are to be returned
+        :type created_before:
+            TimeStamp/Date in box acceptable format ( '2018-01-01T09:00:00+00:00' or '2018-01-01' )
+        :returns:
+            Dictionary containing the next stream position along with a list of some number of events.
+        :rtype:
+            `dict`
+        """
+        url = self.get_url()
+        params = {
+            'limit': limit,
+            'created_after': created_after,
+            'created_before':created_before,
+            'stream_type': stream_type,
+            'stream_position':stream_position
+        }
+        box_response = self._session.get(url, params=params)
+        response = box_response.json().copy()
+        if 'entries' in response:
+            response['entries'] = [self.translator.translate(item['type'])(item) for item in response['entries']]
+        return response
 
     def get_latest_stream_position(self, stream_type=UserEventsStreamType.ALL):
         """
