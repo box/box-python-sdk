@@ -304,7 +304,7 @@ to get the correct URL for use with that object and endpoint.
 
 For API calls which require a body, ``make_request()`` accepts ``**kwargs`` after ``method`` and ``url``.
 
-..code-block:: python
+.. code-block:: python
 
     # https://developer.box.com/reference#update-terms-of-service-user-status
     # Updates a user's ToS status
