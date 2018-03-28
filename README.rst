@@ -287,7 +287,7 @@ supported by the SDK. You can still use these endpoints by using the ``make_requ
 
 .. code-block:: python
 
-    # https://box-content.readme.io/reference#get-metadata-schema
+    # https://developer.box.com/reference#get-metadata-schema
     # Returns a Python dictionary containing the result of the API request
     json_response = client.make_request(
         'GET',
@@ -301,6 +301,19 @@ supported by the SDK. You can still use these endpoints by using the ``make_requ
 
 The ``Client`` class and Box objects have a ``get_url`` method. Pass it an endpoint
 to get the correct URL for use with that object and endpoint.
+
+For API calls which require a body, ``make_request()`` accepts ``**kwargs`` after ``method`` and ``url``.
+
+.. code-block:: python
+
+    # https://developer.box.com/reference#update-terms-of-service-user-status
+    # Updates a user's ToS status
+
+    # JSONify the body
+    body = json.dumps({"is_accepted":true})
+
+    # Pass body as "data" argument
+    client.make_request(method, url, data = body)
 
 Box Developer Edition
 ---------------------
