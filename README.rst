@@ -313,7 +313,6 @@ For API calls which require a body, ``make_request()`` accepts ``**kwargs`` afte
     body = json.dumps({"is_accepted":true})
 
     # Pass body as "data" argument
-    data = body
     client.make_request(method, url, data = body)
 
 Box Developer Edition
