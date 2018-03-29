@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 
-from boxsdk.config import API
 from .item import Item
 from ..util.api_call_decorator import api_call
 

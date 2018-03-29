@@ -4,7 +4,6 @@ from __future__ import unicode_literals, absolute_import
 import json
 
 from ..auth.oauth2 import TokenResponse
-from ..config import API
 from ..session.box_session import BoxSession
 from ..network.default_network import DefaultNetwork
 from ..object.cloneable import Cloneable

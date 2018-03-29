@@ -116,6 +116,7 @@ Release History
 - Added methods for configuring ``JWTAuth`` from config file: ``JWTAuth.from_settings_file`` and
   ``JWTAuth.from_settings_dictionary``.
 - Added ``network_response`` property to ``BoxOAuthException``.
+- API Configuration can now be done per ``BoxSession`` instance.
 
 **Other**
 

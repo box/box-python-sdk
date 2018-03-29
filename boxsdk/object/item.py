@@ -4,7 +4,6 @@ from __future__ import unicode_literals, absolute_import
 import json
 
 from .base_object import BaseObject
-from ..config import API
 from ..exception import BoxAPIException
 from .metadata import Metadata
 from ..util.api_call_decorator import api_call
