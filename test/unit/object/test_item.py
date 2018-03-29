@@ -9,8 +9,7 @@ import pytest
 def test_item_and_response(test_file, test_folder, mock_file_response, mock_folder_response, request):
     if request.param == 'file':
         return test_file, mock_file_response
-    elif request.param == 'folder':
-        return test_folder, mock_folder_response
+    return test_folder, mock_folder_response
 
 
 def test_update_info(test_item_and_response, mock_box_session, etag, if_match_header):

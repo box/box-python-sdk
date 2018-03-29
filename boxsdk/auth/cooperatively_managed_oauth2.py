@@ -16,6 +16,7 @@ class CooperativelyManagedOAuth2Mixin(OAuth2):
         :type retrieve_tokens:
             `callable` of () => (`unicode`, `unicode`)
         """
+        # pylint:disable=keyword-arg-before-vararg
         self._retrieve_tokens = retrieve_tokens
         super(CooperativelyManagedOAuth2Mixin, self).__init__(*args, **kwargs)
 

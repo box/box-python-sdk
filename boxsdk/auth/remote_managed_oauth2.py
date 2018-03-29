@@ -17,6 +17,7 @@ class RemoteOAuth2Mixin(OAuth2):
         :type retrieve_access_token:
             `callable` of `unicode` => `unicode`
         """
+        # pylint:disable=keyword-arg-before-vararg
         self._retrieve_access_token = retrieve_access_token
         super(RemoteOAuth2Mixin, self).__init__(*args, **kwargs)
 

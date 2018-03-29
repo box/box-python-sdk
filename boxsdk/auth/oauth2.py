@@ -9,7 +9,9 @@ import string  # pylint:disable=deprecated-module
 import sys
 
 import six
-from six.moves.urllib.parse import urlencode, urlunsplit  # pylint:disable=import-error,no-name-in-module
+# pylint:disable=import-error,no-name-in-module,relative-import
+from six.moves.urllib.parse import urlencode, urlunsplit
+# pylint:enable=import-error,no-name-in-module,relative-import
 
 from boxsdk.config import API
 from boxsdk.exception import BoxOAuthException

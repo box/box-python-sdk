@@ -14,17 +14,19 @@ class RedisManagedOAuth2Mixin(OAuth2):
     """
     Box SDK OAuth2 subclass.
     Allows for storing auth tokens in redis.
-
-    :param unique_id:
-        An identifier for this auth object. Auth instances which wish to share tokens must use the same ID.
-    :type unique_id:
-        `unicode`
-    :param redis_server:
-        An instance of a Redis server, configured to talk to Redis.
-    :type redis_server:
-        :class:`Redis`
     """
     def __init__(self, unique_id=uuid4(), redis_server=None, *args, **kwargs):
+        """
+        :param unique_id:
+            An identifier for this auth object. Auth instances which wish to share tokens must use the same ID.
+        :type unique_id:
+            `unicode`
+        :param redis_server:
+            An instance of a Redis server, configured to talk to Redis.
+        :type redis_server:
+            :class:`Redis`
+        """
+        # pylint:disable=keyword-arg-before-vararg
         self._unique_id = unique_id
         self._redis_server = redis_server or StrictRedis()
         refresh_lock = Lock(redis=self._redis_server, name='{0}_lock'.format(self._unique_id))

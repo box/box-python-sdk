@@ -116,6 +116,14 @@ boxsdk.object.metadata module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.object.recent_item module
+--------------------------------
+
+.. automodule:: boxsdk.object.recent_item
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.object.search module
 ---------------------------
 

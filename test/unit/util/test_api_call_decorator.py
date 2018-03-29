@@ -2,10 +2,11 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from boxsdk.object.cloneable import Cloneable
-from boxsdk.util.api_call_decorator import api_call
 from mock import NonCallableMock
 import pytest
+
+from boxsdk.object.cloneable import Cloneable
+from boxsdk.util.api_call_decorator import api_call
 
 
 @pytest.fixture
