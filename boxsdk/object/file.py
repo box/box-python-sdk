@@ -278,4 +278,4 @@ class File(Item):
             allow_preview=allow_preview,
             password=password,
         )
-        return item.shared_link['download_url']
+        return item.shared_link['download_url']  # pylint:disable=no-member

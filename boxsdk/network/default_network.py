@@ -20,6 +20,7 @@ class DefaultNetwork(Network):
         """Base class override.
         Make a network request using a requests.Session.
         """
+        # pylint:disable=abstract-class-instantiated
         return self.network_response_constructor(
             request_response=self._session.request(method, url, **kwargs),
             access_token_used=access_token,

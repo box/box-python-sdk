@@ -8,6 +8,8 @@ Release History
 
 **Breaking Changes**
 
+- Python 2.6 is no longer supported.
+- Python 3.3 is no longer supported.
 - ``Events.get_events(...)`` now returns a list of ``Event`` instances rather than a list of ``dict``
   representing events.  ``Event`` inherits from ``Mapping`` but will not have all the same capabilities as
   ``dict``.

@@ -10,7 +10,9 @@ import uuid
 from mock import Mock, patch
 import pytest
 from six.moves import range   # pylint:disable=redefined-builtin
-from six.moves.urllib import parse as urlparse  # pylint:disable=import-error,no-name-in-module,wrong-import-order
+# pylint:disable=import-error,no-name-in-module,wrong-import-order,relative-import
+from six.moves.urllib import parse as urlparse
+# pylint:enable=import-error,no-name-in-module,wrong-import-order,relative-import
 
 from boxsdk.exception import BoxOAuthException
 from boxsdk.network.default_network import DefaultNetworkResponse
@@ -204,6 +206,7 @@ def token_method(request):
         return partial(OAuth2.refresh, access_token_to_refresh='fake_access_token')
     elif request.param == OAuth2.authenticate:
         return partial(OAuth2.authenticate, auth_code='fake_code')
+    return None
 
 
 @pytest.mark.parametrize(

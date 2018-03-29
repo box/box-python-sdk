@@ -10,6 +10,7 @@ Subpackages
     boxsdk.client
     boxsdk.network
     boxsdk.object
+    boxsdk.pagination
     boxsdk.session
     boxsdk.util
 
