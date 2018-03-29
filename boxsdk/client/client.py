@@ -4,7 +4,6 @@ from __future__ import unicode_literals, absolute_import
 import json
 
 from ..auth.oauth2 import TokenResponse
-from ..config import API
 from ..session.box_session import BoxSession
 from ..network.default_network import DefaultNetwork
 from ..object.cloneable import Cloneable
@@ -166,7 +165,7 @@ class Client(Cloneable):
         :rtype:
             `list` of :class:`User`
         """
-        url = '{0}/users'.format(API.BASE_API_URL)
+        url = self.get_url('users')
         params = dict(offset=offset)
         if limit is not None:
             params['limit'] = limit
@@ -278,7 +277,7 @@ class Client(Cloneable):
         :rtype:
             `list` of :class:`Group`
         """
-        url = '{0}/groups'.format(API.BASE_API_URL)
+        url = self.get_url('groups')
         box_response = self._session.get(url)
         response = box_response.json()
         group_class = self.translator.translate('group')
@@ -304,7 +303,7 @@ class Client(Cloneable):
         :raises:
             :class:`BoxAPIException` if current user doesn't have permissions to create a group.
         """
-        url = '{0}/groups'.format(API.BASE_API_URL)
+        url = self.get_url('groups')
         body_attributes = {
             'name': name,
         }
@@ -375,7 +374,7 @@ class Client(Cloneable):
         """
         response = self.make_request(
             'GET',
-            '{0}/shared_items'.format(API.BASE_API_URL),
+            self.get_url('shared_items'),
             headers=get_shared_link_header(shared_link, password),
         ).json()
         return self.translator.translate(response['type'])(
@@ -425,7 +424,7 @@ class Client(Cloneable):
             https://box-content.readme.io/#create-an-enterprise-user for enterprise users
             or https://box-content.readme.io/docs/app-users for app users.
         """
-        url = '{0}/users'.format(API.BASE_API_URL)
+        url = self.get_url('users')
         user_attributes['name'] = name
         if login is not None:
             user_attributes['login'] = login
@@ -461,7 +460,7 @@ class Client(Cloneable):
         :rtype:
             :class:`TokenResponse`
         """
-        url = '{base_auth_url}/token'.format(base_auth_url=API.OAUTH2_API_URL)
+        url = '{base_auth_url}/token'.format(base_auth_url=self._session.api_config.OAUTH2_API_URL)
         data = {
             'subject_token': self.auth.access_token,
             'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',

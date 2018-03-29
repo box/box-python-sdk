@@ -109,6 +109,7 @@ class OAuth2(object):
         self._box_device_id = box_device_id
         self._box_device_name = box_device_name
         self._closed = False
+        self._api_config = API()
 
     @property
     def access_token(self):
@@ -131,6 +132,14 @@ class OAuth2(object):
         :rtype:   `bool`
         """
         return self._closed
+
+    @property
+    def api_config(self):
+        """
+
+        :rtype:     :class:`API`
+        """
+        return self._api_config
 
     def get_authorization_url(self, redirect_url):
         """
@@ -162,7 +171,7 @@ class OAuth2(object):
         # encode the parameters as ASCII bytes.
         params = [(key.encode('utf-8'), value.encode('utf-8')) for (key, value) in params]
         query_string = urlencode(params)
-        return urlunsplit(('', '', API.OAUTH2_AUTHORIZE_URL, query_string, '')), csrf_token
+        return urlunsplit(('', '', self._api_config.OAUTH2_AUTHORIZE_URL, query_string, '')), csrf_token
 
     def authenticate(self, auth_code):
         """
@@ -320,7 +329,7 @@ class OAuth2(object):
             :class:`TokenResponse`
         """
         self._check_closed()
-        url = '{base_auth_url}/token'.format(base_auth_url=API.OAUTH2_API_URL)
+        url = '{base_auth_url}/token'.format(base_auth_url=self._api_config.OAUTH2_API_URL)
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         network_response = self._network_layer.request(
             'POST',
@@ -373,7 +382,7 @@ class OAuth2(object):
             token_to_revoke = access_token or refresh_token
             if token_to_revoke is None:
                 return
-            url = '{base_auth_url}/revoke'.format(base_auth_url=API.OAUTH2_API_URL)
+            url = '{base_auth_url}/revoke'.format(base_auth_url=self._api_config.OAUTH2_API_URL)
             network_response = self._network_layer.request(
                 'POST',
                 url,

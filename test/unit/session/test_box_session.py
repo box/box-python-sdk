@@ -10,6 +10,7 @@ from mock import MagicMock, Mock, PropertyMock, call
 import pytest
 
 from boxsdk.auth.oauth2 import OAuth2
+from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.network.default_network import DefaultNetwork, DefaultNetworkResponse
 from boxsdk.session.box_response import BoxResponse
@@ -252,3 +253,18 @@ def test_translator(box_session, translator, default_translator, original_defaul
     # Test that adding new registrations does not affect global state.
     assert default_translator == original_default_translator
     assert (set(box_session.translator) - set(default_translator)) == set([item_type])
+
+
+def test_session_uses_global_config(box_session, mock_network_layer, generic_successful_response, monkeypatch):
+    mock_network_layer.request.side_effect = generic_successful_response
+    example_dot_com = 'https://example.com/'
+    monkeypatch.setattr(API, 'BASE_API_URL', example_dot_com)
+    assert example_dot_com in box_session.get_url('foo', 'bar')
+
+
+def test_session_uses_local_config(box_session, mock_network_layer, generic_successful_response, monkeypatch):
+    mock_network_layer.request.side_effect = generic_successful_response
+    example_dot_com = 'https://example.com/'
+    box_session.api_config.BASE_API_URL = example_dot_com
+    monkeypatch.setattr(API, 'BASE_API_URL', 'https://api.box.com')
+    assert example_dot_com in box_session.get_url('foo', 'bar')
