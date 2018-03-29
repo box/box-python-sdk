@@ -274,6 +274,7 @@ class BoxSession(object):
                 self._get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)),
                 self._send_request,
             )
+        return None
 
     def _raise_on_unsuccessful_request(self, network_response, request):
         """
