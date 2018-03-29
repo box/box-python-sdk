@@ -66,7 +66,16 @@ class BoxSession(object):
     Box API session. Provides auth, automatic retry of failed requests, and session renewal.
     """
 
-    def __init__(self, oauth, network_layer, default_headers=None, translator=None, default_network_request_kwargs=None):
+    def __init__(
+            self,
+            oauth,
+            network_layer,
+            default_headers=None,
+            translator=None,
+            default_network_request_kwargs=None,
+            api_config=None,
+            client_config=None,
+    ):
         """
         :param oauth:
             OAuth2 object used by the session to authorize requests.
@@ -91,13 +100,23 @@ class BoxSession(object):
             when this session makes an API request.
         :type default_network_request_kwargs:
             `dict` or None
+        :param api_config:
+            Object containing URLs for the Box API.
+        :type api_config:
+            :class:`API`
+        :param client_config:
+            Object containing client information, including user agent string.
+        :type client_config:
+            :class:`Client`
         """
         if translator is None:
             translator = Translator(extend_default_translator=True, new_child=True)
+        self._api_config = api_config or API()
+        self._client_config = client_config or Client()
         super(BoxSession, self).__init__()
         self._oauth = oauth
         self._network_layer = network_layer
-        self._default_headers = {'User-Agent': Client.USER_AGENT_STRING}
+        self._default_headers = {'User-Agent': self._client_config.USER_AGENT_STRING}
         self._translator = translator
         self._default_network_request_kwargs = {}
         if default_headers:
@@ -112,6 +131,22 @@ class BoxSession(object):
         :rtype:   :class:`Translator`
         """
         return self._translator
+
+    @property
+    def api_config(self):
+        """
+
+        :rtype:     :class:`API`
+        """
+        return self._api_config
+
+    @property
+    def client_config(self):
+        """
+
+        :rtype:     :class:`Client`
+        """
+        return self._client_config
 
     def get_url(self, endpoint, *args):
         """
@@ -129,7 +164,7 @@ class BoxSession(object):
             `unicode`
         """
         # pylint:disable=no-self-use
-        url = ['{0}/{1}'.format(API.BASE_API_URL, endpoint)]
+        url = ['{0}/{1}'.format(self._api_config.BASE_API_URL, endpoint)]
         url.extend(['/{0}'.format(x) for x in args])
         return ''.join(url)
 
@@ -150,6 +185,8 @@ class BoxSession(object):
             default_headers=headers,
             translator=self._translator,
             default_network_request_kwargs=self._default_network_request_kwargs.copy(),
+            api_config=self._api_config,
+            client_config=self._client_config,
         )
 
     def with_shared_link(self, shared_link, shared_link_password=None):
@@ -173,6 +210,8 @@ class BoxSession(object):
             default_headers=headers,
             translator=self._translator,
             default_network_request_kwargs=self._default_network_request_kwargs.copy(),
+            api_config=self._api_config,
+            client_config=self._client_config,
         )
 
     def with_default_network_request_kwargs(self, extra_network_parameters):
@@ -182,6 +221,8 @@ class BoxSession(object):
             default_headers=self._default_headers.copy(),
             translator=self._translator,
             default_network_request_kwargs=extra_network_parameters,
+            api_config=self._api_config,
+            client_config=self._client_config,
         )
 
     def _renew_session(self, access_token_used):

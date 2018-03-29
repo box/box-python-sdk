@@ -5,7 +5,6 @@ from functools import partial
 import json
 
 from .base_object import BaseObject
-from ..config import API
 from ..util.api_call_decorator import api_call
 
 
@@ -73,7 +72,7 @@ class Group(BaseObject):
         :rtype:
             :class:`GroupMembership`
         """
-        url = '{0}/group_memberships'.format(API.BASE_API_URL)
+        url = self._session.get_url('group_memberships')
         body_attributes = {
             'user': {'id': user.object_id},
             'group': {'id': self.object_id},

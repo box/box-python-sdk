@@ -27,7 +27,7 @@ class Item(BaseObject):
             `unicode` or None
         """
         endpoint = '{0}/content'.format(file_id) if file_id else 'content'
-        url = '{0}/files/{1}'.format(API.BASE_API_URL, endpoint)
+        url = '{0}/files/{1}'.format(self._session.api_config.BASE_API_URL, endpoint)
         try:
             response_json = self._session.options(
                 url=url,
@@ -63,7 +63,7 @@ class Item(BaseObject):
             :class:`BoxAPIException` when preflight check fails.
         """
         endpoint = '{0}/content'.format(file_id) if file_id else 'content'
-        url = '{0}/files/{1}'.format(API.BASE_API_URL, endpoint)
+        url = '{0}/files/{1}'.format(self._session.api_config.BASE_API_URL, endpoint)
         data = {'size': size}
         if name:
             data['name'] = name
