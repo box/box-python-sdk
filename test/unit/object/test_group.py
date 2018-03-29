@@ -13,7 +13,7 @@ from six.moves import map  # pylint:disable=redefined-builtin,import-error
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.config import API
-from boxsdk.session.box_session import BoxResponse
+from boxsdk.session.box_response import BoxResponse
 
 
 @pytest.fixture(scope='module')

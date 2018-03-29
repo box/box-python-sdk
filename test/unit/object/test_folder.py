@@ -15,7 +15,7 @@ from boxsdk.object.collaboration import Collaboration, CollaborationRole
 from boxsdk.object.folder import Folder, FolderSyncState
 from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
-from boxsdk.session.box_session import BoxResponse
+from boxsdk.session.box_response import BoxResponse
 
 
 # pylint:disable=protected-access
