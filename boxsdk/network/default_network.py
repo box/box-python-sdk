@@ -8,7 +8,7 @@ import sys
 import time
 
 import requests
-from six import text_type
+from six import text_type, PY2
 
 from .network_interface import Network, NetworkResponse
 
@@ -265,3 +265,13 @@ class DefaultNetworkResponse(NetworkResponse):
             return self._request_response
         finally:
             self.log(can_safely_log_content=False)
+
+    def __repr__(self):
+        string = '<Box Network Response ({method} {url} {status_code})>'.format(
+            method=self._request_response.request.method,
+            url=self._request_response.request.url,
+            status_code=self.status_code,
+        )
+        if PY2:
+            string = string.encode('utf-8')
+        return string

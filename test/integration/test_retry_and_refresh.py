@@ -9,12 +9,12 @@ def test_automatic_refresh(
         box_client,
         mock_box_network,
         generic_successful_response,
-        successful_token_response,
+        successful_token_mock,
         unauthorized_response,
 ):
     mock_box_network.session.request.side_effect = [
         unauthorized_response,
-        successful_token_response,
+        successful_token_mock,
         generic_successful_response,
     ]
     box_client.folder('0').get()

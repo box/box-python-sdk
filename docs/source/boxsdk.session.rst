@@ -1,27 +1,27 @@
-boxsdk.session package
-======================
+boxsdk\.session package
+=======================
 
 Submodules
 ----------
 
-boxsdk.session.box_request module
----------------------------------
+boxsdk\.session\.box\_request module
+------------------------------------
 
 .. automodule:: boxsdk.session.box_request
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.session.box_response module
-----------------------------------
+boxsdk\.session\.box\_response module
+-------------------------------------
 
 .. automodule:: boxsdk.session.box_response
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.session.box_session module
----------------------------------
+boxsdk\.session\.box\_session module
+------------------------------------
 
 .. automodule:: boxsdk.session.box_session
     :members:

@@ -10,7 +10,7 @@ from pprint import pformat
 
 from mock import DEFAULT, Mock, patch, ANY
 import pytest
-from requests import Response, Session
+from requests import Response
 from six import text_type
 
 from boxsdk.network import default_network
@@ -33,8 +33,8 @@ def network():
 
 @pytest.fixture(autouse=True)
 def mocked_logger(logger):
-    with patch.object(default_network, 'getLogger') as getLogger:
-        getLogger.return_value = logger
+    with patch.object(default_network, 'getLogger') as get_logger:
+        get_logger.return_value = logger
         yield
 
 
@@ -56,7 +56,6 @@ def assert_logger_called_once_with(logger, logger_method_names):
         method_names = set(logger_method_names)
         method_names.discard(method_name)
         for name in method_names:
-            print getattr(logger, name).mock_calls
             getattr(logger, name).assert_not_called()
 
     return _assert_logger_called_once_with

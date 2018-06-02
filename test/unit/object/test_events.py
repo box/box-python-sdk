@@ -4,12 +4,12 @@ from __future__ import unicode_literals, absolute_import
 
 from itertools import chain
 import json
+from six.moves.urllib.parse import urlencode, urlunsplit  # pylint:disable=import-error,no-name-in-module
 
 from mock import Mock
 import pytest
 from requests.exceptions import Timeout
 from six.moves import map   # pylint:disable=redefined-builtin
-from six.moves.urllib.parse import urlencode, urlunsplit  # pylint:disable=import-error,no-name-in-module
 
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.events import Events, EventsStreamType, UserEventsStreamType

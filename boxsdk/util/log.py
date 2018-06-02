@@ -1,7 +1,14 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
 import logging
+try:
+    from logging import NullHandler
+except ImportError:
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
 import sys
 
 from six import string_types
@@ -14,6 +21,7 @@ class Logging(object):
         if not self._has_setup:
             self._has_setup = True
             return self._setup_logging(stream_or_file, debug, name)
+        return None
 
     @staticmethod
     def _setup_logging(stream_or_file=None, debug=False, name=None):
@@ -54,14 +62,7 @@ def setup_logging(stream_or_file=None, debug=False, name=None):
     return _logging.setup_logging(stream_or_file, debug, name)
 
 
-try:
-    from logging import NullHandler
-except ImportError:
-    class NullHandler(logging.Handler):
-        def emit(self, record):
-            pass
-
 logging.getLogger(__name__).addHandler(NullHandler())
 
 
-__all__ = [b'setup_logging']
+__all__ = list(map(str, ['setup_logging']))

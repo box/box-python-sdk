@@ -4,7 +4,6 @@ from __future__ import absolute_import, unicode_literals
 
 from mock import Mock
 import pytest
-from requests import Response
 
 from boxsdk import Client
 from boxsdk.auth.oauth2 import OAuth2
@@ -36,18 +35,11 @@ def mock_box_network():
 
 @pytest.fixture
 def generic_successful_response(generic_successful_request_response):
+    generic_successful_request_response.request = Mock()
     return generic_successful_request_response
 
 
 @pytest.fixture
 def successful_token_mock(successful_token_request_response):
+    successful_token_request_response.request = Mock()
     return successful_token_request_response
-
-
-@pytest.fixture(scope='session')
-def unauthorized_response():
-    res = Mock(Response)
-    res.content = b''
-    res.status_code = 401
-    res.ok = False
-    return res

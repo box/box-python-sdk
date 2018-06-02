@@ -65,10 +65,11 @@ def test_setup_logging_is_reentrant(mock_logger):
     with patch('logging.getLogger') as get_logger:
         with patch('logging.open', mock_file_open, create=True):
             get_logger.return_value = mock_logger
-            assert boxsdk.util.log.setup_logging() == mock_logger
+            logging_instance = boxsdk.util.log.Logging()
+            assert logging_instance.setup_logging() == mock_logger
             get_logger.assert_called_once_with(None)
             get_logger.return_value = Mock()
-            assert boxsdk.util.log.setup_logging() is None
+            assert logging_instance.setup_logging() is None
 
     assert mock_logger.addHandler.call_count == 1
     assert isinstance(mock_logger.addHandler.call_args[0][0], logging.Handler)
