@@ -13,15 +13,15 @@ from six.moves.urllib import parse  # pylint:disable=import-error, no-name-in-mo
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.config import API
 from boxsdk.client import LoggingClient
-from boxsdk.network.logging_network import LoggingNetwork
+from boxsdk.network.default_network import DefaultNetwork
 from boxsdk.session.box_session import BoxSession
 from test.functional.mock_box.box import Box
 from test.util.streamable_mock_open import streamable_mock_open
 
 
 @pytest.fixture(scope='session')
-def network_layer(logger):
-    return LoggingNetwork(logger=logger)
+def network_layer():
+    return DefaultNetwork()
 
 
 @pytest.fixture()
