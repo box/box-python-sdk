@@ -20,8 +20,7 @@ class Logging(object):
     def setup_logging(self, stream_or_file=None, debug=False, name=None):
         if not self._has_setup:
             self._has_setup = True
-            return self._setup_logging(stream_or_file, debug, name)
-        return None
+            self._setup_logging(stream_or_file, debug, name)
 
     @staticmethod
     def _setup_logging(stream_or_file=None, debug=False, name=None):
@@ -31,7 +30,6 @@ class Logging(object):
         else:
             logger.addHandler(logging.StreamHandler(stream_or_file or sys.stdout))
         logger.setLevel(logging.DEBUG if debug else logging.INFO)
-        return logger
 
 
 _logging = Logging()
@@ -54,12 +52,8 @@ def setup_logging(stream_or_file=None, debug=False, name=None):
         The logging channel. If None, a root logger will be created.
     :type name:
         `unicode` or None
-    :return:
-        A logger that's been set up according to the specified parameters.
-    :rtype:
-        :class:`Logger`
     """
-    return _logging.setup_logging(stream_or_file, debug, name)
+    _logging.setup_logging(stream_or_file, debug, name)
 
 
 logging.getLogger(__name__).addHandler(NullHandler())

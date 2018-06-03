@@ -378,7 +378,6 @@ class BoxSession(object):
                 break
 
             attempt_number += 1
-            network_response.log(can_safely_log_content=True)
             self._logger.debug('Retrying request')
             network_response = retry(request, **kwargs)
 

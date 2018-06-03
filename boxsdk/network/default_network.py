@@ -14,7 +14,7 @@ from .network_interface import Network, NetworkResponse
 
 
 class DefaultNetwork(Network):
-    """Implementation of the network interface using the requests library."""
+    """Implementats the network interface using the requests library."""
 
     LOGGER_NAME = 'boxsdk.network'
     REQUEST_FORMAT = '\x1b[36m%(method)s %(url)s %(request_kwargs)s\x1b[0m'
@@ -24,6 +24,44 @@ class DefaultNetwork(Network):
         super(DefaultNetwork, self).__init__()
         self._session = requests.Session()
         self._logger = getLogger(__name__)
+
+    def request(self, method, url, access_token, **kwargs):
+        """Base class override.
+
+        Make a network request using a requests.Session. Logs information about an API request and response.
+
+        Also logs exceptions before re-raising them.
+
+        The logging of the response is deferred to :class:`DefaultNetworkResponse`.
+        See that class's docstring for more info.
+        """
+        self._log_request(method, url, **kwargs)
+        # pylint:disable=abstract-class-instantiated
+        try:
+            return self.network_response_constructor(
+                request_response=self._session.request(method, url, **kwargs),
+                access_token_used=access_token,
+            )
+        except Exception:
+            self._log_exception(method, url, sys.exc_info())
+            raise
+
+    def retry_after(self, delay, request_method, *args, **kwargs):
+        """Base class override.
+        Retry after sleeping for delay seconds.
+        """
+        time.sleep(delay)
+        return request_method(*args, **kwargs)
+
+    @property
+    def network_response_constructor(self):
+        """Baseclass override.
+
+        A callable that accepts `request_response` and `access_token_used`
+        keyword arguments for the :class:`DefaultNetworkResponse` constructor,
+        and returns an instance of :class:`DefaultNetworkResponse`.
+        """
+        return DefaultNetworkResponse
 
     def _log_request(self, method, url, **kwargs):
         """
@@ -59,43 +97,6 @@ class DefaultNetwork(Network):
             {'method': method, 'url': url, 'exc_type_name': exc_type.__name__, 'exc_value': exc_value},
         )
 
-    def request(self, method, url, access_token, **kwargs):
-        """Base class override.
-
-        Make a network request using a requests.Session. Logs information about an API request and response.
-
-        Also logs exceptions before re-raising them.
-
-        The logging of the response is deferred to :class:`NetworkResponse`. See that class's docstring for more info.
-        """
-        self._log_request(method, url, **kwargs)
-        # pylint:disable=abstract-class-instantiated
-        try:
-            return self.network_response_constructor(
-                request_response=self._session.request(method, url, **kwargs),
-                access_token_used=access_token,
-            )
-        except Exception:
-            self._log_exception(method, url, sys.exc_info())
-            raise
-
-    def retry_after(self, delay, request_method, *args, **kwargs):
-        """Base class override.
-        Retry after sleeping for delay seconds.
-        """
-        time.sleep(delay)
-        return request_method(*args, **kwargs)
-
-    @property
-    def network_response_constructor(self):
-        """Baseclass override.
-
-        A callable that accepts `request_response` and `access_token_used`
-        keyword arguments for the :class:`DefaultNetworkResponse` constructor,
-        and returns an instance of :class:`DefaultNetworkResponse`.
-        """
-        return DefaultNetworkResponse
-
 
 class DefaultNetworkResponse(NetworkResponse):
     """Implementation of the network interface using the requests library.
@@ -121,8 +122,8 @@ class DefaultNetworkResponse(NetworkResponse):
     whether `stream=True` or `stream=False` on the request.
 
     If the caller uses `Response.content`, then it is safe for
-    :class:`LoggingNetwork` to also access it. But if the caller uses any of
-    the streaming mechanisms, then it is not safe for :class:`LoggingNetwork`
+    :class:`DefaultNetwork` to also access it. But if the caller uses any of
+    the streaming mechanisms, then it is not safe for :class:`DefaultNetwork`
     to ever read any of the content. Thus, the options available are:
 
         - Never log the content of a response.
@@ -132,19 +133,17 @@ class DefaultNetworkResponse(NetworkResponse):
         - Defer logging until it is possible to auto-detect which mechanism is
           being used.
 
-    This class is an implementation of the latter option. Instead of response
-    logging taking place in `LoggingNetwork.request()`, it takes place in this
-    `DefaultNetworkResponse` subclass, as soon as the caller starts reading the
+    This class implements the latter option. Instead of response
+    logging taking place in `DefaultNetwork.request()`, it takes place in this
+    `DefaultNetworkResponse` class, as soon as the caller starts reading the
     content. If `content` or `json()` are accessed, then the response will be
     logged with its content. Whereas if `response_as_stream` or
     `request_response` are accessed, then the response will be logged with a
     placeholder for the actual content.
 
-    In theory, this could make the logs less useful, by adding a delay between
-    when the network response was actually received, and when it is logged. Or
-    the response may never be logged, if the content is never accessed. In
-    practice, this is unlikely to happen, because nearly all SDK methods
-    immediately read the content.
+    Because most SDK methods immediately read the content on success, but not
+    on errors (the SDK may retry the request based on just the status code),
+    this class will log its content if it represents a failed request.
     """
 
     _COMMON_RESPONSE_FORMAT = '"%(method)s %(url)s" %(status_code)s %(content_length)s\n%(headers)s\n%(content)s\n'
@@ -157,58 +156,8 @@ class DefaultNetworkResponse(NetworkResponse):
         self._request_response = request_response
         self._access_token_used = access_token_used
         self._did_log = False
-
-    def log(self, can_safely_log_content=False):
-        """Logs information about the Box API response.
-
-        Will only execute once. Subsequent calls will be no-ops. This is
-        partially because we only want to log responses once, and partially
-        because this is necessary to prevent this method from infinite
-        recursing with its use of the `content` property.
-
-        :param can_safely_log_content:
-            (optional) `True` if the caller is accessing the `content`
-            property, `False` otherwise.
-
-            As stated in the class docstring, it is unsafe for this logging
-            method to access `content` unless the caller is also accessing it.
-
-            Defaults to `False`.
-        :type can_safely_log_content:   `bool`
-        """
-        if self._did_log:
-            return
-        self._did_log = True
-        content_length = self.headers.get('Content-Length', None)
-        content = self.STREAM_CONTENT_NOT_LOGGED
-        if can_safely_log_content:
-            if content_length is None:
-                content_length = text_type(len(self.content))
-
-            # If possible, get the content as a JSON `dict`, that way
-            # `pformat(content)` will return pretty-printed JSON.
-            try:
-                content = self.json()
-            except ValueError:
-                content = self.content
-            content = pformat(content)
-        if content_length is None:
-            content_length = '?'
-        if self.ok:
-            logger_method, response_format = self._logger.info, self.SUCCESSFUL_RESPONSE_FORMAT
-        else:
-            logger_method, response_format = self._logger.warning, self.ERROR_RESPONSE_FORMAT
-        logger_method(
-            response_format,
-            {
-                'method': self.request_response.request.method,
-                'url': self.request_response.request.url,
-                'status_code': self.status_code,
-                'content_length': content_length,
-                'headers': pformat(self.headers),
-                'content': content,
-            },
-        )
+        if not self.ok:
+            self.log(can_safely_log_content=True)
 
     def json(self):
         """Base class override."""
@@ -265,6 +214,58 @@ class DefaultNetworkResponse(NetworkResponse):
             return self._request_response
         finally:
             self.log(can_safely_log_content=False)
+
+    def log(self, can_safely_log_content=False):
+        """Logs information about the Box API response.
+
+        Will only execute once. Subsequent calls will be no-ops. This is
+        partially because we only want to log responses once, and partially
+        because this is necessary to prevent this method from infinite
+        recursing with its use of the `content` property.
+
+        :param can_safely_log_content:
+            (optional) `True` if the caller is accessing the `content`
+            property, `False` otherwise.
+
+            As stated in the class docstring, it is unsafe for this logging
+            method to access `content` unless the caller is also accessing it.
+
+            Defaults to `False`.
+        :type can_safely_log_content:   `bool`
+        """
+        if self._did_log:
+            return
+        self._did_log = True
+        content_length = self.headers.get('Content-Length', None)
+        content = self.STREAM_CONTENT_NOT_LOGGED
+        if can_safely_log_content:
+            if content_length is None:
+                content_length = text_type(len(self.content))
+
+            # If possible, get the content as a JSON `dict`, that way
+            # `pformat(content)` will return pretty-printed JSON.
+            try:
+                content = self.json()
+            except ValueError:
+                content = self.content
+            content = pformat(content)
+        if content_length is None:
+            content_length = '?'
+        if self.ok:
+            logger_method, response_format = self._logger.info, self.SUCCESSFUL_RESPONSE_FORMAT
+        else:
+            logger_method, response_format = self._logger.warning, self.ERROR_RESPONSE_FORMAT
+        logger_method(
+            response_format,
+            {
+                'method': self.request_response.request.method,
+                'url': self.request_response.request.url,
+                'status_code': self.status_code,
+                'content_length': content_length,
+                'headers': pformat(self.headers),
+                'content': content,
+            },
+        )
 
     def __repr__(self):
         string = '<Box Network Response ({method} {url} {status_code})>'.format(

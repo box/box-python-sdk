@@ -187,11 +187,10 @@ def test_network_response_constructor(make_network_request_and_assert_response):
     assert isinstance(response, DefaultNetworkResponseSubclass)
 
 
-def test_network_logs_requests(make_network_request, http_verb, test_url, network, assert_logger_called_once_with):
+def test_network_logs_requests(make_network_request, http_verb, test_url, network, logger):
     kwargs = dict(custom_kwarg='foo')
     make_network_request(network, **kwargs)
-    assert_logger_called_once_with(
-        'info',
+    logger.info.assert_called_once_with(
         network.REQUEST_FORMAT,
         {'method': http_verb, 'url': test_url, 'request_kwargs': pformat(kwargs)},
     )
@@ -217,11 +216,11 @@ def test_network_request_returns_network_response(make_network_request, request_
 # BEGIN Tests for NetworkResponse.
 
 
-def test_network_response_does_not_log_anything_immediately(network_response, logger_call_count):
+def test_error_network_response_logs_immediately(network_response, logger_call_count):
     # pylint:disable=unused-argument
     # Need to load the `network_response` fixture for this test to be
     # meaningful.
-    assert logger_call_count() == 0
+    assert logger_call_count() == 0 if network_response.ok else 1
 
 
 def test_network_response_only_logs_once(network_response, logger_call_count):
@@ -291,12 +290,11 @@ def test_network_logs_successful_responses_with_non_json_content(
 
 def test_network_logs_non_successful_responses(
         construct_network_response, server_error_request_response, assert_logger_called_once_with,
-        get_content_from_response, http_verb, test_url,
+        http_verb, test_url,
 ):
     server_error_request_response.request.method = http_verb
     server_error_request_response.request.url = test_url
-    network_response = construct_network_response(server_error_request_response)
-    get_content_from_response(network_response)
+    construct_network_response(server_error_request_response)
     assert_logger_called_once_with(
         'warning',
         DefaultNetworkResponse.ERROR_RESPONSE_FORMAT,
