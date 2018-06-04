@@ -9,7 +9,9 @@ from mock import Mock
 import pytest
 from requests.exceptions import Timeout
 from six.moves import map   # pylint:disable=redefined-builtin
-from six.moves.urllib.parse import urlencode, urlunsplit  # pylint:disable=import-error,no-name-in-module
+# pylint:disable=import-error,no-name-in-module,wrong-import-order
+from six.moves.urllib.parse import urlencode, urlunsplit
+# pylint:enable=import-error,no-name-in-module,wrong-import-order
 
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.events import Events, EventsStreamType, UserEventsStreamType

@@ -3,15 +3,16 @@
 from __future__ import unicode_literals
 
 from contextlib import contextmanager
-from threading import Lock
+from logging import getLogger
 import random
 import string  # pylint:disable=deprecated-module
 import sys
+from threading import Lock
 
-import six
 # pylint:disable=import-error,no-name-in-module,relative-import
 from six.moves.urllib.parse import urlencode, urlunsplit
 # pylint:enable=import-error,no-name-in-module,relative-import
+import six
 
 from boxsdk.config import API
 from boxsdk.exception import BoxOAuthException
@@ -110,6 +111,7 @@ class OAuth2(object):
         self._box_device_name = box_device_name
         self._closed = False
         self._api_config = API()
+        self._logger = getLogger(__name__)
 
     @property
     def access_token(self):
@@ -252,6 +254,7 @@ class OAuth2(object):
         self._check_closed()
         with self._refresh_lock:
             self._check_closed()
+            self._logger.debug('Refreshing tokens.')
             access_token, refresh_token = self._get_and_update_current_tokens()
             # The lock here is for handling that case that multiple requests fail, due to access token expired, at the
             # same time to avoid multiple session renewals.

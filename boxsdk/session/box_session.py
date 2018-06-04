@@ -3,6 +3,7 @@
 from __future__ import unicode_literals, absolute_import
 
 from functools import partial
+from logging import getLogger
 
 from .box_request import BoxRequest as _BoxRequest
 from .box_response import BoxResponse as _BoxResponse
@@ -75,6 +76,7 @@ class BoxSession(object):
             self._default_headers.update(default_headers)
         if default_network_request_kwargs:
             self._default_network_request_kwargs.update(default_network_request_kwargs)
+        self._logger = getLogger(__name__)
 
     @property
     def box_request_constructor(self):
@@ -376,6 +378,7 @@ class BoxSession(object):
                 break
 
             attempt_number += 1
+            self._logger.debug('Retrying request')
             network_response = retry(request, **kwargs)
 
         self._raise_on_unsuccessful_request(network_response, request)

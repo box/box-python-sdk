@@ -24,7 +24,8 @@ Release History
   + Migration: If you still need to treat an ``Event`` as a ``dict``, you can get a deepcopy of the original ``dict``
     using the new property on ``BaseAPIJSONObject``, ``response_object``.
 
-- The logging format strings in ``LoggingNetwork`` have changed in a way that
+- ``LoggingNetwork`` has been removed. Logging calls are now made from the ``DefaultNetwork`` class. In addition,
+  the logging format strings in this class have changed in a way that
   will break logging for any applications that have overridden any of these
   strings. They now use keyword format placeholders instead of positional
   placeholders. All custom format strings will now have to use the same keyword
