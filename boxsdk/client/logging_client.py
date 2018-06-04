@@ -11,5 +11,5 @@ class LoggingClient(Client):
     Box client subclass which logs requests and responses.
     """
     def __init__(self, *args, **kwargs):
-        setup_logging()
+        setup_logging(None)
         super(LoggingClient, self).__init__(*args, **kwargs)
