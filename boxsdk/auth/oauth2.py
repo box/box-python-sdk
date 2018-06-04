@@ -8,10 +8,10 @@ import random
 import string  # pylint:disable=deprecated-module
 import sys
 
-import six
 # pylint:disable=import-error,no-name-in-module,relative-import
 from six.moves.urllib.parse import urlencode, urlunsplit
 # pylint:enable=import-error,no-name-in-module,relative-import
+import six
 
 from boxsdk.config import API
 from boxsdk.exception import BoxOAuthException

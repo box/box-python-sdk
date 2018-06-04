@@ -310,9 +310,11 @@ class File(Item):
     @api_call
     def create_chunked_upload_session(self, file_size):
         """
-        
-        :param file_size:
-        :return:
+        Create a new chunked upload session for uploading a new version of the file.
+
+        :param file_size:       The size of the file that will be uploaded.
+        :type file_size:        `int`
+        :rtype:                 :class:`ChunkedUploadSession`
         """
         response = self.session.post(
             self.get_url('{0}s'.format('upload_session')).replace(

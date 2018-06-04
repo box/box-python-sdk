@@ -491,7 +491,9 @@ class Folder(Item):
         Create a new chunked upload session for uploading a new file.
 
         :param file_size:       The size of the file that will be uploaded.
+        :type file_size:        `int`
         :param file_name:       The name of the file that will be uploaded.
+        :type file_name:        `unicode`
         :rtype:                 :class:`ChunkedUploadSession`
         """
         url = '{0}/files/upload_sessions'.format(self._session.api_config.UPLOAD_URL)

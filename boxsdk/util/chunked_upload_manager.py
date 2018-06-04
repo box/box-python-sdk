@@ -14,7 +14,6 @@ class ChunkedUploadManager(object):
     Class for managing a chunked upload. By default, uploads chunks in parallel using a thread pool.
     """
     executor_factory = ThreadPoolExecutor
-    lock_factory = Lock
     num_workers = 3
 
     def __init__(self, upload_session, content_stream, file_size):
@@ -31,9 +30,10 @@ class ChunkedUploadManager(object):
         self._total_size = file_size
         self._content_sha1 = hashlib.sha1()
         self._part_queue = self.executor_factory(max_workers=self.num_workers)
-        self._get_work_lock = self.lock_factory()
+        self._get_work_lock = self._lock_factory()
         self._uploaded_parts = {}
         self._work_generator = self._get_next_work_item()
+        self._futures = []
 
     def start(self):
         """
@@ -41,7 +41,12 @@ class ChunkedUploadManager(object):
 
         :rtype:     :class:`File`
         """
-        wait([self._future_factory() for _ in range(self._session.total_parts)], return_when=FIRST_EXCEPTION)
+        self._futures = [self._future_factory() for _ in range(self._session.total_parts)]
+        wait(self._futures, return_when=FIRST_EXCEPTION)
+        for future in self._futures:
+            future.cancel()
+            if future.exception():
+                raise future.exception()
         return self._commit()
 
     def resume(self):
@@ -126,7 +131,7 @@ class ChunkedUploadManager(object):
             chunk = self._stream.read(self._session.part_size - copied_length)
             if chunk is None:
                 continue
-            if len(chunk) == 0:
+            if len(chunk) == 0:  # pylint:disable=len-as-condition
                 break
             copied_length += len(chunk)
             part_buffer.write(chunk)
@@ -157,3 +162,7 @@ class ChunkedUploadManager(object):
         part = future.result()['part']
         offset = part['offset']
         self._uploaded_parts[offset] = part
+
+    @staticmethod
+    def _lock_factory():
+        return Lock()
