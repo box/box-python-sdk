@@ -1,7 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from six import PY2
+
+import attr
+
+from .network.network_interface import NetworkResponse
+from .util.log import sanitize_dictionary
 
 
 class BoxException(Exception):
@@ -9,9 +13,10 @@ class BoxException(Exception):
     Base class exception for all errors raised from the SDK.
     """
     def __str__(self):
-        # pylint:disable=no-member
-        # <https://github.com/box/box-python-sdk/issues/117>
-        return self.__unicode__().encode('utf-8') if PY2 else self.__unicode__()
+        return '{}'.format(self.__class__.__name__)
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
 
 
 class BoxNetworkException(BoxException):
@@ -21,204 +26,122 @@ class BoxNetworkException(BoxException):
     pass
 
 
+@attr.s(repr=True, slots=True, frozen=True)
 class BoxAPIException(BoxException):
     """
     Exception raised from the box session layer.
-    """
-    def __init__(
-            self,
-            status,
-            code=None,
-            message=None,
-            request_id=None,
-            headers=None,
-            url=None,
-            method=None,
-            context_info=None,
-            network_response=None,
-    ):
-        """
-        :param status:
-            HTTP status code of the failed response
-        :type status:
-            `int`
-        :param code:
-            The 'code' field of the failed response
-        :type code:
-            `unicode` or None
-        :param message:
-            A message to associate with the exception, e.g. 'message' field of the json in the failed response
-        :type message:
-            `unicode` or None
-        :param request_id:
-            The 'request_id' field of the json in the failed response
-        :type request_id:
-            `unicode` or None
-        :param headers:
-            The HTTP headers in the failed response
-        :type headers:
-            `dict`
-        :param url:
-            The url which raised the exception
-        :type url:
-            `unicode`
-        :param method:
-            The HTTP verb used to make the request.
-        :type method:
-            `unicode`
-        :param context_info:
-            The context_info returned in the failed response.
-        :type context_info:
-            `dict` or None
-        :param network_response:
-            The failed response
-        :type network_response:
-            Requests `Response`
-        """
-        super(BoxAPIException, self).__init__()
-        self._status = status
-        self._code = code
-        self._message = message
-        self._request_id = request_id
-        self._headers = headers
-        self._url = url
-        self._method = method
-        self._context_info = context_info
-        self._network_response = network_response
 
-    def __unicode__(self):
-        return '\nMessage: {0}\nStatus: {1}\nCode: {2}\nRequest id: {3}\nHeaders: {4}\nURL: {5}\nMethod: {6}\nContext info: {7}'.format(
-            self._message,
-            self._status,
-            self._code,
-            self._request_id,
-            self._headers,
-            self._url,
-            self._method,
-            self._context_info,
-        )
-
-    @property
-    def status(self):
-        """
-        The status code of the network response that is responsible for the exception.
-
-        :rtype: `int`
-        """
-        return self._status
-
-    @property
-    def code(self):
-        """
-        The explanation of the status code of the network response that is responsible for the exception.
-
-        :rtype: `int`
-        """
-        return self._code
-
-    @property
-    def message(self):
-        """
-        The message associated with the exception, e.g. 'message' field of the json in the failed response.
-
-        :rtype:   `unicode`
-        """
-        return self._message
-
-    @property
-    def request_id(self):
-        """
-        The id the network request that is responsible for the exception.
-
-        :rtype: `unicode`
-        """
-        return self._request_id
-
-    @property
-    def url(self):
-        """
-        The URL of the network request that is responsible for the exception.
-
-        :rtype: `unicode`
-        """
-        return self._url
-
-    @property
-    def method(self):
-        """
-        The HTTP verb of the request that is responsible for the exception.
-
-        :rtype: `unicode`
-        """
-        return self._method
-
-    @property
-    def context_info(self):
-        """
+    :param status:
+        HTTP status code of the failed response
+    :type status:
+        `int`
+    :param code:
+        The 'code' field of the failed response
+    :type code:
+        `unicode` or None
+    :param message:
+        A message to associate with the exception, e.g. 'message' field of the json in the failed response
+    :type message:
+        `unicode` or None
+    :param request_id:
+        The 'request_id' field of the json in the failed response
+    :type request_id:
+        `unicode` or None
+    :param headers:
+        The HTTP headers in the failed response
+    :type headers:
+        `dict`
+    :param url:
+        The url which raised the exception
+    :type url:
+        `unicode`
+    :param method:
+        The HTTP verb used to make the request.
+    :type method:
+        `unicode`
+    :param context_info:
         The context_info returned in the failed response.
+    :type context_info:
+        `dict` or None
+    :param network_response:
+        The failed response
+    :type network_response:
+        Requests `Response`
+    """
+    status = attr.ib()
+    code = attr.ib(default=None)
+    message = attr.ib(default=None)
+    request_id = attr.ib(default=None)
+    headers = attr.ib(default=None, hash=False)
+    url = attr.ib(default=None)
+    method = attr.ib(default=None)
+    context_info = attr.ib(default=None)
+    network_response = attr.ib(default=None, repr=False)
 
-        :rtype: `dict`
-        """
-        return self._context_info
+    def __str__(self):
+        return '\n'.join((
+            'Message: {self.message}',
+            'Status: {self.status}',
+            'Code: {self.code}',
+            'Request ID: {self.request_id}',
+            'Headers: {headers}',
+            'URL: {self.url}',
+            'Method: {self.method}',
+            'Context Info: {self.context_info}',
+        )).format(self=self, headers=sanitize_dictionary(self.headers))
 
-    @property
-    def network_response(self):
-        """
-        The response returned from the network.
 
-        :rtype: `NetworkResponse`
-        """
-        return self._network_response
-
-
+@attr.s(repr=True, slots=True, frozen=True)
 class BoxOAuthException(BoxException):
     """
     Exception raised during auth.
+
+    :param status:
+        HTTP status code of the auth response
+    :type status:
+        `int`
+    :param message:
+        A message to associate with the exception, e.g. HTTP content of the auth response
+    :type message:
+        `unicode`
+    :param url:
+        The url which raised the exception
+    :type url:
+        `unicode`
+    :param method:
+        The HTTP verb used to make the request.
+    :type method:
+        `unicode`
+    :param network_response:
+        The network response for the request.
+    :type network_response:
+        :class:`NetworkResponse`
+    :param code:
+        The 'code' field of the failed response
+    :type code:
+        `unicode` or None
     """
-    def __init__(self, status, message=None, url=None, method=None, network_response=None):
-        """
-        :param status:
-            HTTP status code of the auth response
-        :type status:
-            `int`
-        :param message:
-            A message to associate with the exception, e.g. HTTP content of the auth response
-        :type message:
-            `unicode`
-        :param url:
-            The url which raised the exception
-        :type url:
-            `unicode`
-        :param method:
-            The HTTP verb used to make the request.
-        :type method:
-            `unicode`
-        :param network_response:
-            The network response for the request.
-        :type network_response:
-            :class:`NetworkResponse`
-        """
-        super(BoxOAuthException, self).__init__()
-        self._status = status
-        self._message = message
-        self._url = url
-        self._method = method
-        self._network_response = network_response
+    status = attr.ib()
+    message = attr.ib(default=None)
+    url = attr.ib(default=None)
+    method = attr.ib(default=None)
+    network_response = attr.ib(default=None, repr=False, type=NetworkResponse)
+    code = attr.ib(default=None)
 
-    @property
-    def network_response(self):
-        """
-        The response returned from the network.
-
-        :rtype: :class:`NetworkResponse`
-        """
-        return self._network_response
-
-    def __unicode__(self):
+    def __str__(self):
+        # pylint:disable=no-member
+        if self.network_response.headers:
+            headers = sanitize_dictionary(self.network_response.headers)
+        # pylint:enable=no-member
+        else:
+            headers = 'N/A'
         return '\nMessage: {0}\nStatus: {1}\nURL: {2}\nMethod: {3}\nHeaders: {4}'.format(
-            self._message,
-            self._status,
-            self._url,
-            self._method,
-            self.network_response.headers if self.network_response else 'N/A',
+            self.message,
+            self.status,
+            self.url,
+            self.method,
+            headers,
         )
+
+
+__all__ = list(map(str, ['BoxException', 'BoxAPIException', 'BoxOAuthException', 'BoxNetworkException']))

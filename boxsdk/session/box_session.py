@@ -9,6 +9,7 @@ from .box_request import BoxRequest as _BoxRequest
 from .box_response import BoxResponse as _BoxResponse
 from ..config import API, Client
 from ..exception import BoxAPIException
+from ..util.json import is_json_response
 from ..util.multipart_stream import MultipartStream
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
@@ -201,21 +202,6 @@ class BoxSession(object):
         new_access_token, _ = self._oauth.refresh(access_token_used)
         return new_access_token
 
-    @staticmethod
-    def _is_json_response(network_response):
-        """Return whether or not the network response content is json.
-
-        :param network_response:
-            The response from the Box API.
-        :type network_response:
-            :class:`NetworkResponse`
-        """
-        try:
-            network_response.json()
-            return True
-        except ValueError:
-            return False
-
     def _get_retry_after_time(self, attempt_number, retry_after_header):
         """
         Get the amount of time to wait before retrying the API request.
@@ -278,7 +264,8 @@ class BoxSession(object):
             )
         return None
 
-    def _raise_on_unsuccessful_request(self, network_response, request):
+    @staticmethod
+    def _raise_on_unsuccessful_request(network_response, request):
         """
         Raise an exception if the request was unsuccessful.
 
@@ -308,7 +295,7 @@ class BoxSession(object):
                 context_info=response_json.get('context_info', None),
                 network_response=network_response
             )
-        if request.expect_json_response and not self._is_json_response(network_response):
+        if request.expect_json_response and not is_json_response(network_response):
             raise BoxAPIException(
                 status=network_response.status_code,
                 headers=network_response.headers,
