@@ -2,8 +2,13 @@
 
 from __future__ import unicode_literals
 
+import json
+
 from .item import Item
+from .base_object import BaseObject
+from .comment import Comment
 from ..util.api_call_decorator import api_call
+from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
 
 class File(Item):
@@ -281,3 +286,61 @@ class File(Item):
             password=password,
         )
         return item.shared_link['download_url']  # pylint:disable=no-member
+
+    @api_call
+    def get_comments(self, limit=None, offset=0, fields=None):
+        """
+        Get the comments on the file.
+
+        :param limit:
+            The maximum number of items to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param offset:
+            The index at which to start returning items.
+        :type offset:
+            `int`
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the items in the folder.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return LimitOffsetBasedObjectCollection(
+            self.session,
+            self.get_url('comments'),
+            limit=limit,
+            fields=fields,
+            offset=offset,
+            return_full_pages=False,
+        )
+
+    @api_call
+    def add_comment(self, message):
+        """
+        Add a comment to the file.
+
+        :param message:
+            The content of the reply comment.
+        :type message:
+            `unicode`
+        """
+        url = BaseObject.get_url(self, 'comments')
+        message_type = 'tagged_message' if '@[' in message else 'message'
+        data = {
+            message_type: message,
+            'item': {
+                'type': 'file',
+                'id': self.object_id
+            }
+        }
+        box_response = self._session.post(url, data=json.dumps(data))
+        response = box_response.json()
+        return Comment(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
