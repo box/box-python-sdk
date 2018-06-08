@@ -130,7 +130,7 @@ class BoxOAuthException(BoxException):
 
     def __str__(self):
         # pylint:disable=no-member
-        if self.network_response.headers:
+        if self.network_response:
             headers = sanitize_dictionary(self.network_response.headers)
         # pylint:enable=no-member
         else:
