@@ -7,22 +7,24 @@ import pytest
 
 from boxsdk import Client
 from boxsdk.auth.oauth2 import OAuth2
-from test.integration.mock_network import MockNetwork
+from boxsdk.session.session import Session, AuthorizedSession
+
+from .mock_network import MockNetwork
 
 
 @pytest.fixture()
-def box_client(box_oauth, mock_box_network):
+def box_client(box_oauth, mock_box_session):
     # pylint:disable=redefined-outer-name
-    return Client(box_oauth, network_layer=mock_box_network)
+    return Client(box_oauth, session=mock_box_session)
 
 
 @pytest.fixture()
-def box_oauth(mock_box_network, client_id, client_secret, access_token, refresh_token):
+def box_oauth(unauthorized_session, client_id, client_secret, access_token, refresh_token):
     # pylint:disable=redefined-outer-name
     return OAuth2(
         client_id,
         client_secret,
-        network_layer=mock_box_network,
+        session=unauthorized_session,
         access_token=access_token,
         refresh_token=refresh_token,
     )
@@ -31,6 +33,16 @@ def box_oauth(mock_box_network, client_id, client_secret, access_token, refresh_
 @pytest.fixture()
 def mock_box_network():
     return MockNetwork()
+
+
+@pytest.fixture()
+def unauthorized_session(mock_box_network):
+    return Session(network_layer=mock_box_network)
+
+
+@pytest.fixture()
+def mock_box_session(mock_box_network, box_oauth):
+    return AuthorizedSession(box_oauth, network_layer=mock_box_network)
 
 
 @pytest.fixture

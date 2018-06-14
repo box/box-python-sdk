@@ -8,7 +8,7 @@ import pytest
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from boxsdk.session.box_response import BoxResponse
-from boxsdk.session.box_session import BoxSession
+from boxsdk.session.session import Session
 from .box_object_collection_test_base import BoxObjectCollectionTestBase
 
 
@@ -59,7 +59,7 @@ class TestMarkerBasedObjectCollection(BoxObjectCollectionTestBase):
     @pytest.fixture()
     def mock_session(self, translator, mock_items_response):
         """Baseclass override."""
-        mock_box_session = Mock(BoxSession)
+        mock_box_session = Mock(Session)
         type(mock_box_session).translator = PropertyMock(return_value=translator)
 
         def mock_items_side_effect(_, params):

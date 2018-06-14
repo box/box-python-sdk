@@ -54,7 +54,13 @@ class PyTest(TestCommand):
 
 def main():
     base_dir = dirname(__file__)
-    install_requires = ['attrs>=16.0.0', 'requests>=2.4.3', 'six>=1.9.0', 'requests-toolbelt>=0.4.0']
+    install_requires = [
+        'attrs>=16.0.0',
+        'requests>=2.4.3',
+        'requests-toolbelt>=0.4.0',
+        'six>=1.9.0',
+        'wrapt>=1.10.1',
+    ]
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=0.9.2']
     extra_requires = defaultdict(list)
