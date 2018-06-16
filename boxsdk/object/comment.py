@@ -7,6 +7,7 @@ import json
 from boxsdk.object.base_object import BaseObject
 from ..util.api_call_decorator import api_call
 
+
 class Comment(BaseObject):
     """An object that represents a comment on an item"""
     _item_type = 'comment'
