@@ -39,7 +39,6 @@ class Comment(BaseObject):
             response_object=response,
         )
 
-
     @api_call
     def edit(self, message):
         """
