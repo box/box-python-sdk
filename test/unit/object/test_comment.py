@@ -6,6 +6,7 @@ import pytest
 
 from boxsdk.object.comment import Comment
 
+
 # pylint:disable=protected-access
 # pylint:disable=redefined-outer-name
 
@@ -43,6 +44,7 @@ def test_reply(test_comment, mock_box_session, message_type, message):
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert reply_comment.object_id == '12345'
 
+
 @pytest.mark.parametrize(
     'message_type, message',
     [
@@ -72,6 +74,7 @@ def test_edit(test_comment, mock_box_session, message_type, message):
     test_comment.edit(message)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=None, params=None)
 
+
 def test_get(mock_box_session):
     comment_id = '1235'
     expected_url = mock_box_session.get_url('comments', comment_id)
@@ -84,6 +87,7 @@ def test_get(mock_box_session):
     mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
     assert comment.object_id == comment_id
     assert comment.message == 'Hi!' # pylint:disable=no-member
+
 
 def test_delete(test_comment, mock_box_session):
     expected_url = test_comment.get_url()

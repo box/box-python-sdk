@@ -279,6 +279,7 @@ def test_get_shared_link_download_url(
     )
     assert url == test_url
 
+
 def test_get_comments(test_file, mock_box_session):
     expected_url = test_file.get_url('comments')
     mock_box_session.get.return_value.json.return_value = {
@@ -300,6 +301,7 @@ def test_get_comments(test_file, mock_box_session):
     }
     test_file.get_comments().next()
     mock_box_session.get.assert_called_once_with(expected_url, params={'offset': 0})
+
 
 @pytest.mark.parametrize(
     'message_type, message',
