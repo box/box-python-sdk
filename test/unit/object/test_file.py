@@ -278,3 +278,59 @@ def test_get_shared_link_download_url(
         params=None,
     )
     assert url == test_url
+
+def test_get_comments(test_file, mock_box_session):
+    expected_url = test_file.get_url('comments')
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 2,
+        'offset': 0,
+        'limit': 100,
+        'entries': [
+            {
+                'type': 'comment',
+                'id': '1',
+                'message': 'Foo'
+            },
+            {
+                'type': 'comment',
+                'id': '2',
+                'message': 'Bar'
+            }
+        ]
+    }
+    test_file.get_comments().next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': 0})
+
+@pytest.mark.parametrize(
+    'message_type, message',
+    [
+        # Test case for plain message
+        (
+            'message',
+            'Hello there!'
+        ),
+
+        # Test case for tagged message
+        (
+            'tagged_message',
+            '@[22222:Test User] Hi!'
+        )
+    ]
+)
+def test_add_comment(test_file, mock_box_session, message_type, message):
+    expected_url = 'https://api.box.com/2.0/comments'
+    expected_data = {
+        message_type: message,
+        'item': {
+            'type': 'file',
+            'id': test_file.object_id
+        }
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'type': 'comment',
+        'id': '12345',
+        message_type: message
+    }
+    comment = test_file.add_comment(message)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert comment.object_id == '12345'

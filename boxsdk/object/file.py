@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 import json
 
 from .item import Item
-from .base_object import BaseObject
 from .comment import Comment
 from ..util.api_call_decorator import api_call
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -328,7 +327,7 @@ class File(Item):
         :type message:
             `unicode`
         """
-        url = BaseObject.get_url(self, 'comments')
+        url = self._session.get_url('comments')
         message_type = 'tagged_message' if '@[' in message else 'message'
         data = {
             message_type: message,
