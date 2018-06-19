@@ -10,7 +10,7 @@ from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
-from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 
