@@ -13,7 +13,7 @@ class Collection(BaseObject):
     _item_type = 'collection'
 
     @api_call
-    def get_items(self, limit=None, offset=None, fields=None):
+    def get_items(self, limit=None, offset=0, fields=None):
         """
         Get the items in a collection using limit-offset paging.
 
