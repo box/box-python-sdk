@@ -27,6 +27,7 @@ def mock_group_membership_id():
 def mock_collaboration_id():
     return 'collab_id1'
 
+
 @pytest.fixture(scope='module')
 def mock_collection_id():
     return 'collection_id1'

@@ -43,7 +43,6 @@ def test_get_items(mock_collection, mock_box_session):
 
     items = mock_collection.get_items()
 
-
     item1 = items.next()
     mock_box_session.get.assert_called_once_with(expected_url, params={'offset': 0})
     assert item1.type == 'folder'
