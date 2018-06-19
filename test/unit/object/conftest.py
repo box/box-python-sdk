@@ -106,8 +106,7 @@ def mock_user(mock_box_session, mock_user_id):
 
 @pytest.fixture()
 def mock_collection(mock_box_session, mock_collection_id):
-    collection = Collection(mock_box_session, mock_collection_id)
-    return collection
+    return Collection(mock_box_session, mock_collection_id)
 
 
 @pytest.fixture(scope='function')

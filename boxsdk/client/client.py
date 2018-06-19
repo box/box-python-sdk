@@ -160,7 +160,7 @@ class Client(Cloneable):
         return self.translator.translate('collection')(session=self._session, object_id=collection_id)
 
     @api_call
-    def collections(self, limit=None, offset=0):
+    def collections(self, limit=None, offset=0, fields=None):
         """
         Get a list of collections for the current user.
 
@@ -177,7 +177,7 @@ class Client(Cloneable):
             self.session,
             self._session.get_url('collections'),
             limit=limit,
-            fields=None,
+            fields=fields,
             offset=offset,
             return_full_pages=False,
         )

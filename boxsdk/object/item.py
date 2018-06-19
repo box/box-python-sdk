@@ -383,13 +383,7 @@ class Item(BaseObject):
         data = {
             'collections': collections
         }
-        box_response = self._session.put(url, data=json.dumps(data))
-        response = box_response.json()
-        return self.__class__(
-            session=self._session,
-            object_id=response['id'],
-            response_object=response,
-        )
+        return self.update_info(data)
 
     @api_call
     def remove_from_collection(self, collection):
@@ -416,10 +410,4 @@ class Item(BaseObject):
         data = {
             'collections': collections
         }
-        box_response = self._session.put(url, data=json.dumps(data))
-        response = box_response.json()
-        return self.__class__(
-            session=self._session,
-            object_id=response['id'],
-            response_object=response,
-        )
+        return self.update_info(data)
