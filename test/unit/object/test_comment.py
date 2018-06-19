@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 import json
-import pytest
 
 from boxsdk.object.comment import Comment
 
@@ -10,24 +9,9 @@ from boxsdk.object.comment import Comment
 # pylint:disable=protected-access
 # pylint:disable=redefined-outer-name
 
-@pytest.mark.parametrize(
-    'message_type, message',
-    [
-        # Test case for plain message
-        (
-            'message',
-            'Hello there!'
-        ),
-
-        # Test case for tagged message
-        (
-            'tagged_message',
-            '@[22222:Test User] Hi!'
-        )
-    ]
-)
-def test_reply(test_comment, mock_box_session, message_type, message):
+def test_reply(test_comment, mock_box_session, comment_params):
     expected_url = mock_box_session.get_url('comments')
+    (message_type, message) = comment_params
     expected_data = {
         message_type: message,
         'item': {
@@ -45,24 +29,9 @@ def test_reply(test_comment, mock_box_session, message_type, message):
     assert reply_comment.object_id == '12345'
 
 
-@pytest.mark.parametrize(
-    'message_type, message',
-    [
-        # Test case for plain message
-        (
-            'message',
-            'Hello there!'
-        ),
-
-        # Test case for tagged message
-        (
-            'tagged_message',
-            '@[22222:Test User] Hi!'
-        )
-    ]
-)
-def test_edit(test_comment, mock_box_session, message_type, message):
+def test_edit(test_comment, mock_box_session, comment_params):
     expected_url = mock_box_session.get_url('comments', test_comment.object_id)
+    (message_type, message) = comment_params
     expected_data = {
         message_type: message,
     }
@@ -86,7 +55,7 @@ def test_get(mock_box_session):
     comment = Comment(mock_box_session, comment_id).get()
     mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
     assert comment.object_id == comment_id
-    assert comment.message == 'Hi!' # pylint:disable=no-member
+    assert comment.message == 'Hi!'  # pylint:disable=no-member
 
 
 def test_delete(test_comment, mock_box_session):

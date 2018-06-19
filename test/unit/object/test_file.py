@@ -303,24 +303,10 @@ def test_get_comments(test_file, mock_box_session):
     mock_box_session.get.assert_called_once_with(expected_url, params={'offset': 0})
 
 
-@pytest.mark.parametrize(
-    'message_type, message',
-    [
-        # Test case for plain message
-        (
-            'message',
-            'Hello there!'
-        ),
-
-        # Test case for tagged message
-        (
-            'tagged_message',
-            '@[22222:Test User] Hi!'
-        )
-    ]
-)
-def test_add_comment(test_file, mock_box_session, message_type, message):
+def test_add_comment(test_file, mock_box_session, comment_params):
     expected_url = 'https://api.box.com/2.0/comments'
+    comment_id = '12345'
+    (message_type, message) = comment_params
     expected_data = {
         message_type: message,
         'item': {
@@ -330,9 +316,9 @@ def test_add_comment(test_file, mock_box_session, message_type, message):
     }
     mock_box_session.post.return_value.json.return_value = {
         'type': 'comment',
-        'id': '12345',
+        'id': comment_id,
         message_type: message
     }
     comment = test_file.add_comment(message)
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
-    assert comment.object_id == '12345'
+    assert comment.object_id == comment_id

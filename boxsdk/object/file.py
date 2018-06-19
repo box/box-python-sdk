@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 import json
 
 from .item import Item
-from .comment import Comment
 from ..util.api_call_decorator import api_call
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
@@ -338,7 +337,7 @@ class File(Item):
         }
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
-        return Comment(
+        return self._session.translator.translate(response['type'])(
             session=self._session,
             object_id=response['id'],
             response_object=response,

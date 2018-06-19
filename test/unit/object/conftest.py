@@ -69,6 +69,7 @@ def test_collaboration(mock_box_session, mock_collaboration_id):
 def test_file(mock_box_session, mock_object_id):
     return File(mock_box_session, mock_object_id)
 
+
 @pytest.fixture()
 def test_comment(mock_box_session, mock_object_id):
     return Comment(mock_box_session, mock_object_id)
@@ -203,4 +204,21 @@ def shared_link_password(request):
 
 @pytest.fixture(params=(date(2015, 5, 5), None))
 def shared_link_unshared_at(request):
+    return request.param
+
+
+@pytest.fixture(params=[
+    # Test case for plain message
+    (
+        'message',
+        'Hello there!'
+    ),
+
+    # Test case for tagged message
+    (
+        'tagged_message',
+        '@[22222:Test User] Hi!'
+    )
+])
+def comment_params(request):
     return request.param
