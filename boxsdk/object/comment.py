@@ -12,6 +12,14 @@ class Comment(BaseObject):
     """An object that represents a comment on an item"""
     _item_type = 'comment'
 
+    @staticmethod
+    def construct_params_from_message(message):
+        message_type = 'tagged_message' if '@[' in message else 'message'
+        data = {
+            message_type: message
+        }
+        return data
+
     @api_call
     def reply(self, message):
         """
@@ -23,13 +31,10 @@ class Comment(BaseObject):
             `unicode`
         """
         url = self.get_type_url()
-        message_type = 'tagged_message' if '@[' in message else 'message'
-        data = {
-            message_type: message,
-            'item': {
-                'type': 'comment',
-                'id': self.object_id
-            }
+        data = Comment.construct_params_from_message(message)
+        data['item'] = {
+            'type': 'comment',
+            'id': self.object_id
         }
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
@@ -49,8 +54,5 @@ class Comment(BaseObject):
         :type message:
             `unicode`
         """
-        message_type = 'tagged_message' if '@[' in message else 'message'
-        data = {
-            message_type: message
-        }
+        data = Comment.construct_params_from_message(message)
         return self.update_info(data)

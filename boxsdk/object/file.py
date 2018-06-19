@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 import json
 
+from .comment import Comment
 from .item import Item
 from ..util.api_call_decorator import api_call
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -327,13 +328,10 @@ class File(Item):
             `unicode`
         """
         url = self._session.get_url('comments')
-        message_type = 'tagged_message' if '@[' in message else 'message'
-        data = {
-            message_type: message,
-            'item': {
-                'type': 'file',
-                'id': self.object_id
-            }
+        data = Comment.construct_params_from_message(message)
+        data['item'] = {
+            'type': 'file',
+            'id': self.object_id
         }
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()

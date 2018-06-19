@@ -11,7 +11,7 @@ from boxsdk.object.comment import Comment
 
 def test_reply(test_comment, mock_box_session, comment_params):
     expected_url = mock_box_session.get_url('comments')
-    (message_type, message) = comment_params
+    message_type, message = comment_params
     expected_data = {
         message_type: message,
         'item': {
@@ -26,22 +26,25 @@ def test_reply(test_comment, mock_box_session, comment_params):
     }
     reply_comment = test_comment.reply(message)
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert isinstance(reply_comment, Comment)
     assert reply_comment.object_id == '12345'
 
 
 def test_edit(test_comment, mock_box_session, comment_params):
     expected_url = mock_box_session.get_url('comments', test_comment.object_id)
-    (message_type, message) = comment_params
+    message_type, message = comment_params
     expected_data = {
         message_type: message,
     }
-    mock_box_session.post.return_value.json.return_value = {
+    mock_box_session.put.return_value.json.return_value = {
         'type': 'comment',
         'id': '12345',
         message_type: message
     }
-    test_comment.edit(message)
+    updated_comment = test_comment.edit(message)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=None, params=None)
+    assert isinstance(updated_comment, Comment)
+    assert updated_comment[message_type] == message
 
 
 def test_get(mock_box_session):
