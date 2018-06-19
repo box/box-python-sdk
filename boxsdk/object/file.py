@@ -328,7 +328,8 @@ class File(Item):
             `unicode`
         """
         url = self._session.get_url('comments')
-        data = Comment.construct_params_from_message(message)
+        comment_class = self._session.translator.translate('comment')
+        data = comment_class.construct_params_from_message(message)
         data['item'] = {
             'type': 'file',
             'id': self.object_id
