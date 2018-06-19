@@ -356,3 +356,68 @@ class Item(BaseObject):
             :class:`Metadata`
         """
         return Metadata(self._session, self, scope, template)
+
+    @api_call
+    def add_to_collection(self, collection):
+        """
+        Add the item to a collection.
+
+        :param collection:
+            The collection to add the item to.
+        :type collection:
+            :class:`Collection`
+        :return:
+            This item.
+        :rtype:
+            :class:`Item`
+        """
+        url = self.get_url()
+        params = {
+            'fields': 'collections'
+        }
+        box_response = self._session.get(url, params=params)
+        response = box_response.json()
+
+        collections = response['collections']
+        collections.append({'id': collection.object_id})
+        data = {
+            'collections': collections
+        }
+        box_response = self._session.put(url, data=json.dumps(data))
+        return self.__class__(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+    @api_call
+    def remove_from_collection(self, collection):
+        """
+        Remove the item from a collection.
+
+        :param collection:
+            The collection to remove the item from.
+        :type collection:
+            :class:`Collection`
+        :return:
+            This item.
+        :rtype:
+            :class:`Item`
+        """
+        url = self.get_url()
+        params = {
+            'fields': 'collections'
+        }
+        box_response = self._session.get(url, params=params)
+        response = box_response.json()
+
+        collections = [c for c in response['collections'] if c['id'] != collection.object_id]
+        data = {
+            'collections': collections
+        }
+        box_response = self._session.put(url, data=json.dumps(data))
+        return self.__class__(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
