@@ -41,5 +41,4 @@ class Collection(BaseObject):
             fields=fields,
             offset=offset,
             return_full_pages=False,
-        ) 
-
+        )
