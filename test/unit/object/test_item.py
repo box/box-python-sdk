@@ -14,17 +14,23 @@ def test_item_and_response(test_file, test_folder, mock_file_response, mock_fold
 
 @pytest.fixture(params=('empty', 'same', 'other'))
 def test_collections_for_addition(mock_collection_id, request):
+    """Fixture returning a tuple of the expected collections values before and after addition"""
     other_collection_id = mock_collection_id + '2'
     if request.param == 'empty':
         return [], [{'id': mock_collection_id}]
     elif request.param == 'same':
+        # Adding a second instance of the same collection is handled correctly by the API,
+        # so for simplicity we do not check for an existing copy of the collection and just append
         return [{'id': mock_collection_id}], [{'id': mock_collection_id}, {'id': mock_collection_id}]
+    elif request.param == 'other':
+        return [{'id': other_collection_id}], [{'id': other_collection_id}, {'id': mock_collection_id}]
 
-    return [{'id': other_collection_id}], [{'id': other_collection_id}, {'id': mock_collection_id}]
+    raise NotImplementedError("Forgot to implement {}".format(request.param))
 
 
 @pytest.fixture(params=('empty', 'only_removed', 'only_other', 'other_and_removed'))
 def test_collections_for_removal(mock_collection_id, request):
+    """Fixture returning a tuple of the expected collections values before and after removal"""
     other_collection_id = mock_collection_id + '2'
     if request.param == 'empty':
         return [], []
@@ -32,8 +38,10 @@ def test_collections_for_removal(mock_collection_id, request):
         return [{'id': mock_collection_id}], []
     elif request.param == 'only_other':
         return [{'id': other_collection_id}], [{'id': other_collection_id}]
+    elif request.param == 'other_and_removed':
+        return [{'id': mock_collection_id}, {'id': other_collection_id}], [{'id': other_collection_id}]
 
-    return [{'id': mock_collection_id}, {'id': other_collection_id}], [{'id': other_collection_id}]
+    raise NotImplementedError("Forgot to implement {}".format(request.param))
 
 
 def test_update_info(test_item_and_response, mock_box_session, etag, if_match_header):

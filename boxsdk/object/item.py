@@ -360,7 +360,7 @@ class Item(BaseObject):
     @api_call
     def add_to_collection(self, collection):
         """
-        Add the item to a collection.
+        Add the item to a collection.  This method is not currently safe from race conditions.
 
         :param collection:
             The collection to add the item to.
@@ -371,14 +371,7 @@ class Item(BaseObject):
         :rtype:
             :class:`Item`
         """
-        url = self.get_url()
-        params = {
-            'fields': 'collections'
-        }
-        box_response = self._session.get(url, params=params)
-        response = box_response.json()
-
-        collections = response['collections']
+        collections = self.get(fields=['collections']).collections  # pylint:disable no-member
         collections.append({'id': collection.object_id})
         data = {
             'collections': collections
@@ -388,7 +381,7 @@ class Item(BaseObject):
     @api_call
     def remove_from_collection(self, collection):
         """
-        Remove the item from a collection.
+        Remove the item from a collection.  This method is not currently safe from race conditions.
 
         :param collection:
             The collection to remove the item from.
@@ -399,15 +392,9 @@ class Item(BaseObject):
         :rtype:
             :class:`Item`
         """
-        url = self.get_url()
-        params = {
-            'fields': 'collections'
-        }
-        box_response = self._session.get(url, params=params)
-        response = box_response.json()
-
-        collections = [c for c in response['collections'] if c['id'] != collection.object_id]
+        collections = self.get(fields=['collections']).collections  # pylint:disable no-member
+        updated_collections = [c for c in collections if c['id'] != collection.object_id]
         data = {
-            'collections': collections
+            'collections': updated_collections
         }
         return self.update_info(data)
