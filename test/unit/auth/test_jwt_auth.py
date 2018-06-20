@@ -23,7 +23,6 @@ from boxsdk.auth.jwt_auth import JWTAuth
 from boxsdk.exception import BoxOAuthException
 from boxsdk.config import API
 from boxsdk.object.user import User
-from boxsdk.util.compat import total_seconds
 
 
 @pytest.fixture(params=[16, 32, 128])
@@ -280,7 +279,7 @@ def jwt_auth_auth_mocks(jti_length, jwt_algorithm, jwt_key_id, jwt_encode):
                 mock_datetime.utcnow.return_value = datetime(2015, 7, 6, 12, 1, 2)
                 mock_datetime.return_value = datetime(1970, 1, 1)
                 now_plus_30 = mock_datetime.utcnow.return_value + timedelta(seconds=30)
-                exp = int(total_seconds(now_plus_30 - datetime(1970, 1, 1)))
+                exp = int((now_plus_30 - datetime(1970, 1, 1)).total_seconds())
                 system_random = mock_system_random.return_value
                 system_random.randint.return_value = jti_length
                 random_choices = [random.random() for _ in range(jti_length)]

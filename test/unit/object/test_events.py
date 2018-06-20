@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals, absolute_import
 
+from collections import OrderedDict
 from itertools import chain
 import json
 
@@ -17,7 +18,6 @@ from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.events import Events, EventsStreamType, UserEventsStreamType
 from boxsdk.object.event import Event
 from boxsdk.session.box_response import BoxResponse
-from boxsdk.util.ordered_dict import OrderedDict
 
 
 @pytest.fixture()
