@@ -156,7 +156,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
 
     def __eq__(self, other):
         """Equality as determined by object id and type"""
-        if (other is None):
+        if other is None:
             return False
         if not isinstance(other, BaseObject):
             return False

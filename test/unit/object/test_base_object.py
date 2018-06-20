@@ -9,6 +9,7 @@ from boxsdk.object.base_object import BaseObject
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 
+
 @pytest.fixture(params=('file', 'folder', 'user'))
 def test_object_and_response(
         test_file, test_folder, mock_user,
