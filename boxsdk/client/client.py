@@ -98,6 +98,21 @@ class Client(Cloneable):
         """
         return self.translator.translate('file')(session=self._session, object_id=file_id)
 
+    def comment(self, comment_id):
+        """
+        Initialize a :class:`Comment` object, whose Box ID is comment_id.
+
+        :param comment_id:
+            The Box ID of the :class:`Comment` object.
+        :type comment_id:
+            `unicode`
+        :return:
+            A :class:`Comment` object with the given comment ID.
+        :rtype:
+            :class:`Comment`
+        """
+        return self.translator.translate('comment')(session=self._session, object_id=comment_id)
+
     def user(self, user_id='me'):
         """
         Initialize a :class:`User` object, whose box id is user_id.
