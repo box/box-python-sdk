@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 import json
 
-from .comment import Comment
 from .item import Item
 from ..util.api_call_decorator import api_call
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
