@@ -7,9 +7,9 @@ from six.moves import map   # pylint:disable=redefined-builtin
 
 __all__ = list(map(str, [
     'collaboration',
+    'collaboration_whitelist',
     'collaboration_whitelist_entry',
     'collaboration_whitelist_exempt_target',
-    'comment',
     'events',
     'event',
     'file',
