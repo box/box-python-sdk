@@ -7,6 +7,9 @@ from mock import Mock
 import pytest
 from six import int2byte, PY2
 from boxsdk.object.collaboration import Collaboration
+from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
+from boxsdk.object.collaboration_whitelist_entry import CollaborationWhitelistEntry
+from boxsdk.object.collaboration_whitelist_exempt_target import CollaborationWhitelistExemptTarget
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
@@ -65,6 +68,21 @@ def test_collaboration(mock_box_session, mock_collaboration_id):
 
 
 @pytest.fixture()
+def test_collaboration_whitelist(mock_box_session):
+    return CollaborationWhitelist(mock_box_session)
+
+
+@pytest.fixture()
+def test_collaboration_whitelist_entry(mock_box_session, mock_object_id):
+    return CollaborationWhitelistEntry(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_collaboration_whitelist_exemption(mock_box_session, mock_object_id):
+    return CollaborationWhitelistExemptTarget(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
 def test_file(mock_box_session, mock_object_id):
     return File(mock_box_session, mock_object_id)
 
@@ -94,8 +112,7 @@ def mock_collab_response(make_mock_box_request, mock_collaboration_id):
 
 @pytest.fixture()
 def mock_user(mock_box_session, mock_user_id):
-    user = User(mock_box_session, mock_user_id)
-    return user
+    return User(mock_box_session, mock_user_id)
 
 
 @pytest.fixture(scope='function')

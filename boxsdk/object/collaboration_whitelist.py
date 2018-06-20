@@ -121,7 +121,7 @@ class CollaborationWhitelist(BaseEndpoint):
         url = self.get_url('collaboration_whitelist_exempt_targets')
         data = {
             'user': {
-                'id': user._object_id
+                'id': user.object_id  # pylint:disable=protected-access
             }
         }
         response = self._session.post(url, data=json.dumps(data)).json()
