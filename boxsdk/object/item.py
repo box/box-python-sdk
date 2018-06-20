@@ -371,7 +371,7 @@ class Item(BaseObject):
         :rtype:
             :class:`Item`
         """
-        collections = self.get(fields=['collections']).collections  # pylint:disable no-member
+        collections = self.get(fields=['collections']).collections  # pylint:disable=no-member
         collections.append({'id': collection.object_id})
         data = {
             'collections': collections
@@ -392,7 +392,7 @@ class Item(BaseObject):
         :rtype:
             :class:`Item`
         """
-        collections = self.get(fields=['collections']).collections  # pylint:disable no-member
+        collections = self.get(fields=['collections']).collections  # pylint:disable=no-member
         updated_collections = [c for c in collections if c['id'] != collection.object_id]
         data = {
             'collections': updated_collections

@@ -192,7 +192,7 @@ def test_add_to_collection(test_item_and_response, mock_box_session, mock_collec
 
     test_item.add_to_collection(mock_collection)
 
-    mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
+    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=expected_params)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=None, params=None)
 
 
@@ -213,5 +213,5 @@ def test_remove_from_collection(test_item_and_response, mock_box_session, mock_c
 
     test_item.remove_from_collection(mock_collection)
 
-    mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
+    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=expected_params)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=None, params=None)
