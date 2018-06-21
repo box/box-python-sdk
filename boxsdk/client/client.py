@@ -10,6 +10,7 @@ from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
+from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 
@@ -157,6 +158,44 @@ class Client(Cloneable):
             :class:`Collaboration`
         """
         return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
+
+    def collection(self, collection_id):
+        """
+        Initialize a :class:`Collection` object, whose box ID is collection_id.
+
+        :param collection_id:
+            The box id of the :class:`Collection` object.
+        :type collection_id:
+            `unicode`
+        :return:
+            A :class:`Collection` object with the given collection ID.
+        :rtype:
+            :class:`Collection`
+        """
+        return self.translator.translate('collection')(session=self._session, object_id=collection_id)
+
+    @api_call
+    def collections(self, limit=None, offset=0, fields=None):
+        """
+        Get a list of collections for the current user.
+
+        :param limit:
+            The maximum number of users to return. If not specified, the Box API will determine an appropriate limit.
+        :type limit:
+            `int` or None
+        :param offset:
+            The user index at which to start the response.
+        :type offset:
+            `int`
+        """
+        return LimitOffsetBasedObjectCollection(
+            self.session,
+            self._session.get_url('collections'),
+            limit=limit,
+            fields=fields,
+            offset=offset,
+            return_full_pages=False,
+        )
 
     @api_call
     def users(self, limit=None, offset=0, filter_term=None):
