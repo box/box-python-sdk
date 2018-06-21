@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 
+from collections import Mapping
 import logging
 try:
     from logging import NullHandler
@@ -11,7 +12,7 @@ except ImportError:
             pass
 import sys
 
-from six import string_types
+from six import string_types, iteritems
 
 
 _no_logger = object()
@@ -19,6 +20,21 @@ _no_logger = object()
 
 class Logging(object):
     _has_setup = False
+    KEYS_TO_SANITIZE = (
+        'Authorization',
+        'access_token',
+        'refresh_token',
+        'subject_token',
+        'token',
+        'client_id',
+        'client_secret',
+        'code',
+        'shared_link',
+        'download_url',
+        'jwt_private_key',
+        'jwt_private_key_passphrase',
+        'password',
+    )
 
     def setup_logging(self, stream_or_file=_no_logger, debug=False, name=None):
         if not self._has_setup:
@@ -33,6 +49,23 @@ class Logging(object):
         elif stream_or_file is not _no_logger:
             logger.addHandler(logging.StreamHandler(stream_or_file or sys.stdout))
         logger.setLevel(logging.DEBUG if debug else logging.INFO)
+
+    @staticmethod
+    def sanitize_value(value):
+        return '---{}'.format(value[-4:])
+
+    def sanitize_dictionary(self, dictionary):
+        if not isinstance(dictionary, Mapping):
+            return dictionary
+        sanitized_dictionary = {}
+        for key, value in iteritems(dictionary):
+            if key in self.KEYS_TO_SANITIZE:
+                sanitized_dictionary[key] = self.sanitize_value(value)
+            elif isinstance(value, Mapping):
+                sanitized_dictionary[key] = self.sanitize_dictionary(value)
+            else:
+                sanitized_dictionary[key] = value
+        return sanitized_dictionary
 
 
 _logging = Logging()
@@ -62,7 +95,20 @@ def setup_logging(stream_or_file=_no_logger, debug=False, name=None):
     _logging.setup_logging(stream_or_file, debug, name)
 
 
+def sanitize_dictionary(dictionary):
+    """
+    Get a copy of a dictionary that has sensitive information redacted. Should be called on objects that will be
+    logged or printed.
+
+    :param dictionary:      Dictionary that may contain sensitive information.
+    :type dictionary:       :class:`Mapping`
+    :return:                Copy of the dictionary with sensitive information redacted.
+    :rtype:                 `dict`
+    """
+    return _logging.sanitize_dictionary(dictionary)
+
+
 logging.getLogger(__name__).addHandler(NullHandler())
 
 
-__all__ = list(map(str, ['setup_logging']))
+__all__ = list(map(str, ['setup_logging', 'sanitize_dictionary']))

@@ -36,6 +36,14 @@ boxsdk\.util\.enum module
     :undoc-members:
     :show-inheritance:
 
+boxsdk\.util\.json module
+-------------------------
+
+.. automodule:: boxsdk.util.json
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk\.util\.log module
 ------------------------
 
@@ -56,14 +64,6 @@ boxsdk\.util\.multipart\_stream module
 --------------------------------------
 
 .. automodule:: boxsdk.util.multipart_stream
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-boxsdk\.util\.ordered\_dict module
-----------------------------------
-
-.. automodule:: boxsdk.util.ordered_dict
     :members:
     :undoc-members:
     :show-inheritance:
