@@ -156,8 +156,6 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
 
     def __eq__(self, other):
         """Equality as determined by object id and type"""
-        if other is None:
-            return False
         if not isinstance(other, BaseObject):
             return False
 
@@ -166,12 +164,9 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
 
     def __ne__(self, other):
         """Equality as determined by object id and type"""
-
-        # Inequality is the inverse of equality
         return not self == other
 
     def __hash__(self):
-        """Custom object hash"""
         return hash((self._object_id, self._item_type))
 
     def _paging_wrapper(self, url, starting_index, limit, factory=None):

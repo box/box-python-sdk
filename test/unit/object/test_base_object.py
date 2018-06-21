@@ -8,6 +8,7 @@ from boxsdk.config import API
 from boxsdk.object.base_object import BaseObject
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
+from boxsdk.object.user import User
 
 
 @pytest.fixture(params=('file', 'folder', 'user'))
@@ -26,9 +27,10 @@ def test_object_and_response(
 @pytest.fixture(params=('same_file', 'same_folder', 'same_user', 'against_none', 'different_ids', 'different_types'))
 def objects_for_comparison(test_file, test_folder, mock_user, request, mock_box_session):
     cases = {
-        'same_file': (test_file, test_file, True),
-        'same_folder': (test_folder, test_folder, True),
-        'same_user': (mock_user, mock_user, True),
+        'identical_object': (test_file, test_file, True),
+        'same_file': (test_file, File(mock_box_session, test_file.object_id), True),
+        'same_folder': (test_folder, Folder(mock_box_session, test_folder.object_id), True),
+        'same_user': (mock_user, User(mock_box_session, mock_user.object_id), True),
         'against_none': (test_file, None, False),
         'different_ids': (File(mock_box_session, '1'), File(mock_box_session, '2'), False),
         'different_types': (File(mock_box_session, '1'), Folder(mock_box_session, '1'), False)
