@@ -162,7 +162,6 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
 
         return NotImplemented
 
-
     def __ne__(self, other):
         """Equality as determined by object id and type"""
         return not self == other
