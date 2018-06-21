@@ -156,11 +156,12 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
 
     def __eq__(self, other):
         """Equality as determined by object id and type"""
-        if not isinstance(other, BaseObject):
-            return False
+        if isinstance(other, BaseObject):
+            # Two objects are considered the same if they have the same address in the API
+            return self.get_url() == other.get_url()
 
-        # Two objects are considered the same if they have the same address in the API
-        return self.get_url() == other.get_url()
+        return NotImplemented
+
 
     def __ne__(self, other):
         """Equality as determined by object id and type"""

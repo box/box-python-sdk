@@ -33,7 +33,8 @@ def objects_for_comparison(test_file, test_folder, mock_user, request, mock_box_
         'same_user': (mock_user, User(mock_box_session, mock_user.object_id), True),
         'against_none': (test_file, None, False),
         'different_ids': (File(mock_box_session, '1'), File(mock_box_session, '2'), False),
-        'different_types': (File(mock_box_session, '1'), Folder(mock_box_session, '1'), False)
+        'different_types': (File(mock_box_session, '1'), Folder(mock_box_session, '1'), False),
+        'not_api_object': (test_file, {'id': test_file.object_id, 'type': 'file'}, False)
     }
     return cases[request.param]
 
