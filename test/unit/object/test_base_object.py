@@ -6,6 +6,9 @@ import json
 import pytest
 from boxsdk.config import API
 from boxsdk.object.base_object import BaseObject
+from boxsdk.object.file import File
+from boxsdk.object.folder import Folder
+from boxsdk.object.user import User
 
 
 @pytest.fixture(params=('file', 'folder', 'user'))
@@ -19,6 +22,21 @@ def test_object_and_response(
         'user': (mock_user, mock_user_response),
     }
     return test_objects_and_responses[request.param]
+
+
+@pytest.fixture(params=('same_file', 'same_folder', 'same_user', 'against_none', 'different_ids', 'different_types'))
+def objects_for_comparison(test_file, test_folder, mock_user, request, mock_box_session):
+    cases = {
+        'identical_object': (test_file, test_file, True),
+        'same_file': (test_file, File(mock_box_session, test_file.object_id), True),
+        'same_folder': (test_folder, Folder(mock_box_session, test_folder.object_id), True),
+        'same_user': (mock_user, User(mock_box_session, mock_user.object_id), True),
+        'against_none': (test_file, None, False),
+        'different_ids': (File(mock_box_session, '1'), File(mock_box_session, '2'), False),
+        'different_types': (File(mock_box_session, '1'), Folder(mock_box_session, '1'), False),
+        'not_api_object': (test_file, {'id': test_file.object_id, 'type': 'file'}, False),
+    }
+    return cases[request.param]
 
 
 @pytest.mark.parametrize('params,headers', product(*([[None, {}, {'foo': 'bar'}, {'foo': 'bar', 'num': 4}]] * 2)))
@@ -79,3 +97,28 @@ def test_get_type_url(test_object_and_response):
     test_object, _ = test_object_and_response
     url = test_object.get_type_url()
     assert url.endswith('{0}s'.format(test_object._item_type))
+
+
+def test_eq(objects_for_comparison):
+    # pylint:disable=redefined-outer-name
+    obj1, obj2, expected_value = objects_for_comparison
+    assert (obj1 == obj2) == expected_value
+
+
+def test_ne(objects_for_comparison):
+    # pylint:disable=redefined-outer-name
+    obj1, obj2, are_equal = objects_for_comparison
+    expected_value = not are_equal
+    assert (obj1 != obj2) == expected_value
+
+
+def test_hash(objects_for_comparison):
+    # pylint:disable=redefined-outer-name
+    obj1, obj2, are_equal = objects_for_comparison
+
+    # Set a value in the dict such that it will be overridden to True iff the objects hash identically (are equal)
+    test_dict = {}
+    test_dict[obj1] = False
+    test_dict[obj2] = True
+
+    assert test_dict[obj1] == are_equal
