@@ -40,6 +40,9 @@ Release History
   inside ``file['entries'][0]``. This is a bugfix, but will be a breaking
   change for any clients that have already written code to handle the bug.
 
+- Comparing two objects (e.g. a ``File`` and a ``Folder``) that have the same Box ID but different types with ``==``
+  will now correctly return `False`.
+
 **Features**
 
 - Added more flexibility to the object translation system:
