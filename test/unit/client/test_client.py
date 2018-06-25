@@ -70,9 +70,15 @@ def marker_id():
 def users_response(user_id_1, user_id_2):
     # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.json.return_value = {'entries': [
-        {'type': 'user', 'id': user_id_1}, {'type': 'user', 'id': user_id_2}
-    ]}
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'user', 'id': user_id_1},
+            {'type': 'user', 'id': user_id_2}
+        ],
+        'limit': 100,
+        'offset': 0,
+        'total_count': 2
+    }
     return mock_network_response
 
 
@@ -98,10 +104,15 @@ def group_id_2():
 def groups_response(group_id_1, group_id_2):
     # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.json.return_value = {'entries': [
-        {'type': 'group', 'id': group_id_1, 'name': text_type(group_id_1)},
-        {'type': 'group', 'id': group_id_2, 'name': text_type(group_id_2)},
-    ]}
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'group', 'id': group_id_1, 'name': text_type(group_id_1)},
+            {'type': 'group', 'id': group_id_2, 'name': text_type(group_id_2)},
+        ],
+        'limit': 100,
+        'offset': 0,
+        'total_count': 2
+    }
     return mock_network_response
 
 
@@ -145,9 +156,15 @@ def shared_item_response(request):
 def search_response(file_id, folder_id):
     # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.json.return_value = {'entries': [
-        {'type': 'file', 'id': file_id}, {'type': 'folder', 'id': folder_id}
-    ]}
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'file', 'id': file_id},
+            {'type': 'folder', 'id': folder_id}
+        ],
+        'limit': 100,
+        'offset': 0,
+        'total_count': 2
+    }
     return mock_network_response
 
 
@@ -217,9 +234,9 @@ def test_users_return_the_correct_user_objects(
         expected_params['limit'] = users_limit
     if users_filter_term is not None:
         expected_params['filter_term'] = users_filter_term
+    assert users.next().object_id == user_id_1
+    assert users.next().object_id == user_id_2
     mock_box_session.get.assert_called_once_with('{0}/users'.format(API.BASE_API_URL), params=expected_params)
-    assert users[0].object_id == user_id_1
-    assert users[1].object_id == user_id_2
 
 
 def test_search_instantiates_search_and_calls_search(
@@ -239,8 +256,8 @@ def test_search_instantiates_search_and_calls_search(
         ancestor_folders=[Folder(mock_box_session, folder_id)],
         file_extensions=['.jpg'],
     )
-    assert search_result[0].object_id == file_id
-    assert search_result[1].object_id == folder_id
+    assert search_result.next().object_id == file_id
+    assert search_result.next().object_id == folder_id
 
 
 def test_events_returns_event_object(mock_client):

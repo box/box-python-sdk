@@ -231,8 +231,8 @@ class Search(BaseEndpoint):
         additional_params.update(kwargs)
 
         return LimitOffsetBasedObjectCollection(
-            url,
             self._session,
+            url,
             limit=limit,
             offset=offset,
             fields=fields,

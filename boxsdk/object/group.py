@@ -33,8 +33,8 @@ class Group(BaseObject):
         """
         url = self.get_url('memberships')
         return LimitOffsetBasedObjectCollection(
-            url,
             self._session,
+            url,
             limit=limit,
             offset=offset,
             fields=fields,
