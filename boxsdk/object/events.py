@@ -93,9 +93,12 @@ class Events(BaseEndpoint):
         }
         box_response = self._session.get(url, params=params)
         response = box_response.json().copy()
+        # if 'entries' in response:
+        #     response['entries'] = [self.translator.translate(item['type'])(item) for item in response['entries']]
+        # return response
         if 'entries' in response:
-            response['entries'] = [self.translator.translate(item['type'])(item) for item in response['entries']]
-        return response
+            response['entries'] = [self.translator.full_translate(item, self._session) for item in response['entries']]
+        return self.translator.full_translate(response, self._session)
 
     @api_call
     def get_latest_stream_position(self, stream_type=UserEventsStreamType.ALL):

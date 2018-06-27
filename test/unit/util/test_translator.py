@@ -139,3 +139,52 @@ def test_without_new_child(extend_default_translator):
 
     del translator[item_type]
     assert not mapping
+
+
+def test_full_translate(default_translator, mock_box_session):
+    response_object = {
+        'entries': [
+            {
+                'type': 'folder',
+                'id': '11111',
+                'name': 'Test Folder',
+                'created_by': {
+                    'type': 'user',
+                    'id': '33333',
+                    'name': 'Test User',
+                },
+            },
+            {
+                'type': 'file',
+                'id': '22222',
+                'name': 'Test File',
+                'modified_by': {
+                    'type': 'user',
+                    'id': '33333',
+                    'name': 'Test User',
+                },
+            },
+        ],
+    }
+
+    results = [default_translator.full_translate(item, mock_box_session) for item in response_object['entries']]
+    test_folder = results[0]
+    test_file = results[1]
+
+    assert isinstance(test_folder, Folder)
+    assert isinstance(test_file, File)
+    assert test_folder.object_id == '11111'
+    assert test_folder.name == 'Test Folder'
+    assert test_file.object_id == '22222'
+    assert test_file.name == 'Test File'
+
+    user_1 = test_folder.created_by
+    user_2 = test_file.modified_by
+    assert isinstance(user_1, User)
+    assert isinstance(user_2, User)
+    assert user_1 == user_2
+
+    assert test_folder._session == mock_box_session
+    assert test_file._session == mock_box_session
+    assert user_1._session == mock_box_session
+    assert user_2._session == mock_box_session

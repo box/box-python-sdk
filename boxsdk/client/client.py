@@ -82,7 +82,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Folder`
         """
-        return self.translator.translate('folder')(session=self._session, object_id=folder_id)
+        return self.translator.get('folder')(session=self._session, object_id=folder_id)
 
     def file(self, file_id):
         """
@@ -97,7 +97,7 @@ class Client(Cloneable):
         :rtype:
             :class:`File`
         """
-        return self.translator.translate('file')(session=self._session, object_id=file_id)
+        return self.translator.get('file')(session=self._session, object_id=file_id)
 
     def comment(self, comment_id):
         """
@@ -112,7 +112,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Comment`
         """
-        return self.translator.translate('comment')(session=self._session, object_id=comment_id)
+        return self.translator.get('comment')(session=self._session, object_id=comment_id)
 
     def user(self, user_id='me'):
         """
@@ -127,7 +127,7 @@ class Client(Cloneable):
         :rtype:
             :class:`User`
         """
-        return self.translator.translate('user')(session=self._session, object_id=user_id)
+        return self.translator.get('user')(session=self._session, object_id=user_id)
 
     def group(self, group_id):
         """
@@ -142,7 +142,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Group`
         """
-        return self.translator.translate('group')(session=self._session, object_id=group_id)
+        return self.translator.get('group')(session=self._session, object_id=group_id)
 
     def collaboration(self, collab_id):
         """
@@ -157,7 +157,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Collaboration`
         """
-        return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
+        return self.translator.get('collaboration')(session=self._session, object_id=collab_id)
 
     def collection(self, collection_id):
         """
@@ -172,7 +172,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Collection`
         """
-        return self.translator.translate('collection')(session=self._session, object_id=collection_id)
+        return self.translator.get('collection')(session=self._session, object_id=collection_id)
 
     @api_call
     def collections(self, limit=None, offset=0, fields=None):
