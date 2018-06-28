@@ -97,28 +97,3 @@ def test_get_type_url(test_object_and_response):
     test_object, _ = test_object_and_response
     url = test_object.get_type_url()
     assert url.endswith('{0}s'.format(test_object._item_type))
-
-
-def test_eq(objects_for_comparison):
-    # pylint:disable=redefined-outer-name
-    obj1, obj2, expected_value = objects_for_comparison
-    assert (obj1 == obj2) == expected_value
-
-
-def test_ne(objects_for_comparison):
-    # pylint:disable=redefined-outer-name
-    obj1, obj2, are_equal = objects_for_comparison
-    expected_value = not are_equal
-    assert (obj1 != obj2) == expected_value
-
-
-def test_hash(objects_for_comparison):
-    # pylint:disable=redefined-outer-name
-    obj1, obj2, are_equal = objects_for_comparison
-
-    # Set a value in the dict such that it will be overridden to True iff the objects hash identically (are equal)
-    test_dict = {}
-    test_dict[obj1] = False
-    test_dict[obj2] = True
-
-    assert test_dict[obj1] == are_equal
