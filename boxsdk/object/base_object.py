@@ -151,6 +151,10 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         box_response = self._session.delete(url, expect_json_response=False, params=params or {}, headers=headers)
         return box_response.ok
 
+    def __eq__(self, other):
+        """Base class override. Equality is determined by object id."""
+        return self._object_id == other.object_id
+
     def _paging_wrapper(self, url, starting_index, limit, factory=None):
         """
         Helper function that turns any paging API into a generator that transparently implements the paging for
