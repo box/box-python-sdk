@@ -4,6 +4,7 @@ from __future__ import unicode_literals, absolute_import
 
 from .base_endpoint import BaseEndpoint
 from .base_api_json_object import BaseAPIJSONObject
+from ..util.translator import Translator
 
 
 class RecentItem(BaseEndpoint, BaseAPIJSONObject):
@@ -20,7 +21,7 @@ class RecentItem(BaseEndpoint, BaseAPIJSONObject):
             :class:`Item`
         """
         item = self._response_object['item']
-        return self.translator.translate(item['type'])(
+        return Translator().translate(item['type'])(
             session=self._session,
             object_id=item['id'],
             response_object=item,

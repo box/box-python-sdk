@@ -7,6 +7,7 @@ import copy
 
 from boxsdk.object.base_object import BaseObject
 from boxsdk.object.base_endpoint import BaseEndpoint
+from boxsdk.util.translator import Translator
 
 
 class Page(Sequence, object):
@@ -33,14 +34,6 @@ class Page(Sequence, object):
         self._response_object = response_object
 
     @property
-    def _translator(self):
-        """The translator used for translating Box API JSON responses into `BaseAPIJSONObject` smart objects.
-
-        :rtype:   :class:`Translator`
-        """
-        return self._session.translator
-
-    @property
     def response_object(self):
         """
         Return a copy of the response object for this Page.
@@ -61,7 +54,7 @@ class Page(Sequence, object):
             :class:`BaseObject`
         """
         item_json = self._response_object[self._item_entries_key_name][key]
-        item_class = self._translator.translate(item_json['type'])
+        item_class = Translator().translate(item_json['type'])
         kwargs = {}
         if issubclass(item_class, BaseObject):
             kwargs['object_id'] = item_json['id']
