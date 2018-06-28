@@ -13,6 +13,7 @@ from ..object.events import Events
 from ..object.file import File
 from ..object.group import Group
 from ..object.group_membership import GroupMembership
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
@@ -264,6 +265,42 @@ class Client(object):
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
         return Group(self._session, response['id'], response)
+
+    def get_recent_items(self, limit=None, marker=None, fields=None, **collection_kwargs):
+        """
+        Get the user's recently accessed items.
+
+        :param: limit
+            The maximum number of items to return. If limit is set to None, then the default
+            limit (returned by Box in the response) is used. See https://developer.box.com/reference#get-recent-items
+            for default.
+        :type: limit
+            `int` or None
+        :param marker:
+            The index at which to start returning items.
+        :type marker:
+            `str` or None
+        :param fields:
+            List of fields to request on the file or folder which the `RecentItem` references.
+        :type fields:
+            `Iterable` of `unicode`
+        :param **collection_kwargs:
+            Keyword arguments passed to `MarkerBasedObjectCollection`.
+        :type **collection_args:
+            `dict`
+        :returns:
+            An iterator on the user's recent items
+        :rtype:
+            :class:`MarkerBasedObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            self._session,
+            self.get_url('recent_items'),
+            limit=limit,
+            fields=fields,
+            marker=marker,
+            **collection_kwargs
+        )
 
     def get_shared_item(self, shared_link, password=None):
         """
