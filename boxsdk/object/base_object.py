@@ -5,6 +5,7 @@ import json
 
 from .base_endpoint import BaseEndpoint
 from .base_api_json_object import BaseAPIJSONObject
+from ..util.translator import Translator
 
 
 class BaseObject(BaseEndpoint, BaseAPIJSONObject):
@@ -199,7 +200,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
             for index_in_current_page, item in enumerate(response['entries']):
                 instance_factory = factory
                 if not instance_factory:
-                    instance_factory = self.translator.translate(item['type'])
+                    instance_factory = Translator().translate(item['type'])
                 instance = instance_factory(self._session, item['id'], item)
                 yield instance, current_page_size, index_in_current_page
 
