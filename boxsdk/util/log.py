@@ -59,7 +59,7 @@ class Logging(object):
             return dictionary
         sanitized_dictionary = {}
         for key, value in iteritems(dictionary):
-            if key in self.KEYS_TO_SANITIZE:
+            if key in self.KEYS_TO_SANITIZE and isinstance(value, string_types):
                 sanitized_dictionary[key] = self.sanitize_value(value)
             elif isinstance(value, Mapping):
                 sanitized_dictionary[key] = self.sanitize_dictionary(value)
