@@ -5,6 +5,7 @@ branches:
     only:
         - master
         - "1.5"
+        - "1.6"
 
 cache:
   directories:
