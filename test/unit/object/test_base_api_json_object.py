@@ -4,7 +4,6 @@ from __future__ import unicode_literals, absolute_import
 import pytest
 
 from boxsdk.object.base_api_json_object import BaseAPIJSONObject
-from boxsdk.object.base_object import BaseObject
 from boxsdk.object.folder import Folder
 from boxsdk.util.translator import Translator
 
@@ -17,6 +16,7 @@ def response(request):
 @pytest.fixture()
 def default_translator():
     return Translator()
+
 
 @pytest.fixture()
 def original_default_translator():
