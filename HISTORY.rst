@@ -6,6 +6,11 @@ Release History
 Upcoming
 ++++++++
 
+**Breaking Changes**
+
+- Removed support for Python2.6 and 3.3; while this would normally be a breaking change, we are dropping
+  support for these versions since our tooling no longer supports them.
+
 1.5.4
 ++++++++++++++++++
 
