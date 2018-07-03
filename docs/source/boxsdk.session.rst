@@ -1,11 +1,11 @@
-boxsdk.session package
-======================
+boxsdk\.session package
+=======================
 
 Submodules
 ----------
 
-boxsdk.session.box_session module
----------------------------------
+boxsdk\.session\.box\_session module
+------------------------------------
 
 .. automodule:: boxsdk.session.box_session
     :members:
