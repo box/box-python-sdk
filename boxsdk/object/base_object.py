@@ -62,6 +62,15 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         """
         return self._object_id
 
+    @property
+    def object_type(self):
+        """Return the Box type for the object.
+
+        :rtype:
+            `unicode`
+        """
+        return self._item_type
+
     def get(self, fields=None, headers=None):
         """
         Get information about the object, specified by fields. If fields is None, return the default fields.
