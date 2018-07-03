@@ -28,14 +28,14 @@ Installing
 
 .. code-block:: console
 
-    pip install "boxsdk>=1.5,<2.0"
+    pip install "boxsdk>=1.6,<2.0"
 
 Important Versioning Note
 -------------------------
 
-The production version of the ``boxsdk`` package is the 1.5.x release track.
+The production version of the ``boxsdk`` package is the 1.6.x release track.
 The code can be found on Github at
-<https://github.com/box/box-python-sdk/tree/1.5>. This is what will be
+<https://github.com/box/box-python-sdk/tree/1.6>. This is what will be
 installed with ``pip install boxsdk``.
 
 The development version of the ``boxsdk`` package is the 2.0.0 release track,
@@ -47,11 +47,11 @@ on these alpha releases. Note that while we're still in alpha, version 2.0.0 is
 subject to change, and there might be breaking changes between alpha releases
 (e.g. between 2.0.0a2 and 2.0.0a3).
 
-The 1.5.x release track will receive bugfix support at least until the final
-release of 2.0.0.
+The 1.6.x release track will receive bugfix and API coverage support at least until
+the final release of 2.0.0.
 
 We always recommend pinning to a specific version (e.g. by adding
-``boxsdk==1.5.3`` in your ``requirements.txt`` file), so that you don't risk
+``boxsdk==1.6.0`` in your ``requirements.txt`` file), so that you don't risk
 accidentally upgrading to a new version and breaking your application. This is
 particularly important with the upcoming 2.0.0 release. There will be some
 breaking changes in version 2.0.0, which might break your application if you
@@ -444,7 +444,7 @@ Run all tests using -
 
 The tox tests include code style checks via pep8 and pylint.
 
-The tox tests are configured to run on Python 2.6, 2.7, 3.3, 3.4, 3.5, 3.6, and
+The tox tests are configured to run on Python 2.7, 3.4, 3.5, 3.6, and
 PyPy2.7 (our CI is configured to run PyPy2.7 tests on PyPy2.7 5.8.0).
 
 

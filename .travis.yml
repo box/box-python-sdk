@@ -1,6 +1,12 @@
 sudo: false
 language: python
 
+branches:
+    only:
+        - master
+        - "1.5"
+        - "1.6"
+
 cache:
   directories:
     - $HOME/.cache/pip
@@ -10,12 +16,8 @@ before_cache:
 
 matrix:
   include:
-    - python: 2.6
-      env: TOX_ENV=py26
     - python: 2.7
       env: TOX_ENV=py27
-    - python: 3.3
-      env: TOX_ENV=py33
     - python: 3.4
       env: TOX_ENV=py34
     - python: 3.5
