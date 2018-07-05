@@ -1,27 +1,27 @@
-boxsdk.network package
-======================
+boxsdk\.network package
+=======================
 
 Submodules
 ----------
 
-boxsdk.network.default_network module
--------------------------------------
+boxsdk\.network\.default\_network module
+----------------------------------------
 
 .. automodule:: boxsdk.network.default_network
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.network.logging_network module
--------------------------------------
+boxsdk\.network\.logging\_network module
+----------------------------------------
 
 .. automodule:: boxsdk.network.logging_network
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.network.network_interface module
----------------------------------------
+boxsdk\.network\.network\_interface module
+------------------------------------------
 
 .. automodule:: boxsdk.network.network_interface
     :members:
