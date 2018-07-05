@@ -1,4 +1,0 @@
-{
-  "test/unit/pagination/test_page.py::test_getitem": true,
-  "test/unit/pagination/test_page.py::test_translation_of_page_entries": true
-}

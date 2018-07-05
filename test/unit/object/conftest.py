@@ -12,6 +12,8 @@ from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.search import Search
+from boxsdk.object.legal_hold_policy import LegalHoldPolicy
+from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
 
 
 # pylint:disable=redefined-outer-name
@@ -188,3 +190,14 @@ def shared_link_password(request):
 @pytest.fixture(params=(date(2015, 5, 5), None))
 def shared_link_unshared_at(request):
     return request.param
+
+
+@pytest.fixture()
+def test_legal_hold_policy(mock_box_session, mock_object_id):
+    return LegalHoldPolicy(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_legal_hold_policy_assignment(mock_box_session, mock_object_id):
+    return LegalHoldPolicyAssignment(mock_box_session, mock_object_id)
+

@@ -407,6 +407,24 @@ class Client(object):
             :class:`LegalHoldPolicy`
         """
         return LegalHoldPolicy(session=self._session, object_id=policy_id)
+    
+    def create_legal_hold_policy(self, policy_name, **policy_attributes): 
+        """
+        Create a legal hold policy.
+
+        :param policy_name:
+            The legal hold policy's display name.
+        :type policy_name:
+            `unicode`
+        :param policy_attributes:
+            Additional attributes for the legal hold policy.
+        """
+
+        url = '{0}/legal_hold_policies'.format(API.BASE_API_URL)
+        policy_attributes['policy_name'] = policy_name
+        box_response = self._session.post(url, data=json.dumps(policy_attributes))
+        response = box_response.json()
+        return LegalHoldPolicy(self._session, response['id'], response)
 
     # def legal_hold_policies(self, policy_name=None, limit=None, marker=None, fields=None):
     #     """
