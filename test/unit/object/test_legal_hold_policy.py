@@ -4,10 +4,35 @@ from __future__ import unicode_literals
 import json
 import pytest
 
+from mock import Mock
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
 from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
 from boxsdk.config import API
 from boxsdk.session.box_session import BoxResponse 
+from boxsdk.network.default_network import DefaultNetworkResponse
+
+@pytest.fixture(scope='module')
+def policy_id_1():
+    return 101
+
+
+@pytest.fixture(scope='module')
+def policy_id_2():
+    return 202
+
+
+@pytest.fixture(scope='module')
+def policies_response(policy_id_1, policy_id_2):
+    # pylint disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'legal_hold_policy', 'id': policy_id_1, 'name': 'Test Policy 1'},
+            {'type': 'legal_hold_policy', 'id': policy_id_2, 'name': 'Test Policy 2'}
+        ],
+        'limit': 5,
+    }
+    return mock_network_response
 
 def test_assign(test_legal_hold_policy, mock_box_session, test_file):
     assignment_id = '12345'
@@ -43,3 +68,45 @@ def test_get(test_legal_hold_policy, mock_box_session):
     mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
     assert isinstance(legal_hold_policy, LegalHoldPolicy)
     assert legal_hold_policy.created_at == created_at
+
+
+@pytest.fixture(scope='module')
+def delete_policy_response():
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.ok = True
+    return mock_network_response
+
+
+def test_delete_policy_return_the_correct_response(
+    test_legal_hold_policy,
+    mock_box_session,
+    delete_policy_response,
+):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.delete.return_value = delete_policy_response
+    response = test_legal_hold_policy.delete()
+
+    # pylint:disable=protected-access
+    expected_url = test_legal_hold_policy.get_url()
+    # pylint:enable = protected-access
+    mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
+
+    assert response is True
+
+
+def test_get_assignments(
+    test_legal_hold_policy,
+    mock_box_session,
+    policies_response,
+    policy_id_1,
+    policy_id_2,
+): 
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value = policies_response
+    assignments = test_legal_hold_policy.get_assignments()
+    for assignment, expected_id in zip(assignments, [policy_id_1, policy_id_2]):
+        assert assignment.object_id == expected_id
+        # pylint:disable=protected-access
+        assert assignment._session == mock_box_session
+

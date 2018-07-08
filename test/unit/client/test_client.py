@@ -62,6 +62,28 @@ def folder_id():
 
 
 @pytest.fixture(scope='module')
+def legal_hold_policy_id_1():
+    return 101
+
+
+@pytest.fixture(scope='module')
+def legal_hold_policy_id_2():
+    return 202
+
+@pytest.fixture(scope='module')
+def legal_hold_policies_response(legal_hold_policy_id_1, legal_hold_policy_id_2):
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'legal_hold_policy', 'id': legal_hold_policy_id_1, 'name': 'Test Policy 1'},
+            {'type': 'legal_hold_policy', 'id': legal_hold_policy_id_2, 'name': 'Test Policy 2'},
+        ],
+        'limit': 5,
+    }
+    return mock_network_response
+
+@pytest.fixture(scope='module')
 def users_response(user_id_1, user_id_2):
     # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
@@ -93,10 +115,12 @@ def group_id_2():
 def groups_response(group_id_1, group_id_2):
     # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.json.return_value = {'entries': [
-        {'type': 'group', 'id': group_id_1, 'name': text_type(group_id_1)},
-        {'type': 'group', 'id': group_id_2, 'name': text_type(group_id_2)},
-    ]}
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'group', 'id': group_id_1, 'name': text_type(group_id_1)},
+            {'type': 'group', 'id': group_id_2, 'name': text_type(group_id_2)},
+        ]
+    }
     return mock_network_response
 
 
@@ -353,3 +377,20 @@ def test_create_legal_hold_policy_returns_the_correct_policy_object(mock_client,
     assert mock_box_session.post.call_args[1] == {'data': value}
     assert isinstance(new_policy, LegalHoldPolicy)
     assert new_policy.policy_name == test_policy_name
+
+
+def test_legal_hold_policies_return_the_correct_policy_objects(
+    mock_client, 
+    mock_box_session,
+    legal_hold_policies_response,
+    legal_hold_policy_id_1,
+    legal_hold_policy_id_2,
+):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value = legal_hold_policies_response
+    policies = mock_client.legal_hold_policies()
+    for policy, expected_id in zip(policies, [legal_hold_policy_id_1, legal_hold_policy_id_2]):
+        assert policy.object_id == expected_id
+        # pylint:disable=protected-access
+        assert policy._session == mock_box_session
+
