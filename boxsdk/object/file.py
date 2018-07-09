@@ -289,3 +289,26 @@ class File(Item):
             password=password,
         )
         return item.shared_link['download_url']
+
+    
+    def get_watermark(self): 
+        """
+        Return the watermark info for a Box file
+        """
+        url = '{0}/files/{1}'.format(API.BASE_API_URL, 'watermark')
+        box_response = self._session.get(url, expect_json_response=False)
+        return box_response.content
+
+    
+    def apply_watermark(self):
+        """
+        Apply watermark on a Box file
+        """
+        body_attributes = {
+            'watermark': {
+                'imprint': 'default'
+            }
+        }
+        box_response = self._session.post(url, data=json.dumps(body_attributes))
+        response = box_response.json()
+        return Watermark(self._session, response['id'], response)
