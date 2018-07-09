@@ -13,6 +13,7 @@ from ..object.events import Events
 from ..object.file import File
 from ..object.group import Group
 from ..object.group_membership import GroupMembership
+from ..object.web_link import WebLink
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
@@ -391,3 +392,60 @@ class Client(object):
         """
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
+
+    def web_link(self, web_link_id):
+        """
+        Initialize a :class: `WebLink` object, whose box id is web_link_id.
+
+        :param web_link_id:
+            The box ID of the :class:`WebLink` object.
+        :type web_link_id:
+            `unicode`
+        :return:
+            A :class: `WebLink` object with the given entry ID.
+        :rtype:
+            :class:`WebLink`
+        """
+        return WebLink(session=self._session, object_id=web_link_id)
+
+    def create_web_link(self, target_url, parent_id, name=None, description=None):
+        """
+        Create a WebLink with a given url.
+
+        :param url:
+            The url the web link points to.
+        :type url:
+            `unicode`
+        :param parent_id:
+            The id of the parent folder where the web link is created.
+        :type parent_id:
+            `unicode`
+        :param name:
+            The name of the web link. Defaults to the URL is not specified.
+        :type name:
+            `unicode`
+        :param description:
+            Description of the web link
+        :type name:
+            `unicode`
+        :return:
+            A :class:`WebLink` object with the given web link id.
+        :rtype:
+            :class:`WebLink`
+        """
+        url = '{0}/web_links'.format(API.BASE_API_URL)
+        web_link_attributes = {
+            'url': target_url,
+            'parent': {
+                'id': parent_id
+            }
+        }
+        if name is not None:
+            web_link_attributes['name'] = name
+        if description is not None:
+            web_link_attributes['description'] = description
+        box_response = self._session.post(url, data=json.dumps(web_link_attributes))
+        response = box_response.json()
+        return WebLink(self._session, response['id'], response)
+
+
