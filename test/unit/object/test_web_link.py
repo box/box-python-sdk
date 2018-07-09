@@ -31,14 +31,3 @@ def test_delete(mock_box_session, test_web_link):
  
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=None, params={})
 
-
-def test_update(mock_box_session, test_web_link):
-    expected_url = test_file.get_url()
-    mock_box_session.put.return_value = mock_file_response
-    test_file.lock(prevent_download)
-    mock_box_session.put.assert_called_once_with(
-        expected_url,
-        data=json.dumps({'lock': {'is_download_prevented': prevent_download, 'type': 'lock'}}),
-        params=None,
-        headers=None,
-    )
