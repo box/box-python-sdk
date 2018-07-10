@@ -1,10 +1,13 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import json
 
 from boxsdk.config import API
 from .item import Item
 from .metadata import Metadata
+from .task import Task
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
 class File(Item):
@@ -289,3 +292,45 @@ class File(Item):
             password=password,
         )
         return item.shared_link['download_url']
+
+    def get_tasks(self, **kwargs):
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('tasks'),
+            limit=100,
+            return_full_pages=False,
+        )
+
+
+    def create_task(self, message=None, due_at=None):
+        """
+        Create a task on the given file.
+
+        :param message:
+            An optional message to include in the task.
+        :type message:
+            `unicode`
+        :param due_at:
+            When this task is due.
+        :type due_at:
+            `str`
+        :return:
+            The newly created task
+        :rtype:
+            :class:`Task`
+        """
+        url = '{0}/tasks'.format(API.BASE_API_URL)
+        task_attributes = {
+            'item': {
+                'type': 'file',
+                'id': self.object_id
+            },
+            'action': 'review'
+        }
+        if message is not None:
+            task_attributes['message'] = message
+        if due_at is not None:
+            task_attributes['due_at'] = due_at
+        box_response = self._session.post(url, data=json.dumps(task_attributes))
+        response = box_response.json()
+        return Task(self._session, response['id'], response)
