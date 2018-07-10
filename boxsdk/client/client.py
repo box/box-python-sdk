@@ -408,44 +408,5 @@ class Client(object):
         """
         return WebLink(session=self._session, object_id=web_link_id)
 
-    def create_web_link(self, target_url, parent_id, name=None, description=None):
-        """
-        Create a WebLink with a given url.
-
-        :param url:
-            The url the web link points to.
-        :type url:
-            `unicode`
-        :param parent_id:
-            The id of the parent folder where the web link is created.
-        :type parent_id:
-            `unicode`
-        :param name:
-            The name of the web link. Defaults to the URL is not specified.
-        :type name:
-            `unicode`
-        :param description:
-            Description of the web link
-        :type name:
-            `unicode`
-        :return:
-            A :class:`WebLink` object with the given web link id.
-        :rtype:
-            :class:`WebLink`
-        """
-        url = '{0}/web_links'.format(API.BASE_API_URL)
-        web_link_attributes = {
-            'url': target_url,
-            'parent': {
-                'id': parent_id
-            }
-        }
-        if name is not None:
-            web_link_attributes['name'] = name
-        if description is not None:
-            web_link_attributes['description'] = description
-        box_response = self._session.post(url, data=json.dumps(web_link_attributes))
-        response = box_response.json()
-        return WebLink(self._session, response['id'], response)
 
 

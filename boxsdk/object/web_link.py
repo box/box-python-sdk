@@ -9,5 +9,3 @@ class WebLink(BaseObject):
 
     _item_type = 'web_link'
 
-
-   

@@ -11,6 +11,7 @@ from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.file import File
+from boxsdk.object.web_link import WebLink
 from boxsdk.object.collaboration import Collaboration, CollaborationRole
 from boxsdk.object.folder import Folder, FolderSyncState
 from boxsdk.session.box_session import BoxResponse
@@ -34,6 +35,17 @@ def mock_accelerator_response_for_new_uploads(make_mock_box_request, mock_new_up
         }
     )
     return mock_response
+
+
+@pytest.fixture(scope='module')
+def create_web_link_response():
+    #pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'type': 'web_link',
+        'id': 42,
+    }
+    return mock_network_response
 
 
 @pytest.fixture()
@@ -284,3 +296,18 @@ def test_preflight(test_folder, mock_object_id, mock_box_session):
             }
         ),
     )
+
+
+def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_box_session, create_web_link_response):
+    # pylint:disable=redefined-outer-name
+    test_web_link_url = 'https://test.com'
+    value = json.dumps({'url': test_web_link_url, 'parent': {'id': test_folder.object_id}, 'name': "42"})
+    mock_box_session.post.return_value = create_web_link_response
+    new_web_link = test_folder.create_web_link(test_web_link_url, test_folder.object_id)
+
+    assert len(mock_box_session.post.call_args_list) == 1
+
+    assert mock_box_session.post.call_args[0] == ("{0}/web_links".format(API.BASE_API_URL),)
+    assert mock_box_session.post.call_args[1] == {'data': value}
+    assert isinstance(new_web_link, WebLink)
+

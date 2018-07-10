@@ -23,7 +23,6 @@ from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.group_membership import GroupMembership
-from boxsdk.object.web_link import WebLink
 
 
 @pytest.fixture
@@ -120,18 +119,6 @@ def create_user_response():
         'type': 'user',
         'id': 1234,
         'name': 'Ned Stark',
-    }
-    return mock_network_response
-
-
-@pytest.fixture(scope='module')
-def create_web_link_response():
-    #pylint:disable=redefined-outer-name
-    mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.json.return_value = {
-        'type': 'web_link',
-        'id': 1234,
-        'name': 'Test Web Linl',
     }
     return mock_network_response
 
@@ -337,21 +324,5 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
-
-
-def test_create_web_link_returns_the_correct_web_link_object(mock_client, mock_box_session, create_web_link_response): 
-    # pylint:disable=redefined-outer-name
-    test_web_link_url = 'https://test.com'
-    test_parent_id = 1234
-    value = json.dumps({'url': test_web_link_url, 'parent': {'id': test_parent_id}})
-    mock_box_session.post.return_value = create_web_link_response
-    new_web_link = mock_client.create_web_link(test_web_link_url, test_parent_id)
-
-    assert len(mock_box_session.post.call_args_list) == 1
-
-    assert mock_box_session.post.call_args[0] == ("{0}/web_links".format(API.BASE_API_URL),)
-    assert mock_box_session.post.call_args[1] == {'data': value}
-    assert isinstance(new_web_link, WebLink)
-    assert new_web_link.object_id == 1234
 
 
