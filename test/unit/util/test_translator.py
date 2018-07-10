@@ -167,9 +167,9 @@ def test_full_translate(default_translator, mock_box_session):
         ],
     }
 
-    results = [default_translator.full_translate(item, mock_box_session) for item in response_object['entries']]
-    test_folder = results[0]
-    test_file = results[1]
+    results = default_translator.full_translate(response_object, mock_box_session)
+    test_folder = results['entries'][0]
+    test_file = results['entries'][1]
 
     assert isinstance(test_folder, Folder)
     assert isinstance(test_file, File)

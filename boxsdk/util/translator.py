@@ -133,25 +133,27 @@ class Translator(ChainMap):
 
     def full_translate(self, response_object, session):
 
-        if isinstance(response_object, Mapping) and 'type' in response_object:
-            object_type = response_object['type']
-            object_id = response_object['event_id'] if object_type == 'event' else response_object['id']
+        if isinstance(response_object, Mapping):
             for key in response_object:
                 if isinstance(response_object[key], Mapping):
                     response_object[key] = self.full_translate(response_object[key], session)
-                elif isinstance(response_object, list):
-                    for i in len(response_object[key]):
+                elif isinstance(response_object[key], list):
+                    for i in range(len(response_object[key])):
                         response_object[key][i] = self.full_translate(response_object[key][i], session)
 
-            object_class = self.get(object_type)
-            param_values = {
-                'session': session,
-                'response_object': response_object,
-                'object_id': object_id,
-            }
-            params = inspect.signature(object_class.__init__).parameters
-            param_values = {p:param_values[p] for p in params if self._is_constructor_param(params[p])}
-            return self.get(object_type)(**param_values)
+            if 'type' in response_object:
+                object_type = response_object['type']
+                object_id = response_object['event_id'] if object_type == 'event' else response_object['id']
+
+                object_class = self.get(object_type)
+                param_values = {
+                    'session': session,
+                    'response_object': response_object,
+                    'object_id': object_id,
+                }
+                params = inspect.signature(object_class.__init__).parameters
+                param_values = {p:param_values[p] for p in params if self._is_constructor_param(params[p])}
+                return self.get(object_type)(**param_values)
 
         return response_object
 
