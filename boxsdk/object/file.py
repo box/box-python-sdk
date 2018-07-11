@@ -7,6 +7,7 @@ from boxsdk.config import API
 from .item import Item
 from .metadata import Metadata
 from .task import Task
+from .task_assignment import TaskAssignment
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
@@ -293,14 +294,35 @@ class File(Item):
         )
         return item.shared_link['download_url']
 
-    def get_tasks(self, **kwargs):
-        return MarkerBasedObjectCollection(
-            session=self._session,
-            url=self.get_url('tasks'),
-            limit=100,
-            return_full_pages=False,
-        )
+    def task(self, task_id):
+        """
+        Initialize a :class: `Task` object, whose box id is task_id.
 
+        :param task_id:
+            The box ID of the :class:`Task` object.
+        :type task_id:
+            `unicode`
+        :return:
+            A :class: `Task` object with the given entry ID.
+        :rtype:
+            :class:`Task`
+        """
+        return Task(session=self._session, object_id=task_id)
+
+    def task_assignment(self, assignment_id):
+        """
+        Initialize a :class: `TaskAssignment` object, whose box id is assignment_id.
+
+        :param assignment_id:
+            The box ID of the :class:`TaskAssignment` object.
+        :type assignment_id:
+            `unicode`
+        :return:
+            A :class: `TaskAssignment` object with the given entry ID.
+        :rtype:
+            :class:`TaskAssignment`
+        """
+        return TaskAssignment(session=self._session, object_id=assignment_id)
 
     def create_task(self, message=None, due_at=None):
         """

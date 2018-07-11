@@ -8,6 +8,7 @@ from six import BytesIO
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.object.file import File
+from boxsdk.object.task import Task
 
 
 # pylint:disable=protected-access
@@ -274,3 +275,21 @@ def test_get_shared_link_download_url(
         params=None,
     )
     assert url == test_url
+
+
+def test_create_task(test_file, mock_box_session, test_task):
+    # pylint:disable=redefined-outer-name
+    expected_body = {
+        'item': {
+            'type': 'file',
+            'id': 42
+        },
+        'action': 'review'
+    }
+    value = json.dumps(expected_body)
+    mock_box_session.post.return_value = test_task
+    new_task = test_file.create_task()
+    assert len(mock_box_session.post.call_args_list) == 1
+    assert mock_box_session.post.call_args[0] == ("{0}/tasks".format(API.BASE_API_URL),)
+    assert mock_box_session.post.call_args[1] == {'data': value}
+    assert isinstance(new_task, Task)
