@@ -62,6 +62,32 @@ def folder_id():
 
 
 @pytest.fixture(scope='module')
+def webhook_id_1():
+    return 101
+
+
+@pytest.fixture(scope='module')
+def webhook_id_2():
+    return 202
+
+
+
+@pytest.fixture(scope='module')
+def webhooks_response(webhook_id_1, webhook_id_2):
+    # pylint disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'webhook', 'id': webhook_id_1},
+            {'type': 'webhook', 'id': webhook_id_2}
+        ],
+        'limit': 5,
+    }
+    return mock_network_response
+
+
+
+@pytest.fixture(scope='module')
 def create_webhook_response():
     # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
@@ -356,3 +382,20 @@ def test_create_webhook_returns_the_correct_policy_object(mock_client, mock_box_
     assert mock_box_session.post.call_args[0] == ("{0}/webhooks".format(API.BASE_API_URL),)
     assert mock_box_session.post.call_args[1] == {'data': value}
     assert isinstance(new_webhook, Webhook)
+
+
+
+def test_get_assignments(
+        mock_client,
+        mock_box_session,
+        webhooks_response,
+        webhook_id_1,
+        webhook_id_2,
+): 
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value = webhooks_response
+    webhooks = mock_client.webhooks()
+    for webhook, expected_id in zip(webhooks, [webhook_id_1, webhook_id_2]):
+        assert webhook.object_id == expected_id
+        # pylint:disable=protected-access
+        assert webhook._session == mock_box_session
