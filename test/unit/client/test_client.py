@@ -343,15 +343,15 @@ def test_create_webhook_returns_the_correct_policy_object(mock_client, mock_box_
     # pylint:disable=redefined-outer-name
     expected_body = {
         'target': {
-            'id': 42,
-            'type': 'file'
+            'type': 'file',
+            'id': 42
         },
         'triggers': ['FILE.DOWNLOADED'],
         'address': 'https://test.com'
     }
     value = json.dumps(expected_body)
     mock_box_session.post.return_value = create_webhook_response
-    new_webhook = mock_client.create_webhook(42, 'file', ['FILE.DOWNLOADED'], 'https://test/com')
+    new_webhook = mock_client.create_webhook(42, 'file', ['FILE.DOWNLOADED'], 'https://test.com')
     assert len(mock_box_session.post.call_args_list) == 1
     assert mock_box_session.post.call_args[0] == ("{0}/webhooks".format(API.BASE_API_URL),)
     assert mock_box_session.post.call_args[1] == {'data': value}
