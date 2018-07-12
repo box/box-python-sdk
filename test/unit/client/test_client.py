@@ -23,6 +23,7 @@ from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.group_membership import GroupMembership
+from boxsdk.object.webhook import Webhook
 
 
 @pytest.fixture
@@ -58,6 +59,17 @@ def file_id():
 @pytest.fixture(scope='module')
 def folder_id():
     return '1022'
+
+
+@pytest.fixture(scope='module')
+def create_webhook_response():
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'type': 'webhook',
+        'id': 1234
+    }
+    return mock_network_response
 
 
 @pytest.fixture(scope='module')
@@ -324,3 +336,23 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
+
+
+
+def test_create_webhook_returns_the_correct_policy_object(mock_client, mock_box_session, create_webhook_response):
+    # pylint:disable=redefined-outer-name
+    expected_body = {
+        'target': {
+            'id': 42,
+            'type': 'file'
+        },
+        'triggers': ['FILE.DOWNLOADED'],
+        'address': 'https://test.com'
+    }
+    value = json.dumps(expected_body)
+    mock_box_session.post.return_value = create_webhook_response
+    new_webhook = mock_client.create_webhook(42, 'file', ['FILE.DOWNLOADED'], 'https://test/com')
+    assert len(mock_box_session.post.call_args_list) == 1
+    assert mock_box_session.post.call_args[0] == ("{0}/webhooks".format(API.BASE_API_URL),)
+    assert mock_box_session.post.call_args[1] == {'data': value}
+    assert isinstance(new_webhook, Webhook)
