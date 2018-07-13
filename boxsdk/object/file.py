@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import json
 
 from boxsdk.config import API
 from .item import Item
@@ -290,25 +291,37 @@ class File(Item):
         )
         return item.shared_link['download_url']
 
-    
-    def get_watermark(self): 
+
+
+    def get_watermark(self):
         """
         Return the watermark info for a Box file
         """
-        url = '{0}/files/{1}'.format(API.BASE_API_URL, 'watermark')
+        url = '{0}/files/{1}/{2}'.format(API.BASE_API_URL, self.object_id, 'watermark')
         box_response = self._session.get(url, expect_json_response=False)
         return box_response.content
 
-    
+
+
     def apply_watermark(self):
         """
         Apply watermark on a Box file
         """
+        url = '{0}/files/{1}/{2}'.format(API.BASE_API_URL, self.object_id, 'watermark')
         body_attributes = {
             'watermark': {
                 'imprint': 'default'
             }
         }
-        box_response = self._session.post(url, data=json.dumps(body_attributes))
-        response = box_response.json()
-        return Watermark(self._session, response['id'], response)
+        box_response = self._session.put(url, data=json.dumps(body_attributes))
+        return box_response.json()
+
+
+
+    def delete_watermark(self):
+        """
+        Return the watermark info for a Box file
+        """
+        url = '{0}/files/{1}/{2}'.format(API.BASE_API_URL, self.object_id, 'watermark')
+        box_response = self._session.delete(url, expect_json_response=False)
+        return box_response.content
