@@ -38,7 +38,7 @@ class Page(Sequence, object):
 
         :rtype:   :class:`Translator`
         """
-        return self._session.translator
+        return Translator()
 
     @property
     def response_object(self):
