@@ -13,8 +13,12 @@ from ..object.events import Events
 from ..object.file import File
 from ..object.group import Group
 from ..object.group_membership import GroupMembership
+from ..object.storage_policy import StoragePolicy
+from ..object.storage_policy_assignment import StoragePolicyAssignment
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+
 
 
 class Client(object):
@@ -391,3 +395,107 @@ class Client(object):
         """
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
+
+
+    def storage_policy(self, policy_id):
+        """
+        Initialize a :class: `StoragePolicy` object, whose box id is policy_id.
+ 
+        :param policy_id:
+            The box ID of the :class:`StoragePolicy` object.
+        :type policy_id:
+            `unicode`
+        :return:
+            A :class: `StoragePolicy` object with the given entry ID.
+        :rtype:
+            :class:`StoragePolicy`
+        """
+        return StoragePolicy(session=self._session, object_id=policy_id)
+
+
+    def storage_policy_assignment(self, assignment_id):
+        """
+        Initialize a :class: `StoragePolicyAssignment` object, whose box id is assignment_id.
+
+        :param assignment_id:
+            The box ID of the :class:`StoragePolicyAssignment` object.
+        :type assignment_id:
+            `unicode`
+        :return:
+            A :class: `StoragePolicyAssignment` object with the given entry ID.
+        :rtype:
+            :class:`StoragePolicyAssignment`
+        """
+        return StoragePolicyAssignment(session=self._session, object_id=assignment_id)
+
+
+
+    def storage_policies(self, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the storage policy using limit-offset paging.
+
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `str` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the storage policy
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('storage_policies'),
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False
+        )
+
+
+    
+    def storage_policy_assignments(self, resolved_for_type, resolved_for_id, marker=None, fields=None):
+        """
+        Get the entries in the storage policy assignment using limit-offset paging.
+
+        :param resolved_for_type:
+            Set to either `user` or `enterprise`
+        :type limit:
+            unicode
+        :param resolved_for_id:
+            The id of the user or enterprise
+        :type limit:
+            unicode
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `str` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the storage policy assignment
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url='{0}/storage_policy_assignments?resolved_for_type={1}&resolved_for_id={2}'.
+            format(API.BASE_API_URL, resolved_for_type, resolved_for_id),
+            limit=1,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False
+        )
+
+
+
