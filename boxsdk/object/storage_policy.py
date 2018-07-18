@@ -3,7 +3,10 @@
 from __future__ import unicode_literals, absolute_import
 
 import json
+
 from .base_object import BaseObject
+from boxsdk.util.translator import Translator
+
 
 class StoragePolicy(BaseObject):
     """Represents the storage policy"""
@@ -21,7 +24,7 @@ class StoragePolicy(BaseObject):
                 'type': 'storage_policy',
                 'id': self.object_id
             },
-            'assign_to': {
+            'assigned_to': {
                 'type': item.type,
                 'id': item.object_id
             }
