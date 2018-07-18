@@ -22,7 +22,7 @@ class LegalHoldPolicy(BaseObject):
         body = {
             'policy_id': self.object_id,
             'assign_to': {
-                'type': item.object_type,
+                'type': item.type,
                 'id': item.object_id
             }
         }
@@ -31,22 +31,22 @@ class LegalHoldPolicy(BaseObject):
             self._session,
             response['id'],
             response,
-        ) 
+        )
 
     def get_assignments(self, assign_to_type=None, assign_to_id=None, limit=None, marker=None, fields=None):
         """
-        Get the entries in the legal hold policy assignment using limit-offset paging. 
+        Get the entries in the legal hold policy assignment using limit-offset paging.
 
         :param policy_id:
-            The ID of the legal hold policy assignment 
+            The ID of the legal hold policy assignment
         :type policy_id:
             `str` or None
         :param assign_to_type:
-            Filter assignments of this type only. Can be `file_version`, `file`, `folder`, or `user` 
+            Filter assignments of this type only. Can be `file_version`, `file`, `folder`, or `user`
         :type assign_to_type:
             `str` or None
         :param assign_to_id:
-            Filter assignments to this ID only 
+            Filter assignments to this ID only
         :type assign_to_id:
             `str` or None
         :param limit:
@@ -54,7 +54,7 @@ class LegalHoldPolicy(BaseObject):
         :type limit:
             `str` or None
         :param marker:
-            The paging marker to start paging from 
+            The paging marker to start paging from
         :type marker:
             `str` or None
         :param fields:
@@ -64,9 +64,9 @@ class LegalHoldPolicy(BaseObject):
         :returns:
             An iterator of the entries in the legal hold policy assignment
         """
-        additional_params = { 
-            'policy_id': self.object_id, 
-            'assign_to_type': assign_to_type, 
+        additional_params = {
+            'policy_id': self.object_id,
+            'assign_to_type': assign_to_type,
             'assign_to_id': assign_to_id,
         }
         return MarkerBasedObjectCollection(
