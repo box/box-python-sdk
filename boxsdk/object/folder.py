@@ -302,6 +302,42 @@ class Folder(Item):
             response_object=response,
         )
 
+    def create_web_link(self, target_url, name=None, description=None):
+        """
+        Create a WebLink with a given url.
+
+        :param target_url:
+            The url the web link points to.
+        :type target_url:
+            `unicode`
+        :param name:
+            The name of the web link. Optional, the API will give it a default if not specified.
+        :type name:
+            `unicode` or None
+        :param description:
+            Description of the web link
+        :type name:
+            `unicode` or None
+        :return:
+            A :class:`WebLink` object.
+        :rtype:
+            :class:`WebLink`
+        """
+        url = '{0}/web_links'.format(API.BASE_API_URL)
+        web_link_attributes = {
+            'url': target_url,
+            'parent': {
+                'id': self.object_id
+            }
+        }
+        if name is not None:
+            web_link_attributes['name'] = name
+        if description is not None:
+            web_link_attributes['description'] = description
+        box_response = self._session.post(url, data=json.dumps(web_link_attributes))
+        response = box_response.json()
+        return WebLink(self._session, response['id'], response)
+
     def update_sync_state(self, sync_state):
         """Update the ``sync_state`` attribute of this folder.
 
@@ -383,45 +419,4 @@ class Folder(Item):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
         return super(Folder, self).delete({'recursive': recursive}, etag)
-
-
-    def create_web_link(self, target_url, name=None, description=None):
-        """
-        Create a WebLink with a given url.
-
-        :param url:
-            The url the web link points to.
-        :type url:
-            `unicode`
-        :param parent_id:
-            The id of the parent folder where the web link is created.
-        :type parent_id:
-            `unicode`
-        :param name:
-            The name of the web link. Defaults to the URL is not specified.
-        :type name:
-            `unicode`
-        :param description:
-            Description of the web link
-        :type name:
-            `unicode`
-        :return:
-            A :class:`WebLink` object with the given web link id.
-        :rtype:
-            :class:`WebLink`
-        """
-        url = '{0}/web_links'.format(API.BASE_API_URL)
-        web_link_attributes = {
-            'url': target_url,
-            'parent': {
-                'id': self.object_id
-            }
-        }
-        if name is not None:
-            web_link_attributes['name'] = name
-        if description is not None:
-            web_link_attributes['description'] = description
-        box_response = self._session.post(url, data=json.dumps(web_link_attributes))
-        response = box_response.json()
-        return WebLink(self._session, response['id'], response)
 

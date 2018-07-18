@@ -43,7 +43,7 @@ def create_web_link_response():
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'type': 'web_link',
-        'id': 42,
+        'id': '42',
     }
     return mock_network_response
 
