@@ -21,6 +21,7 @@ from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
 from boxsdk.object.group import Group
+from boxsdk.object.terms_of_service import TermsOfService
 from boxsdk.object.user import User
 from boxsdk.object.group_membership import GroupMembership
 
@@ -119,6 +120,18 @@ def create_user_response():
         'type': 'user',
         'id': 1234,
         'name': 'Ned Stark',
+    }
+    return mock_network_response
+
+
+@pytest.fixture(scope='module')
+def terms_of_service_response():
+    #pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'type': 'terms_of_service',
+        'id': 1234,
+        'status': 'enabled',
     }
     return mock_network_response
 
@@ -324,3 +337,21 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
+
+
+
+def test_terms_of_service_returns_the_correct_tos_object(mock_client, mock_box_session, terms_of_service_response):
+    #pylint:disable=redefined-outer-name
+    value = json.dumps({
+        'status': 'enabled',
+        'tos_type': 'external',
+        'text': 'This is a test text',
+    })
+    mock_box_session.post.return_value = terms_of_service_response
+    new_terms_of_service = mock_client.create_a_terms_of_service('enabled', 'external', 'This is a test text')
+
+    assert len(mock_box_session.post.call_args_list) == 1
+
+    assert mock_box_session.post.call_args[0] == ("{0}/terms_of_services".format(API.BASE_API_URL),)
+    assert mock_box_session.post.call_args[1] == {'data': value}
+    assert isinstance(new_terms_of_service, TermsOfService)

@@ -10,6 +10,8 @@ from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
+from boxsdk.object.terms_of_service import TermsOfService
+from boxsdk.object.terms_of_service_user_status import TermsOfServiceUserStatus
 from boxsdk.object.user import User
 from boxsdk.object.search import Search
 
@@ -66,6 +68,16 @@ def test_folder(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_group(mock_box_session, mock_group_id):
     return Group(mock_box_session, mock_group_id)
+
+
+@pytest.fixture()
+def test_terms_of_service(mock_box_session, mock_object_id):
+    return TermsOfService(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_terms_of_service_user_status(mock_box_session, mock_object_id):
+    return TermsOfServiceUserStatus(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()

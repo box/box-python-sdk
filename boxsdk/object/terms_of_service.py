@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from functools import partial
 import json
 
+from boxsdk.config import API
 from .base_object import BaseObject
 from .terms_of_service_user_status import TermsOfServiceUserStatus
 
