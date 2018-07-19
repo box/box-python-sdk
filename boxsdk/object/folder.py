@@ -382,3 +382,31 @@ class Folder(Item):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
         return super(Folder, self).delete({'recursive': recursive}, etag)
+
+
+    def copy(self, parent_id, name=None):
+        """
+        Used to create a copy of a folder in another folder.
+
+        :param parent_id:
+            The id of the destination folder
+        :type parent_id:
+            `unicode`
+        :param name:
+            An optional new name for the folder.
+        :type name:
+            `unicode` or None
+        """
+        url = '{0}/folders/{1}'.format(API.BASE_API_URL, self.object_id)
+        body = {
+            'parent': {
+                'id': parent_id
+            },
+            'name': name
+        }
+        response = self._session.post(url, data=json.dumps(body)).json()
+        return Translator().translate(response['type'])(
+            self._session,
+            response['id'],
+            response,
+        )
