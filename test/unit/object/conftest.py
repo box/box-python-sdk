@@ -7,6 +7,7 @@ from mock import Mock
 import pytest
 from six import int2byte, PY2
 from boxsdk.object.collaboration import Collaboration
+from boxsdk.object.device_pin import DevicePin
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
@@ -66,6 +67,11 @@ def test_folder(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_group(mock_box_session, mock_group_id):
     return Group(mock_box_session, mock_group_id)
+
+
+@pytest.fixture()
+def test_device_pin(mock_box_session, mock_object_id):
+    return DevicePin(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()

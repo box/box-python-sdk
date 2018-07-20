@@ -112,6 +112,29 @@ def create_group_response():
 
 
 @pytest.fixture(scope='module')
+def device_pin_id_1():
+    return 101
+
+
+@pytest.fixture(scope='module')
+def device_pin_id_2():
+    return 202
+
+@pytest.fixture(scope='module')
+def device_pins_response(device_pin_id_1, device_pin_id_2):
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'device_pinner', 'id': device_pin_id_1},
+            {'type': 'device_pinner', 'id': device_pin_id_2},
+        ],
+        'limit': 2,
+    }
+    return mock_network_response
+
+
+@pytest.fixture(scope='module')
 def create_user_response():
     # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
@@ -324,3 +347,14 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
+
+
+
+def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_response, device_pin_id_1, device_pin_id_2):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value = device_pins_response
+    pins = mock_client.device_pins('1234')
+    for pin, expected_id in zip(pins, [device_pin_id_1, device_pin_id_2]):
+        assert pin.object_id == expected_id
+        # pylint:disable=protected-access
+        assert pin._session == mock_box_session
