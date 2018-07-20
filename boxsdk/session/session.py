@@ -397,6 +397,7 @@ class Session(object):
         :rtype:
             `callable`
         """
+        # pylint:disable=unused-argument
         code = network_response.status_code
         if code in (202, 429) or code >= 500:
             return partial(
@@ -453,7 +454,7 @@ class AuthorizedSession(Session):
     Box API authorized session. Provides auth, automatic retry of failed requests, and session renewal.
     """
 
-    def __init__(self, oauth, *args, **kwargs):
+    def __init__(self, oauth, **kwargs):
         """
         :param oauth:
             OAuth2 object used by the session to authorize requests.
