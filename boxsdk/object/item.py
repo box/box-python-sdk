@@ -322,3 +322,24 @@ class Item(BaseObject):
         """
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).delete(params, headers)
+
+
+    def get_from_trash(self, fields=None):
+        """
+        Get item from trash.
+
+        :param fields:
+            List of fields to request
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entry in the trash
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url='{0}/{1}/{2}/trash'.format(API.BASE_API_URL, endpoint, item_id),
+            limit=1,
+            marker=None,
+            fields=fields,
+            return_full_pages=False
+        )
