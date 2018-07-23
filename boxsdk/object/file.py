@@ -6,6 +6,8 @@ from boxsdk.config import API
 from .item import Item
 from .metadata import Metadata
 
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+
 
 class File(Item):
     """Box API endpoint for interacting with files."""
@@ -289,3 +291,34 @@ class File(Item):
             password=password,
         )
         return item.shared_link['download_url']
+
+
+    def collaborators(self, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the collaborators using limit-offset paging.
+
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `str` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the legal hold policy
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url='{0}/files/{1}/collaborations'.format(API.BASE_API_URL, self.object_id),
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False
+        )

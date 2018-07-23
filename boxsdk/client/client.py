@@ -15,6 +15,7 @@ from ..object.group import Group
 from ..object.group_membership import GroupMembership
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
+from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
 
 class Client(object):
@@ -391,3 +392,38 @@ class Client(object):
         """
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
+
+
+    def pending_collaborations(self, status, limit=None, offset=None, fields=None):
+        """
+        Get the entries in the file version using limit-offset paging.
+
+        :param status:
+            The status of the collaboration.
+        :type status:
+            `Unicode`
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param offset:
+            The offset of the item at which to begin the response.
+        :type offset:
+            `str` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the pending collaborations
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return LimitOffsetBasedObjectCollection(
+            session=self._session,
+            url='{0}/collaborations'.format(API.BASE_API_URL),
+            limit=limit,
+            offset=offset,
+            fields=fields,
+            return_full_pages=False
+        )

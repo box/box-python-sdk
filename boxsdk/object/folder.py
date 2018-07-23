@@ -12,6 +12,7 @@ from boxsdk.object.item import Item
 from boxsdk.object.user import User
 from boxsdk.util.text_enum import TextEnum
 from boxsdk.util.translator import Translator
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
 class FolderSyncState(TextEnum):
@@ -382,3 +383,34 @@ class Folder(Item):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
         return super(Folder, self).delete({'recursive': recursive}, etag)
+
+
+    def collaborators(self, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the collaborators using limit-offset paging.
+
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `str` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the legal hold policy
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url='{0}/folders/{1}/collaborations'.format(API.BASE_API_URL, self.object_id),
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False
+        )
