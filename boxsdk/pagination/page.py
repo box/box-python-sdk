@@ -7,6 +7,7 @@ import copy
 
 from boxsdk.object.base_object import BaseObject
 from boxsdk.object.base_endpoint import BaseEndpoint
+from boxsdk.util.translator import Translator
 
 
 class Page(Sequence, object):
@@ -38,7 +39,7 @@ class Page(Sequence, object):
 
         :rtype:   :class:`Translator`
         """
-        return self._session.translator
+        return Translator()
 
     @property
     def response_object(self):
