@@ -10,7 +10,6 @@ from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
-from boxsdk.object.web_link import WebLink
 from boxsdk.util.text_enum import TextEnum
 from boxsdk.util.translator import Translator
 
@@ -323,7 +322,6 @@ class Folder(Item):
         :rtype:
             :class:`WebLink`
         """
-        url = '{0}/web_links'.format(API.BASE_API_URL)
         web_link_attributes = {
             'url': target_url,
             'parent': {
@@ -334,9 +332,7 @@ class Folder(Item):
             web_link_attributes['name'] = name
         if description is not None:
             web_link_attributes['description'] = description
-        box_response = self._session.post(url, data=json.dumps(web_link_attributes))
-        response = box_response.json()
-        return WebLink(self._session, response['id'], response)
+        return self.update_info(web_link_attributes)
 
     def update_sync_state(self, sync_state):
         """Update the ``sync_state`` attribute of this folder.

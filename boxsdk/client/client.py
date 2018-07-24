@@ -407,4 +407,3 @@ class Client(object):
         """
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
-
