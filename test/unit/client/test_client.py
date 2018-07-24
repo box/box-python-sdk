@@ -23,6 +23,7 @@ from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.group_membership import GroupMembership
+from boxsdk.object.legal_hold_policy import LegalHoldPolicy
 
 
 @pytest.fixture
@@ -61,6 +62,28 @@ def folder_id():
 
 
 @pytest.fixture(scope='module')
+def legal_hold_policy_id_1():
+    return 101
+
+
+@pytest.fixture(scope='module')
+def legal_hold_policy_id_2():
+    return 202
+
+@pytest.fixture(scope='module')
+def legal_hold_policies_response(legal_hold_policy_id_1, legal_hold_policy_id_2):
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'legal_hold_policy', 'id': legal_hold_policy_id_1, 'name': 'Test Policy 1'},
+            {'type': 'legal_hold_policy', 'id': legal_hold_policy_id_2, 'name': 'Test Policy 2'},
+        ],
+        'limit': 5,
+    }
+    return mock_network_response
+
+@pytest.fixture(scope='module')
 def users_response(user_id_1, user_id_2):
     # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
@@ -92,10 +115,12 @@ def group_id_2():
 def groups_response(group_id_1, group_id_2):
     # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.json.return_value = {'entries': [
-        {'type': 'group', 'id': group_id_1, 'name': text_type(group_id_1)},
-        {'type': 'group', 'id': group_id_2, 'name': text_type(group_id_2)},
-    ]}
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'group', 'id': group_id_1, 'name': text_type(group_id_1)},
+            {'type': 'group', 'id': group_id_2, 'name': text_type(group_id_2)},
+        ]
+    }
     return mock_network_response
 
 
@@ -142,6 +167,18 @@ def search_response(file_id, folder_id):
     mock_network_response.json.return_value = {'entries': [
         {'type': 'file', 'id': file_id}, {'type': 'folder', 'id': folder_id}
     ]}
+    return mock_network_response
+
+
+@pytest.fixture(scope='module')
+def create_policy_response():
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'type': 'legal_hold_policy',
+        'id': 1234,
+        'policy_name': 'Test Policy'
+    }
     return mock_network_response
 
 
@@ -324,3 +361,36 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
+
+def test_create_legal_hold_policy_returns_the_correct_policy_object(mock_client, mock_box_session, create_policy_response):
+    # pylint:disable=redefined-outer-name
+    test_policy_name = 'Test Policy'
+    expected_body = {
+        'policy_name': test_policy_name
+    }
+    value = json.dumps(expected_body)
+    mock_box_session.post.return_value = create_policy_response
+    new_policy = mock_client.create_legal_hold_policy(test_policy_name)
+
+    assert len(mock_box_session.post.call_args_list) == 1
+    assert mock_box_session.post.call_args[0] == ("{0}/legal_hold_policies".format(API.BASE_API_URL),)
+    assert mock_box_session.post.call_args[1] == {'data': value}
+    assert isinstance(new_policy, LegalHoldPolicy)
+    assert new_policy.policy_name == test_policy_name
+
+
+def test_legal_hold_policies_return_the_correct_policy_objects(
+    mock_client, 
+    mock_box_session,
+    legal_hold_policies_response,
+    legal_hold_policy_id_1,
+    legal_hold_policy_id_2,
+):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value = legal_hold_policies_response
+    policies = mock_client.legal_hold_policies()
+    for policy, expected_id in zip(policies, [legal_hold_policy_id_1, legal_hold_policy_id_2]):
+        assert policy.object_id == expected_id
+        # pylint:disable=protected-access
+        assert policy._session == mock_box_session
+
