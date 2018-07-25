@@ -7,6 +7,7 @@ import json
 from .base_object import BaseObject
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
 class Item(BaseObject):
@@ -337,7 +338,7 @@ class Item(BaseObject):
         """
         return MarkerBasedObjectCollection(
             session=self._session,
-            url='{0}/{1}/{2}/trash'.format(API.BASE_API_URL, endpoint, item_id),
+            url='{0}/{1}/{2}/trash'.format(API.BASE_API_URL, self.type, self.object_id),
             limit=1,
             marker=None,
             fields=fields,
