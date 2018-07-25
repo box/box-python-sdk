@@ -34,3 +34,25 @@ class Task(BaseObject):
             response,
         )
 
+    def assignments(self, fields=None):
+        """
+        Get the entries in the file task assignment.
+
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the file task assignment.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url='{0}/tasks/{1}/assignments'.format(API.BASE_API_URL, self.object_id),
+            limit=100,
+            marker=None,
+            fields=fields,
+            return_full_pages=False
+        )
+

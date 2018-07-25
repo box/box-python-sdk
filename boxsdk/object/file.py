@@ -356,3 +356,26 @@ class File(Item):
         box_response = self._session.post(url, data=json.dumps(task_attributes))
         response = box_response.json()
         return Task(self._session, response['id'], response)
+
+
+    def tasks(self, fields=None):
+        """
+        Get the entries in the file tasks.
+
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the file tasks
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url='{0}/files/{1}/tasks'.format(API.BASE_API_URL, self.object_id),
+            limit=100,
+            marker=None,
+            fields=fields,
+            return_full_pages=False
+        )
