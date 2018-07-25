@@ -23,6 +23,7 @@ from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.group_membership import GroupMembership
+from boxsdk.object.invite import Invite
 
 
 @pytest.fixture
@@ -119,6 +120,16 @@ def create_user_response():
         'type': 'user',
         'id': 1234,
         'name': 'Ned Stark',
+    }
+    return mock_network_response
+
+@pytest.fixture(scope='module')
+def create_invite_response():
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'type': 'invite',
+        'id': 1234,
     }
     return mock_network_response
 
@@ -324,3 +335,25 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
+
+
+def test_invite_user_to_enterprise(mock_client, mock_box_session, create_invite_response):
+    # pylint:disable=redefined-outer-name
+    test_user_login = 'test@user.com'
+    value = json.dumps({
+        'enterprise': {
+            'id': '1234'
+        },
+        'actionable_by': {
+            'login': test_user_login
+        }
+    })
+    mock_box_session.post.return_value = create_invite_response
+    new_invite = mock_client.invite_user('1234', test_user_login)
+
+    assert len(mock_box_session.post.call_args_list) == 1
+
+    assert mock_box_session.post.call_args[0] == ("{0}/invites".format(API.BASE_API_URL),)
+    assert mock_box_session.post.call_args[1] == {'data': value}
+    assert isinstance(new_invite, Invite)
+    assert new_invite.object_id == 1234

@@ -14,6 +14,7 @@ from ..object.events import Events
 from ..object.file import File
 from ..object.group import Group
 from ..object.group_membership import GroupMembership
+from ..object.invite import Invite
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
@@ -438,3 +439,20 @@ class Client(object):
             :class:`EmailAlias`
         """
         return EmailAlias(session=self._session, object_id=alias_id)
+
+
+    def invite(self, invite_id):
+        """
+        Initialize a :class: `Invite` object, whose box id is invite_id.
+
+        :param invite_id:
+            The invite ID of the :class:`Invite` object.
+        :type alias_id:
+            `unicode`
+        :return:
+            A :class `Invite` object with the given entry ID.
+        :rtype:
+            :class:`Invite`
+        """
+        return Invite(session=self._session, object_id=invie_id)
+
