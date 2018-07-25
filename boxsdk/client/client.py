@@ -14,6 +14,7 @@ from ..object.file import File
 from ..object.group import Group
 from ..object.group_membership import GroupMembership
 from ..object.terms_of_service import TermsOfService
+from ..object.terms_of_service_user_status import TermsOfServiceUserStatus
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
@@ -447,7 +448,7 @@ class Client(object):
             session=self._session,
             url=self._session.get_url('terms_of_services'),
             additional_params=additional_params,
-            limit=2,
+            limit=100,
             marker=None,
             fields=None,
             return_full_pages=False

@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 import json
 
-from mock import Mock
 from boxsdk.config import API
 from boxsdk.object.terms_of_service import TermsOfService
 
@@ -20,6 +19,23 @@ def test_get(test_terms_of_service, mock_box_session):
     mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
     assert isinstance(terms_of_service, TermsOfService)
     assert terms_of_service.created_at == created_at
+
+
+def test_update(test_terms_of_service, mock_box_session):
+    new_text = 'This is new text'
+    expected_url = '{0}/terms_of_services/{1}'.format(API.BASE_API_URL, test_terms_of_service.object_id)
+    mock_box_session.put.return_value.json.return_value = {
+        'type': 'terms_of_service',
+        'id': test_terms_of_service.object_id,
+        'text': new_text,
+    }
+    data = {
+        'text': new_text,
+    }
+    updated_terms_of_service = test_terms_of_service.update_info(data)
+    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
+    assert isinstance(updated_terms_of_service, TermsOfService)
+    assert updated_terms_of_service.text == new_text
 
 
 def test_create_user_status(test_terms_of_service, test_terms_of_service_user_status, mock_box_session):
