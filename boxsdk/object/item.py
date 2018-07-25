@@ -338,7 +338,7 @@ class Item(BaseObject):
         """
         return MarkerBasedObjectCollection(
             session=self._session,
-            url='{0}/{1}/{2}/trash'.format(API.BASE_API_URL, self.type, self.object_id),
+            url='{0}/{1}/{2}/trash'.format(API.BASE_API_URL, self.get_url, self.object_id),
             limit=1,
             marker=None,
             fields=fields,
