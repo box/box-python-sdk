@@ -324,3 +324,23 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
+
+
+def test_get_trashed_items(mock_box_session, mock_client):
+    expected_url = '{0}/folders/trash/items'.format(API.BASE_API_URL)
+    mock_trash = {
+        'type': 'file',
+        'id': '12345',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 5,
+        'offset': 0,
+        'limit': 100,
+        'entries': [mock_trash]
+    }
+
+    trashed_items = mock_client.get_trashed_items()
+    trashed_item = trashed_items.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
+    assert trashed_item.id == mock_trash['id']
+    assert trashed_item.type == mock_trash['type']
