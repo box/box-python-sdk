@@ -383,13 +383,11 @@ class Item(BaseObject):
         )
 
 
-
     def permanently_delete_item(self):
         """
         Permanently delete an item that is in the trash. The item will no longer exist in Box.
 
         """
         url = self.get_url('trash')
-        box_response = self._session.delete(url)
-        response = box_response.json()
-        return response
+        box_response = self._session.delete(url, expect_json_response=False)
+        return box_response.ok
