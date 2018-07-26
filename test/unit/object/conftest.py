@@ -12,6 +12,7 @@ from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.search import Search
+from boxsdk.object.watermark import Watermark
 
 
 # pylint:disable=redefined-outer-name
@@ -79,6 +80,11 @@ def mock_collab_response(make_mock_box_request, mock_collaboration_id):
         response={'type': 'collaboration', 'id': mock_collaboration_id},
     )
     return mock_box_response
+
+
+@pytest.fixture()
+def test_watermark(mock_box_session):
+    return Watermark(mock_box_session)
 
 
 @pytest.fixture()

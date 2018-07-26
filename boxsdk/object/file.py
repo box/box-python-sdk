@@ -299,7 +299,7 @@ class File(Item):
         """
         url = '{0}/files/{1}/{2}'.format(API.BASE_API_URL, self.object_id, 'watermark')
         box_response = self._session.get(url, expect_json_response=False)
-        return box_response.content
+        return box_response.json()
 
 
 
