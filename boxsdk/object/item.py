@@ -333,14 +333,63 @@ class Item(BaseObject):
             List of fields to request
         :type fields:
             `Iterable` of `unicode`
-        :returns:
-            An iterator of the entry in the trash
         """
-        return MarkerBasedObjectCollection(
+        url = self.get_url('trash')
+        params = {}
+        if fields:
+            params['fields'] = ','.join(fields)
+        box_response = self._session.get(url, params=params)
+        response = box_response.json()
+        return self.__class__(
             session=self._session,
-            url='{0}/{1}/{2}/trash'.format(API.BASE_API_URL, self.get_url, self.object_id),
-            limit=1,
-            marker=None,
-            fields=fields,
-            return_full_pages=False
+            object_id=response['id'],
+            response_object=response,
         )
+
+
+    def restore_from_trash(self, name=None, parent_id=None, fields=None):
+        """
+        Restores an item from the trash. Could be files, folders, or weblinks.
+
+        :param name:
+            The new name for this item. Only used if the item can't be restored due to name conflict.
+        :type name:
+            `unicode` or None
+        :param parent_id:
+            The id of the new parent folder. Only used if the previous parent folder no longer exists.
+        :type parent_id:
+            `unicode` or None
+        :param fields:
+            List of fields to request
+        :type fields:
+            `Iterable` of `unicode`
+        """
+        url = self.get_url()
+        body = {
+            'name': name,
+            'parent': {
+                'id': parent_id
+            }
+        }
+        params = {}
+        if fields:
+            params['fields'] = ','.join(fields)
+        box_response = self._session.post(url, data=json.dumps(body), params=params)
+        response = box_response.json()
+        return self.__class__(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+
+
+    def permanently_delete_item(self):
+        """
+        Permanently delete an item that is in the trash. The item will no longer exist in Box.
+
+        """
+        url = self.get_url('trash')
+        box_response = self._session.delete(url)
+        response = box_response.json()
+        return response

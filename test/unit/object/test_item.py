@@ -127,3 +127,25 @@ def test_get(test_item_and_response, mock_box_session, fields, mock_object_id, e
     mock_box_session.get.assert_called_once_with(expected_url, params=expected_params, headers=if_none_match_header)
     assert isinstance(info, test_item.__class__)
     assert info.id == mock_object_id
+
+
+def test_get_from_trash(test_item_and_response, mock_box_session, mock_object_id):
+    # pylint:disable=redefined-outer-name, protected-access
+    test_item, mock_item_response = test_item_and_response
+    expected_url = test_item.get_url('trash')
+    mock_box_session.get.return_value = mock_item_response
+    info = test_item.get_from_trash()
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    assert isinstance(info, test_item.__class__)
+    assert info.id == mock_object_id
+
+
+def test_restore_from_trash(test_item_and_response, mock_box_session, mock_object_id):
+    # pylint:disable=redefined-outer-name, protected-access
+    test_item, mock_item_response = test_item_and_response
+    expected_url = test_item.get_url()
+    mock_box_session.post.return_value = mock_item_response
+    info = test_item.restore_from_trash()
+    mock_box_session.post.assert_called_once_with(expected_url, data='{"name": null, "parent": {"id": null}}', params={})
+    assert isinstance(info, test_item.__class__)
+    assert info.id == mock_object_id
