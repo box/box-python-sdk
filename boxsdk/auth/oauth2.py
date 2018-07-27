@@ -320,3 +320,11 @@ class OAuth2(object):
             if not network_response.ok:
                 raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
             self._store_tokens(None, None)
+
+    # def exchange(self, scopes, resource=None):
+    #     params = {
+    #         grant_type: grantTypes.TOKEN_EXCHANGE,
+    #         subject_token_type: ACCESS_TOKEN_TYPE,
+    #         subject_token: accessToken,
+    #         scope: (typeof scopes === 'string' ? scopes : scopes.join(' '))
+    #     }
