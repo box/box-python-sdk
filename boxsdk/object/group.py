@@ -7,6 +7,7 @@ import json
 from .base_object import BaseObject
 from boxsdk.config import API
 from boxsdk.object.group_membership import GroupMembership
+from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
 
 class Group(BaseObject):
@@ -83,7 +84,7 @@ class Group(BaseObject):
         return GroupMembership(self._session, response['id'], response, user=user, group=self)
 
 
-    def get_collaborations(self, offset=None, limit=None):
+    def collaborations(self, offset=None, limit=None):
         """
         Get the entries in the collaboration for the group using limit-offset paging.
 

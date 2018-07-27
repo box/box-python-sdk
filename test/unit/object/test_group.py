@@ -11,6 +11,7 @@ import pytest
 from six.moves import map  # pylint:disable=redefined-builtin,import-error
 
 from boxsdk.network.default_network import DefaultNetworkResponse
+from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.config import API
 from boxsdk.session.box_session import BoxResponse
@@ -195,3 +196,29 @@ def test_membership_with_page_info(test_group, mock_box_session, mock_membership
 
     with pytest.raises(StopIteration):
         next(group_generator)
+
+
+def test_collaborations(test_group, mock_box_session):
+    expected_url = '{0}/groups/{1}/collaborations'.format(API.BASE_API_URL, test_group.object_id)
+    mock_collaboration = {
+        'type': 'collaboration',
+        'id': '12345',
+        'created_by': {
+            'type': 'user',
+            'id': '33333'
+        }
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_collaboration],
+        'offset': 0,
+        'total_count': 1
+    }
+
+    collaborations = test_group.collaborations()
+    collaboration = collaborations.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
+    assert isinstance(collaboration, Collaboration)
+    assert collaboration.id == mock_collaboration['id']
+    assert collaboration.created_by['id'] == mock_collaboration['created_by']['id']
+ 
