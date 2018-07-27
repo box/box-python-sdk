@@ -322,3 +322,27 @@ class Item(BaseObject):
         """
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).delete(params, headers)
+
+
+    def collaborate(self, role, accessible_by=None, can_view_path=None, notify=None, fields=None):
+        url = self._session.get_url('collaborations')
+        body = {
+            'item': {
+                'type': self.type,
+                'id': self.object_id,
+            },
+            'role': role,
+        }
+        if accessible_by:
+            body['accessible_by'] = accessible_by
+        params = {}
+        if fields:
+            params['fields'] = ','.join(fields)
+        if notify:
+            params['notify'] = ','.join(fields)
+        response = self._session.post(url, data=json.dumps(body), params=params).json()
+        return Translator().translate(response['type'])(
+            self._session,
+            response['id'],
+            response,
+        )
