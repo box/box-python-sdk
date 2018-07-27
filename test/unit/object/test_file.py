@@ -293,3 +293,26 @@ def test_create_task(test_file, mock_box_session, test_task):
     assert mock_box_session.post.call_args[0] == ("{0}/tasks".format(API.BASE_API_URL),)
     assert mock_box_session.post.call_args[1] == {'data': value}
     assert isinstance(new_task, Task)
+
+
+def test_get_tasks(test_file, mock_box_session):
+    expected_url = test_file.get_url('tasks')
+    task_body = {
+        'type': 'task',
+        'id': '12345',
+        'item': {
+            'type': 'file',
+            'id': '33333'
+        }
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [task_body]
+    }
+
+    tasks = test_file.tasks()
+    task = tasks.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 100})
+    assert isinstance(task, Task)
+    assert task.id == task_body['id']
+    assert task.item['id'] == task_body['item']['id']
