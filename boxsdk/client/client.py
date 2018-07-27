@@ -400,7 +400,7 @@ class Client(object):
     def storage_policy(self, policy_id):
         """
         Initialize a :class: `StoragePolicy` object, whose box id is policy_id.
- 
+
         :param policy_id:
             The box ID of the :class:`StoragePolicy` object.
         :type policy_id:
@@ -461,7 +461,7 @@ class Client(object):
         )
 
 
-    
+
     def storage_policy_assignments(self, resolved_for_type, resolved_for_id, marker=None, fields=None):
         """
         Get the entries in the storage policy assignment using limit-offset paging.
@@ -491,7 +491,7 @@ class Client(object):
             session=self._session,
             url='{0}/storage_policy_assignments?resolved_for_type={1}&resolved_for_id={2}'.
             format(API.BASE_API_URL, resolved_for_type, resolved_for_id),
-            limit=1,
+            limit=100,
             marker=marker,
             fields=fields,
             return_full_pages=False

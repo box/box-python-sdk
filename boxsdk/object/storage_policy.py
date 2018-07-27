@@ -25,7 +25,7 @@ class StoragePolicy(BaseObject):
                 'id': self.object_id
             },
             'assigned_to': {
-                'type': item.type,
+                'type': item.object_type,
                 'id': item.object_id
             }
         }
