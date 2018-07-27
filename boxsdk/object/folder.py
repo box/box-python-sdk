@@ -12,6 +12,8 @@ from boxsdk.object.item import Item
 from boxsdk.object.user import User
 from boxsdk.util.text_enum import TextEnum
 from boxsdk.util.translator import Translator
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+
 
 
 class FolderSyncState(TextEnum):
@@ -384,29 +386,24 @@ class Folder(Item):
         return super(Folder, self).delete({'recursive': recursive}, etag)
 
 
-    def copy(self, parent_id, name=None):
+    def collaborations(self, fields=None):
         """
-        Used to create a copy of a folder in another folder.
+        Get the entries in the collaboration using marker-based paging.
 
-        :param parent_id:
-            The id of the destination folder
-        :type parent_id:
-            `unicode`
-        :param name:
-            An optional new name for the folder.
-        :type name:
-            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the collaboration for the folder.
+        :rtype:
+            :class:`BoxObjectCollection`
         """
-        url = '{0}/folders/{1}'.format(API.BASE_API_URL, self.object_id)
-        body = {
-            'parent': {
-                'id': parent_id
-            },
-            'name': name
-        }
-        response = self._session.post(url, data=json.dumps(body)).json()
-        return Translator().translate(response['type'])(
-            self._session,
-            response['id'],
-            response,
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('collaborations'),
+            limit=500,
+            marker=None,
+            fields=fields,
+            return_full_pages=False
         )
