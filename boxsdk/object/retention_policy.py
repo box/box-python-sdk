@@ -22,7 +22,7 @@ class RetentionPolicy(BaseObject):
         body = {
             'policy_id': self.object_id,
             'assign_to': {
-                'type': item.type,
+                'type': item.object_type,
                 'id': item.object_id
             }
         }

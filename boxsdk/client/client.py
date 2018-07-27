@@ -497,7 +497,7 @@ class Client(object):
         return RetentionPolicy(self._session, response['id'], response)
 
 
-    def get_retention_policies(
+    def retention_policies(
             self,
             policy_name=None,
             policy_type=None,
