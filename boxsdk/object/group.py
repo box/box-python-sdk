@@ -81,3 +81,33 @@ class Group(BaseObject):
         response = box_response.json()
 
         return GroupMembership(self._session, response['id'], response, user=user, group=self)
+
+
+    def get_collaborations(self, offset=None, limit=None):
+        """
+        Get the entries in the collaboration for the group using limit-offset paging.
+
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param offset:
+            The offset of the item at which to begin the response.
+        :type offset:
+            `str` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the collaboration for the group.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return LimitOffsetBasedObjectCollection(
+            session=self._session,
+            url='{0}/groups/{1}/collaborations'.format(API.BASE_API_URL, self.object_id),
+            limit=limit,
+            offset=offset,
+            return_full_pages=False
+        )
