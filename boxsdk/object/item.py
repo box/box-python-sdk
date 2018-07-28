@@ -7,6 +7,7 @@ import json
 from .base_object import BaseObject
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
+from ..util.translator import Translator
 
 
 class Item(BaseObject):
@@ -324,17 +325,19 @@ class Item(BaseObject):
         return super(Item, self).delete(params, headers)
 
 
-    def collaborate(self, role, accessible_by=None, can_view_path=None, notify=None, fields=None):
+    def collaborate(self, role, accessible_by, can_view_path=None, notify=None, fields=None):
         url = self._session.get_url('collaborations')
         body = {
             'item': {
                 'type': self.type,
                 'id': self.object_id,
             },
+            'accessible_by': {
+                'type': accessible_by.object_type,
+                'id': accessible_by.object_id,
+            },
             'role': role,
         }
-        if accessible_by:
-            body['accessible_by'] = accessible_by
         params = {}
         if fields:
             params['fields'] = ','.join(fields)
@@ -346,3 +349,4 @@ class Item(BaseObject):
             response['id'],
             response,
         )
+    # def collaborate_with_login user with login only
