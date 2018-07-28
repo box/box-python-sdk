@@ -8,6 +8,8 @@ from .base_object import BaseObject
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from ..util.translator import Translator
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
 
 class Item(BaseObject):
@@ -326,6 +328,29 @@ class Item(BaseObject):
 
 
     def collaborate(self, role, accessible_by, can_view_path=None, notify=None, fields=None):
+        """Collaborate user or group onto a Box item.
+
+        :param role:
+            The permission level to grant the collaborator.
+        :type role:
+            `unicode`
+        :param accessible_by:
+            An object containing the collaborator.
+        :type etag:
+            `object`
+        :param accessible_by:
+            Indicates whether the user can view the path of the folder collaborated into.
+        :type can_view_path:
+            `boolean`
+        :param notify:
+            Determines if the collaborator should receive a notification for the collaboration.
+        :type notify:
+            `boolean`
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        """
         url = self._session.get_url('collaborations')
         body = {
             'item': {
@@ -350,3 +375,111 @@ class Item(BaseObject):
             response,
         )
     # def collaborate_with_login user with login only
+
+    def collaborate(self, role, login, can_view_path=None, notify=None, fields=None):
+        """Collaborate user or group onto a Box item.
+
+        :param role:
+            The permission level to grant the collaborator.
+        :type role:
+            `unicode`
+        :param login:
+            The email address of the person to grant access to.
+        :type login:
+            `unicode`
+        :param can_view_path:
+            Indicates whether the user can view the path of the folder collaborated into.
+        :type can_view_path:
+            `boolean`
+        :param notify:
+            Determines if the collaborator should receive a notification for the collaboration.
+        :type notify:
+            `boolean`
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        """
+        url = self._session.get_url('collaborations')
+        body = {
+            'item': {
+                'type': self.type,
+                'id': self.object_id,
+            },
+            'accessible_by': {
+                'type': 'user',
+                'id': login,
+            },
+            'role': role,
+        }
+        params = {}
+        if fields:
+            params['fields'] = ','.join(fields)
+        if notify:
+            params['notify'] = ','.join(fields)
+        response = self._session.post(url, data=json.dumps(body), params=params).json()
+        return Translator().translate(response['type'])(
+            self._session,
+            response['id'],
+            response,
+        )
+
+    def collaborations(self, fields=None):
+        """
+        Get the entries in the collaboration using marker-based paging.
+
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the collaboration.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('collaborations'),
+            limit=500,
+            marker=None,
+            fields=fields,
+            return_full_pages=False
+        )
+
+    def pending_collaborations(self, status, limit=None, offset=None, fields=None):
+        """
+        Get the entries in the storage policy assignment using limit-offset paging.
+         :param resolved_for_type:
+            Set to either `user` or `enterprise`
+        :type limit:
+            unicode
+        :param resolved_for_id:
+            The id of the user or enterprise
+        :type limit:
+            unicode
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `str` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the storage policy assignment
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {'status': status}
+        if fields:
+            additional_params['fields'] = ','.join(fields)
+        return LimitOffsetBasedObjectCollection(
+            session=self._session,
+            url='{0}/collaborations'.format(API.BASE_API_URL),
+            additional_params=additional_params,
+            limit=limit,
+            offset=offset,
+            fields=fields,
+            return_full_pages=False
+        )
+

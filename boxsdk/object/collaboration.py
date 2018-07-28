@@ -57,3 +57,15 @@ class Collaboration(BaseObject):
         if status:
             data['status'] = status
         return super(Collaboration, self).update_info(data=data)
+
+    def respond_to_pending(self, new_status):
+        """Accepts a pending collaboration
+
+        :param new_status:
+            The status of the collaboration invitation.
+        :type new_status:
+            `unicode`
+        """
+        data = {}
+        data['status'] = new_status
+        return super(Collaboration, self).update_info(data=data)
