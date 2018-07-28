@@ -354,7 +354,7 @@ class Item(BaseObject):
         url = self._session.get_url('collaborations')
         body = {
             'item': {
-                'type': self.type,
+                'type': self.objecttype,
                 'id': self.object_id,
             },
             'accessible_by': {
@@ -374,9 +374,9 @@ class Item(BaseObject):
             response['id'],
             response,
         )
-    # def collaborate_with_login user with login only
 
-    def collaborate(self, role, login, can_view_path=None, notify=None, fields=None):
+
+    def collaborate_with_login(self, role, login, can_view_path=None, notify=None, fields=None):
         """Collaborate user or group onto a Box item.
 
         :param role:
@@ -403,12 +403,12 @@ class Item(BaseObject):
         url = self._session.get_url('collaborations')
         body = {
             'item': {
-                'type': self.type,
+                'type': self.object_type,
                 'id': self.object_id,
             },
             'accessible_by': {
                 'type': 'user',
-                'id': login,
+                'login': login,
             },
             'role': role,
         }

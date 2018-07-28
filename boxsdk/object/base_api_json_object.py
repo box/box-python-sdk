@@ -143,3 +143,4 @@ class BaseAPIJSONObject(object):
             `unicode`
         """
         return self._item_type
+
