@@ -18,6 +18,17 @@ class RetentionPolicy(BaseObject):
 
 
     def assign(self, item, fields=None):
+        """Assign a retention policy to a Box item
+
+        :param item:
+            The item to assign the retention policy on.
+        :type item:
+            `object`
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        """
         url = self._session.get_url('retention_policy_assignments')
         body = {
             'policy_id': self.object_id,
@@ -36,12 +47,31 @@ class RetentionPolicy(BaseObject):
 
 
     def assignments(self, assignment_type=None, limit=None, marker=None, fields=None):
+        """Get the assignments for the retention policy.
+
+        :param limit:
+            The maximum number of items to return.
+        :type limit:
+            `int`
+        :param marker:
+            The position marker at which to begin the response.
+        :type marker:
+            `unicode`
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            A list of assignments in the retention policy.
+        :rtype:
+            `list` of :class:`RetentionPolicyAssignment`
+        """
         additional_params = {
             'type': assignment_type,
         }
         return MarkerBasedObjectCollection(
             session=self._session,
-            url='{0}/retention_policies/{1}'.format(API.BASE_API_URL, self.object_id),
+            url='{0}/retention_policies/{1}/assignments'.format(API.BASE_API_URL, self.object_id),
             additional_params=additional_params,
             limit=limit,
             marker=marker,

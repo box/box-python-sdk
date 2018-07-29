@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import json
 from boxsdk.config import API
 from boxsdk.object.retention_policy import RetentionPolicy
+from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 
 
 def test_get(test_retention_policy, mock_box_session):
@@ -35,7 +36,7 @@ def test_update(test_retention_policy, mock_box_session):
 
 
 def test_assign(test_retention_policy, test_folder, mock_box_session):
-    policy_id = '1234'
+    policy_id = '42'
     expected_url = mock_box_session.get_url('retention_policy_assignments')
     expected_data = {
         'policy_id': policy_id,
@@ -49,7 +50,7 @@ def test_assign(test_retention_policy, test_folder, mock_box_session):
         'id': '1234',
         'retention_policy': {
             'type': 'retention_policy',
-            'id': '1111'
+            'id': policy_id
         }
     }
     mock_box_session.post.return_value.json.return_value = mock_assignment
@@ -57,3 +58,24 @@ def test_assign(test_retention_policy, test_folder, mock_box_session):
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert assignment.id == mock_assignment['id']
     assert assignment.retention_policy['id'] == mock_assignment['retention_policy']['id']
+
+
+
+def test_get_assignments(test_retention_policy, mock_box_session):
+    expected_url = test_retention_policy.get_url('assignments')
+    mock_assignment = {
+        'type': 'retention_policy_assignment',
+        'id': '12345'
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_assignment],
+        'next_marker': 'testMarter'
+    }
+
+    assignments = test_retention_policy.assignments()
+    assignment = assignments.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'type': None})
+    assert isinstance(assignment, RetentionPolicyAssignment)
+    assert assignment.id == mock_assignment['id']
+    assert assignment.type == mock_assignment['type']
