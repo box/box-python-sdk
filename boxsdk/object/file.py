@@ -2,9 +2,12 @@
 
 from __future__ import unicode_literals
 
+import json
+
 from boxsdk.config import API
 from .item import Item
 from .metadata import Metadata
+from ..util.translator import Translator
 
 
 class File(Item):
@@ -288,4 +291,21 @@ class File(Item):
             allow_preview=allow_preview,
             password=password,
         )
-        return item.shared_link['download_url']
+        return item.shared_link['download_url']  #pylint:disable=no-member
+
+    def create_chunked_upload_session(self, file_size):
+        """
+        Create a new chunked upload session for uploading a new version of the file.
+
+        :param file_size:       The size of the file that will be uploaded.
+        :type file_size:        `int`
+        :rtype:                 :class:`ChunkedUploadSession`
+        """
+        response = self.session.post(
+            self.get_url('{0}s'.format('upload_session')).replace(
+                API.BASE_API_URL,
+                API.UPLOAD_URL,
+            ),
+            data=json.dumps({'file_id': self.object_id, 'file_size': file_size}),
+        ).json()
+        return Translator().translate(response['type'])(self.session, response['id'], response_object=response)
