@@ -33,9 +33,13 @@ class User(BaseObject):
         :rtype:
             :class:`BoxObjectCollection`
         """
+        additional_params = {}
+        if fields:
+            additional_params['fields'] = ','.join(fields)
         return LimitOffsetBasedObjectCollection(
             session=self._session,
             url='{0}/users/{1}/memberships'.format(API.BASE_API_URL, self.object_id),
+            additional_params=additional_params,
             limit=limit,
             offset=offset,
             return_full_pages=False

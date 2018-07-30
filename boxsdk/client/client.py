@@ -415,9 +415,15 @@ class Client(object):
         :rtype:
             :class:`BoxObjectCollection`
         """
+        additional_params = {}
+        if name:
+            additional_params['name'] = name
+        if fields:
+            additional_params['fields'] = ','.join(fields)
         return LimitOffsetBasedObjectCollection(
             session=self._session,
             url='{0}/groups'.format(API.BASE_API_URL),
+            additional_params=additional_params,
             limit=limit,
             offset=offset,
             return_full_pages=False
