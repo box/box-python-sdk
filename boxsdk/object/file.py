@@ -71,6 +71,43 @@ class File(Item):
         for chunk in box_response.network_response.response_as_stream.stream(decode_content=True):
             writeable_stream.write(chunk)
 
+
+    def download_url(self, version_id=None, range=None, box_api=None):
+        """
+        Retrieves the actual data of the file. An optional version parameter can be set to
+        download a previous version of the file.
+
+        :param version_id:
+            Optional file version ID to download.
+        :type version_id:
+            `unicode` or None
+        :param range:
+            The value of range in bytes. Format should be `bytes={start_range}-{end_range}`
+        :type range:
+            `unicode` or None
+        :param box_api:
+            Set to `shared_link=SHARED_LINK_URL` or `shared_link=SHARED_LINK_URL&shared_link_password=PASSWORD`
+        :type: box_api:
+            `unicode` or None
+        """
+        params = {}
+        headers = {}
+        if version_id is not None:
+            params['version_id'] = version_id
+        if range is not None:
+            headers['range'] = range
+        if box_api is not None:
+            headers['box_api'] = box_api
+        url = self.get_url('content')
+        box_response = self._session.get(url, params=params, headers=headers)
+        response = box_response.json()
+        return self.__class__(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+
     def update_contents_with_stream(
             self,
             file_stream,
