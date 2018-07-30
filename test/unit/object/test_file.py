@@ -8,6 +8,7 @@ from six import BytesIO
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.object.file import File
+from boxsdk.object.upload_session import UploadSession
 
 
 # pylint:disable=protected-access
@@ -274,3 +275,27 @@ def test_get_shared_link_download_url(
         params=None,
     )
     assert url == test_url
+
+
+def test_create_upload_session(test_file, mock_box_session):
+    expected_url = '{}/files/{}/upload_sessions'.format(API.UPLOAD_URL, test_file.object_id)
+    file_size = 197520
+    expected_data = {
+        'file_id': test_file.object_id,
+        'file_size': file_size,
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'id': 'F971964745A5CD0C001BBE4E58196BFD',
+        'type': 'upload_session',
+        'num_parts_processed': 0,
+        'total_parts': 16,
+        'part_size': 12345,
+    }
+
+    upload_session = test_file.create_upload_session(file_size)
+
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+
+    assert isinstance(upload_session, UploadSession)
+    assert upload_session.part_size == 12345
+    assert upload_session.total_parts == 16

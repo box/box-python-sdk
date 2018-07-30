@@ -293,7 +293,7 @@ class File(Item):
         )
         return item.shared_link['download_url']  #pylint:disable=no-member
 
-    def create_chunked_upload_session(self, file_size):
+    def create_upload_session(self, file_size):
         """
         Create a new chunked upload session for uploading a new version of the file.
 
