@@ -317,8 +317,6 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     mock_box_session.post.return_value = create_user_response
     new_user = mock_client.create_user(name=test_user_name, login=test_user_login)
 
-    assert len(mock_box_session.post.call_args_list) == 1
-
     assert mock_box_session.post.call_args[0] == ("{0}/users".format(API.BASE_API_URL),)
     assert mock_box_session.post.call_args[1] == {'data': value}
     assert isinstance(new_user, User)
