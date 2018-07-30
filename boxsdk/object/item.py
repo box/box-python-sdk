@@ -322,3 +322,81 @@ class Item(BaseObject):
         """
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).delete(params, headers)
+
+
+    def metadata(self, fields=None):
+        """
+        Get the entries in the metadata using marker-based paging.
+
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the metadata
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('metadata'),
+            limit=500,
+            marker=None,
+            fields=None,
+            return_full_pages=False
+        )
+
+
+    def create_metadata(self, key_1, scope, template, key_2=None):
+        """
+        Create a metadata instance for a file.
+
+        :param key_1:
+            Key value pair to add to metadata.
+        :type key_1:
+            `unicode`
+        :param scope:
+            The scope of the metadata object.
+        :type scope:
+            `unicode`
+        :param template:
+            The key of the template
+        :type template:
+            `unicode`
+        """
+        url = self.get_url('metadata', scope, template)
+        body = {
+            key_1
+        }
+        if key_2 is not None:
+            body.update(key_2)
+        headers = {'Content-Type': 'application/json'}
+        response = self._session.post(url, data=json.dumps(body), headers=headers).json()
+        return Translator().translate(response['type'])(
+            self._session,
+            response['id'],
+            response,
+        )
+
+
+    def delete_metadata(self, scope, template):
+        """
+        Delete metadata instance on the item.
+
+        :param scope:
+            The scope of the metadata object.
+        :type scope:
+            `unicode`
+        :param template:
+            The key of the template
+        :type template:
+            `unicode`
+        """
+        url = self.get_url('metadata', scope, template)
+        response = self._session.delete(url, data=json.dumps(body), headers=headers).json()
+        return Translator().translate(response['type'])(
+            self._session,
+            response['id'],
+            response,
+        )
+

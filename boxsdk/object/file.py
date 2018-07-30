@@ -289,3 +289,88 @@ class File(Item):
             password=password,
         )
         return item.shared_link['download_url']
+
+
+    def embed_link(self):
+        """
+        Get a URL for creating an embedded preview session.
+        """
+        url = self.get_url()
+        params = {'fields': 'expiring_embed_link'}
+        box_response = self._session.get(url, params=params)
+        response = box_response.json()
+        return self.__class__(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+
+    def thumbnail(self, extension, min_height=None, max_height=None, min_width=None, max_width=None):
+        """
+        Gets a thumbnail for the file.
+
+        :param extension:
+            Either set to `jpg` or `png`.
+        :type fields:
+            `unicode`
+        :param min_height:
+            The minimum height of the thumbnail.
+        :type min_height:
+            `unicode` or None
+        :param max_height:
+            The maximum height of the thumbnail.
+        :type max_height:
+            `unicode` or None
+        :param min_width:
+            The minimum width of the thumbnail.
+        :type min_width:
+            `unicode` or None
+        :param max_width:
+            The maximum width of the thumbnail.
+        :type max_width:
+            `unicode` or None
+        """
+        extension_path = 'thumbnail.' + extension
+        url = self.get_url(extension_path)
+        params = {}
+        if min_height is not None:
+            params['min_height'] = min_height
+        if max_height is not None:
+            params['max_height'] = max_height
+        if min_width is not None:
+            params['min_width'] = min_width
+        if max_width is not None:
+            params['max_width'] = max_width
+        box_response = self._session.get(url, params=params)
+        response = box_response.json()
+        return self.__class__(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+
+
+    def representations(self, x_rep_hints=None):
+        """
+        Get representations for a file.
+
+        :param x_rep_hints:
+            The representation to retrieve for the file
+        :type fields:
+            `unicode` of None
+        """
+        url = self.get_url()
+        params = {}
+        headers = {}
+        params['fields'] = 'representations'
+        if x_rep_hints is not None:
+            headers['x-rep-hints'] = x_rep_hints
+        box_response = self._session.get(url, params=params, headers=headers)
+        response = box_response.json()
+        return self.__class__(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
