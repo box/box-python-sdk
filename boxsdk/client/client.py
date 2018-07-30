@@ -9,10 +9,12 @@ from ..network.default_network import DefaultNetwork
 from ..object.user import User
 from ..object.folder import Folder
 from ..object.search import Search
+from ..object.email_alias import EmailAlias
 from ..object.events import Events
 from ..object.file import File
 from ..object.group import Group
 from ..object.group_membership import GroupMembership
+from ..object.invite import Invite
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
@@ -391,3 +393,66 @@ class Client(object):
         """
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
+
+
+    def invite_user(self, enterprise_id, email_to_invite):
+        """
+        Invites an existing user to an Enterprise. User must already have a Box account.
+
+        :param enterprise_id:
+            The id of the enterprise the user will be invited to.
+        :type enterprise_id:
+            `unicode`
+        :param login:
+            The login of the user that will receive the invitation.
+        :type login:
+            `unicode`
+        """
+        url = self._session.get_url('invites')
+        body = {
+            'enterprise': {
+                'id': enterprise_id
+            },
+            'actionable_by': {
+                'login': email_to_invite
+            }
+        }
+        response = self._session.post(url, data=json.dumps(body)).json()
+        return Translator().translate(response['type'])(
+            self._session,
+            response['id'],
+            response,
+        )
+
+
+    def email_alias(self, alias_id):
+        """
+        Initialize a :class: `EmailAlias` object, whose box id is alias_id.
+
+        :param alias_id:
+            The assignment ID of the :class:`EmailAlias` object.
+        :type alias_id:
+            `unicode`
+        :return:
+            A :class `EmailAlias` object with the given entry ID.
+        :rtype:
+            :class:`EmailAlias`
+        """
+        return EmailAlias(session=self._session, object_id=alias_id)
+
+
+    def invite(self, invite_id):
+        """
+        Initialize a :class: `Invite` object, whose box id is invite_id.
+
+        :param invite_id:
+            The invite ID of the :class:`Invite` object.
+        :type alias_id:
+            `unicode`
+        :return:
+            A :class `Invite` object with the given entry ID.
+        :rtype:
+            :class:`Invite`
+        """
+        return Invite(session=self._session, object_id=invie_id)
+
