@@ -380,12 +380,14 @@ class File(Item):
         if max_width is not None:
             params['max_width'] = max_width
         box_response = self._session.get(url, params=params)
-        response = box_response.json()
-        return self.__class__(
-            session=self._session,
-            object_id=response['id'],
-            response_object=response,
-        )
+        for chunk in box_response.network_response.response_as_stream.stream(decode_content=True):
+            writeable_stream.write(chunk)
+        # response = box_response.json()
+        # return self.__class__(
+        #     session=self._session,
+        #     object_id=response['id'],
+        #     response_object=response,
+        # )
 
 
 

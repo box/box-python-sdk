@@ -413,7 +413,6 @@ class Client(object):
         return RetentionPolicy(session=self._session, object_id=retention_id)
 
 
-
     def retention_policy_assignment(self, assignment_id):
         """
         Initialize a :class: `RetentionPolicyAssignment` object, whose box id is assignment_id.
