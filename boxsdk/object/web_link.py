@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals, absolute_import
 
-from boxsdk.config import API
 from .base_object import BaseObject
 
 class WebLink(BaseObject):
