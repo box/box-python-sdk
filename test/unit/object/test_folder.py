@@ -305,8 +305,6 @@ def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_b
     mock_box_session.post.return_value = create_web_link_response
     new_web_link = test_folder.create_web_link(test_web_link_url, test_folder.object_id)
 
-    assert len(mock_box_session.post.call_args_list) == 1
-
     assert mock_box_session.post.call_args[0] == ("{0}/web_links".format(API.BASE_API_URL),)
     assert mock_box_session.post.call_args[1] == {'data': value}
     assert isinstance(new_web_link, WebLink)
