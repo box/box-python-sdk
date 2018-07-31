@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 import json
 from .base_object import BaseObject
@@ -14,8 +14,11 @@ class RetentionPolicy(BaseObject):
 
     _item_type = 'retention_policy'
 
-    def get_url(self, *args): return self._session.get_url('retention_policies', self._object_id, *args)
-
+    def get_url(self, *args):
+        """
+        Returns the url for this retention policy.
+        """
+        return self._session.get_url('retention_policies', self._object_id, *args)
 
     def assign(self, item, fields=None):
         """Assign a retention policy to a Box item
@@ -34,17 +37,17 @@ class RetentionPolicy(BaseObject):
             'policy_id': self.object_id,
             'assign_to': {
                 'type': item.object_type,
-                'id': item.object_id
+                'id': item.object_id,
             }
         }
-        response = self._session.post(url, data=json.dumps(body)).json()
+        if fields:
+            params['fields'] = ','.join(fields)
+        response = self._session.post(url, data=json.dumps(body), params=params).json()
         return Translator().translate(response['type'])(
             self._session,
             response['id'],
             response,
         )
-
-
 
     def assignments(self, assignment_type=None, limit=None, marker=None, fields=None):
         """Get the assignments for the retention policy.
@@ -62,9 +65,9 @@ class RetentionPolicy(BaseObject):
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            A list of assignments in the retention policy.
+            An iterable of assignments in the retention policy.
         :rtype:
-            `list` of :class:`RetentionPolicyAssignment`
+            `Iterable` of :class:`RetentionPolicyAssignment`
         """
         additional_params = {
             'type': assignment_type,
@@ -76,6 +79,5 @@ class RetentionPolicy(BaseObject):
             limit=limit,
             marker=marker,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )
-

@@ -15,9 +15,9 @@ from ..object.group import Group
 from ..object.group_membership import GroupMembership
 from ..object.retention_policy import RetentionPolicy
 from ..object.retention_policy_assignment import RetentionPolicyAssignment
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
-from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
 class Client(object):
@@ -395,40 +395,35 @@ class Client(object):
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
 
-
-
     def retention_policy(self, retention_id):
         """
-        Initialize a :class: `RetentionPolicy` object, whose box id is retention_id.
+        Initialize a :class:`RetentionPolicy` object, whose box id is retention_id.
 
         :param retention_id:
             The box ID of the :class:`RetentionPolicy` object.
         :type retention_id:
             `unicode`
         :return:
-            A :class: `RetentionPolicy` object with the given entry ID.
+            A :class:`RetentionPolicy` object with the given entry ID.
         :rtype:
             :class:`RetentionPolicy`
         """
         return RetentionPolicy(session=self._session, object_id=retention_id)
 
-
-
     def retention_policy_assignment(self, assignment_id):
         """
-        Initialize a :class: `RetentionPolicyAssignment` object, whose box id is assignment_id.
+        Initialize a :class:`RetentionPolicyAssignment` object, whose box id is assignment_id.
 
         :param assignment_id:
             The box ID of the :class:`RetentionPolicyAssignment` object.
         :type assignment_id:
             `unicode`
         :return:
-            A :class: `RetentionPolicyAssignment` object with the given entry ID.
+            A :class:`RetentionPolicyAssignment` object with the given assignment ID.
         :rtype:
             :class:`RetentionPolicyAssignment`
         """
         return RetentionPolicyAssignment(session=self._session, object_id=assignment_id)
-
 
     def create_retention_policy(
             self,
@@ -482,7 +477,7 @@ class Client(object):
         retention_attributes = {
             'policy_name': policy_name,
             'policy_type': policy_type,
-            'disposition_action': disposition_action
+            'disposition_action': disposition_action,
         }
         if can_owner_extend_retention is not None:
             retention_attributes['can_owner_extend_retention'] = can_owner_extend_retention
@@ -496,7 +491,6 @@ class Client(object):
         response = box_response.json()
         return RetentionPolicy(self._session, response['id'], response)
 
-
     def retention_policies(
             self,
             policy_name=None,
@@ -507,7 +501,7 @@ class Client(object):
             fields=None,
     ):
         """
-        Get the entries in the retention policy using limit-offset paging.
+        Get the entries in the retention policy using marker-based paging.
 
         :param policy_name:
             The name of the retention policy.
@@ -521,7 +515,7 @@ class Client(object):
             A user id to filter the retention policies.
         :type created_by_user_id:
             `unicode` or None
-	    :param limit:
+        :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:
             `str` or None
@@ -539,7 +533,7 @@ class Client(object):
         additional_params = {
             'policy_name': policy_name,
             'policy_type': policy_type,
-            'created_by_user_id': created_by_user_id
+            'created_by_user_id': created_by_user_id,
         }
         return MarkerBasedObjectCollection(
             session=self._session,
@@ -548,5 +542,5 @@ class Client(object):
             limit=limit,
             marker=marker,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )
