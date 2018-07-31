@@ -7,6 +7,7 @@ import pytest
 from six import BytesIO
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
+from boxsdk.object.comment import Comment
 from boxsdk.object.file import File
 
 
@@ -311,4 +312,58 @@ def test_delete_watermark(mock_box_session, test_file):
     mock_box_session.delete.return_value.ok = True
     is_watermark_deleted = test_file.delete_watermark()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)
+<<<<<<< HEAD
     assert is_watermark_deleted is True
+=======
+
+    
+def test_get_comments(test_file, mock_box_session):
+    expected_url = test_file.get_url('comments')
+    mock_comment1 = {
+        'type': 'comment',
+        'id': '11111',
+        'message': 'Foo'
+    }
+    mock_comment2 = {
+        'type': 'comment',
+        'id': '22222',
+        'tagged_message': 'Well hello there, @[33333:friend]!'
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 2,
+        'offset': 0,
+        'limit': 100,
+        'entries': [mock_comment1, mock_comment2]
+    }
+    comments = test_file.get_comments()
+    comment1 = comments.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': 0})
+    assert comment1.object_id == mock_comment1['id']
+    assert comment1.message == mock_comment1['message']
+
+    comment2 = comments.next()
+    assert comment2.object_id == mock_comment2['id']
+    assert comment2.tagged_message == mock_comment2['tagged_message']
+
+
+def test_add_comment(test_file, mock_box_session, comment_params):
+    expected_url = 'https://api.box.com/2.0/comments'
+    comment_id = '12345'
+    (message_type, message) = comment_params
+    expected_data = {
+        message_type: message,
+        'item': {
+            'type': 'file',
+            'id': test_file.object_id
+        }
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'type': 'comment',
+        'id': comment_id,
+        message_type: message
+    }
+    comment = test_file.add_comment(message)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert isinstance(comment, Comment)
+    assert comment.object_id == comment_id
+>>>>>>> 65a51f44a971f8751fd9a7e21a75d3f3c3c3caa0
