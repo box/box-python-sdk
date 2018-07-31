@@ -94,7 +94,8 @@ def test_storage_policy(mock_box_session, mock_object_id):
 def test_storage_policy_assignment(mock_box_session, mock_object_id):
     return StoragePolicyAssignment(mock_box_session, mock_object_id)
 
-@pytest.fixture() 
+
+@pytest.fixture()
 def test_retention_policy(mock_box_session, mock_object_id):
     return RetentionPolicy(mock_box_session, mock_object_id)
 

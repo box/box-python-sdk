@@ -374,7 +374,7 @@ def test_get_storage_policy_assignments(mock_client, mock_box_session):
     assert assignment.id == mock_assignment['id']
     assert assignment.type == mock_assignment['type']
 
-    
+
 def test_create_retention_policy(mock_client, mock_box_session):
     policy_name = 'Test Retention Policy'
     policy_type = 'indefinite'
