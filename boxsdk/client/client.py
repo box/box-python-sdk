@@ -429,10 +429,10 @@ class Client(object):
         webhook_attributes = {
             'target': {
                 'type': target_type,
-                'id': target_id
+                'id': target_id,
             },
             'triggers': triggers,
-            'address': address
+            'address': address,
         }
         box_response = self._session.post(url, data=json.dumps(webhook_attributes))
         response = box_response.json()
@@ -461,5 +461,5 @@ class Client(object):
             url=self.get_url('webhooks'),
             limit=limit,
             marker=marker,
-            return_full_pages=False
+            return_full_pages=False,
         )

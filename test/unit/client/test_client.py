@@ -370,10 +370,10 @@ def test_create_webhook_returns_the_correct_policy_object(mock_client, mock_box_
     expected_body = {
         'target': {
             'type': 'file',
-            'id': 42
+            'id': 42,
         },
         'triggers': ['FILE.DOWNLOADED'],
-        'address': 'https://test.com'
+        'address': 'https://test.com',
     }
     value = json.dumps(expected_body)
     mock_box_session.post.return_value = create_webhook_response
@@ -391,7 +391,7 @@ def test_get_assignments(
         webhooks_response,
         webhook_id_1,
         webhook_id_2,
-): 
+):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = webhooks_response
     webhooks = mock_client.webhooks()

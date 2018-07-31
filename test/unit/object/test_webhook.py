@@ -79,7 +79,7 @@ def test_validate_message():
         'box-signature-algorithm': 'HmacSHA256',
         'box-signature-primary': '6TfeAW3A1PASkgboxxA5yqHNKOwFyMWuEXny/FPD5hI=',
         'box-signature-secondary': 'v+1CD1Jdo3muIcbpv5lxxgPglOqMfsNHPV899xWYydo=',
-        'box-signature-version': '1'
+        'box-signature-version': '1',
     }
     primary_signature_key = 'SamplePrimaryKey'
     secondary_signature_key = 'SampleSecondaryKey'
