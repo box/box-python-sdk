@@ -324,7 +324,7 @@ class File(Item):
 
     def delete_watermark(self):
         """
-        Return the watermark info for a Box file
+        Deletes the watermark info for a Box file
 
         :return:
             Whether or not the delete succeeded.
@@ -333,4 +333,4 @@ class File(Item):
         """
         url = '{0}/files/{1}/watermark'.format(API.BASE_API_URL, self.object_id)
         box_response = self._session.delete(url, expect_json_response=False)
-        return box_response.content
+        return box_response.ok

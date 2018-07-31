@@ -453,7 +453,7 @@ class Folder(Item):
 
     def delete_watermark(self):
         """
-        Return the watermark info for a Box folder
+        Deletes the watermark info for a Box folder
 
         :return:
             Whether or not the delete succeeded.

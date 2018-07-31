@@ -308,5 +308,7 @@ def test_apply_watermark(mock_box_session, test_file):
 
 def test_delete_watermark(mock_box_session, test_file):
     expected_url = '{0}/files/{1}/watermark'.format(API.BASE_API_URL, test_file.object_id)
-    test_file.delete_watermark()
+    mock_box_session.delete.return_value.ok = True
+    is_watermark_deleted = test_file.delete_watermark()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)
+    assert is_watermark_deleted is True
