@@ -1,11 +1,13 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
+
 import base64
 import hashlib
 from io import BytesIO
 import json
 import pytest
+
 from boxsdk.config import API
 from boxsdk.object.file import File
 from boxsdk.object.upload_session import UploadSession
