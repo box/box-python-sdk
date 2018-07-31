@@ -23,6 +23,7 @@ from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.group_membership import GroupMembership
+from boxsdk.object.retention_policy import RetentionPolicy
 
 
 @pytest.fixture
@@ -324,3 +325,47 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
+
+
+def test_create_retention_policy(mock_client, mock_box_session):
+    policy_name = 'Test Retention Policy'
+    policy_type = 'indefinite'
+    disposition_action = 'remove_retention'
+    expected_url = mock_box_session.get_url('retention_policies')
+    expected_data = {
+        'policy_name': policy_name,
+        'policy_type': policy_type,
+        'disposition_action': disposition_action,
+        'can_owner_extend_retention': False,
+        'are_owners_notified': False,
+    }
+    mock_policy = {
+        'type': 'retention_policy',
+        'id': '1234',
+        'policy_name': policy_name,
+    }
+    mock_box_session.post.return_value.json.return_value = mock_policy
+    policy = mock_client.create_retention_policy(policy_name, policy_type, disposition_action)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert policy.id == mock_policy['id']
+    assert policy.type == mock_policy['type']
+
+
+def test_get_retention_policies(mock_client, mock_box_session):
+    expected_url = mock_box_session.get_url('retention_policies')
+    mock_policy = {
+        'type': 'retention_policy',
+        'id': '12345',
+        'name': 'Test Retention Policy',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_policy],
+        'next_marker': 'testMarker',
+    }
+    policies = mock_client.retention_policies()
+    policy = policies.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'policy_name': None, 'policy_type': None, 'created_by_user_id': None})
+    assert isinstance(policy, RetentionPolicy)
+    assert policy.id == mock_policy['id']
+    assert policy.name == mock_policy['name']
