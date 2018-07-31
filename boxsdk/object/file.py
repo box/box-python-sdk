@@ -313,7 +313,7 @@ class File(Item):
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            An iterator of the entries in the legal hold policy
+            An iterator of the entries in the collaborators
         :rtype:
             :class:`BoxObjectCollection`
         """
@@ -323,7 +323,7 @@ class File(Item):
             limit=limit,
             marker=marker,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )
 
     def get_comments(self, limit=None, offset=0, fields=None):

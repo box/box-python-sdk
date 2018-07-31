@@ -449,5 +449,5 @@ class Folder(Item):
             limit=limit,
             marker=marker,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )

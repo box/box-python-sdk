@@ -66,6 +66,5 @@ class Collaboration(BaseObject):
         :type new_status:
             `unicode`
         """
-        data = {}
-        data['status'] = new_status
+        data = {'status': new_status}
         return super(Collaboration, self).update_info(data=data)

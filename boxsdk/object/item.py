@@ -335,16 +335,16 @@ class Item(BaseObject):
             `unicode`
         :param accessible_by:
             An object containing the collaborator.
-        :type etag:
-            `object`
-        :param accessible_by:
+        :type accessible_by:
+            class:`User`
+        :param can_view_path:
             Indicates whether the user can view the path of the folder collaborated into.
         :type can_view_path:
-            `boolean`
+            `bool`
         :param notify:
             Determines if the collaborator should receive a notification for the collaboration.
         :type notify:
-            `boolean`
+            `bool`
         :param fields:
             List of fields to request.
         :type fields:
@@ -353,7 +353,7 @@ class Item(BaseObject):
         url = self._session.get_url('collaborations')
         body = {
             'item': {
-                'type': self.objecttype,
+                'type': self.object_type,
                 'id': self.object_id,
             },
             'accessible_by': {
@@ -374,7 +374,6 @@ class Item(BaseObject):
             response,
         )
 
-
     def collaborate_with_login(self, role, login, can_view_path=None, notify=None, fields=None):
         """Collaborate user or group onto a Box item.
 
@@ -389,11 +388,11 @@ class Item(BaseObject):
         :param can_view_path:
             Indicates whether the user can view the path of the folder collaborated into.
         :type can_view_path:
-            `boolean`
+            `bool`
         :param notify:
             Determines if the collaborator should receive a notification for the collaboration.
         :type notify:
-            `boolean`
+            `bool`
         :param fields:
             List of fields to request.
         :type fields:
@@ -411,6 +410,8 @@ class Item(BaseObject):
             },
             'role': role,
         }
+        if can_view_path:
+            body['can_view_path'] = can_view_path
         params = {}
         if fields:
             params['fields'] = ','.join(fields)
@@ -442,7 +443,7 @@ class Item(BaseObject):
             limit=500,
             marker=None,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )
 
     def pending_collaborations(self, status, limit=None, offset=None, fields=None):
@@ -479,7 +480,7 @@ class Item(BaseObject):
             limit=limit,
             offset=offset,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )
 
     def add_to_collection(self, collection):

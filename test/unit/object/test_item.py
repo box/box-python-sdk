@@ -169,20 +169,20 @@ def test_collaborate(test_item_and_response, test_group, mock_box_session):
     expected_data = {
         'item': {
             'type': test_item.object_type,
-            'id': test_item.object_id
+            'id': test_item.object_id,
         },
         'accessible_by': {
             'type': test_group.object_type,
-            'id': test_group.object_id
+            'id': test_group.object_id,
         },
-        'role': 'editor'
+        'role': 'editor',
     }
     mock_collaboration = {
         'type': 'collaboration',
         'id': '1234',
         'created_by': {
             'type': 'user',
-            'id': '1111'
+            'id': '1111',
         }
     }
     mock_box_session.post.return_value.json.return_value = mock_collaboration
@@ -199,20 +199,20 @@ def test_collaborate_with_login(test_item_and_response, mock_box_session):
     expected_data = {
         'item': {
             'type': test_item.object_type,
-            'id': test_item.object_id
+            'id': test_item.object_id,
         },
         'accessible_by': {
             'type': 'user',
-            'login': 'test@example.com'
+            'login': 'test@example.com',
         },
-        'role': 'editor'
+        'role': 'editor',
     }
     mock_collaboration = {
         'type': 'collaboration',
         'id': '1234',
         'created_by': {
             'type': 'user',
-            'id': '1111'
+            'id': '1111',
         }
     }
     mock_box_session.post.return_value.json.return_value = mock_collaboration
@@ -231,7 +231,7 @@ def test_collaborations(test_item_and_response, mock_box_session):
         'id': '12345',
         'created_by': {
             'type': 'user',
-            'id': '33333'
+            'id': '33333',
         }
     }
     mock_box_session.get.return_value.json.return_value = {
@@ -256,14 +256,14 @@ def test_pending_collaborations(test_item_and_response, mock_box_session):
         'id': '12345',
         'created_by': {
             'type': 'user',
-            'id': '33333'
+            'id': '33333',
         }
     }
     mock_box_session.get.return_value.json.return_value = {
         'limit': 500,
         'entries': [mock_collaboration],
         'total_count': 1,
-        'offset': 0
+        'offset': 0,
     }
 
     collaborations = test_item.pending_collaborations('pending')
