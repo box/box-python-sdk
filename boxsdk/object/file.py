@@ -291,7 +291,7 @@ class File(Item):
             allow_preview=allow_preview,
             password=password,
         )
-        return item.shared_link['download_url']  #pylint:disable=no-member
+        return item.shared_link['download_url']  # pylint:disable=no-member
 
     def create_upload_session(self, file_size):
         """

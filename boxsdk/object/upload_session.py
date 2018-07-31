@@ -42,7 +42,7 @@ class UploadSession(BaseObject):
             chunk = content_stream.read(self.part_size - hashed_length)  # pylint:disable=no-member
             if chunk is None:
                 continue
-            if len(chunk) == 0:  # pylint:disable=len-as-condition
+            if len(chunk) == 0:
                 break
             hashed_length += len(chunk)
             content_sha1.update(chunk)
