@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 from boxsdk.object.base_object import BaseObject
 from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
-from boxsdk.util.api_call_decorator import api_call
 
 
 class Collection(BaseObject):
@@ -12,7 +11,6 @@ class Collection(BaseObject):
 
     _item_type = 'collection'
 
-    @api_call
     def get_items(self, limit=None, offset=0, fields=None):
         """
         Get the items in a collection using limit-offset paging.
