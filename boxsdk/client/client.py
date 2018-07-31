@@ -86,6 +86,21 @@ class Client(object):
         """
         return File(session=self._session, object_id=file_id)
 
+    def comment(self, comment_id):
+        """
+        Initialize a :class:`Comment` object, whose Box ID is comment_id.
+
+        :param comment_id:
+            The Box ID of the :class:`Comment` object.
+        :type comment_id:
+            `unicode`
+        :return:
+            A :class:`Comment` object with the given comment ID.
+        :rtype:
+            :class:`Comment`
+        """
+        return Translator().translate('comment')(session=self._session, object_id=comment_id)
+
     def web_link(self, web_link_id):
         """
         Initialize a :class: `WebLink` object, whose box id is web_link_id.

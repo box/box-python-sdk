@@ -8,6 +8,7 @@ from six.moves import map   # pylint:disable=redefined-builtin
 __all__ = list(map(str, [
     'collaboration',
     'collection',
+    'comment',
     'events',
     'file',
     'folder',
