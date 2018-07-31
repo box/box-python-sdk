@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 import json
 from boxsdk.config import API
@@ -15,7 +15,6 @@ def test_get(test_retention_policy, mock_box_session):
     retention_policy = test_retention_policy.get()
     mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
     assert isinstance(retention_policy, RetentionPolicy)
-
 
 
 def test_update(test_retention_policy, mock_box_session):
@@ -50,7 +49,7 @@ def test_assign(test_retention_policy, test_folder, mock_box_session):
         'id': '1234',
         'retention_policy': {
             'type': 'retention_policy',
-            'id': policy_id
+            'id': policy_id,
         }
     }
     mock_box_session.post.return_value.json.return_value = mock_assignment
@@ -60,17 +59,16 @@ def test_assign(test_retention_policy, test_folder, mock_box_session):
     assert assignment.retention_policy['id'] == mock_assignment['retention_policy']['id']
 
 
-
 def test_get_assignments(test_retention_policy, mock_box_session):
     expected_url = test_retention_policy.get_url('assignments')
     mock_assignment = {
         'type': 'retention_policy_assignment',
-        'id': '12345'
+        'id': '12345',
     }
     mock_box_session.get.return_value.json.return_value = {
         'limit': 100,
         'entries': [mock_assignment],
-        'next_marker': 'testMarter'
+        'next_marker': 'testMarker',
     }
 
     assignments = test_retention_policy.assignments()

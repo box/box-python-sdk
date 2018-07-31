@@ -433,7 +433,7 @@ class Client(object):
             can_owner_extend_retention=False,
             are_owners_notified=False,
             retention_length=None,
-            custom_notification_recipients=None
+            custom_notification_recipients=None,
     ):
         """
         Create a retention policy for the given enterprise.

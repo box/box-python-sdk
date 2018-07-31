@@ -337,7 +337,7 @@ def test_create_retention_policy(mock_client, mock_box_session):
         'policy_type': policy_type,
         'disposition_action': disposition_action,
         'can_owner_extend_retention': False,
-        'are_owners_notified': False
+        'are_owners_notified': False,
     }
     mock_policy = {
         'type': 'retention_policy',
@@ -356,12 +356,12 @@ def test_get_retention_policies(mock_client, mock_box_session):
     mock_policy = {
         'type': 'retention_policy',
         'id': '12345',
-        'name': 'Test Retention Policy'
+        'name': 'Test Retention Policy',
     }
     mock_box_session.get.return_value.json.return_value = {
         'limit': 100,
         'entries': [mock_policy],
-        'next_marker': 'testMarker'
+        'next_marker': 'testMarker',
     }
     policies = mock_client.retention_policies()
     policy = policies.next()
