@@ -411,7 +411,6 @@ class Client(object):
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
 
-
     def storage_policy(self, policy_id):
         """
         Initialize a :class:`StoragePolicy` object, whose box id is policy_id.
