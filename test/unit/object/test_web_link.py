@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 import json
 
+
 def test_get(mock_box_session, test_web_link):
     # pylint:disable=redefined-outer-name, protected-access
     web_link_id = test_web_link.object_id
@@ -25,7 +26,7 @@ def test_get(mock_box_session, test_web_link):
 
 
 def test_update(mock_box_session, test_web_link):
-    #pylint:disable=redefined-outer-name, protected-access
+    # pylint:disable=redefined-outer-name, protected-access
     web_link_id = test_web_link.object_id
     expected_url = mock_box_session.get_url('web_links', web_link_id)
 
@@ -47,10 +48,8 @@ def test_update(mock_box_session, test_web_link):
     assert web_link.url == mock_web_link['url']
 
 
-
 def test_delete(mock_box_session, test_web_link):
     web_link_id = test_web_link.object_id
     expected_url = mock_box_session.get_url('web_links', web_link_id)
     test_web_link.delete()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=None, params={})
-
