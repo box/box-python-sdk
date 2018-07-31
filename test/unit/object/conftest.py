@@ -21,8 +21,6 @@ from boxsdk.object.web_link import WebLink
 
 
 # pylint:disable=redefined-outer-name
-
-
 @pytest.fixture(scope='module')
 def mock_group_membership_id():
     return 'fake-group-membership-5'
