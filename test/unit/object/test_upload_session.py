@@ -1,11 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import base64
+import hashlib
+from io import BytesIO
 import json
 import pytest
-from io import BytesIO
-import hashlib
-import base64
 from boxsdk.config import API
 from boxsdk.object.file import File
 from boxsdk.object.upload_session import UploadSession
@@ -22,7 +22,7 @@ def test_upload_session(mock_box_session):
 
 def test_get_parts(test_upload_session, mock_box_session):
     expected_url = '{}/files/upload_sessions/{}/parts'.format(API.UPLOAD_URL, test_upload_session.object_id)
-    
+
     parts = mock_box_session.get.return_value.json.return_value = {
         'entries': [
             {
@@ -84,7 +84,7 @@ def test_upload_part(test_upload_session, mock_box_session):
 def test_commit(test_upload_session, mock_box_session):
     expected_url = '{}/files/upload_sessions/{}/commit'.format(API.UPLOAD_URL, test_upload_session.object_id)
     sha1 = hashlib.sha1()
-    sha1.update(b'fake_file_data') 
+    sha1.update(b'fake_file_data')
     file_id = '12345'
     parts = [
         {
