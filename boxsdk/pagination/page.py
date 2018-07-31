@@ -7,7 +7,6 @@ import copy
 
 from boxsdk.object.base_object import BaseObject
 from boxsdk.object.base_endpoint import BaseEndpoint
-from ..util.translator import Translator
 from boxsdk.util.translator import Translator
 
 
