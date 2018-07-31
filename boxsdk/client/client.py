@@ -429,7 +429,7 @@ class Client(object):
         :type marker:
             `str` or None
         :param direction:
-            The sorting direction.
+            The sorting direction. Set to `ASC` or `DESC`
         :type direction:
             `unicode` or None
         :param fields:
@@ -441,9 +441,9 @@ class Client(object):
         :rtype:
             :class:`BoxObjectCollection`
         """
-        additional_params = {
-            'direction': direction,
-        }
+        additional_params = {}
+        if direction:
+            additional_params['direction'] = direction
         return MarkerBasedObjectCollection(
             session=self._session,
             url='{0}/enterprises/{1}/device_pinners'.format(API.BASE_API_URL, enterprise_id),
