@@ -83,7 +83,6 @@ class Group(BaseObject):
 
         return GroupMembership(self._session, response['id'], response, user=user, group=self)
 
-
     def collaborations(self, offset=None, limit=None, fields=None):
         """
         Get the entries in the collaboration for the group using limit-offset paging.

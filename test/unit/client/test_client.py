@@ -324,26 +324,3 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
-
-
-def test_get_all_groups(mock_client, mock_box_session):
-    expected_url = '{0}/groups'.format(API.BASE_API_URL)
-    mock_group = {
-        'type': 'group',
-        'id': '12345',
-        'name': 'Test Group',
-    }
-    mock_box_session.get.return_value.json.return_value = {
-        'limit': 100,
-        'entries': [mock_group],
-        'offset': 0,
-        'total_count': 1
-    }
-
-    groups = mock_client.groups()
-    group = groups.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
-    assert isinstance(group, Group)
-    assert group.id == mock_group['id']
-    assert group.name == mock_group['name']
- 

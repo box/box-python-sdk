@@ -42,6 +42,5 @@ class User(BaseObject):
             additional_params=additional_params,
             limit=limit,
             offset=offset,
-            return_full_pages=False
+            return_full_pages=False,
         )
-

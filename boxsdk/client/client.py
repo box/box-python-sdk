@@ -392,39 +392,3 @@ class Client(object):
         """
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
-
-
-    def groups(self, name=None, offset=None, limit=None, fields=None):
-        """
-        Get the entries in the group for the enterprise using limit-offset paging.
-
-        :param limit:
-            The maximum number of entries to return per page. If not specified, then will use the server-side default.
-        :type limit:
-            `int` or None
-        :param offset:
-            The offset of the item at which to begin the response.
-        :type offset:
-            `str` or None
-        :param fields:
-            List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
-        :returns:
-            An iterator of the entries in the group.
-        :rtype:
-            :class:`BoxObjectCollection`
-        """
-        additional_params = {}
-        if name:
-            additional_params['name'] = name
-        if fields:
-            additional_params['fields'] = ','.join(fields)
-        return LimitOffsetBasedObjectCollection(
-            session=self._session,
-            url='{0}/groups'.format(API.BASE_API_URL),
-            additional_params=additional_params,
-            limit=limit,
-            offset=offset,
-            return_full_pages=False
-        )
