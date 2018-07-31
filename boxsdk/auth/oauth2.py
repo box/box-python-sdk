@@ -14,11 +14,12 @@ from six.moves.urllib.parse import urlencode, urlunsplit
 # pylint:enable=import-error,no-name-in-module,relative-import
 import six
 
-from boxsdk.config import API
-from boxsdk.exception import BoxOAuthException
-from boxsdk.network.default_network import DefaultNetwork
-from boxsdk.object.base_api_json_object import BaseAPIJSONObject
-from boxsdk.util.text_enum import TextEnum
+from ..config import API
+from ..exception import BoxOAuthException
+from ..network.default_network import DefaultNetwork
+from ..object.base_api_json_object import BaseAPIJSONObject
+from ..util.json import is_json_response
+from ..util.text_enum import TextEnum
 
 
 class TokenScope(TextEnum):
@@ -342,16 +343,40 @@ class OAuth2(object):
             access_token=access_token,
         )
         if not network_response.ok:
-            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST', network_response)
+            raise self._oauth_exception(network_response, url)
         try:
             token_response = TokenResponse(network_response.json())
         except ValueError:
-            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST', network_response)
+            raise self._oauth_exception(network_response, url)
 
         if ('access_token' not in token_response) or (expect_refresh_token and 'refresh_token' not in token_response):
-            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST', network_response)
+            raise self._oauth_exception(network_response, url)
 
         return token_response
+
+    @staticmethod
+    def _oauth_exception(network_response, url):
+        """
+        Create a BoxOAuthException instance to raise. If the error response is JSON, parse it and include the
+        code and message in the exception.
+
+        :rtype:     :class:`BoxOAuthException`
+        """
+        exception_kwargs = dict(
+            status=network_response.status_code,
+            url=url,
+            method='POST',
+            network_response=network_response,
+        )
+        if is_json_response(network_response):
+            json_response = network_response.json()
+            exception_kwargs.update(dict(
+                code=json_response.get('code'),
+                message=json_response.get('message'),
+            ))
+        else:
+            exception_kwargs['message'] = network_response.content
+        return BoxOAuthException(**exception_kwargs)
 
     def send_token_request(self, data, access_token, expect_refresh_token=True):
         """
@@ -397,7 +422,13 @@ class OAuth2(object):
                 access_token=access_token,
             )
             if not network_response.ok:
-                raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST', network_response)
+                raise BoxOAuthException(
+                    network_response.status_code,
+                    network_response.content,
+                    url,
+                    'POST',
+                    network_response,
+                )
             self._store_tokens(None, None)
 
     def close(self, revoke=True):

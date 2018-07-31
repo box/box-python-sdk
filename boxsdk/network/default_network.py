@@ -11,6 +11,7 @@ import requests
 from six import text_type, PY2
 
 from .network_interface import Network, NetworkResponse
+from ..util.log import sanitize_dictionary
 
 
 class DefaultNetwork(Network):
@@ -80,7 +81,10 @@ class DefaultNetwork(Network):
         :type access_token:
             `unicode`
         """
-        self._logger.info(self.REQUEST_FORMAT, {'method': method, 'url': url, 'request_kwargs': pformat(kwargs)})
+        self._logger.info(
+            self.REQUEST_FORMAT,
+            {'method': method, 'url': url, 'request_kwargs': pformat(sanitize_dictionary(kwargs))},
+        )
 
     def _log_exception(self, method, url, exc_info):
         """Log information at WARNING level about the exception that was raised when trying to make the request.
@@ -248,7 +252,7 @@ class DefaultNetworkResponse(NetworkResponse):
                 content = self.json()
             except ValueError:
                 content = self.content
-            content = pformat(content)
+            content = pformat(sanitize_dictionary(content))
         if content_length is None:
             content_length = '?'
         if self.ok:

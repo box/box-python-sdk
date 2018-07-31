@@ -10,6 +10,8 @@ __all__ = list(map(str, [
     'collaboration_whitelist',
     'collaboration_whitelist_entry',
     'collaboration_whitelist_exempt_target',
+    'collection',
+    'comment',
     'events',
     'event',
     'file',

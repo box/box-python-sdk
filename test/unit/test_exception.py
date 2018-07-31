@@ -32,19 +32,18 @@ def test_box_api_exception():
     assert box_exception.code == code
     assert box_exception.message == message
     assert box_exception.request_id == request_id
-    assert box_exception._headers == headers  # pylint:disable=protected-access
+    assert box_exception.headers == headers  # pylint:disable=protected-access
     assert box_exception.url == url
     assert box_exception.method == method
     assert box_exception.context_info == context_info
-    assert str(box_exception) == '''
-Message: {0}
+    assert str(box_exception) == '''Message: {0}
 Status: {1}
 Code: {2}
-Request id: {3}
+Request ID: {3}
 Headers: {4}
 URL: {5}
 Method: {6}
-Context info: {7}'''.format(message, status, code, request_id, headers, url, method, context_info)
+Context Info: {7}'''.format(message, status, code, request_id, headers, url, method, context_info)
 
 
 @pytest.mark.parametrize('has_network_response', [True, False])
