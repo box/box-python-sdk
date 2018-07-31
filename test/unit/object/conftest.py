@@ -19,11 +19,10 @@ from boxsdk.object.search import Search
 from boxsdk.object.storage_policy import StoragePolicy
 from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.object.web_link import WebLink
+from boxsdk.object.watermark import Watermark
 
 
 # pylint:disable=redefined-outer-name
-
-
 @pytest.fixture(scope='module')
 def mock_group_membership_id():
     return 'fake-group-membership-5'
@@ -121,6 +120,11 @@ def mock_collab_response(make_mock_box_request, mock_collaboration_id):
         response={'type': 'collaboration', 'id': mock_collaboration_id},
     )
     return mock_box_response
+
+
+@pytest.fixture()
+def test_watermark(mock_box_session):
+    return Watermark(mock_box_session)
 
 
 @pytest.fixture()

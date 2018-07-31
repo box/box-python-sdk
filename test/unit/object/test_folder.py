@@ -287,6 +287,44 @@ def test_preflight(test_folder, mock_object_id, mock_box_session):
     )
 
 
+def test_get_watermark(mock_box_session, test_folder):
+    created_at = '2016-10-31T15:33:33-07:00'
+    modified_at = '2016-10-31T15:33:33-07:00'
+    expected_url = '{0}/folders/{1}/watermark'.format(API.BASE_API_URL, test_folder.object_id)
+    mock_box_session.get.return_value.json.return_value = {
+        'created_at': created_at,
+        'modified_at': modified_at,
+    }
+
+    watermark = test_folder.get_watermark()
+    mock_box_session.get.assert_called_once_with(expected_url, expect_json_response=False)
+    assert watermark['created_at'] == created_at
+    assert watermark['modified_at'] == modified_at
+
+
+def test_apply_watermark(mock_box_session, test_folder):
+    created_at = '2016-10-31T15:33:33-07:00'
+    modified_at = '2016-10-31T15:33:33-07:00'
+    expected_url = '{0}/folders/{1}/watermark'.format(API.BASE_API_URL, test_folder.object_id)
+    mock_box_session.put.return_value.json.return_value = {
+        'created_at': created_at,
+        'modified_at': modified_at,
+    }
+
+    watermark = test_folder.apply_watermark()
+    mock_box_session.put.assert_called_once_with(expected_url, data='{"watermark": {"imprint": "default"}}')
+    assert watermark['created_at'] == created_at
+    assert watermark['modified_at'] == modified_at
+
+
+def test_delete_watermark(mock_box_session, test_folder):
+    expected_url = '{0}/folders/{1}/watermark'.format(API.BASE_API_URL, test_folder.object_id)
+    mock_box_session.delete.return_value.ok = True
+    is_watermark_deleted = test_folder.delete_watermark()
+    mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)
+    assert is_watermark_deleted is True
+
+
 def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_box_session):
     # pylint:disable=redefined-outer-name
     expected_url = "{0}/web_links".format(API.BASE_API_URL)

@@ -419,3 +419,47 @@ class Folder(Item):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
         return super(Folder, self).delete({'recursive': recursive}, etag)
+
+    def get_watermark(self):
+        """
+        Return the watermark info for a Box folder
+
+        :return:
+            Watermark object.
+        :rtype:
+            `dict`
+        """
+        url = '{0}/folders/{1}/watermark'.format(API.BASE_API_URL, self.object_id)
+        box_response = self._session.get(url, expect_json_response=False)
+        return box_response.json()
+
+    def apply_watermark(self):
+        """
+        Apply watermark on a Box folder
+
+        :return:
+            Watermark object.
+        :rtype:
+            `dict`
+        """
+        url = '{0}/folders/{1}/watermark'.format(API.BASE_API_URL, self.object_id)
+        body_attributes = {
+            'watermark': {
+                'imprint': 'default'
+            }
+        }
+        box_response = self._session.put(url, data=json.dumps(body_attributes))
+        return box_response.json()
+
+    def delete_watermark(self):
+        """
+        Deletes the watermark info for a Box folder
+
+        :return:
+            Whether or not the delete succeeded.
+        :rtype:
+            `bool`
+        """
+        url = '{0}/folders/{1}/watermark'.format(API.BASE_API_URL, self.object_id)
+        box_response = self._session.delete(url, expect_json_response=False)
+        return box_response.ok
