@@ -12,10 +12,12 @@ class StoragePolicy(BaseObject):
     """Represents the storage policy"""
 
     def get_url(self, *args):
+        """
+        Get url for storage policies.
+        """
         return self._session.get_url('storage_policies', self._object_id, *args)
 
     _item_type = 'storage_policy'
-
 
     def assign(self, item):
         url = self._session.get_url('storage_policy_assignments')
@@ -35,4 +37,3 @@ class StoragePolicy(BaseObject):
             response['id'],
             response,
         )
-
