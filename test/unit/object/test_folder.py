@@ -286,7 +286,7 @@ def test_preflight(test_folder, mock_object_id, mock_box_session):
     )
 
 
-def test_get(mock_box_session, test_folder):
+def test_get_watermark(mock_box_session, test_folder):
     created_at = '2016-10-31T15:33:33-07:00'
     modified_at = '2016-10-31T15:33:33-07:00'
     expected_url = '{0}/folders/{1}/watermark'.format(API.BASE_API_URL, test_folder.object_id)
@@ -301,7 +301,7 @@ def test_get(mock_box_session, test_folder):
     assert watermark['modified_at'] == modified_at
 
 
-def test_apply(mock_box_session, test_folder):
+def test_apply_watermark(mock_box_session, test_folder):
     created_at = '2016-10-31T15:33:33-07:00'
     modified_at = '2016-10-31T15:33:33-07:00'
     expected_url = '{0}/folders/{1}/watermark'.format(API.BASE_API_URL, test_folder.object_id)
@@ -316,7 +316,7 @@ def test_apply(mock_box_session, test_folder):
     assert watermark['modified_at'] == modified_at
 
 
-def test_delete(mock_box_session, test_folder):
+def test_delete_watermark(mock_box_session, test_folder):
     expected_url = '{0}/folders/{1}/watermark'.format(API.BASE_API_URL, test_folder.object_id)
     test_folder.delete_watermark()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)

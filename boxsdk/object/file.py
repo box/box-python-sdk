@@ -291,23 +291,29 @@ class File(Item):
         )
         return item.shared_link['download_url']
 
-
-
     def get_watermark(self):
         """
         Return the watermark info for a Box file
+
+        :return:
+            Watermark object.
+        :rtype:
+            `dict`
         """
-        url = '{0}/files/{1}/{2}'.format(API.BASE_API_URL, self.object_id, 'watermark')
+        url = '{0}/files/{1}/watermark'.format(API.BASE_API_URL, self.object_id)
         box_response = self._session.get(url, expect_json_response=False)
         return box_response.json()
-
-
 
     def apply_watermark(self):
         """
         Apply watermark on a Box file
+
+        :return:
+            Watermark object.
+        :rtype:
+            `dict`
         """
-        url = '{0}/files/{1}/{2}'.format(API.BASE_API_URL, self.object_id, 'watermark')
+        url = '{0}/files/{1}/watermark'.format(API.BASE_API_URL, self.object_id)
         body_attributes = {
             'watermark': {
                 'imprint': 'default'
@@ -316,12 +322,15 @@ class File(Item):
         box_response = self._session.put(url, data=json.dumps(body_attributes))
         return box_response.json()
 
-
-
     def delete_watermark(self):
         """
         Return the watermark info for a Box file
+
+        :return:
+            Whether or not the delete succeeded.
+        :rtype:
+            `bool`
         """
-        url = '{0}/files/{1}/{2}'.format(API.BASE_API_URL, self.object_id, 'watermark')
+        url = '{0}/files/{1}/watermark'.format(API.BASE_API_URL, self.object_id)
         box_response = self._session.delete(url, expect_json_response=False)
         return box_response.content

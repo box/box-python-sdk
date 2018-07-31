@@ -276,7 +276,7 @@ def test_get_shared_link_download_url(
     assert url == test_url
 
 
-def test_get(mock_box_session, test_file):
+def test_get_watermark(mock_box_session, test_file):
     created_at = '2016-10-31T15:33:33-07:00'
     modified_at = '2016-10-31T15:33:33-07:00'
     expected_url = '{0}/files/{1}/watermark'.format(API.BASE_API_URL, test_file.object_id)
@@ -292,7 +292,7 @@ def test_get(mock_box_session, test_file):
 
 
 
-def test_apply(mock_box_session, test_file):
+def test_apply_watermark(mock_box_session, test_file):
     created_at = '2016-10-31T15:33:33-07:00'
     modified_at = '2016-10-31T15:33:33-07:00'
     expected_url = '{0}/files/{1}/watermark'.format(API.BASE_API_URL, test_file.object_id)
@@ -307,7 +307,7 @@ def test_apply(mock_box_session, test_file):
     assert watermark['modified_at'] == modified_at
 
 
-def test_delete(mock_box_session, test_file):
+def test_delete_watermark(mock_box_session, test_file):
     expected_url = '{0}/files/{1}/watermark'.format(API.BASE_API_URL, test_file.object_id)
     test_file.delete_watermark()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)
