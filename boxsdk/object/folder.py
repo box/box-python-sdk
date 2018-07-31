@@ -338,7 +338,6 @@ class Folder(Item):
         response = box_response.json()
         return WebLink(self._session, response['id'], response)
 
-
     def update_sync_state(self, sync_state):
         """Update the ``sync_state`` attribute of this folder.
 
@@ -420,4 +419,3 @@ class Folder(Item):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
         return super(Folder, self).delete({'recursive': recursive}, etag)
-
