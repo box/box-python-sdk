@@ -13,6 +13,38 @@ def test_item_and_response(test_file, test_folder, mock_file_response, mock_fold
         return test_folder, mock_folder_response
 
 
+@pytest.fixture(params=('empty', 'same', 'other'))
+def test_collections_for_addition(mock_collection_id, request):
+    """Fixture returning a tuple of the expected collections values before and after addition"""
+    other_collection_id = mock_collection_id + '2'
+    if request.param == 'empty':
+        return [], [{'id': mock_collection_id}]
+    elif request.param == 'same':
+        # Adding a second instance of the same collection is handled correctly by the API,
+        # so for simplicity we do not check for an existing copy of the collection and just append
+        return [{'id': mock_collection_id}], [{'id': mock_collection_id}, {'id': mock_collection_id}]
+    elif request.param == 'other':
+        return [{'id': other_collection_id}], [{'id': other_collection_id}, {'id': mock_collection_id}]
+
+    raise NotImplementedError("Forgot to implement {}".format(request.param))
+
+
+@pytest.fixture(params=('empty', 'only_removed', 'only_other', 'other_and_removed'))
+def test_collections_for_removal(mock_collection_id, request):
+    """Fixture returning a tuple of the expected collections values before and after removal"""
+    other_collection_id = mock_collection_id + '2'
+    if request.param == 'empty':
+        return [], []
+    elif request.param == 'only_removed':
+        return [{'id': mock_collection_id}], []
+    elif request.param == 'only_other':
+        return [{'id': other_collection_id}], [{'id': other_collection_id}]
+    elif request.param == 'other_and_removed':
+        return [{'id': mock_collection_id}, {'id': other_collection_id}], [{'id': other_collection_id}]
+
+    raise NotImplementedError("Forgot to implement {}".format(request.param))
+
+
 def test_update_info(test_item_and_response, mock_box_session, etag, if_match_header):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, mock_item_response = test_item_and_response
@@ -127,3 +159,45 @@ def test_get(test_item_and_response, mock_box_session, fields, mock_object_id, e
     mock_box_session.get.assert_called_once_with(expected_url, params=expected_params, headers=if_none_match_header)
     assert isinstance(info, test_item.__class__)
     assert info.id == mock_object_id
+
+
+def test_add_to_collection(test_item_and_response, mock_box_session, mock_collection, test_collections_for_addition):
+    # pylint:disable=redefined-outer-name, protected-access
+    test_item, mock_item_response = test_item_and_response
+    current_collections, expected_collections = test_collections_for_addition
+    expected_url = test_item.get_url()
+    expected_params = {'fields': 'collections'}
+    expected_data = {
+        'collections': expected_collections
+    }
+    mock_response = {
+        'collections': current_collections
+    }
+    mock_box_session.get.return_value.json.return_value = mock_response
+    mock_box_session.put.return_value = mock_item_response
+
+    test_item.add_to_collection(mock_collection)
+
+    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=expected_params)
+    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=None, params=None)
+
+
+def test_remove_from_collection(test_item_and_response, mock_box_session, mock_collection, test_collections_for_removal):
+    # pylint:disable=redefined-outer-name, protected-access
+    test_item, mock_item_response = test_item_and_response
+    current_collections, expected_collections = test_collections_for_removal
+    expected_url = test_item.get_url()
+    expected_params = {'fields': 'collections'}
+    expected_data = {
+        'collections': expected_collections
+    }
+    mock_response = {
+        'collections': current_collections
+    }
+    mock_box_session.get.return_value.json.return_value = mock_response
+    mock_box_session.put.return_value = mock_item_response
+
+    test_item.remove_from_collection(mock_collection)
+
+    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=expected_params)
+    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=None, params=None)
