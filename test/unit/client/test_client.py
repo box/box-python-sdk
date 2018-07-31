@@ -23,6 +23,9 @@ from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.group_membership import GroupMembership
+from boxsdk.object.retention_policy import RetentionPolicy
+from boxsdk.object.storage_policy import StoragePolicy
+from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.object.webhook import Webhook
 
 
@@ -364,7 +367,6 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert new_user.name == test_user_name
 
 
-
 def test_create_webhook_returns_the_correct_policy_object(mock_client, mock_box_session, create_webhook_response):
     # pylint:disable=redefined-outer-name
     expected_body = {
@@ -384,7 +386,6 @@ def test_create_webhook_returns_the_correct_policy_object(mock_client, mock_box_
     assert isinstance(new_webhook, Webhook)
 
 
-
 def test_get_assignments(
         mock_client,
         mock_box_session,
@@ -399,3 +400,93 @@ def test_get_assignments(
         assert webhook.object_id == expected_id
         # pylint:disable=protected-access
         assert webhook._session == mock_box_session
+
+        
+def test_get_storage_policies(mock_client, mock_box_session):
+    expected_url = mock_box_session.get_url('storage_policies')
+    mock_policy = {
+        'type': 'storage_policy',
+        'id': '12345',
+        'name': 'Test Storage Policy'
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_policy]
+    }
+
+    policies = mock_client.storage_policies()
+    policy = policies.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    assert isinstance(policy, StoragePolicy)
+    assert policy.id == mock_policy['id']
+    assert policy.name == mock_policy['name']
+
+
+def test_get_storage_policy_assignments(mock_client, mock_box_session):
+    resolved_for_type = 'user'
+    resolved_for_id = '1234'
+    expected_url = mock_box_session.get_url('storage_policy_assignments')
+    mock_assignment = {
+        'type': 'storage_policy_assignment',
+        'id': '12345',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_assignment]
+    }
+    expected_params = {
+        'limit': 100,
+        'resolved_for_type': resolved_for_type,
+        'resolved_for_id': resolved_for_id,
+    }
+
+    assignments = mock_client.storage_policy_assignments(resolved_for_type, resolved_for_id)
+    assignment = assignments.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
+    assert isinstance(assignment, StoragePolicyAssignment)
+    assert assignment.id == mock_assignment['id']
+    assert assignment.type == mock_assignment['type']
+
+
+def test_create_retention_policy(mock_client, mock_box_session):
+    policy_name = 'Test Retention Policy'
+    policy_type = 'indefinite'
+    disposition_action = 'remove_retention'
+    expected_url = mock_box_session.get_url('retention_policies')
+    expected_data = {
+        'policy_name': policy_name,
+        'policy_type': policy_type,
+        'disposition_action': disposition_action,
+        'can_owner_extend_retention': False,
+        'are_owners_notified': False,
+    }
+    mock_policy = {
+        'type': 'retention_policy',
+        'id': '1234',
+        'policy_name': policy_name,
+    }
+    mock_box_session.post.return_value.json.return_value = mock_policy
+    policy = mock_client.create_retention_policy(policy_name, policy_type, disposition_action)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert policy.id == mock_policy['id']
+    assert policy.type == mock_policy['type']
+
+
+def test_get_retention_policies(mock_client, mock_box_session):
+    expected_url = mock_box_session.get_url('retention_policies')
+    mock_policy = {
+        'type': 'retention_policy',
+        'id': '12345',
+        'name': 'Test Retention Policy',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_policy],
+        'next_marker': 'testMarker',
+    }
+    policies = mock_client.retention_policies()
+    policy = policies.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'policy_name': None, 'policy_type': None, 'created_by_user_id': None})
+    assert isinstance(policy, RetentionPolicy)
+    assert policy.id == mock_policy['id']
+    assert policy.name == mock_policy['name']

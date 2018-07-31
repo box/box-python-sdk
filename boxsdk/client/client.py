@@ -14,6 +14,13 @@ from ..object.file import File
 from ..object.group import Group
 from ..object.webhook import Webhook
 from ..object.group_membership import GroupMembership
+from ..object.retention_policy import RetentionPolicy
+from ..object.retention_policy_assignment import RetentionPolicyAssignment
+from ..object.storage_policy import StoragePolicy
+from ..object.storage_policy_assignment import StoragePolicyAssignment
+from ..object.web_link import WebLink
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
@@ -86,6 +93,36 @@ class Client(object):
         """
         return File(session=self._session, object_id=file_id)
 
+    def comment(self, comment_id):
+        """
+        Initialize a :class:`Comment` object, whose Box ID is comment_id.
+
+        :param comment_id:
+            The Box ID of the :class:`Comment` object.
+        :type comment_id:
+            `unicode`
+        :return:
+            A :class:`Comment` object with the given comment ID.
+        :rtype:
+            :class:`Comment`
+        """
+        return Translator().translate('comment')(session=self._session, object_id=comment_id)
+
+    def web_link(self, web_link_id):
+        """
+        Initialize a :class: `WebLink` object, whose box id is web_link_id.
+
+        :param web_link_id:
+            The box ID of the :class:`WebLink` object.
+        :type web_link_id:
+            `unicode`
+        :return:
+            A :class: `WebLink` object with the given entry ID.
+        :rtype:
+            :class:`WebLink`
+        """
+        return WebLink(session=self._session, object_id=web_link_id)
+
     def user(self, user_id='me'):
         """
         Initialize a :class:`User` object, whose box id is user_id.
@@ -115,6 +152,43 @@ class Client(object):
             :class:`Group`
         """
         return Group(session=self._session, object_id=group_id)
+
+    def collection(self, collection_id):
+        """
+        Initialize a :class:`Collection` object, whose box ID is collection_id.
+
+        :param collection_id:
+            The box id of the :class:`Collection` object.
+        :type collection_id:
+            `unicode`
+        :return:
+            A :class:`Collection` object with the given collection ID.
+        :rtype:
+            :class:`Collection`
+        """
+        return Translator().translate('collection')(session=self._session, object_id=collection_id)
+
+    def collections(self, limit=None, offset=0, fields=None):
+        """
+        Get a list of collections for the current user.
+
+        :param limit:
+            The maximum number of users to return. If not specified, the Box API will determine an appropriate limit.
+        :type limit:
+            `int` or None
+        :param offset:
+            The user index at which to start the response.
+        :type offset:
+            `int`
+        """
+        return LimitOffsetBasedObjectCollection(
+            self._session,
+            self._session.get_url('collections'),
+            limit=limit,
+            fields=fields,
+            offset=offset,
+            return_full_pages=False,
+        )
 
     def users(self, limit=None, offset=0, filter_term=None):
         """
@@ -438,7 +512,6 @@ class Client(object):
         response = box_response.json()
         return Webhook(self._session, response['id'], response)
 
-
     def webhooks(self, marker=None, limit=None):
         """
         Get all webhooks in an enterprise.
@@ -461,5 +534,251 @@ class Client(object):
             url=self.get_url('webhooks'),
             limit=limit,
             marker=marker,
+
+    def storage_policy(self, policy_id):
+        """
+        Initialize a :class:`StoragePolicy` object, whose box id is policy_id.
+
+        :param policy_id:
+            The box ID of the :class:`StoragePolicy` object.
+        :type policy_id:
+            `unicode`
+        :return:
+            A :class:`StoragePolicy` object with the given entry ID.
+        :rtype:
+            :class:`StoragePolicy`
+        """
+        return StoragePolicy(session=self._session, object_id=policy_id)
+
+    def storage_policy_assignment(self, assignment_id):
+        """
+        Initialize a :class:`StoragePolicyAssignment` object, whose box id is assignment_id.
+
+        :param assignment_id:
+            The box ID of the :class:`StoragePolicyAssignment` object.
+        :type assignment_id:
+            `unicode`
+        :return:
+            A :class:`StoragePolicyAssignment` object with the given entry ID.
+        :rtype:
+            :class:`StoragePolicyAssignment`
+        """
+        return StoragePolicyAssignment(session=self._session, object_id=assignment_id)
+
+    def storage_policies(self, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the storage policy using limit-offset paging.
+
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `str` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the storage policy
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('storage_policies'),
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
+
+    def storage_policy_assignments(self, resolved_for_type, resolved_for_id, marker=None, fields=None):
+        """
+        Get the entries in the storage policy assignment using limit-offset paging.
+
+        :param resolved_for_type:
+            Set to either `user` or `enterprise`
+        :type limit:
+            unicode
+        :param resolved_for_id:
+            The id of the user or enterprise
+        :type limit:
+            unicode
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `str` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the storage policy assignment
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {
+            'resolved_for_type': resolved_for_type,
+            'resolved_for_id': resolved_for_id,
+        }
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url='{0}/storage_policy_assignments'.format(API.BASE_API_URL),
+            additional_params=additional_params,
+            limit=100,
+            marker=marker,
+            fields=fields,
+        )
+
+    def retention_policy(self, retention_id):
+        """
+        Initialize a :class:`RetentionPolicy` object, whose box id is retention_id.
+
+        :param retention_id:
+            The box ID of the :class:`RetentionPolicy` object.
+        :type retention_id:
+            `unicode`
+        :return:
+            A :class:`RetentionPolicy` object with the given entry ID.
+        :rtype:
+            :class:`RetentionPolicy`
+        """
+        return RetentionPolicy(session=self._session, object_id=retention_id)
+
+    def retention_policy_assignment(self, assignment_id):
+        """
+        Initialize a :class:`RetentionPolicyAssignment` object, whose box id is assignment_id.
+
+        :param assignment_id:
+            The box ID of the :class:`RetentionPolicyAssignment` object.
+        :type assignment_id:
+            `unicode`
+        :return:
+            A :class:`RetentionPolicyAssignment` object with the given assignment ID.
+        :rtype:
+            :class:`RetentionPolicyAssignment`
+        """
+        return RetentionPolicyAssignment(session=self._session, object_id=assignment_id)
+
+    def create_retention_policy(
+            self,
+            policy_name,
+            policy_type,
+            disposition_action,
+            can_owner_extend_retention=False,
+            are_owners_notified=False,
+            retention_length=None,
+            custom_notification_recipients=None,
+    ):
+        """
+        Create a retention policy for the given enterprise.
+
+        :param policy_name:
+            The name of the retention policy.
+        :type policy_name:
+            `unicode`
+        :param policy_type:
+            Set to either `finite` or `indefinite`
+        :type policy_type:
+            `unicode`
+        :param disposition_action:
+            For `finite` policy can be set to `permanently delete` or `remove retention`.
+            For `indefinite` policy this must be set to `remove_retention`
+        :type disposition_action:
+            `unicode`
+        :param can_owner_extend_retention:
+            The owner of a file will be allowed to extend the retention if set to true.
+        :type can_owner_extend_retention:
+            `boolean` or None
+        :param are_owners_notified:
+            The owner or co-owner will get notified when a file is nearing expiration.
+        :type are_owners_notified:
+            `boolean` or None
+        :param retention_length:
+            The amount of time in days to apply the retention policy to the selected content.
+            Do not specify for `indefinite` policies, only for `finite` policies.
+        :type are_owners_notified:
+            `int` or None
+        :param custom_notification_recipients:
+            A custom list of user mini objects that should be notified when a file is nearing expiration.
+        :type custom_notification_recipients:
+            `list` or `User` objects
+        :return:
+            The newly created Retention Policy
+        :rtype:
+            :class:`RetentionPolicy`
+        """
+        url = '{0}/retention_policies'.format(API.BASE_API_URL)
+        retention_attributes = {
+            'policy_name': policy_name,
+            'policy_type': policy_type,
+            'disposition_action': disposition_action,
+        }
+        if can_owner_extend_retention is not None:
+            retention_attributes['can_owner_extend_retention'] = can_owner_extend_retention
+        if are_owners_notified is not None:
+            retention_attributes['are_owners_notified'] = are_owners_notified
+        if retention_length is not None:
+            retention_attributes['retention_length'] = retention_length
+        if custom_notification_recipients is not None:
+            retention_attributes['custom_notification_recipients'] = custom_notification_recipients
+        box_response = self._session.post(url, data=json.dumps(retention_attributes))
+        response = box_response.json()
+        return RetentionPolicy(self._session, response['id'], response)
+
+    def retention_policies(
+            self,
+            policy_name=None,
+            policy_type=None,
+            created_by_user_id=None,
+            limit=None,
+            marker=None,
+            fields=None,
+    ):
+        """
+        Get the entries in the retention policy using marker-based paging.
+
+        :param policy_name:
+            The name of the retention policy.
+        :type policy_name:
+            `unicode` or None
+        :param policy_type:
+            Set to either `finite` or `indefinite`
+        :type policy_type:
+            `unicode` or None
+        :param created_by_user_id:
+            A user id to filter the retention policies.
+        :type created_by_user_id:
+            `unicode` or None
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `str` or None
+        :param marker:
+            The paging marker to start paging from
+        :type marker:
+            `str` or None
+        :param fields:
+            List of fields to request
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the retention policy
+        """
+        additional_params = {
+            'policy_name': policy_name,
+            'policy_type': policy_type,
+            'created_by_user_id': created_by_user_id,
+        }
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self._session.get_url('retention_policies'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
             return_full_pages=False,
         )
