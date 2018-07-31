@@ -4,9 +4,12 @@ from __future__ import unicode_literals, absolute_import
 
 import json
 
+import json
+
 from boxsdk.config import API
 from .item import Item
 from .metadata import Metadata
+from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..util.translator import Translator
 
 
@@ -309,3 +312,57 @@ class File(Item):
             data=json.dumps({'file_id': self.object_id, 'file_size': file_size}),
         ).json()
         return Translator().translate(response['type'])(self.session, response['id'], response_object=response)
+
+    def get_comments(self, limit=None, offset=0, fields=None):
+        """
+        Get the comments on the file.
+
+        :param limit:
+            The maximum number of items to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param offset:
+            The index at which to start returning items.
+        :type offset:
+            `int`
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the items in the folder.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return LimitOffsetBasedObjectCollection(
+            self.session,
+            self.get_url('comments'),
+            limit=limit,
+            fields=fields,
+            offset=offset,
+            return_full_pages=False,
+        )
+
+    def add_comment(self, message):
+        """
+        Add a comment to the file.
+
+        :param message:
+            The content of the reply comment.
+        :type message:
+            `unicode`
+        """
+        url = self._session.get_url('comments')
+        comment_class = Translator().translate('comment')
+        data = comment_class.construct_params_from_message(message)
+        data['item'] = {
+            'type': 'file',
+            'id': self.object_id
+        }
+        box_response = self._session.post(url, data=json.dumps(data))
+        response = box_response.json()
+        return Translator().translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
