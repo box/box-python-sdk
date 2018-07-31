@@ -221,4 +221,3 @@ def test_collaborations(test_group, mock_box_session):
     assert isinstance(collaboration, Collaboration)
     assert collaboration.id == mock_collaboration['id']
     assert collaboration.created_by['id'] == mock_collaboration['created_by']['id']
- 

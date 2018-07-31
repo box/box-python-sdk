@@ -15,7 +15,6 @@ from ..object.group import Group
 from ..object.group_membership import GroupMembership
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
-from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
 
 class Client(object):
