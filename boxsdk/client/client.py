@@ -560,6 +560,7 @@ class Client(object):
             url='{0}/storage_policy_assignments'.format(API.BASE_API_URL),
             additional_params=additional_params,
             limit=100,
+        )
     
     def retention_policy(self, retention_id):
         """
