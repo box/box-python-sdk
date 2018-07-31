@@ -312,11 +312,9 @@ def test_delete_watermark(mock_box_session, test_file):
     mock_box_session.delete.return_value.ok = True
     is_watermark_deleted = test_file.delete_watermark()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)
-<<<<<<< HEAD
     assert is_watermark_deleted is True
-=======
 
-    
+
 def test_get_comments(test_file, mock_box_session):
     expected_url = test_file.get_url('comments')
     mock_comment1 = {
@@ -366,4 +364,3 @@ def test_add_comment(test_file, mock_box_session, comment_params):
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert isinstance(comment, Comment)
     assert comment.object_id == comment_id
->>>>>>> 65a51f44a971f8751fd9a7e21a75d3f3c3c3caa0
