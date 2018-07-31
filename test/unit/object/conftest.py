@@ -22,7 +22,6 @@ from boxsdk.object.web_link import WebLink
 from boxsdk.object.watermark import Watermark
 
 
-
 # pylint:disable=redefined-outer-name
 @pytest.fixture(scope='module')
 def mock_group_membership_id():
