@@ -123,6 +123,7 @@ def device_pin_id_1():
 def device_pin_id_2():
     return 202
 
+
 @pytest.fixture(scope='module')
 def device_pins_response(device_pin_id_1, device_pin_id_2):
     # pylint:disable=redefined-outer-name
@@ -351,7 +352,7 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
 
-    
+
 def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_response, device_pin_id_1, device_pin_id_2):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = device_pins_response
@@ -361,7 +362,7 @@ def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_r
         # pylint:disable=protected-access
         assert pin._session == mock_box_session
 
-        
+
 def test_get_storage_policies(mock_client, mock_box_session):
     expected_url = mock_box_session.get_url('storage_policies')
     mock_policy = {
