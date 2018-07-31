@@ -19,12 +19,10 @@ from ..object.retention_policy_assignment import RetentionPolicyAssignment
 from ..object.storage_policy import StoragePolicy
 from ..object.storage_policy_assignment import StoragePolicyAssignment
 from ..object.web_link import WebLink
-from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
-from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
-
 
 
 class Client(object):
@@ -559,7 +557,7 @@ class Client(object):
     def storage_policies(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the storage policy using limit-offset paging.
-        
+
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:
