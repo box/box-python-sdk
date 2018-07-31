@@ -14,5 +14,6 @@ __all__ = list(map(str, [
     'group',
     'group_membership',
     'search',
-    'user'
+    'user',
+    'web_link',
 ]))
