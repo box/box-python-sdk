@@ -7,6 +7,7 @@ from ..config import API
 from ..session.box_session import BoxSession
 from ..network.default_network import DefaultNetwork
 from ..object.user import User
+from ..object.device_pin import DevicePin
 from ..object.folder import Folder
 from ..object.search import Search
 from ..object.events import Events
@@ -18,8 +19,8 @@ from ..object.retention_policy_assignment import RetentionPolicyAssignment
 from ..object.storage_policy import StoragePolicy
 from ..object.storage_policy_assignment import StoragePolicyAssignment
 from ..object.web_link import WebLink
-from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
@@ -465,6 +466,63 @@ class Client(object):
         """
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
+
+    def device_pin(self, device_pin_id):
+        """
+        Initialize a :class: `Device Pin` object, whose box id is device_pin_id.
+
+        :param device_pin_id:
+            The assignment ID of the :class:`DevicePin` object.
+        :type device_pin_id:
+            `unicode`
+        :return:
+            A :class `DevicePin` object with the given entry ID.
+        :rtype:
+            :class:`DevicePin`
+        """
+        return DevicePin(session=self._session, object_id=device_pin_id)
+
+    def device_pins(self, enterprise_id, limit=None, marker=None, direction=None, fields=None):
+        """
+        Returns all of the deviec pins for the given enterprise.
+
+        :param enterprise_id:
+            The id of the enterprise to retrieve device pinners for.
+        :type enterprise_id:
+            `unicode`
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `str` or None
+        :param direction:
+            The sorting direction. Set to `ASC` or `DESC`
+        :type direction:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the device pins.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {}
+        if direction:
+            additional_params['direction'] = direction
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url='{0}/enterprises/{1}/device_pinners'.format(API.BASE_API_URL, enterprise_id),
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
 
     def storage_policy(self, policy_id):
         """
