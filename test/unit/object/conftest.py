@@ -14,6 +14,7 @@ from boxsdk.object.user import User
 from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 from boxsdk.object.search import Search
+from boxsdk.object.web_link import WebLink
 
 
 # pylint:disable=redefined-outer-name
@@ -83,6 +84,11 @@ def test_retention_policy_assignment(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_search(mock_box_session):
     return Search(mock_box_session)
+
+
+@pytest.fixture()
+def test_web_link(mock_box_session, mock_object_id):
+    return WebLink(mock_box_session, mock_object_id)
 
 
 @pytest.fixture(scope='function')
