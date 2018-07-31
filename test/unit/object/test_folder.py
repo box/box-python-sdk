@@ -11,9 +11,9 @@ from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.file import File
-from boxsdk.object.web_link import WebLink
 from boxsdk.object.collaboration import Collaboration, CollaborationRole
 from boxsdk.object.folder import Folder, FolderSyncState
+from boxsdk.object.web_link import WebLink
 from boxsdk.session.box_session import BoxResponse
 
 
@@ -35,17 +35,6 @@ def mock_accelerator_response_for_new_uploads(make_mock_box_request, mock_new_up
         }
     )
     return mock_response
-
-
-@pytest.fixture(scope='module')
-def create_web_link_response():
-    #pylint:disable=redefined-outer-name
-    mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.json.return_value = {
-        'type': 'web_link',
-        'id': '42',
-    }
-    return mock_network_response
 
 
 @pytest.fixture()
@@ -298,14 +287,29 @@ def test_preflight(test_folder, mock_object_id, mock_box_session):
     )
 
 
-def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_box_session, create_web_link_response):
+def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_box_session):
     # pylint:disable=redefined-outer-name
+    expected_url = "{0}/web_links".format(API.BASE_API_URL)
+    expected_name = 'Test WebLink'
+    description = 'Test Description'
     test_web_link_url = 'https://test.com'
-    value = json.dumps({'url': test_web_link_url, 'parent': {'id': test_folder.object_id}, 'name': "42"})
-    mock_box_session.post.return_value = create_web_link_response
-    new_web_link = test_folder.create_web_link(test_web_link_url, test_folder.object_id)
-
-    assert mock_box_session.post.call_args[0] == ("{0}/web_links".format(API.BASE_API_URL),)
-    assert mock_box_session.post.call_args[1] == {'data': value}
+    mock_box_session.post.return_value.json.return_value = {
+        'type': 'web_link',
+        'id': '42',
+        'url': expected_url,
+    }
+    new_web_link = test_folder.create_web_link(test_web_link_url, expected_name, description)
+    data = {
+        'url': test_web_link_url,
+        'parent': {
+            'id': '42',
+        },
+        'name': expected_name,
+        'description': description,
+    }
+    mock_box_session.post.assert_called_once_with(
+        expected_url,
+        data=json.dumps(data),
+    )
     assert isinstance(new_web_link, WebLink)
-
+    assert new_web_link.url == expected_url
