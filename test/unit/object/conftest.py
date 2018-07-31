@@ -7,6 +7,7 @@ from mock import Mock
 import pytest
 from six import int2byte, PY2
 from boxsdk.object.collaboration import Collaboration
+from boxsdk.object.collection import Collection
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
@@ -26,6 +27,11 @@ def mock_group_membership_id():
 @pytest.fixture(scope='module')
 def mock_collaboration_id():
     return 'collab_id1'
+
+
+@pytest.fixture(scope='module')
+def mock_collection_id():
+    return 'collection_id1'
 
 
 @pytest.fixture(scope='module')
@@ -91,6 +97,11 @@ def mock_collab_response(make_mock_box_request, mock_collaboration_id):
 def mock_user(mock_box_session, mock_user_id):
     user = User(mock_box_session, mock_user_id)
     return user
+
+
+@pytest.fixture()
+def mock_collection(mock_box_session, mock_collection_id):
+    return Collection(mock_box_session, mock_collection_id)
 
 
 @pytest.fixture(scope='function')
