@@ -7,6 +7,8 @@ from mock import Mock
 import pytest
 from six import int2byte, PY2
 from boxsdk.object.collaboration import Collaboration
+from boxsdk.object.collection import Collection
+from boxsdk.object.comment import Comment
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
@@ -28,6 +30,11 @@ def mock_group_membership_id():
 @pytest.fixture(scope='module')
 def mock_collaboration_id():
     return 'collab_id1'
+
+
+@pytest.fixture(scope='module')
+def mock_collection_id():
+    return 'collection_id1'
 
 
 @pytest.fixture(scope='module')
@@ -59,6 +66,11 @@ def test_collaboration(mock_box_session, mock_collaboration_id):
 @pytest.fixture()
 def test_file(mock_box_session, mock_object_id):
     return File(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_comment(mock_box_session, mock_object_id):
+    return Comment(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()
@@ -103,6 +115,11 @@ def mock_collab_response(make_mock_box_request, mock_collaboration_id):
 def mock_user(mock_box_session, mock_user_id):
     user = User(mock_box_session, mock_user_id)
     return user
+
+
+@pytest.fixture()
+def mock_collection(mock_box_session, mock_collection_id):
+    return Collection(mock_box_session, mock_collection_id)
 
 
 @pytest.fixture(scope='function')
@@ -205,4 +222,21 @@ def shared_link_password(request):
 
 @pytest.fixture(params=(date(2015, 5, 5), None))
 def shared_link_unshared_at(request):
+    return request.param
+
+
+@pytest.fixture(params=[
+    # Test case for plain message
+    (
+        'message',
+        'Hello there!'
+    ),
+
+    # Test case for tagged message
+    (
+        'tagged_message',
+        '@[22222:Test User] Hi!'
+    )
+])
+def comment_params(request):
     return request.param

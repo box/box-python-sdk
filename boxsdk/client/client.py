@@ -17,6 +17,7 @@ from ..object.retention_policy import RetentionPolicy
 from ..object.retention_policy_assignment import RetentionPolicyAssignment
 from ..object.web_link import WebLink
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
@@ -88,6 +89,21 @@ class Client(object):
         """
         return File(session=self._session, object_id=file_id)
 
+    def comment(self, comment_id):
+        """
+        Initialize a :class:`Comment` object, whose Box ID is comment_id.
+
+        :param comment_id:
+            The Box ID of the :class:`Comment` object.
+        :type comment_id:
+            `unicode`
+        :return:
+            A :class:`Comment` object with the given comment ID.
+        :rtype:
+            :class:`Comment`
+        """
+        return Translator().translate('comment')(session=self._session, object_id=comment_id)
+
     def web_link(self, web_link_id):
         """
         Initialize a :class: `WebLink` object, whose box id is web_link_id.
@@ -132,6 +148,43 @@ class Client(object):
             :class:`Group`
         """
         return Group(session=self._session, object_id=group_id)
+
+    def collection(self, collection_id):
+        """
+        Initialize a :class:`Collection` object, whose box ID is collection_id.
+
+        :param collection_id:
+            The box id of the :class:`Collection` object.
+        :type collection_id:
+            `unicode`
+        :return:
+            A :class:`Collection` object with the given collection ID.
+        :rtype:
+            :class:`Collection`
+        """
+        return Translator().translate('collection')(session=self._session, object_id=collection_id)
+
+    def collections(self, limit=None, offset=0, fields=None):
+        """
+        Get a list of collections for the current user.
+
+        :param limit:
+            The maximum number of users to return. If not specified, the Box API will determine an appropriate limit.
+        :type limit:
+            `int` or None
+        :param offset:
+            The user index at which to start the response.
+        :type offset:
+            `int`
+        """
+        return LimitOffsetBasedObjectCollection(
+            self._session,
+            self._session.get_url('collections'),
+            limit=limit,
+            fields=fields,
+            offset=offset,
+            return_full_pages=False,
+        )
 
     def users(self, limit=None, offset=0, filter_term=None):
         """
