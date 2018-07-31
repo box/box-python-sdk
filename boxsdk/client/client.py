@@ -364,7 +364,7 @@ class Client(object):
             response['id'],
             response,
         )
-    
+
     def collaboration_whitelist_entry(self, entry_id):
         """
         Initialize a :class:`CollaborationWhitelistEntry` object, whose box id is entry_id.
