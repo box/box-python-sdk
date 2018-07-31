@@ -291,7 +291,6 @@ def test_get_watermark(mock_box_session, test_file):
     assert watermark['modified_at'] == modified_at
 
 
-
 def test_apply_watermark(mock_box_session, test_file):
     created_at = '2016-10-31T15:33:33-07:00'
     modified_at = '2016-10-31T15:33:33-07:00'
