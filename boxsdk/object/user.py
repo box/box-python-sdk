@@ -12,7 +12,7 @@ class User(BaseObject):
 
     _item_type = 'user'
 
-    def get_memberships(self, offset=None, limit=None):
+    def get_memberships(self, offset=None, limit=None, fields=None):
         """
         Get the entries in the user group membership using limit-offset paging.
 
@@ -29,7 +29,7 @@ class User(BaseObject):
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            An iterator of the entries in the legal hold policy
+            An iterator of the entries in the groups
         :rtype:
             :class:`BoxObjectCollection`
         """

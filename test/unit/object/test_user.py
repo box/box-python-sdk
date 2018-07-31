@@ -14,12 +14,12 @@ def memberships_response():
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'entries': [
-            {'type': 'group_membership', 'id': 101},
-            {'type': 'group_membership', 'id': 202}
+            {'type': 'group_membership', 'id': 101, 'user': {'type': 'user', 'id': 100}, 'group': {'type': 'group', 'id': 300}},
+            {'type': 'group_membership', 'id': 202, 'user': {'type': 'user', 'id': 200}, 'group': {'type': 'group', 'id': 400}}
         ],
         'limit': 2,
         'total_count': 2,
-        'offset': 0
+        'offset': 0,
     }
     return mock_network_response
 
