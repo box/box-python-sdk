@@ -292,7 +292,7 @@ class File(Item):
             allow_preview=allow_preview,
             password=password,
         )
-        return item.shared_link['download_url']  #pylint:disable=no-member
+        return item.shared_link['download_url']  # pylint:disable=no-member
 
     def get_comments(self, limit=None, offset=0, fields=None):
         """

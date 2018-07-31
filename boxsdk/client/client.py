@@ -97,7 +97,7 @@ class Client(object):
         :rtype:
             :class:`Comment`
         """
-        return self.translator.translate('comment')(session=self._session, object_id=comment_id)
+        return Translator().translate('comment')(session=self._session, object_id=comment_id)
 
     def user(self, user_id='me'):
         """
