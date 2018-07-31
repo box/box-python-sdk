@@ -462,4 +462,4 @@ class Folder(Item):
         """
         url = '{0}/folders/{1}/watermark'.format(API.BASE_API_URL, self.object_id)
         box_response = self._session.delete(url, expect_json_response=False)
-        return box_response.content
+        return box_response.ok
