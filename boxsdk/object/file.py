@@ -4,8 +4,6 @@ from __future__ import unicode_literals, absolute_import
 
 import json
 
-import json
-
 from boxsdk.config import API
 from .item import Item
 from .metadata import Metadata
