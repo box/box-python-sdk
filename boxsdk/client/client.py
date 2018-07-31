@@ -496,10 +496,14 @@ class Client(object):
         :rtype:
             :class:`BoxObjectCollection`
         """
+        additional_params = {
+            'resolved_for_type': resolved_for_type,
+            'resolved_for_id': resolved_for_id,
+        }
         return MarkerBasedObjectCollection(
             session=self._session,
-            url='{0}/storage_policy_assignments?resolved_for_type={1}&resolved_for_id={2}'.
-            format(API.BASE_API_URL, resolved_for_type, resolved_for_id),
+            url='{0}/storage_policy_assignments'.format(API.BASE_API_URL),
+            additional_params=additional_params,
             limit=100,
             marker=marker,
             fields=fields,

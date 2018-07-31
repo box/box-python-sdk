@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 import json
 import pytest
@@ -10,12 +10,14 @@ from boxsdk.config import API
 from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.network.default_network import DefaultNetworkResponse
 
+
 @pytest.fixture(scope='module')
 def delete_assignment_response():
     # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.ok = True
     return mock_network_response
+
 
 def test_get(test_storage_policy_assignment, mock_box_session):
     expected_url = '{0}/storage_policy_assignments/{1}'.format(API.BASE_API_URL, test_storage_policy_assignment.object_id)
@@ -36,15 +38,15 @@ def test_update(test_storage_policy_assignment, mock_box_session):
         'id': new_policy_id,
     }
     storage_policy_assignment = test_storage_policy_assignment.update_info({
-        'storage_policy':{
-            'type':'storage_policy',
-            'id':new_policy_id,
+        'storage_policy': {
+            'type': 'storage_policy',
+            'id': new_policy_id,
         }
     })
     data = {
-        'storage_policy':{
-            'type':'storage_policy',
-            'id':new_policy_id,
+        'storage_policy': {
+            'type': 'storage_policy',
+            'id': new_policy_id,
         }
     }
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
@@ -52,7 +54,7 @@ def test_update(test_storage_policy_assignment, mock_box_session):
 
 
 def test_delete(test_storage_policy_assignment, delete_assignment_response, mock_box_session):
-	# pylint:disable=redefined-outer-name
+    # pylint:disable=redefined-outer-name
     mock_box_session.delete.return_value = delete_assignment_response
     response = test_storage_policy_assignment.delete()
 
@@ -62,4 +64,3 @@ def test_delete(test_storage_policy_assignment, delete_assignment_response, mock
     mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
 
     assert response is True
-
