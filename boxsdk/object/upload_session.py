@@ -18,6 +18,9 @@ class UploadSession(BaseObject):
     def get_url(self, *args):
         """
         Base class override. Endpoint is a little different - it's /files/upload_sessions.
+
+        :rtype:
+            `unicode`
         """
         return self.session.get_url(
             '{0}s/{1}s'.format(self._parent_item_type, self._item_type),
@@ -35,6 +38,14 @@ class UploadSession(BaseObject):
         return response['entries']
 
     def _calculate_part_sha1(self, content_stream):
+        """
+        Calculate the SHA1 hash of the chunk stream for a given part of the file.
+
+        :returns:
+            The unencoded SHA1 hash of the part.
+        :rtype:
+            `bytes`
+        """
         content_sha1 = hashlib.sha1()
         stream_position = content_stream.tell()
         hashed_length = 0
