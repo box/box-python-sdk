@@ -322,7 +322,7 @@ def test_delete_watermark(mock_box_session, test_folder):
     test_folder.delete_watermark()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)
 
-    
+
 def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_box_session):
     # pylint:disable=redefined-outer-name
     expected_url = "{0}/web_links".format(API.BASE_API_URL)
@@ -349,4 +349,3 @@ def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_b
     )
     assert isinstance(new_web_link, WebLink)
     assert new_web_link.url == expected_url
-
