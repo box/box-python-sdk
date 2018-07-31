@@ -326,7 +326,6 @@ class Item(BaseObject):
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).delete(params, headers)
 
-
     def collaborate(self, role, accessible_by, can_view_path=None, notify=None, fields=None):
         """Collaborate user or group onto a Box item.
 
@@ -483,3 +482,42 @@ class Item(BaseObject):
             return_full_pages=False
         )
 
+    def add_to_collection(self, collection):
+        """
+        Add the item to a collection.  This method is not currently safe from race conditions.
+
+        :param collection:
+            The collection to add the item to.
+        :type collection:
+            :class:`Collection`
+        :return:
+            This item.
+        :rtype:
+            :class:`Item`
+        """
+        collections = self.get(fields=['collections']).collections  # pylint:disable=no-member
+        collections.append({'id': collection.object_id})
+        data = {
+            'collections': collections
+        }
+        return self.update_info(data)
+
+    def remove_from_collection(self, collection):
+        """
+        Remove the item from a collection.  This method is not currently safe from race conditions.
+
+        :param collection:
+            The collection to remove the item from.
+        :type collection:
+            :class:`Collection`
+        :return:
+            This item.
+        :rtype:
+            :class:`Item`
+        """
+        collections = self.get(fields=['collections']).collections  # pylint:disable=no-member
+        updated_collections = [c for c in collections if c['id'] != collection.object_id]
+        data = {
+            'collections': updated_collections
+        }
+        return self.update_info(data)
