@@ -6,15 +6,16 @@ import json
 from ..config import API
 from ..session.box_session import BoxSession
 from ..network.default_network import DefaultNetwork
-from ..object.user import User
-from ..object.folder import Folder
-from ..object.search import Search
+from ..object.collaboration_whitelist import CollaborationWhitelist
 from ..object.events import Events
 from ..object.file import File
+from ..object.folder import Folder
 from ..object.group import Group
 from ..object.group_membership import GroupMembership
 from ..object.retention_policy import RetentionPolicy
 from ..object.retention_policy_assignment import RetentionPolicyAssignment
+from ..object.search import Search
+from ..object.user import User
 from ..object.web_link import WebLink
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -366,6 +367,47 @@ class Client(object):
             response['id'],
             response,
         )
+
+    def collaboration_whitelist_entry(self, entry_id):
+        """
+        Initialize a :class:`CollaborationWhitelistEntry` object, whose box id is entry_id.
+         :param entry_id:
+            The box ID of the :class:`CollaborationWhitelistEntry` object.
+        :type entry_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationWhitelistEntry` object with the given entry ID.
+        :rtype:
+            :class:`CollaborationWhitelistEntry`
+        """
+        return Translator().translate('collaboration_whitelist_entry')(session=self._session, object_id=entry_id)
+
+    def collaboration_whitelist_exempt_target(self, exemption_id):
+        """
+        Initialize a :class:`CollaborationWhitelistExemptTarget` object, whose box ID is exemption_id.
+         :param exemption_id:
+            The box ID of the :class:`CollaborationWhitelistExemptTarget` object.
+        :type exemption_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationWhitelistExemptTarget` object with the given exemption ID.
+        :rtype:
+            :class:`CollaborationWhitelistExemptTarget`
+        """
+        return Translator().translate('collaboration_whitelist_exempt_target')(
+            session=self._session,
+            object_id=exemption_id
+        )
+
+    def collaboration_whitelist(self):
+        """
+        Initialize a :class:`CollaborationWhitelistExemptTarget` object, whose box ID is exemption_id.
+         :return:
+            The :class:`CollaborationWhitelist` object.
+        :rtype:
+            :class:`CollaborationWhitelist:
+        """
+        return CollaborationWhitelist(self._session)
 
     def make_request(self, method, url, **kwargs):
         """
