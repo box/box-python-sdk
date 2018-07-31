@@ -17,6 +17,7 @@ __all__ = list(map(str, [
     'folder',
     'group',
     'group_membership',
+    'retention_policy',
     'search',
     'user',
     'web_link',

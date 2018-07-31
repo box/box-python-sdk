@@ -16,6 +16,8 @@ from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
+from boxsdk.object.retention_policy import RetentionPolicy
+from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 from boxsdk.object.search import Search
 from boxsdk.object.web_link import WebLink
 
@@ -97,6 +99,16 @@ def test_folder(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_group(mock_box_session, mock_group_id):
     return Group(mock_box_session, mock_group_id)
+
+
+@pytest.fixture()
+def test_retention_policy(mock_box_session, mock_object_id):
+    return RetentionPolicy(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_retention_policy_assignment(mock_box_session, mock_object_id):
+    return RetentionPolicyAssignment(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()
