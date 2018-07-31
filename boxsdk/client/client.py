@@ -15,6 +15,7 @@ from ..object.group import Group
 from ..object.group_membership import GroupMembership
 from ..object.storage_policy import StoragePolicy
 from ..object.storage_policy_assignment import StoragePolicyAssignment
+from ..object.web_link import WebLink
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
@@ -86,6 +87,21 @@ class Client(object):
             :class:`File`
         """
         return File(session=self._session, object_id=file_id)
+
+    def web_link(self, web_link_id):
+        """
+        Initialize a :class: `WebLink` object, whose box id is web_link_id.
+
+        :param web_link_id:
+            The box ID of the :class:`WebLink` object.
+        :type web_link_id:
+            `unicode`
+        :return:
+            A :class: `WebLink` object with the given entry ID.
+        :rtype:
+            :class:`WebLink`
+        """
+        return WebLink(session=self._session, object_id=web_link_id)
 
     def user(self, user_id='me'):
         """
