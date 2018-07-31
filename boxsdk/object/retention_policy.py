@@ -40,6 +40,7 @@ class RetentionPolicy(BaseObject):
                 'id': item.object_id,
             }
         }
+        params = {}
         if fields:
             params['fields'] = ','.join(fields)
         response = self._session.post(url, data=json.dumps(body), params=params).json()

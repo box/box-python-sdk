@@ -54,7 +54,7 @@ def test_assign(test_retention_policy, test_folder, mock_box_session):
     }
     mock_box_session.post.return_value.json.return_value = mock_assignment
     assignment = test_retention_policy.assign(test_folder)
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), params={})
     assert assignment.id == mock_assignment['id']
     assert assignment.retention_policy['id'] == mock_assignment['retention_policy']['id']
 
