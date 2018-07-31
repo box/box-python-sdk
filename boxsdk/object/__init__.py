@@ -15,4 +15,5 @@ __all__ = list(map(str, [
     'search',
     'upload_session',
     'user',
+    'web_link',
 ]))

@@ -14,6 +14,7 @@ from boxsdk.object.file import File
 from boxsdk.object.upload_session import UploadSession
 from boxsdk.object.collaboration import Collaboration, CollaborationRole
 from boxsdk.object.folder import Folder, FolderSyncState
+from boxsdk.object.web_link import WebLink
 from boxsdk.session.box_session import BoxResponse
 
 
@@ -311,3 +312,31 @@ def test_create_upload_session(test_folder, mock_box_session):
     assert isinstance(upload_session, UploadSession)
     assert upload_session.part_size == 12345
     assert upload_session.total_parts == 16
+
+
+def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_box_session):
+    # pylint:disable=redefined-outer-name
+    expected_url = "{0}/web_links".format(API.BASE_API_URL)
+    expected_name = 'Test WebLink'
+    description = 'Test Description'
+    test_web_link_url = 'https://test.com'
+    mock_box_session.post.return_value.json.return_value = {
+        'type': 'web_link',
+        'id': '42',
+        'url': expected_url,
+    }
+    new_web_link = test_folder.create_web_link(test_web_link_url, expected_name, description)
+    data = {
+        'url': test_web_link_url,
+        'parent': {
+            'id': '42',
+        },
+        'name': expected_name,
+        'description': description,
+    }
+    mock_box_session.post.assert_called_once_with(
+        expected_url,
+        data=json.dumps(data),
+    )
+    assert isinstance(new_web_link, WebLink)
+    assert new_web_link.url == expected_url
