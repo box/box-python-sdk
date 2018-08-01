@@ -15,7 +15,6 @@ from boxsdk.util.translator import Translator
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
-
 class FolderSyncState(TextEnum):
     """An enum of all possible values of a folder's ``sync_state`` attribute.
 
@@ -385,7 +384,6 @@ class Folder(Item):
         """
         return super(Folder, self).delete({'recursive': recursive}, etag)
 
-
     def collaborations(self, fields=None):
         """
         Get the entries in the collaboration using marker-based paging.
@@ -405,5 +403,5 @@ class Folder(Item):
             limit=500,
             marker=None,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )

@@ -392,9 +392,8 @@ class Client(object):
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
 
-
     def root_folder(self):
-        url = '{0}/folders/0'.format(API.BASE_API_URL, scope)
-        box_response = self._session.get(url)
-        response = box_response.json()
-        return Folder(self._session, response['id'], response)
+        """
+        Returns a user's root folder object.
+        """
+        return Translator().translate('folder')(self._session, '0')
