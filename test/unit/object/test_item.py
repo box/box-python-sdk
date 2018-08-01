@@ -7,6 +7,7 @@ import pytest
 from boxsdk.config import API
 from boxsdk.object.collaboration import Collaboration
 
+
 @pytest.fixture(params=('file', 'folder'))
 def test_item_and_response(test_file, test_folder, mock_file_response, mock_folder_response, request):
     if request.param == 'file':
