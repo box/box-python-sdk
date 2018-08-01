@@ -1,12 +1,13 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
 import base64
+import hashlib
 import hmac
 import json
+
 from .base_object import BaseObject
-from boxsdk.config import API
-from boxsdk.util.translator import Translator
 
 
 def _compute_signature(body, headers, signature_key):
@@ -38,7 +39,7 @@ def _compute_signature(body, headers, signature_key):
     encoded_signature_key = signature_key.encode()
     encoded_delivery_time_stamp = headers.get('box-delivery-timestamp').encode()
 
-    new_hmac = hmac.new(encoded_signature_key, digestmod='sha256')
+    new_hmac = hmac.new(encoded_signature_key, digestmod=hashlib.sha256)
     new_hmac.update(body)
     new_hmac.update(encoded_delivery_time_stamp)
 
@@ -74,7 +75,7 @@ class Webhook(BaseObject):
         :type secondary_signature_key:
             `unicode`
         """
-        if type(body) is dict:
+        if isinstance(body, dict):
             body = json.dumps(body, separators=(',', ':')).encode()
 
         primary_signature = _compute_signature(body, headers, primary_signature_key)

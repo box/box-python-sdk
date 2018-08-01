@@ -19,11 +19,10 @@ from ..object.retention_policy_assignment import RetentionPolicyAssignment
 from ..object.storage_policy import StoragePolicy
 from ..object.storage_policy_assignment import StoragePolicyAssignment
 from ..object.web_link import WebLink
-from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
-from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
 class Client(object):
@@ -480,7 +479,7 @@ class Client(object):
         :rtype:
             :class:`Webhook`
         """
-        return Webhook(session-self._session, object_id=webhook_id)
+        return Webhook(session=self._session, object_id=webhook_id)
 
     def create_webhook(self, target_id, target_type, triggers, address):
         """
