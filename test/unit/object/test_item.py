@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import json
 import pytest
 
+from boxsdk.config import API
 from boxsdk.object.collaboration import Collaboration
 
 @pytest.fixture(params=('file', 'folder'))
@@ -165,7 +166,7 @@ def test_get(test_item_and_response, mock_box_session, fields, mock_object_id, e
 def test_collaborate(test_item_and_response, test_group, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
-    expected_url = test_item.get_url('collaborations')
+    expected_url = '{0}/collaborations'.format(API.BASE_API_URL)
     expected_data = {
         'item': {
             'type': test_item.object_type,
@@ -187,11 +188,11 @@ def test_collaborate(test_item_and_response, test_group, mock_box_session):
     }
     mock_box_session.post.return_value.json.return_value = mock_collaboration
     collaboration = test_item.collaborate('editor', test_group)
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), params={})
     assert collaboration.id == mock_collaboration['id']
     assert collaboration['type'] == mock_collaboration['type']
 
-    
+
 def test_collaborate_with_login(test_item_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response

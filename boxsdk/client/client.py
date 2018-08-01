@@ -18,11 +18,10 @@ from ..object.retention_policy_assignment import RetentionPolicyAssignment
 from ..object.storage_policy import StoragePolicy
 from ..object.storage_policy_assignment import StoragePolicyAssignment
 from ..object.web_link import WebLink
-from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
-from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
 
 class Client(object):
@@ -467,14 +466,10 @@ class Client(object):
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
 
-    def pending_collaborations(self, status, limit=None, offset=None, fields=None):
+    def pending_collaborations(self, limit=None, offset=None, fields=None):
         """
         Get the entries in the file version using limit-offset paging.
 
-        :param status:
-            The status of the collaboration.
-        :type status:
-            `Unicode`
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:
@@ -492,13 +487,15 @@ class Client(object):
         :rtype:
             :class:`BoxObjectCollection`
         """
+        additional_params = {'status': 'pending'}
         return LimitOffsetBasedObjectCollection(
             session=self._session,
             url='{0}/collaborations'.format(API.BASE_API_URL),
+            additional_params=additional_params,
             limit=limit,
             offset=offset,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )
 
     def storage_policy(self, policy_id):
@@ -534,7 +531,7 @@ class Client(object):
     def storage_policies(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the storage policy using limit-offset paging.
-        
+
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:

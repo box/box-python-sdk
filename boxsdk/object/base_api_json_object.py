@@ -134,11 +134,3 @@ class BaseAPIJSONObject(object):
             `dict`
         """
         return copy.deepcopy(self._response_object)
-
-    @property
-    def object_type(self):
-        """Return the Box type for the object.
-        :rtype:
-            `unicode`
-        """
-        return self._item_type

@@ -421,7 +421,6 @@ class Folder(Item):
         """
         return super(Folder, self).delete({'recursive': recursive}, etag)
 
-
     def collaborators(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the collaborators using limit-offset paging.

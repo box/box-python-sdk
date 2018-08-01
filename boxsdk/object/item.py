@@ -362,6 +362,8 @@ class Item(BaseObject):
             },
             'role': role,
         }
+        if can_view_path:
+            body['can_view_path'] = can_view_path
         params = {}
         if fields:
             params['fields'] = ','.join(fields)
