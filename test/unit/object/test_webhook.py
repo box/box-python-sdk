@@ -10,13 +10,13 @@ from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.webhook import Webhook
 
+
 @pytest.fixture(scope='module')
 def delete_webhook_response():
     # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.ok = True
     return mock_network_response
-
 
 
 def test_delete_webhook_return_the_correct_response(
@@ -27,7 +27,6 @@ def test_delete_webhook_return_the_correct_response(
     # pylint:disable=redefined-outer-name
     mock_box_session.delete.return_value = delete_webhook_response
     response = test_webhook.delete()
-    # pylint:disable=protected-access
     expected_url = test_webhook.get_url()
     mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
     assert response is True
@@ -72,7 +71,6 @@ def test_update(test_webhook, mock_box_session):
 )
 def test_validate_message(signature_version, signature_algorithm, primary_key, secondary_key, expected_result):
     body = {
-        'type': 'webhook_event',
         'webhook': {
             'id': '1234567890',
         },

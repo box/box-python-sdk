@@ -74,7 +74,6 @@ def webhook_id_2():
     return 202
 
 
-
 @pytest.fixture(scope='module')
 def webhooks_response(webhook_id_1, webhook_id_2):
     # pylint disable=redefined-outer-name
@@ -87,7 +86,6 @@ def webhooks_response(webhook_id_1, webhook_id_2):
         'limit': 5,
     }
     return mock_network_response
-
 
 
 @pytest.fixture(scope='module')
@@ -401,7 +399,7 @@ def test_get_assignments(
         # pylint:disable=protected-access
         assert webhook._session == mock_box_session
 
-        
+
 def test_get_storage_policies(mock_client, mock_box_session):
     expected_url = mock_box_session.get_url('storage_policies')
     mock_policy = {

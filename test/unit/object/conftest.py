@@ -90,7 +90,7 @@ def test_group(mock_box_session, mock_group_id):
 def test_webhook(mock_box_session, mock_object_id):
     return Webhook(mock_box_session, mock_object_id)
 
-  
+
 @pytest.fixture()
 def test_storage_policy(mock_box_session, mock_object_id):
     return StoragePolicy(mock_box_session, mock_object_id)
