@@ -10,6 +10,8 @@ from .metadata import Metadata
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..util.translator import Translator
 
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+
 
 class File(Item):
     """Box API endpoint for interacting with files."""
@@ -292,7 +294,37 @@ class File(Item):
             allow_preview=allow_preview,
             password=password,
         )
-        return item.shared_link['download_url']  # pylint:disable=no-member
+        return item.shared_link['download_url']
+
+    def collaborations(self, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the collaborators using limit-offset paging.
+
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `str` or None
+         :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the collaborators
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url='{0}/files/{1}/collaborations'.format(API.BASE_API_URL, self.object_id),
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
 
     def get_comments(self, limit=None, offset=0, fields=None):
         """

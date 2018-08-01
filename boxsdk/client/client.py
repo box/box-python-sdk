@@ -18,8 +18,8 @@ from ..object.retention_policy_assignment import RetentionPolicyAssignment
 from ..object.storage_policy import StoragePolicy
 from ..object.storage_policy_assignment import StoragePolicyAssignment
 from ..object.web_link import WebLink
-from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
@@ -465,6 +465,38 @@ class Client(object):
         """
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
+
+    def pending_collaborations(self, limit=None, offset=None, fields=None):
+        """
+        Get the entries in the file version using limit-offset paging.
+
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param offset:
+            The offset of the item at which to begin the response.
+        :type offset:
+            `str` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the pending collaborations
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {'status': 'pending'}
+        return LimitOffsetBasedObjectCollection(
+            session=self._session,
+            url='{0}/collaborations'.format(API.BASE_API_URL),
+            additional_params=additional_params,
+            limit=limit,
+            offset=offset,
+            fields=fields,
+            return_full_pages=False,
+        )
 
     def storage_policy(self, policy_id):
         """
