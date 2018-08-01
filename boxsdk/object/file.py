@@ -296,7 +296,7 @@ class File(Item):
         )
         return item.shared_link['download_url']
 
-    def collaborators(self, limit=None, marker=None, fields=None):
+    def collaborations(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the collaborators using limit-offset paging.
 
