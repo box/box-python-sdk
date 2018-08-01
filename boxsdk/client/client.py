@@ -534,6 +534,7 @@ class Client(object):
             url=self.get_url('webhooks'),
             limit=limit,
             marker=marker,
+        )
 
     def storage_policy(self, policy_id):
         """
