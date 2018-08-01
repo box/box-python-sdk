@@ -29,10 +29,8 @@ def test_delete_webhook_return_the_correct_response(
     response = test_webhook.delete()
     # pylint:disable=protected-access
     expected_url = test_webhook.get_url()
-    # pylint:enable = protected-access
     mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
     assert response is True
-
 
 
 def test_get(test_webhook, mock_box_session):
@@ -60,7 +58,19 @@ def test_update(test_webhook, mock_box_session):
     assert isinstance(webhook, Webhook)
 
 
-def test_validate_message():
+@pytest.mark.parametrize(
+    'signature_version,signature_algorithm,primary_key,secondary_key,expected_result',
+    [
+        ('1', 'HmacSHA256', 'SamplePrimaryKey', 'SampleSecondaryKey', True),
+        ('1', 'HmacSHA256', 'SamplePrimaryKey', None, True),
+        ('1', 'HmacSHA256', 'WrongPrimaryKey', 'SampleSecondaryKey', True),
+        ('1', 'HmacSHA256', 'WrongPrimaryKey', 'WrongSecondaryKey', False),
+        ('1', 'HmacSHA256', None, None, False),
+        ('2', 'HmacSHA256', 'SamplePrimaryKey', 'SampleSecondaryKey', False),
+        ('1', 'WrongAlgorithm', 'SamplePrimaryKey', 'SampleSecondaryKey', False),
+    ]
+)
+def test_validate_message(signature_version, signature_algorithm, primary_key, secondary_key, expected_result):
     body = {
         'type': 'webhook_event',
         'webhook': {
@@ -73,20 +83,15 @@ def test_validate_message():
             'name': 'Test.txt',
         }
     }
+    encoded_body = json.dumps(body, separators=(',', ':')).encode()
     headers = {
         'box-delivery-id': 'f96bb54b-ee16-4fc5-aa65-8c2d9e5b546f',
         'box-delivery-timestamp': '2020-01-01T00:00:00-07:00',
-        'box-signature-algorithm': 'HmacSHA256',
+        'box-signature-algorithm': signature_algorithm,
         'box-signature-primary': '6TfeAW3A1PASkgboxxA5yqHNKOwFyMWuEXny/FPD5hI=',
         'box-signature-secondary': 'v+1CD1Jdo3muIcbpv5lxxgPglOqMfsNHPV899xWYydo=',
-        'box-signature-version': '1',
+        'box-signature-version': signature_version,
     }
-    primary_signature_key = 'SamplePrimaryKey'
-    secondary_signature_key = 'SampleSecondaryKey'
-    # incorrect_signaute_key = 'IncorrectKey'
-    # date_in_past = parse('2010-01-01T00:00:00-07:00')
-    # date_in_future = parse('2020-01-01T00:15:00-07:00')
-    # headers_with_wrong_signature_version = headers.update({'box-signature-version': '2'})
-    # headers_with_wrong_signature_algorithm = headers.update({'box-signature-algorithm': 'XXX'})
 
-    Webhook.validate_message(body, headers, primary_signature_key, secondary_signature_key)
+    is_validated = Webhook.validate_message(encoded_body, headers, primary_key, secondary_key)
+    assert is_validated is expected_result
