@@ -19,6 +19,7 @@ from boxsdk.object.search import Search
 from boxsdk.object.storage_policy import StoragePolicy
 from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.object.web_link import WebLink
+from boxsdk.object.webhook import Webhook
 
 
 # pylint:disable=redefined-outer-name
@@ -83,6 +84,11 @@ def test_folder(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_group(mock_box_session, mock_group_id):
     return Group(mock_box_session, mock_group_id)
+
+
+@pytest.fixture()
+def test_webhook(mock_box_session, mock_object_id):
+    return Webhook(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()

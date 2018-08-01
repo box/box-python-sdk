@@ -18,4 +18,5 @@ __all__ = list(map(str, [
     'search',
     'user',
     'web_link',
+    'webhook',
 ]))

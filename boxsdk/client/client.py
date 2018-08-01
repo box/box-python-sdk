@@ -12,14 +12,15 @@ from ..object.search import Search
 from ..object.events import Events
 from ..object.file import File
 from ..object.group import Group
+from ..object.webhook import Webhook
 from ..object.group_membership import GroupMembership
 from ..object.retention_policy import RetentionPolicy
 from ..object.retention_policy_assignment import RetentionPolicyAssignment
 from ..object.storage_policy import StoragePolicy
 from ..object.storage_policy_assignment import StoragePolicyAssignment
 from ..object.web_link import WebLink
-from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
@@ -465,6 +466,74 @@ class Client(object):
         """
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
+
+    def webhook(self, webhook_id):
+        """
+        Initialize a :class: `Webhook` object, whose box id is webhook_id.
+        :param webhook_id:
+            The box ID of the :class: `Webhook` object.
+        :type webhook_id:
+            `unicode`
+        :return:
+            A :class: `Webhook` object with the given entry ID.
+        :rtype:
+            :class:`Webhook`
+        """
+        return Webhook(session=self._session, object_id=webhook_id)
+
+    def create_webhook(self, target_id, target_type, triggers, address):
+        """
+        Create a webhook on the given file.
+
+        :param triggers:
+            Event types that trigger notifications for the target.
+        :type triggers:
+            `list of str`
+        :param address:
+            The url to send the notification to.
+        :type address:
+            `str`
+        :return:
+            A :class: `Webhook` object with the given entry ID.
+        :rtype:
+            :class:`Webhook`
+        """
+        url = '{0}/webhooks'.format(API.BASE_API_URL)
+        webhook_attributes = {
+            'target': {
+                'type': target_type,
+                'id': target_id,
+            },
+            'triggers': triggers,
+            'address': address,
+        }
+        box_response = self._session.post(url, data=json.dumps(webhook_attributes))
+        response = box_response.json()
+        return Webhook(self._session, response['id'], response)
+
+    def webhooks(self, marker=None, limit=None):
+        """
+        Get all webhooks in an enterprise.
+
+        :param marker:
+            The position marker at which to begin the response.
+        :type marker:
+            `str` or None
+        :param limit:
+            The maximum number of entries to return.
+        :type limit:
+            `int`
+        :returns:
+            An iterator of the entries in the webhook
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('webhooks'),
+            limit=limit,
+            marker=marker,
+        )
 
     def storage_policy(self, policy_id):
         """
