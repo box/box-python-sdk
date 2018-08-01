@@ -421,24 +421,3 @@ class Folder(Item):
         """
         return super(Folder, self).delete({'recursive': recursive}, etag)
 
-    def collaborations(self, fields=None):
-        """
-        Get the entries in the collaboration using marker-based paging.
-
-        :param fields:
-            List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
-        :returns:
-            An iterator of the entries in the collaboration for the folder.
-        :rtype:
-            :class:`BoxObjectCollection`
-        """
-        return MarkerBasedObjectCollection(
-            session=self._session,
-            url=self.get_url('collaborations'),
-            limit=500,
-            marker=None,
-            fields=fields,
-            return_full_pages=False,
-        )
