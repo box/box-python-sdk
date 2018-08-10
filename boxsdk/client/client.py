@@ -21,9 +21,10 @@ class Client(object):
 
     def __init__(
             self,
+            raise_exceptions=True,
             oauth=None,
             network_layer=None,
-            session=None,
+            session=None
     ):
         """
         :param oauth:
@@ -42,7 +43,7 @@ class Client(object):
         network_layer = network_layer or DefaultNetwork()
         self._oauth = oauth
         self._network = network_layer
-        self._session = session or BoxSession(oauth=oauth, network_layer=network_layer)
+        self._session = session or BoxSession(oauth=oauth, network_layer=network_layer, raise_exceptions=raise_exceptions)
 
     @property
     def auth(self):

@@ -65,7 +65,7 @@ class BoxSession(object):
     Box API session. Provides auth, automatic retry of failed requests, and session renewal.
     """
 
-    def __init__(self, oauth, network_layer, default_headers=None):
+    def __init__(self, oauth, network_layer, raise_exceptions, default_headers=None):
         """
         :param oauth:
             OAuth2 object used by the session to authorize requests.
@@ -83,6 +83,7 @@ class BoxSession(object):
         self._oauth = oauth
         self._network_layer = network_layer
         self._default_headers = {'User-Agent': Client.USER_AGENT_STRING}
+        self._raise_exceptions = raise_exceptions
         if default_headers:
             self._default_headers.update(default_headers)
 
@@ -380,7 +381,8 @@ class BoxSession(object):
             **kwargs
         )
 
-        self._raise_on_unsuccessful_request(network_response, expect_json_response, method, url)
+        if self._raise_exceptions is True:
+            self._raise_on_unsuccessful_request(network_response, expect_json_response, method, url)
 
         return network_response
 
