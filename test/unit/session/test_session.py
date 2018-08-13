@@ -14,7 +14,7 @@ from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.network.default_network import DefaultNetwork, DefaultNetworkResponse
 from boxsdk.session.box_response import BoxResponse
-from boxsdk.session.box_session import BoxSession, Translator
+from boxsdk.session.session import Session, Translator, AuthorizedSession
 
 
 @pytest.fixture(scope='function', params=[False, True])
@@ -42,17 +42,23 @@ def mock_network_layer():
 
 
 @pytest.fixture
+def unauthorized_session(mock_network_layer, translator):
+    # pylint:disable=redefined-outer-name
+    return Session(network_layer=mock_network_layer, translator=translator)
+
+
+@pytest.fixture
 def box_session(mock_oauth, mock_network_layer, translator):
     # pylint:disable=redefined-outer-name
-    return BoxSession(oauth=mock_oauth, network_layer=mock_network_layer, translator=translator)
+    return AuthorizedSession(oauth=mock_oauth, network_layer=mock_network_layer, translator=translator)
 
 
 @pytest.mark.parametrize('test_method', [
-    BoxSession.get,
-    BoxSession.post,
-    BoxSession.put,
-    BoxSession.delete,
-    BoxSession.options,
+    Session.get,
+    Session.post,
+    Session.put,
+    Session.delete,
+    Session.options,
 ])
 def test_box_session_handles_unauthorized_response(
         test_method,
@@ -84,11 +90,11 @@ def test_box_session_handles_unauthorized_response(
 
 
 @pytest.mark.parametrize('test_method', [
-    BoxSession.get,
-    BoxSession.post,
-    BoxSession.put,
-    BoxSession.delete,
-    BoxSession.options,
+    Session.get,
+    Session.post,
+    Session.put,
+    Session.delete,
+    Session.options,
 ])
 @pytest.mark.parametrize('initial_access_token', [None])
 def test_box_session_gets_access_token_before_request(
@@ -120,12 +126,12 @@ def test_box_session_gets_access_token_before_request(
 
 
 @pytest.mark.parametrize('test_method', [
-    BoxSession.get,
-    BoxSession.post,
-    BoxSession.put,
-    BoxSession.delete,
-    BoxSession.options,
-    partial(BoxSession.request, method='head'),
+    Session.get,
+    Session.post,
+    Session.put,
+    Session.delete,
+    Session.options,
+    partial(Session.request, method='head'),
 ])
 def test_box_session_retries_response_after_retry_after(
         test_method,
@@ -147,12 +153,12 @@ def test_box_session_retries_response_after_retry_after(
 
 
 @pytest.mark.parametrize('test_method', [
-    BoxSession.get,
-    BoxSession.post,
-    BoxSession.put,
-    BoxSession.delete,
-    BoxSession.options,
-    partial(BoxSession.request, method='head'),
+    Session.get,
+    Session.post,
+    Session.put,
+    Session.delete,
+    Session.options,
+    partial(Session.request, method='head'),
 ])
 def test_box_session_retries_request_after_server_error(
         test_method,

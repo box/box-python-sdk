@@ -134,7 +134,7 @@ def pass_private_key_by_path(request):
 
 @pytest.fixture
 def jwt_auth_init_mocks(
-        mock_network_layer,
+        mock_box_session,
         successful_token_response,
         jwt_algorithm,
         jwt_key_id,
@@ -158,7 +158,7 @@ def jwt_auth_init_mocks(
             'box_device_id': '0',
             'box_device_name': 'my_awesome_device',
         }
-        mock_network_layer.request.return_value = successful_token_response
+        mock_box_session.request.return_value = successful_token_response
         with patch('boxsdk.auth.jwt_auth.open', mock_open(read_data=rsa_private_key_bytes), create=True) as jwt_auth_open:
             with patch('cryptography.hazmat.primitives.serialization.load_pem_private_key') as load_pem_private_key:
                 oauth = JWTAuth(
@@ -167,7 +167,7 @@ def jwt_auth_init_mocks(
                     rsa_private_key_file_sys_path=(sentinel.rsa_path if pass_private_key_by_path else None),
                     rsa_private_key_data=(None if pass_private_key_by_path else rsa_private_key_bytes),
                     rsa_private_key_passphrase=rsa_passphrase,
-                    network_layer=mock_network_layer,
+                    session=mock_box_session,
                     box_device_name='my_awesome_device',
                     jwt_algorithm=jwt_algorithm,
                     jwt_key_id=jwt_key_id,
@@ -188,7 +188,7 @@ def jwt_auth_init_mocks(
                 yield oauth, assertion, fake_client_id, load_pem_private_key.return_value
 
         if assert_authed:
-            mock_network_layer.request.assert_called_once_with(
+            mock_box_session.request.assert_called_once_with(
                 'POST',
                 '{0}/token'.format(API.OAUTH2_API_URL),
                 data=data,
