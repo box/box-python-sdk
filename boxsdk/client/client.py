@@ -466,6 +466,12 @@ class Client(object):
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
 
+    def root_folder(self):
+        """
+        Returns a user's root folder object.
+        """
+        return Translator().translate('folder')(self._session, '0')
+
     def storage_policy(self, policy_id):
         """
         Initialize a :class:`StoragePolicy` object, whose box id is policy_id.
