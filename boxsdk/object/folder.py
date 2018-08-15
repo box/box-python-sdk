@@ -13,7 +13,6 @@ from boxsdk.object.user import User
 from boxsdk.object.web_link import WebLink
 from boxsdk.util.text_enum import TextEnum
 from boxsdk.util.translator import Translator
-from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
 class FolderSyncState(TextEnum):
@@ -420,4 +419,3 @@ class Folder(Item):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
         return super(Folder, self).delete({'recursive': recursive}, etag)
-
