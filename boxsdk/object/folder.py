@@ -419,3 +419,19 @@ class Folder(Item):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
         return super(Folder, self).delete({'recursive': recursive}, etag)
+
+    def create_upload_session(self, file_size, file_name):
+        """
+        Create a new chunked upload session for uploading a new file.
+        :param file_size:       The size of the file that will be uploaded.
+        :type file_size:        `int`
+        :param file_name:       The name of the file that will be uploaded.
+        :type file_name:        `unicode`
+        :rtype:                 :class:`ChunkedUploadSession`
+        """
+        url = '{0}/files/upload_sessions'.format(API.UPLOAD_URL)
+        response = self.session.post(
+            url,
+            data=json.dumps({'folder_id': self._object_id, 'file_size': file_size, 'file_name': file_name}),
+        ).json()
+        return Translator().translate(response['type'])(self.session, response['id'], response_object=response)

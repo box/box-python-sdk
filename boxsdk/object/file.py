@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 import json
 
@@ -293,6 +293,23 @@ class File(Item):
             password=password,
         )
         return item.shared_link['download_url']  # pylint:disable=no-member
+
+    def create_upload_session(self, file_size):
+        """
+        Create a new chunked upload session for uploading a new version of the file.
+
+        :param file_size:       The size of the file that will be uploaded.
+        :type file_size:        `int`
+        :rtype:                 :class:`ChunkedUploadSession`
+        """
+        response = self.session.post(
+            self.get_url('{0}s'.format('upload_session')).replace(
+                API.BASE_API_URL,
+                API.UPLOAD_URL,
+            ),
+            data=json.dumps({'file_id': self.object_id, 'file_size': file_size}),
+        ).json()
+        return Translator().translate(response['type'])(self.session, response['id'], response_object=response)
 
     def get_comments(self, limit=None, offset=0, fields=None):
         """
