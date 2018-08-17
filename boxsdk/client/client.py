@@ -7,6 +7,7 @@ from ..auth.oauth2 import TokenResponse
 from ..session.session import Session, AuthorizedSession
 from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
+from ..object.collaboration_whitelist import CollaborationWhitelist
 from ..object.search import Search
 from ..object.events import Events
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -436,6 +437,50 @@ class Client(Cloneable):
             object_id=response['id'],
             response_object=response,
         )
+
+    def collaboration_whitelist_entry(self, entry_id):
+        """
+        Initialize a :class:`CollaborationWhitelistEntry` object, whose box id is entry_id.
+
+        :param entry_id:
+            The box ID of the :class:`CollaborationWhitelistEntry` object.
+        :type entry_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationWhitelistEntry` object with the given entry ID.
+        :rtype:
+            :class:`CollaborationWhitelistEntry`
+        """
+        return self.translator.translate('collaboration_whitelist_entry')(session=self._session, object_id=entry_id)
+
+    def collaboration_whitelist_exempt_target(self, exemption_id):
+        """
+        Initialize a :class:`CollaborationWhitelistExemptTarget` object, whose box ID is exemption_id.
+
+        :param exemption_id:
+            The box ID of the :class:`CollaborationWhitelistExemptTarget` object.
+        :type exemption_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationWhitelistExemptTarget` object with the given exemption ID.
+        :rtype:
+            :class:`CollaborationWhitelistExemptTarget`
+        """
+        return self.translator.translate('collaboration_whitelist_exempt_target')(
+            session=self._session,
+            object_id=exemption_id
+        )
+
+    def collaboration_whitelist(self):
+        """
+        Initialize a :class:`CollaborationWhitelistExemptTarget` object, whose box ID is exemption_id.
+
+        :return:
+            The :class:`CollaborationWhitelist` object.
+        :rtype:
+            :class:`CollaborationWhitelist:
+        """
+        return CollaborationWhitelist(self._session)
 
     @api_call
     def make_request(self, method, url, **kwargs):

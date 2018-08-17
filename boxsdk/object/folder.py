@@ -196,7 +196,7 @@ class Folder(Item):
         :type limit:
             `int` or None
         :param marker:
-            The offset index to start paging from.
+            The paging marker to start paging from.
         :type marker:
             `str` or None
         :param fields:
