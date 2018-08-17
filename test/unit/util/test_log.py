@@ -77,3 +77,43 @@ def test_setup_logging_is_reentrant(mock_logger):
 
     if isinstance(stream_or_file, string_types):
         assert mock_file_open.call_count == 1
+
+
+@pytest.mark.parametrize(
+    'unsanitized_dict, expected_result',
+    [
+        # Test for when no sanitization is required
+        (
+            {'name': 'foo'},
+            {'name': 'foo'},
+        ),
+        # Test for basic string sanitization
+        (
+            {'access_token': 'askdjfhadsrwedr'},
+            {'access_token': '---wedr'},
+        ),
+        # Test for short string sanitization
+        (
+            {'refresh_token': 'abc'},
+            {'refresh_token': '---abc'},
+        ),
+        # Test for recursive sanitization
+        (
+            {'stuff': {'shared_link': 'https://example.com/asdfghjkl'}},
+            {'stuff': {'shared_link': '---hjkl'}},
+        ),
+        # Test for None type
+        (
+            {'download_url': None},
+            {'download_url': None},
+        ),
+    ]
+)
+def test_sanitize_dictionary_correctly_sanitizes_params(mock_logger, unsanitized_dict, expected_result):
+    mock_file_open = mock_open()
+
+    with patch('logging.getLogger') as get_logger:
+        with patch('logging.open', mock_file_open, create=True):
+            get_logger.return_value = mock_logger
+            actual_result = boxsdk.util.log.Logging().sanitize_dictionary(unsanitized_dict)
+            assert actual_result == expected_result

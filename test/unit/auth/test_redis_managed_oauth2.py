@@ -47,7 +47,7 @@ def test_redis_managed_oauth2_gets_tokens_from_redis_during_refresh(access_token
 def test_redis_managed_oauth2_stores_tokens_to_redis_during_refresh(
         access_token,
         refresh_token,
-        mock_network_layer,
+        mock_box_session,
         successful_token_response,
 ):
     redis_server = Mock(redis_managed_oauth2.StrictRedis)
@@ -59,8 +59,8 @@ def test_redis_managed_oauth2_stores_tokens_to_redis_during_refresh(
             client_secret=None,
             unique_id=unique_id,
             redis_server=redis_server,
-            network_layer=mock_network_layer,
+            session=mock_box_session,
         )
-    mock_network_layer.request.return_value = successful_token_response
+    mock_box_session.request.return_value = successful_token_response
     oauth2.send_token_request({}, access_token=None, expect_refresh_token=True)
     redis_server.hmset.assert_called_once_with(unique_id, {'access': access_token, 'refresh': refresh_token})

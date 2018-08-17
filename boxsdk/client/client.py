@@ -4,8 +4,7 @@ from __future__ import unicode_literals, absolute_import
 import json
 
 from ..auth.oauth2 import TokenResponse
-from ..session.box_session import BoxSession
-from ..network.default_network import DefaultNetwork
+from ..session.session import Session, AuthorizedSession
 from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
@@ -16,11 +15,12 @@ from ..util.shared_link import get_shared_link_header
 
 
 class Client(Cloneable):
+    unauthorized_session_class = Session
+    authorized_session_class = AuthorizedSession
 
     def __init__(
             self,
-            oauth=None,
-            network_layer=None,
+            oauth,
             session=None,
     ):
         """
@@ -28,18 +28,18 @@ class Client(Cloneable):
             OAuth2 object used by the session to authorize requests.
         :type oauth:
             :class:`OAuth2`
-        :param network_layer:
-            The Network layer to use. If none is provided then an instance of :class:`DefaultNetwork` will be used.
-        :type network_layer:
-            :class:`Network`
         :param session:
-            The session object to use. If None is provided then an instance of :class:`BoxSession` will be used.
+            The session object to use. If None is provided then an instance of :class:`AuthorizedSession` will be used.
         :type session:
             :class:`BoxSession`
         """
         super(Client, self).__init__()
         self._oauth = oauth
-        self._session = session or BoxSession(oauth=oauth, network_layer=(network_layer or DefaultNetwork()))
+        if session is not None:
+            self._session = session
+        else:
+            session = session or self.unauthorized_session_class()
+            self._session = self.authorized_session_class(self._oauth, **session.get_constructor_kwargs())
 
     @property
     def auth(self):

@@ -14,7 +14,7 @@ from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.config import API
 from boxsdk.client import LoggingClient
 from boxsdk.network.default_network import DefaultNetwork
-from boxsdk.session.box_session import BoxSession
+from boxsdk.session.session import Session, AuthorizedSession
 from test.functional.mock_box.box import Box
 from test.util.streamable_mock_open import streamable_mock_open
 
@@ -25,21 +25,26 @@ def network_layer():
 
 
 @pytest.fixture()
-def box_client(box_oauth, box_session, network_layer):
+def box_client(box_oauth, box_session):
     # pylint:disable=redefined-outer-name
-    return LoggingClient(box_oauth, session=box_session, network_layer=network_layer)
+    return LoggingClient(box_oauth, session=box_session)
+
+
+@pytest.fixture
+def unauthorized_session(network_layer):
+    return Session(network_layer=network_layer)
 
 
 @pytest.fixture
 def box_session(box_oauth, network_layer):
     # pylint:disable=redefined-outer-name
-    return BoxSession(oauth=box_oauth, network_layer=network_layer)
+    return AuthorizedSession(oauth=box_oauth, network_layer=network_layer)
 
 
 @pytest.fixture()
-def box_oauth(client_id, client_secret, user_login, network_layer):
+def box_oauth(client_id, client_secret, user_login, unauthorized_session):
     # pylint:disable=redefined-outer-name
-    oauth2 = OAuth2(client_id, client_secret, box_device_name='mock_box functional test', network_layer=network_layer)
+    oauth2 = OAuth2(client_id, client_secret, box_device_name='mock_box functional test', session=unauthorized_session)
     url, _ = oauth2.get_authorization_url('http://localhost')
     form = requests.get(url + '&box_login=' + user_login).content.decode('utf-8')
     form_action = re.search('action="([^"]*)"', form).group(1)

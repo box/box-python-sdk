@@ -38,7 +38,7 @@ class JWTAuth(OAuth2):
             box_device_id='0',
             box_device_name='',
             access_token=None,
-            network_layer=None,
+            session=None,
             jwt_algorithm='RS256',
             rsa_private_key_data=None,
             **kwargs
@@ -150,7 +150,7 @@ class JWTAuth(OAuth2):
             box_device_name=box_device_name,
             access_token=access_token,
             refresh_token=None,
-            network_layer=network_layer,
+            session=session,
             **kwargs
         )
         self._rsa_private_key = rsa_private_key
