@@ -116,17 +116,20 @@ def mock_membership_responses(mock_membership_dict_stream):
     (5, 4),
     (9, 4),
 ])
-def test_membership(test_group, mock_box_session, mock_membership_responses, total, page_size):
+def test_get_memberships(test_group, mock_box_session, mock_membership_responses, total, page_size):
     # pylint:disable=redefined-outer-name
     # Each call the 'get' (the GET next page call) will return the next response
     mock_box_session.get.side_effect = mock_membership_responses(total, page_size)
 
     # Get all the members
-    all_members = list(test_group.membership(0, page_size))
+    all_members = test_group.get_memberships()
 
     # Assert we got the expected number of membership instances
-    assert len(all_members) == total
-    assert all(isinstance(m, GroupMembership) for m in all_members)
+    count = 0
+    for membership in all_members:
+        count += 1
+        assert isinstance(membership, GroupMembership)
+    assert count == total
 
 
 @pytest.mark.parametrize('hidden_in_batch', [
@@ -135,7 +138,7 @@ def test_membership(test_group, mock_box_session, mock_membership_responses, tot
     (10, 10, 9),
     (10, 10, 10),
 ])
-def test_membership_with_hidden_results(test_group, mock_box_session, mock_membership_responses, hidden_in_batch):
+def test_get_memberships_with_hidden_results(test_group, mock_box_session, mock_membership_responses, hidden_in_batch):
     """
     This test verifies that the SDK properly deals with missing (aka hidden) data potentially present in a paged
     API. The API might indicate that the total_size is X, but in actuality the pages API could return less than X
@@ -151,47 +154,11 @@ def test_membership_with_hidden_results(test_group, mock_box_session, mock_membe
     mock_box_session.get.side_effect = mock_membership_responses(total, page_size, hidden_in_batch=hidden_in_batch)
 
     # Get all the members
-    all_members = list(test_group.membership(0, page_size))
+    all_members = test_group.get_memberships(0, page_size)
 
     # Assert we got the expected number of membership instances
-    assert len(all_members) == total - total_hidden
-    assert all(isinstance(m, GroupMembership) for m in all_members)
-
-
-def test_membership_with_page_info(test_group, mock_box_session, mock_membership_responses):
-    """
-    Verify that the paging info returned by the membership call when include_page_info=True
-    is correct, thus allowing a client complete knowledge of when another API call
-    is going to be triggered.
-    """
-    # pylint:disable=redefined-outer-name
-    total = 9
-    page_size = 3
-    hidden_in_batch = 0, 2, 1
-
-    # Each call to 'get' (the GET next page call) will return the next response
-    mock_box_session.get.side_effect = mock_membership_responses(total, page_size, hidden_in_batch=hidden_in_batch)
-
-    # Initialize the generator of all the membership
-    group_generator = test_group.membership(0, page_size, include_page_info=True)
-
-    # manually get all the items, verifying that the page-info data is correct.
-    _, page_size, index = next(group_generator)
-    assert page_size == 3 and index == 0
-    _, page_size, index = next(group_generator)
-    assert page_size == 3 and index == 1
-    _, page_size, index = next(group_generator)
-    assert page_size == 3 and index == 2
-
-    # This next call will trigger a new GET request, returning the 2nd page
-    _, page_size, index = next(group_generator)
-    assert page_size == 1 and index == 0
-
-    # This next call will trigger a new GET request, returning the 3rd page
-    _, page_size, index = next(group_generator)
-    assert page_size == 2 and index == 0
-    _, page_size, index = next(group_generator)
-    assert page_size == 2 and index == 1
-
-    with pytest.raises(StopIteration):
-        next(group_generator)
+    count = 0
+    for membership in all_members:
+        count += 1
+        assert isinstance(membership, GroupMembership)
+    assert count == total - total_hidden
