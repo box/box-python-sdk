@@ -14,6 +14,7 @@ from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.search import Search
+from boxsdk.object.watermark import Watermark
 
 
 # pylint:disable=redefined-outer-name
@@ -94,6 +95,11 @@ def test_group(mock_box_session, mock_group_id):
 @pytest.fixture()
 def test_search(mock_box_session):
     return Search(mock_box_session)
+
+
+@pytest.fixture()
+def test_watermark(mock_box_session):
+    return Watermark(mock_box_session)
 
 
 @pytest.fixture(scope='function')
