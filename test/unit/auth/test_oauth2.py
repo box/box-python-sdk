@@ -55,7 +55,7 @@ def test_get_correct_authorization_url(redirect_url):
     assert re.match('^box_csrf_token_[A-Za-z0-9]{16}$', csrf_token)
 
 
-def test_authenticate_send_post_request_with_correct_params(mock_network_layer, successful_token_response):
+def test_authenticate_send_post_request_with_correct_params(mock_box_session, successful_token_response):
     fake_client_id = 'fake_client_id'
     fake_client_secret = 'fake_client_secret'
     fake_auth_code = 'fake_auth_code'
@@ -67,17 +67,17 @@ def test_authenticate_send_post_request_with_correct_params(mock_network_layer, 
         'box_device_id': '0',
         'box_device_name': 'my_awesome_device',
     }
-    mock_network_layer.request.return_value = successful_token_response
+    mock_box_session.request.return_value = successful_token_response
     oauth = OAuth2(
         client_id=fake_client_id,
         client_secret=fake_client_secret,
-        network_layer=mock_network_layer,
+        session=mock_box_session,
         box_device_name='my_awesome_device',
     )
 
     oauth.authenticate(fake_auth_code)
 
-    mock_network_layer.request.assert_called_once_with(
+    mock_box_session.request.assert_called_once_with(
         'POST',
         '{0}/token'.format(API.OAUTH2_API_URL),
         data=data,
@@ -90,7 +90,7 @@ def test_authenticate_send_post_request_with_correct_params(mock_network_layer, 
 
 @pytest.mark.parametrize('_', range(10))
 def test_refresh_send_post_request_with_correct_params_and_handles_multiple_requests(
-        mock_network_layer,
+        mock_box_session,
         successful_token_response,
         _,
 ):
@@ -106,13 +106,13 @@ def test_refresh_send_post_request_with_correct_params_and_handles_multiple_requ
         'box_device_id': '0',
         'box_device_name': 'my_awesome_device',
     }
-    mock_network_layer.request.return_value = successful_token_response
+    mock_box_session.request.return_value = successful_token_response
     oauth = OAuth2(
         client_id=fake_client_id,
         client_secret=fake_client_secret,
         access_token=fake_access_token,
         refresh_token=fake_refresh_token,
-        network_layer=mock_network_layer,
+        session=mock_box_session,
         box_device_name='my_awesome_device',
     )
 
@@ -128,7 +128,7 @@ def test_refresh_send_post_request_with_correct_params_and_handles_multiple_requ
 
     # Assert that even four threads were trying to refresh the tokens at the same time, only one token request was made,
     # and it was made with the correct params.
-    mock_network_layer.request.assert_called_once_with(
+    mock_box_session.request.assert_called_once_with(
         'POST',
         '{0}/token'.format(API.OAUTH2_API_URL),
         data=data,
@@ -137,17 +137,17 @@ def test_refresh_send_post_request_with_correct_params_and_handles_multiple_requ
     )
 
 
-def test_authenticate_stores_tokens_correctly(mock_network_layer, successful_token_response):
+def test_authenticate_stores_tokens_correctly(mock_box_session, successful_token_response):
     fake_client_id = 'fake_client_id'
     fake_client_secret = 'fake_client_secret'
     fake_auth_code = 'fake_auth_code'
 
-    mock_network_layer.request.return_value = successful_token_response
+    mock_box_session.request.return_value = successful_token_response
     mock_token_callback = Mock()
     oauth = OAuth2(
         client_id=fake_client_id,
         client_secret=fake_client_secret,
-        network_layer=mock_network_layer,
+        session=mock_box_session,
         store_tokens=mock_token_callback,
     )
 
@@ -160,7 +160,7 @@ def test_authenticate_stores_tokens_correctly(mock_network_layer, successful_tok
 
 @pytest.mark.parametrize('_', range(10))
 def test_refresh_gives_back_the_correct_response_and_handles_multiple_requests(
-        mock_network_layer,
+        mock_box_session,
         successful_token_response,
         network_response_with_missing_tokens,
         _,
@@ -173,13 +173,13 @@ def test_refresh_gives_back_the_correct_response_and_handles_multiple_requests(
 
     # Setup the network layer so that if oauth makes more than one request, it will get a malformed response and failed
     # the test.
-    mock_network_layer.request.side_effect = [successful_token_response, network_response_with_missing_tokens]
+    mock_box_session.request.side_effect = [successful_token_response, network_response_with_missing_tokens]
     oauth = OAuth2(
         client_id=fake_client_id,
         client_secret=fake_client_secret,
         access_token=fake_access_token,
         refresh_token=fake_refresh_token,
-        network_layer=mock_network_layer,
+        session=mock_box_session,
     )
 
     def refresh_tokens_and_verify_the_response():
@@ -216,16 +216,16 @@ def token_method(request):
 )
 def test_token_request_raises_box_oauth_exception_when_getting_bad_network_response(
         token_method,
-        mock_network_layer,
+        mock_box_session,
         bad_network_response,
 ):
     with pytest.raises(BoxOAuthException):
-        mock_network_layer.request.return_value = bad_network_response
+        mock_box_session.request.return_value = bad_network_response
         oauth = OAuth2(
             client_id='',
             client_secret='',
             access_token='fake_access_token',
-            network_layer=mock_network_layer,
+            session=mock_box_session,
         )
         token_method(oauth)
 
@@ -237,15 +237,15 @@ def test_token_request_raises_box_oauth_exception_when_getting_bad_network_respo
 )
 def test_token_request_raises_box_oauth_exception_when_no_json_object_can_be_decoded(
         token_method,
-        mock_network_layer,
+        mock_box_session,
         non_json_response,
 ):
-    mock_network_layer.request.return_value = non_json_response
+    mock_box_session.request.return_value = non_json_response
     oauth = OAuth2(
         client_id='',
         client_secret='',
         access_token='fake_access_token',
-        network_layer=mock_network_layer,
+        session=mock_box_session,
     )
     with pytest.raises(BoxOAuthException):
         token_method(oauth)
@@ -272,43 +272,43 @@ def network_response_with_missing_tokens(request):
 ])
 def test_token_request_raises_box_oauth_exception_when_tokens_are_not_in_the_response(
         test_method,
-        mock_network_layer,
+        mock_box_session,
         network_response_with_missing_tokens,
 ):
     # pylint:disable=redefined-outer-name
-    mock_network_layer.request.return_value = network_response_with_missing_tokens
+    mock_box_session.request.return_value = network_response_with_missing_tokens
     oauth = OAuth2(
         client_id='',
         client_secret='',
         access_token='fake_access_token',
-        network_layer=mock_network_layer,
+        session=mock_box_session,
     )
     with pytest.raises(BoxOAuthException):
         test_method(oauth)
 
 
-def test_token_request_allows_missing_refresh_token(mock_network_layer):
+def test_token_request_allows_missing_refresh_token(mock_box_session):
     mock_network_response = Mock()
     mock_network_response.ok = True
     mock_network_response.json.return_value = {'access_token': 'fake_token'}
-    mock_network_layer.request.return_value = mock_network_response
+    mock_box_session.request.return_value = mock_network_response
     oauth = OAuth2(
         client_id='',
         client_secret='',
         access_token='fake_access_token',
-        network_layer=mock_network_layer,
+        session=mock_box_session,
     )
     oauth.send_token_request({}, access_token=None, expect_refresh_token=False)
 
 
 @pytest.fixture()
-def oauth(client_id, client_secret, access_token, refresh_token, mock_network_layer):
+def oauth(client_id, client_secret, access_token, refresh_token, mock_box_session):
     return OAuth2(
         client_id=client_id,
         client_secret=client_secret,
         access_token=access_token,
         refresh_token=refresh_token,
-        network_layer=mock_network_layer,
+        session=mock_box_session,
     )
 
 
@@ -322,16 +322,16 @@ def oauth(client_id, client_secret, access_token, refresh_token, mock_network_la
 def test_revoke_sends_revoke_request(
         client_id,
         client_secret,
-        mock_network_layer,
+        mock_box_session,
         access_token,
         oauth,
         expected_token_to_revoke,
 ):
     mock_network_response = Mock()
     mock_network_response.ok = True
-    mock_network_layer.request.return_value = mock_network_response
+    mock_box_session.request.return_value = mock_network_response
     oauth.revoke()
-    mock_network_layer.request.assert_called_once_with(
+    mock_box_session.request.assert_called_once_with(
         'POST',
         '{0}/revoke'.format(API.OAUTH2_API_URL),
         data={
@@ -344,7 +344,7 @@ def test_revoke_sends_revoke_request(
     assert oauth.access_token is None
 
 
-def test_tokens_get_updated_after_noop_refresh(client_id, client_secret, access_token, new_access_token, refresh_token, mock_network_layer):
+def test_tokens_get_updated_after_noop_refresh(client_id, client_secret, access_token, new_access_token, refresh_token, mock_box_session):
     """`OAuth2` object should update its state with new tokens, after no-op refresh.
 
     If the protected method `_get_tokens()` returns new tokens, refresh is
@@ -374,7 +374,7 @@ def test_tokens_get_updated_after_noop_refresh(client_id, client_secret, access_
         client_secret=client_secret,
         access_token=access_token,
         refresh_token=refresh_token,
-        network_layer=mock_network_layer,
+        session=mock_box_session,
     )
     assert oauth.access_token == access_token
 
@@ -382,27 +382,27 @@ def test_tokens_get_updated_after_noop_refresh(client_id, client_secret, access_
     assert oauth.access_token == new_access_token
 
 
-def test_closed_is_false_after_init(client_id, client_secret, mock_network_layer):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+def test_closed_is_false_after_init(client_id, client_secret, mock_box_session):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
     assert auth.closed is False
 
 
-def test_closed_is_true_after_close(client_id, client_secret, mock_network_layer):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+def test_closed_is_true_after_close(client_id, client_secret, mock_box_session):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
     auth.close()
     assert auth.closed is True
 
 
-def test_token_requests_fail_after_close(client_id, client_secret, mock_network_layer):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+def test_token_requests_fail_after_close(client_id, client_secret, mock_box_session):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
     auth.close()
     with pytest.raises(ValueError):
         auth.refresh(auth.access_token)
 
 
 @pytest.mark.parametrize('raise_exception', [False, True])
-def test_context_manager_closes_auth_object(client_id, client_secret, mock_network_layer, raise_exception):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+def test_context_manager_closes_auth_object(client_id, client_secret, mock_box_session, raise_exception):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
     try:
         with auth.closing():
             if raise_exception:
@@ -412,8 +412,8 @@ def test_context_manager_closes_auth_object(client_id, client_secret, mock_netwo
     assert auth.closed is True
 
 
-def test_context_manager_fails_after_close(client_id, client_secret, mock_network_layer):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+def test_context_manager_fails_after_close(client_id, client_secret, mock_box_session):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
     with auth.closing():
         pass
     with pytest.raises(ValueError):
@@ -422,15 +422,15 @@ def test_context_manager_fails_after_close(client_id, client_secret, mock_networ
 
 
 @pytest.mark.parametrize(('close_args', 'close_kwargs'), [((), {}), ((True,), {}), ((), dict(revoke=True))])
-def test_revoke_on_close(client_id, client_secret, access_token, mock_network_layer, close_args, close_kwargs):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, access_token=access_token, network_layer=mock_network_layer)
+def test_revoke_on_close(client_id, client_secret, access_token, mock_box_session, close_args, close_kwargs):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, access_token=access_token, session=mock_box_session)
     with patch.object(auth, 'revoke') as mock_revoke:
         auth.close(*close_args, **close_kwargs)
     mock_revoke.assert_called_once_with()
 
 
-def test_auth_object_is_closed_even_if_revoke_fails(client_id, client_secret, access_token, mock_network_layer):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, access_token=access_token, network_layer=mock_network_layer)
+def test_auth_object_is_closed_even_if_revoke_fails(client_id, client_secret, access_token, mock_box_session):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, access_token=access_token, session=mock_box_session)
     with patch.object(auth, 'revoke', side_effect=BoxOAuthException(status=500)):
         with pytest.raises(BoxOAuthException):
             auth.close(revoke=True)
@@ -438,8 +438,8 @@ def test_auth_object_is_closed_even_if_revoke_fails(client_id, client_secret, ac
 
 
 @pytest.mark.parametrize(('close_args', 'close_kwargs'), [((False,), {}), ((), dict(revoke=False))])
-def test_revoke_on_close_can_be_skipped(client_id, client_secret, access_token, mock_network_layer, close_args, close_kwargs):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, access_token=access_token, network_layer=mock_network_layer)
+def test_revoke_on_close_can_be_skipped(client_id, client_secret, access_token, mock_box_session, close_args, close_kwargs):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, access_token=access_token, session=mock_box_session)
     with patch.object(auth, 'revoke') as mock_revoke:
         auth.close(*close_args, **close_kwargs)
     mock_revoke.assert_not_called()
@@ -452,9 +452,9 @@ def test_revoke_on_close_can_be_skipped(client_id, client_secret, access_token, 
 ])
 @pytest.mark.parametrize('close_kwargs', [{}, dict(revoke=False), dict(revoke=True)])
 def test_context_manager_reraises_first_exception_after_close(
-        client_id, client_secret, mock_network_layer, close_kwargs, raise_from_block, raise_from_close, expected_exception,
+        client_id, client_secret, mock_box_session, close_kwargs, raise_from_block, raise_from_close, expected_exception,
 ):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
     with patch.object(auth, 'close', side_effect=raise_from_close) as mock_close:
         with pytest.raises(expected_exception):
             with auth.closing(**close_kwargs):
@@ -464,8 +464,8 @@ def test_context_manager_reraises_first_exception_after_close(
 
 
 @pytest.mark.parametrize('close_kwargs', [{}, dict(revoke=False), dict(revoke=True)])
-def test_context_manager_skips_revoke_on_base_exception(client_id, client_secret, mock_network_layer, close_kwargs):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, network_layer=mock_network_layer)
+def test_context_manager_skips_revoke_on_base_exception(client_id, client_secret, mock_box_session, close_kwargs):
+    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
     with patch.object(auth, 'close') as mock_close:
         with pytest.raises(MyBaseException):
             with auth.closing(**close_kwargs):

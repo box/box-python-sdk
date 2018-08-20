@@ -4,8 +4,7 @@ from __future__ import unicode_literals, absolute_import
 import json
 
 from ..auth.oauth2 import TokenResponse
-from ..session.box_session import BoxSession
-from ..network.default_network import DefaultNetwork
+from ..session.session import Session, AuthorizedSession
 from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.device_pin import DevicePin
@@ -17,11 +16,12 @@ from ..util.shared_link import get_shared_link_header
 
 
 class Client(Cloneable):
+    unauthorized_session_class = Session
+    authorized_session_class = AuthorizedSession
 
     def __init__(
             self,
-            oauth=None,
-            network_layer=None,
+            oauth,
             session=None,
     ):
         """
@@ -29,18 +29,18 @@ class Client(Cloneable):
             OAuth2 object used by the session to authorize requests.
         :type oauth:
             :class:`OAuth2`
-        :param network_layer:
-            The Network layer to use. If none is provided then an instance of :class:`DefaultNetwork` will be used.
-        :type network_layer:
-            :class:`Network`
         :param session:
-            The session object to use. If None is provided then an instance of :class:`BoxSession` will be used.
+            The session object to use. If None is provided then an instance of :class:`AuthorizedSession` will be used.
         :type session:
             :class:`BoxSession`
         """
         super(Client, self).__init__()
         self._oauth = oauth
-        self._session = session or BoxSession(oauth=oauth, network_layer=(network_layer or DefaultNetwork()))
+        if session is not None:
+            self._session = session
+        else:
+            session = session or self.unauthorized_session_class()
+            self._session = self.authorized_session_class(self._oauth, **session.get_constructor_kwargs())
 
     @property
     def auth(self):
@@ -199,7 +199,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def users(self, limit=None, offset=0, filter_term=None):
+    def users(self, limit=None, offset=0, filter_term=None, user_type=None, fields=None):
         """
         Get a list of all users for the Enterprise along with their user_id, public_name, and login.
 
@@ -215,25 +215,38 @@ class Client(Cloneable):
             Filters the results to only users starting with the filter_term in either the name or the login.
         :type filter_term:
             `unicode` or None
+        :param user_type:
+            Filters the results to only users of the given type: 'managed', 'external', or 'all'.
+        :type user_type:
+            `unicode` or None
+        :param fields:
+            List of fields to request on the :class:`User` objects.
+        :type fields:
+            `Iterable` of `unicode`
         :return:
             The list of all users in the enterprise.
         :rtype:
             `list` of :class:`User`
+        :returns:
+            An iterator on the user's recent items
+        :rtype:
+            :class:`MarkerBasedObjectCollection`
         """
         url = self.get_url('users')
-        params = dict(offset=offset)
-        if limit is not None:
-            params['limit'] = limit
-        if filter_term is not None:
-            params['filter_term'] = filter_term
-        box_response = self._session.get(url, params=params)
-        response = box_response.json()
-        user_class = self.translator.translate('user')
-        return [user_class(
+        additional_params = {}
+        if filter_term:
+            additional_params['filter_term'] = filter_term
+        if user_type:
+            additional_params['user_type'] = user_type
+        return LimitOffsetBasedObjectCollection(
+            url=url,
             session=self._session,
-            object_id=item['id'],
-            response_object=item,
-        ) for item in response['entries']]
+            additional_params=additional_params,
+            limit=limit,
+            offset=offset,
+            fields=fields,
+            return_full_pages=False,
+        )
 
     @api_call
     def search(
@@ -323,24 +336,43 @@ class Client(Cloneable):
         )
 
     @api_call
-    def groups(self):
+    def groups(self, name=None, offset=0, limit=None, fields=None):
         """
         Get a list of all groups for the current user.
 
+        :param name:
+            Filter on the name of the groups to return.
+        :type name:
+            `unicode` or None
+        :param limit:
+            The maximum number of groups to return. If not specified, the Box API will determine an appropriate limit.
+        :type limit:
+            `int` or None
+        :param offset:
+            The group index at which to start the response.
+        :type offset:
+            `int`
+        :param fields:
+            List of fields to request on the :class:`Group` objects.
+        :type fields:
+            `Iterable` of `unicode`
         :return:
-            The list of all groups.
+            The collection of all groups.
         :rtype:
-            `list` of :class:`Group`
+            `Iterable` of :class:`Group`
         """
         url = self.get_url('groups')
-        box_response = self._session.get(url)
-        response = box_response.json()
-        group_class = self.translator.translate('group')
-        return [group_class(
+        additional_params = {}
+        if name:
+            additional_params['name'] = name
+        return LimitOffsetBasedObjectCollection(
+            url=url,
             session=self._session,
-            object_id=item['id'],
-            response_object=item,
-        ) for item in response['entries']]
+            limit=limit,
+            offset=offset,
+            fields=fields,
+            return_full_pages=False,
+        )
 
     @api_call
     def create_group(self, name):

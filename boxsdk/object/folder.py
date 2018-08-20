@@ -124,98 +124,72 @@ class Folder(Item):
         return self._get_accelerator_upload_url()
 
     @api_call
-    def get_items(self, limit, offset=0, fields=None):
-        """Get the items in a folder.
+    def get_items(self, limit=None, offset=0, marker=None, use_marker=False, sort=None, direction=None, fields=None):
+        """
+        Get the items in a folder.
 
         :param limit:
             The maximum number of items to return.
         :type limit:
-            `int`
+            `int` or None
         :param offset:
-            The index at which to start returning items.
+            The index at which to start returning items when using offset-based pagin.
         :type offset:
             `int`
+        :param use_marker:
+            Whether to use marker-based paging instead of offset-based paging, defaults to False.
+        :type use_marker:
+            `bool`
+        :param marker:
+            The paging marker to start returning items from when using marker-based paging.
+        :type marker:
+            `unicode` or None
+        :param sort:
+            Item field to sort results on: 'id', 'name', or 'date'.
+        :type sort':
+            `unicode` or None
+        :param direction:
+            Sort direction for the items returned.
+        :type direction:
+            `unicode` or None
         :param fields:
             List of fields to request.
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            A list of items in the folder.
+            The collection of items in the folder.
         :rtype:
-            `list` of :class:`Item`
+            `Iterable` of :class:`Item`
         """
         url = self.get_url('items')
-        params = {
-            'limit': limit,
-            'offset': offset,
-        }
-        if fields:
-            params['fields'] = ','.join(fields)
-        box_response = self._session.get(url, params=params)
-        response = box_response.json()
-        return [self.translator.translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
+        additional_params = {}
+        if limit is not None:
+            additional_params['limit'] = limit
+        if sort:
+            additional_params['sort'] = sort
+        if direction:
+            additional_params['direction'] = direction
 
-    @api_call
-    def get_items_limit_offset(self, limit=None, offset=0, fields=None):
-        """
-        Get the items in a folder using limit-offset paging.
+        if use_marker:
+            additional_params['usemarker'] = True
+            return MarkerBasedObjectCollection(
+                url=url,
+                session=self._session,
+                limit=limit,
+                marker=marker,
+                fields=fields,
+                additional_params=additional_params,
+                return_full_pages=False,
+            )
 
-        :param limit:
-            The maximum number of items to return per page. If not specified, then will use the server-side default.
-        :type limit:
-            `int` or None
-        :param offset:
-            The index at which to start returning items.
-        :type offset:
-            `int`
-        :param fields:
-            List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
-        :returns:
-            An iterator of the items in the folder.
-        :rtype:
-            :class:`BoxObjectCollection`
-        """
         return LimitOffsetBasedObjectCollection(
-            self.session,
-            self.get_url('items'),
+            url=url,
+            session=self._session,
             limit=limit,
-            fields=fields,
             offset=offset,
-            return_full_pages=False,
-        )
-
-    @api_call
-    def get_items_marker(self, limit=None, marker=None, fields=None):
-        """
-        Get the items in a folder using marker-based paging.
-
-        :param limit:
-            The maximum number of items to return per page. If not specified, then will use the server-side default.
-        :type limit:
-            `int` or None
-        :param marker:
-            The offset index to start paging from.
-        :type marker:
-            `str` or None
-        :param fields:
-            List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
-        :returns:
-            An iterator of the items in the folder.
-        :rtype:
-            :class:`BoxObjectCollection`
-        """
-        return MarkerBasedObjectCollection(
-            self.session,
-            self.get_url('items'),
-            limit=limit,
             fields=fields,
-            marker=marker,
+            additional_params=additional_params,
             return_full_pages=False,
-            supports_limit_offset_paging=True,
         )
 
     @api_call
