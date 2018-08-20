@@ -91,7 +91,7 @@ class Item(BaseObject):
         :rtype:
             :class:`BaseObject`
         """
-        # pylint:disable=arguments-differ
+        # pylint:disable=_carguments-differ
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).update_info(data, headers=headers)
 

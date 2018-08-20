@@ -568,7 +568,7 @@ class Client(Cloneable):
 
     def device_pins(self, enterprise_id, limit=None, marker=None, direction=None, fields=None):
         """
-        Returns all of the deviec pins for the given enterprise.
+        Returns all of the device pins for the given enterprise.
          :param enterprise_id:
             The id of the enterprise to retrieve device pinners for.
         :type enterprise_id:
@@ -599,7 +599,7 @@ class Client(Cloneable):
             additional_params['direction'] = direction
         return MarkerBasedObjectCollection(
             session=self._session,
-            url='{0}/enterprises/{1}/device_pinners'.format(API.BASE_API_URL, enterprise_id),
+            url=self.get_url('enterprises', enterprise_id, 'device_pinners'),
             additional_params=additional_params,
             limit=limit,
             marker=marker,
