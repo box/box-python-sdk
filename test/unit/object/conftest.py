@@ -14,6 +14,7 @@ from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.search import Search
+from boxsdk.object.webhook import Webhook
 
 
 # pylint:disable=redefined-outer-name
@@ -94,6 +95,11 @@ def test_group(mock_box_session, mock_group_id):
 @pytest.fixture()
 def test_search(mock_box_session):
     return Search(mock_box_session)
+
+
+@pytest.fixture()
+def test_webhook(mock_box_session, mock_object_id):
+    return Webhook(mock_box_session, mock_object_id)
 
 
 @pytest.fixture(scope='function')
