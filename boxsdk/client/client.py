@@ -401,6 +401,34 @@ class Client(Cloneable):
             response_object=response,
         )
 
+    def get_trashed_items(self, offset=None, limit=None, fields=None):
+        """
+        Using limit-offset paging, get the files, folders and web links that are in the user's trash.
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param offset:
+            The offset of the item at which to begin the response.
+        :type offset:
+            `str` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the trash
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return LimitOffsetBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('folders', 'trash', 'items'),
+            limit=limit,
+            offset=offset,
+            return_full_pages=False
+        )
+
     @api_call
     def get_recent_items(self, limit=None, marker=None, fields=None, **collection_kwargs):
         """

@@ -298,6 +298,25 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
     assert new_group.name == test_group_name
 
 
+def test_get_trashed_items(mock_box_session, mock_client):
+    expected_url = '{0}/folders/trash/items'.format(API.BASE_API_URL)
+    mock_trash = {
+        'type': 'file',
+        'id': '12345',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 5,
+        'offset': 0,
+        'limit': 100,
+        'entries': [mock_trash]
+    }
+    trashed_items = mock_client.get_trashed_items()
+    trashed_item = trashed_items.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
+    assert trashed_item.id == mock_trash['id']
+    assert trashed_item.type == mock_trash['type']
+
+
 def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_session, recent_items_response, file_id):
     mock_box_session.get.return_value = recent_items_response
     recent_items = mock_client.get_recent_items()
