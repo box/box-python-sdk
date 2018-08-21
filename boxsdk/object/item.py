@@ -357,6 +357,56 @@ class Item(BaseObject):
         """
         return Metadata(self._session, self, scope, template)
 
+    def create_metadata(self, key_1, scope, template, key_2=None):
+        """
+        Create a metadata instance for a file.
+         :param key_1:
+            Key value pair to add to metadata.
+        :type key_1:
+            `dict`
+        :param scope:
+            The scope of the metadata object.
+        :type scope:
+            `unicode`
+        :param template:
+            The key of the template
+        :type template:
+            `unicode`
+        """
+        url = self.get_url('metadata', scope, template)
+        body = {
+            key_1
+        }
+        if key_2 is not None:
+            body.update(key_2)
+        headers = {'Content-Type': 'application/json'}
+        response = self._session.post(url, data=json.dumps(body), headers=headers).json()
+        return Translator().translate(response['type'])(
+            self._session,
+            response['id'],
+            response,
+        )
+
+    def delete_metadata(self, scope, template):
+        """
+        Delete metadata instance on the item.
+         :param scope:
+            The scope of the metadata object.
+        :type scope:
+            `unicode`
+        :param template:
+            The key of the template
+        :type template:
+            `unicode`
+        """
+        url = self.get_url('metadata', scope, template)
+        response = self._session.delete(url, data=json.dumps(body), headers=headers).json()
+        return Translator().translate(response['type'])(
+            self._session,
+            response['id'],
+            response,
+        )
+
     @api_call
     def add_to_collection(self, collection):
         """
