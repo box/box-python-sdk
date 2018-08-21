@@ -8,6 +8,8 @@ from ..session.session import Session, AuthorizedSession
 from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
+from ..object.terms_of_service import TermsOfService
+from ..object.terms_of_service_user_status import TermsOfServiceUserStatus
 from ..object.events import Events
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
@@ -396,6 +398,89 @@ class Client(Cloneable):
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
         return self.translator.translate('group')(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+    def terms_of_service(self, tos_id):
+        """
+        Initialize a :class:`TermsOfService` object, whose box id is tos_id.
+        :param tos_id:
+            The box id of the :class:`TermsOfService` object.
+        :type tos_id:
+            `unicode`
+        :return:
+            A :class:`TermsOfService` object with the given terms of service id.
+        :rtype:
+            :class:`TermsOfService`
+        """
+        return TermsOfService(session=self._session, object_id=tos_id)
+
+    def terms_of_service_user_status(self, tos_user_status_id):
+        """
+        Initialize a :class:`TermsOfServiceUserStatus` object, whose box id is tos_user_status_id.
+        :param tos_user_status_id:
+            The box id of the :class:`TermsOfServiceUserStatus` object.
+        :type tos_id:
+            `unicode`
+        :return:
+            A :class:`TermsOfServiceUserStatus` object with the given terms of service user status id.
+        :rtype:
+            :class:`TermsOfServiceUserStatus`
+        """
+        return TermsOfServiceUserStatus(session=self._session, object_id=tos_user_status_id)
+
+    def terms_of_services(self, tos_type=None, limit=None):
+        """
+        Get the entries in the legal hold policy assignment using limit-offset paging.
+        :param fields:
+            List of fields to request
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the terms of service
+        """
+        additional_params = {}
+        if tos_type:
+            additional_params['tos_type'] = tos_type
+        if limit is not None:
+            additional_params['limit'] = limit
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self._session.get_url('terms_of_services'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=None,
+            fields=None,
+            return_full_pages=False
+        )
+
+    def create_a_terms_of_service(self, status, tos_type, text):
+        """
+        Create a terms of service.
+        :param status:
+            The status of the terms of service.
+        :type status:
+            `unicode`
+        :param tos_type:
+            The type of the terms of service. Can be set to managed or external.
+        :type tos_type:
+            `unicode`
+        :param text:
+            The message of the terms of service.
+        :type text:
+            `unicode`
+        """
+        url = '{0}/terms_of_services'.format(API.BASE_API_URL)
+        body = {
+            'status': status,
+            'tos_type': tos_type,
+            'text': text
+        }
+        box_response = self._session.post(url, data=json.dumps(body))
+        response = box_response.json()
+        return self.translator.translate('terms_of_service')(
             session=self._session,
             object_id=response['id'],
             response_object=response,
