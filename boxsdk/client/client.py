@@ -7,6 +7,8 @@ from ..auth.oauth2 import TokenResponse
 from ..session.session import Session, AuthorizedSession
 from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
+from ..object.legal_hold_policy import LegalHoldPolicy
+from ..object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
 from ..object.search import Search
 from ..object.events import Events
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -158,6 +160,87 @@ class Client(Cloneable):
             :class:`Collaboration`
         """
         return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
+
+    def legal_hold_policy(self, policy_id):
+        """
+        Initialize a :class: `LegalHoldPolicy` object, whose box id is policy_id.
+        :param policy_id:
+            The box ID of the :class:`LegalHoldPolicy` object.
+        :type policy_id:
+            `unicode`
+        :return:
+            A :class: `LegalHoldPolicy` object with the given entry ID.
+        :rtype:
+            :class:`LegalHoldPolicy`
+        """
+        return LegalHoldPolicy(session=self._session, object_id=policy_id)
+
+    def legal_hold_policy_assignment(self, policy_assignment_id):
+        """
+        Initialize a :class: `LegalHoldPolicyAssignment` object, whose box id is policy_assignment_id.
+        :param policy_assignment_id:
+            The assignment ID of the :class:`LegalHoldPolicyAssignment` object.
+        :type policy_assignment_id:
+            `unicode`
+        :return:
+            A :class `LegalHoldPolicyAssignment` object with the given entry ID.
+        :rtype:
+            :class:`LegalHoldPolicyAssignment`
+        """
+        return LegalHoldPolicyAssignment(session=self._session, object_id=policy_assignment_id)
+
+    def create_legal_hold_policy(self, policy_name, **policy_attributes):
+        """
+        Create a legal hold policy.
+         :param policy_name:
+            The legal hold policy's display name.
+        :type policy_name:
+            `unicode`
+        :param policy_attributes:
+            Additional attributes for the legal hold policy.
+        """
+        url = self.get_url('legal_hold_policies')
+        policy_attributes['policy_name'] = policy_name
+        box_response = self._session.post(url, data=json.dumps(policy_attributes))
+        response = box_response.json()
+        return LegalHoldPolicy(self._session, response['id'], response)
+
+    def legal_hold_policies(self, policy_name=None, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the legal hold policy using limit-offset paging.
+        :param policy_name:
+            The name of the legal hold policy case insensitive to search for
+        :type policy_name:
+            `str` or None
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `str` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the legal hold policy
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {}
+        if policy_name is not None:
+            additional_params = {'policy_name': policy_name}
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('legal_hold_policies'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False
+        )
 
     def collection(self, collection_id):
         """
