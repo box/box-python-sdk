@@ -9,6 +9,8 @@ from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
+from ..object.retention_policy import RetentionPolicy
+from ..object.retention_policy_assignment import RetentionPolicyAssignment
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
@@ -399,6 +401,152 @@ class Client(Cloneable):
             session=self._session,
             object_id=response['id'],
             response_object=response,
+        )
+
+    def retention_policy(self, retention_id):
+        """
+        Initialize a :class:`RetentionPolicy` object, whose box id is retention_id.
+         :param retention_id:
+            The box ID of the :class:`RetentionPolicy` object.
+        :type retention_id:
+            `unicode`
+        :return:
+            A :class:`RetentionPolicy` object with the given entry ID.
+        :rtype:
+            :class:`RetentionPolicy`
+        """
+        return RetentionPolicy(session=self._session, object_id=retention_id)
+
+    def retention_policy_assignment(self, assignment_id):
+        """
+        Initialize a :class:`RetentionPolicyAssignment` object, whose box id is assignment_id.
+         :param assignment_id:
+            The box ID of the :class:`RetentionPolicyAssignment` object.
+        :type assignment_id:
+            `unicode`
+        :return:
+            A :class:`RetentionPolicyAssignment` object with the given assignment ID.
+        :rtype:
+            :class:`RetentionPolicyAssignment`
+        """
+        return RetentionPolicyAssignment(session=self._session, object_id=assignment_id)
+
+    def create_retention_policy(
+            self,
+            policy_name,
+            policy_type,
+            disposition_action,
+            can_owner_extend_retention=False,
+            are_owners_notified=False,
+            retention_length=None,
+            custom_notification_recipients=None,
+    ):
+        """
+        Create a retention policy for the given enterprise.
+         :param policy_name:
+            The name of the retention policy.
+        :type policy_name:
+            `unicode`
+        :param policy_type:
+            Set to either `finite` or `indefinite`
+        :type policy_type:
+            `unicode`
+        :param disposition_action:
+            For `finite` policy can be set to `permanently delete` or `remove retention`.
+            For `indefinite` policy this must be set to `remove_retention`
+        :type disposition_action:
+            `unicode`
+        :param can_owner_extend_retention:
+            The owner of a file will be allowed to extend the retention if set to true.
+        :type can_owner_extend_retention:
+            `boolean` or None
+        :param are_owners_notified:
+            The owner or co-owner will get notified when a file is nearing expiration.
+        :type are_owners_notified:
+            `boolean` or None
+        :param retention_length:
+            The amount of time in days to apply the retention policy to the selected content.
+            Do not specify for `indefinite` policies, only for `finite` policies.
+        :type are_owners_notified:
+            `int` or None
+        :param custom_notification_recipients:
+            A custom list of user mini objects that should be notified when a file is nearing expiration.
+        :type custom_notification_recipients:
+            `list` or `User` objects
+        :return:
+            The newly created Retention Policy
+        :rtype:
+            :class:`RetentionPolicy`
+        """
+        url = self.get_url('retention_policies')
+        retention_attributes = {
+            'policy_name': policy_name,
+            'policy_type': policy_type,
+            'disposition_action': disposition_action,
+        }
+        if can_owner_extend_retention is not None:
+            retention_attributes['can_owner_extend_retention'] = can_owner_extend_retention
+        if are_owners_notified is not None:
+            retention_attributes['are_owners_notified'] = are_owners_notified
+        if retention_length is not None:
+            retention_attributes['retention_length'] = retention_length
+        if custom_notification_recipients is not None:
+            retention_attributes['custom_notification_recipients'] = custom_notification_recipients
+        box_response = self._session.post(url, data=json.dumps(retention_attributes))
+        response = box_response.json()
+        return RetentionPolicy(self._session, response['id'], response)
+
+    def retention_policies(
+            self,
+            policy_name=None,
+            policy_type=None,
+            created_by_user_id=None,
+            limit=None,
+            marker=None,
+            fields=None,
+    ):
+        """
+        Get the entries in the retention policy using marker-based paging.
+         :param policy_name:
+            The name of the retention policy.
+        :type policy_name:
+            `unicode` or None
+        :param policy_type:
+            Set to either `finite` or `indefinite`
+        :type policy_type:
+            `unicode` or None
+        :param created_by_user_id:
+            A user id to filter the retention policies.
+        :type created_by_user_id:
+            `unicode` or None
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `str` or None
+        :param marker:
+            The paging marker to start paging from
+        :type marker:
+            `str` or None
+        :param fields:
+            List of fields to request
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the retention policy
+        """
+        additional_params = {
+            'policy_name': policy_name,
+            'policy_type': policy_type,
+            'created_by_user_id': created_by_user_id,
+        }
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self._session.get_url('retention_policies'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
         )
 
     @api_call
