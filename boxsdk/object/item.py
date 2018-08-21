@@ -400,7 +400,7 @@ class Item(BaseObject):
             `unicode`
         """
         url = self.get_url('metadata', scope, template)
-        response = self._session.delete(url, data=json.dumps(body), headers=headers).json()
+        response = self._session.delete(url, headers=headers).json()
         return Translator().translate(response['type'])(
             self._session,
             response['id'],
