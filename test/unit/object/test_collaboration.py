@@ -34,3 +34,28 @@ def test_update_info_returns_the_correct_response(
     )
     assert isinstance(update_response, test_collaboration.__class__)
     assert update_response.object_id == test_collaboration.object_id
+
+
+def test_response_to_pending_collaboration(test_collaboration, mock_box_session):
+    # pylint:disable=protected-access
+    new_status = 'accepted'
+    expected_url = test_collaboration.get_url()
+    mock_collab_response = {
+        'type': 'collaboration',
+        'id': '1234',
+        'status': 'accepted',
+    }
+    mock_box_session.put.return_value.json.return_value = mock_collab_response
+    response = test_collaboration.respond_to_pending(new_status)
+    update_body = {
+        'status': 'accepted'
+    }
+    mock_box_session.put.assert_called_once_with(
+        expected_url,
+        data=json.dumps(update_body),
+        headers=None,
+        params=None,
+    )
+    assert isinstance(response, test_collaboration.__class__)
+    assert response.status == new_status
+

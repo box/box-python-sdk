@@ -524,6 +524,37 @@ class Client(Cloneable):
             response_object=response,
         )
 
+    def pending_collaborations(self, limit=None, offset=None, fields=None):
+        """
+        Get the entries in the file version using limit-offset paging.
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param offset:
+            The offset of the item at which to begin the response.
+        :type offset:
+            `str` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the pending collaborations
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {'status': 'pending'}
+        return LimitOffsetBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('collaboration'),
+            additional_params=additional_params,
+            limit=limit,
+            offset=offset,
+            fields=fields,
+            return_full_pages=False,
+        )
+
     def downscope_token(self, scopes, item=None, additional_data=None):
         """
         Generate a downscoped token for the provided file or folder with the provided scopes.

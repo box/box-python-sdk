@@ -7,6 +7,7 @@ import json
 from .item import Item
 from ..util.api_call_decorator import api_call
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
 class File(Item):
@@ -339,4 +340,33 @@ class File(Item):
             session=self._session,
             object_id=response['id'],
             response_object=response,
+        )
+
+    def collaborations(self, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the collaborators using limit-offset paging.
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `str` or None
+         :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the collaborators
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('files', self.object_id, 'collaborations'),
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
         )
