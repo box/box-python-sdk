@@ -9,11 +9,15 @@ from six import int2byte, PY2
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
+from boxsdk.object.email_alias import EmailAlias
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.search import Search
+from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
+from boxsdk.object.collaboration_whitelist_entry import CollaborationWhitelistEntry
+from boxsdk.object.collaboration_whitelist_exempt_target import CollaborationWhitelistExemptTarget
 
 
 # pylint:disable=redefined-outer-name
@@ -82,6 +86,21 @@ def test_comment(mock_box_session, mock_object_id):
 
 
 @pytest.fixture()
+def test_collaboration_whitelist(mock_box_session):
+    return CollaborationWhitelist(mock_box_session)
+
+
+@pytest.fixture()
+def test_collaboration_whitelist_entry(mock_box_session, mock_object_id):
+    return CollaborationWhitelistEntry(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_collaboration_whitelist_exemption(mock_box_session, mock_object_id):
+    return CollaborationWhitelistExemptTarget(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
 def test_folder(mock_box_session, mock_object_id):
     return Folder(mock_box_session, mock_object_id)
 
@@ -89,6 +108,11 @@ def test_folder(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_group(mock_box_session, mock_group_id):
     return Group(mock_box_session, mock_group_id)
+
+
+@pytest.fixture()
+def test_email_alias(mock_box_session, mock_object_id):
+    return EmailAlias(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()
