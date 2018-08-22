@@ -9,6 +9,7 @@ from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.object.comment import Comment
 from boxsdk.object.file import File
+from boxsdk.object.task import Task
 
 
 # pylint:disable=protected-access
@@ -39,6 +40,46 @@ def test_delete_file(test_file, mock_box_session, etag, if_match_header):
         params={},
         headers=if_match_header,
     )
+
+
+def test_create_task(test_file, mock_box_session, test_task):
+    # pylint:disable=redefined-outer-name
+    expected_body = {
+        'item': {
+            'type': 'file',
+            'id': 42,
+        },
+        'action': 'review',
+    }
+    value = json.dumps(expected_body)
+    mock_box_session.post.return_value = test_task
+    new_task = test_file.create_task()
+    assert len(mock_box_session.post.call_args_list) == 1
+    assert mock_box_session.post.call_args[0] == ("{0}/tasks".format(API.BASE_API_URL),)
+    assert mock_box_session.post.call_args[1] == {'data': value}
+    assert isinstance(new_task, Task)
+
+
+def test_get_tasks(test_file, mock_box_session):
+    expected_url = test_file.get_url('tasks')
+    task_body = {
+        'type': 'task',
+        'id': '12345',
+        'item': {
+            'type': 'file',
+            'id': '33333',
+        },
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [task_body],
+    }
+    tasks = test_file.tasks()
+    task = tasks.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 100})
+    assert isinstance(task, Task)
+    assert task.id == task_body['id']
+    assert task.item['id'] == task_body['item']['id']
 
 
 def test_download_to(test_file, mock_box_session, mock_content_response):
