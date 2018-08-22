@@ -84,6 +84,12 @@ class Client(Cloneable):
         """
         return self.translator.translate('folder')(session=self._session, object_id=folder_id)
 
+    def root_folder(self):
+        """
+        Returns a user's root folder object.
+        """
+        return self.translator.translate('folder')(self._session, '0')
+
     def file(self, file_id):
         """
         Initialize a :class:`File` object, whose box id is file_id.
