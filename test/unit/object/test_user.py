@@ -41,5 +41,3 @@ def test_get_memberships(
         assert membership.object_id == expected_id
         # pylint:disable=protected-access
         assert membership._session == mock_box_session
-
-
