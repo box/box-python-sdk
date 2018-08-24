@@ -10,7 +10,6 @@ from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.network.default_network import DefaultNetworkResponse
 
 
-
 @pytest.fixture(scope='module')
 def delete_assignment_response():
     # pylint:disable=redefined-outer-name
