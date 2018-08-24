@@ -101,5 +101,3 @@ class Group(BaseObject):
             offset=offset,
             return_full_pages=False
         )
-
-

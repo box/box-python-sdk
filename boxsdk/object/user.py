@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 from .base_object import BaseObject
-from boxsdk.config import API
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
 
