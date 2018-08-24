@@ -421,7 +421,6 @@ def test_get_storage_policy_assignments(mock_client, mock_box_session):
         'entries': [mock_assignment]
     }
     expected_params = {
-        'limit': 100,
         'resolved_for_type': resolved_for_type,
         'resolved_for_id': resolved_for_id,
     }

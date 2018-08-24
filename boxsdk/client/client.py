@@ -406,7 +406,8 @@ class Client(Cloneable):
     def storage_policy(self, policy_id):
         """
         Initialize a :class:`StoragePolicy` object, whose box id is policy_id.
-            :param policy_id:
+
+        :param policy_id:
             The box ID of the :class:`StoragePolicy` object.
         :type policy_id:
             `unicode`
@@ -420,7 +421,8 @@ class Client(Cloneable):
     def storage_policy_assignment(self, assignment_id):
         """
         Initialize a :class:`StoragePolicyAssignment` object, whose box id is assignment_id.
-         :param assignment_id:
+
+        :param assignment_id:
             The box ID of the :class:`StoragePolicyAssignment` object.
         :type assignment_id:
             `unicode`
@@ -452,6 +454,8 @@ class Client(Cloneable):
         :rtype:
             :class:`BoxObjectCollection`
         """
+        if limit is not None:
+            limit = limit
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self.get_url('storage_policies'),
@@ -461,13 +465,14 @@ class Client(Cloneable):
             return_full_pages=False,
         )
 
-    def storage_policy_assignments(self, resolved_for_type, resolved_for_id, marker=None, fields=None):
+    def storage_policy_assignments(self, resolved_for_type, resolved_for_id, limit=None, marker=None, fields=None):
         """
         Get the entries in the storage policy assignment using limit-offset paging.
-	    :param resolved_for_type:
+
+        :param resolved_for_type:
             Set to either `user` or `enterprise`
         :type limit:
-            `unicode`
+            `unicode` or None
         :param resolved_for_id:
             The id of the user or enterprise
         :type limit:
@@ -485,15 +490,17 @@ class Client(Cloneable):
         :rtype:
             :class:`BoxObjectCollection`
         """
+        if limit is not None:
+            limit = limit
         additional_params = {
             'resolved_for_type': resolved_for_type,
             'resolved_for_id': resolved_for_id,
         }
         return MarkerBasedObjectCollection(
             session=self._session,
-            url='{0}/storage_policy_assignments'.format(API.BASE_API_URL),
+            url=self.get_url('storage_policy_assignments'),
             additional_params=additional_params,
-            limit=100,
+            limit=limit,
             marker=marker,
             fields=fields,
         )
