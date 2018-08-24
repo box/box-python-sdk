@@ -3,8 +3,8 @@ from __future__ import unicode_literals, absolute_import
 
 import json
 
-from .base_object import BaseObject
 from boxsdk.util.translator import Translator
+from .base_object import BaseObject
 
 
 class StoragePolicy(BaseObject):
