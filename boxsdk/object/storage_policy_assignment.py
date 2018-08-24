@@ -10,4 +10,3 @@ class StoragePolicyAssignment(BaseObject):
 
     def get_url(self, *args):
         return self._session.get_url('storage_policy_assignments', self._object_id, *args)
-
