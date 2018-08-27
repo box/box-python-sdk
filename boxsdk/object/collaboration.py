@@ -69,4 +69,3 @@ class Collaboration(BaseObject):
         """
         data = {'status': new_status}
         return super(Collaboration, self).update_info(data=data)
-

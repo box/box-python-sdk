@@ -298,7 +298,7 @@ def test_collaborations(test_item_and_response, mock_box_session):
     }
     collaborations = test_item.collaborations()
     collaboration = collaborations.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 500})
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
     assert isinstance(collaboration, Collaboration)
     assert collaboration.id == mock_collaboration['id']
     assert collaboration.type == mock_collaboration['type']

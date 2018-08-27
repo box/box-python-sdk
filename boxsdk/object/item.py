@@ -3,6 +3,7 @@
 from __future__ import unicode_literals, absolute_import
 import json
 
+from boxsdk.config import API
 from .base_object import BaseObject
 from ..exception import BoxAPIException
 from .metadata import Metadata
@@ -512,7 +513,7 @@ class Item(BaseObject):
         """
         return MarkerBasedObjectCollection(
             session=self._session,
-            url=self.get_url('collaborations'),
+            url='{0}/collaborations'.format(API.BASE_API_URL),
             limit=500,
             marker=None,
             fields=fields,

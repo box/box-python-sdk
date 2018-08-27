@@ -344,7 +344,7 @@ class File(Item):
 
     def collaborations(self, limit=None, marker=None, fields=None):
         """
-        Get the entries in the collaborators using limit-offset paging.
+        Get the entries in the collaborators using marker-based paging.
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:
