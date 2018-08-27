@@ -5,9 +5,11 @@ import json
 import os
 from six import text_type
 
+from boxsdk.config import API
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
+from boxsdk.object.web_link import WebLink
 from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from boxsdk.util.api_call_decorator import api_call
@@ -415,6 +417,41 @@ class Folder(Item):
             object_id=collab_id,
             response_object=collaboration_response,
         )
+
+    def create_web_link(self, target_url, name=None, description=None):
+        """
+        Create a WebLink with a given url.
+         :param target_url:
+            The url the web link points to.
+        :type target_url:
+            `unicode`
+        :param name:
+            The name of the web link. Optional, the API will give it a default if not specified.
+        :type name:
+            `unicode` or None
+        :param description:
+            Description of the web link
+        :type name:
+            `unicode` or None
+        :return:
+            A :class:`WebLink` object.
+        :rtype:
+            :class:`WebLink`
+        """
+        url = "{0}/web_links".format(API.BASE_API_URL)
+        web_link_attributes = {
+            'url': target_url,
+            'parent': {
+                'id': self.object_id
+            }
+        }
+        if name is not None:
+            web_link_attributes['name'] = name
+        if description is not None:
+            web_link_attributes['description'] = description
+        box_response = self._session.post(url, data=json.dumps(web_link_attributes))
+        response = box_response.json()
+        return WebLink(self._session, response['id'], response)
 
     @api_call
     def delete(self, recursive=True, etag=None):
