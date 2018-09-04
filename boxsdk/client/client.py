@@ -434,7 +434,6 @@ class Client(Cloneable):
     def create_retention_policy(
             self,
             policy_name,
-            policy_type,
             disposition_action,
             can_owner_extend_retention=False,
             are_owners_notified=False,
@@ -479,10 +478,16 @@ class Client(Cloneable):
             :class:`RetentionPolicy`
         """
         url = self.get_url('retention_policies')
+        retention_attributes = {}
+        if retention_length == -1 or retention_lengh == None:
+            retention_attributes['policy_type'] = 'indefinite'
+            retention_attributes['disposition_action'] = 'remove_retention'
+        else:
+            retention_attributes['policy_type'] = 'finite'
+            retention_attributes['retention_length'] = retention_length
+            retention_attributes['disposition_action'] = disposition_action
         retention_attributes = {
             'policy_name': policy_name,
-            'policy_type': policy_type,
-            'disposition_action': disposition_action,
         }
         if can_owner_extend_retention is not None:
             retention_attributes['can_owner_extend_retention'] = can_owner_extend_retention
