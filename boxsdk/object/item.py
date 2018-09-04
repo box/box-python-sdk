@@ -522,25 +522,21 @@ class Item(BaseObject):
 
     def pending_collaborations(self, status, limit=None, offset=None, fields=None):
         """
-        Get the entries in the storage policy assignment using limit-offset paging.
-         :param resolved_for_type:
-            Set to either `user` or `enterprise`
-        :type limit:
+        Get the entries in the pending collaborations using limit-offset paging.
+        :param status:
+            Set to either `pending`
+        :type status:
             unicode
-        :param resolved_for_id:
-            The id of the user or enterprise
+        :param limit:
+            The number of entries to retrieve per page.
         :type limit:
-            unicode
-        :param marker:
-            The paging marker to start paging from.
-        :type marker:
             `str` or None
         :param fields:
             List of fields to request.
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            An iterator of the entries in the storage policy assignment
+            An iterator of the entries in the pending collaborations
         :rtype:
             :class:`BoxObjectCollection`
         """
