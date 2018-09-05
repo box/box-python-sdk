@@ -3,7 +3,6 @@
 from __future__ import unicode_literals, absolute_import
 import json
 
-from boxsdk.config import API
 from ..auth.oauth2 import TokenResponse
 from ..session.session import Session, AuthorizedSession
 from ..object.cloneable import Cloneable

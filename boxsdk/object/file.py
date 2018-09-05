@@ -7,7 +7,6 @@ import json
 from .item import Item
 from ..util.api_call_decorator import api_call
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
-from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
 class File(Item):

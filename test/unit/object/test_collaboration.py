@@ -58,4 +58,3 @@ def test_response_to_pending_collaboration(test_collaboration, mock_box_session)
     )
     assert isinstance(response, test_collaboration.__class__)
     assert response.status == new_status
-
