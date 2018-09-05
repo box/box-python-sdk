@@ -341,32 +341,3 @@ class File(Item):
             object_id=response['id'],
             response_object=response,
         )
-
-    def collaborations(self, limit=None, marker=None, fields=None):
-        """
-        Get the entries in the collaborators using marker-based paging.
-        :param limit:
-            The maximum number of entries to return per page. If not specified, then will use the server-side default.
-        :type limit:
-            `int` or None
-        :param marker:
-            The paging marker to start paging from.
-        :type marker:
-            `str` or None
-         :param fields:
-            List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
-        :returns:
-            An iterator of the entries in the collaborators
-        :rtype:
-            :class:`BoxObjectCollection`
-        """
-        return MarkerBasedObjectCollection(
-            session=self._session,
-            url=self.get_url('files', self.object_id, 'collaborations'),
-            limit=limit,
-            marker=marker,
-            fields=fields,
-            return_full_pages=False,
-        )

@@ -296,7 +296,7 @@ def test_collaborations(test_item_and_response, mock_box_session):
         'limit': 500,
         'entries': [mock_collaboration]
     }
-    collaborations = test_item.collaborations()
+    collaborations = test_item.collaborations(limit=500)
     collaboration = collaborations.next()
     mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 500})
     assert isinstance(collaboration, Collaboration)
@@ -322,10 +322,9 @@ def test_pending_collaborations(test_item_and_response, mock_box_session):
         'total_count': 1,
         'offset': 0,
     }
-    collaborations = test_item.pending_collaborations('pending')
+    collaborations = test_item.pending_collaborations()
     collaboration = collaborations.next()
     mock_box_session.get.assert_called_once_with(expected_url, params={'status': 'pending', 'offset': None})
     assert isinstance(collaboration, Collaboration)
     assert collaboration.id == mock_collaboration['id']
     assert collaboration.type == mock_collaboration['type']
-

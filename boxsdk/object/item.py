@@ -10,6 +10,8 @@ from .metadata import Metadata
 from ..util.api_call_decorator import api_call
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..util.translator import Translator
+
 
 class Item(BaseObject):
     """Box API endpoint for interacting with files and folders."""
@@ -499,7 +501,7 @@ class Item(BaseObject):
             response,
         )
 
-    def collaborations(self, fields=None):
+    def collaborations(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the collaboration using marker-based paging.
          :param fields:
@@ -513,14 +515,14 @@ class Item(BaseObject):
         """
         return MarkerBasedObjectCollection(
             session=self._session,
-            url='{0}/collaborations'.format(API.BASE_API_URL),
-            limit=500,
-            marker=None,
+            url=self.get_url('collaborations'),
+            limit=limit,
+            marker=marker,
             fields=fields,
             return_full_pages=False,
         )
 
-    def pending_collaborations(self, status, limit=None, offset=None, fields=None):
+    def pending_collaborations(self, limit=None, offset=None, fields=None):
         """
         Get the entries in the pending collaborations using limit-offset paging.
         :param status:
@@ -540,7 +542,7 @@ class Item(BaseObject):
         :rtype:
             :class:`BoxObjectCollection`
         """
-        additional_params = {'status': status}
+        additional_params = {'status': 'pending'}
         if fields:
             additional_params['fields'] = ','.join(fields)
         return LimitOffsetBasedObjectCollection(
