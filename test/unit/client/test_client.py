@@ -390,13 +390,14 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
 
 def test_create_retention_policy(mock_client, mock_box_session):
     policy_name = 'Test Retention Policy'
-    policy_type = 'indefinite'
+    policy_type = 'finite'
     disposition_action = 'remove_retention'
     expected_url = mock_box_session.get_url('retention_policies')
     expected_data = {
-        'policy_name': policy_name,
         'policy_type': policy_type,
+        'retention_length': 5,
         'disposition_action': disposition_action,
+        'policy_name': policy_name,
         'can_owner_extend_retention': False,
         'are_owners_notified': False,
     }
@@ -406,7 +407,7 @@ def test_create_retention_policy(mock_client, mock_box_session):
         'policy_name': policy_name,
     }
     mock_box_session.post.return_value.json.return_value = mock_policy
-    policy = mock_client.create_retention_policy(policy_name, policy_type, disposition_action)
+    policy = mock_client.create_retention_policy(policy_name, disposition_action, retention_length=5)
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert policy.id == mock_policy['id']
     assert policy.type == mock_policy['type']
