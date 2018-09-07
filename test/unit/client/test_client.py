@@ -411,6 +411,28 @@ def test_create_retention_policy(mock_client, mock_box_session):
     assert policy.object_type == mock_policy['type']
 
 
+def test_create_infinte_retention_policy(mock_client, mock_box_session):
+    policy_name = 'Test Retention Policy'
+    policy_type = 'indefinite'
+    disposition_action = 'remove_retention'
+    expected_url = mock_box_session.get_url('retention_policies')
+    expected_data = {
+        'policy_name': policy_name,
+        'policy_type': policy_type,
+        'disposition_action': disposition_action,
+    }
+    mock_policy = {
+        'type': 'retention_policy',
+        'id': '1234',
+        'policy_name': policy_name,
+    }
+    mock_box_session.post.return_value.json.return_value = mock_policy
+    policy = mock_client.create_retention_policy(policy_name, disposition_action)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert policy.object_id == mock_policy['id']
+    assert policy.object_type == mock_policy['type']
+
+
 def test_get_retention_policies(mock_client, mock_box_session):
     expected_url = mock_box_session.get_url('retention_policies')
     mock_policy = {
