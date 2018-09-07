@@ -29,14 +29,14 @@ def memberships_response():
     return mock_network_response
 
 
-def test_get_memberships(
+def test_get_group_memberships(
         mock_user,
         mock_box_session,
         memberships_response,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = memberships_response
-    memberships = mock_user.get_memberships()
+    memberships = mock_user.get_group_memberships()
     for membership, expected_id in zip(memberships, [101, 202]):
         assert membership.object_id == expected_id
         # pylint:disable=protected-access

@@ -14,14 +14,14 @@ class Group(BaseObject):
     _item_type = 'group'
 
     @api_call
-    def get_memberships(self, offset=0, limit=None, fields=None):
+    def get_memberships(self, limit=None, offset=0, fields=None):
         """
         Get the membership records for the group, which indicate which users are included in the group.
 
         :param offset:
             The index at which to begin.
         :type offset:
-            `int`
+            `int` or None
         :param limit:
             The maximum number of items to return in a page.
         :type limit:
@@ -41,7 +41,7 @@ class Group(BaseObject):
         )
 
     @api_call
-    def add_member(self, user, role):
+    def add_member(self, user, role='Member'):
         """
         Add the given user to this group under the given role
 
@@ -68,7 +68,7 @@ class Group(BaseObject):
         response = box_response.json()
         return self.translator.translate(response['type'])(self._session, response['id'], response, user=user, group=self)
 
-    def collaborations(self, offset=None, limit=None, fields=None):
+    def collaborations(self, limit=None, offset=None, fields=None):
         """
         Get the entries in the collaboration for the group using limit-offset paging.
 
@@ -79,7 +79,7 @@ class Group(BaseObject):
         :param offset:
             The offset of the item at which to begin the response.
         :type offset:
-            `str` or None
+            `int` or None
         :param fields:
             List of fields to request.
         :type fields:
