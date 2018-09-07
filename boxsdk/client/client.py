@@ -9,8 +9,6 @@ from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
-from ..object.retention_policy import RetentionPolicy
-from ..object.retention_policy_assignment import RetentionPolicyAssignment
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
@@ -415,7 +413,7 @@ class Client(Cloneable):
         :rtype:
             :class:`RetentionPolicy`
         """
-        return RetentionPolicy(session=self._session, object_id=retention_id)
+        return self.translator.translate('retention_policy')(session=self._session, object_id=retention_id)
 
     def retention_policy_assignment(self, assignment_id):
         """
@@ -429,14 +427,14 @@ class Client(Cloneable):
         :rtype:
             :class:`RetentionPolicyAssignment`
         """
-        return RetentionPolicyAssignment(session=self._session, object_id=assignment_id)
+        return self.translator.translate('retention_policy_assignment')(session=self._session, object_id=assignment_id)
 
     def create_retention_policy(
             self,
             policy_name,
             disposition_action,
-            can_owner_extend_retention=False,
-            are_owners_notified=False,
+            can_owner_extend_retention=None,
+            are_owners_notified=None,
             retention_length=None,
             custom_notification_recipients=None,
     ):
@@ -478,7 +476,7 @@ class Client(Cloneable):
             :class:`RetentionPolicy`
         """
         url = self.get_url('retention_policies')
-        retention_attributes = {}
+        retention_attributes = {'policy_name': policy_name}
         if retention_length == -1 or retention_length is None:
             retention_attributes['policy_type'] = 'indefinite'
             retention_attributes['disposition_action'] = 'remove_retention'
@@ -487,19 +485,15 @@ class Client(Cloneable):
             retention_attributes['retention_length'] = retention_length
             retention_attributes['disposition_action'] = disposition_action
 
-        retention_attributes['policy_name'] = policy_name
-
         if can_owner_extend_retention is not None:
             retention_attributes['can_owner_extend_retention'] = can_owner_extend_retention
         if are_owners_notified is not None:
             retention_attributes['are_owners_notified'] = are_owners_notified
-        if retention_length is not None:
-            retention_attributes['retention_length'] = retention_length
         if custom_notification_recipients is not None:
             retention_attributes['custom_notification_recipients'] = custom_notification_recipients
         box_response = self._session.post(url, data=json.dumps(retention_attributes))
         response = box_response.json()
-        return RetentionPolicy(self._session, response['id'], response)
+        return self.translator.translate('retention_policy')(session=self._session, object_id=response['id'])
 
     def retention_policies(
             self,

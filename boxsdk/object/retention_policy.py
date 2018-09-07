@@ -23,7 +23,7 @@ class RetentionPolicy(BaseObject):
         :param item:
             The item to assign the retention policy on.
         :type item:
-            `object`
+            :class: ''
         :param fields:
             List of fields to request.
         :type fields:
@@ -38,13 +38,13 @@ class RetentionPolicy(BaseObject):
             }
         }
         params = {}
-        if fields:
+        if fields is not None:
             params['fields'] = ','.join(fields)
         response = self._session.post(url, data=json.dumps(body), params=params).json()
-        return Translator().translate(response['type'])(
-            self._session,
-            response['id'],
-            response,
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
         )
 
     def assignments(self, assignment_type=None, limit=None, marker=None, fields=None):
@@ -71,7 +71,7 @@ class RetentionPolicy(BaseObject):
         }
         return MarkerBasedObjectCollection(
             session=self._session,
-            url='{0}/retention_policies/{1}/assignments'.format(API.BASE_API_URL, self.object_id),
+            url=self.get_url('assignments'),
             additional_params=additional_params,
             limit=limit,
             marker=marker,
