@@ -8,8 +8,6 @@ from ..session.session import Session, AuthorizedSession
 from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
-from ..object.storage_policy import StoragePolicy
-from ..object.storage_policy_assignment import StoragePolicyAssignment
 from ..object.events import Events
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
@@ -416,7 +414,7 @@ class Client(Cloneable):
         :rtype:
             :class:`StoragePolicy`
         """
-        return StoragePolicy(session=self._session, object_id=policy_id)
+        return self.translator.translate('storage_policy')(session=self._session, object_id=policy_id)
 
     def storage_policy_assignment(self, assignment_id):
         """
@@ -431,7 +429,7 @@ class Client(Cloneable):
         :rtype:
             :class:`StoragePolicyAssignment`
         """
-        return StoragePolicyAssignment(session=self._session, object_id=assignment_id)
+        return self.translator.translate('storage_policy_assignment')(session=self._session, object_id=assignment_id)
 
     def storage_policies(self, limit=None, marker=None, fields=None):
         """

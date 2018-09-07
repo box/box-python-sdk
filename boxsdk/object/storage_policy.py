@@ -3,7 +3,6 @@ from __future__ import unicode_literals, absolute_import
 
 import json
 
-from boxsdk.util.translator import Translator
 from .base_object import BaseObject
 
 
@@ -31,7 +30,7 @@ class StoragePolicy(BaseObject):
             }
         }
         response = self._session.post(url, data=json.dumps(body)).json()
-        return Translator().translate(response['type'])(
+        return self.translator().translate(response['type'])(
             self._session,
             response['id'],
             response,
