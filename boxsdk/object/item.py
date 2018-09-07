@@ -449,7 +449,7 @@ class Item(BaseObject):
         return self.translator.translate(response['type'])(
             session=self._session,
             object_id=response['id'],
-            response_objet=response,
+            response_object=response,
         )
 
     def collaborate_with_login(self, role, login, can_view_path=None, notify=None, fields=None):
