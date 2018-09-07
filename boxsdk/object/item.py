@@ -446,10 +446,10 @@ class Item(BaseObject):
         if notify:
             params['notify'] = ','.join(fields)
         response = self._session.post(url, data=json.dumps(body), params=params).json()
-        return Translator().translate(response['type'])(
-            self._session,
-            response['id'],
-            response,
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_objet=response,
         )
 
     def collaborate_with_login(self, role, login, can_view_path=None, notify=None, fields=None):
@@ -495,10 +495,10 @@ class Item(BaseObject):
         if notify:
             params['notify'] = ','.join(fields)
         response = self._session.post(url, data=json.dumps(body), params=params).json()
-        return Translator().translate(response['type'])(
-            self._session,
-            response['id'],
-            response,
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
         )
 
     def collaborations(self, limit=None, marker=None, fields=None):
@@ -543,7 +543,7 @@ class Item(BaseObject):
             :class:`BoxObjectCollection`
         """
         additional_params = {'status': 'pending'}
-        if fields:
+        if fields is not None:
             additional_params['fields'] = ','.join(fields)
         return LimitOffsetBasedObjectCollection(
             session=self._session,
