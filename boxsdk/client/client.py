@@ -452,8 +452,6 @@ class Client(Cloneable):
         :rtype:
             :class:`BoxObjectCollection`
         """
-        if limit is not None:
-            limit = limit
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self.get_url('storage_policies'),
@@ -488,19 +486,16 @@ class Client(Cloneable):
         :rtype:
             :class:`BoxObjectCollection`
         """
-        if limit is not None:
-            limit = limit
         additional_params = {
             'resolved_for_type': resolved_for_type,
             'resolved_for_id': resolved_for_id,
         }
-        return MarkerBasedObjectCollection(
+        box_response = self._session.get(url, params=additional_params)
+        response = box_response.json()
+        return self.translator.translate('storage_policy_assignment')(
             session=self._session,
-            url=self.get_url('storage_policy_assignments'),
-            additional_params=additional_params,
-            limit=limit,
-            marker=marker,
-            fields=fields,
+            object_id=response['id'],
+            response_object=response['entries'][0],
         )
 
     @api_call

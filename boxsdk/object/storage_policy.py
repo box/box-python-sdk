@@ -17,7 +17,15 @@ class StoragePolicy(BaseObject):
         """
         return self._session.get_url('storage_policies', self._object_id, *args)
 
-    def assign(self, item):
+    def assign(self, assignee):
+        """
+        Assign a storage policy to a `user` or `enterprise`
+
+        :param assignee:
+            The `user` or `enterprise` to assign the storage policy to
+        :type:
+            :class:User
+        """
         url = self._session.get_url('storage_policy_assignments')
         body = {
             'storage_policy': {
@@ -25,8 +33,8 @@ class StoragePolicy(BaseObject):
                 'id': self.object_id,
             },
             'assigned_to': {
-                'type': item.object_type,
-                'id': item.object_id,
+                'type': assignee.object_type,
+                'id': assignee.object_id,
             }
         }
         response = self._session.post(url, data=json.dumps(body)).json()

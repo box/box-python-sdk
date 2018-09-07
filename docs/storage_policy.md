@@ -9,20 +9,22 @@ where they work/reside.
 Get Storage Policy
 ------------------
 
-Calling 'storage_policy.get('storage_policy_id')' will return the storage policy object.
+Calling `storage_policy.get(storage_policy_id)` will return the storage policy object.
 
 ```python
 storage_policy_id = '1234'
 storage_policy = client.storage_policy(storage_policy_id).get()
 ```
 
-Get List of Storage Policies
-----------------------------
+List Available Storage Policies
+-------------------------------
 
-Calling `client.storage_policies()` will return an iterable that will page through all of the storage policies. It is possible to specify maxiumum number of items per response and fields to retrieve by caling `client.storage_policies(limit=number_of_entries, fields=fields_to_retrieve)`.
+Calling `client.storage_policies()` will return an iterable that will page through all of the storage policies. It is possible to specify maxiumum number of items per response and fields to retrieve by caling `client.storage_policies(limit=None, fields=None)`.
 
 ```python
 storage_policies = client.storage_policies(limit=100)
+for storage_policy in storage_policies:
+    # Do something
 ```
 
 Assign Storage Policy
@@ -32,8 +34,8 @@ To create new storage policy assignment call `storage_policy.assign(item)`.
 
 ```python
 storage_policy_id = '5678'
-item = {'type': 'user', 'id': '1234'}
-storage_policy_assignment = client.storage_policy(storage_policyid).assign(item)
+user = client.user('1234')
+storage_policy_assignment = client.storage_policy(storage_policyid).assign(user)
 ```
 
 Update Existing Assignment
