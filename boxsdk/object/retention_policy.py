@@ -2,9 +2,7 @@
 from __future__ import unicode_literals, absolute_import
 import json
 
-from boxsdk.util.translator import Translator
 from .base_object import BaseObject
-from ..config import API
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
