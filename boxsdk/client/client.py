@@ -534,7 +534,7 @@ class Client(Cloneable):
         :param offset:
             The offset of the item at which to begin the response.
         :type offset:
-            `str` or None
+            `int` or None
         :param fields:
             List of fields to request.
         :type fields:
@@ -544,11 +544,10 @@ class Client(Cloneable):
         :rtype:
             :class:`BoxObjectCollection`
         """
-        additional_params = {'status': 'pending'}
         return LimitOffsetBasedObjectCollection(
             session=self._session,
             url=self.get_url('collaboration'),
-            additional_params=additional_params,
+            additional_params={'status': 'pending'},
             limit=limit,
             offset=offset,
             fields=fields,

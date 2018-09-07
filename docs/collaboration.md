@@ -8,13 +8,14 @@ define what permissions a user has for a folder.
 Add a Collaboration
 -------------------
 
-You can add a collaboration on a folder by calling `client.add_collaborator(collaborator, role)`. The
+You can add a collaboration on a folder or a file by calling `item.collaborate(accessible_by, role, can_view_path=None, notify=None, fields=None)`. The
 `role` parameter determines what permissions the collaborator will have on the folder.
 
 ```python
 folder_id = '1234'
-collaborator = {'type': 'user', 'id': '1111'}
-collaboration = client.folder(folder_id).add_collaborator(collaborator, CollaborationRole.VIEWER)
+user_id = '1111'
+collaborator = client.user(user_id)
+collaboration = client.folder(folder_id).collaborate(collaborator, CollaborationRole.VIEWER)
 ```
 
 Alternatively you can also invite a user with their email address.
@@ -22,13 +23,13 @@ Alternatively you can also invite a user with their email address.
 ```python
 folder_id = '1234'
 email_of_invitee = "testuser@example.com"
-collaboration = client.folder(folder_id).add_collaborator(email_of_invitee, CollaborationRole.VIEWER)
+collaboration = client.folder(folder_id).collaborate_with_login(email_of_invitee, CollaborationRole.VIEWER)
 ```
 
 Edit a Collaboration
 --------------------
 
-A collaboration can be edited by using `collaborationupdate_info()`.
+A collaboration can be edited by using `collaboration.update_info()`.
 
 ```python
 collaboration_id = '1111'
@@ -56,15 +57,14 @@ collaboration_id = '1111'
 collaboration_info = client.collaboration(collaboration_id).get()
 ```
 
-Get Collaborations on a Folder
-------------------------------
+List Collaborations on a Folder
+-------------------------------
 
 To retrieve all collaborations on a specified folder you can use `client.collaborations()`.
 
 ```python
 folder_id = '1234'
-folder = client.folder(folder_id).get()
-collaborations_on_folder = folder.collaborations()
+collaborations = client.folder(folder_id).collaborations()
 for collaborations in collaborations_on_folder:
     # Do something
 ```
@@ -76,51 +76,36 @@ To retrieve an iterable of collaborations on a specified file you can use `clien
 
 ```python
 file_id = '2222'
-file = client.file(file_id).get()
-collaborations_on_file = folder.collaborations()
+collaborations = client.file(file_id).collaborations()
 for collaborations in collaborations_on_file:
     # Do something
 ```
 
-Get Pending Collaborations on Folder
+List Pending Collaborations
 ------------------------------------
 
-To retrieve all pending collaborations on a folder use `folder.pending_collaborations()`. The status is always set to `pending`.
+To retrieve all pending collaborations on a folder use `folder.pending_collaborations()`.
 
 ```python
 folder_id = '1234'
-pending_collaborations_on_folder = client.folder(folder_id).pending_collaborations()
+pending_collaborations_on_folder = client.pending_collaborations()
 for pending_collaborations in pending_collaborations_on_folder:
     # Do something
 ```
 
-Get Pending Collaborations on File
-----------------------------------
-
-To retrieve all pending collaborations on a file use `file.pending_collaborations()`. The status is always set to `pending`.
-
-```python
-file_id = '2222'
-pending_collaborations_on_file = client.file(file_id).pending_collaborations()
-for pending_collaborations in pending_collaborations_on_file
-    # Do something
-```
-
-Accept or Decline a Pending Collaboration
+Accept or Reject a Pending Collaboration
 -----------------------------------------
 
 To `accept` or `reject` a pending collaboration use `client.respond_to_collaboration(new_status)`.
 
 ```python
-new_status = 'accepted'
 collaboration_id = '3333'
-client.collaboration(collaboration_id).respond_to_collaboration(new_status)
+client.collaboration(collaboration_id).accept()
 ```
 
 Alternatively. you can reject a pending collaboration with
 
 ```python
-new_status = 'rejected'
 collaboration_id = '3333'
-client.collaboration(collaboration_id).response_to_collaboration(new_status)
+client.collaboration(collaboration_id).reject()
 ```

@@ -244,10 +244,11 @@ def test_collaborate(test_item_and_response, test_group, mock_box_session):
         }
     }
     mock_box_session.post.return_value.json.return_value = mock_collaboration
-    collaboration = test_item.collaborate('editor', test_group)
+    collaboration = test_item.collaborate(test_group, 'editor')
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), params={})
     assert collaboration.id == mock_collaboration['id']
     assert collaboration['type'] == mock_collaboration['type']
+    assert collaboration['created_by']['id'] == mock_collaboration['created_by']['id']
 
 
 def test_collaborate_with_login(test_item_and_response, mock_box_session):
@@ -274,10 +275,11 @@ def test_collaborate_with_login(test_item_and_response, mock_box_session):
         }
     }
     mock_box_session.post.return_value.json.return_value = mock_collaboration
-    collaboration = test_item.collaborate_with_login('editor', 'test@example.com')
+    collaboration = test_item.collaborate_with_login('test@example.com', 'editor')
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), params={})
     assert collaboration.id == mock_collaboration['id']
     assert collaboration['type'] == mock_collaboration['type']
+    assert collaboration['created_by']['id'] == mock_collaboration['created_by']['id']
 
 
 def test_collaborations(test_item_and_response, mock_box_session):
@@ -299,32 +301,6 @@ def test_collaborations(test_item_and_response, mock_box_session):
     collaborations = test_item.collaborations(limit=500)
     collaboration = collaborations.next()
     mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 500})
-    assert isinstance(collaboration, Collaboration)
-    assert collaboration.id == mock_collaboration['id']
-    assert collaboration.type == mock_collaboration['type']
-
-
-def test_pending_collaborations(test_item_and_response, mock_box_session):
-    # pylint:disable=redefined-outer-name, protected-access
-    test_item, _ = test_item_and_response
-    expected_url = mock_box_session.get_url('collaborations')
-    mock_collaboration = {
-        'type': 'collaboration',
-        'id': '12345',
-        'created_by': {
-            'type': 'user',
-            'id': '33333',
-        }
-    }
-    mock_box_session.get.return_value.json.return_value = {
-        'limit': 500,
-        'entries': [mock_collaboration],
-        'total_count': 1,
-        'offset': 0,
-    }
-    collaborations = test_item.pending_collaborations()
-    collaboration = collaborations.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={'status': 'pending', 'offset': None})
     assert isinstance(collaboration, Collaboration)
     assert collaboration.id == mock_collaboration['id']
     assert collaboration.type == mock_collaboration['type']
