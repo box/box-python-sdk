@@ -5,7 +5,6 @@ import json
 import os
 from six import text_type
 
-from boxsdk.config import API
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
@@ -438,7 +437,7 @@ class Folder(Item):
         :rtype:
             :class:`WebLink`
         """
-        url = "{0}/web_links".format(API.BASE_API_URL)
+        url = self._session.get_url('web_links')
         web_link_attributes = {
             'url': target_url,
             'parent': {
@@ -451,7 +450,7 @@ class Folder(Item):
             web_link_attributes['description'] = description
         box_response = self._session.post(url, data=json.dumps(web_link_attributes))
         response = box_response.json()
-        return WebLink(self._session, response['id'], response)
+        return self.translator.translate('web_link')(session=self._session, object_id=response['id'])
 
     @api_call
     def delete(self, recursive=True, etag=None):
