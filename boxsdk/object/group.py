@@ -37,7 +37,7 @@ class Group(BaseObject):
             limit=limit,
             offset=offset,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )
 
     @api_call
@@ -66,7 +66,6 @@ class Group(BaseObject):
         }
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
-
         return self.translator.translate(response['type'])(self._session, response['id'], response, user=user, group=self)
 
     def collaborations(self, offset=None, limit=None, fields=None):
@@ -91,7 +90,7 @@ class Group(BaseObject):
             :class:`BoxObjectCollection`
         """
         additional_params = {}
-        if fields:
+        if fields is not None:
             additional_params['fields'] = ','.join(fields)
         return LimitOffsetBasedObjectCollection(
             session=self._session,
@@ -99,5 +98,5 @@ class Group(BaseObject):
             additional_params=additional_params,
             limit=limit,
             offset=offset,
-            return_full_pages=False
+            return_full_pages=False,
         )

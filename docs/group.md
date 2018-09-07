@@ -3,18 +3,6 @@ Groups
 
 Groups are sets of users that can be used in collaborations.
 
-- [Get All Groups](#get-all-groups)
-- [Create a Group](#create-a-group)
-- [Get Information About a Group](#get-information-about-a-group)
-- [Update a Group](#update-a-group)
-- [Delete a Group](#delete-a-group)
-- [Get a Groups collaborations](#get-a-groups-collaborations)
-- [Create Membership](#create-membership)
-- [Get Membership](#get-membership)
-- [Update Membership](#update-membership)
-- [Delete Membership](#delete-membership)
-- [Get Memberships for Group](#get-memberships-for-group)
-- [Get Memberships for User](#get-memberships-for-user)
 
 Get All Groups
 --------------
@@ -23,7 +11,8 @@ Calling `groups()` will return an iterable of all groups in the enterprise.
 
 ```python
 groups = client.groups()
-first_group = groups.next()
+for group in groups:
+    # Do something
 ```
 
 Alternatively, you can set a filter on the name of the groups to return from the enterprise by using `groups(name)`.
@@ -31,7 +20,8 @@ Alternatively, you can set a filter on the name of the groups to return from the
 ```python
 group_name = 'Example Group'
 groups = client.groups(group_name)
-first_group = groups.next()
+for group in groups:
+    # Do something
 ```
 
 Create a Group
@@ -82,7 +72,8 @@ To retrieve all collaborations for a specified group call `collaborations()`.
 ```python
 group_id = '1234'
 collaborations = client.group(group_id).collaborations()
-collaboration = collaborations.next()
+for collaboration in collaborations:
+    # Do something
 ```
 
 Create Membership
@@ -135,7 +126,8 @@ To retrieve all of the members for a given group use `get_memberships()`.
 ```python
 group_id == '1111'
 group_memberships = client.group(group_id).get_memberships()
-first_membership = group_memberships.next()
+for group_membership in group_memberships:
+    # Do something
 ```
 
 Get Memberships for User
@@ -146,5 +138,6 @@ To retrieve all of the members for a give user use `get_memberships()`.
 ```python
 user_id == '2222'
 user_memberships = client.user(user_id).get_memberships()
-first_membership = user_memberships.next()
+for user_membership in user_memberships:
+    # Do something
 ```

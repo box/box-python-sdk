@@ -32,7 +32,7 @@ class User(BaseObject):
             :class:`BoxObjectCollection`
         """
         additional_params = {}
-        if fields:
+        if fields is not None:
             additional_params['fields'] = ','.join(fields)
         return LimitOffsetBasedObjectCollection(
             session=self._session,
