@@ -8,7 +8,6 @@ from six import text_type
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
-from boxsdk.object.web_link import WebLink
 from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from boxsdk.util.api_call_decorator import api_call
@@ -420,7 +419,8 @@ class Folder(Item):
     def create_web_link(self, target_url, name=None, description=None):
         """
         Create a WebLink with a given url.
-         :param target_url:
+
+        :param target_url:
             The url the web link points to.
         :type target_url:
             `unicode`

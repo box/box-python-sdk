@@ -289,7 +289,6 @@ def test_preflight(test_folder, mock_object_id, mock_box_session):
 
 
 def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_box_session):
-    # pylint:disable=redefined-outer-name
     expected_url = "{0}/web_links".format(API.BASE_API_URL)
     expected_name = 'Test WebLink'
     description = 'Test Description'
@@ -313,4 +312,4 @@ def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_b
         data=json.dumps(data),
     )
     assert isinstance(new_web_link, WebLink)
-    assert new_web_link.url == expected_url
+    assert new_web_link.object_id == '42'
