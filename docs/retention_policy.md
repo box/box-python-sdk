@@ -6,7 +6,7 @@ A retention policy blocks permanent deletion of content for a specified amount o
 Create Retention Policy
 -----------------------
 
-You can call `client.create_retention_policy(policy_name, disposition_action)` to let you create a new indefinite retention policy.
+You can call `client.create_retention_policy(policy_name, disposition_action, can_owner_extend_retention=None, are_owners_notified=None, retention_length=None, custom_notification_recipients=None)` to let you create a new indefinite retention policy.
 
 ```python
 policy_name = 'Test Indefinite Policy Name'

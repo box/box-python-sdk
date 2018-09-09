@@ -444,10 +444,6 @@ class Client(Cloneable):
             The name of the retention policy.
         :type policy_name:
             `unicode`
-        :param policy_type:
-            Set to either `finite` or `indefinite`
-        :type policy_type:
-            `unicode`
         :param disposition_action:
             For `finite` policy can be set to `permanently delete` or `remove retention`.
             For `indefinite` policy this must be set to `remove_retention`
@@ -464,7 +460,7 @@ class Client(Cloneable):
         :param retention_length:
             The amount of time in days to apply the retention policy to the selected content.
             Do not specify for `indefinite` policies, only for `finite` policies.
-        :type are_owners_notified:
+        :type retention_length:
             `int` or None
         :param custom_notification_recipients:
             A custom list of user mini objects that should be notified when a file is nearing expiration.
@@ -477,7 +473,7 @@ class Client(Cloneable):
         """
         url = self.get_url('retention_policies')
         retention_attributes = {'policy_name': policy_name}
-        if retention_length == -1 or retention_length is None:
+        if retention_length == float('inf') or retention_length is None:
             retention_attributes['policy_type'] = 'indefinite'
             retention_attributes['disposition_action'] = 'remove_retention'
         else:
@@ -521,7 +517,7 @@ class Client(Cloneable):
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:
-            `str` or None
+            `int` or None
         :param marker:
             The paging marker to start paging from
         :type marker:
@@ -533,11 +529,13 @@ class Client(Cloneable):
         :returns:
             An iterator of the entries in the retention policy
         """
-        additional_params = {
-            'policy_name': policy_name,
-            'policy_type': policy_type,
-            'created_by_user_id': created_by_user_id,
-        }
+        additional_params = {}
+        if policy_name is not None:
+            additional_params['policy_name'] = policy_name
+        if policy_type is not None:
+            additional_params['policy_type'] = policy_type
+        if created_by_user_id is not None:
+            additional_params['created_by_user_id'] = created_by_user_id
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self._session.get_url('retention_policies'),

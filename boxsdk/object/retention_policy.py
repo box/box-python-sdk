@@ -16,12 +16,14 @@ class RetentionPolicy(BaseObject):
         """
         return self._session.get_url('retention_policies', self._object_id, *args)
 
-    def assign(self, item, fields=None):
+    def assign(self, assignee, fields=None):
         """Assign a retention policy to a Box item
+
         :param item:
             The item to assign the retention policy on.
+        TODO(9/9/2018): Add `Enterprise` and `Metadata_Template` types after those have been merged.
         :type item:
-            :class: ''
+            :class:`Folder`
         :param fields:
             List of fields to request.
         :type fields:
@@ -31,8 +33,8 @@ class RetentionPolicy(BaseObject):
         body = {
             'policy_id': self.object_id,
             'assign_to': {
-                'type': item.object_type,
-                'id': item.object_id,
+                'type': assignee.object_type,
+                'id': assignee.object_id,
             }
         }
         params = {}
@@ -47,14 +49,19 @@ class RetentionPolicy(BaseObject):
 
     def assignments(self, assignment_type=None, limit=None, marker=None, fields=None):
         """Get the assignments for the retention policy.
+
+        :param assignment_type:
+            The type of retention policy assignment to retrieve.
+        :type assignment_type:
+            `unicode` or None
         :param limit:
             The maximum number of items to return.
         :type limit:
-            `int`
+            `int` or None
         :param marker:
             The position marker at which to begin the response.
         :type marker:
-            `unicode`
+            `unicode` or None
         :param fields:
             List of fields to request.
         :type fields:
@@ -64,9 +71,9 @@ class RetentionPolicy(BaseObject):
         :rtype:
             `Iterable` of :class:`RetentionPolicyAssignment`
         """
-        additional_params = {
-            'type': assignment_type,
-        }
+        additional_params = {}
+        if assignment_type is not None:
+            additional_params['assignment_type'] = assignment_type
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self.get_url('assignments'),
