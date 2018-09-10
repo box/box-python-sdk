@@ -367,7 +367,7 @@ class Item(BaseObject):
         """
         url = self.get_url('trash')
         params = {}
-        if fields:
+        if fields is not None:
             params['fields'] = ','.join(fields)
         box_response = self._session.get(url, params=params)
         response = box_response.json()
@@ -380,7 +380,7 @@ class Item(BaseObject):
     def restore_from_trash(self, name=None, parent_id=None, fields=None):
         """
         Restores an item from the trash. Could be files, folders, or weblinks.
-         :param name:
+        :param name:
             The new name for this item. Only used if the item can't be restored due to name conflict.
         :type name:
             `unicode` or None
@@ -401,7 +401,7 @@ class Item(BaseObject):
             },
         }
         params = {}
-        if fields:
+        if fields is not None:
             params['fields'] = ','.join(fields)
         box_response = self._session.post(url, data=json.dumps(body), params=params)
         response = box_response.json()
@@ -411,7 +411,7 @@ class Item(BaseObject):
             response_object=response,
         )
 
-    def permanently_delete_item(self):
+    def permanently_delete(self):
         """
         Permanently delete an item that is in the trash. The item will no longer exist in Box.
         """

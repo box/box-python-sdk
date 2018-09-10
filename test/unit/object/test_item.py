@@ -223,7 +223,7 @@ def test_permanently_delete(test_item_and_response, mock_box_session, mock_objec
     test_item, mock_item_response = test_item_and_response
     expected_url = test_item.get_url('trash')
     mock_box_session.delete.return_value = mock_item_response
-    info = test_item.permanently_delete_item()
+    info = test_item.permanently_delete()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)
     assert info == True
 

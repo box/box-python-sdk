@@ -401,9 +401,10 @@ class Client(Cloneable):
             response_object=response,
         )
 
-    def get_trashed_items(self, offset=None, limit=None, fields=None):
+    def get_trashed_items(self, limit=None, offset=None, fields=None):
         """
         Using limit-offset paging, get the files, folders and web links that are in the user's trash.
+
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:
@@ -426,7 +427,7 @@ class Client(Cloneable):
             url=self.get_url('folders', 'trash', 'items'),
             limit=limit,
             offset=offset,
-            return_full_pages=False
+            return_full_pages=False,
         )
 
     @api_call
