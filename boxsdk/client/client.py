@@ -526,7 +526,8 @@ class Client(Cloneable):
 
     def pending_collaborations(self, limit=None, offset=None, fields=None):
         """
-        Get the entries in the file version using limit-offset paging.
+        Get the entries in the pending collaborations using limit-offset paging.
+
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:

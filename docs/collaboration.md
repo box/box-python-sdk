@@ -12,6 +12,7 @@ You can add a collaboration on a folder or a file by calling `item.collaborate(a
 `role` parameter determines what permissions the collaborator will have on the folder.
 
 ```python
+from boxsdk.object.collaboration import CollaborationRole
 folder_id = '1234'
 user_id = '1111'
 collaborator = client.user(user_id)
@@ -21,6 +22,7 @@ collaboration = client.folder(folder_id).collaborate(collaborator, Collaboration
 Alternatively you can also invite a user with their email address.
 
 ```python
+from boxsdk.object.collaboration import CollaborationRole
 folder_id = '1234'
 email_of_invitee = "testuser@example.com"
 collaboration = client.folder(folder_id).collaborate_with_login(email_of_invitee, CollaborationRole.VIEWER)
@@ -32,6 +34,7 @@ Edit a Collaboration
 A collaboration can be edited by using `collaboration.update_info()`.
 
 ```python
+from boxsdk.object.collaboration import CollaborationRole
 collaboration_id = '1111'
 collaboration_update = {'role': CollaborationRole.EDITOR}
 updated_collaboration = client.collaboration(collaboration_id).update_info(collaboration_update)
@@ -60,7 +63,7 @@ collaboration_info = client.collaboration(collaboration_id).get()
 List Collaborations on a Folder
 -------------------------------
 
-To retrieve all collaborations on a specified folder you can use `client.collaborations()`.
+To retrieve all collaborations on a specified folder you can use `folder.collaborations(limit=None, marker=None, fields=None)`.
 
 ```python
 folder_id = '1234'
@@ -72,7 +75,7 @@ for collaborations in collaborations_on_folder:
 Get Collaborations on a File
 ----------------------------
 
-To retrieve an iterable of collaborations on a specified file you can use `client.collaborations()`.
+To retrieve an iterable of collaborations on a specified file you can use `file.collaborations(limit=None, marker=None, fields=None)`.
 
 ```python
 file_id = '2222'
@@ -84,26 +87,25 @@ for collaborations in collaborations_on_file:
 List Pending Collaborations
 ------------------------------------
 
-To retrieve all pending collaborations on a folder use `folder.pending_collaborations()`.
+To retrieve all pending collaborations for the user, use `folder.pending_collaborations(limit=None, offset=None, fields=None)`.
 
 ```python
-folder_id = '1234'
-pending_collaborations_on_folder = client.pending_collaborations()
-for pending_collaborations in pending_collaborations_on_folder:
+pending_collaborations = client.pending_collaborations()
+for pending_collaborations in pending_collaborations:
     # Do something
 ```
 
 Accept or Reject a Pending Collaboration
 -----------------------------------------
 
-To `accept` or `reject` a pending collaboration use `client.respond_to_collaboration(new_status)`.
+To `accept` or `reject` a pending collaboration use `collaboration.accept()` or `collaboration.reject()`.
 
 ```python
 collaboration_id = '3333'
 client.collaboration(collaboration_id).accept()
 ```
 
-Alternatively. you can reject a pending collaboration with
+You can reject a pending collaboration with
 
 ```python
 collaboration_id = '3333'

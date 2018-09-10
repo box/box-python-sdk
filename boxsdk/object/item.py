@@ -3,13 +3,11 @@
 from __future__ import unicode_literals, absolute_import
 import json
 
-from boxsdk.config import API
 from .base_object import BaseObject
 from ..exception import BoxAPIException
 from .metadata import Metadata
 from ..util.api_call_decorator import api_call
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
-from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
 
 class Item(BaseObject):
@@ -404,6 +402,7 @@ class Item(BaseObject):
 
     def collaborate(self, accessible_by, role, can_view_path=None, notify=None, fields=None):
         """Collaborate user or group onto a Box item.
+
         :param accessible_by:
             An object containing the collaborator.
         :type accessible_by:
@@ -415,11 +414,11 @@ class Item(BaseObject):
         :param can_view_path:
             Indicates whether the user can view the path of the folder collaborated into.
         :type can_view_path:
-            `bool`
+            `bool` or None
         :param notify:
             Determines if the collaborator should receive a notification for the collaboration.
         :type notify:
-            `bool`
+            `bool` or None
         :param fields:
             List of fields to request.
         :type fields:
@@ -437,7 +436,7 @@ class Item(BaseObject):
             },
             'role': role,
         }
-        if can_view_path:
+        if can_view_path is not None:
             body['can_view_path'] = can_view_path
         params = {}
         if fields is not None:
@@ -453,6 +452,7 @@ class Item(BaseObject):
 
     def collaborate_with_login(self, login, role, can_view_path=None, notify=None, fields=None):
         """Collaborate user or group onto a Box item.
+
         :param login:
             The email address of the person to grant access to.
         :type login:
@@ -464,11 +464,11 @@ class Item(BaseObject):
         :param can_view_path:
             Indicates whether the user can view the path of the folder collaborated into.
         :type can_view_path:
-            `bool`
+            `bool` or None
         :param notify:
             Determines if the collaborator should receive a notification for the collaboration.
         :type notify:
-            `bool`
+            `bool` or None
         :param fields:
             List of fields to request.
         :type fields:
@@ -486,7 +486,7 @@ class Item(BaseObject):
             },
             'role': role,
         }
-        if can_view_path:
+        if can_view_path is not None:
             body['can_view_path'] = can_view_path
         params = {}
         if fields is not None:
@@ -503,7 +503,16 @@ class Item(BaseObject):
     def collaborations(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the collaboration using marker-based paging.
-         :param fields:
+
+        :param limit:
+            The maximum number of items to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start returning items from when using marker-based paging.
+        :type marker:
+            `unicode` or None
+        :param fields:
             List of fields to request.
         :type fields:
             `Iterable` of `unicode`
@@ -520,4 +529,3 @@ class Item(BaseObject):
             fields=fields,
             return_full_pages=False,
         )
-
