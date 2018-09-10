@@ -6,8 +6,6 @@ import json
 
 from .item import Item
 from ..util.api_call_decorator import api_call
-from .task import Task
-from .task_assignment import TaskAssignment
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
@@ -347,20 +345,21 @@ class File(Item):
 def create_task(self, message=None, due_at=None):
     """
     Create a task on the given file.
-        :param message:
+
+    :param message:
         An optional message to include in the task.
     :type message:
-        `unicode`
+        `unicode` or None
     :param due_at:
         When this task is due.
     :type due_at:
-        `str`
+        `str` or None
     :return:
         The newly created task
     :rtype:
         :class:`Task`
     """
-    url = '{0}/tasks'.format(API.BASE_API_URL)
+    url = self._session.get_url('tasks')
     task_attributes = {
         'item': {
             'type': 'file',
@@ -383,7 +382,16 @@ def create_task(self, message=None, due_at=None):
     def tasks(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the file tasks.
-         :param fields:
+
+        :param limit:
+            The maximum number of items to return.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start returning items from when using marker-based paging.
+        :type marker:
+            `unicode` or None
+        :param fields:
             List of fields to request.
         :type fields:
             `Iterable` of `unicode`
@@ -392,13 +400,11 @@ def create_task(self, message=None, due_at=None):
         :rtype:
             :class:`BoxObjectCollection`
         """
-        if limit is not None:
-            additional_params['limit'] = limit
         return MarkerBasedObjectCollection(
             session=self._session,
-            url='{0}/files/{1}/tasks'.format(API.BASE_API_URL, self.object_id),
+            url=self.get_url('tasks'),
             limit=limit,
             marker=marker,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )
