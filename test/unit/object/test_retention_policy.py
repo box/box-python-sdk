@@ -74,7 +74,7 @@ def test_get_assignments(test_retention_policy, mock_box_session):
     }
     assignments = test_retention_policy.assignments()
     assignment = assignments.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={'type': None})
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
     assert isinstance(assignment, RetentionPolicyAssignment)
     assert assignment.id == mock_assignment['id']
     assert assignment.type == mock_assignment['type']
