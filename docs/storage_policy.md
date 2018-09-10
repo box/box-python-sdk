@@ -60,15 +60,14 @@ assignment_id = '1234'
 storage_policy_assignment = client.storage_policy_assignment(assignment_id).get()
 ```
 
-Get Assignment for Target
+Get Assignment for User
 -------------------------
 
-Calling `client.storage_policy_assignments(resolved_for_type, resolved_for_id)` will return a storage policy assignment object
+Calling `user.storage_policy_assignments(fields=None)` will return a storage policy assignment object
 
 ```python
-resolved_for_type = 'user'
-resolved_for_id = '1234'
-assignment_info = client.storage_policy_assignments(resolved_for_type, resolved_for_id)
+user_id = '1111'
+assignment_info = client.user(user_id).storage_policy_assignments()
 ```
 
 Delete Assignment

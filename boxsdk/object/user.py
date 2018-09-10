@@ -10,18 +10,10 @@ class User(BaseObject):
 
     _item_type = 'user'
 
-    def storage_policy_assignments(self, limit=None, marker=None, fields=None):
+    def storage_policy_assignments(self, fields=None):
         """
         Get the entries in the storage policy assignment using limit-offset paging.
 
-        :param limit:
-            The number of entries to retrieve.
-        :type limit:
-            `unicode` or None
-        :param marker:
-            The paging marker to start paging from.
-        :type marker:
-            `str` or None
         :param fields:
             List of fields to request.
         :type fields:
