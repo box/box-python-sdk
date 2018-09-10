@@ -467,12 +467,16 @@ class Client(Cloneable):
 
         :param resolved_for_type:
             Set to either `user` or `enterprise`
+        :type resolved_for_type:
+            `unicode`
+        :param resolved_for_id:
+            The id of the `user` or `enterprise`
+        :type resolved_for_id:
+            `unicode`
+        :param limit:
+            The number of entries to retrieve
         :type limit:
             `unicode` or None
-        :param resolved_for_id:
-            The id of the user or enterprise
-        :type limit:
-            `unicode`
         :param marker:
             The paging marker to start paging from.
         :type marker:
@@ -486,6 +490,7 @@ class Client(Cloneable):
         :rtype:
             :class:`BoxObjectCollection`
         """
+        url = self._session.get_url('storage_policy_assignments')
         additional_params = {
             'resolved_for_type': resolved_for_type,
             'resolved_for_id': resolved_for_id,
@@ -494,7 +499,7 @@ class Client(Cloneable):
         response = box_response.json()
         return self.translator.translate('storage_policy_assignment')(
             session=self._session,
-            object_id=response['id'],
+            object_id=response['entries'][0]['id'],
             response_object=response['entries'][0],
         )
 

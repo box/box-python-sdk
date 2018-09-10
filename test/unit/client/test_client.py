@@ -424,8 +424,7 @@ def test_get_storage_policy_assignments(mock_client, mock_box_session):
         'resolved_for_type': resolved_for_type,
         'resolved_for_id': resolved_for_id,
     }
-    assignments = mock_client.storage_policy_assignments(resolved_for_type, resolved_for_id)
-    assignment = assignments.next()
+    assignment = mock_client.storage_policy_assignments(resolved_for_type, resolved_for_id)
     mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
     assert isinstance(assignment, StoragePolicyAssignment)
     assert assignment.id == mock_assignment['id']
