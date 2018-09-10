@@ -447,7 +447,7 @@ def test_get_retention_policies(mock_client, mock_box_session):
     }
     policies = mock_client.retention_policies()
     policy = policies.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={'policy_name': None, 'policy_type': None, 'created_by_user_id': None})
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
     assert isinstance(policy, RetentionPolicy)
     assert policy.id == mock_policy['id']
     assert policy.name == mock_policy['name']
