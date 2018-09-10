@@ -35,7 +35,6 @@ def test_update(test_retention_policy, mock_box_session):
     assert isinstance(retention_policy, RetentionPolicy)
 
 
-# TODO(9/9/2018): Add parametrize test for conditions for `Enterprise` and `Metadata_Template`.
 def test_assign(test_retention_policy, test_folder, mock_box_session):
     policy_id = '42'
     expected_url = mock_box_session.get_url('retention_policy_assignments')
