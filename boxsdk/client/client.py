@@ -461,7 +461,7 @@ class Client(Cloneable):
             return_full_pages=False,
         )
 
-    def storage_policy_assignments(self, resolved_for_type, resolved_for_id, limit=None, marker=None, fields=None):
+    def storage_policy_assignments(self, resolved_for_type, resolved_for_id):
         """
         Get the entries in the storage policy assignment using limit-offset paging.
 
@@ -473,18 +473,6 @@ class Client(Cloneable):
             The id of the `user` or `enterprise`
         :type resolved_for_id:
             `unicode`
-        :param limit:
-            The number of entries to retrieve
-        :type limit:
-            `unicode` or None
-        :param marker:
-            The paging marker to start paging from.
-        :type marker:
-            `str` or None
-        :param fields:
-            List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
         :returns:
             An iterator of the entries in the storage policy assignment
         :rtype:
