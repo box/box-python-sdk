@@ -8,7 +8,6 @@ from mock import Mock
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
 from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
 from boxsdk.config import API
-from boxsdk.session.box_session import BoxResponse
 from boxsdk.network.default_network import DefaultNetworkResponse
 
 
@@ -110,4 +109,3 @@ def test_get_assignments(
         assert assignment.object_id == expected_id
         # pylint:disable=protected-access
         assert assignment._session == mock_box_session
-

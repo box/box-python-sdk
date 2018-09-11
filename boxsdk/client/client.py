@@ -7,8 +7,6 @@ from ..auth.oauth2 import TokenResponse
 from ..session.session import Session, AuthorizedSession
 from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
-from ..object.legal_hold_policy import LegalHoldPolicy
-from ..object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
 from ..object.search import Search
 from ..object.events import Events
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -164,6 +162,7 @@ class Client(Cloneable):
     def legal_hold_policy(self, policy_id):
         """
         Initialize a :class: `LegalHoldPolicy` object, whose box id is policy_id.
+
         :param policy_id:
             The box ID of the :class:`LegalHoldPolicy` object.
         :type policy_id:
@@ -173,11 +172,12 @@ class Client(Cloneable):
         :rtype:
             :class:`LegalHoldPolicy`
         """
-        return LegalHoldPolicy(session=self._session, object_id=policy_id)
+        return self.translator.translate('legal_hold_policy')(session=self._session, object_id=policy_id)
 
     def legal_hold_policy_assignment(self, policy_assignment_id):
         """
         Initialize a :class: `LegalHoldPolicyAssignment` object, whose box id is policy_assignment_id.
+
         :param policy_assignment_id:
             The assignment ID of the :class:`LegalHoldPolicyAssignment` object.
         :type policy_assignment_id:
@@ -187,27 +187,58 @@ class Client(Cloneable):
         :rtype:
             :class:`LegalHoldPolicyAssignment`
         """
-        return LegalHoldPolicyAssignment(session=self._session, object_id=policy_assignment_id)
+        return self.translator.translate('legal_hold_policy_assignment')(session=self._session, object_id=policy_assignment_id)
 
-    def create_legal_hold_policy(self, policy_name, **policy_attributes):
+    def create_legal_hold_policy(
+            self,
+            policy_name,
+            description=None,
+            filter_starting_at=None,
+            filter_ending_at=None,
+            is_ongoing=None
+    ):
         """
         Create a legal hold policy.
-         :param policy_name:
+        :param policy_name:
             The legal hold policy's display name.
         :type policy_name:
             `unicode`
-        :param policy_attributes:
-            Additional attributes for the legal hold policy.
+        :param description:
+            The description of the legal hold policy.
+        :type description:
+            `unicode` or None
+        :param filter_starting_at:
+            The start time filter for legal hold policy
+        :type filter_starting_at:
+            `unicode` or None
+        :param filter_ending_at:
+            The end time filter for legal hold policy
+        :type filter_ending_at:
+            `unicode` or None
+        :param is_ongoing:
+            After initialization, Assignments under this Policy will continue applying to
+            files based on events, indefinitely.
+        :type is_ongoing:
+            `bool` or None
         """
         url = self.get_url('legal_hold_policies')
-        policy_attributes['policy_name'] = policy_name
+        policy_attributes = {'policy_name': policy_name}
+        if description is not None:
+            policy_attributes['description'] = description
+        if filter_starting_at is not None:
+            policy_attributes['filter_starting_at'] = filter_starting_at
+        if filter_ending_at is not None:
+            policy_attributes['filter_ending_at'] = filter_ending_at
+        if is_ongoing is not None:
+            policy_attributes['is_ongoing'] = is_ongoing
         box_response = self._session.post(url, data=json.dumps(policy_attributes))
         response = box_response.json()
-        return LegalHoldPolicy(self._session, response['id'], response)
+        return self.translator.translate('legal_hold_policy')(session=self._session, object_id=response['id'], response_object=response)
 
     def legal_hold_policies(self, policy_name=None, limit=None, marker=None, fields=None):
         """
         Get the entries in the legal hold policy using limit-offset paging.
+
         :param policy_name:
             The name of the legal hold policy case insensitive to search for
         :type policy_name:
@@ -239,7 +270,7 @@ class Client(Cloneable):
             limit=limit,
             marker=marker,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )
 
     def collection(self, collection_id):

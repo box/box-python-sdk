@@ -17,17 +17,24 @@ class LegalHoldPolicy(BaseObject):
     def get_url(self, *args):
         return self._session.get_url('legal_hold_policies', self._object_id, *args)
 
-    def assign(self, item):
+    def assign(self, assignee):
+        """Assign legal hold policy
+
+        :param assignee:
+            The `file_version`, `file`, `folder`, or `user` to assign the legal hold policy to.
+        :type assignee:
+            :class:`file_version` :class:`file` or :class:`folder` or :class:`user`
+        """
         url = self._session.get_url('legal_hold_policy_assignments')
         body = {
             'policy_id': self.object_id,
             'assign_to': {
-                'type': item.object_type,
-                'id': item.object_id
+                'type': assignee.object_type,
+                'id': assignee.object_id
             }
         }
         response = self._session.post(url, data=json.dumps(body)).json()
-        return Translator().translate(response['type'])(
+        return self.translator.translate(response['type'])(
             self._session,
             response['id'],
             response,
@@ -36,26 +43,23 @@ class LegalHoldPolicy(BaseObject):
     def get_assignments(self, assign_to_type=None, assign_to_id=None, limit=None, marker=None, fields=None):
         """
         Get the entries in the legal hold policy assignment using limit-offset paging.
-        :param policy_id:
-            The ID of the legal hold policy assignment
-        :type policy_id:
-            `str` or None
+
         :param assign_to_type:
             Filter assignments of this type only. Can be `file_version`, `file`, `folder`, or `user`
         :type assign_to_type:
-            `str` or None
+            `unicode` or None
         :param assign_to_id:
             Filter assignments to this ID only
         :type assign_to_id:
-            `str` or None
+            `unicode` or None
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:
-            `str` or None
+            `int` or None
         :param marker:
             The paging marker to start paging from
         :type marker:
-            `str` or None
+            `unicode` or None
         :param fields:
             List of fields to request
         :type fields:
@@ -77,5 +81,5 @@ class LegalHoldPolicy(BaseObject):
             limit=limit,
             marker=marker,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )
