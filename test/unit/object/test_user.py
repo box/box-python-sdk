@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 from boxsdk.config import API
 from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
-from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
 def test_user_url(mock_user):
