@@ -587,7 +587,8 @@ class Client(Cloneable):
     def device_pin(self, device_pin_id):
         """
         Initialize a :class: `Device Pin` object, whose box id is device_pin_id.
-         :param device_pin_id:
+
+        :param device_pin_id:
             The assignment ID of the :class:`DevicePin` object.
         :type device_pin_id:
             `unicode`
@@ -596,15 +597,20 @@ class Client(Cloneable):
         :rtype:
             :class:`DevicePin`
         """
-        return DevicePin(session=self._session, object_id=device_pin_id)
+        return self.translator.translate('device_pinner')(session=self._session, object_id=device_pin_id)
 
-    def device_pins(self, enterprise_id, limit=None, marker=None, direction=None, fields=None):
+    def device_pins(self, enterprise_id, direction=None, limit=None, marker=None, fields=None):
         """
         Returns all of the device pins for the given enterprise.
-         :param enterprise_id:
+
+        :param enterprise_id:
             The id of the enterprise to retrieve device pinners for.
         :type enterprise_id:
             `unicode`
+        :param direction:
+            The sorting direction. Set to `ASC` or `DESC`
+        :type direction:
+            `unicode` or None
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:
@@ -613,10 +619,6 @@ class Client(Cloneable):
             The paging marker to start paging from.
         :type marker:
             `str` or None
-        :param direction:
-            The sorting direction. Set to `ASC` or `DESC`
-        :type direction:
-            `unicode` or None
         :param fields:
             List of fields to request.
         :type fields:
@@ -627,7 +629,7 @@ class Client(Cloneable):
             :class:`BoxObjectCollection`
         """
         additional_params = {}
-        if direction:
+        if direction is not None:
             additional_params['direction'] = direction
         return MarkerBasedObjectCollection(
             session=self._session,
@@ -638,4 +640,3 @@ class Client(Cloneable):
             fields=fields,
             return_full_pages=False,
         )
-
