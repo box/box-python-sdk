@@ -431,10 +431,18 @@ class Client(Cloneable):
         """
         return self.translator.translate('storage_policy_assignment')(session=self._session, object_id=assignment_id)
 
-    def storage_policies(self, fields=None):
+    def storage_policies(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the storage policy using marker-based paging.
 
+        :param limit:
+            The maximum number of items to return.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start returning items from when using marker-based paging.
+        :type marker:
+            `unicode` or None
         :param fields:
             List of fields to request.
         :type fields:
