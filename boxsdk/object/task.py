@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 import json
 
 from .base_object import BaseObject
-from boxsdk.util.translator import Translator
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
@@ -42,10 +41,10 @@ class Task(BaseObject):
             },
         }
         response = self._session.post(url, data=json.dumps(body)).json()
-        return Translator().translate(response['type'])(
-            self._session,
-            response['id'],
-            response,
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
         )
 
     def assignments(self, limit=None, marker=None, fields=None):

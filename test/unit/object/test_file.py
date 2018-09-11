@@ -76,7 +76,7 @@ def test_get_tasks(test_file, mock_box_session):
     }
     tasks = test_file.tasks()
     task = tasks.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 100})
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
     assert isinstance(task, Task)
     assert task.id == task_body['id']
     assert task.item['id'] == task_body['item']['id']
