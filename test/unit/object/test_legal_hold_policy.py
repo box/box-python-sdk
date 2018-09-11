@@ -88,7 +88,7 @@ def test_delete_policy_return_the_correct_response(
     # pylint:disable=redefined-outer-name
     mock_box_session.delete.return_value = delete_policy_response
     response = test_legal_hold_policy.delete()
-     # pylint:disable=protected-access
+    # pylint:disable=protected-access
     expected_url = test_legal_hold_policy.get_url()
     # pylint:enable = protected-access
     mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
