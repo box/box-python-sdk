@@ -101,4 +101,4 @@ def test_assignments(test_task, mock_box_session):
     mock_box_session.get.assert_called_once_with(expected_url, params={})
     assert isinstance(assignment, TaskAssignment)
     assert assignment.id == mock_assignment['id']
-    assert assignment.item['id'] == mock_assignment['user']['id']
+    assert assignment.item['id'] == mock_assignment['item']['id']
