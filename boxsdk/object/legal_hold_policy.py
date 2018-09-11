@@ -22,6 +22,10 @@ class LegalHoldPolicy(BaseObject):
             The `file_version`, `file`, `folder`, or `user` to assign the legal hold policy to.
         :type assignee:
             :class:`file_version` :class:`file` or :class:`folder` or :class:`user`
+        :returns:
+            A legal hold policy assignment object
+        :rtype:
+            :class:`LegalHoldPolicyAssignment`
         """
         url = self._session.get_url('legal_hold_policy_assignments')
         body = {

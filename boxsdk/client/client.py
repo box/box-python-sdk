@@ -220,6 +220,10 @@ class Client(Cloneable):
             files based on events, indefinitely.
         :type is_ongoing:
             `bool` or None
+        :returns:
+            A legal hold policy object
+        :rtype:
+            :class:`LegalHoldPolicy
         """
         url = self.get_url('legal_hold_policies')
         policy_attributes = {'policy_name': policy_name}
@@ -233,7 +237,11 @@ class Client(Cloneable):
             policy_attributes['is_ongoing'] = is_ongoing
         box_response = self._session.post(url, data=json.dumps(policy_attributes))
         response = box_response.json()
-        return self.translator.translate('legal_hold_policy')(session=self._session, object_id=response['id'], response_object=response)
+        return self.translator.translate('legal_hold_policy')(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
 
     def legal_hold_policies(self, policy_name=None, limit=None, marker=None, fields=None):
         """
