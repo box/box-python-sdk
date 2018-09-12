@@ -494,4 +494,3 @@ def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_r
         assert pin.object_id == expected_id
         # pylint:disable=protected-access
         assert pin._session == mock_box_session
-
