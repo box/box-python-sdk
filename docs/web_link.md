@@ -15,7 +15,7 @@ folder_id = '1234'
 target_url = 'https://example.com'
 link_name = 'Example Link'
 link_description = 'This is the description'
-folder = client.folder(folder_id).create_web_link(target_url, link_name, link_description)
+web_link = client.folder(folder_id).create_web_link(target_url, link_name, link_description)
 ```
 
 Get Web Link

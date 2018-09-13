@@ -448,9 +448,12 @@ class Folder(Item):
             web_link_attributes['name'] = name
         if description is not None:
             web_link_attributes['description'] = description
-        box_response = self._session.post(url, data=json.dumps(web_link_attributes))
-        response = box_response.json()
-        return self.translator.translate('web_link')(session=self._session, object_id=response['id'])
+        response = self._session.post(url, data=json.dumps(web_link_attributes)).json()
+        return self.translator.translate('web_link')(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response
+        )
 
     @api_call
     def delete(self, recursive=True, etag=None):

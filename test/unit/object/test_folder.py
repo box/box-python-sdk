@@ -296,7 +296,9 @@ def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_b
     mock_box_session.post.return_value.json.return_value = {
         'type': 'web_link',
         'id': '42',
-        'url': expected_url,
+        'url': test_web_link_url,
+        'name': expected_name,
+        'description': description
     }
     new_web_link = test_folder.create_web_link(test_web_link_url, expected_name, description)
     data = {
@@ -313,3 +315,6 @@ def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_b
     )
     assert isinstance(new_web_link, WebLink)
     assert new_web_link.object_id == '42'
+    assert new_web_link.url == test_web_link_url
+    assert new_web_link.name == expected_name
+    assert new_web_link.description == description
