@@ -8,8 +8,6 @@ from ..session.session import Session, AuthorizedSession
 from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
-from ..object.terms_of_service import TermsOfService
-from ..object.terms_of_service_user_status import TermsOfServiceUserStatus
 from ..object.events import Events
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
@@ -406,6 +404,7 @@ class Client(Cloneable):
     def terms_of_service(self, tos_id):
         """
         Initialize a :class:`TermsOfService` object, whose box id is tos_id.
+
         :param tos_id:
             The box id of the :class:`TermsOfService` object.
         :type tos_id:
@@ -415,11 +414,12 @@ class Client(Cloneable):
         :rtype:
             :class:`TermsOfService`
         """
-        return TermsOfService(session=self._session, object_id=tos_id)
+        return self.translator.translate('terms_of_service')(session=self._session, object_id=tos_id)
 
     def terms_of_service_user_status(self, tos_user_status_id):
         """
         Initialize a :class:`TermsOfServiceUserStatus` object, whose box id is tos_user_status_id.
+
         :param tos_user_status_id:
             The box id of the :class:`TermsOfServiceUserStatus` object.
         :type tos_id:
@@ -429,11 +429,25 @@ class Client(Cloneable):
         :rtype:
             :class:`TermsOfServiceUserStatus`
         """
-        return TermsOfServiceUserStatus(session=self._session, object_id=tos_user_status_id)
+        return self.translator.translate('terms_of_service_user_status')(session=self._session, object_id=tos_user_status_id)
 
-    def terms_of_services(self, tos_type=None, limit=None):
+    def terms_of_services(self, tos_type=None, limit=None, marker=None, fields=None):
         """
         Get the entries in the legal hold policy assignment using limit-offset paging.
+        :param tos_type:
+            Can be set to `managed` or `external` for the type of terms of service.
+        :type tos_type:
+            `unicode`
+        :param: limit
+            The maximum number of items to return. If limit is set to None, then the default
+            limit (returned by Box in the response) is used. See https://developer.box.com/reference#get-recent-items
+            for default.
+        :type: limit
+            `int` or None
+        :param marker:
+            The index at which to start returning items.
+        :type marker:
+            `unicode` or None
         :param fields:
             List of fields to request
         :type fields:
@@ -451,20 +465,21 @@ class Client(Cloneable):
             url=self._session.get_url('terms_of_services'),
             additional_params=additional_params,
             limit=limit,
-            marker=None,
-            fields=None,
-            return_full_pages=False
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
         )
 
     def create_a_terms_of_service(self, status, tos_type, text):
         """
         Create a terms of service.
+
         :param status:
             The status of the terms of service.
         :type status:
             `unicode`
         :param tos_type:
-            The type of the terms of service. Can be set to managed or external.
+            The type of the terms of service. Can be set to `managed` or `external`.
         :type tos_type:
             `unicode`
         :param text:
@@ -472,7 +487,7 @@ class Client(Cloneable):
         :type text:
             `unicode`
         """
-        url = '{0}/terms_of_services'.format(API.BASE_API_URL)
+        url = self.get_url('terms_of_services')
         body = {
             'status': status,
             'tos_type': tos_type,

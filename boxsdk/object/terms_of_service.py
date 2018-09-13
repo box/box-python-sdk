@@ -4,10 +4,20 @@ from functools import partial
 
 import json
 
-from boxsdk.config import API
 from .base_object import BaseObject
-from .terms_of_service_user_status import TermsOfServiceUserStatus
-from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+from boxsdk.util.text_enum import TextEnum
+
+
+class TermsOfServiceType(TextEnum):
+    """An enum of possible terms of service types"""
+    MANAGED = 'managed'
+    EXTERNAL = 'external'
+
+
+class TermsOfServiceStatus(TextEnum):
+    """An enum of possible terms of service status"""
+    ENABLED = 'enabled'
+    DISABLED = 'disabled'
 
 
 class TermsOfService(BaseObject):
@@ -15,56 +25,65 @@ class TermsOfService(BaseObject):
 
     _item_type = 'terms_of_service'
 
-    def get_user_status(self, user_id=None, limit=None, fields=None):
+    def get_user_status(self, user_id=None):
         """
-        Get the entries in the terms of service user status using limit-offset paging.
+        Get the terms of service user status.
+
         :param user_id:
             The ID of the user
         :type user_id:
             `str` or None
         :returns:
-            An iterator of the entries in the terms of service user status
+            A newly created :class:`TermsOfServiceUserStatus` object
+        :rtype:
+            :class:`TermsOfServiceUserStatus`
         """
-        if limit is not None:
-            additional_params['limit'] = limit
+        url = self._session.get_url('terms_of_service_user_statuses')
         additional_params = {
             'tos_id': self.object_id,
-            'user_id': user_id,
         }
-        return MarkerBasedObjectCollection(
+        if user_id is not None:
+            additional_params['user_id'] = user_id
+        box_response = self._session.get(url, params=additional_params)
+        response_array = box_response.json()
+        response = response_array['entries'][0]
+        return self.translator.translate('terms_of_service_user_statuses')(
             session=self._session,
-            url='{0}/terms_of_service_user_statuses'.format(API.BASE_API_URL),
-            additional_params=additional_params,
-            limit=limit,
-            marker=None,
-            fields=fields,
-            return_full_pages=False
+            object_id=response['id'],
+            response_object=response,
         )
 
-    def create_user_status(self, is_accepted, user):
+    def create_user_status(self, is_accepted, user=None):
         """
         Create a terms of service user status.
-         :param is_accepted:
+
+        :param is_accepted:
             Indicator for whether the terms of service is accepted or not.
         :type is_accepted:
             `boolean`
         :param user:
-            The user to assign the terms of service to.
+            The :class:`User` to assign the terms of service to.
         :type user:
-            `unicode` or None
+            :class:`User` or None
+        :returns:
+            A newly created :class:`TermsOfServiceUserStatus` object
+        :rtype:
+            :class:`TermsOfServiceUserStatus`
         """
         url = self.get_url('terms_of_service_user_statuses')
         body = {
             'tos': {
-                'type': self.type,
+                'type': self.object_type,
                 'id': self.object_id,
-            },
-            'user': {
-                'type': user.type,
-                'id': user.object_id,
             },
             'is_accepted': is_accepted,
         }
+        if user is not None:
+            user_json = {
+                'type': user.object_type,
+                'id': user.object_id,
+            }
+            body['user'] = user_json
         box_response = self._session.post(url, data=json.dumps(body))
         response = box_response.json()
         return self.translator.translate('terms_of_service_user_status')(
