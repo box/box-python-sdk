@@ -67,14 +67,17 @@ If they have then you will need to make the update call.
 Accept or Decline a Terms of Service for Existing User
 ------------------------------------------------------
 
-For an existing user you can accept or decline a terms of service by calling `terms_of_service.update_info()
+For an existing user you can accept or decline a terms of service by calling `terms_of_service_user_status.accept()` to `accept` or  `terms_of_service_user_status.reject()` to `reject`
 
 ```python
-update_object = {'is_accepted': True}
-updated_user_status = client.terms_of_service_user_status('1234').update_info(update_object)
+accepted_user_status = client.terms_of_service_user_status('1234').accept()
 ```
 
-Get User Status fr a Terms of Service
+```python
+rejected_user_status = client.terms_of_service_user_status('1234').reject()
+```
+
+Get User Status for a Terms of Service
 -------------------------------------
 
 You can retrieve an iterable of terms of service status for a user by calling
