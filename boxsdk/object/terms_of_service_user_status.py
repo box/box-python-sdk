@@ -17,17 +17,20 @@ class TermsOfServiceUserStatus(BaseObject):
     def get_url(self, *args):
         return self._session.get_url('terms_of_service_user_statuses', self._object_id, *args)
 
-    def update(self, is_accepted):
+    def accept(self):
         """
-        Update the user status on a term of service.
-        :param is_accepted:
-            Indicates whether the terms of service has been accepted or not.
-        :type is_accepted:
-            `boolean`
+        Accept a term of service.
         """
-        url = '{0}/terms_of_service_user_statuses/{1}'.format(API.BASE_API_URL, self.object_id)
         body = {
-            'is_accepted': is_accepted
+            'is_accepted': True
         }
-        return self.update_info(json.dumps(body))
+        return self.update_info(data=body)
 
+    def reject(self):
+        """
+        Reject a term of service.
+        """
+        body = {
+            'is_accepted': False
+        }
+        return self.update_info(data=body)

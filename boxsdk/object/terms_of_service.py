@@ -47,7 +47,7 @@ class TermsOfService(BaseObject):
         box_response = self._session.get(url, params=additional_params)
         response_array = box_response.json()
         response = response_array['entries'][0]
-        return self.translator.translate('terms_of_service_user_statuses')(
+        return self.translator.translate('terms_of_service_user_status')(
             session=self._session,
             object_id=response['id'],
             response_object=response,
@@ -70,7 +70,7 @@ class TermsOfService(BaseObject):
         :rtype:
             :class:`TermsOfServiceUserStatus`
         """
-        url = self.get_url('terms_of_service_user_statuses')
+        url = self._session.get_url('terms_of_service_user_statuses')
         body = {
             'tos': {
                 'type': self.object_type,

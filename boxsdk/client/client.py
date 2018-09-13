@@ -434,6 +434,7 @@ class Client(Cloneable):
     def terms_of_services(self, tos_type=None, limit=None, marker=None, fields=None):
         """
         Get the entries in the legal hold policy assignment using limit-offset paging.
+
         :param tos_type:
             Can be set to `managed` or `external` for the type of terms of service.
         :type tos_type:
@@ -454,12 +455,12 @@ class Client(Cloneable):
             `Iterable` of `unicode`
         :returns:
             An iterator of the entries in the terms of service
+        :rtype:
+            :class:`MarkerBasedObjectCollection`
         """
         additional_params = {}
         if tos_type:
             additional_params['tos_type'] = tos_type
-        if limit is not None:
-            additional_params['limit'] = limit
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self._session.get_url('terms_of_services'),
@@ -486,6 +487,10 @@ class Client(Cloneable):
             The message of the terms of service.
         :type text:
             `unicode`
+        :returns:
+            A newly created :class:`TermsOfService` object
+        :rtype:
+            :class:`TermsOfService`
         """
         url = self.get_url('terms_of_services')
         body = {
