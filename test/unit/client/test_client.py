@@ -155,7 +155,7 @@ def terms_of_services_response(tos_id_1, tos_id_2):
 
 @pytest.fixture(scope='module')
 def terms_of_service_response():
-    #pylint:disable=redefined-outer-name
+    # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'type': 'terms_of_service',
@@ -425,7 +425,7 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
 
 
 def test_terms_of_service_returns_the_correct_tos_object(mock_client, mock_box_session, terms_of_service_response):
-    #pylint:disable=redefined-outer-name
+    # pylint:disable=redefined-outer-name
     value = json.dumps({
         'status': 'enabled',
         'tos_type': 'external',

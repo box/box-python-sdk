@@ -1,12 +1,7 @@
 # coding: utf-8
 from __future__ import unicode_literals
-from functools import partial
 
-import json
-
-from ..config import API
 from .base_object import BaseObject
-from ..util.translator import Translator
 
 
 class TermsOfServiceUserStatus(BaseObject):

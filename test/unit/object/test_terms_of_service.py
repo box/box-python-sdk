@@ -50,8 +50,8 @@ def test_create_user_status(test_terms_of_service, test_terms_of_service_user_st
         'is_accepted': True,
         'user':{
             'type': 'user',
-            'id': 'fake-user-100'
-        }
+            'id': 'fake-user-100',
+        },
     })
     mock_box_session.post.return_value.json.return_value = {
         'type': 'terms_of_service_user_status',
