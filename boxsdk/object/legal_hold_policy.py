@@ -19,9 +19,9 @@ class LegalHoldPolicy(BaseObject):
         """Assign legal hold policy
 
         :param assignee:
-            The `file_version`, `file`, `folder`, or `user` to assign the legal hold policy to.
+            The `file_version`, `file`, `folder`, or :`user` to assign the legal hold policy to.
         :type assignee:
-            :class:`file_version` :class:`file` or :class:`folder` or :class:`user`
+            :class:`FileVersion` :class:`File` or :class:`Folder` or :class:`User`
         :returns:
             A legal hold policy assignment object
         :rtype:
@@ -68,6 +68,8 @@ class LegalHoldPolicy(BaseObject):
             `Iterable` of `unicode`
         :returns:
             An iterator of the entries in the legal hold policy assignment
+        :rtype:
+            :class:`MarkerBasedObjectCollection`
         """
         additional_params = {
             'policy_id': self.object_id,

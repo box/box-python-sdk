@@ -161,14 +161,14 @@ class Client(Cloneable):
 
     def legal_hold_policy(self, policy_id):
         """
-        Initialize a :class: `LegalHoldPolicy` object, whose box id is policy_id.
+        Initialize a :class:`LegalHoldPolicy` object, whose box id is policy_id.
 
         :param policy_id:
             The box ID of the :class:`LegalHoldPolicy` object.
         :type policy_id:
             `unicode`
         :return:
-            A :class: `LegalHoldPolicy` object with the given entry ID.
+            A :class:`LegalHoldPolicy` object with the given entry ID.
         :rtype:
             :class:`LegalHoldPolicy`
         """
@@ -176,14 +176,14 @@ class Client(Cloneable):
 
     def legal_hold_policy_assignment(self, policy_assignment_id):
         """
-        Initialize a :class: `LegalHoldPolicyAssignment` object, whose box id is policy_assignment_id.
+        Initialize a :class:`LegalHoldPolicyAssignment` object, whose box id is policy_assignment_id.
 
         :param policy_assignment_id:
             The assignment ID of the :class:`LegalHoldPolicyAssignment` object.
         :type policy_assignment_id:
             `unicode`
         :return:
-            A :class `LegalHoldPolicyAssignment` object with the given entry ID.
+            A :class:`LegalHoldPolicyAssignment` object with the given entry ID.
         :rtype:
             :class:`LegalHoldPolicyAssignment`
         """
@@ -237,7 +237,7 @@ class Client(Cloneable):
             policy_attributes['is_ongoing'] = is_ongoing
         box_response = self._session.post(url, data=json.dumps(policy_attributes))
         response = box_response.json()
-        return self.translator.translate('legal_hold_policy')(
+        return self.translator.translate(response['type'])(
             session=self._session,
             object_id=response['id'],
             response_object=response,
@@ -250,7 +250,7 @@ class Client(Cloneable):
         :param policy_name:
             The name of the legal hold policy case insensitive to search for
         :type policy_name:
-            `str` or None
+            `unicode` or None
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:
@@ -258,7 +258,7 @@ class Client(Cloneable):
         :param marker:
             The paging marker to start paging from.
         :type marker:
-            `str` or None
+            `unicode` or None
         :param fields:
             List of fields to request.
         :type fields:
@@ -270,7 +270,7 @@ class Client(Cloneable):
         """
         additional_params = {}
         if policy_name is not None:
-            additional_params = {'policy_name': policy_name}
+            additional_params['policy_name'] = policy_name
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self.get_url('legal_hold_policies'),
