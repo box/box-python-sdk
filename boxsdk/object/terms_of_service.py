@@ -1,10 +1,8 @@
 # coding: utf-8
 from __future__ import unicode_literals
-from functools import partial
 
 import json
 
-from .base_object import BaseObject
 from boxsdk.util.text_enum import TextEnum
 
 

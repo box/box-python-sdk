@@ -40,15 +40,15 @@ def test_update(test_terms_of_service, mock_box_session):
 
 
 def test_create_user_status(test_terms_of_service, test_terms_of_service_user_status, mock_user, mock_box_session):
-    #pylint:disable=redefined-outer-name
+    # pylint:disable=redefined-outer-name
     created_at = '2016-05-18T17:38:03-07:00',
     value = json.dumps({
-        'tos':{
+        'tos': {
             'type': 'terms_of_service',
             'id': test_terms_of_service.object_id,
         },
         'is_accepted': True,
-        'user':{
+        'user': {
             'type': 'user',
             'id': 'fake-user-100',
         },
