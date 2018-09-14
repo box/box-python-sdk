@@ -131,6 +131,36 @@ class Client(Cloneable):
         """
         return self.translator.translate('user')(session=self._session, object_id=user_id)
 
+    def invite(self, invite_id):
+        """
+        Initialize a :class:`Invite` object, whose box id is invite_id.
+
+        :param invite_id:
+            The invite ID of the :class:`Invite` object.
+        :type invite_id:
+            `unicode`
+        :return:
+            A :class:`Invite` object with the given entry ID.
+        :rtype:
+            :class:`Invite`
+        """
+        return self.translator.translate('invite')(session=self._session, object_id=invite_id)
+
+    def email_alias(self, alias_id):
+        """
+        Initialize a :class: `EmailAlias` object, whose box id is alias_id.
+
+        :param alias_id:
+            The aliad id of the :class:`EmailAlias` object.
+        :type alias_id:
+            `unicode`
+        :return:
+            A :class:`EmailAlias` object with the given entry ID.
+        :rtype:
+            :class:`EmailAlias`
+        """
+        return self.translator.translate('email_alias')(session=self._session, object_id=alias_id)
+
     def group(self, group_id):
         """
         Initialize a :class:`Group` object, whose box id is group_id.
@@ -247,6 +277,39 @@ class Client(Cloneable):
             offset=offset,
             fields=fields,
             return_full_pages=False,
+        )
+
+    def invite_user(self, enterprise_id, email_to_invite):
+        """
+        Invites an existing user to an Enterprise. User must already have a Box account.
+
+        :param enterprise_id:
+            The id of the enterprise the user will be invited to.
+        :type enterprise_id:
+            `unicode`
+        :param email_to_invite:
+            The login of the user that will receive the invitation.
+        :type email_to_invite:
+            `unicode`
+        :returns:
+            A :class:`Invite` object.
+        :rtype:
+            :class:`Invite`
+        """
+        url = self.get_url('invites')
+        body = {
+            'enterprise': {
+                'id': enterprise_id
+            },
+            'actionable_by': {
+                'login': email_to_invite
+            }
+        }
+        response = self._session.post(url, data=json.dumps(body)).json()
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
         )
 
     @api_call

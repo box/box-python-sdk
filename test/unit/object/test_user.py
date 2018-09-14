@@ -120,8 +120,8 @@ def test_move_users_owned_items(mock_user, mock_box_session, move_items_response
         },
     })
     mock_box_session.put.return_value = move_items_response
-    moved_item = mock_user.move_owned_items('5678')
+    moved_item = mock_user.move_owned_items(mock_user.object_id)
     assert len(mock_box_session.put.call_args_list) == 1
-    assert mock_box_session.put.call_args[0] == ("{0}/users/5678/folders/0".format(API.BASE_API_URL),)
+    assert mock_box_session.put.call_args[0] == ("{0}/users/fake-user-100/folders/0".format(API.BASE_API_URL),)
     assert mock_box_session.put.call_args[1] == {'data': value}
     assert isinstance(moved_item, Folder)
