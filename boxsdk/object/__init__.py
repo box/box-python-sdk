@@ -17,5 +17,7 @@ __all__ = list(map(str, [
     'group_membership',
     'recent_item',
     'search',
+    'storage_policy',
+    'storage_policy_assignment',
     'user',
 ]))

@@ -24,7 +24,11 @@ class StoragePolicy(BaseObject):
         :param assignee:
             The `user` or `enterprise` to assign the storage policy to
         :type:
-            :class:User
+            :class:`User`
+        :returns:
+            Information about the :class:`StoragePolicyAssignment` object
+        :rtype:
+            :class:`StoragePolicyAssignment`
         """
         url = self._session.get_url('storage_policy_assignments')
         body = {

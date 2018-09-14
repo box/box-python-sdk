@@ -10,14 +10,14 @@ class User(BaseObject):
 
     _item_type = 'user'
 
-    def storage_policy_assignments(self):
+    def get_storage_policy_assignment(self):
         """
         Get the entries in the storage policy assignment using limit-offset paging.
 
         :returns:
-            An iterator of the entries in the storage policy assignment
+            The :class:`StoragePolicyAssignment` object information
         :rtype:
-            :class:`BoxObjectCollection`
+            :class:`StoragePolicyAssignment`
         """
         url = self._session.get_url('storage_policy_assignments')
         additional_params = {
@@ -25,9 +25,9 @@ class User(BaseObject):
             'resolved_for_id': self.object_id,
         }
         box_response = self._session.get(url, params=additional_params)
-        response = box_response.json()
+        response = box_response.json()['entries'][0]
         return self.translator.translate('storage_policy_assignment')(
             session=self._session,
-            object_id=response['entries'][0]['id'],
-            response_object=response['entries'][0],
+            object_id=response['id'],
+            response_object=response,
         )

@@ -35,7 +35,7 @@ To create new storage policy assignment call `storage_policy.assign(item)`.
 ```python
 storage_policy_id = '5678'
 user = client.user('1234')
-storage_policy_assignment = client.storage_policy(storage_policyid).assign(user)
+storage_policy_assignment = client.storage_policy(storage_policy_id).assign(user)
 ```
 
 Update Existing Assignment
@@ -45,9 +45,9 @@ Updating a storage policy assignment is done by calling `storage_policy.update_i
 
 ```python
 storage_policy_assignment_id = '1234'
-new_storage_policy_id = '5678'
-updated_item = {'type': 'storage_policy', 'id': new_storage_policy_id}
-updated_storage_policy_assignment = client.storage_policy_assignment(storage_policy_assignment).update_info(updated_item)
+new__storage_policy_id = '5678'
+new_storage_policy = client.storage_policy('5678')
+updated_storage_policy_assignment = client.storage_policy_assignment(storage_policy_assignment).update_info(new_storage_policy)
 ```
 
 Get Assignment
@@ -63,11 +63,11 @@ storage_policy_assignment = client.storage_policy_assignment(assignment_id).get(
 Get Assignment for User
 -------------------------
 
-Calling `user.storage_policy_assignments(fields=None)` will return a storage policy assignment object
+Calling `user.get_storage_policy_assignment(fields=None)` will return a storage policy assignment object
 
 ```python
 user_id = '1111'
-assignment_info = client.user(user_id).storage_policy_assignments()
+assignment_info = client.user(user_id).get_storage_policy_assignment()
 ```
 
 Delete Assignment

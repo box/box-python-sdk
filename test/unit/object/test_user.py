@@ -25,7 +25,7 @@ def test_get_storage_policy_assignments(mock_user, mock_box_session):
         'resolved_for_type': 'user',
         'resolved_for_id': mock_user.object_id,
     }
-    assignment = mock_user.storage_policy_assignments()
+    assignment = mock_user.get_storage_policy_assignment()
     mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
     assert isinstance(assignment, StoragePolicyAssignment)
     assert assignment.id == mock_assignment['id']
