@@ -10,7 +10,8 @@ class CollaborationWhitelistEntry(BaseObject):
     def get_url(self, *args):
         """
         Gets the collaboration whitelist entries endpoint URL.
-         :return:
+
+        :return:
             The collaboration whitelist entries endpoint URL.
         :rtype:
             `unicode`

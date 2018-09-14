@@ -15,14 +15,15 @@ class CollaborationWhitelist(BaseEndpoint):
     def get_entries(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the collaboration whitelist using limit-offset paging.
-         :param limit:
+
+        :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:
             `int` or None
         :param marker:
             The paging marker to start paging from.
         :type marker:
-            `str` or None
+            `unicode` or None
         :param fields:
             List of fields to request.
         :type fields:
@@ -38,14 +39,15 @@ class CollaborationWhitelist(BaseEndpoint):
             limit=limit,
             marker=marker,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )
 
     @api_call
     def add_domain(self, domain, direction):
         """
         Add a new domain to the collaboration whitelist.
-         :param domain:
+
+        :param domain:
             The email domain to add to the whitelist.
         :type domain:
             `unicode`
@@ -67,21 +69,22 @@ class CollaborationWhitelist(BaseEndpoint):
         return self.translator.translate('collaboration_whitelist_entry')(
             session=self._session,
             object_id=response['id'],
-            response_object=response
+            response_object=response,
         )
 
     @api_call
     def get_exemptions(self, limit=None, marker=None, fields=None):
         """
         Get the list of exempted users who are not subject to the collaboration whitelist rules.
-         :param limit:
+
+        :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:
             `int` or None
         :param marker:
             The paging marker to start paging from.
         :type marker:
-            `str` or None
+            `unicode` or None
         :param fields:
             List of fields to request.
         :type fields:
@@ -97,14 +100,15 @@ class CollaborationWhitelist(BaseEndpoint):
             limit=limit,
             marker=marker,
             fields=fields,
-            return_full_pages=False
+            return_full_pages=False,
         )
 
     @api_call
     def add_exemption(self, user):
         """
         Exempt a user from the collaboration whitelist.
-         :param user:
+
+        :param user:
             The user to exempt from the whitelist.
         :type user:
             :class:`User`
@@ -123,5 +127,5 @@ class CollaborationWhitelist(BaseEndpoint):
         return self.translator.translate('collaboration_whitelist_exempt_target')(
             session=self._session,
             object_id=response['id'],
-            response_object=response
+            response_object=response,
         )
