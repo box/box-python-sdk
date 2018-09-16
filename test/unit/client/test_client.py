@@ -400,35 +400,12 @@ def test_get_storage_policies(mock_client, mock_box_session):
         'limit': 100,
         'entries': [mock_policy]
     }
-    policies = mock_client.storage_policies()
+    policies = mock_client.get_storage_policies()
     policy = policies.next()
     mock_box_session.get.assert_called_once_with(expected_url, params={})
     assert isinstance(policy, StoragePolicy)
     assert policy.id == mock_policy['id']
     assert policy.name == mock_policy['name']
-
-
-def test_get_storage_policy_assignments(mock_client, mock_box_session):
-    resolved_for_type = 'user'
-    resolved_for_id = '1234'
-    expected_url = mock_box_session.get_url('storage_policy_assignments')
-    mock_assignment = {
-        'type': 'storage_policy_assignment',
-        'id': '12345',
-    }
-    mock_box_session.get.return_value.json.return_value = {
-        'limit': 100,
-        'entries': [mock_assignment]
-    }
-    expected_params = {
-        'resolved_for_type': resolved_for_type,
-        'resolved_for_id': resolved_for_id,
-    }
-    assignment = mock_client.storage_policy_assignments(resolved_for_type, resolved_for_id)
-    mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
-    assert isinstance(assignment, StoragePolicyAssignment)
-    assert assignment.id == mock_assignment['id']
-    assert assignment.type == mock_assignment['type']
 
 
 @pytest.fixture

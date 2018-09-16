@@ -19,10 +19,10 @@ storage_policy = client.storage_policy(storage_policy_id).get()
 List Available Storage Policies
 -------------------------------
 
-Calling `client.storage_policies()` will return an iterable that will page through all of the storage policies. It is possible to specify maxiumum number of items per response and fields to retrieve by caling `client.storage_policies(limit=None, fields=None)`.
+Calling `client.get_storage_policies()` will return an iterable that will page through all of the storage policies. It is possible to specify maxiumum number of items per response and fields to retrieve by caling `client.get_storage_policies(limit=None, fields=None)`.
 
 ```python
-storage_policies = client.storage_policies(limit=100)
+storage_policies = client.get_storage_policies(limit=100)
 for storage_policy in storage_policies:
     # Do something
 ```
@@ -44,10 +44,8 @@ Update Existing Assignment
 Updating a storage policy assignment is done by calling `storage_policy.update_info(update_item)`.
 
 ```python
-storage_policy_assignment_id = '1234'
-new__storage_policy_id = '5678'
-new_storage_policy = client.storage_policy('5678')
-updated_storage_policy_assignment = client.storage_policy_assignment(storage_policy_assignment).update_info(new_storage_policy)
+updated_storage_policy = {'storage_policy': {'type': 'storage_policy', 'id': '1234'}}
+updated_assignment = client.storage_policy_assignment('ZW50ZXJwcmldfgeV82MDMwMDQ=').update_info(updated_storage_policy)
 ```
 
 Get Assignment
