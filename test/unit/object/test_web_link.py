@@ -6,6 +6,7 @@ import json
 from boxsdk.config import API
 from boxsdk.object.web_link import WebLink
 
+
 def test_get(mock_box_session, test_web_link):
     # pylint:disable=redefined-outer-name, protected-access
     web_link_id = test_web_link.object_id
@@ -45,6 +46,7 @@ def test_update(mock_box_session, test_web_link):
     assert web_link.type == mock_web_link['type']
     assert web_link.url == mock_web_link['url']
     assert isinstance(web_link, WebLink)
+
 
 def test_delete(mock_box_session, test_web_link):
     web_link_id = test_web_link.object_id
