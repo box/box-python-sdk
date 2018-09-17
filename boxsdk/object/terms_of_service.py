@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import json
 
+from .base_object import BaseObject
 from boxsdk.util.text_enum import TextEnum
 
 
