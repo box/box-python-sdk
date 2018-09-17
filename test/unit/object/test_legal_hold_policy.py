@@ -20,9 +20,11 @@ def policy_id_1():
 def policy_id_2():
     return 202
 
+
 @pytest.fixture(scope='module')
 def legal_hold_id_1():
     return 101
+
 
 @pytest.fixture(scope='module')
 def legal_hold_id_2():
