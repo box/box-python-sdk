@@ -69,7 +69,7 @@ class LegalHoldPolicy(BaseObject):
         :returns:
             An iterator of the entries in the legal hold policy assignment
         :rtype:
-            :class:`MarkerBasedObjectCollection`
+            :class:`BoxObjectCollection`
         """
         additional_params = {
             'policy_id': self.object_id,
@@ -81,6 +81,40 @@ class LegalHoldPolicy(BaseObject):
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self._session.get_url('legal_hold_policy_assignments'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
+
+    def get_file_version_legal_holds(self, limit=None, marker=None, fields=None):
+        """
+        Get legal holds for a file version.
+
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the file version legal holds
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {
+            'policy_id': self.object_id,
+        }
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self._session.get_url('file_version_legal_holds'),
             additional_params=additional_params,
             limit=limit,
             marker=marker,

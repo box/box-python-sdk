@@ -20,6 +20,14 @@ def policy_id_1():
 def policy_id_2():
     return 202
 
+@pytest.fixture(scope='module')
+def legal_hold_id_1():
+    return 101
+
+@pytet.fixture(scope='module')
+def legal_hold_id_2():
+    return 202
+
 
 @pytest.fixture(scope='module')
 def policies_response(policy_id_1, policy_id_2):
@@ -29,6 +37,20 @@ def policies_response(policy_id_1, policy_id_2):
         'entries': [
             {'type': 'legal_hold_policy', 'id': policy_id_1, 'name': 'Test Policy 1'},
             {'type': 'legal_hold_policy', 'id': policy_id_2, 'name': 'Test Policy 2'}
+        ],
+        'limit': 5,
+    }
+    return mock_network_response
+
+
+@pytest.fixture(scope='module')
+def legal_hold_response(legal_hold_id_1, legal_hold_id_2):
+    # pylint disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'legal_hold', 'id': legal_hold_id_1, 'name': 'Test Legal Hold 1'},
+            {'type': 'legal_hold', 'id': legal_hold_id_2, 'name': 'Test Legal Hold 2'}
         ],
         'limit': 5,
     }
@@ -109,3 +131,19 @@ def test_get_assignments(
         assert assignment.object_id == expected_id
         # pylint:disable=protected-access
         assert assignment._session == mock_box_session
+
+
+def test_get_legal_holds(
+        test_legal_hold_policy,
+        mock_box_session,
+        legal_hold_response,
+        legal_hold_id_1,
+        legal_hold_id_2
+):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value = legal_hold_response
+    legal_holds = test_legal_hold_policy.test_get_legal_holds()
+    for legal_hold, expected_id in zip(legal_holds, [legal_hold_id_1, legal_hold_id_2]):
+        assert legal_hold.object_id == expected_id
+        # pylint:disable=protected-access
+        assert legal_hold._session == mock_box_session

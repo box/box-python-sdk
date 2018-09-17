@@ -10,6 +10,7 @@ from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
 from boxsdk.object.file import File
+from boxsdk.object.file_version_legal_hold import FileVersionLegalHold
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
