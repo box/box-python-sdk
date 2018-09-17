@@ -24,7 +24,7 @@ def policy_id_2():
 def legal_hold_id_1():
     return 101
 
-@pytet.fixture(scope='module')
+@pytest.fixture(scope='module')
 def legal_hold_id_2():
     return 202
 
@@ -142,7 +142,7 @@ def test_get_legal_holds(
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = legal_hold_response
-    legal_holds = test_legal_hold_policy.test_get_legal_holds()
+    legal_holds = test_legal_hold_policy.get_file_version_legal_holds()
     for legal_hold, expected_id in zip(legal_holds, [legal_hold_id_1, legal_hold_id_2]):
         assert legal_hold.object_id == expected_id
         # pylint:disable=protected-access
