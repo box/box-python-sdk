@@ -75,5 +75,5 @@ Calling `storage_policy_assignment.delete()` will remove the storage policy assi
 
 ```python
 assignment_id = '1234'
-policy_assignment = client.storage_policy_assignment(assignment_id).delete()
+client.storage_policy_assignment(assignment_id).delete()
 ```

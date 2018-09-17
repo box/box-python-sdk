@@ -18,7 +18,7 @@ def test_get(test_storage_policy, mock_box_session):
 
 
 def test_assign(test_storage_policy, mock_user, mock_box_session):
-    expected_url = mock_box_session.get_url('storage_policy_assignments')
+    expected_url = '{0}/storage_policy_assignments'.format(API.BASE_API_URL)
     expected_data = {
         'storage_policy': {
             'type': 'storage_policy',
