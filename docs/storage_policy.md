@@ -61,7 +61,7 @@ storage_policy_assignment = client.storage_policy_assignment(assignment_id).get(
 Get Assignment for User
 -------------------------
 
-Calling `user.get_storage_policy_assignment(fields=None)` will return a storage policy assignment object
+Calling `user.get_storage_policy_assignment(fields=None)` will return the storage policy assigned to the specified user.
 
 ```python
 user_id = '1111'
