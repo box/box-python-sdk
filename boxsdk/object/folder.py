@@ -449,7 +449,7 @@ class Folder(Item):
         if description is not None:
             web_link_attributes['description'] = description
         response = self._session.post(url, data=json.dumps(web_link_attributes)).json()
-        return self.translator.translate('web_link')(
+        return self.translator.translate(response['type'])(
             session=self._session,
             object_id=response['id'],
             response_object=response
