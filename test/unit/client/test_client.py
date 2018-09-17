@@ -360,7 +360,7 @@ def test_legal_hold_policies_return_the_correct_policy_objects(
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = legal_hold_policies_response
-    policies = mock_client.legal_hold_policies()
+    policies = mock_client.get_legal_hold_policies()
     for policy, expected_id in zip(policies, [legal_hold_policy_id_1, legal_hold_policy_id_2]):
         assert policy.object_id == expected_id
         # pylint:disable=protected-access

@@ -135,7 +135,7 @@ def test_get_assignments(
         assert assignment._session == mock_box_session
 
 
-def test_get_legal_holds(
+def test_get_file_version_legal_holds(
         test_legal_hold_policy,
         mock_box_session,
         legal_hold_response,

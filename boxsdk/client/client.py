@@ -189,6 +189,21 @@ class Client(Cloneable):
         """
         return self.translator.translate('legal_hold_policy_assignment')(session=self._session, object_id=policy_assignment_id)
 
+    def file_version_legal_hold(self, policy_id):
+        """
+        Initialize a :class:`FileVersionLegalHold` object, whose box id is policy_id.
+
+        :param policy_id:
+            The assignment ID of the :class:`FileVersionLegalHold` object.
+        :type policy_id:
+            `unicode`
+        :return:
+            A :class:`FileVersionLegalHold` object with the given entry ID.
+        :rtype:
+            :class:`FileVersionLegalHold`
+        """
+        return self.translator.translate('legal_hold')(session=self._session, object_id=policy_id)
+
     def create_legal_hold_policy(
             self,
             policy_name,
@@ -243,7 +258,7 @@ class Client(Cloneable):
             response_object=response,
         )
 
-    def legal_hold_policies(self, policy_name=None, limit=None, marker=None, fields=None):
+    def get_legal_hold_policies(self, policy_name=None, limit=None, marker=None, fields=None):
         """
         Get the entries in the legal hold policy using limit-offset paging.
 

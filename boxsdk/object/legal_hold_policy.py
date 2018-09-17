@@ -19,7 +19,7 @@ class LegalHoldPolicy(BaseObject):
         """Assign legal hold policy
 
         :param assignee:
-            The `file_version`, `file`, `folder`, or :`user` to assign the legal hold policy to.
+            The `file_version`, `file`, `folder`, or `user` to assign the legal hold policy to.
         :type assignee:
             :class:`FileVersion` :class:`File` or :class:`Folder` or :class:`User`
         :returns:

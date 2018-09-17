@@ -2,7 +2,9 @@ Legal Holds Policy
 ==================
 
 Legal Hold Policy information describes the basic characteristics of the Policy,
-such as name, description, and filter dates.
+such as name, description, and filter dates. It is important to note that the legal hold object contains no information about what this policy applies to.
+
+If an order of discovery is received or the customer is part of an ongoing litigation, a legal hold policy can be created to keep track of everything that needs to be held. The actual holding is done via the Legal Hold Assignments endpoint. When the holds are no longer needed, the policy can be released by calling DELETE.
 
 
 Get Legal Hold Policy Information
@@ -18,10 +20,10 @@ policy_info = client.legal_hold_policy(policy_id).get()
 List Legal Hold Policies
 ------------------------
 
-To retrieve an interable of legal hold policies in the enterprise, you can call `client.legal_hold_policies(policy_name=None, limit=None, marker=None, fields=None)`.
+To retrieve an iterable of legal hold policies in the enterprise, you can call `client.get_legal_hold_policies(policy_name=None, limit=None, marker=None, fields=None)`.
 
 ```python
-policies = client.legal_hold_policies()
+policies = client.get_legal_hold_policies()
 for policy in policies:
     # Do something
 ```
@@ -40,7 +42,7 @@ Create New Legal Hold Policy
 To create a new legal hold policy, use `client.create_legal_hold_policy(policy_name, description=None, filter_starting_at=None, filter_ending_at=None, is_ongoing=None)`.
 
 ```python
-new_policy = client.create_legal_hold_policy('New Policy')
+new_policy = client.create_legal_hold_policy('New Policy', is_ongoing=True)
 ```
 
 Update Legal Hold Policy
@@ -114,4 +116,24 @@ To delete an existing legal hold policy assignment, use `legal_hold__policy_assi
 ```python
 assignment_id = '1111'
 client.legal_hold_policy_assignment.delete()
+```
+
+List File Version Legal Holds
+-----------------------------
+
+To return an iterable of all file version legal holds, use `legal_hold_policy.get_file_version_legal_holds()`
+
+```python
+policies = client.legal_hold_policy('1234').get_file_version_legal_holds()
+for policy in policies:
+    # Do something
+```
+
+Get Information about a File Version Legal Hold
+-----------------------------------------------
+
+To retrieve information about a file version legal hold, use `file_version_legal_hold.get()`
+
+```python
+legal_hold = client.file_version_legal_hold('1234').get()
 ```
