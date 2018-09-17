@@ -42,7 +42,6 @@ class StoragePolicy(BaseObject):
             }
         }
         response = self._session.post(url, data=json.dumps(body)).json()
-        if response.status is 
         return self.translator.translate(response['type'])(
             self._session,
             response['id'],
