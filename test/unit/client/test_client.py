@@ -22,7 +22,6 @@ from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.storage_policy import StoragePolicy
-from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.object.user import User
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
