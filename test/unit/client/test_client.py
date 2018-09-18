@@ -489,7 +489,7 @@ def test_downscope_token_sends_downscope_request_with_additional_data(
 def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_response, device_pin_id_1, device_pin_id_2):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = device_pins_response
-    pins = mock_client.device_pins('1234')
+    pins = mock_client.device_pinners('1234')
     for pin, expected_id in zip(pins, [device_pin_id_1, device_pin_id_2]):
         assert pin.object_id == expected_id
         # pylint:disable=protected-access

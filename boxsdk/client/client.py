@@ -7,7 +7,7 @@ from ..auth.oauth2 import TokenResponse
 from ..session.session import Session, AuthorizedSession
 from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
-from ..object.device_pin import DevicePin
+from ..object.device_pinner import DevicePinner
 from ..object.search import Search
 from ..object.events import Events
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -584,7 +584,7 @@ class Client(Cloneable):
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
 
-    def device_pin(self, device_pin_id):
+    def device_pinner(self, device_pin_id):
         """
         Initialize a :class: `Device Pin` object, whose box id is device_pin_id.
 
@@ -599,7 +599,7 @@ class Client(Cloneable):
         """
         return self.translator.translate('device_pinner')(session=self._session, object_id=device_pin_id)
 
-    def device_pins(self, enterprise_id, direction=None, limit=None, marker=None, fields=None):
+    def device_pinners(self, enterprise_id, direction=None, limit=None, marker=None, fields=None):
         """
         Returns all of the device pins for the given enterprise.
 
@@ -618,7 +618,7 @@ class Client(Cloneable):
         :param marker:
             The paging marker to start paging from.
         :type marker:
-            `str` or None
+            `unicode` or None
         :param fields:
             List of fields to request.
         :type fields:
