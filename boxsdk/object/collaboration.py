@@ -62,10 +62,8 @@ class Collaboration(BaseObject):
 
     def accept(self):
         """Accepts a pending collaboration"""
-        data = {'status': 'accepted'}
-        return super(Collaboration, self).update_info(data=data)
+        return self.update_info(status='accepted')
 
     def reject(self):
         """Rejects a pending collaboration"""
-        data = {'status': 'rejected'}
-        return super(Collaboration, self).update_info(data=data)
+        return self.update_info(status='rejected')

@@ -323,7 +323,7 @@ def test_collaborations(test_item_and_response, mock_box_session):
         'created_by': {
             'type': 'user',
             'id': '33333',
-        }
+        },
     }
     mock_box_session.get.return_value.json.return_value = {
         'limit': 500,

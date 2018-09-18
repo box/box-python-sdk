@@ -24,7 +24,7 @@ Alternatively you can also invite a user with their email address.
 ```python
 from boxsdk.object.collaboration import CollaborationRole
 folder_id = '1234'
-email_of_invitee = "testuser@example.com"
+email_of_invitee = 'testuser@example.com'
 collaboration = client.folder(folder_id).collaborate_with_login(email_of_invitee, CollaborationRole.VIEWER)
 ```
 
@@ -34,10 +34,8 @@ Edit a Collaboration
 A collaboration can be edited by using `collaboration.update_info()`.
 
 ```python
-from boxsdk.object.collaboration import CollaborationRole
-collaboration_id = '1111'
-collaboration_update = {'role': CollaborationRole.EDITOR}
-updated_collaboration = client.collaboration(collaboration_id).update_info(collaboration_update)
+from boxsdk.object.collaboration import CollaborationRole, CollaborationStatus
+updated_collaboration = client.collaboration('1111').update_info(CollaborationRole.EDITOR, CollaborationStatus.ACCEPTED)
 ```
 
 Remove a Collaboration
@@ -68,7 +66,7 @@ To retrieve all collaborations on a specified folder you can use `folder.collabo
 ```python
 folder_id = '1234'
 collaborations = client.folder(folder_id).collaborations()
-for collaborations in collaborations_on_folder:
+for collaboration in collaborations:
     # Do something
 ```
 
@@ -80,7 +78,7 @@ To retrieve an iterable of collaborations on a specified file you can use `file.
 ```python
 file_id = '2222'
 collaborations = client.file(file_id).collaborations()
-for collaborations in collaborations_on_file:
+for collaboration in collaborations
     # Do something
 ```
 
@@ -91,7 +89,7 @@ To retrieve all pending collaborations for the user, use `folder.pending_collabo
 
 ```python
 pending_collaborations = client.pending_collaborations()
-for pending_collaborations in pending_collaborations:
+for pending_collaboration in pending_collaborations:
     # Do something
 ```
 
@@ -102,12 +100,12 @@ To `accept` or `reject` a pending collaboration use `collaboration.accept()` or 
 
 ```python
 collaboration_id = '3333'
-client.collaboration(collaboration_id).accept()
+updated_collaboration = client.collaboration(collaboration_id).accept()
 ```
 
 You can reject a pending collaboration with
 
 ```python
 collaboration_id = '3333'
-client.collaboration(collaboration_id).reject()
+updated_collaboration = client.collaboration(collaboration_id).reject()
 ```

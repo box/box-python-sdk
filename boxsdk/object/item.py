@@ -423,6 +423,10 @@ class Item(BaseObject):
             List of fields to request.
         :type fields:
             `Iterable` of `unicode`
+        :return:
+            The new collaboration
+        :rtype:
+            :class:`Collaboration`
         """
         url = self._session.get_url('collaborations')
         body = {
@@ -442,7 +446,7 @@ class Item(BaseObject):
         if fields is not None:
             params['fields'] = ','.join(fields)
         if notify is not None:
-            params['notify'] = ','.join(fields)
+            params['notify'] = notify
         response = self._session.post(url, data=json.dumps(body), params=params).json()
         return self.translator.translate(response['type'])(
             session=self._session,
@@ -451,7 +455,7 @@ class Item(BaseObject):
         )
 
     def collaborate_with_login(self, login, role, can_view_path=None, notify=None, fields=None):
-        """Collaborate user or group onto a Box item.
+        """Collaborate user onto a Box item with the user login.
 
         :param login:
             The email address of the person to grant access to.
@@ -473,6 +477,10 @@ class Item(BaseObject):
             List of fields to request.
         :type fields:
             `Iterable` of `unicode`
+        :return:
+            The new collaboration with the user login
+        :rtype:
+            :class:`Collaboration`
         """
         url = self._session.get_url('collaborations')
         body = {
@@ -492,7 +500,7 @@ class Item(BaseObject):
         if fields is not None:
             params['fields'] = ','.join(fields)
         if notify is not None:
-            params['notify'] = ','.join(fields)
+            params['notify'] = notify
         response = self._session.post(url, data=json.dumps(body), params=params).json()
         return self.translator.translate(response['type'])(
             session=self._session,
@@ -502,7 +510,7 @@ class Item(BaseObject):
 
     def collaborations(self, limit=None, marker=None, fields=None):
         """
-        Get the entries in the collaboration using marker-based paging.
+        Get the entries in the collaboration.
 
         :param limit:
             The maximum number of items to return per page. If not specified, then will use the server-side default.

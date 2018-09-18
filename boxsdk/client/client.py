@@ -547,7 +547,7 @@ class Client(Cloneable):
         """
         return LimitOffsetBasedObjectCollection(
             session=self._session,
-            url=self.get_url('collaboration'),
+            url=self.get_url('collaborations'),
             additional_params={'status': 'pending'},
             limit=limit,
             offset=offset,

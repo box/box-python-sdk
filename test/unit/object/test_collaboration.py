@@ -6,6 +6,7 @@ import json
 
 import pytest
 
+from boxsdk.config import API
 from boxsdk.object.collaboration import CollaborationRole, CollaborationStatus
 
 
@@ -39,7 +40,7 @@ def test_update_info_returns_the_correct_response(
 def test_accept_pending_collaboration(test_collaboration, mock_box_session):
     # pylint:disable=protected-access
     new_status = 'accepted'
-    expected_url = test_collaboration.get_url()
+    expected_url = '{0}/collaborations/{1}'.format(API.BASE_API_URL, test_collaboration.object_id)
     mock_collab_response = {
         'type': 'collaboration',
         'id': '1234',
@@ -63,7 +64,7 @@ def test_accept_pending_collaboration(test_collaboration, mock_box_session):
 def test_reject_pending_collaboration(test_collaboration, mock_box_session):
     # pylint:disable=protected-access
     new_status = 'rejected'
-    expected_url = test_collaboration.get_url()
+    expected_url = '{0}/collaborations/{1}'.format(API.BASE_API_URL, test_collaboration.object_id)
     mock_collab_response = {
         'type': 'collaboration',
         'id': '1234',
