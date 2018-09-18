@@ -437,43 +437,46 @@ class Folder(Item):
         # pylint:disable=arguments-differ
         return super(Folder, self).delete({'recursive': recursive}, etag)
 
-def get_watermark(self):
-    """
-    Return the watermark info for a Box folder
-        :return:
-        Watermark object.
-    :rtype:
-        `dict`
-    """
-    url = self.get_url('folders', self.object_id, 'watermark')
-    box_response = self._session.get(url, expect_json_response=False)
-    return box_response.json()
+    def get_watermark(self):
+        """
+        Return the watermark info for a Box folder
 
-def apply_watermark(self):
-    """
-    Apply watermark on a Box folder
         :return:
-        Watermark object.
-    :rtype:
-        `dict`
-    """
-    url = self.get_url('folders', self.object_id, 'watermark')
-    body_attributes = {
-        'watermark': {
-            'imprint': 'default'
+            Watermark object.
+        :rtype:
+            `dict`
+        """
+        url = self.get_url('watermark')
+        box_response = self._session.get(url, expect_json_response=False)
+        return box_response.json()
+
+    def apply_watermark(self):
+        """
+        Apply watermark on a Box folder
+
+        :return:
+            Watermark object.
+        :rtype:
+            `dict`
+        """
+        url = self.get_url('watermark')
+        body_attributes = {
+            'watermark': {
+                'imprint': 'default'
+            }
         }
-    }
-    box_response = self._session.put(url, data=json.dumps(body_attributes))
-    return box_response.json()
+        box_response = self._session.put(url, data=json.dumps(body_attributes))
+        return box_response.json()
 
-def delete_watermark(self):
-    """
-    Deletes the watermark info for a Box folder
+    def delete_watermark(self):
+        """
+        Deletes the watermark info for a Box folder
+
         :return:
-        Whether or not the delete succeeded.
-    :rtype:
-        `bool`
-    """
-    url = self.get_url('folders', self.object_id, 'watermark')
-    box_response = self._session.delete(url, expect_json_response=False)
-    return box_response.ok
+            Whether or not the delete succeeded.
+        :rtype:
+            `bool`
+        """
+        url = self.get_url('watermark')
+        box_response = self._session.delete(url, expect_json_response=False)
+        return box_response.ok
