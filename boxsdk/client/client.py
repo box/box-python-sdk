@@ -7,7 +7,6 @@ from ..auth.oauth2 import TokenResponse
 from ..session.session import Session, AuthorizedSession
 from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
-from ..object.device_pinner import DevicePinner
 from ..object.search import Search
 from ..object.events import Events
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -586,16 +585,16 @@ class Client(Cloneable):
 
     def device_pinner(self, device_pin_id):
         """
-        Initialize a :class: `Device Pin` object, whose box id is device_pin_id.
+        Initialize a :class:`DevicePinner` object, whose box id is device_pin_id.
 
         :param device_pin_id:
             The assignment ID of the :class:`DevicePin` object.
         :type device_pin_id:
             `unicode`
         :return:
-            A :class `DevicePin` object with the given entry ID.
+            A :class:`DevicePinner` object with the given entry ID.
         :rtype:
-            :class:`DevicePin`
+            :class:`DevicePinner`
         """
         return self.translator.translate('device_pinner')(session=self._session, object_id=device_pin_id)
 
