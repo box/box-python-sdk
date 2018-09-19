@@ -9,11 +9,13 @@ from six import int2byte, PY2
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
+from boxsdk.object.device_pinner import DevicePinner
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.search import Search
+from boxsdk.object.web_link import WebLink
 
 
 # pylint:disable=redefined-outer-name
@@ -94,6 +96,16 @@ def test_group(mock_box_session, mock_group_id):
 @pytest.fixture()
 def test_search(mock_box_session):
     return Search(mock_box_session)
+
+
+@pytest.fixture()
+def test_web_link(mock_box_session, mock_object_id):
+    return WebLink(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_device_pin(mock_box_session, mock_object_id):
+    return DevicePinner(mock_box_session, mock_object_id)
 
 
 @pytest.fixture(scope='function')
