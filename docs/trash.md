@@ -13,38 +13,39 @@ To retrieve a list of all trashed items, you can use `client.get_trashed_items(o
 
 ```python
 trashed_items = client.get_trashed_items()
-for trashed_item in trashed_item:
+for trashed_item in trashed_items:
     # Do something
 ```
 
-Get Trashed File Information
-----------------------------
+Get Trashed File or Folder
+--------------------------
 
-To retrieve a file from the trash, use `file.get_from_trash(fields=None)`
+To retrieve a file from the trash, use `file.get_from_trash(fields=None)`. To retrieve a folder from the trash, use `folder.get_from_trash(fields=None)`.
 
 ```python
 file_id = '1234'
 file_from_trash = client.file(file_id).get_from_trash()
 ```
 
-Get Trashed Folder Information
-------------------------------
-
-To retrieve a folder from the trash, use `folder.get_from_trash(fields=None)`
-
 ```python
 folder_id = '5678'
 folder_from_trash = client.folder(folder_id).get_from_trash()
 ```
 
-Restore File from Trash
------------------------
+Restore File or Folder from Trash
+---------------------------------
 
-To retore a trashed file, effectively undeleting it, call `file.retore_from_trash(name=None, parent_id=None, fields=None)`
+To retore a trashed file, effectively undeleting it, call `file.restore_from_trash(name=None, parent_id=None, fields=None)` or  to restore a trashed folder, call
+`folder.restore_from_trash(name=None, parent_id=None, fields=None)`
 
 ```python
 file_id = '1234'
 restored_file = client.file(file_id).restore_from_trash()
+```
+
+```python
+folder_id = '5678'
+restored_folder = client.folder(folder_id).restore_from_trash()
 ```
 
 In order to avoid conflicts, you can set a new name and new parent folder for the file you wish to restore.
@@ -56,18 +57,6 @@ new_parent_id = '1111'
 restored_file = client.file(file_id).restore_from_trash(new_name, new_parent_id)
 ```
 
-Restore Folder from Trash
--------------------------
-
-To retore a trashed folder, effectively undeleting it, call `folder.retore_from_trash(name=None, parent_id=None, fields=None)`
-
-```python
-folder_id = '5678'
-restored_folder = client.folder(folder_id).restore_from_trash()
-```
-
-In order to avoid conflicts, you can set a new name and new parent folder for the folder you wish to restore.
-
 ```python
 folder_id = '1234'
 new_name = 'New Folder Name'
@@ -75,20 +64,15 @@ new_parent_id = '1111'
 restored_folder = client.folder(folder_id).restore_from_trash(new_name, new_parent_id)
 ```
 
-Permanently Delete File
------------------------
+Permanently Delete File or Folder
+---------------------------------
 
-To delete a file from trash, use `file.permanently_delete()`
+To delete a file from trash, use `file.permanently_delete()` or to delete a folder from trash, use `folder.permanently_delete()`
 
 ```python
 file_id = '1234'
 client.file(file_id).permanently_delete()
 ```
-
-Permanently Delete Folder
--------------------------
-
-To delete a folder from trash, use `folder.permanently_delete()`
 
 ```python
 folder_id = '5678'

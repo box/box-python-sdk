@@ -412,7 +412,7 @@ class Client(Cloneable):
         :param offset:
             The offset of the item at which to begin the response.
         :type offset:
-            `str` or None
+            `unicode` or None
         :param fields:
             List of fields to request.
         :type fields:
@@ -427,6 +427,7 @@ class Client(Cloneable):
             url=self.get_url('folders', 'trash', 'items'),
             limit=limit,
             offset=offset,
+            fields=fields,
             return_full_pages=False,
         )
 

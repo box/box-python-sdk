@@ -360,6 +360,7 @@ class Item(BaseObject):
     def get_from_trash(self, fields=None):
         """
         Get item from trash.
+
         :param fields:
             List of fields to request
         :type fields:
@@ -380,6 +381,7 @@ class Item(BaseObject):
     def restore_from_trash(self, name=None, parent_id=None, fields=None):
         """
         Restores an item from the trash. Could be files, folders, or weblinks.
+
         :param name:
             The new name for this item. Only used if the item can't be restored due to name conflict.
         :type name:
@@ -394,12 +396,12 @@ class Item(BaseObject):
             `Iterable` of `unicode`
         """
         url = self.get_url()
-        body = {
-            'name': name,
-            'parent': {
-                'id': parent_id,
-            },
-        }
+        body = {}
+        if name is not None:
+            body['name'] = name
+        if parent_id is not None:
+            parent_object = {'id': parent_id}
+            body['parent'] = parent_object
         params = {}
         if fields is not None:
             params['fields'] = ','.join(fields)

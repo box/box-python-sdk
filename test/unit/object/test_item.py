@@ -213,7 +213,7 @@ def test_restore_from_trash(test_item_and_response, mock_box_session, mock_objec
     expected_url = test_item.get_url()
     mock_box_session.post.return_value = mock_item_response
     info = test_item.restore_from_trash()
-    mock_box_session.post.assert_called_once_with(expected_url, data='{"name": null, "parent": {"id": null}}', params={})
+    mock_box_session.post.assert_called_once_with(expected_url, data='{}', params={})
     assert isinstance(info, test_item.__class__)
     assert info.id == mock_object_id
 
@@ -225,7 +225,7 @@ def test_permanently_delete(test_item_and_response, mock_box_session, mock_objec
     mock_box_session.delete.return_value = mock_item_response
     info = test_item.permanently_delete()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)
-    assert info == True
+    assert info is True
 
 
 def test_remove_from_collection(test_item_and_response, mock_box_session, mock_collection, test_collections_for_removal):
