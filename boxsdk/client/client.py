@@ -401,6 +401,20 @@ class Client(Cloneable):
             response_object=response,
         )
 
+    def web_link(self, web_link_id):
+        """
+        Initialize a :class: `WebLink` object, whose box id is web_link_id.
+        :param web_link_id:
+            The box ID of the :class:`WebLink` object.
+        :type web_link_id:
+            `unicode`
+        :return:
+            A :class:`WebLink` object with the given entry ID.
+        :rtype:
+            :class:`WebLink`
+        """
+        return self.translator.translate('web_link')(session=self._session, object_id=web_link_id)
+
     @api_call
     def get_recent_items(self, limit=None, marker=None, fields=None, **collection_kwargs):
         """

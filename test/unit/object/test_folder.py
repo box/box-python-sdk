@@ -11,6 +11,7 @@ from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.file import File
+from boxsdk.object.web_link import WebLink
 from boxsdk.object.collaboration import Collaboration, CollaborationRole
 from boxsdk.object.folder import Folder, FolderSyncState
 from boxsdk.session.box_response import BoxResponse
@@ -285,3 +286,35 @@ def test_preflight(test_folder, mock_object_id, mock_box_session):
             }
         ),
     )
+
+
+def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_box_session):
+    expected_url = "{0}/web_links".format(API.BASE_API_URL)
+    expected_name = 'Test WebLink'
+    description = 'Test Description'
+    test_web_link_url = 'https://test.com'
+    mock_box_session.post.return_value.json.return_value = {
+        'type': 'web_link',
+        'id': '42',
+        'url': test_web_link_url,
+        'name': expected_name,
+        'description': description
+    }
+    new_web_link = test_folder.create_web_link(test_web_link_url, expected_name, description)
+    data = {
+        'url': test_web_link_url,
+        'parent': {
+            'id': '42',
+        },
+        'name': expected_name,
+        'description': description,
+    }
+    mock_box_session.post.assert_called_once_with(
+        expected_url,
+        data=json.dumps(data),
+    )
+    assert isinstance(new_web_link, WebLink)
+    assert new_web_link.object_id == '42'
+    assert new_web_link.url == test_web_link_url
+    assert new_web_link.name == expected_name
+    assert new_web_link.description == description
