@@ -431,7 +431,7 @@ class Client(Cloneable):
         """
         return self.translator.translate('terms_of_service_user_status')(session=self._session, object_id=tos_user_status_id)
 
-    def terms_of_services(self, tos_type=None, limit=None, marker=None, fields=None):
+    def get_terms_of_services(self, tos_type=None, limit=None, marker=None, fields=None):
         """
         Get the entries in the legal hold policy assignment using limit-offset paging.
 
@@ -459,7 +459,7 @@ class Client(Cloneable):
             :class:`MarkerBasedObjectCollection`
         """
         additional_params = {}
-        if tos_type:
+        if tos_type is not None:
             additional_params['tos_type'] = tos_type
         return MarkerBasedObjectCollection(
             session=self._session,
@@ -471,7 +471,7 @@ class Client(Cloneable):
             return_full_pages=False,
         )
 
-    def create_a_terms_of_service(self, status, tos_type, text):
+    def create_terms_of_service(self, status, tos_type, text):
         """
         Create a terms of service.
 
@@ -500,7 +500,7 @@ class Client(Cloneable):
         }
         box_response = self._session.post(url, data=json.dumps(body))
         response = box_response.json()
-        return self.translator.translate('terms_of_service')(
+        return self.translator.translate(response['type'])(
             session=self._session,
             object_id=response['id'],
             response_object=response,

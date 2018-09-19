@@ -12,11 +12,11 @@ A terms of service can be created in an enterprise. Please note that only two ca
 and one managed. If a terms of service already exists please use the update call to change the current
 terms of service.
 
-You can create a custom terms of service by using `client.create_a_terms_of_service(status, tos_type, text)`.
+You can create a custom terms of service by using `client.create_terms_of_service(status, tos_type, text)`.
 
 ```python
 from boxsdk.object.terms_of_service import TermsOfServiceType, TermsOfServiceStatus
-terms_of_service = client.create_a_terms_of_service(TermsOfServiceStatus.ENABLED, TermsOfServiceType.MANAGED, 'Example Text')
+terms_of_service = client.create_terms_of_service(TermsOfServiceStatus.ENABLED, TermsOfServiceType.MANAGED, 'Example Text')
 ```
 
 Edit a Terms of Service
@@ -43,10 +43,10 @@ terms_of_service = client.terms_of_service(tos_id).get()
 List Terms of Service
 ---------------------
 
-You can retrieve an iterable of terms of service in your enterprise by calling `client.terms_of_services(tos_type=None, limit=None)`.
+You can retrieve an iterable of terms of service in your enterprise by calling `client.get_terms_of_services(tos_type=None, limit=None)`.
 
 ```python
-terms_of_services = client.terms_of_services()
+terms_of_services = client.get_terms_of_services()
 for terms_of_service in terms_of_services:
     # Do something
 ```
@@ -54,11 +54,11 @@ for terms_of_service in terms_of_services:
 Accept or Decline a Terms of Service for New User
 -------------------------------------------------
 
-For new users you can accept or decline a terms of service by calling `terms_of_service.create_user_status(is_accepted, user=None)`.
+For new users you can accept or decline a terms of service by calling `terms_of_service.accept(user=None)` or `terms_of_service.reject(user=None)`.
 
 ```python
 user = client.user('1234')
-user_status = client.create_user_status(True, user)
+user_status = client.terms_of_service.accept(user)
 ```
 
 You can only create a new user status on a terms of service if the user has never accepted/declined a terms of service.
@@ -67,7 +67,7 @@ If they have then you will need to make the update call.
 Accept or Decline a Terms of Service for Existing User
 ------------------------------------------------------
 
-For an existing user you can accept or decline a terms of service by calling `terms_of_service_user_status.accept()` to `accept` or  `terms_of_service_user_status.reject()` to `reject`
+For an existing user you can accept or decline a terms of service by calling `terms_of_service_user_status.accept()` to accept or  `terms_of_service_user_status.reject()` to reject
 
 ```python
 accepted_user_status = client.terms_of_service_user_status('1234').accept()
@@ -81,10 +81,9 @@ Get User Status for a Terms of Service
 -------------------------------------
 
 You can retrieve an iterable of terms of service status for a user by calling
-`terms_of_service.get_user_status(user_id=None, limit=None, fields=None)`.
+`terms_of_service.get_user_status(user_id=None)`.
 
 ```python
-user_statuses = client.terms_of_service('1234').get_user_status()
-for status in user_status:
-    # Do something
+user_id = '5678'
+user_status = client.terms_of_service('1234').get_user_status(user_id)
 ```

@@ -424,29 +424,36 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert new_user.name == test_user_name
 
 
-def test_terms_of_service_returns_the_correct_tos_object(mock_client, mock_box_session, terms_of_service_response):
+def test_create_terms_of_service(mock_client, mock_box_session, terms_of_service_response):
     # pylint:disable=redefined-outer-name
+    expected_url = "{0}/terms_of_services".format(API.BASE_API_URL)
     value = json.dumps({
         'status': 'enabled',
         'tos_type': 'external',
         'text': 'This is a test text',
     })
     mock_box_session.post.return_value = terms_of_service_response
-    new_terms_of_service = mock_client.create_a_terms_of_service('enabled', 'external', 'This is a test text')
-    assert len(mock_box_session.post.call_args_list) == 1
-    assert mock_box_session.post.call_args[0] == ("{0}/terms_of_services".format(API.BASE_API_URL),)
-    assert mock_box_session.post.call_args[1] == {'data': value}
+    new_terms_of_service = mock_client.create_terms_of_service('enabled', 'external', 'This is a test text')
+    mock_box_session.post.assert_called_once_with(
+        expected_url,
+        data=value,
+    )
     assert isinstance(new_terms_of_service, TermsOfService)
 
 
 def test_get_all_terms_of_services(mock_client, mock_box_session, terms_of_services_response, tos_id_1, tos_id_2):
     # pylint:disable=redefined-outer-name
+    expected_url = "{0}/terms_of_services".format(API.BASE_API_URL)
     mock_box_session.get.return_value = terms_of_services_response
-    services = mock_client.terms_of_services()
+    services = mock_client.get_terms_of_services()
     for service, expected_id in zip(services, [tos_id_1, tos_id_2]):
         assert service.object_id == expected_id
         # pylint:disable=protected-access
         assert service._session == mock_box_session
+    mock_box_session.get.assert_called_once_with(
+        expected_url,
+        params={},
+    )
 
 
 @pytest.fixture
