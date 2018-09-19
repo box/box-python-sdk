@@ -181,6 +181,30 @@ def recent_items_response(file_id):
     return mock_network_response
 
 
+@pytest.fixture(scope='module')
+def device_pin_id_1():
+    return 101
+
+
+@pytest.fixture(scope='module')
+def device_pin_id_2():
+    return 202
+
+
+@pytest.fixture(scope='module')
+def device_pins_response(device_pin_id_1, device_pin_id_2):
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'device_pinner', 'id': device_pin_id_1},
+            {'type': 'device_pinner', 'id': device_pin_id_2},
+        ],
+        'limit': 2,
+    }
+    return mock_network_response
+
+
 @pytest.mark.parametrize('test_class, factory_method_name', [
     (Folder, 'folder'),
     (File, 'file'),
@@ -460,3 +484,13 @@ def test_downscope_token_sends_downscope_request_with_additional_data(
         'extra_data_key': 'extra_data_value',
     }
     check_downscope_token_request(File, [TokenScope.ITEM_READWRITE], additional_data, expected_data)
+
+
+def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_response, device_pin_id_1, device_pin_id_2):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value = device_pins_response
+    pins = mock_client.device_pinners('1234')
+    for pin, expected_id in zip(pins, [device_pin_id_1, device_pin_id_2]):
+        assert pin.object_id == expected_id
+        # pylint:disable=protected-access
+        assert pin._session == mock_box_session
