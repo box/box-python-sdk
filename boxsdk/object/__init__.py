@@ -12,6 +12,7 @@ __all__ = list(map(str, [
     'events',
     'event',
     'file',
+    'legal_hold',
     'folder',
     'group',
     'group_membership',

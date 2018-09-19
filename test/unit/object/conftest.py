@@ -10,7 +10,7 @@ from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
 from boxsdk.object.file import File
-from boxsdk.object.file_version_legal_hold import FileVersionLegalHold
+from boxsdk.object.legal_hold import LegalHold
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
@@ -105,8 +105,8 @@ def test_legal_hold_policy_assignment(mock_box_session, mock_object_id):
 
 
 @pytest.fixture()
-def test_file_version_legal_hold(mock_box_session, mock_object_id):
-    return FileVersionLegalHold(mock_box_session, mock_object_id)
+def test_legal_hold(mock_box_session, mock_object_id):
+    return LegalHold(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()

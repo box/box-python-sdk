@@ -189,18 +189,18 @@ class Client(Cloneable):
         """
         return self.translator.translate('legal_hold_policy_assignment')(session=self._session, object_id=policy_assignment_id)
 
-    def file_version_legal_hold(self, policy_id):
+    def legal_hold(self, policy_id):
         """
-        Initialize a :class:`FileVersionLegalHold` object, whose box id is policy_id.
+        Initialize a :class:`LegalHold` object, whose box id is policy_id.
 
         :param policy_id:
-            The assignment ID of the :class:`FileVersionLegalHold` object.
+            The assignment ID of the :class:`LegalHold` object.
         :type policy_id:
             `unicode`
         :return:
-            A :class:`FileVersionLegalHold` object with the given entry ID.
+            A :class:`LegalHold` object with the given entry ID.
         :rtype:
-            :class:`FileVersionLegalHold`
+            :class:`LegalHold`
         """
         return self.translator.translate('legal_hold')(session=self._session, object_id=policy_id)
 
