@@ -11,8 +11,11 @@ from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
 from boxsdk.object.device_pinner import DevicePinner
 from boxsdk.object.file import File
+from boxsdk.object.legal_hold import LegalHold
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
+from boxsdk.object.legal_hold_policy import LegalHoldPolicy
+from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
 from boxsdk.object.user import User
 from boxsdk.object.search import Search
 from boxsdk.object.web_link import WebLink
@@ -91,6 +94,21 @@ def test_folder(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_group(mock_box_session, mock_group_id):
     return Group(mock_box_session, mock_group_id)
+
+
+@pytest.fixture()
+def test_legal_hold_policy(mock_box_session, mock_object_id):
+    return LegalHoldPolicy(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_legal_hold_policy_assignment(mock_box_session, mock_object_id):
+    return LegalHoldPolicyAssignment(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_legal_hold(mock_box_session, mock_object_id):
+    return LegalHold(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()

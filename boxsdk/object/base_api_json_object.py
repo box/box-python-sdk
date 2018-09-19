@@ -128,7 +128,6 @@ class BaseAPIJSONObject(object):
     @property
     def object_type(self):
         """Return the Box type for the object.
-
         :rtype:
             `unicode`
         """
