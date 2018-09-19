@@ -189,20 +189,20 @@ class Client(Cloneable):
         """
         return self.translator.translate('legal_hold_policy_assignment')(session=self._session, object_id=policy_assignment_id)
 
-    def legal_hold(self, policy_id):
+    def legal_hold(self, hold_id):
         """
         Initialize a :class:`LegalHold` object, whose box id is policy_id.
 
-        :param policy_id:
-            The assignment ID of the :class:`LegalHold` object.
-        :type policy_id:
+        :param hold_id:
+            The legal hold ID of the :class:`LegalHold` object.
+        :type hold_id:
             `unicode`
         :return:
             A :class:`LegalHold` object with the given entry ID.
         :rtype:
             :class:`LegalHold`
         """
-        return self.translator.translate('legal_hold')(session=self._session, object_id=policy_id)
+        return self.translator.translate('legal_hold')(session=self._session, object_id=hold_id)
 
     def create_legal_hold_policy(
             self,
@@ -214,6 +214,7 @@ class Client(Cloneable):
     ):
         """
         Create a legal hold policy.
+
         :param policy_name:
             The legal hold policy's display name.
         :type policy_name:
