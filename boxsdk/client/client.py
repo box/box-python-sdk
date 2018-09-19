@@ -388,18 +388,14 @@ class Client(Cloneable):
         """
         return self.translator.translate('webhook')(session=self._session, object_id=webhook_id)
 
-    def create_webhook(self, target_id, target_type, triggers, address):
+    def create_webhook(self, target, triggers, address):
         """
         Create a webhook on the given file.
 
-        :param target_id:
-            The id of the target :class:`File` or :class:`Folder`.
-        :type target_id:
-            `unicode`
-        :param target_type:
-            Set to either `file` or `folder`.
-        :type target_type:
-            `unicode`
+        :param target:
+            Either a :class:`File` or :class:`Folder` to assign a webhook to.
+        :type target:
+            :class:`File` or :class`Folder`
         :param triggers:
             Event types that trigger notifications for the target.
         :type triggers:
@@ -416,8 +412,8 @@ class Client(Cloneable):
         url = self.get_url('webhooks')
         webhook_attributes = {
             'target': {
-                'type': target_type,
-                'id': target_id,
+                'type': target.object_type,
+                'id': target.object_id,
             },
             'triggers': triggers,
             'address': address,

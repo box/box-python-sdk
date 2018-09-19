@@ -62,6 +62,11 @@ def folder_id():
     return '1022'
 
 
+@pytest.fixture()
+def test_folder(mock_box_session, mock_object_id):
+    return Folder(mock_box_session, mock_object_id)
+
+
 @pytest.fixture(scope='module')
 def marker_id():
     return 'marker_1'
@@ -423,20 +428,20 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert new_user.name == test_user_name
 
 
-def test_create_webhook_returns_the_correct_policy_object(mock_client, mock_box_session, create_webhook_response):
+def test_create_webhook_returns_the_correct_policy_object(test_folder, mock_client, mock_box_session, create_webhook_response):
     # pylint:disable=redefined-outer-name
     expected_url = "{0}/webhooks".format(API.BASE_API_URL)
     expected_body = {
         'target': {
-            'type': 'file',
-            'id': 42,
+            'type': 'folder',
+            'id': '42',
         },
         'triggers': ['FILE.DOWNLOADED'],
         'address': 'https://test.com',
     }
     value = json.dumps(expected_body)
     mock_box_session.post.return_value = create_webhook_response
-    new_webhook = mock_client.create_webhook(42, 'file', ['FILE.DOWNLOADED'], 'https://test.com')
+    new_webhook = mock_client.create_webhook(test_folder, ['FILE.DOWNLOADED'], 'https://test.com')
     mock_box_session.post.assert_called_once_with(
         expected_url,
         data=value,

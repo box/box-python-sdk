@@ -26,12 +26,13 @@ for webhook in webhooks:
 Create Webhook
 --------------
 
-To create a webhook on a specified target, use `client.create_webhook(target_id, target_type, triggers, address)`
+To create a webhook on a specified target, use `client.create_webhook(target, triggers, address)`
 
 You can create a webhook on either a `file` or a `folder`. For a full list of triggers, see [here](https://developer.box.com/v2.0/reference#webhooks-v2)
 
 ```python
-created_webhook = client.create_webhook('1234', 'file', ['FILE.UPLOADED', 'FILE.PREVIEWED'], 'https://example.com')
+folder = client.folder('1111')
+created_webhook = client.create_webhook(folder, ['FILE.UPLOADED', 'FILE.PREVIEWED'], 'https://example.com')
 ```
 
 Delete Webhook
