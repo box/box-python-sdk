@@ -1,9 +1,18 @@
-Devices
-======
+Device Pins
+===========
 
 Device pinning is a feature that allows enterprise admins to pin their user’s
 corporate-managed Box account to a particular mobile device or Box Sync client.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [List Enterprise Device Pins](#list-enterprise-device-pins)
+- [Get Device Pin Information](#get-device-pin-information)
+- [Delete Device Pin](#delete-device-pin)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 List Enterprise Device Pins
 ---------------------------
