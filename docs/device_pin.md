@@ -29,11 +29,11 @@ for device_in in device_pins:
 Get Device Pin Information
 --------------------------
 
-To get information about a specific device pin. use `device_pin.get()`
+To get information about a specific device pin. use `device_pinner.get()`
 
 ```python
 device_pin_id = '1111'
-device_pin_info = client.device_pinner(device_pin_id).get()
+device_pin_info = client.device_pinner('device_pin_id).get()
 ```
 
 Delete Device Pin
