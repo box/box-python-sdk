@@ -171,7 +171,7 @@ def create_webhook_response():
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'type': 'webhook',
-        'id': 1234
+        'id': '1234',
     }
     return mock_network_response
 
@@ -425,6 +425,7 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
 
 def test_create_webhook_returns_the_correct_policy_object(mock_client, mock_box_session, create_webhook_response):
     # pylint:disable=redefined-outer-name
+    expected_url = "{0}/webhooks".format(API.BASE_API_URL)
     expected_body = {
         'target': {
             'type': 'file',
@@ -436,13 +437,16 @@ def test_create_webhook_returns_the_correct_policy_object(mock_client, mock_box_
     value = json.dumps(expected_body)
     mock_box_session.post.return_value = create_webhook_response
     new_webhook = mock_client.create_webhook(42, 'file', ['FILE.DOWNLOADED'], 'https://test.com')
-    assert len(mock_box_session.post.call_args_list) == 1
-    assert mock_box_session.post.call_args[0] == ("{0}/webhooks".format(API.BASE_API_URL),)
-    assert mock_box_session.post.call_args[1] == {'data': value}
+    mock_box_session.post.assert_called_once_with(
+        expected_url,
+        data=value,
+    )
     assert isinstance(new_webhook, Webhook)
+    assert new_webhook.id == '1234'
+    assert new_webhook.type == 'webhook'
 
 
-def test_get_assignments(
+def test_get_webhooks(
         mock_client,
         mock_box_session,
         webhooks_response,
@@ -450,12 +454,17 @@ def test_get_assignments(
         webhook_id_2,
 ):
     # pylint:disable=redefined-outer-name
+    expected_url = "{0}/webhooks".format(API.BASE_API_URL)
     mock_box_session.get.return_value = webhooks_response
-    webhooks = mock_client.webhooks()
+    webhooks = mock_client.get_webhooks()
     for webhook, expected_id in zip(webhooks, [webhook_id_1, webhook_id_2]):
         assert webhook.object_id == expected_id
         # pylint:disable=protected-access
         assert webhook._session == mock_box_session
+    mock_box_session.get.assert_called_once_with(
+        expected_url,
+        params={},
+    )
 
 
 @pytest.fixture

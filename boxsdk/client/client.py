@@ -9,7 +9,6 @@ from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
-from ..object.webhook import Webhook
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
@@ -376,35 +375,45 @@ class Client(Cloneable):
 
     def webhook(self, webhook_id):
         """
-        Initialize a :class: `Webhook` object, whose box id is webhook_id.
+        Initialize a :class:`Webhook` object, whose box id is webhook_id.
+
         :param webhook_id:
             The box ID of the :class: `Webhook` object.
         :type webhook_id:
             `unicode`
         :return:
-            A :class: `Webhook` object with the given entry ID.
+            A :class:`Webhook` object with the given entry ID.
         :rtype:
             :class:`Webhook`
         """
-        return Webhook(session=self._session, object_id=webhook_id)
+        return self.translator.translate('webhook')(session=self._session, object_id=webhook_id)
 
     def create_webhook(self, target_id, target_type, triggers, address):
         """
         Create a webhook on the given file.
+
+        :param target_id:
+            The id of the target :class:`File` or :class:`Folder`.
+        :type target_id:
+            `unicode`
+        :param target_type:
+            Set to either `file` or `folder`.
+        :type target_type:
+            `unicode`
         :param triggers:
             Event types that trigger notifications for the target.
         :type triggers:
-            `list of str`
+            `list of unicode`
         :param address:
             The url to send the notification to.
         :type address:
-            `str`
+            `unicode`
         :return:
-            A :class: `Webhook` object with the given entry ID.
+            A :class:`Webhook` object with the given entry ID.
         :rtype:
             :class:`Webhook`
         """
-        url = '{0}/webhooks'.format(API.BASE_API_URL)
+        url = self.get_url('webhooks')
         webhook_attributes = {
             'target': {
                 'type': target_type,
@@ -415,19 +424,28 @@ class Client(Cloneable):
         }
         box_response = self._session.post(url, data=json.dumps(webhook_attributes))
         response = box_response.json()
-        return Webhook(self._session, response['id'], response)
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
 
-    def webhooks(self, marker=None, limit=None):
+    def get_webhooks(self, limit=None, marker=None, fields=None):
         """
         Get all webhooks in an enterprise.
-        :param marker:
-            The position marker at which to begin the response.
-        :type marker:
-            `str` or None
+
         :param limit:
             The maximum number of entries to return.
         :type limit:
             `int`
+        :param marker:
+            The position marker at which to begin the response.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request on the file or folder which the `RecentItem` references.
+        :type fields:
+            `Iterable` of `unicode`
         :returns:
             An iterator of the entries in the webhook
         :rtype:
@@ -438,6 +456,7 @@ class Client(Cloneable):
             url=self.get_url('webhooks'),
             limit=limit,
             marker=marker,
+            fields=fields,
         )
 
     @api_call
