@@ -17,6 +17,7 @@ from boxsdk.auth.oauth2 import OAuth2, TokenScope
 from boxsdk.client import Client, DeveloperTokenClient, DevelopmentClient, LoggingClient
 from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
+from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
@@ -214,6 +215,30 @@ def recent_items_response(file_id):
         ],
         'next_marker': None,
         'limit': 100,
+    }
+    return mock_network_response
+
+
+@pytest.fixture(scope='module')
+def device_pin_id_1():
+    return 101
+
+
+@pytest.fixture(scope='module')
+def device_pin_id_2():
+    return 202
+
+
+@pytest.fixture(scope='module')
+def device_pins_response(device_pin_id_1, device_pin_id_2):
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'device_pinner', 'id': device_pin_id_1},
+            {'type': 'device_pinner', 'id': device_pin_id_2},
+        ],
+        'limit': 2,
     }
     return mock_network_response
 
@@ -456,6 +481,33 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert new_user.name == test_user_name
 
 
+def test_get_pending_collaborations(mock_client, mock_box_session):
+    # pylint:disable=redefined-outer-name, protected-access
+    expected_url = '{0}/collaborations'.format(API.BASE_API_URL)
+    mock_collaboration = {
+        'type': 'collaboration',
+        'id': '12345',
+        'created_by': {
+            'type': 'user',
+            'id': '33333',
+        },
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 1,
+        'limit': 2,
+        'offset': 0,
+        'entries': [mock_collaboration],
+    }
+    pending_collaborations = mock_client.get_pending_collaborations(limit=2)
+    pending_collaboration = pending_collaborations.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 2, 'status': 'pending', 'offset': None})
+    assert isinstance(pending_collaboration, Collaboration)
+    assert pending_collaboration.id == mock_collaboration['id']
+    assert pending_collaboration.type == mock_collaboration['type']
+    assert pending_collaboration['created_by']['type'] == 'user'
+    assert pending_collaboration['created_by']['id'] == '33333'
+
+
 @pytest.fixture
 def check_downscope_token_request(
         mock_client,
@@ -529,3 +581,13 @@ def test_downscope_token_sends_downscope_request_with_additional_data(
         'extra_data_key': 'extra_data_value',
     }
     check_downscope_token_request(File, [TokenScope.ITEM_READWRITE], additional_data, expected_data)
+
+
+def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_response, device_pin_id_1, device_pin_id_2):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value = device_pins_response
+    pins = mock_client.device_pinners('1234')
+    for pin, expected_id in zip(pins, [device_pin_id_1, device_pin_id_2]):
+        assert pin.object_id == expected_id
+        # pylint:disable=protected-access
+        assert pin._session == mock_box_session

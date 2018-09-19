@@ -4,6 +4,9 @@ from __future__ import unicode_literals
 import json
 import pytest
 
+from boxsdk.config import API
+from boxsdk.object.collaboration import Collaboration
+
 
 @pytest.fixture(params=('file', 'folder'))
 def test_item_and_response(test_file, test_folder, mock_file_response, mock_folder_response, request):
@@ -215,3 +218,122 @@ def test_remove_from_collection(test_item_and_response, mock_box_session, mock_c
 
     mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=expected_params)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=None, params=None)
+
+
+def test_collaborate_with_group(test_item_and_response, test_group, mock_box_session):
+    # pylint:disable=redefined-outer-name, protected-access
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/collaborations'.format(API.BASE_API_URL)
+    expected_data = {
+        'item': {
+            'type': test_item.object_type,
+            'id': test_item.object_id,
+        },
+        'accessible_by': {
+            'type': test_group.object_type,
+            'id': test_group.object_id,
+        },
+        'role': 'editor',
+    }
+    mock_collaboration = {
+        'type': 'collaboration',
+        'id': '1234',
+        'created_by': {
+            'type': 'user',
+            'id': '1111',
+        }
+    }
+    mock_box_session.post.return_value.json.return_value = mock_collaboration
+    collaboration = test_item.collaborate(test_group, 'editor')
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), params={})
+    assert collaboration.id == mock_collaboration['id']
+    assert collaboration['type'] == mock_collaboration['type']
+    assert collaboration['created_by']['id'] == mock_collaboration['created_by']['id']
+
+
+def test_collaborate_with_user(test_item_and_response, mock_user, mock_box_session):
+    # pylint:disable=redefined-outer-name, protected-access
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/collaborations'.format(API.BASE_API_URL)
+    expected_data = {
+        'item': {
+            'type': test_item.object_type,
+            'id': test_item.object_id,
+        },
+        'accessible_by': {
+            'type': mock_user.object_type,
+            'id': mock_user.object_id,
+        },
+        'role': 'editor',
+    }
+    mock_collaboration = {
+        'type': 'collaboration',
+        'id': '1234',
+        'created_by': {
+            'type': 'user',
+            'id': '1111',
+        }
+    }
+    mock_box_session.post.return_value.json.return_value = mock_collaboration
+    collaboration = test_item.collaborate(mock_user, 'editor')
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), params={})
+    assert collaboration.id == mock_collaboration['id']
+    assert collaboration['type'] == mock_collaboration['type']
+    assert collaboration['created_by']['id'] == mock_collaboration['created_by']['id']
+
+
+def test_collaborate_with_login(test_item_and_response, mock_box_session):
+    # pylint:disable=redefined-outer-name, protected-access
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/collaborations'.format(API.BASE_API_URL)
+    expected_data = {
+        'item': {
+            'type': test_item.object_type,
+            'id': test_item.object_id,
+        },
+        'accessible_by': {
+            'type': 'user',
+            'login': 'test@example.com',
+        },
+        'role': 'editor',
+    }
+    mock_collaboration = {
+        'type': 'collaboration',
+        'id': '1234',
+        'created_by': {
+            'type': 'user',
+            'id': '1111',
+        }
+    }
+    mock_box_session.post.return_value.json.return_value = mock_collaboration
+    collaboration = test_item.collaborate_with_login('test@example.com', 'editor')
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), params={})
+    assert collaboration.id == mock_collaboration['id']
+    assert collaboration['type'] == mock_collaboration['type']
+    assert collaboration['created_by']['id'] == mock_collaboration['created_by']['id']
+
+
+def test_collaborations(test_item_and_response, mock_box_session):
+    # pylint:disable=redefined-outer-name, protected-access
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/{1}s/{2}/collaborations'.format(API.BASE_API_URL, test_item.object_type, test_item.object_id)
+    mock_collaboration = {
+        'type': 'collaboration',
+        'id': '12345',
+        'created_by': {
+            'type': 'user',
+            'id': '33333',
+        },
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 500,
+        'entries': [mock_collaboration]
+    }
+    collaborations = test_item.get_collaborations(limit=500)
+    collaboration = collaborations.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 500})
+    assert isinstance(collaboration, Collaboration)
+    assert collaboration.id == mock_collaboration['id']
+    assert collaboration.type == mock_collaboration['type']
+    assert collaboration['created_by']['type'] == 'user'
+    assert collaboration['created_by']['id'] == '33333'
