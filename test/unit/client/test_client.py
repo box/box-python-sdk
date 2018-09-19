@@ -405,12 +405,14 @@ def test_get_pending_collaborations(mock_client, mock_box_session):
         'offset': 0,
         'entries': [mock_collaboration],
     }
-    pending_collaborations = mock_client.pending_collaborations(limit=2)
+    pending_collaborations = mock_client.get_pending_collaborations(limit=2)
     pending_collaboration = pending_collaborations.next()
     mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 2, 'status': 'pending', 'offset': None})
     assert isinstance(pending_collaboration, Collaboration)
     assert pending_collaboration.id == mock_collaboration['id']
     assert pending_collaboration.type == mock_collaboration['type']
+    assert pending_collaboration['created_by']['type'] == 'user'
+    assert pending_collaboration['created_by']['id'] == '33333'
 
 
 @pytest.fixture

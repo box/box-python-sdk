@@ -58,37 +58,32 @@ collaboration_id = '1111'
 collaboration_info = client.collaboration(collaboration_id).get()
 ```
 
-List Collaborations on a Folder
--------------------------------
+List Collaborations on a Folder or File
+----------------------------------------
 
-To retrieve all collaborations on a specified folder you can use `folder.collaborations(limit=None, marker=None, fields=None)`.
+To retrieve all collaborations on a specified folder you can use `folder.get_collaborations(limit=None, marker=None, fields=None)`. Or to retrieve an iterable of collaborations on a specified file you can use `file.get_collaborations(limit=None, marker=None, fields=None)`.
 
 ```python
 folder_id = '1234'
-collaborations = client.folder(folder_id).collaborations()
+collaborations = client.folder(folder_id).get_collaborations()
 for collaboration in collaborations:
     # Do something
 ```
 
-Get Collaborations on a File
-----------------------------
-
-To retrieve an iterable of collaborations on a specified file you can use `file.collaborations(limit=None, marker=None, fields=None)`.
-
 ```python
 file_id = '2222'
-collaborations = client.file(file_id).collaborations()
+collaborations = client.file(file_id).get_collaborations()
 for collaboration in collaborations
     # Do something
 ```
 
 List Pending Collaborations
-------------------------------------
+---------------------------
 
-To retrieve all pending collaborations for the user, use `folder.pending_collaborations(limit=None, offset=None, fields=None)`.
+To retrieve all pending collaborations for the user, use `client.get_pending_collaborations(limit=None, offset=None, fields=None)`.
 
 ```python
-pending_collaborations = client.pending_collaborations()
+pending_collaborations = client.get_pending_collaborations()
 for pending_collaboration in pending_collaborations:
     # Do something
 ```

@@ -508,7 +508,7 @@ class Item(BaseObject):
             response_object=response,
         )
 
-    def collaborations(self, limit=None, marker=None, fields=None):
+    def get_collaborations(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the collaboration.
 

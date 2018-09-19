@@ -285,7 +285,7 @@ def test_collaborate_with_user(test_item_and_response, mock_user, mock_box_sessi
 def test_collaborate_with_login(test_item_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
-    expected_url = mock_box_session.get_url('collaborations')
+    expected_url = '{0}/collaborations'.format(API.BASE_API_URL)
     expected_data = {
         'item': {
             'type': test_item.object_type,
@@ -316,7 +316,7 @@ def test_collaborate_with_login(test_item_and_response, mock_box_session):
 def test_collaborations(test_item_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
-    expected_url = test_item.get_url('collaborations')
+    expected_url = '{0}/{1}s/{2}/collaborations'.format(API.BASE_API_URL, test_item.object_type, test_item.object_id)
     mock_collaboration = {
         'type': 'collaboration',
         'id': '12345',
@@ -329,9 +329,11 @@ def test_collaborations(test_item_and_response, mock_box_session):
         'limit': 500,
         'entries': [mock_collaboration]
     }
-    collaborations = test_item.collaborations(limit=500)
+    collaborations = test_item.get_collaborations(limit=500)
     collaboration = collaborations.next()
     mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 500})
     assert isinstance(collaboration, Collaboration)
     assert collaboration.id == mock_collaboration['id']
     assert collaboration.type == mock_collaboration['type']
+    assert collaboration['created_by']['type'] == 'user'
+    assert collaboration['created_by']['id'] == '33333'

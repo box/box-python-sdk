@@ -524,7 +524,7 @@ class Client(Cloneable):
             response_object=response,
         )
 
-    def pending_collaborations(self, limit=None, offset=None, fields=None):
+    def get_pending_collaborations(self, limit=None, offset=None, fields=None):
         """
         Get the entries in the pending collaborations using limit-offset paging.
 
