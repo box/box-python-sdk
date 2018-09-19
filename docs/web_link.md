@@ -5,6 +5,17 @@ Web links are objects that point to URLs. These objects are also known as
 bookmarks within the Box web application. Web link objects are treated
 similarly to file objects.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Create Web Link](#create-web-link)
+- [Get Web Link](#get-web-link)
+- [Update Web Link](#update-web-link)
+- [Delete Web Link](#delete-web-link)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 Create Web Link
 ---------------
 
