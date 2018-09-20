@@ -159,6 +159,144 @@ class Client(Cloneable):
         """
         return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
 
+    def legal_hold_policy(self, policy_id):
+        """
+        Initialize a :class:`LegalHoldPolicy` object, whose box id is policy_id.
+
+        :param policy_id:
+            The box ID of the :class:`LegalHoldPolicy` object.
+        :type policy_id:
+            `unicode`
+        :return:
+            A :class:`LegalHoldPolicy` object with the given entry ID.
+        :rtype:
+            :class:`LegalHoldPolicy`
+        """
+        return self.translator.translate('legal_hold_policy')(session=self._session, object_id=policy_id)
+
+    def legal_hold_policy_assignment(self, policy_assignment_id):
+        """
+        Initialize a :class:`LegalHoldPolicyAssignment` object, whose box id is policy_assignment_id.
+
+        :param policy_assignment_id:
+            The assignment ID of the :class:`LegalHoldPolicyAssignment` object.
+        :type policy_assignment_id:
+            `unicode`
+        :return:
+            A :class:`LegalHoldPolicyAssignment` object with the given entry ID.
+        :rtype:
+            :class:`LegalHoldPolicyAssignment`
+        """
+        return self.translator.translate('legal_hold_policy_assignment')(session=self._session, object_id=policy_assignment_id)
+
+    def legal_hold(self, hold_id):
+        """
+        Initialize a :class:`LegalHold` object, whose box id is policy_id.
+
+        :param hold_id:
+            The legal hold ID of the :class:`LegalHold` object.
+        :type hold_id:
+            `unicode`
+        :return:
+            A :class:`LegalHold` object with the given entry ID.
+        :rtype:
+            :class:`LegalHold`
+        """
+        return self.translator.translate('legal_hold')(session=self._session, object_id=hold_id)
+
+    def create_legal_hold_policy(
+            self,
+            policy_name,
+            description=None,
+            filter_starting_at=None,
+            filter_ending_at=None,
+            is_ongoing=None
+    ):
+        """
+        Create a legal hold policy.
+
+        :param policy_name:
+            The legal hold policy's display name.
+        :type policy_name:
+            `unicode`
+        :param description:
+            The description of the legal hold policy.
+        :type description:
+            `unicode` or None
+        :param filter_starting_at:
+            The start time filter for legal hold policy
+        :type filter_starting_at:
+            `unicode` or None
+        :param filter_ending_at:
+            The end time filter for legal hold policy
+        :type filter_ending_at:
+            `unicode` or None
+        :param is_ongoing:
+            After initialization, Assignments under this Policy will continue applying to
+            files based on events, indefinitely.
+        :type is_ongoing:
+            `bool` or None
+        :returns:
+            A legal hold policy object
+        :rtype:
+            :class:`LegalHoldPolicy
+        """
+        url = self.get_url('legal_hold_policies')
+        policy_attributes = {'policy_name': policy_name}
+        if description is not None:
+            policy_attributes['description'] = description
+        if filter_starting_at is not None:
+            policy_attributes['filter_starting_at'] = filter_starting_at
+        if filter_ending_at is not None:
+            policy_attributes['filter_ending_at'] = filter_ending_at
+        if is_ongoing is not None:
+            policy_attributes['is_ongoing'] = is_ongoing
+        box_response = self._session.post(url, data=json.dumps(policy_attributes))
+        response = box_response.json()
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+    def get_legal_hold_policies(self, policy_name=None, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the legal hold policy using limit-offset paging.
+
+        :param policy_name:
+            The name of the legal hold policy case insensitive to search for
+        :type policy_name:
+            `unicode` or None
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the legal hold policy
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {}
+        if policy_name is not None:
+            additional_params['policy_name'] = policy_name
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('legal_hold_policies'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
+
     def collection(self, collection_id):
         """
         Initialize a :class:`Collection` object, whose box ID is collection_id.
@@ -401,6 +539,7 @@ class Client(Cloneable):
             response_object=response,
         )
 
+
     def get_trashed_items(self, limit=None, offset=None, fields=None):
         """
         Using limit-offset paging, get the files, folders and web links that are in the user's trash.
@@ -430,6 +569,21 @@ class Client(Cloneable):
             fields=fields,
             return_full_pages=False,
         )
+
+    def web_link(self, web_link_id):
+        """
+        Initialize a :class: `WebLink` object, whose box id is web_link_id.
+        :param web_link_id:
+            The box ID of the :class:`WebLink` object.
+        :type web_link_id:
+            `unicode`
+        :return:
+            A :class:`WebLink` object with the given entry ID.
+        :rtype:
+            :class:`WebLink`
+        """
+        return self.translator.translate('web_link')(session=self._session, object_id=web_link_id)
+
 
     @api_call
     def get_recent_items(self, limit=None, marker=None, fields=None, **collection_kwargs):
@@ -554,6 +708,37 @@ class Client(Cloneable):
             response_object=response,
         )
 
+    def get_pending_collaborations(self, limit=None, offset=None, fields=None):
+        """
+        Get the entries in the pending collaborations using limit-offset paging.
+
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param offset:
+            The offset of the item at which to begin the response.
+        :type offset:
+            `int` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the pending collaborations
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return LimitOffsetBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('collaborations'),
+            additional_params={'status': 'pending'},
+            limit=limit,
+            offset=offset,
+            fields=fields,
+            return_full_pages=False,
+        )
+
     def downscope_token(self, scopes, item=None, additional_data=None):
         """
         Generate a downscoped token for the provided file or folder with the provided scopes.
@@ -612,3 +797,60 @@ class Client(Cloneable):
         """
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
+
+    def device_pinner(self, device_pin_id):
+        """
+        Initialize a :class:`DevicePinner` object, whose box id is device_pin_id.
+
+        :param device_pin_id:
+            The assignment ID of the :class:`DevicePin` object.
+        :type device_pin_id:
+            `unicode`
+        :return:
+            A :class:`DevicePinner` object with the given entry ID.
+        :rtype:
+            :class:`DevicePinner`
+        """
+        return self.translator.translate('device_pinner')(session=self._session, object_id=device_pin_id)
+
+    def device_pinners(self, enterprise_id, direction=None, limit=None, marker=None, fields=None):
+        """
+        Returns all of the device pins for the given enterprise.
+
+        :param enterprise_id:
+            The id of the enterprise to retrieve device pinners for.
+        :type enterprise_id:
+            `unicode`
+        :param direction:
+            The sorting direction. Set to `ASC` or `DESC`
+        :type direction:
+            `unicode` or None
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the device pins.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {}
+        if direction is not None:
+            additional_params['direction'] = direction
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('enterprises', enterprise_id, 'device_pinners'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
