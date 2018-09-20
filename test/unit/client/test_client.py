@@ -360,7 +360,6 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
     assert new_group.name == test_group_name
 
 
-
 def test_get_trashed_items(mock_box_session, mock_client):
     expected_url = '{0}/folders/trash/items'.format(API.BASE_API_URL)
     mock_trash = {
@@ -410,7 +409,6 @@ def test_legal_hold_policies_return_the_correct_policy_objects(
         assert policy.object_id == expected_id
         # pylint:disable=protected-access
         assert policy._session == mock_box_session
-
 
 
 def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_session, recent_items_response, file_id):
