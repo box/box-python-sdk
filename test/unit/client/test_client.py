@@ -379,7 +379,7 @@ def test_get_trashed_items(mock_box_session, mock_client):
     assert trashed_item.id == mock_trash['id']
     assert trashed_item.type == mock_trash['type']
 
-    
+
 def test_create_legal_hold_policy_returns_the_correct_policy_object(mock_client, mock_box_session, create_policy_response):
     # pylint:disable=redefined-outer-name
     test_policy_name = 'Test Policy'

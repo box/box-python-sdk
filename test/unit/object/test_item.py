@@ -221,7 +221,7 @@ def test_restore_from_trash(test_item_and_response, mock_box_session, mock_objec
     assert info.id == mock_object_id
 
 
-def test_permanently_delete(test_item_and_response, mock_box_session, mock_object_id):
+def test_permanently_delete(test_item_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, mock_item_response = test_item_and_response
     expected_url = test_item.get_url('trash')

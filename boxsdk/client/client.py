@@ -539,7 +539,6 @@ class Client(Cloneable):
             response_object=response,
         )
 
-
     def get_trashed_items(self, limit=None, offset=None, fields=None):
         """
         Using limit-offset paging, get the files, folders and web links that are in the user's trash.
@@ -583,7 +582,6 @@ class Client(Cloneable):
             :class:`WebLink`
         """
         return self.translator.translate('web_link')(session=self._session, object_id=web_link_id)
-
 
     @api_call
     def get_recent_items(self, limit=None, marker=None, fields=None, **collection_kwargs):
