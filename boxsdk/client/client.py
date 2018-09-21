@@ -542,7 +542,8 @@ class Client(Cloneable):
     def retention_policy(self, retention_id):
         """
         Initialize a :class:`RetentionPolicy` object, whose box id is retention_id.
-         :param retention_id:
+
+        :param retention_id:
             The box ID of the :class:`RetentionPolicy` object.
         :type retention_id:
             `unicode`
@@ -553,10 +554,26 @@ class Client(Cloneable):
         """
         return self.translator.translate('retention_policy')(session=self._session, object_id=retention_id)
 
+    def file_version_retention(self, retention_id):
+        """
+        Initialize a :class:`FileVersionRetention` object, whose box id is retention_id.
+
+        :param retention_id:
+            The box ID of the :class:`FileVersionRetention` object.
+        :type retention_id:
+            `unicode`
+        :return:
+            A :class:`FileVersionRetention` object with the given retention ID.
+        :rtype:
+            :class:`FileVersionRetention`
+        """
+        return self.translator.translate('file_version_retention')(session=self._session, object_id=retention_id)
+
     def retention_policy_assignment(self, assignment_id):
         """
         Initialize a :class:`RetentionPolicyAssignment` object, whose box id is assignment_id.
-         :param assignment_id:
+
+        :param assignment_id:
             The box ID of the :class:`RetentionPolicyAssignment` object.
         :type assignment_id:
             `unicode`
@@ -571,17 +588,23 @@ class Client(Cloneable):
             self,
             policy_name,
             disposition_action,
+            retention_length,
             can_owner_extend_retention=None,
             are_owners_notified=None,
-            retention_length=None,
             custom_notification_recipients=None,
     ):
         """
         Create a retention policy for the given enterprise.
-         :param policy_name:
+
+        :param policy_name:
             The name of the retention policy.
         :type policy_name:
             `unicode`
+        :param retention_length:
+            The amount of time in days to apply the retention policy to the selected content.
+            Do not specify for `indefinite` policies, only for `finite` policies.
+        :type retention_length:
+            `int` or float('inf')
         :param disposition_action:
             For `finite` policy can be set to `permanently delete` or `remove retention`.
             For `indefinite` policy this must be set to `remove_retention`
@@ -595,11 +618,6 @@ class Client(Cloneable):
             The owner or co-owner will get notified when a file is nearing expiration.
         :type are_owners_notified:
             `boolean` or None
-        :param retention_length:
-            The amount of time in days to apply the retention policy to the selected content.
-            Do not specify for `indefinite` policies, only for `finite` policies.
-        :type retention_length:
-            `int` or None
         :param custom_notification_recipients:
             A custom list of user mini objects that should be notified when a file is nearing expiration.
         :type custom_notification_recipients:
@@ -627,9 +645,9 @@ class Client(Cloneable):
             retention_attributes['custom_notification_recipients'] = custom_notification_recipients
         box_response = self._session.post(url, data=json.dumps(retention_attributes))
         response = box_response.json()
-        return self.translator.translate('retention_policy')(session=self._session, object_id=response['id'], response_object=response)
+        return self.translator.translate(response['type'])(session=self._session, object_id=response['id'], response_object=response)
 
-    def retention_policies(
+    def get_retention_policies(
             self,
             policy_name=None,
             policy_type=None,
@@ -640,7 +658,8 @@ class Client(Cloneable):
     ):
         """
         Get the entries in the retention policy using marker-based paging.
-         :param policy_name:
+
+        :param policy_name:
             The name of the retention policy.
         :type policy_name:
             `unicode` or None
@@ -659,13 +678,15 @@ class Client(Cloneable):
         :param marker:
             The paging marker to start paging from
         :type marker:
-            `str` or None
+            `unicode` or None
         :param fields:
             List of fields to request
         :type fields:
             `Iterable` of `unicode`
         :returns:
             An iterator of the entries in the retention policy
+        :rtype:
+            :class:`BoxObjectCollection`
         """
         additional_params = {}
         if policy_name is not None:
@@ -677,6 +698,85 @@ class Client(Cloneable):
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self._session.get_url('retention_policies'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
+
+    def get_file_version_retentions(
+            self,
+            file_id=None,
+            file_version_id=None,
+            policy_id=None,
+            disposition_action=None,
+            disposition_before=None,
+            disposition_after=None,
+            limit=None,
+            marker=None,
+            fields=None,
+    ):
+        """
+        Get the entries in the file version retention.
+
+        :param file_id:
+            The file id to filter the file version.
+        :type file_id:
+            `unicode` or None
+        :param file_version_id:
+            A file version id to filter the file version retentions by.
+        :type file_version_id:
+            `unicode` or None
+        :param policy_id:
+            A policy id to filder the file version retentions by.
+        :type policy_id:
+            `unicode` or None
+        :param disposition_action:
+            Can be set to `permanently_delete` or `remove_retention`.
+        :type disposition_action:
+            `unicode` or None
+        :param disposition_before:
+            A date time filter for disposition action.
+        :type disposition_before:
+            `unicode` or None
+        :param disposition_after:
+            A date time filter for disposition action.
+        :type disposition_after:
+            `unicode` or None
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+           An iterator of the entries in the file version retention.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {}
+        if file_id is not None:
+            additional_params['file_id'] = file_id
+        if file_version_id is not None:
+            additional_params['file_version_id'] = file_version_id
+        if policy_id is not None:
+            additional_params['policy_id'] = policy_id
+        if disposition_action is not None:
+            additional_params['disposition_action'] = disposition_action
+        if disposition_before is not None:
+            additional_params['disposition_before'] = disposition_before
+        if disposition_after is not None:
+            additional_params['disposition_after'] = disposition_after
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self._session.get_url('file_version_retentions'),
             additional_params=additional_params,
             limit=limit,
             marker=marker,

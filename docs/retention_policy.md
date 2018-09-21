@@ -36,10 +36,10 @@ retention_policy = client.retention_policy(policy_id).get()
 Get Retention Policies
 ----------------------
 
-Calling `client.retention_policies()` will return all retention policies for the enterprise.
+Calling `client.get_retention_policies()` will return all retention policies for the enterprise.
 
 ```python
-retention_policies = client.retention_policies()
+retention_policies = client.get_retention_policies()
 for policy in retention_policies:
     # Do something
 ```
@@ -98,4 +98,24 @@ policy_id = '1234'
 assignments = client.retention_policy(policy_id).assignments(assignment_type='folder', limit=10)
 for assignment in assignments:
     # Do something
+```
+
+Get File Version Retentions
+---------------------------
+
+Calling `client.get_file_version_retentions(file_id=None, file_version_id=None, policy_id=None, disposition_action=None, disposition_before=None, disposition_after=None, limit=None, marker=None, fields=None)` will return an iterable of file version retentions for the enterprise.
+
+```python
+retentions = client.get_file_version_retentions()
+for retention in retentions:
+    # Do something
+```
+
+Get Information about a File Version Retention
+----------------------------------------------
+
+Calling `file_version_retention.get()` will return information about the specific file version retention.
+
+```python
+retention_info = client.file_version_retention('1234').get()
 ```

@@ -25,6 +25,7 @@ from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.retention_policy import RetentionPolicy
+from boxsdk.object.file_version_retention import FileVersionRetention
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
@@ -543,12 +544,31 @@ def test_get_retention_policies(mock_client, mock_box_session):
         'entries': [mock_policy],
         'next_marker': 'testMarker',
     }
-    policies = mock_client.retention_policies()
+    policies = mock_client.get_retention_policies()
     policy = policies.next()
     mock_box_session.get.assert_called_once_with(expected_url, params={})
     assert isinstance(policy, RetentionPolicy)
     assert policy.id == mock_policy['id']
     assert policy.name == mock_policy['name']
+
+
+def test_get_file_version_retentions(mock_client, mock_box_session):
+    expected_url = "{0}/file_version_retentions".format(API.BASE_API_URL)
+    mock_retention = {
+        'type': 'file_version_retention',
+        'id': '12345',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_retention],
+        'next_marker': 'testMarker',
+    }
+    retentions = mock_client.get_file_version_retentions()
+    retention = retentions.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    assert isinstance(retention, FileVersionRetention)
+    assert retention.id == mock_retention['id']
+    assert retention.type == mock_retention['type']
 
 
 def test_get_pending_collaborations(mock_client, mock_box_session):

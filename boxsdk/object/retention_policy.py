@@ -56,7 +56,7 @@ class RetentionPolicy(BaseObject):
         :param assignment_type:
             The type of retention policy assignment to retrieve.
         :type assignment_type:
-            `unicode` or None
+            `unicode` or None. Can be set to 'folder', 'enterprise', or 'metadata_template'.
         :param limit:
             The maximum number of items to return.
         :type limit:
