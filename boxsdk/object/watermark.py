@@ -2,8 +2,10 @@
 from __future__ import unicode_literals
 
 
-from .base_endpoint import BaseEndpoint
+from .api_json_object import APIJSONObject
 
 
-class Watermark(BaseEndpoint):
+class Watermark(APIJSONObject):
     """Box API endpoint for applying watermark in a Box account."""
+
+    _item_type = 'watermark'

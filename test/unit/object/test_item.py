@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 import json
 import pytest
 
+from boxsdk.config import API
+from boxsdk.object.watermark import Watermark
 
 @pytest.fixture(params=('file', 'folder'))
 def test_item_and_response(test_file, test_folder, mock_file_response, mock_folder_response, request):
@@ -215,3 +217,48 @@ def test_remove_from_collection(test_item_and_response, mock_box_session, mock_c
 
     mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=expected_params)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=None, params=None)
+
+
+def test_get_watermark(test_item_and_response, mock_box_session):
+    test_item, _ = test_item_and_response
+    created_at = '2016-10-31T15:33:33-07:00'
+    modified_at = '2016-10-31T15:33:33-07:00'
+    expected_url = '{0}/{1}s/{2}/watermark'.format(API.BASE_API_URL, test_item.object_type, test_item.object_id)
+    mock_box_session.get.return_value.json.return_value = {
+        'watermark': {
+            'created_at': created_at,
+            'modified_at': modified_at,
+        },
+    }
+    watermark = test_item.get_watermark()
+    mock_box_session.get.assert_called_once_with(expected_url, expect_json_response=False)
+    assert isinstance(watermark, Watermark)
+    assert watermark['created_at'] == created_at
+    assert watermark['modified_at'] == modified_at
+
+
+def test_apply_watermark(test_item_and_response, mock_box_session):
+    test_item, _ = test_item_and_response
+    created_at = '2016-10-31T15:33:33-07:00'
+    modified_at = '2016-10-31T15:33:33-07:00'
+    expected_url = '{0}/{1}s/{2}/watermark'.format(API.BASE_API_URL, test_item.object_type, test_item.object_id)
+    mock_box_session.put.return_value.json.return_value = {
+        'watermark': {
+            'created_at': created_at,
+            'modified_at': modified_at,
+        },
+    }
+    watermark = test_item.apply_watermark()
+    mock_box_session.put.assert_called_once_with(expected_url, data='{"watermark": {"imprint": "default"}}')
+    assert isinstance(watermark, Watermark)
+    assert watermark['created_at'] == created_at
+    assert watermark['modified_at'] == modified_at
+
+
+def test_delete_watermark(test_item_and_response, mock_box_session):
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/{1}s/{2}/watermark'.format(API.BASE_API_URL, test_item.object_type, test_item.object_id)
+    mock_box_session.delete.return_value.ok = True
+    is_watermark_deleted = test_item.delete_watermark()
+    mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)
+    assert is_watermark_deleted is True
