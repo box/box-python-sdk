@@ -19,15 +19,18 @@ class RetentionPolicy(BaseObject):
     def assign(self, assignee, fields=None):
         """Assign a retention policy to a Box item
 
-        :param item:
+        :param assignee:
             The item to assign the retention policy on.
-        TODO(9/9/2018): Add `Enterprise` and `Metadata_Template` types after those have been merged.
-        :type item:
-            :class:`Folder`
+        :type assignee:
+            :class:`Folder`, :class:`Enterprise`, or :class:`MetadataTemplate`
         :param fields:
             List of fields to request.
         :type fields:
             `Iterable` of `unicode`
+        :returns:
+            A :class:`RetentionPolicyAssignment` object.
+        :rtype:
+            :class:`RetentionPolicyAssignment`
         """
         url = self._session.get_url('retention_policy_assignments')
         body = {
@@ -69,7 +72,7 @@ class RetentionPolicy(BaseObject):
         :returns:
             An iterable of assignments in the retention policy.
         :rtype:
-            `Iterable` of :class:`RetentionPolicyAssignment`
+            :class:`BoxObjectCollection`
         """
         additional_params = {}
         if assignment_type is not None:

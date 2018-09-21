@@ -489,7 +489,7 @@ class Client(Cloneable):
             retention_attributes['custom_notification_recipients'] = custom_notification_recipients
         box_response = self._session.post(url, data=json.dumps(retention_attributes))
         response = box_response.json()
-        return self.translator.translate('retention_policy')(session=self._session, object_id=response['id'])
+        return self.translator.translate('retention_policy')(session=self._session, object_id=response['id'], response_object=response)
 
     def retention_policies(
             self,
