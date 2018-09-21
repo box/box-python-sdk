@@ -159,6 +159,36 @@ class Client(Cloneable):
         """
         return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
 
+    def collaboration_whitelist_entry(self, entry_id):
+        """
+        Initialize a :class:`CollaborationWhitelistEntry` object, whose box id is entry_id.
+
+        :param entry_id:
+            The box id of the :class:`CollaborationWhitelistEntry` object.
+        :type entry_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationWhitelistEntry` object with the given entry id.
+        :rtype:
+            :class:`CollaborationWhitelistEntry`
+        """
+        return self.translator.translate('collaboration_whitelist_entry')(session=self._session, object_id=entry_id)
+
+    def collaboration_whitelist_exempty_target(self, target_id):
+        """
+        Initialize a :class:`CollaborationWhitelistExemptTarget` object, whose box id is target_id.
+
+        :param target_id:
+            The box id of the :class:`CollaborationWhitelistExemptTarget` object.
+        :type target_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationWhitelistExemptTarget` object with the given target id.
+        :rtype:
+            :class:`CollaborationWhitelistExemptTarget`
+        """
+        return self.translator.translate('collaboration_whitelist_exempt_target')(session=self._session, object_id=target_id)
+
     def collection(self, collection_id):
         """
         Initialize a :class:`Collection` object, whose box ID is collection_id.
