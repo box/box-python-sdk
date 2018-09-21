@@ -22,5 +22,6 @@ __all__ = list(map(str, [
     'recent_item',
     'search',
     'user',
+    'watermark',
     'web_link',
 ]))
