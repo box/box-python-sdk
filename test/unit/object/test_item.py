@@ -231,7 +231,7 @@ def test_get_watermark(test_item_and_response, mock_box_session):
         },
     }
     watermark = test_item.get_watermark()
-    mock_box_session.get.assert_called_once_with(expected_url, expect_json_response=False)
+    mock_box_session.get.assert_called_once_with(expected_url)
     assert isinstance(watermark, Watermark)
     assert watermark['created_at'] == created_at
     assert watermark['modified_at'] == modified_at

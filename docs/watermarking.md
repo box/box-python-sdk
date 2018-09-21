@@ -5,7 +5,7 @@ The ability to watermark files and folders is represented as a sub-resource on t
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
 
 - [Watermarking](#watermarking)
   - [Get Watermark on File or Folder](#get-watermark-on-file-or-folder)

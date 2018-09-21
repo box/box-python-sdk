@@ -367,7 +367,7 @@ class Item(BaseObject):
             :class:`Watermark`
         """
         url = self.get_url('watermark')
-        box_response = self._session.get(url, expect_json_response=False)
+        box_response = self._session.get(url)
         response = box_response.json()
         return self.translator.translate('watermark')(response['watermark'])
 
