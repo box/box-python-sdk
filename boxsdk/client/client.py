@@ -539,7 +539,6 @@ class Client(Cloneable):
             response_object=response,
         )
 
-
     def retention_policy(self, retention_id):
         """
         Initialize a :class:`RetentionPolicy` object, whose box id is retention_id.
