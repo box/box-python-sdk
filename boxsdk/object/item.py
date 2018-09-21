@@ -7,6 +7,7 @@ from .base_object import BaseObject
 from ..exception import BoxAPIException
 from .metadata import Metadata
 from ..util.api_call_decorator import api_call
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
 class Item(BaseObject):
@@ -444,3 +445,141 @@ class Item(BaseObject):
             'collections': updated_collections
         }
         return self.update_info(data)
+
+    def collaborate(self, accessible_by, role, can_view_path=None, notify=None, fields=None):
+        """Collaborate user or group onto a Box item.
+
+        :param accessible_by:
+            An object containing the collaborator.
+        :type accessible_by:
+            class:`User` or class:`Group`
+        :param role:
+            The permission level to grant the collaborator.
+        :type role:
+            `unicode`
+        :param can_view_path:
+            Indicates whether the user can view the path of the folder collaborated into.
+        :type can_view_path:
+            `bool` or None
+        :param notify:
+            Determines if the collaborator should receive a notification for the collaboration.
+        :type notify:
+            `bool` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :return:
+            The new collaboration
+        :rtype:
+            :class:`Collaboration`
+        """
+        url = self._session.get_url('collaborations')
+        body = {
+            'item': {
+                'type': self.object_type,
+                'id': self.object_id,
+            },
+            'accessible_by': {
+                'type': accessible_by.object_type,
+                'id': accessible_by.object_id,
+            },
+            'role': role,
+        }
+        if can_view_path is not None:
+            body['can_view_path'] = can_view_path
+        params = {}
+        if fields is not None:
+            params['fields'] = ','.join(fields)
+        if notify is not None:
+            params['notify'] = notify
+        response = self._session.post(url, data=json.dumps(body), params=params).json()
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+    def collaborate_with_login(self, login, role, can_view_path=None, notify=None, fields=None):
+        """Collaborate user onto a Box item with the user login.
+
+        :param login:
+            The email address of the person to grant access to.
+        :type login:
+            `unicode`
+        :param role:
+            The permission level to grant the collaborator.
+        :type role:
+            `unicode`
+        :param can_view_path:
+            Indicates whether the user can view the path of the folder collaborated into.
+        :type can_view_path:
+            `bool` or None
+        :param notify:
+            Determines if the collaborator should receive a notification for the collaboration.
+        :type notify:
+            `bool` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :return:
+            The new collaboration with the user login
+        :rtype:
+            :class:`Collaboration`
+        """
+        url = self._session.get_url('collaborations')
+        body = {
+            'item': {
+                'type': self.object_type,
+                'id': self.object_id,
+            },
+            'accessible_by': {
+                'type': 'user',
+                'login': login,
+            },
+            'role': role,
+        }
+        if can_view_path is not None:
+            body['can_view_path'] = can_view_path
+        params = {}
+        if fields is not None:
+            params['fields'] = ','.join(fields)
+        if notify is not None:
+            params['notify'] = notify
+        response = self._session.post(url, data=json.dumps(body), params=params).json()
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+    def get_collaborations(self, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the collaboration.
+
+        :param limit:
+            The maximum number of items to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start returning items from when using marker-based paging.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the collaboration.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('collaborations'),
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
