@@ -482,7 +482,6 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert new_user.name == test_user_name
 
 
-
 def test_create_retention_policy(mock_client, mock_box_session):
     policy_name = 'Test Retention Policy'
     policy_type = 'finite'

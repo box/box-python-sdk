@@ -123,7 +123,6 @@ def test_legal_hold(mock_box_session, mock_object_id):
     return LegalHold(mock_box_session, mock_object_id)
 
 
-
 @pytest.fixture()
 def test_search(mock_box_session):
     return Search(mock_box_session)
