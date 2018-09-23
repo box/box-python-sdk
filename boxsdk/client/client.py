@@ -1,5 +1,5 @@
 # coding: utf-8
-
+# pylint: disable=too-many-lines
 from __future__ import unicode_literals, absolute_import
 import json
 
@@ -629,7 +629,7 @@ class Client(Cloneable):
         """
         url = self.get_url('retention_policies')
         retention_attributes = {'policy_name': policy_name}
-        if retention_length == float('inf') or retention_length is -1:
+        if retention_length == float('inf') or retention_length == -1:
             retention_attributes['policy_type'] = 'indefinite'
             retention_attributes['disposition_action'] = 'remove_retention'
         else:
