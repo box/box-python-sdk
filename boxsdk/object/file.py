@@ -353,7 +353,7 @@ class File(Item):
         :param due_at:
             When this task is due.
         :type due_at:
-            `str` or None
+            `unicode` or None
         :return:
             The newly created task
         :rtype:

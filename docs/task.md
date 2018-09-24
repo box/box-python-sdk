@@ -29,7 +29,7 @@ for task in tasks:
 Add Task to File
 ----------------
 
-To create a single task for a single user on a single file use, `file.createtask(message=None, due_at=None)`
+To create a single task for a single user on a single file use, `file.create_task(message=None, due_at=None)`
 
 ```python
 file_id = '1111'

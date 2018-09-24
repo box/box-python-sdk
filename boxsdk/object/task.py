@@ -1,10 +1,9 @@
-
 # coding: utf-8
 from __future__ import unicode_literals
 
 import json
 
-from .base_object import BaseObject
+from boxsdk.object.base_object import BaseObject
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
@@ -37,9 +36,10 @@ class Task(BaseObject):
             },
             'assign_to': {
                 'id': assign_to_id,
-                'login': assign_to_login,
             },
         }
+        if assign_to_login is not None:
+            body['assign_to']['login'] = assign_to_login
         response = self._session.post(url, data=json.dumps(body)).json()
         return self.translator.translate(response['type'])(
             session=self._session,

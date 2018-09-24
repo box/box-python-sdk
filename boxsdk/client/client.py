@@ -403,14 +403,14 @@ class Client(Cloneable):
 
     def task(self, task_id):
         """
-        Initialize a :class: `Task` object, whose box id is task_id.
+        Initialize a :class:`Task` object, whose box id is task_id.
 
         :param task_id:
             The box ID of the :class:`Task` object.
         :type task_id:
             `unicode`
         :return:
-            A :class: `Task` object with the given entry ID.
+            A :class:`Task` object with the given entry ID.
         :rtype:
             :class:`Task`
         """
@@ -418,14 +418,14 @@ class Client(Cloneable):
 
     def task_assignment(self, assignment_id):
         """
-        Initialize a :class: `TaskAssignment` object, whose box id is assignment_id.
+        Initialize a :class:`TaskAssignment` object, whose box id is assignment_id.
 
         :param assignment_id:
             The box ID of the :class:`TaskAssignment` object.
         :type assignment_id:
             `unicode`
         :return:
-            A :class: `TaskAssignment` object with the given entry ID.
+            A :class:`TaskAssignment` object with the given entry ID.
         :rtype:
             :class:`TaskAssignment`
         """
