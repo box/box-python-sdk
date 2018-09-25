@@ -15,7 +15,7 @@ for group in groups:
     # Do something
 ```
 
-Alternatively, you can set a filter on the name of the groups to return from the enterprise by using `groups(name)`.
+Alternatively, you can set a filter on the name of the groups to return from the enterprise by using `client.groups(name)`.
 
 ```python
 group_name = 'Example Group'
@@ -125,7 +125,7 @@ To retrieve all of the members for a given group use `group.get_memberships(limi
 
 ```python
 group_id == '1111'
-group_memberships = client.group(group_id).get_group_memberships()
+group_memberships = client.group(group_id).get_memberships()
 for group_membership in group_memberships:
     # Do something
 ```
