@@ -537,6 +537,7 @@ class Client(Cloneable):
             :class:`BoxAPIException` if current user doesn't have permissions to create a group.
         """
         url = self.get_url('groups')
+        additional_params = {}
         body_attributes = {
             'name': name,
         }
