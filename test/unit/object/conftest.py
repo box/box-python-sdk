@@ -9,12 +9,17 @@ from six import int2byte, PY2
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
+from boxsdk.object.device_pinner import DevicePinner
 from boxsdk.object.file import File
+from boxsdk.object.legal_hold import LegalHold
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
 from boxsdk.object.group_membership import GroupMembership
+from boxsdk.object.legal_hold_policy import LegalHoldPolicy
+from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
 from boxsdk.object.user import User
 from boxsdk.object.search import Search
+from boxsdk.object.web_link import WebLink
 
 
 # pylint:disable=redefined-outer-name
@@ -98,8 +103,33 @@ def test_group_membership(mock_box_session, mock_object_id):
 
 
 @pytest.fixture()
+def test_legal_hold_policy(mock_box_session, mock_object_id):
+    return LegalHoldPolicy(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_legal_hold_policy_assignment(mock_box_session, mock_object_id):
+    return LegalHoldPolicyAssignment(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_legal_hold(mock_box_session, mock_object_id):
+    return LegalHold(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
 def test_search(mock_box_session):
     return Search(mock_box_session)
+
+
+@pytest.fixture()
+def test_web_link(mock_box_session, mock_object_id):
+    return WebLink(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_device_pin(mock_box_session, mock_object_id):
+    return DevicePinner(mock_box_session, mock_object_id)
 
 
 @pytest.fixture(scope='function')
