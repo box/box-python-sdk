@@ -275,7 +275,7 @@ def test_get_groups_return_the_correct_group_objects(
     # pylint:disable=redefined-outer-name
     expected_url = '{0}/groups'.format(API.BASE_API_URL)
     mock_box_session.get.return_value = groups_response
-    groups = mock_client.groups()
+    groups = mock_client.get_groups()
     for group, expected_id in zip(groups, [group_id_1, group_id_2]):
         assert group.object_id == expected_id
         assert group.name == str(expected_id)

@@ -181,7 +181,7 @@ def test_get_group_collaborations(test_group, mock_box_session):
         'offset': 0,
         'total_count': 1
     }
-    collaborations = test_group.collaborations()
+    collaborations = test_group.get_collaborations()
     collaboration = collaborations.next()
     mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
     assert isinstance(collaboration, Collaboration)

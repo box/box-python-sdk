@@ -4,8 +4,15 @@ from __future__ import unicode_literals, absolute_import
 import json
 
 from .base_object import BaseObject
+from boxsdk.util.text_enum import TextEnum
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..util.api_call_decorator import api_call
+
+
+class GroupRole(TextEnum):
+    """The role in the group."""
+    ADMIN = 'admin'
+    MEMBER = 'member'
 
 
 class Group(BaseObject):
@@ -14,7 +21,7 @@ class Group(BaseObject):
     _item_type = 'group'
 
     @api_call
-    def get_memberships(self, limit=None, offset=0, fields=None):
+    def get_memberships(self, limit=None, offset=None, fields=None):
         """
         Get the membership records for the group, which indicate which users are included in the group.
 
@@ -41,7 +48,7 @@ class Group(BaseObject):
         )
 
     @api_call
-    def add_member(self, user, role='Member'):
+    def add_member(self, user, role=GroupRole.MEMBER):
         """
         Add the given user to this group under the given role
 
@@ -50,7 +57,7 @@ class Group(BaseObject):
         :type user:
             :class:`User`
         :param role:
-            The role for the user. TODO: determine valid options and create an Enum.
+            The role for the user.
         :type role:
             `unicode`
         :returns:
@@ -68,7 +75,7 @@ class Group(BaseObject):
         response = box_response.json()
         return self.translator.translate(response['type'])(self._session, response['id'], response, user=user, group=self)
 
-    def collaborations(self, limit=None, offset=None, fields=None):
+    def get_collaborations(self, limit=None, offset=None, fields=None):
         """
         Get the entries in the collaboration for the group using limit-offset paging.
 

@@ -335,7 +335,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def groups(self, name=None, offset=0, limit=None, fields=None):
+    def get_groups(self, name=None, limit=None, offset=None, fields=None):
         """
         Get a list of all groups for the current user.
 
@@ -350,7 +350,7 @@ class Client(Cloneable):
         :param offset:
             The group index at which to start the response.
         :type offset:
-            `int`
+            `int` or None.
         :param fields:
             List of fields to request on the :class:`Group` objects.
         :type fields:
@@ -374,7 +374,16 @@ class Client(Cloneable):
         )
 
     @api_call
-    def create_group(self, name):
+    def create_group(
+            self,
+            name,
+            provenance=None,
+            external_sync_identifier=None,
+            description=None,
+            invitability_level=None,
+            member_viewability_level=None,
+            fields=None,
+    ):
         """
         Create a group with the given name.
 
@@ -393,7 +402,19 @@ class Client(Cloneable):
         body_attributes = {
             'name': name,
         }
-        box_response = self._session.post(url, data=json.dumps(body_attributes))
+        if provenance is not None:
+            body_attributes['provenance'] = provenance
+        if external_sync_identifier is not None:
+            body_attributes['external_sync_identifier'] = external_sync_identifier
+        if description is not None:
+            body_attributes['description'] = description
+        if invitability_level is not None:
+            body_attributes['invitability_level'] = invitability_level
+        if member_viewability_level is not None:
+            body_attributes['member_viewability_level'] = member_viewability_level
+        if fields is not None:
+            additional_params['fields'] = ','.join(fields)
+        box_response = self._session.post(url, data=json.dumps(body_attributes), params=additional_params)
         response = box_response.json()
         return self.translator.translate('group')(
             session=self._session,

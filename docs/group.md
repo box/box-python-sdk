@@ -4,22 +4,22 @@ Groups
 Groups are sets of users that can be used in collaborations.
 
 
-Get All Groups
---------------
+List Groups
+-----------
 
-Calling `client.groups(name=None, offset=0, limit=None, fields=None)` will return an iterable of all groups in the enterprise.
+Calling `client.get_groups(name=None, limit=None, offset=None, fields=None)` will return an iterable of all groups in the enterprise.
 
 ```python
-groups = client.groups()
+groups = client.get_groups()
 for group in groups:
     # Do something
 ```
 
-Alternatively, you can set a filter on the name of the groups to return from the enterprise by using `client.groups(name)`.
+Alternatively, you can set a filter on the name of the groups to return from the enterprise by using `client.get_groups(name)`.
 
 ```python
 group_name = 'Example Group'
-groups = client.groups(group_name)
+groups = client.get_groups(group_name)
 for group in groups:
     # Do something
 ```
@@ -27,11 +27,13 @@ for group in groups:
 Create a Group
 --------------
 
-To create a group, use `client.create_group(name)`.
+To create a group, use `client.create_group(name, provenance=None, external_sync_identifier=None, description=None, invitability_level=None, member_viewability_level=None, fields=None)`.
 
 ```python
 created_group = client.create_group('Example Group')
 ```
+
+You can read more about the optional parameters [here](https://developer.box.com/v2.0/reference#create-a-group)
 
 Get Information about a Group
 -----------------------------
@@ -67,11 +69,11 @@ client.group(group_id).delete()
 Get a Group's Collaborations
 ----------------------------
 
-To retrieve all collaborations for a specified group call `group.collaborations(limit=None, offset=None, fields=None)`.
+To retrieve all collaborations for a specified group call `group.get_collaborations(limit=None, offset=None, fields=None)`.
 
 ```python
 group_id = '1234'
-collaborations = client.group(group_id).collaborations()
+collaborations = client.group(group_id).get_collaborations()
 for collaboration in collaborations:
     # Do something
 ```
@@ -83,7 +85,7 @@ To add a new member to the group use `group.add_member(user, role='Member')`.
 
 ```python
 group_id = '1234'
-user = {'id': '1111', 'type': 'user'}
+user = client.user('1111')
 group_membership = client.group(group_id).add_member(user)
 ```
 
@@ -124,7 +126,7 @@ List Group Members
 To retrieve all of the members for a given group use `group.get_memberships(limit=None, offset=0, fields=None)`.
 
 ```python
-group_id == '1111'
+group_id = '1111'
 group_memberships = client.group(group_id).get_memberships()
 for group_membership in group_memberships:
     # Do something
@@ -133,10 +135,10 @@ for group_membership in group_memberships:
 List Memberships for User
 -------------------------
 
-To retrieve all of the members for a give user use `user.get_memberships(limit=None, offset=0, fields=None)`.
+To retrieve all of the members for a give user use `user.get_group_memberships(limit=None, offset=0, fields=None)`.
 
 ```python
-user_id == '2222'
+user_id = '2222'
 user_memberships = client.user(user_id).get_group_memberships()
 for user_membership in user_memberships:
     # Do something
