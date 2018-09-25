@@ -265,7 +265,7 @@ def test_events_returns_event_object(mock_client):
     assert isinstance(mock_client.events(), Events)
 
 
-def test_groups_return_the_correct_group_objects(
+def test_get_groups_return_the_correct_group_objects(
         mock_client,
         mock_box_session,
         groups_response,
@@ -273,13 +273,15 @@ def test_groups_return_the_correct_group_objects(
         group_id_2,
 ):
     # pylint:disable=redefined-outer-name
+    expected_url = '{0}/groups'.format(API.BASE_API_URL)
     mock_box_session.get.return_value = groups_response
-    groups = mock_client.groups()
+    groups = mock_client.get_groups()
     for group, expected_id in zip(groups, [group_id_1, group_id_2]):
         assert group.object_id == expected_id
         assert group.name == str(expected_id)
         # pylint:disable=protected-access
         assert group._session == mock_box_session
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': 0})
 
 
 def test_create_group_returns_the_correct_group_object(mock_client, mock_box_session, create_group_response):

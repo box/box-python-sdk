@@ -35,9 +35,11 @@ def test_get_group_memberships(
         memberships_response,
 ):
     # pylint:disable=redefined-outer-name
+    expected_url = '{0}/users/{1}/memberships'.format(API.BASE_API_URL, mock_user.object_id)
     mock_box_session.get.return_value = memberships_response
     memberships = mock_user.get_group_memberships()
     for membership, expected_id in zip(memberships, [101, 202]):
         assert membership.object_id == expected_id
         # pylint:disable=protected-access
         assert membership._session == mock_box_session
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
