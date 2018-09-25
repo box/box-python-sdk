@@ -343,11 +343,12 @@ def test_get_groups_return_the_correct_group_objects(
         assert group.name == str(expected_id)
         # pylint:disable=protected-access
         assert group._session == mock_box_session
-    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': 0})
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
 
 
 def test_create_group_returns_the_correct_group_object(mock_client, mock_box_session, create_group_response):
     # pylint:disable=redefined-outer-name
+    expected_url = "{0}/groups".format(API.BASE_API_URL)
     test_group_name = 'test_group_name'
     value = json.dumps({'name': test_group_name})
     mock_box_session.post.return_value = create_group_response
@@ -355,8 +356,7 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
 
     assert len(mock_box_session.post.call_args_list) == 1
 
-    assert mock_box_session.post.call_args[0] == ("{0}/groups".format(API.BASE_API_URL),)
-    assert mock_box_session.post.call_args[1] == {'data': value}
+    mock_box_session.post.assert_called_once_with(expected_url, data=value, params={})
     assert isinstance(new_group, Group)
     assert new_group.object_id == 1234
     assert new_group.name == test_group_name
