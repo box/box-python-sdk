@@ -165,7 +165,7 @@ def test_get_memberships_with_hidden_results(test_group, mock_box_session, mock_
     assert count == total - total_hidden
 
 
-def test_collaborations(test_group, mock_box_session):
+def test_get_group_collaborations(test_group, mock_box_session):
     expected_url = '{0}/groups/{1}/collaborations'.format(API.BASE_API_URL, test_group.object_id)
     mock_collaboration = {
         'type': 'collaboration',
