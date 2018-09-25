@@ -3,8 +3,8 @@
 from __future__ import unicode_literals, absolute_import
 import json
 
-from .base_object import BaseObject
 from boxsdk.util.text_enum import TextEnum
+from .base_object import BaseObject
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..util.api_call_decorator import api_call
 
