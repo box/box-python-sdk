@@ -17,12 +17,14 @@ from boxsdk.auth.oauth2 import OAuth2, TokenScope
 from boxsdk.client import Client, DeveloperTokenClient, DevelopmentClient, LoggingClient
 from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
+from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.group_membership import GroupMembership
+from boxsdk.object.legal_hold_policy import LegalHoldPolicy
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
@@ -117,6 +119,42 @@ def groups_response(group_id_1, group_id_2):
 
 
 @pytest.fixture(scope='module')
+def legal_hold_policy_id_1():
+    return 101
+
+
+@pytest.fixture(scope='module')
+def legal_hold_policy_id_2():
+    return 202
+
+
+@pytest.fixture(scope='module')
+def legal_hold_policies_response(legal_hold_policy_id_1, legal_hold_policy_id_2):
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'legal_hold_policy', 'id': legal_hold_policy_id_1, 'name': 'Test Policy 1'},
+            {'type': 'legal_hold_policy', 'id': legal_hold_policy_id_2, 'name': 'Test Policy 2'},
+        ],
+        'limit': 5,
+    }
+    return mock_network_response
+
+
+@pytest.fixture(scope='module')
+def create_policy_response():
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'type': 'legal_hold_policy',
+        'id': 1234,
+        'policy_name': 'Test Policy'
+    }
+    return mock_network_response
+
+
+@pytest.fixture(scope='module')
 def create_group_response():
     # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
@@ -177,6 +215,30 @@ def recent_items_response(file_id):
         ],
         'next_marker': None,
         'limit': 100,
+    }
+    return mock_network_response
+
+
+@pytest.fixture(scope='module')
+def device_pin_id_1():
+    return 101
+
+
+@pytest.fixture(scope='module')
+def device_pin_id_2():
+    return 202
+
+
+@pytest.fixture(scope='module')
+def device_pins_response(device_pin_id_1, device_pin_id_2):
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'device_pinner', 'id': device_pin_id_1},
+            {'type': 'device_pinner', 'id': device_pin_id_2},
+        ],
+        'limit': 2,
     }
     return mock_network_response
 
@@ -300,6 +362,38 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
     assert new_group.name == test_group_name
 
 
+def test_create_legal_hold_policy_returns_the_correct_policy_object(mock_client, mock_box_session, create_policy_response):
+    # pylint:disable=redefined-outer-name
+    test_policy_name = 'Test Policy'
+    expected_body = {
+        'policy_name': test_policy_name
+    }
+    value = json.dumps(expected_body)
+    mock_box_session.post.return_value = create_policy_response
+    new_policy = mock_client.create_legal_hold_policy(test_policy_name)
+    assert len(mock_box_session.post.call_args_list) == 1
+    assert mock_box_session.post.call_args[0] == ("{0}/legal_hold_policies".format(API.BASE_API_URL),)
+    assert mock_box_session.post.call_args[1] == {'data': value}
+    assert isinstance(new_policy, LegalHoldPolicy)
+    assert new_policy.policy_name == test_policy_name
+
+
+def test_legal_hold_policies_return_the_correct_policy_objects(
+        mock_client,
+        mock_box_session,
+        legal_hold_policies_response,
+        legal_hold_policy_id_1,
+        legal_hold_policy_id_2,
+):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value = legal_hold_policies_response
+    policies = mock_client.get_legal_hold_policies()
+    for policy, expected_id in zip(policies, [legal_hold_policy_id_1, legal_hold_policy_id_2]):
+        assert policy.object_id == expected_id
+        # pylint:disable=protected-access
+        assert policy._session == mock_box_session
+
+
 def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_session, recent_items_response, file_id):
     mock_box_session.get.return_value = recent_items_response
     recent_items = mock_client.get_recent_items()
@@ -389,6 +483,33 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert new_user.name == test_user_name
 
 
+def test_get_pending_collaborations(mock_client, mock_box_session):
+    # pylint:disable=redefined-outer-name, protected-access
+    expected_url = '{0}/collaborations'.format(API.BASE_API_URL)
+    mock_collaboration = {
+        'type': 'collaboration',
+        'id': '12345',
+        'created_by': {
+            'type': 'user',
+            'id': '33333',
+        },
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 1,
+        'limit': 2,
+        'offset': 0,
+        'entries': [mock_collaboration],
+    }
+    pending_collaborations = mock_client.get_pending_collaborations(limit=2)
+    pending_collaboration = pending_collaborations.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 2, 'status': 'pending', 'offset': None})
+    assert isinstance(pending_collaboration, Collaboration)
+    assert pending_collaboration.id == mock_collaboration['id']
+    assert pending_collaboration.type == mock_collaboration['type']
+    assert pending_collaboration['created_by']['type'] == 'user'
+    assert pending_collaboration['created_by']['id'] == '33333'
+
+
 @pytest.fixture
 def check_downscope_token_request(
         mock_client,
@@ -462,3 +583,13 @@ def test_downscope_token_sends_downscope_request_with_additional_data(
         'extra_data_key': 'extra_data_value',
     }
     check_downscope_token_request(File, [TokenScope.ITEM_READWRITE], additional_data, expected_data)
+
+
+def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_response, device_pin_id_1, device_pin_id_2):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value = device_pins_response
+    pins = mock_client.device_pinners('1234')
+    for pin, expected_id in zip(pins, [device_pin_id_1, device_pin_id_2]):
+        assert pin.object_id == expected_id
+        # pylint:disable=protected-access
+        assert pin._session == mock_box_session
