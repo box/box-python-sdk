@@ -48,7 +48,7 @@ class Group(BaseObject):
         )
 
     @api_call
-    def add_member(self, user, role=GroupRole.MEMBER):
+    def add_member(self, user, role=GroupRole.MEMBER, configurable_permissions=None):
         """
         Add the given user to this group under the given role
 
@@ -60,6 +60,11 @@ class Group(BaseObject):
             The role for the user.
         :type role:
             `unicode`
+        :param configurable_permissions:
+            This is a group level permission that is configured for Group members with
+            admin role only.
+        :type configurable_permissons:
+            `unicode` or None
         :returns:
             The new GroupMembership instance.
         :rtype:
@@ -71,6 +76,8 @@ class Group(BaseObject):
             'group': {'id': self.object_id},
             'role': role,
         }
+        if configurable_permissions is not None:
+            body_attributes['configurable_permissions'] = configurable_permissions
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
         return self.translator.translate(response['type'])(self._session, response['id'], response, user=user, group=self)

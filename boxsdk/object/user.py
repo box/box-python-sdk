@@ -14,6 +14,7 @@ class User(BaseObject):
     def get_group_memberships(self, limit=None, offset=None, fields=None):
         """
         Get the entries in the user group membership using limit-offset paging.
+
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:

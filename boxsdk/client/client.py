@@ -529,6 +529,30 @@ class Client(Cloneable):
             The name of the group.
         :type name:
             `unicode`
+        :param provenance:
+            Used to track the external source where the group is coming from.
+        :type provenance:
+            `unicode` or None
+        :param external_sync_identifier:
+            Used as a group identifier for groups coming from an external source.
+        :type external_sync_identifier:
+            `unicode` or None
+        :param description:
+            Description of the group.
+        :type description:
+            `unicode` or None
+        :param invitability_level:
+            Specifies who can invite this group to folders.
+        :type invitability_level:
+            `unicode`
+        :param member_viewability_level:
+            Specifies who can view the members of this group.
+        :type member_viewability_level:
+            `unicode`
+        :param fields:
+            List of fields to request on the :class:`Group` objects.
+        :type fields:
+            `Iterable` of `unicode`
         :return:
             The newly created Group.
         :rtype:

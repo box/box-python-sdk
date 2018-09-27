@@ -350,9 +350,23 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
     # pylint:disable=redefined-outer-name
     expected_url = "{0}/groups".format(API.BASE_API_URL)
     test_group_name = 'test_group_name'
-    value = json.dumps({'name': test_group_name})
+    value = json.dumps({
+        'name': test_group_name,
+        'provenance': 'Example',
+        'external_sync_identifier': 'Example-User',
+        'description': 'Description of group',
+        'invitability_level': 'admins_and_members',
+        'member_viewability_level': 'admins_only',
+    })
     mock_box_session.post.return_value = create_group_response
-    new_group = mock_client.create_group(name=test_group_name)
+    new_group = mock_client.create_group(
+        name=test_group_name,
+        provenance='Example',
+        external_sync_identifier='Example-User',
+        description='Description of group',
+        invitability_level='admins_and_members',
+        member_viewability_level='admins_only',
+    )
 
     assert len(mock_box_session.post.call_args_list) == 1
 
