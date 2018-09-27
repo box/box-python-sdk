@@ -10,29 +10,40 @@ from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 def test_get(test_retention_policy, mock_box_session):
     expected_url = '{0}/retention_policies/{1}'.format(API.BASE_API_URL, test_retention_policy.object_id)
     mock_box_session.get.return_value.json.return_value = {
-        'type': 'retention_policy',
+        'type': test_retention_policy.object_type,
         'id': test_retention_policy.object_id,
+        'policy_name': 'Policy Name',
+        'policy_type': 'finite',
+        'retention_length': '10',
+        'disposition_action': 'permanently_delete',
     }
     retention_policy = test_retention_policy.get()
     mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
     assert isinstance(retention_policy, RetentionPolicy)
+    assert retention_policy['type'] == test_retention_policy.object_type
+    assert retention_policy['id'] == test_retention_policy.object_id
+    assert retention_policy['policy_name'] == 'Policy Name'
 
 
 def test_update(test_retention_policy, mock_box_session):
     new_policy_name = 'New Name'
     expected_url = '{0}/retention_policies/{1}'.format(API.BASE_API_URL, test_retention_policy.object_id)
-    mock_box_session.get.return_value.json.return_value = {
-        'type': 'retention_policy',
+    mock_box_session.put.return_value.json.return_value = {
+        'type': test_retention_policy.object_type,
         'id': test_retention_policy.object_id,
-    }
-    retention_policy = test_retention_policy.update_info({
         'policy_name': new_policy_name,
-    })
+        'policy_type': 'finite',
+        'retention_length': '10',
+    }
     data = {
         'policy_name': new_policy_name,
     }
+    retention_policy = test_retention_policy.update_info(data)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
     assert isinstance(retention_policy, RetentionPolicy)
+    assert retention_policy['type'] == test_retention_policy.object_type
+    assert retention_policy['id'] == test_retention_policy.object_id
+    assert retention_policy['policy_name'] == new_policy_name
 
 
 def test_assign(test_retention_policy, test_folder, mock_box_session):

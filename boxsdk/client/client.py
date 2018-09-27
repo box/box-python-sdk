@@ -630,14 +630,13 @@ class Client(Cloneable):
         url = self.get_url('retention_policies')
         retention_attributes = {
             'policy_name': policy_name,
-            'disposition_action:': disposition_action,
+            'disposition_action': disposition_action,
         }
         if retention_length == float('inf'):
             retention_attributes['policy_type'] = 'indefinite'
         else:
             retention_attributes['policy_type'] = 'finite'
             retention_attributes['retention_length'] = retention_length
-            retention_attributes['disposition_action'] = disposition_action
         if can_owner_extend_retention is not None:
             retention_attributes['can_owner_extend_retention'] = can_owner_extend_retention
         if are_owners_notified is not None:

@@ -104,6 +104,12 @@ def group_id_2():
     return 202
 
 
+@pytest.fixture()
+def mock_user(mock_box_session):
+    user = User(mock_box_session, '12345')
+    return user
+
+
 @pytest.fixture(scope='module')
 def groups_response(group_id_1, group_id_2):
     # pylint:disable=redefined-outer-name
@@ -490,9 +496,9 @@ def test_create_retention_policy(mock_client, mock_box_session):
     expected_url = "{0}/retention_policies".format(API.BASE_API_URL)
     expected_data = {
         'policy_name': policy_name,
-        'policy_type': policy_type,
-        'retention_length': 5,
         'disposition_action': disposition_action,
+        'policy_type': 'finite',
+        'retention_length': 5,
         'can_owner_extend_retention': True,
         'are_owners_notified': False,
     }
@@ -531,8 +537,8 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
     expected_url = "{0}/retention_policies".format(API.BASE_API_URL)
     expected_data = {
         'policy_name': policy_name,
-        'policy_type': policy_type,
         'disposition_action': disposition_action,
+        'policy_type': policy_type,
         'can_owner_extend_retention': False,
         'are_owners_notified': False,
     }
@@ -575,9 +581,14 @@ def test_get_retention_policies(mock_client, mock_box_session, mock_user):
         'entries': [mock_policy],
         'next_marker': 'testMarker',
     }
-    policies = mock_client.get_retention_policies(policy_name='Test Name', policy_type='Finite', user=mock_user)
+    policies = mock_client.get_retention_policies(policy_name='Test Name', policy_type='finite', user=mock_user)
     policy = policies.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    params = {
+        'policy_name': 'Test Name',
+        'policy_type': 'finite',
+        'created_by_user_id': '12345',
+    }
+    mock_box_session.get.assert_called_once_with(expected_url, params=params)
     assert isinstance(policy, RetentionPolicy)
     assert policy.id == mock_policy['id']
     assert policy.name == mock_policy['name']
