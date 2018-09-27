@@ -602,7 +602,7 @@ class Client(Cloneable):
             `unicode`
         :param retention_length:
             The amount of time in days to apply the retention policy to the selected content.
-            Do not specify for `indefinite` policies, only for `finite` policies.
+            The retention_length should be set to float('inf') for indefinite policies.
         :type retention_length:
             `int` or float('inf')
         :param disposition_action:
@@ -628,15 +628,16 @@ class Client(Cloneable):
             :class:`RetentionPolicy`
         """
         url = self.get_url('retention_policies')
-        retention_attributes = {'policy_name': policy_name}
-        if retention_length == float('inf') or retention_length == -1:
+        retention_attributes = {
+            'policy_name': policy_name,
+            'disposition_action:': disposition_action,
+        }
+        if retention_length == float('inf'):
             retention_attributes['policy_type'] = 'indefinite'
-            retention_attributes['disposition_action'] = 'remove_retention'
         else:
             retention_attributes['policy_type'] = 'finite'
             retention_attributes['retention_length'] = retention_length
             retention_attributes['disposition_action'] = disposition_action
-
         if can_owner_extend_retention is not None:
             retention_attributes['can_owner_extend_retention'] = can_owner_extend_retention
         if are_owners_notified is not None:
@@ -651,7 +652,7 @@ class Client(Cloneable):
             self,
             policy_name=None,
             policy_type=None,
-            created_by_user_id=None,
+            user=None,
             limit=None,
             marker=None,
             fields=None,
@@ -667,10 +668,10 @@ class Client(Cloneable):
             Set to either `finite` or `indefinite`
         :type policy_type:
             `unicode` or None
-        :param created_by_user_id:
-            A user id to filter the retention policies.
-        :type created_by_user_id:
-            `unicode` or None
+        :param user:
+            A user to filter the retention policies.
+        :type user:
+            :class:`User` or None
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :type limit:
@@ -693,8 +694,8 @@ class Client(Cloneable):
             additional_params['policy_name'] = policy_name
         if policy_type is not None:
             additional_params['policy_type'] = policy_type
-        if created_by_user_id is not None:
-            additional_params['created_by_user_id'] = created_by_user_id
+        if user is not None:
+            additional_params['created_by_user_id'] = user.object_id
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self._session.get_url('retention_policies'),
@@ -707,9 +708,9 @@ class Client(Cloneable):
 
     def get_file_version_retentions(
             self,
-            file_id=None,
-            file_version_id=None,
-            policy_id=None,
+            file=None,
+            file_version=None,
+            policy=None,
             disposition_action=None,
             disposition_before=None,
             disposition_after=None,
@@ -720,18 +721,18 @@ class Client(Cloneable):
         """
         Get the entries in the file version retention.
 
-        :param file_id:
-            The file id to filter the file version.
-        :type file_id:
-            `unicode` or None
-        :param file_version_id:
-            A file version id to filter the file version retentions by.
-        :type file_version_id:
-            `unicode` or None
-        :param policy_id:
-            A policy id to filder the file version retentions by.
-        :type policy_id:
-            `unicode` or None
+        :param file:
+            The file to filter the file version.
+        :type file:
+            :class:`File` or None
+        :param file_version:
+            A file version to filter the file version retentions by.
+        :type file_version:
+            :class:`FileVersion` or None
+        :param policy:
+            A policy to filter the file version retentions by.
+        :type policy:
+            :class:`RetentionPolicy` or None
         :param disposition_action:
             Can be set to `permanently_delete` or `remove_retention`.
         :type disposition_action:
@@ -762,12 +763,12 @@ class Client(Cloneable):
             :class:`BoxObjectCollection`
         """
         additional_params = {}
-        if file_id is not None:
-            additional_params['file_id'] = file_id
-        if file_version_id is not None:
-            additional_params['file_version_id'] = file_version_id
-        if policy_id is not None:
-            additional_params['policy_id'] = policy_id
+        if file is not None:
+            additional_params['file_id'] = file.object_id
+        if file_version is not None:
+            additional_params['file_version_id'] = file_version.object_id
+        if policy is not None:
+            additional_params['policy_id'] = policy.object_id
         if disposition_action is not None:
             additional_params['disposition_action'] = disposition_action
         if disposition_before is not None:
