@@ -707,7 +707,7 @@ class Client(Cloneable):
 
     def get_file_version_retentions(
             self,
-            file=None,
+            target_file=None,
             file_version=None,
             policy=None,
             disposition_action=None,
@@ -720,9 +720,9 @@ class Client(Cloneable):
         """
         Get the entries in the file version retention.
 
-        :param file:
+        :param target_file:
             The file to filter the file version.
-        :type file:
+        :type target_file:
             :class:`File` or None
         :param file_version:
             A file version to filter the file version retentions by.
@@ -762,8 +762,8 @@ class Client(Cloneable):
             :class:`BoxObjectCollection`
         """
         additional_params = {}
-        if file is not None:
-            additional_params['file_id'] = file.object_id
+        if target_file is not None:
+            additional_params['file_id'] = target_file.object_id
         if file_version is not None:
             additional_params['file_version_id'] = file_version.object_id
         if policy is not None:

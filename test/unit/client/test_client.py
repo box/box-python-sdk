@@ -110,6 +110,18 @@ def mock_user(mock_box_session):
     return user
 
 
+@pytest.fixture()
+def mock_file(mock_box_session):
+    file = File(mock_box_session, '11111')
+    return file
+
+
+@pytest.fixture()
+def mock_retention_policy(mock_box_session):
+    retention_policy = RetentionPolicy(mock_box_session, '22222')
+    return retention_policy
+
+
 @pytest.fixture(scope='module')
 def groups_response(group_id_1, group_id_2):
     # pylint:disable=redefined-outer-name
@@ -594,7 +606,7 @@ def test_get_retention_policies(mock_client, mock_box_session, mock_user):
     assert policy.name == mock_policy['name']
 
 
-def test_get_file_version_retentions(mock_client, mock_box_session):
+def test_get_file_version_retentions(mock_client, mock_box_session, mock_file, mock_retention_policy):
     expected_url = "{0}/file_version_retentions".format(API.BASE_API_URL)
     mock_retention = {
         'type': 'file_version_retention',
@@ -605,9 +617,22 @@ def test_get_file_version_retentions(mock_client, mock_box_session):
         'entries': [mock_retention],
         'next_marker': 'testMarker',
     }
-    retentions = mock_client.get_file_version_retentions()
+    retentions = mock_client.get_file_version_retentions(
+        target_file=mock_file,
+        policy=mock_retention_policy,
+        disposition_action='remove_retention',
+        disposition_before='2014-09-15T13:15:35-07:00',
+        disposition_after='2014-09-20T13:15:35-07:00',
+    )
     retention = retentions.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    params = {
+        'file_id': '11111',
+        'policy_id': '22222',
+        'disposition_action': 'remove_retention',
+        'disposition_before': '2014-09-15T13:15:35-07:00',
+        'disposition_after': '2014-09-20T13:15:35-07:00',
+    }
+    mock_box_session.get.assert_called_once_with(expected_url, params=params)
     assert isinstance(retention, FileVersionRetention)
     assert retention.id == mock_retention['id']
     assert retention.type == mock_retention['type']
