@@ -68,12 +68,7 @@ class Session(object):
         self._network_layer = network_layer or DefaultNetwork()
         self._default_headers = {
             'User-Agent': self._client_config.USER_AGENT_STRING,
-            'X-Box-UA': 'agent=box-python-sdk/{0}; env=python/{1}.{2}.{3}'.format(
-                sdk_version,
-                py_version.major,
-                py_version.minor,
-                py_version.micro
-            )
+            'X-Box-UA': self._client_config.BOX_UA_STRING,
         }
         self._translator = translator
         self._default_network_request_kwargs = {}
