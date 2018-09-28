@@ -4,7 +4,7 @@ Groups are sets of users that can be used in collaborations.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
 
 - [List Groups](#list-groups)
 - [Create a Group](#create-a-group)
@@ -98,7 +98,7 @@ for collaboration in collaborations:
 Add User to Group
 -----------------
 
-To add a new member to the group use `group.add_member(user, role='Member')`.
+To add a new member to the group use `group.add_member(user, role='Member', configurable_permissions=None)`.
 
 ```python
 group_id = '1234'
