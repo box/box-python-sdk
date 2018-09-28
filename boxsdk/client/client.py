@@ -628,6 +628,7 @@ class Client(Cloneable):
             :class:`RetentionPolicy`
         """
         url = self.get_url('retention_policies')
+        user_list = []
         retention_attributes = {
             'policy_name': policy_name,
             'disposition_action': disposition_action,
@@ -642,7 +643,8 @@ class Client(Cloneable):
         if are_owners_notified is not None:
             retention_attributes['are_owners_notified'] = are_owners_notified
         if custom_notification_recipients is not None:
-            retention_attributes['custom_notification_recipients'] = custom_notification_recipients
+            user_list = [{'type': user.object_type, 'id': user.object_id} for user in custom_notification_recipients]
+            retention_attributes['custom_notification_recipients'] = user_list
         box_response = self._session.post(url, data=json.dumps(retention_attributes))
         response = box_response.json()
         return self.translator.translate(response['type'])(session=self._session, object_id=response['id'], response_object=response)

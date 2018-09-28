@@ -87,7 +87,7 @@ policy_assignment = retention_policy.assign(folder)
 Get Retention Policy Assignment
 -------------------------------
 
-Calling `retention_polict_assignment.get(fields=None, headers=None)` will return the retention policy assignment object.
+Calling `retention_policy_assignment.get(fields=None, headers=None)` will return the retention policy assignment object.
 
 ```python
 assignment_id = '1234'
