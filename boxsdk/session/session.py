@@ -4,7 +4,6 @@ from __future__ import unicode_literals, absolute_import
 
 from functools import partial
 from logging import getLogger
-from sys import version_info as py_version
 
 from .box_request import BoxRequest as _BoxRequest
 from .box_response import BoxResponse as _BoxResponse
@@ -15,7 +14,6 @@ from ..util.json import is_json_response
 from ..util.multipart_stream import MultipartStream
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
-from ..version import __version__ as sdk_version
 
 
 class Session(object):
