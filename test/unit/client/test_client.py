@@ -568,7 +568,6 @@ def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
     assert policy.disposition_action == mock_policy['disposition_action']
     assert policy.can_owner_extend_retention == mock_policy['can_owner_extend_retention']
     assert policy.are_owners_notified == mock_policy['are_owners_notified']
-    assert policy.custom_notification_recipients[0].object_type == mock_policy['custom_notification_recipients'][0]['type']
     assert isinstance(policy, RetentionPolicy)
 
 
