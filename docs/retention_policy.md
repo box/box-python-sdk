@@ -26,7 +26,7 @@ finite_retention_policy = client.create_retention_policy(policy_name=policy_name
 Get Retention Policy
 --------------------
 
-Calling `client.get()` will return a retention policy object.
+Calling `client.get(fields=None, headers=None)` will return a retention policy object.
 
 ```python
 policy_id = '1234'
@@ -36,7 +36,7 @@ retention_policy = client.retention_policy(policy_id).get()
 Get Retention Policies
 ----------------------
 
-Calling `client.get_retention_policies()` will return all retention policies for the enterprise.
+Calling `client.get_retention_policies(policy_name=None, policy_type=None, user=None, limit=None, marker=None, fields=None)` will return all retention policies for the enterprise.
 
 ```python
 retention_policies = client.get_retention_policies()
@@ -47,7 +47,7 @@ for policy in retention_policies:
 Update Retention Policy
 -----------------------
 
-Calling `retention_policy.update_info()` will return the updated retention policy object.
+Calling `retention_policy.update_info(data, params=None, headers=None, **kwargs)` will return the updated retention policy object.
 
 ```python
 policy_id = '1234'
@@ -58,20 +58,20 @@ updated_retention_policy = client.retention_policy(policy_id).update_info(policy
 Assign Retention Policy
 -----------------------
 
-To create a new retention policy assignment call `retention_policy.assign(item)` to assign the policy to a specific enterprise, 
+To create a new retention policy assignment call `retention_policy.assign(assignee, fields=None)` to assign the policy to a specific enterprise, 
 folder, or metadata_template If assigining to an enterprise you will not have to provide the ID.
 
 ```python
 policy_id = '1234'
-item_to_assign = {'type': 'folder', 'id': '1111'}
+folder = client.folder('1111')
 retention_policy = client.retention_policy(policy_id)
-policy_assignment = retention_policy.assign(item_to_assign)
+policy_assignment = retention_policy.assign(folder)
 ```
 
 Get Retention Policy Assignment
 -------------------------------
 
-Calling `retention_polict_assignment.get()` will return the retention policy assignment object.
+Calling `retention_polict_assignment.get(fields=None, headers=None)` will return the retention policy assignment object.
 
 ```python
 assignment_id = '1234'
@@ -81,7 +81,7 @@ assignment = client.retention_policy_assignment(assignment_id).get()
 Get Retention Policy Assignments
 --------------------------------
 
-Calling `retention_policy.assigments()` will return all retention policy assignments for the enterprise. It is possible to specify maximum number of items per single reponse with
+Calling `retention_policy.assigments(assignment_type=None, limit=None, marker=None, fields=None)` will return all retention policy assignments for the enterprise. It is possible to specify maximum number of items per single reponse with
 `retention_policy.assignments(limit=10)`.
 
 ```python
@@ -114,7 +114,7 @@ for retention in retentions:
 Get Information about a File Version Retention
 ----------------------------------------------
 
-Calling `file_version_retention.get()` will return information about the specific file version retention.
+Calling `file_version_retention.get(fields=None, headers=None)` will return information about the specific file version retention.
 
 ```python
 retention_info = client.file_version_retention('1234').get()

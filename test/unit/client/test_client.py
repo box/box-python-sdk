@@ -112,8 +112,8 @@ def mock_user(mock_box_session):
 
 @pytest.fixture()
 def mock_file(mock_box_session):
-    file = File(mock_box_session, '11111')
-    return file
+    test_file = File(mock_box_session, '11111')
+    return test_file
 
 
 @pytest.fixture()
