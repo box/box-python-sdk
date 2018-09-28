@@ -159,6 +159,144 @@ class Client(Cloneable):
         """
         return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
 
+    def legal_hold_policy(self, policy_id):
+        """
+        Initialize a :class:`LegalHoldPolicy` object, whose box id is policy_id.
+
+        :param policy_id:
+            The box ID of the :class:`LegalHoldPolicy` object.
+        :type policy_id:
+            `unicode`
+        :return:
+            A :class:`LegalHoldPolicy` object with the given entry ID.
+        :rtype:
+            :class:`LegalHoldPolicy`
+        """
+        return self.translator.translate('legal_hold_policy')(session=self._session, object_id=policy_id)
+
+    def legal_hold_policy_assignment(self, policy_assignment_id):
+        """
+        Initialize a :class:`LegalHoldPolicyAssignment` object, whose box id is policy_assignment_id.
+
+        :param policy_assignment_id:
+            The assignment ID of the :class:`LegalHoldPolicyAssignment` object.
+        :type policy_assignment_id:
+            `unicode`
+        :return:
+            A :class:`LegalHoldPolicyAssignment` object with the given entry ID.
+        :rtype:
+            :class:`LegalHoldPolicyAssignment`
+        """
+        return self.translator.translate('legal_hold_policy_assignment')(session=self._session, object_id=policy_assignment_id)
+
+    def legal_hold(self, hold_id):
+        """
+        Initialize a :class:`LegalHold` object, whose box id is policy_id.
+
+        :param hold_id:
+            The legal hold ID of the :class:`LegalHold` object.
+        :type hold_id:
+            `unicode`
+        :return:
+            A :class:`LegalHold` object with the given entry ID.
+        :rtype:
+            :class:`LegalHold`
+        """
+        return self.translator.translate('legal_hold')(session=self._session, object_id=hold_id)
+
+    def create_legal_hold_policy(
+            self,
+            policy_name,
+            description=None,
+            filter_starting_at=None,
+            filter_ending_at=None,
+            is_ongoing=None
+    ):
+        """
+        Create a legal hold policy.
+
+        :param policy_name:
+            The legal hold policy's display name.
+        :type policy_name:
+            `unicode`
+        :param description:
+            The description of the legal hold policy.
+        :type description:
+            `unicode` or None
+        :param filter_starting_at:
+            The start time filter for legal hold policy
+        :type filter_starting_at:
+            `unicode` or None
+        :param filter_ending_at:
+            The end time filter for legal hold policy
+        :type filter_ending_at:
+            `unicode` or None
+        :param is_ongoing:
+            After initialization, Assignments under this Policy will continue applying to
+            files based on events, indefinitely.
+        :type is_ongoing:
+            `bool` or None
+        :returns:
+            A legal hold policy object
+        :rtype:
+            :class:`LegalHoldPolicy
+        """
+        url = self.get_url('legal_hold_policies')
+        policy_attributes = {'policy_name': policy_name}
+        if description is not None:
+            policy_attributes['description'] = description
+        if filter_starting_at is not None:
+            policy_attributes['filter_starting_at'] = filter_starting_at
+        if filter_ending_at is not None:
+            policy_attributes['filter_ending_at'] = filter_ending_at
+        if is_ongoing is not None:
+            policy_attributes['is_ongoing'] = is_ongoing
+        box_response = self._session.post(url, data=json.dumps(policy_attributes))
+        response = box_response.json()
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+    def get_legal_hold_policies(self, policy_name=None, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the legal hold policy using limit-offset paging.
+
+        :param policy_name:
+            The name of the legal hold policy case insensitive to search for
+        :type policy_name:
+            `unicode` or None
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the legal hold policy
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {}
+        if policy_name is not None:
+            additional_params['policy_name'] = policy_name
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('legal_hold_policies'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
+
     def collection(self, collection_id):
         """
         Initialize a :class:`Collection` object, whose box ID is collection_id.
@@ -335,7 +473,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def groups(self, name=None, offset=0, limit=None, fields=None):
+    def get_groups(self, name=None, limit=None, offset=None, fields=None):
         """
         Get a list of all groups for the current user.
 
@@ -350,7 +488,7 @@ class Client(Cloneable):
         :param offset:
             The group index at which to start the response.
         :type offset:
-            `int`
+            `int` or None.
         :param fields:
             List of fields to request on the :class:`Group` objects.
         :type fields:
@@ -456,7 +594,16 @@ class Client(Cloneable):
         )
 
     @api_call
-    def create_group(self, name):
+    def create_group(
+            self,
+            name,
+            provenance=None,
+            external_sync_identifier=None,
+            description=None,
+            invitability_level=None,
+            member_viewability_level=None,
+            fields=None,
+    ):
         """
         Create a group with the given name.
 
@@ -464,6 +611,30 @@ class Client(Cloneable):
             The name of the group.
         :type name:
             `unicode`
+        :param provenance:
+            Used to track the external source where the group is coming from.
+        :type provenance:
+            `unicode` or None
+        :param external_sync_identifier:
+            Used as a group identifier for groups coming from an external source.
+        :type external_sync_identifier:
+            `unicode` or None
+        :param description:
+            Description of the group.
+        :type description:
+            `unicode` or None
+        :param invitability_level:
+            Specifies who can invite this group to folders.
+        :type invitability_level:
+            `unicode`
+        :param member_viewability_level:
+            Specifies who can view the members of this group.
+        :type member_viewability_level:
+            `unicode`
+        :param fields:
+            List of fields to request on the :class:`Group` objects.
+        :type fields:
+            `Iterable` of `unicode`
         :return:
             The newly created Group.
         :rtype:
@@ -472,10 +643,23 @@ class Client(Cloneable):
             :class:`BoxAPIException` if current user doesn't have permissions to create a group.
         """
         url = self.get_url('groups')
+        additional_params = {}
         body_attributes = {
             'name': name,
         }
-        box_response = self._session.post(url, data=json.dumps(body_attributes))
+        if provenance is not None:
+            body_attributes['provenance'] = provenance
+        if external_sync_identifier is not None:
+            body_attributes['external_sync_identifier'] = external_sync_identifier
+        if description is not None:
+            body_attributes['description'] = description
+        if invitability_level is not None:
+            body_attributes['invitability_level'] = invitability_level
+        if member_viewability_level is not None:
+            body_attributes['member_viewability_level'] = member_viewability_level
+        if fields is not None:
+            additional_params['fields'] = ','.join(fields)
+        box_response = self._session.post(url, data=json.dumps(body_attributes), params=additional_params)
         response = box_response.json()
         return self.translator.translate('group')(
             session=self._session,
@@ -618,6 +802,37 @@ class Client(Cloneable):
             session=self._session,
             object_id=response['id'],
             response_object=response,
+        )
+
+    def get_pending_collaborations(self, limit=None, offset=None, fields=None):
+        """
+        Get the entries in the pending collaborations using limit-offset paging.
+
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param offset:
+            The offset of the item at which to begin the response.
+        :type offset:
+            `int` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the pending collaborations
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return LimitOffsetBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('collaborations'),
+            additional_params={'status': 'pending'},
+            limit=limit,
+            offset=offset,
+            fields=fields,
+            return_full_pages=False,
         )
 
     def downscope_token(self, scopes, item=None, additional_data=None):
