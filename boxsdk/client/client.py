@@ -621,7 +621,7 @@ class Client(Cloneable):
         :param custom_notification_recipients:
             A custom list of user mini objects that should be notified when a file is nearing expiration.
         :type custom_notification_recipients:
-            `list` or `User` objects
+            `list` of :class:`User` objects
         :return:
             The newly created Retention Policy
         :rtype:
