@@ -109,6 +109,7 @@ def mock_user(mock_box_session):
     user = User(mock_box_session, '12345')
     return user
 
+
 @pytest.fixture()
 def mock_user_list(mock_box_session):
     user_list = []

@@ -119,7 +119,6 @@ def test_group_membership(mock_box_session, mock_object_id):
     return GroupMembership(mock_box_session, mock_object_id)
 
 
-
 @pytest.fixture()
 def test_legal_hold_policy(mock_box_session, mock_object_id):
     return LegalHoldPolicy(mock_box_session, mock_object_id)
