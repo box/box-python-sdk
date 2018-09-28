@@ -15,6 +15,7 @@ from boxsdk.object.file_version_retention import FileVersionRetention
 from boxsdk.object.legal_hold import LegalHold
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
+from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
 from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
 from boxsdk.object.user import User
@@ -112,6 +113,11 @@ def test_file_version_retention(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_retention_policy_assignment(mock_box_session, mock_object_id):
     return RetentionPolicyAssignment(mock_box_session, mock_object_id)
+
+
+def test_group_membership(mock_box_session, mock_object_id):
+    return GroupMembership(mock_box_session, mock_object_id)
+
 
 
 @pytest.fixture()
