@@ -327,7 +327,7 @@ def test_events_returns_event_object(mock_client):
     assert isinstance(mock_client.events(), Events)
 
 
-def test_groups_return_the_correct_group_objects(
+def test_get_groups_return_the_correct_group_objects(
         mock_client,
         mock_box_session,
         groups_response,
@@ -335,26 +335,42 @@ def test_groups_return_the_correct_group_objects(
         group_id_2,
 ):
     # pylint:disable=redefined-outer-name
+    expected_url = '{0}/groups'.format(API.BASE_API_URL)
     mock_box_session.get.return_value = groups_response
-    groups = mock_client.groups()
+    groups = mock_client.get_groups()
     for group, expected_id in zip(groups, [group_id_1, group_id_2]):
         assert group.object_id == expected_id
         assert group.name == str(expected_id)
         # pylint:disable=protected-access
         assert group._session == mock_box_session
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
 
 
 def test_create_group_returns_the_correct_group_object(mock_client, mock_box_session, create_group_response):
     # pylint:disable=redefined-outer-name
+    expected_url = "{0}/groups".format(API.BASE_API_URL)
     test_group_name = 'test_group_name'
-    value = json.dumps({'name': test_group_name})
+    value = json.dumps({
+        'name': test_group_name,
+        'provenance': 'Example',
+        'external_sync_identifier': 'Example-User',
+        'description': 'Description of group',
+        'invitability_level': 'admins_and_members',
+        'member_viewability_level': 'admins_only',
+    })
     mock_box_session.post.return_value = create_group_response
-    new_group = mock_client.create_group(name=test_group_name)
+    new_group = mock_client.create_group(
+        name=test_group_name,
+        provenance='Example',
+        external_sync_identifier='Example-User',
+        description='Description of group',
+        invitability_level='admins_and_members',
+        member_viewability_level='admins_only',
+    )
 
     assert len(mock_box_session.post.call_args_list) == 1
 
-    assert mock_box_session.post.call_args[0] == ("{0}/groups".format(API.BASE_API_URL),)
-    assert mock_box_session.post.call_args[1] == {'data': value}
+    mock_box_session.post.assert_called_once_with(expected_url, data=value, params={})
     assert isinstance(new_group, Group)
     assert new_group.object_id == 1234
     assert new_group.name == test_group_name

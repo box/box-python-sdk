@@ -419,6 +419,50 @@ class Item(BaseObject):
         Permanently delete an item that is in the trash. The item will no longer exist in Box.
         """
         url = self.get_url('trash')
+
+    def get_watermark(self):
+        """
+        Return the watermark info for a Box file
+
+        :return:
+            Watermark object.
+        :rtype:
+            :class:`Watermark`
+        """
+        url = self.get_url('watermark')
+        box_response = self._session.get(url)
+        response = box_response.json()
+        return self.translator.translate('watermark')(response['watermark'])
+
+    def apply_watermark(self):
+        """
+        Apply watermark on a Box file
+
+        :return:
+            Watermark object.
+        :rtype:
+            :class:`Watermark`
+        """
+        url = self.get_url('watermark')
+        body_attributes = {
+            'watermark': {
+                'imprint': 'default'
+            }
+        }
+        box_response = self._session.put(url, data=json.dumps(body_attributes))
+        response = box_response.json()
+        return self.translator.translate('watermark')(response['watermark'])
+
+    def delete_watermark(self):
+        """
+        Deletes the watermark info for a Box file
+
+        :return:
+            Whether or not the delete succeeded.
+        :rtype:
+            `bool`
+        """
+        url = self.get_url('watermark')
         box_response = self._session.delete(url, expect_json_response=False)
         return box_response.ok
 
