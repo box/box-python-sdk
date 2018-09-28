@@ -10,6 +10,9 @@ Release History
 
 - Python 2.6 is no longer supported.
 - Python 3.3 is no longer supported.
+- ``client.get_memberships`` has a change in signature. The limit and offset parameters have swapped positions to keep
+  consistency with the rest of the SDK.
+- ``client.groups`` has been changed to ``client.get_groups``. The limit and offset parameters have swapped positions.
 - ``Events.get_events(...)`` now returns a list of ``Event`` instances rather than a list of ``dict``
   representing events.  ``Event`` inherits from ``Mapping`` but will not have all the same capabilities as
   ``dict``.
