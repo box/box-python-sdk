@@ -11,6 +11,7 @@ import pytest
 from six.moves import map  # pylint:disable=redefined-builtin,import-error
 
 from boxsdk.network.default_network import DefaultNetworkResponse
+from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.config import API
 from boxsdk.session.box_response import BoxResponse
@@ -45,11 +46,12 @@ def test_delete_group_return_the_correct_response(
 def test_add_member(test_group, mock_box_session, mock_add_member_response, mock_user, role):
     expected_url = '{0}/group_memberships'.format(API.BASE_API_URL)
     mock_box_session.post.return_value = mock_add_member_response
-    new_group_membership = test_group.add_member(mock_user, role)
+    new_group_membership = test_group.add_member(mock_user, role, configurable_permissions={'can_run_reports': True})
     data = json.dumps({
         'user': {'id': mock_user.object_id},
         'group': {'id': test_group.object_id},
         'role': role,
+        'configurable_permissions': {'can_run_reports': True}
     })
     mock_box_session.post.assert_called_once_with(expected_url, data=data)
     assert isinstance(new_group_membership, GroupMembership)
@@ -162,3 +164,27 @@ def test_get_memberships_with_hidden_results(test_group, mock_box_session, mock_
         count += 1
         assert isinstance(membership, GroupMembership)
     assert count == total - total_hidden
+
+
+def test_get_group_collaborations(test_group, mock_box_session):
+    expected_url = '{0}/groups/{1}/collaborations'.format(API.BASE_API_URL, test_group.object_id)
+    mock_collaboration = {
+        'type': 'collaboration',
+        'id': '12345',
+        'created_by': {
+            'type': 'user',
+            'id': '33333'
+        }
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_collaboration],
+        'offset': 0,
+        'total_count': 1
+    }
+    collaborations = test_group.get_collaborations()
+    collaboration = collaborations.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
+    assert isinstance(collaboration, Collaboration)
+    assert collaboration.id == mock_collaboration['id']
+    assert collaboration.created_by['id'] == mock_collaboration['created_by']['id']
