@@ -3,15 +3,31 @@ Retention Policies
 
 A retention policy blocks permanent deletion of content for a specified amount of time. Admins can create retention policies and then later assign them to specific folders or their entire enterprise.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Create Retention Policy](#create-retention-policy)
+- [Get Retention Policy](#get-retention-policy)
+- [Get Retention Policies](#get-retention-policies)
+- [Update Retention Policy](#update-retention-policy)
+- [Assign Retention Policy](#assign-retention-policy)
+- [Get Retention Policy Assignment](#get-retention-policy-assignment)
+- [Get Retention Policy Assignments](#get-retention-policy-assignments)
+- [Get File Version Retentions](#get-file-version-retentions)
+- [Get Information about a File Version Retention](#get-information-about-a-file-version-retention)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 Create Retention Policy
 -----------------------
 
-You can call `client.create_retention_policy(policy_name, disposition_action, can_owner_extend_retention=None, are_owners_notified=None, retention_length=None, custom_notification_recipients=None)` to let you create a new indefinite retention policy.
+You can call `client.create_retention_policy(policy_name, disposition_action, retention_length, can_owner_extend_retention=None, are_owners_notified=None, custom_notification_recipients=None)` to let you create a new indefinite retention policy.
 
 ```python
 policy_name = 'Test Indefinite Policy Name'
 disposition_action = 'remove_retention'
-indefinite_retention_policy = client.create_retention_policy(policy_name, disposition_action)
+indefinite_retention_policy = client.create_retention_policy(policy_name, disposition_action, float('inf'))
 ```
 
 Alternatively, if you want to create a finite retention policy, you can do so by calling `client.create_retention_policy(policy_name, disposition_action, retention_length=5)`
@@ -103,7 +119,7 @@ for assignment in assignments:
 Get File Version Retentions
 ---------------------------
 
-Calling `client.get_file_version_retentions(file_id=None, file_version_id=None, policy_id=None, disposition_action=None, disposition_before=None, disposition_after=None, limit=None, marker=None, fields=None)` will return an iterable of file version retentions for the enterprise.
+Calling `client.get_file_version_retentions(target_file=None, file_version=None, policy_id=None, disposition_action=None, disposition_before=None, disposition_after=None, limit=None, marker=None, fields=None)` will return an iterable of file version retentions for the enterprise.
 
 ```python
 retentions = client.get_file_version_retentions()
