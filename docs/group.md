@@ -1,8 +1,25 @@
 Groups
 ======
-
 Groups are sets of users that can be used in collaborations.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [List Groups](#list-groups)
+- [Create a Group](#create-a-group)
+- [Get Information about a Group](#get-information-about-a-group)
+- [Update a Group](#update-a-group)
+- [Delete a Group](#delete-a-group)
+- [Get a Group's Collaborations](#get-a-groups-collaborations)
+- [Add User to Group](#add-user-to-group)
+- [Get Information about a Group Membership](#get-information-about-a-group-membership)
+- [Update Membership](#update-membership)
+- [Remove User from Group](#remove-user-from-group)
+- [List Group Members](#list-group-members)
+- [List Memberships for User](#list-memberships-for-user)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 List Groups
 -----------
