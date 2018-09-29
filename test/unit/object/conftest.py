@@ -11,6 +11,7 @@ from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
 from boxsdk.object.device_pinner import DevicePinner
 from boxsdk.object.file import File
+from boxsdk.object.file_version_retention import FileVersionRetention
 from boxsdk.object.legal_hold import LegalHold
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
@@ -18,6 +19,8 @@ from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
 from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
 from boxsdk.object.user import User
+from boxsdk.object.retention_policy import RetentionPolicy
+from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 from boxsdk.object.search import Search
 from boxsdk.object.web_link import WebLink
 
@@ -98,6 +101,20 @@ def test_group(mock_box_session, mock_group_id):
 
 
 @pytest.fixture()
+def test_retention_policy(mock_box_session, mock_object_id):
+    return RetentionPolicy(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_file_version_retention(mock_box_session, mock_object_id):
+    return FileVersionRetention(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_retention_policy_assignment(mock_box_session, mock_object_id):
+    return RetentionPolicyAssignment(mock_box_session, mock_object_id)
+
+
 def test_group_membership(mock_box_session, mock_object_id):
     return GroupMembership(mock_box_session, mock_object_id)
 
