@@ -1,5 +1,5 @@
 # coding: utf-8
-
+# pylint: disable=too-many-lines
 from __future__ import unicode_literals, absolute_import
 import json
 
@@ -158,6 +158,144 @@ class Client(Cloneable):
             :class:`Collaboration`
         """
         return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
+
+    def legal_hold_policy(self, policy_id):
+        """
+        Initialize a :class:`LegalHoldPolicy` object, whose box id is policy_id.
+
+        :param policy_id:
+            The box ID of the :class:`LegalHoldPolicy` object.
+        :type policy_id:
+            `unicode`
+        :return:
+            A :class:`LegalHoldPolicy` object with the given entry ID.
+        :rtype:
+            :class:`LegalHoldPolicy`
+        """
+        return self.translator.translate('legal_hold_policy')(session=self._session, object_id=policy_id)
+
+    def legal_hold_policy_assignment(self, policy_assignment_id):
+        """
+        Initialize a :class:`LegalHoldPolicyAssignment` object, whose box id is policy_assignment_id.
+
+        :param policy_assignment_id:
+            The assignment ID of the :class:`LegalHoldPolicyAssignment` object.
+        :type policy_assignment_id:
+            `unicode`
+        :return:
+            A :class:`LegalHoldPolicyAssignment` object with the given entry ID.
+        :rtype:
+            :class:`LegalHoldPolicyAssignment`
+        """
+        return self.translator.translate('legal_hold_policy_assignment')(session=self._session, object_id=policy_assignment_id)
+
+    def legal_hold(self, hold_id):
+        """
+        Initialize a :class:`LegalHold` object, whose box id is policy_id.
+
+        :param hold_id:
+            The legal hold ID of the :class:`LegalHold` object.
+        :type hold_id:
+            `unicode`
+        :return:
+            A :class:`LegalHold` object with the given entry ID.
+        :rtype:
+            :class:`LegalHold`
+        """
+        return self.translator.translate('legal_hold')(session=self._session, object_id=hold_id)
+
+    def create_legal_hold_policy(
+            self,
+            policy_name,
+            description=None,
+            filter_starting_at=None,
+            filter_ending_at=None,
+            is_ongoing=None
+    ):
+        """
+        Create a legal hold policy.
+
+        :param policy_name:
+            The legal hold policy's display name.
+        :type policy_name:
+            `unicode`
+        :param description:
+            The description of the legal hold policy.
+        :type description:
+            `unicode` or None
+        :param filter_starting_at:
+            The start time filter for legal hold policy
+        :type filter_starting_at:
+            `unicode` or None
+        :param filter_ending_at:
+            The end time filter for legal hold policy
+        :type filter_ending_at:
+            `unicode` or None
+        :param is_ongoing:
+            After initialization, Assignments under this Policy will continue applying to
+            files based on events, indefinitely.
+        :type is_ongoing:
+            `bool` or None
+        :returns:
+            A legal hold policy object
+        :rtype:
+            :class:`LegalHoldPolicy
+        """
+        url = self.get_url('legal_hold_policies')
+        policy_attributes = {'policy_name': policy_name}
+        if description is not None:
+            policy_attributes['description'] = description
+        if filter_starting_at is not None:
+            policy_attributes['filter_starting_at'] = filter_starting_at
+        if filter_ending_at is not None:
+            policy_attributes['filter_ending_at'] = filter_ending_at
+        if is_ongoing is not None:
+            policy_attributes['is_ongoing'] = is_ongoing
+        box_response = self._session.post(url, data=json.dumps(policy_attributes))
+        response = box_response.json()
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+    def get_legal_hold_policies(self, policy_name=None, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the legal hold policy using limit-offset paging.
+
+        :param policy_name:
+            The name of the legal hold policy case insensitive to search for
+        :type policy_name:
+            `unicode` or None
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the legal hold policy
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {}
+        if policy_name is not None:
+            additional_params['policy_name'] = policy_name
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('legal_hold_policies'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
 
     def collection(self, collection_id):
         """
@@ -335,7 +473,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def groups(self, name=None, offset=0, limit=None, fields=None):
+    def get_groups(self, name=None, limit=None, offset=None, fields=None):
         """
         Get a list of all groups for the current user.
 
@@ -350,7 +488,7 @@ class Client(Cloneable):
         :param offset:
             The group index at which to start the response.
         :type offset:
-            `int`
+            `int` or None.
         :param fields:
             List of fields to request on the :class:`Group` objects.
         :type fields:
@@ -374,7 +512,16 @@ class Client(Cloneable):
         )
 
     @api_call
-    def create_group(self, name):
+    def create_group(
+            self,
+            name,
+            provenance=None,
+            external_sync_identifier=None,
+            description=None,
+            invitability_level=None,
+            member_viewability_level=None,
+            fields=None,
+    ):
         """
         Create a group with the given name.
 
@@ -382,6 +529,30 @@ class Client(Cloneable):
             The name of the group.
         :type name:
             `unicode`
+        :param provenance:
+            Used to track the external source where the group is coming from.
+        :type provenance:
+            `unicode` or None
+        :param external_sync_identifier:
+            Used as a group identifier for groups coming from an external source.
+        :type external_sync_identifier:
+            `unicode` or None
+        :param description:
+            Description of the group.
+        :type description:
+            `unicode` or None
+        :param invitability_level:
+            Specifies who can invite this group to folders.
+        :type invitability_level:
+            `unicode`
+        :param member_viewability_level:
+            Specifies who can view the members of this group.
+        :type member_viewability_level:
+            `unicode`
+        :param fields:
+            List of fields to request on the :class:`Group` objects.
+        :type fields:
+            `Iterable` of `unicode`
         :return:
             The newly created Group.
         :rtype:
@@ -390,16 +561,30 @@ class Client(Cloneable):
             :class:`BoxAPIException` if current user doesn't have permissions to create a group.
         """
         url = self.get_url('groups')
+        additional_params = {}
         body_attributes = {
             'name': name,
         }
-        box_response = self._session.post(url, data=json.dumps(body_attributes))
+        if provenance is not None:
+            body_attributes['provenance'] = provenance
+        if external_sync_identifier is not None:
+            body_attributes['external_sync_identifier'] = external_sync_identifier
+        if description is not None:
+            body_attributes['description'] = description
+        if invitability_level is not None:
+            body_attributes['invitability_level'] = invitability_level
+        if member_viewability_level is not None:
+            body_attributes['member_viewability_level'] = member_viewability_level
+        if fields is not None:
+            additional_params['fields'] = ','.join(fields)
+        box_response = self._session.post(url, data=json.dumps(body_attributes), params=additional_params)
         response = box_response.json()
         return self.translator.translate('group')(
             session=self._session,
             object_id=response['id'],
             response_object=response,
         )
+
 
     def storage_policy(self, policy_id):
         """
@@ -455,11 +640,267 @@ class Client(Cloneable):
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self.get_url('storage_policies'),
+
+    def retention_policy(self, retention_id):
+        """
+        Initialize a :class:`RetentionPolicy` object, whose box id is retention_id.
+
+        :param retention_id:
+            The box ID of the :class:`RetentionPolicy` object.
+        :type retention_id:
+            `unicode`
+        :return:
+            A :class:`RetentionPolicy` object with the given entry ID.
+        :rtype:
+            :class:`RetentionPolicy`
+        """
+        return self.translator.translate('retention_policy')(session=self._session, object_id=retention_id)
+
+    def file_version_retention(self, retention_id):
+        """
+        Initialize a :class:`FileVersionRetention` object, whose box id is retention_id.
+
+        :param retention_id:
+            The box ID of the :class:`FileVersionRetention` object.
+        :type retention_id:
+            `unicode`
+        :return:
+            A :class:`FileVersionRetention` object with the given retention ID.
+        :rtype:
+            :class:`FileVersionRetention`
+        """
+        return self.translator.translate('file_version_retention')(session=self._session, object_id=retention_id)
+
+    def retention_policy_assignment(self, assignment_id):
+        """
+        Initialize a :class:`RetentionPolicyAssignment` object, whose box id is assignment_id.
+
+        :param assignment_id:
+            The box ID of the :class:`RetentionPolicyAssignment` object.
+        :type assignment_id:
+            `unicode`
+        :return:
+            A :class:`RetentionPolicyAssignment` object with the given assignment ID.
+        :rtype:
+            :class:`RetentionPolicyAssignment`
+        """
+        return self.translator.translate('retention_policy_assignment')(session=self._session, object_id=assignment_id)
+
+    def create_retention_policy(
+            self,
+            policy_name,
+            disposition_action,
+            retention_length,
+            can_owner_extend_retention=None,
+            are_owners_notified=None,
+            custom_notification_recipients=None,
+    ):
+        """
+        Create a retention policy for the given enterprise.
+
+        :param policy_name:
+            The name of the retention policy.
+        :type policy_name:
+            `unicode`
+        :param retention_length:
+            The amount of time in days to apply the retention policy to the selected content.
+            The retention_length should be set to float('inf') for indefinite policies.
+        :type retention_length:
+            `int` or float('inf')
+        :param disposition_action:
+            For `finite` policy can be set to `permanently delete` or `remove retention`.
+            For `indefinite` policy this must be set to `remove_retention`
+        :type disposition_action:
+            `unicode`
+        :param can_owner_extend_retention:
+            The owner of a file will be allowed to extend the retention if set to true.
+        :type can_owner_extend_retention:
+            `boolean` or None
+        :param are_owners_notified:
+            The owner or co-owner will get notified when a file is nearing expiration.
+        :type are_owners_notified:
+            `boolean` or None
+        :param custom_notification_recipients:
+            A custom list of user mini objects that should be notified when a file is nearing expiration.
+        :type custom_notification_recipients:
+            `list` of :class:`User` objects
+        :return:
+            The newly created Retention Policy
+        :rtype:
+            :class:`RetentionPolicy`
+        """
+        url = self.get_url('retention_policies')
+        user_list = []
+        retention_attributes = {
+            'policy_name': policy_name,
+            'disposition_action': disposition_action,
+        }
+        if retention_length == float('inf'):
+            retention_attributes['policy_type'] = 'indefinite'
+        else:
+            retention_attributes['policy_type'] = 'finite'
+            retention_attributes['retention_length'] = retention_length
+        if can_owner_extend_retention is not None:
+            retention_attributes['can_owner_extend_retention'] = can_owner_extend_retention
+        if are_owners_notified is not None:
+            retention_attributes['are_owners_notified'] = are_owners_notified
+        if custom_notification_recipients is not None:
+            user_list = [{'type': user.object_type, 'id': user.object_id} for user in custom_notification_recipients]
+            retention_attributes['custom_notification_recipients'] = user_list
+        box_response = self._session.post(url, data=json.dumps(retention_attributes))
+        response = box_response.json()
+        return self.translator.translate(response['type'])(session=self._session, object_id=response['id'], response_object=response)
+
+    def get_retention_policies(
+            self,
+            policy_name=None,
+            policy_type=None,
+            user=None,
+            limit=None,
+            marker=None,
+            fields=None,
+    ):
+        """
+        Get the entries in the retention policy using marker-based paging.
+
+        :param policy_name:
+            The name of the retention policy.
+        :type policy_name:
+            `unicode` or None
+        :param policy_type:
+            Set to either `finite` or `indefinite`
+        :type policy_type:
+            `unicode` or None
+        :param user:
+            A user to filter the retention policies.
+        :type user:
+            :class:`User` or None
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the retention policy
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {}
+        if policy_name is not None:
+            additional_params['policy_name'] = policy_name
+        if policy_type is not None:
+            additional_params['policy_type'] = policy_type
+        if user is not None:
+            additional_params['created_by_user_id'] = user.object_id
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self._session.get_url('retention_policies'),
+            additional_params=additional_params,
             limit=limit,
             marker=marker,
             fields=fields,
             return_full_pages=False,
         )
+
+    def get_file_version_retentions(
+            self,
+            target_file=None,
+            file_version=None,
+            policy=None,
+            disposition_action=None,
+            disposition_before=None,
+            disposition_after=None,
+            limit=None,
+            marker=None,
+            fields=None,
+    ):
+        """
+        Get the entries in the file version retention.
+
+        :param target_file:
+            The file to filter the file version.
+        :type target_file:
+            :class:`File` or None
+        :param file_version:
+            A file version to filter the file version retentions by.
+        :type file_version:
+            :class:`FileVersion` or None
+        :param policy:
+            A policy to filter the file version retentions by.
+        :type policy:
+            :class:`RetentionPolicy` or None
+        :param disposition_action:
+            Can be set to `permanently_delete` or `remove_retention`.
+        :type disposition_action:
+            `unicode` or None
+        :param disposition_before:
+            A date time filter for disposition action.
+        :type disposition_before:
+            `unicode` or None
+        :param disposition_after:
+            A date time filter for disposition action.
+        :type disposition_after:
+            `unicode` or None
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+           An iterator of the entries in the file version retention.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {}
+        if target_file is not None:
+            additional_params['file_id'] = target_file.object_id
+        if file_version is not None:
+            additional_params['file_version_id'] = file_version.object_id
+        if policy is not None:
+            additional_params['policy_id'] = policy.object_id
+        if disposition_action is not None:
+            additional_params['disposition_action'] = disposition_action
+        if disposition_before is not None:
+            additional_params['disposition_before'] = disposition_before
+        if disposition_after is not None:
+            additional_params['disposition_after'] = disposition_after
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self._session.get_url('file_version_retentions'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
+
+    def web_link(self, web_link_id):
+        """
+        Initialize a :class: `WebLink` object, whose box id is web_link_id.
+        :param web_link_id:
+            The box ID of the :class:`WebLink` object.
+        :type web_link_id:
+            `unicode`
+        :return:
+            A :class:`WebLink` object with the given entry ID.
+        :rtype:
+            :class:`WebLink`
+        """
+        return self.translator.translate('web_link')(session=self._session, object_id=web_link_id)
 
     @api_call
     def get_recent_items(self, limit=None, marker=None, fields=None, **collection_kwargs):
@@ -584,6 +1025,37 @@ class Client(Cloneable):
             response_object=response,
         )
 
+    def get_pending_collaborations(self, limit=None, offset=None, fields=None):
+        """
+        Get the entries in the pending collaborations using limit-offset paging.
+
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param offset:
+            The offset of the item at which to begin the response.
+        :type offset:
+            `int` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the pending collaborations
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return LimitOffsetBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('collaborations'),
+            additional_params={'status': 'pending'},
+            limit=limit,
+            offset=offset,
+            fields=fields,
+            return_full_pages=False,
+        )
+
     def downscope_token(self, scopes, item=None, additional_data=None):
         """
         Generate a downscoped token for the provided file or folder with the provided scopes.
@@ -642,3 +1114,60 @@ class Client(Cloneable):
         """
         # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
+
+    def device_pinner(self, device_pin_id):
+        """
+        Initialize a :class:`DevicePinner` object, whose box id is device_pin_id.
+
+        :param device_pin_id:
+            The assignment ID of the :class:`DevicePin` object.
+        :type device_pin_id:
+            `unicode`
+        :return:
+            A :class:`DevicePinner` object with the given entry ID.
+        :rtype:
+            :class:`DevicePinner`
+        """
+        return self.translator.translate('device_pinner')(session=self._session, object_id=device_pin_id)
+
+    def device_pinners(self, enterprise_id, direction=None, limit=None, marker=None, fields=None):
+        """
+        Returns all of the device pins for the given enterprise.
+
+        :param enterprise_id:
+            The id of the enterprise to retrieve device pinners for.
+        :type enterprise_id:
+            `unicode`
+        :param direction:
+            The sorting direction. Set to `ASC` or `DESC`
+        :type direction:
+            `unicode` or None
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the device pins.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {}
+        if direction is not None:
+            additional_params['direction'] = direction
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('enterprises', enterprise_id, 'device_pinners'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
