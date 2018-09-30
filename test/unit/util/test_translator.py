@@ -141,7 +141,7 @@ def test_without_new_child(extend_default_translator):
     assert not mapping
 
 
-def test_full_translate(default_translator, mock_box_session):
+def test_translate(default_translator, mock_box_session):
     response_object = {
         'entries': [
             {
@@ -167,7 +167,7 @@ def test_full_translate(default_translator, mock_box_session):
         ],
     }
 
-    results = default_translator.full_translate(response_object, mock_box_session)
+    results = default_translator.translate(response_object, mock_box_session)
     test_folder = results['entries'][0]
     test_file = results['entries'][1]
 

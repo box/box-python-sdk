@@ -227,12 +227,15 @@ class Client(Cloneable):
             params['filter_term'] = filter_term
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        user_class = self.translator.translate('user')
-        return [user_class(
+        return self.translator.translate(
             session=self._session,
-            object_id=item['id'],
-            response_object=item,
-        ) for item in response['entries']]
+            response_object=response,
+        )
+        # return [user_class(
+        #     session=self._session,
+        #     object_id=item['id'],
+        #     response_object=item,
+        # ) for item in response['entries']]
 
     @api_call
     def search(
