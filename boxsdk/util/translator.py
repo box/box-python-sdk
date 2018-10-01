@@ -119,19 +119,7 @@ class Translator(ChainMap):
             default = BaseObject
         return super(Translator, self).get(key, default)
 
-    def xtranslate(self, type_name):
-        """
-        Get the box object class associated with the given type name.
-
-        :param type_name:
-            The type name to be translated.
-        :type type_name:
-            `unicode`
-        :rtype:   :class:`BaseAPIJSONObjectMeta`
-        """
-        return self.get(type_name)
-
-    def translate(self, session=None, object_id=None, response_object=None):
+    def translate(self, session=None, response_object=None):
 
         if isinstance(response_object, Mapping):
             for key in response_object:
@@ -146,10 +134,11 @@ class Translator(ChainMap):
                 param_values = {
                     'session': session,
                     'response_object': response_object,
-                    'object_id': object_id or self._get_object_id(response_object),
+                    'object_id': self._get_object_id(response_object),
                 }
-                params = inspect.signature(object_class.__init__).parameters
-                param_values = {p:param_values[p] for p in params if self._is_constructor_param(params[p])}
+                # NOTE: getargspec() is deprecated, and should be replaced by inspect.signature() when 2.7 support drops
+                params = inspect.getargspec(object_class.__init__).args
+                param_values = {p:param_values[p] for p in params if p != 'self'}
                 return object_class(**param_values)
 
         return response_object
@@ -159,15 +148,6 @@ class Translator(ChainMap):
             return obj.get('event_id', None)
 
         return obj.get('id', None)
-
-    def _is_constructor_param(self, param):
-        if param.name is 'self':
-            return False
-
-        if param.kind is not param.POSITIONAL_OR_KEYWORD:
-            return False
-
-        return True
 
 
 Translator._default_translator = Translator(extend_default_translator=False)  # pylint:disable=protected-access

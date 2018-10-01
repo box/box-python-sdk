@@ -61,7 +61,7 @@ class Page(Sequence, object):
             :class:`BaseObject`
         """
         item_json = self._response_object[self._item_entries_key_name][key]
-        item_class = self._translator.translate(item_json['type'])
+        item_class = self._translator.get(item_json['type'])
         kwargs = {}
         if issubclass(item_class, BaseObject):
             kwargs['object_id'] = item_json['id']

@@ -20,8 +20,7 @@ class RecentItem(BaseEndpoint, BaseAPIJSONObject):
             :class:`Item`
         """
         item = self._response_object['item']
-        return self.translator.translate(item['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=item['id'],
             response_object=item,
         )

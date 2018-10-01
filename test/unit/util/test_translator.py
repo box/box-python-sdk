@@ -56,7 +56,7 @@ def translator_response(
 @pytest.mark.parametrize('response_type', ['bookmark', 'box_note', 'file', 'folder', 'group', 'user'])
 def test_translator_converts_response_to_correct_type(response_type):
     response, object_class = _response_to_class_mapping[response_type]
-    assert type(Translator().translate(response.json()['type']) == object_class)
+    assert type(Translator().get(response.json()['type']) == object_class)
 
 
 def test_default_translator():
@@ -113,7 +113,7 @@ def test_with_new_child(new_child, extend_default_translator):
         pass
 
     translator.register(item_type, Bar)
-    assert translator.translate(item_type) is Bar
+    assert translator.get(item_type) is Bar
     assert mapping == {item_type: Foo}
 
 
@@ -134,7 +134,7 @@ def test_without_new_child(extend_default_translator):
         pass
 
     translator.register(item_type, Bar)
-    assert translator.translate(item_type) is Bar
+    assert translator.get(item_type) is Bar
     assert mapping == {item_type: Bar}
 
     del translator[item_type]
@@ -167,7 +167,7 @@ def test_translate(default_translator, mock_box_session):
         ],
     }
 
-    results = default_translator.translate(response_object, mock_box_session)
+    results = default_translator.translate(mock_box_session, response_object=response_object)
     test_folder = results['entries'][0]
     test_file = results['entries'][1]
 
