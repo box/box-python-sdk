@@ -379,7 +379,7 @@ class File(Item):
             response_object=response,
         )
 
-    def tasks(self, limit=None, marker=None, fields=None):
+    def get_tasks(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the file tasks.
 

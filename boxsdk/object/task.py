@@ -11,14 +11,14 @@ class Task(BaseObject):
     """Represents a Box task."""
     _item_type = 'task'
 
-    def assign(self, assign_to_id, assign_to_login=None):
+    def assign(self, assignee, assign_to_login=None):
         """
         Assign a task to a single user on a single file.
 
-        :param assign_to_id:
-            The id of the user to assign the task to.
-        "type assign_to_id:
-            `unicode` or None
+        :param assignee:
+            The :class:`user` to assign the task to.
+        :type assignee:
+            :class:`user`
         :param assign_to_login:
             The login of the user to assign the task to.
         :type assign_to_login:
@@ -35,7 +35,7 @@ class Task(BaseObject):
                 'id': self.object_id,
             },
             'assign_to': {
-                'id': assign_to_id,
+                'id': assignee.object_id,
             },
         }
         if assign_to_login is not None:
@@ -47,7 +47,7 @@ class Task(BaseObject):
             response_object=response,
         )
 
-    def assignments(self, limit=None, marker=None, fields=None):
+    def get_assignments(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the file task assignment.
 

@@ -42,22 +42,33 @@ def test_delete_file(test_file, mock_box_session, etag, if_match_header):
     )
 
 
-def test_create_task(test_file, mock_box_session, test_task):
+def test_create_task(test_file, test_task, mock_box_session):
     # pylint:disable=redefined-outer-name
+    expected_url = "{0}/tasks".format(API.BASE_API_URL)
     expected_body = {
         'item': {
             'type': 'file',
-            'id': 42,
+            'id': '42',
         },
         'action': 'review',
+        'message': 'Test Message',
+        'due_at': '2014-04-03T11:09:43-07:00',
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'type': 'task',
+        'id': '12345',
+        'due_at': '2014-04-03T11:09:43-07:00',
+        'action': 'review',
+        'message': 'Test Message',
     }
     value = json.dumps(expected_body)
-    mock_box_session.post.return_value = test_task
-    new_task = test_file.create_task()
-    assert len(mock_box_session.post.call_args_list) == 1
-    assert mock_box_session.post.call_args[0] == ("{0}/tasks".format(API.BASE_API_URL),)
-    assert mock_box_session.post.call_args[1] == {'data': value}
+    new_task = test_file.create_task(message='Test Message', due_at='2014-04-03T11:09:43-07:00')
+    mock_box_session.post.assert_called_once_with(expected_url, data=value)
     assert isinstance(new_task, Task)
+    assert new_task.object_type == 'task'
+    assert new_task.object_id == '12345'
+    assert new_task.action == 'review'
+    assert new_task.message == 'Test Message'
 
 
 def test_get_tasks(test_file, mock_box_session):
@@ -74,11 +85,12 @@ def test_get_tasks(test_file, mock_box_session):
         'limit': 100,
         'entries': [task_body],
     }
-    tasks = test_file.tasks()
+    tasks = test_file.get_tasks()
     task = tasks.next()
     mock_box_session.get.assert_called_once_with(expected_url, params={})
     assert isinstance(task, Task)
     assert task.id == task_body['id']
+    assert task.object_type == task_body['type']
     assert task.item['id'] == task_body['item']['id']
 
 

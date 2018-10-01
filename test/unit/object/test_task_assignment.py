@@ -20,12 +20,20 @@ def delete_task_assignment_response():
 def test_get_assignment(test_task_assignment, mock_box_session):
     expected_url = '{0}/task_assignments/{1}'.format(API.BASE_API_URL, test_task_assignment.object_id)
     mock_box_session.get.return_value.json.return_value = {
-        'type': 'task_assignment',
+        'type': test_task_assignment.object_type,
         'id': test_task_assignment.object_id,
+        'assigned_to': {
+            'type': 'user',
+            'id': '11111',
+        },
     }
     retrieved_task = test_task_assignment.get()
     mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
     assert isinstance(retrieved_task, TaskAssignment)
+    assert retrieved_task.object_type == test_task_assignment.object_type
+    assert retrieved_task.object_id == test_task_assignment.object_id
+    assert retrieved_task.assigned_to['type'] == 'user'
+    assert retrieved_task.assigned_to['id'] == '11111'
 
 
 def test_delete_policy_return_the_correct_response(
@@ -60,3 +68,5 @@ def test_update(test_task_assignment, mock_box_session):
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body), headers=None, params=None)
     assert isinstance(updated_task_assignment, TaskAssignment)
     assert updated_task_assignment.message == new_message
+    assert updated_task_assignment.object_type == test_task_assignment.object_type
+    assert updated_task_assignment.object_id == test_task_assignment.object_id
