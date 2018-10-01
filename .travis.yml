@@ -38,5 +38,3 @@ install:
 # commands to run
 script:
   - ./.travis/run.sh
-after_success:
-  - if [ "${TOX_ENV}" = "coverage" ]; then coveralls; fi
