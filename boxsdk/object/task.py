@@ -16,9 +16,9 @@ class Task(BaseObject):
         Assign a task to a single user on a single file.
 
         :param assignee:
-            The :class:`user` to assign the task to.
+            The :class:`User` to assign the task to.
         :type assignee:
-            :class:`user`
+            :class:`User`
         :param assign_to_login:
             The login of the user to assign the task to.
         :type assign_to_login:
