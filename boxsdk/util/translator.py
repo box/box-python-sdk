@@ -11,6 +11,22 @@ from .chain_map import ChainMap
 __all__ = list(map(str, ['Translator']))
 
 
+def _get_object_id(obj):
+    """
+    Gets the ID for an API object.
+
+    :param obj:
+        The API object
+    :type obj:
+        `dict`
+    :return:
+    """
+    if obj.get('type', '') == 'event':
+        return obj.get('event_id', None)
+
+    return obj.get('id', None)
+
+
 class Translator(ChainMap):
     """
     Translate item responses from the Box API to Box objects.
@@ -119,22 +135,38 @@ class Translator(ChainMap):
             default = BaseObject
         return super(Translator, self).get(key, default)
 
-    def translate(self, session=None, response_object=None):
+    def translate(self, session, response_object):
+        """
+        Translate a given API response object into SDK classes, rescursively translating any subobjects.
 
-        if isinstance(response_object, Mapping):
+        :param session:
+            The SDK session to use for any objects that require a session (i.e. classes that make API calls)
+        :type session:
+            class:`Session`
+        :param response_object:
+            The JSON response object from the API, which will be translated
+        :type response_object:
+            `dict`
+        :return:
+            The translated object
+        """
+
+        if isinstance(response_object, dict):
             for key in response_object:
-                if isinstance(response_object[key], Mapping):
-                    response_object[key] = self.translate(session, response_object=response_object[key])
+                if isinstance(response_object[key], dict):
+                    response_object[key] = self.translate(session, response_object[key])
                 elif isinstance(response_object[key], list):
-                    for i in range(len(response_object[key])):
-                        response_object[key][i] = self.translate(session, response_object=response_object[key][i])
+                    response_object[key] = [self.translate(session, o) for o in response_object[key]]
 
-            if 'type' in response_object:
+            # Try to translate any API object with a `type` property, except for metadata instances
+            # The $type value in metadata instances isn't directly usable, so we avoid it altogether
+            # NOTE: Currently, we represent metadata as just a `dict`, so there's no need to translate it anyway
+            if 'type' in response_object and '$type' not in response_object:
                 object_class = self.get(response_object.get('type', ''))
                 param_values = {
                     'session': session,
                     'response_object': response_object,
-                    'object_id': self._get_object_id(response_object),
+                    'object_id': _get_object_id(response_object),
                 }
                 # NOTE: getargspec() is deprecated, and should be replaced by inspect.signature() when 2.7 support drops
                 params = inspect.getargspec(object_class.__init__).args
@@ -143,11 +175,6 @@ class Translator(ChainMap):
 
         return response_object
 
-    def _get_object_id(self, obj):
-        if obj.get('type', '') == 'event':
-            return obj.get('event_id', None)
-
-        return obj.get('id', None)
 
 
 Translator._default_translator = Translator(extend_default_translator=False)  # pylint:disable=protected-access
