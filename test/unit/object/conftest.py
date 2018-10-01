@@ -151,7 +151,7 @@ def test_task_assignment(mock_box_session, mock_object_id):
     return TaskAssignment(mock_box_session, mock_object_id)
 
 
-@pytest_fixture()
+@pytest.fixture()
 def test_web_link(mock_box_session, mock_object_id):
     return WebLink(mock_box_session, mock_object_id)
 

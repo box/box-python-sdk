@@ -124,7 +124,7 @@ class BaseAPIJSONObject(object):
     def _description(self):
         """Return a description of the object if one exists."""
         return ""
-    
+
     @property
     def object_type(self):
         """Return the Box type for the object.
