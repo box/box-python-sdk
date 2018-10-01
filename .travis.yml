@@ -29,7 +29,7 @@ matrix:
       env: TOX_ENV=pycodestyle
     - python: 2.7
       env: TOX_ENV=pylint
-    - python: 2.7
+    - python: 3.5
       env: TOX_ENV=coverage
 
 # commands to install dependencies
