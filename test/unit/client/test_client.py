@@ -25,6 +25,8 @@ from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.webhook import Webhook
 from boxsdk.object.group_membership import GroupMembership
+from boxsdk.object.retention_policy import RetentionPolicy
+from boxsdk.object.file_version_retention import FileVersionRetention
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
@@ -106,6 +108,33 @@ def group_id_1():
 @pytest.fixture(scope='module')
 def group_id_2():
     return 202
+
+
+@pytest.fixture()
+def mock_user(mock_box_session):
+    user = User(mock_box_session, '12345')
+    return user
+
+
+@pytest.fixture()
+def mock_user_list(mock_box_session):
+    user_list = []
+    first_user = User(mock_box_session, '33333')
+    second_user = User(mock_box_session, '44444')
+    user_list = [first_user, second_user]
+    return user_list
+
+
+@pytest.fixture()
+def mock_file(mock_box_session):
+    test_file = File(mock_box_session, '11111')
+    return test_file
+
+
+@pytest.fixture()
+def mock_retention_policy(mock_box_session):
+    retention_policy = RetentionPolicy(mock_box_session, '22222')
+    return retention_policy
 
 
 @pytest.fixture(scope='module')
@@ -580,6 +609,164 @@ def test_get_webhooks(
         expected_url,
         params={},
     )
+
+
+def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
+    policy_name = 'Test Retention Policy'
+    policy_type = 'finite'
+    disposition_action = 'remove_retention'
+    expected_url = "{0}/retention_policies".format(API.BASE_API_URL)
+    expected_data = {
+        'policy_name': policy_name,
+        'disposition_action': disposition_action,
+        'policy_type': 'finite',
+        'retention_length': 5,
+        'can_owner_extend_retention': True,
+        'are_owners_notified': False,
+        'custom_notification_recipients': [
+            {
+                'type': mock_user_list[0].object_type,
+                'id': mock_user_list[0].object_id,
+            },
+            {
+                'type': mock_user_list[1].object_type,
+                'id': mock_user_list[1].object_id,
+            },
+        ],
+    }
+    mock_policy = {
+        'type': 'retention_policy',
+        'id': '1234',
+        'policy_name': policy_name,
+        'policy_type': policy_type,
+        'retention_length': 5,
+        'disposition_action': disposition_action,
+        'can_owner_extend_retention': False,
+        'are_owners_notified': False,
+        'custom_notification_recipients': [
+            {
+                'type': mock_user_list[0].object_type,
+                'id': mock_user_list[0].object_id,
+            },
+            {
+                'type': mock_user_list[1].object_type,
+                'id': mock_user_list[1].object_id,
+            },
+        ],
+    }
+    mock_box_session.post.return_value.json.return_value = mock_policy
+    policy = mock_client.create_retention_policy(
+        policy_name=policy_name,
+        disposition_action=disposition_action,
+        retention_length=5,
+        can_owner_extend_retention=True,
+        are_owners_notified=False,
+        custom_notification_recipients=mock_user_list
+    )
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert policy.object_id == mock_policy['id']
+    assert policy.object_type == mock_policy['type']
+    assert policy.policy_name == mock_policy['policy_name']
+    assert policy.disposition_action == mock_policy['disposition_action']
+    assert policy.can_owner_extend_retention == mock_policy['can_owner_extend_retention']
+    assert policy.are_owners_notified == mock_policy['are_owners_notified']
+    assert isinstance(policy, RetentionPolicy)
+
+
+def test_create_infinte_retention_policy(mock_client, mock_box_session):
+    policy_name = 'Test Retention Policy'
+    policy_type = 'indefinite'
+    disposition_action = 'remove_retention'
+    expected_url = "{0}/retention_policies".format(API.BASE_API_URL)
+    expected_data = {
+        'policy_name': policy_name,
+        'disposition_action': disposition_action,
+        'policy_type': policy_type,
+        'can_owner_extend_retention': False,
+        'are_owners_notified': False,
+    }
+    mock_policy = {
+        'type': 'retention_policy',
+        'id': '1234',
+        'policy_name': policy_name,
+        'policy_type': policy_type,
+        'disposition_action': disposition_action,
+        'can_owner_extend_retention': False,
+        'are_owners_notified': False,
+    }
+    mock_box_session.post.return_value.json.return_value = mock_policy
+    policy = mock_client.create_retention_policy(
+        policy_name=policy_name,
+        disposition_action=disposition_action,
+        retention_length=float('inf'),
+        can_owner_extend_retention=False,
+        are_owners_notified=False
+    )
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert policy.object_id == mock_policy['id']
+    assert policy.object_type == mock_policy['type']
+    assert policy.policy_name == mock_policy['policy_name']
+    assert policy.disposition_action == mock_policy['disposition_action']
+    assert policy.can_owner_extend_retention == mock_policy['can_owner_extend_retention']
+    assert policy.are_owners_notified == mock_policy['are_owners_notified']
+    assert isinstance(policy, RetentionPolicy)
+
+
+def test_get_retention_policies(mock_client, mock_box_session, mock_user):
+    expected_url = "{0}/retention_policies".format(API.BASE_API_URL)
+    mock_policy = {
+        'type': 'retention_policy',
+        'id': '12345',
+        'name': 'Test Retention Policy',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_policy],
+        'next_marker': 'testMarker',
+    }
+    policies = mock_client.get_retention_policies(policy_name='Test Name', policy_type='finite', user=mock_user)
+    policy = policies.next()
+    params = {
+        'policy_name': 'Test Name',
+        'policy_type': 'finite',
+        'created_by_user_id': '12345',
+    }
+    mock_box_session.get.assert_called_once_with(expected_url, params=params)
+    assert isinstance(policy, RetentionPolicy)
+    assert policy.id == mock_policy['id']
+    assert policy.name == mock_policy['name']
+
+
+def test_get_file_version_retentions(mock_client, mock_box_session, mock_file, mock_retention_policy):
+    expected_url = "{0}/file_version_retentions".format(API.BASE_API_URL)
+    mock_retention = {
+        'type': 'file_version_retention',
+        'id': '12345',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_retention],
+        'next_marker': 'testMarker',
+    }
+    retentions = mock_client.get_file_version_retentions(
+        target_file=mock_file,
+        policy=mock_retention_policy,
+        disposition_action='remove_retention',
+        disposition_before='2014-09-15T13:15:35-07:00',
+        disposition_after='2014-09-20T13:15:35-07:00',
+    )
+    retention = retentions.next()
+    params = {
+        'file_id': '11111',
+        'policy_id': '22222',
+        'disposition_action': 'remove_retention',
+        'disposition_before': '2014-09-15T13:15:35-07:00',
+        'disposition_after': '2014-09-20T13:15:35-07:00',
+    }
+    mock_box_session.get.assert_called_once_with(expected_url, params=params)
+    assert isinstance(retention, FileVersionRetention)
+    assert retention.id == mock_retention['id']
+    assert retention.type == mock_retention['type']
 
 
 def test_get_pending_collaborations(mock_client, mock_box_session):
