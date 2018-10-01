@@ -55,8 +55,8 @@ def test_create_task(test_file, test_task, mock_box_session):
         'due_at': '2014-04-03T11:09:43-07:00',
     }
     mock_box_session.post.return_value.json.return_value = {
-        'type': 'task',
-        'id': '12345',
+        'type': test_task.object_type,
+        'id': test_task.object_id,
         'due_at': '2014-04-03T11:09:43-07:00',
         'action': 'review',
         'message': 'Test Message',
@@ -65,8 +65,8 @@ def test_create_task(test_file, test_task, mock_box_session):
     new_task = test_file.create_task(message='Test Message', due_at='2014-04-03T11:09:43-07:00')
     mock_box_session.post.assert_called_once_with(expected_url, data=value)
     assert isinstance(new_task, Task)
-    assert new_task.object_type == 'task'
-    assert new_task.object_id == '12345'
+    assert new_task.object_type == test_task.object_type
+    assert new_task.object_id == test_task.object_id
     assert new_task.action == 'review'
     assert new_task.message == 'Test Message'
 
