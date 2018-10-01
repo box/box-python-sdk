@@ -68,4 +68,3 @@ fi
 python -m virtualenv $PWD/.venv
 source $PWD/.venv/bin/activate
 pip install -U tox
-pip install -U python-coveralls
