@@ -9,7 +9,7 @@ from six.moves import range  # pylint:disable=redefined-builtin
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.pagination.page import Page
-from boxsdk.session.box_session import BoxSession
+from boxsdk.session.session import Session
 from boxsdk.util.translator import Translator
 
 
@@ -20,7 +20,7 @@ def translator():
 
 @pytest.fixture()
 def mock_session(translator):
-    mock_box_session = Mock(BoxSession)
+    mock_box_session = Mock(Session)
     type(mock_box_session).translator = PropertyMock(
         return_value=translator
     )

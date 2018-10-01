@@ -15,9 +15,9 @@ from six.moves.urllib.parse import urlencode, urlunsplit
 import six
 
 from ..config import API
-from ..exception import BoxOAuthException
-from ..network.default_network import DefaultNetwork
+from ..exception import BoxOAuthException, BoxAPIException
 from ..object.base_api_json_object import BaseAPIJSONObject
+from ..session.session import Session
 from ..util.json import is_json_response
 from ..util.text_enum import TextEnum
 
@@ -60,7 +60,7 @@ class OAuth2(object):
             box_device_name='',
             access_token=None,
             refresh_token=None,
-            network_layer=None,
+            session=None,
             refresh_lock=None,
     ):
         """
@@ -92,10 +92,10 @@ class OAuth2(object):
             Refresh token to use for auth until it expires or is used.
         :type refresh_token:
             `unicode`
-        :param network_layer:
-            If specified, use it to make network requests. If not, the default network implementation will be used.
-        :type network_layer:
-            :class:`Network`
+        :param session:
+            If specified, use it to make network requests. If not, the default session will be used.
+        :type session:
+            :class:`Session`
         :param refresh_lock:
             Lock used to synchronize token refresh. If not specified, then a :class:`threading.Lock` will be used.
         :type refresh_lock:
@@ -106,7 +106,7 @@ class OAuth2(object):
         self._store_tokens_callback = store_tokens
         self._access_token = access_token
         self._refresh_token = refresh_token
-        self._network_layer = network_layer if network_layer else DefaultNetwork()
+        self._session = session or Session()
         self._refresh_lock = refresh_lock or Lock()
         self._box_device_id = box_device_id
         self._box_device_name = box_device_name
@@ -335,13 +335,16 @@ class OAuth2(object):
         self._check_closed()
         url = '{base_auth_url}/token'.format(base_auth_url=self._api_config.OAUTH2_API_URL)
         headers = {'content-type': 'application/x-www-form-urlencoded'}
-        network_response = self._network_layer.request(
-            'POST',
-            url,
-            data=data,
-            headers=headers,
-            access_token=access_token,
-        )
+        try:
+            network_response = self._session.request(
+                'POST',
+                url,
+                data=data,
+                headers=headers,
+                access_token=access_token,
+            )
+        except BoxAPIException as box_api_excpetion:
+            six.raise_from(self._oauth_exception(box_api_excpetion.network_response, url), box_api_excpetion)
         if not network_response.ok:
             raise self._oauth_exception(network_response, url)
         try:
@@ -411,16 +414,19 @@ class OAuth2(object):
             if token_to_revoke is None:
                 return
             url = '{base_auth_url}/revoke'.format(base_auth_url=self._api_config.OAUTH2_API_URL)
-            network_response = self._network_layer.request(
-                'POST',
-                url,
-                data={
-                    'client_id': self._client_id,
-                    'client_secret': self._client_secret,
-                    'token': token_to_revoke,
-                },
-                access_token=access_token,
-            )
+            try:
+                network_response = self._session.request(
+                    'POST',
+                    url,
+                    data={
+                        'client_id': self._client_id,
+                        'client_secret': self._client_secret,
+                        'token': token_to_revoke,
+                    },
+                    access_token=access_token,
+                )
+            except BoxAPIException as box_api_exception:
+                six.raise_from(self._oauth_exception(box_api_exception.network_response, url), box_api_exception)
             if not network_response.ok:
                 raise BoxOAuthException(
                     network_response.status_code,

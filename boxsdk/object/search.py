@@ -5,6 +5,7 @@ from __future__ import unicode_literals, absolute_import
 import json
 
 from .base_endpoint import BaseEndpoint
+from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..util.api_call_decorator import api_call
 
 
@@ -161,13 +162,14 @@ class Search(BaseEndpoint):
     def search(
             self,
             query,
-            limit=100,
+            limit=None,
             offset=0,
             ancestor_folders=None,
             file_extensions=None,
             metadata_filters=None,
             result_type=None,
             content_types=None,
+            fields=None,
             **kwargs
     ):
         """
@@ -205,30 +207,35 @@ class Search(BaseEndpoint):
             Which content types to search. Valid types include name, description, file_content, comments, and tags.
         :type content_types:
             `Iterable` of `unicode`
+        :param fields:
+            Fields to include on the returned items.
+        :type fields:
+            `Iterable` of `unicode`
         :return:
-            A list of items that match the search query.
+            The collection of items that match the search query.
         :rtype:
-            `list` of :class:`Item`
+            `Iterable` of :class:`Item`
         """
         url = self.get_url()
-        params = {
-            'query': query,
-            'limit': limit,
-            'offset': offset,
-        }
+        additional_params = {'query': query}
         if ancestor_folders:
-            params.update({
-                'ancestor_folder_ids': ','.join([folder.object_id for folder in ancestor_folders])
-            })
+            additional_params['ancestor_folder_ids'] = ','.join([folder.object_id for folder in ancestor_folders])
         if file_extensions:
-            params.update({'file_extensions': ','.join(file_extensions)})
+            additional_params['file_extensions'] = ','.join(file_extensions)
         if metadata_filters:
-            params.update({'mdfilters': json.dumps(metadata_filters.as_list())})
+            additional_params['mdfilters'] = json.dumps(metadata_filters.as_list())
         if content_types:
-            params.update({'content_types': ','.join(content_types)})
+            additional_params['content_types'] = ','.join(content_types)
         if result_type:
-            params.update({'type': result_type})
-        params.update(kwargs)
-        box_response = self._session.get(url, params=params)
-        response = box_response.json()
-        return [self.translator.translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
+            additional_params['type'] = result_type
+        additional_params.update(kwargs)
+
+        return LimitOffsetBasedObjectCollection(
+            self._session,
+            url,
+            limit=limit,
+            offset=offset,
+            fields=fields,
+            additional_params=additional_params,
+            return_full_pages=False,
+        )

@@ -68,9 +68,10 @@ def search_entries():
 
 @pytest.fixture
 def search_response():
+    entries = search_entries()
     return {
-        'entries': search_entries(),
-        'total_count': 0,
+        'entries': entries,
+        'total_count': len(entries),
         'limit': 20,
         'offset': 0
     }
@@ -125,7 +126,8 @@ def test_search_with_value_based_filters(
         result_type=search_result_type,
         content_types=search_content_types,
     )
-    assert response == [File(mock_box_session, search_entry['id'], search_entry) for search_entry in search_entries]
+    for actual, expected in zip(response, [File(mock_box_session, item['id'], item) for item in search_entries]):
+        assert actual == expected
 
     mock_box_session.get.assert_called_once_with(
         test_search.get_url(),
@@ -163,7 +165,8 @@ def test_search_with_range_filters(
         result_type=search_result_type,
         content_types=search_content_types,
     )
-    assert response == [File(mock_box_session, search_entry['id'], search_entry) for search_entry in search_entries]
+    for actual, expected in zip(response, [File(mock_box_session, item['id'], item) for item in search_entries]):
+        assert actual == expected
 
     mock_box_session.get.assert_called_once_with(
         test_search.get_url(),
