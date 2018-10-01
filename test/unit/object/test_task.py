@@ -33,6 +33,7 @@ def test_get(test_task, mock_box_session):
     assert retrieved_task.object_type == test_task.object_type
     assert retrieved_task.object_id == test_task.object_id
 
+
 def test_update(test_task, mock_box_session):
     new_message = 'New Message'
     expected_url = '{0}/tasks/{1}'.format(API.BASE_API_URL, test_task.object_id)
