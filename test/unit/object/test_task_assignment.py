@@ -5,7 +5,7 @@ import pytest
 
 from mock import Mock
 from boxsdk.config import API
-from boxsdk.object.task_assignment import TaskAssignment
+from boxsdk.object.task_assignment import TaskAssignment, ResolutionState
 from boxsdk.network.default_network import DefaultNetworkResponse
 
 
@@ -53,12 +53,13 @@ def test_delete_policy_return_the_correct_response(
 
 def test_update(test_task_assignment, mock_box_session):
     new_message = 'New Message'
-    resolution_state = 'approved'
+    resolution_state = ResolutionState.APPROVED
     expected_url = '{0}/task_assignments/{1}'.format(API.BASE_API_URL, test_task_assignment.object_id)
     mock_box_session.put.return_value.json.return_value = {
         'type': 'task_assignment',
         'id': test_task_assignment.object_id,
         'message': new_message,
+        'resolution_state': resolution_state,
     }
     expected_body = {
         'message': new_message,
@@ -70,3 +71,4 @@ def test_update(test_task_assignment, mock_box_session):
     assert updated_task_assignment.message == new_message
     assert updated_task_assignment.object_type == test_task_assignment.object_type
     assert updated_task_assignment.object_id == test_task_assignment.object_id
+    assert updated_task_assignment.resolution_state == resolution_state

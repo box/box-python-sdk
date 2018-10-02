@@ -16,7 +16,7 @@ task_info = client.task('1234').get()
 List Tasks on File
 ------------------
 
-To retrieve all tasks for a given file use, `file.get_tasks(limit=None, marker=None, fields=None)`.
+To retrieve all tasks for a given file use, `file.get_tasks(fields=None)`.
 
 ```python
 tasks = client.file('1111').get_tasks()
@@ -38,7 +38,7 @@ task = client.file('11111').create_task(message, due_at)
 Update Task Info
 ----------------
 
-To update the task information use, `task.update_info(data, params=None, headers=None, **kwargs)`
+To update the task information use, `task.update_info(data)`
 
 ```python
 task_update = {'message': 'New Message', 'due_at': '2014-04-03T11:09:43-10:00',}
@@ -57,18 +57,26 @@ client.client.task('1234').delete()
 Assign a Task
 --------------
 
-To assign a task to a user on a file use. `task.assign(assignee=None, assign_to_login=None)`
+To assign a task to a user on a file, use `task.assign(assignee)`
 
 ```python
 user = client.user('1111')
 assignment = client.task('1234').assign(user)
 ```
 
+Assign a Task with User Login
+-----------------------------
+
+To assign a task to a user on a file, use `task.assign_with_login(assignee_login)`
+
+```python
+assignment = client.task('1234').assign_with_login('test_user@example.com')
+```
 
 List Task Assignments
 ---------------------
 
-To retrieve all task assignments for a given task use `task.get_assignments(limit=None, marker=None, fields=None)`
+To retrieve all task assignments for a given task use `task.get_assignments(fields=None)`
 
 ```python
 assignments = client.task('1234').get_assignments()
@@ -89,7 +97,7 @@ assignment_info = client.task_assignment(task_assignment_id).get()
 Update Task Assignment
 ----------------------
 
-To update information about a task assignment use, `task_assignment.update_info(data, params=None, headers=None, **kwargs)`
+To update information about a task assignment use, `task_assignment.update_info(data)`
 
 ```python
 from boxsdk.object.task_assignment import ResolutionState

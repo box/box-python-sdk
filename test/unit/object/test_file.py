@@ -45,30 +45,34 @@ def test_delete_file(test_file, mock_box_session, etag, if_match_header):
 def test_create_task(test_file, test_task, mock_box_session):
     # pylint:disable=redefined-outer-name
     expected_url = "{0}/tasks".format(API.BASE_API_URL)
+    due_at = '2014-04-03T11:09:43-07:00'
+    action = 'review'
+    message = 'Test Message'
     expected_body = {
         'item': {
             'type': 'file',
             'id': '42',
         },
-        'action': 'review',
-        'message': 'Test Message',
-        'due_at': '2014-04-03T11:09:43-07:00',
+        'action': action,
+        'message': message,
+        'due_at': due_at,
     }
     mock_box_session.post.return_value.json.return_value = {
         'type': test_task.object_type,
         'id': test_task.object_id,
-        'due_at': '2014-04-03T11:09:43-07:00',
-        'action': 'review',
-        'message': 'Test Message',
+        'due_at': due_at,
+        'action': action,
+        'message': message,
     }
     value = json.dumps(expected_body)
-    new_task = test_file.create_task(message='Test Message', due_at='2014-04-03T11:09:43-07:00')
+    new_task = test_file.create_task(message=message, due_at=due_at)
     mock_box_session.post.assert_called_once_with(expected_url, data=value)
     assert isinstance(new_task, Task)
     assert new_task.object_type == test_task.object_type
     assert new_task.object_id == test_task.object_id
-    assert new_task.action == 'review'
-    assert new_task.message == 'Test Message'
+    assert new_task.action == action
+    assert new_task.message == message
+    assert new_task.due_at == due_at
 
 
 def test_get_tasks(test_file, mock_box_session):

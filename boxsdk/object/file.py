@@ -379,18 +379,10 @@ class File(Item):
             response_object=response,
         )
 
-    def get_tasks(self, limit=None, marker=None, fields=None):
+    def get_tasks(self, fields=None):
         """
         Get the entries in the file tasks.
 
-        :param limit:
-            The maximum number of items to return.
-        :type limit:
-            `int` or None
-        :param marker:
-            The paging marker to start returning items from when using marker-based paging.
-        :type marker:
-            `unicode` or None
         :param fields:
             List of fields to request.
         :type fields:
@@ -403,8 +395,8 @@ class File(Item):
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self.get_url('tasks'),
-            limit=limit,
-            marker=marker,
+            limit=None,
+            marker=None,
             fields=fields,
             return_full_pages=False,
         )

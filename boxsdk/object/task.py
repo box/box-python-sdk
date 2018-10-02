@@ -11,7 +11,7 @@ class Task(BaseObject):
     """Represents a Box task."""
     _item_type = 'task'
 
-    def assign(self, assignee, assign_to_login=None):
+    def assign(self, assignee):
         """
         Assign a task to a single user on a single file.
 
@@ -19,6 +19,32 @@ class Task(BaseObject):
             The :class:`User` to assign the task to.
         :type assignee:
             :class:`User`
+        :returns:
+            A task assignment object.
+        :rtype:
+            :class:`TaskAssignment`
+        """
+        url = self._session.get_url('task_assignments')
+        body = {
+            'task': {
+                'type': 'task',
+                'id': self.object_id,
+            },
+            'assign_to': {
+                'id': assignee.object_id,
+            },
+        }
+        response = self._session.post(url, data=json.dumps(body)).json()
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+    def assign_with_login(self, assignee_login):
+        """
+        Used to assign a task to a single user with the login email address of the assignee.
+
         :param assign_to_login:
             The login of the user to assign the task to.
         :type assign_to_login:
@@ -35,11 +61,9 @@ class Task(BaseObject):
                 'id': self.object_id,
             },
             'assign_to': {
-                'id': assignee.object_id,
+                'login': assignee_login,
             },
         }
-        if assign_to_login is not None:
-            body['assign_to']['login'] = assign_to_login
         response = self._session.post(url, data=json.dumps(body)).json()
         return self.translator.translate(response['type'])(
             session=self._session,
@@ -47,18 +71,10 @@ class Task(BaseObject):
             response_object=response,
         )
 
-    def get_assignments(self, limit=None, marker=None, fields=None):
+    def get_assignments(self, fields=None):
         """
         Get the entries in the file task assignment.
 
-        :param limit:
-            The maximum number of items to return.
-        :type limit:
-            `int` or None
-        :param marker:
-            The paging marker to start returning items from when using marker-based paging.
-        :type marker:
-            `unicode` or None
         :param fields:
             List of fields to request.
         :type fields:
@@ -71,8 +87,8 @@ class Task(BaseObject):
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self.get_url('assignments'),
-            limit=limit,
-            marker=marker,
+            limit=None,
+            marker=None,
             fields=fields,
             return_full_pages=False,
         )

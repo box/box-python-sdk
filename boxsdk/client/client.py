@@ -598,7 +598,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Task`
         """
-        return self.translator.translate('task')(session=self._session, object_id=task_id)
+        return self.translator.get('task')(session=self._session, object_id=task_id)
 
     def task_assignment(self, assignment_id):
         """
@@ -613,7 +613,7 @@ class Client(Cloneable):
         :rtype:
             :class:`TaskAssignment`
         """
-        return self.translator.translate('task_assignment')(session=self._session, object_id=assignment_id)
+        return self.translator.get('task_assignment')(session=self._session, object_id=assignment_id)
 
     def retention_policy(self, retention_id):
         """
