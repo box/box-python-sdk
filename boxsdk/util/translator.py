@@ -150,29 +150,34 @@ class Translator(ChainMap):
             The translated object
         """
 
-        if isinstance(response_object, dict):
-            for key in response_object:
-                if isinstance(response_object[key], dict):
-                    response_object[key] = self.translate(session, response_object[key])
-                elif isinstance(response_object[key], list):
-                    response_object[key] = [self.translate(session, o) for o in response_object[key]]
+        if not isinstance(response_object, dict):
+            return response_object
 
-            # Try to translate any API object with a `type` property, except for metadata instances
-            # The $type value in metadata instances isn't directly usable, so we avoid it altogether
-            # NOTE: Currently, we represent metadata as just a `dict`, so there's no need to translate it anyway
-            if 'type' in response_object and '$type' not in response_object:
-                object_class = self.get(response_object.get('type', ''))
-                param_values = {
-                    'session': session,
-                    'response_object': response_object,
-                    'object_id': _get_object_id(response_object),
-                }
-                # NOTE: getargspec() is deprecated, and should be replaced by inspect.signature() when 2.7 support drops
-                params = inspect.getargspec(object_class.__init__).args
-                param_values = {p: param_values[p] for p in params if p != 'self'}
-                return object_class(**param_values)
+        translated_obj = {}
+        for key in response_object:
+            if isinstance(response_object[key], dict):
+                translated_obj[key] = self.translate(session, response_object[key])
+            elif isinstance(response_object[key], list):
+                translated_obj[key] = [self.translate(session, o) for o in response_object[key]]
+            else:
+                translated_obj[key] = response_object[key]
 
-        return response_object
+        # Try to translate any API object with a `type` property, except for metadata instances
+        # The $type value in metadata instances isn't directly usable, so we avoid it altogether
+        # NOTE: Currently, we represent metadata as just a `dict`, so there's no need to translate it anyway
+        if 'type' in translated_obj and '$type' not in translated_obj:
+            object_class = self.get(translated_obj.get('type', ''))
+            param_values = {
+                'session': session,
+                'response_object': translated_obj,
+                'object_id': _get_object_id(translated_obj),
+            }
+            # NOTE: getargspec() is deprecated, and should be replaced by inspect.signature() when 2.7 support drops
+            params = inspect.getargspec(object_class.__init__).args
+            param_values = {p: param_values[p] for p in params if p != 'self'}
+            return object_class(**param_values)
+
+        return translated_obj
 
 
 Translator._default_translator = Translator(extend_default_translator=False)  # pylint:disable=protected-access

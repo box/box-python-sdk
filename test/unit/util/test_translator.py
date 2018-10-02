@@ -188,3 +188,7 @@ def test_translate(default_translator, mock_box_session):
     assert test_file._session == mock_box_session  # pylint:disable=protected-access
     assert user_1._session == mock_box_session  # pylint:disable=protected-access
     assert user_2._session == mock_box_session  # pylint:disable=protected-access
+
+    # It should not modify the original
+    assert isinstance(response_object['entries'][0], dict)
+    assert isinstance(response_object['entries'][1], dict)
