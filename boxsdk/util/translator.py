@@ -2,7 +2,6 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from collections import Mapping
 import inspect
 
 from .chain_map import ChainMap
@@ -170,11 +169,10 @@ class Translator(ChainMap):
                 }
                 # NOTE: getargspec() is deprecated, and should be replaced by inspect.signature() when 2.7 support drops
                 params = inspect.getargspec(object_class.__init__).args
-                param_values = {p:param_values[p] for p in params if p != 'self'}
+                param_values = {p: param_values[p] for p in params if p != 'self'}
                 return object_class(**param_values)
 
         return response_object
-
 
 
 Translator._default_translator = Translator(extend_default_translator=False)  # pylint:disable=protected-access
