@@ -3,6 +3,18 @@ Webhooks
 
 Webhooks enable you to attach event triggers to Box files and folders. Event triggers monitor events on Box objects and notify your application when they occur. A webhook notifies your application by sending HTTP requests to a URL of your choosing.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Get Information about Webhook](#get-information-about-webhook)
+- [List all Webhooks](#list-all-webhooks)
+- [Create Webhook](#create-webhook)
+- [Delete Webhook](#delete-webhook)
+- [Update Webhook](#update-webhook)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 Get Information about Webhook
 -----------------------------
 
