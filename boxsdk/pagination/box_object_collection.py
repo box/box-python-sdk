@@ -99,10 +99,6 @@ class BoxObjectCollection(collections.Iterator, object):
         while not self._has_retrieved_all_items:
             response_object = self._load_next_page()
 
-            # If the limit was not specified, then it should default to whatever the server tells us.
-            if self._limit is None:
-                self._limit = response_object['limit']
-
             self._update_pointer_to_next_page(response_object)
             self._has_retrieved_all_items = not self._has_more_pages(response_object)
             page = Page(self._session, response_object)

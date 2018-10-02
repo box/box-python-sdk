@@ -24,6 +24,8 @@ __all__ = list(map(str, [
     'retention_policy',
     'retention_policy_assignment',
     'search',
+    'task',
+    'task_assignment',
     'user',
     'webhook',
     'watermark',
