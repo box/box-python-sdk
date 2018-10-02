@@ -45,7 +45,7 @@ def test_delete_policy_return_the_correct_response(
     mock_box_session.delete.return_value = delete_task_assignment_response
     response = test_task_assignment.delete()
     # pylint:disable=protected-access
-    expected_url = test_task_assignment.get_url()
+    expected_url = '{0}/task_assignments/{1}'.format(API.BASE_API_URL, test_task_assignment.object_id)
     # pylint:enable = protected-access
     mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
     assert response is True
