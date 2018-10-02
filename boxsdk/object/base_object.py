@@ -216,10 +216,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
 
             current_page_size = len(response['entries'])
             for index_in_current_page, item in enumerate(response['entries']):
-                instance_factory = factory
-                if not instance_factory:
-                    instance_factory = self.translator.get(item['type'])
-                instance = instance_factory(self._session, item['id'], item)
+                instance = self.translator.translate(self._session, item)
                 yield instance, current_page_size, index_in_current_page
 
             current_index += limit
