@@ -578,6 +578,13 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert new_user.name == test_user_name
 
 
+def test_webhook_initializer(mock_client):
+    expected_id = '1234'
+    webhook = mock_client.webhook(expected_id)
+    assert isinstance(webhook, Webhook)
+    assert webhook.object_id == expected_id
+
+
 def test_create_webhook_on_folder_returns_the_correct_policy_object(
         test_folder,
         test_webhook,
