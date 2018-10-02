@@ -6,7 +6,7 @@ Webhooks enable you to attach event triggers to Box files and folders. Event tri
 Get Information about Webhook
 -----------------------------
 
-To retrieve information about a webhook, use `webhook.get()`
+To retrieve information about a webhook, use `webhook.get(fields=None)`
 
 ```python
 webhook_info = client.webhook('1234').get()
@@ -47,7 +47,7 @@ client.webhook('1234').delete()
 Update Webhook
 --------------
 
-To update a webhook, use `webhook.update_info()`
+To update a webhook, use `webhook.update_info(data)`
 
 ```python
 update_object = {

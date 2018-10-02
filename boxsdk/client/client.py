@@ -524,7 +524,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Webhook`
         """
-        return self.translator.translate('webhook')(session=self._session, object_id=webhook_id)
+        return self.translator.get('webhook')(session=self._session, object_id=webhook_id)
 
     def create_webhook(self, target, triggers, address):
         """
@@ -571,7 +571,7 @@ class Client(Cloneable):
         :param limit:
             The maximum number of entries to return.
         :type limit:
-            `int`
+            `int` or None
         :param marker:
             The position marker at which to begin the response.
         :type marker:
