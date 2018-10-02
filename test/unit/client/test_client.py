@@ -23,7 +23,6 @@ from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
-from boxsdk.object.webhook import Webhook
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.file_version_retention import FileVersionRetention
