@@ -583,6 +583,36 @@ class Client(Cloneable):
             response_object=response,
         )
 
+    def task(self, task_id):
+        """
+        Initialize a :class:`Task` object, whose box id is task_id.
+
+        :param task_id:
+            The box ID of the :class:`Task` object.
+        :type task_id:
+            `unicode`
+        :return:
+            A :class:`Task` object with the given entry ID.
+        :rtype:
+            :class:`Task`
+        """
+        return self.translator.get('task')(session=self._session, object_id=task_id)
+
+    def task_assignment(self, assignment_id):
+        """
+        Initialize a :class:`TaskAssignment` object, whose box id is assignment_id.
+
+        :param assignment_id:
+            The box ID of the :class:`TaskAssignment` object.
+        :type assignment_id:
+            `unicode`
+        :return:
+            A :class:`TaskAssignment` object with the given entry ID.
+        :rtype:
+            :class:`TaskAssignment`
+        """
+        return self.translator.get('task_assignment')(session=self._session, object_id=assignment_id)
+
     def retention_policy(self, retention_id):
         """
         Initialize a :class:`RetentionPolicy` object, whose box id is retention_id.
