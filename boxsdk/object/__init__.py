@@ -27,6 +27,7 @@ __all__ = list(map(str, [
     'task',
     'task_assignment',
     'user',
+    'webhook',
     'watermark',
     'web_link',
 ]))

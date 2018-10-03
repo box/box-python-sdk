@@ -27,6 +27,7 @@ from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.file_version_retention import FileVersionRetention
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
+from boxsdk.object.webhook import Webhook
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
@@ -63,6 +64,34 @@ def file_id():
 @pytest.fixture(scope='module')
 def folder_id():
     return '1022'
+
+
+@pytest.fixture()
+def test_folder(mock_box_session, mock_object_id):
+    return Folder(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_webhook(mock_box_session, mock_object_id):
+    return Webhook(mock_box_session, mock_object_id)
+
+
+@pytest.fixture(scope='function')
+def mock_file_response(mock_object_id, make_mock_box_request):
+    # pylint:disable=redefined-outer-name
+    mock_box_response, _ = make_mock_box_request(
+        response={'type': 'file', 'id': mock_object_id},
+    )
+    return mock_box_response
+
+
+@pytest.fixture(scope='function')
+def mock_folder_response(mock_object_id, make_mock_box_request):
+    # pylint:disable=redefined-outer-name
+    mock_box_response, _ = make_mock_box_request(
+        response={'type': 'folder', 'id': mock_object_id},
+    )
+    return mock_box_response
 
 
 @pytest.fixture(scope='module')
@@ -203,6 +232,35 @@ def create_user_response():
         'type': 'user',
         'id': 1234,
         'name': 'Ned Stark',
+    }
+    return mock_network_response
+
+
+@pytest.fixture(params=('file', 'folder'))
+def test_item_and_response(mock_file, test_folder, mock_file_response, mock_folder_response, request):
+    if request.param == 'file':
+        return mock_file, mock_file_response
+    return test_folder, mock_folder_response
+
+
+@pytest.fixture()
+def create_webhook_response(test_item_and_response, test_webhook):
+    # pylint:disable=redefined-outer-name
+    test_item, _ = test_item_and_response
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'type': test_webhook.object_type,
+        'id': test_webhook.object_id,
+        'target': {
+            'type': test_item.object_type,
+            'id': test_item.object_id,
+        },
+        'created_at': '2016-05-09T17:41:27-07:00',
+        'address': 'https://test.com',
+        'triggers': [
+            'FILE.UPLOADED',
+            'FOLDER.CREATED',
+        ],
     }
     return mock_network_response
 
@@ -524,6 +582,71 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
+
+
+def test_webhook_initializer(mock_client):
+    expected_id = '1234'
+    webhook = mock_client.webhook(expected_id)
+    assert isinstance(webhook, Webhook)
+    assert webhook.object_id == expected_id
+
+
+def test_create_webhook_returns_the_correct_policy_object(
+        test_item_and_response,
+        test_webhook,
+        mock_client,
+        mock_box_session,
+        create_webhook_response,
+):
+    # pylint:disable=redefined-outer-name
+    test_item, _ = test_item_and_response
+    expected_url = "{0}/webhooks".format(API.BASE_API_URL)
+    expected_body = {
+        'target': {
+            'type': test_item.object_type,
+            'id': test_item.object_id,
+        },
+        'triggers': ['FILE.UPLOADED', 'FOLDER.CREATED'],
+        'address': 'https://test.com',
+    }
+    value = json.dumps(expected_body)
+    mock_box_session.post.return_value = create_webhook_response
+    new_webhook = mock_client.create_webhook(test_item, ['FILE.UPLOADED', 'FOLDER.CREATED'], 'https://test.com')
+    mock_box_session.post.assert_called_once_with(
+        expected_url,
+        data=value,
+    )
+    assert isinstance(new_webhook, Webhook)
+    assert new_webhook.id == test_webhook.object_id
+    assert new_webhook.type == test_webhook.object_type
+    assert new_webhook.target['type'] == test_item.object_type
+    assert new_webhook.target['id'] == test_item.object_id
+    assert new_webhook.triggers == ['FILE.UPLOADED', 'FOLDER.CREATED']
+    assert new_webhook.address == 'https://test.com'
+
+
+def test_get_webhooks(mock_client, mock_box_session):
+    expected_url = "{0}/webhooks".format(API.BASE_API_URL)
+    webhook_body = {
+        'type': 'webhook',
+        'id': '12345',
+        'target': {
+            'type': 'folder',
+            'id': '11111',
+        },
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [webhook_body],
+    }
+    webhooks = mock_client.get_webhooks()
+    webhook = webhooks.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    assert isinstance(webhook, Webhook)
+    assert webhook.object_id == webhook_body['id']
+    assert webhook.object_type == webhook_body['type']
+    assert webhook.target['id'] == webhook_body['target']['id']
+    assert webhook.target['type'] == webhook_body['target']['type']
 
 
 def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
