@@ -72,6 +72,28 @@ def mock_items_response(mock_items):
     return get_response
 
 
+@pytest.fixture()
+def mock_items_response_with_marker(mock_items):
+    # pylint:disable=redefined-outer-name
+    def get_response(limit, offset):
+        items_json, items = mock_items
+        entries = items_json[offset:limit + offset]
+        mock_box_response = Mock(BoxResponse)
+        mock_network_response = Mock(DefaultNetworkResponse)
+        mock_box_response.network_response = mock_network_response
+        mock_box_response.json.return_value = mock_json = {
+            'entries': entries,
+            'total_count': len(entries),
+            'limit': limit,
+            'offset': offset,
+        }
+        mock_box_response.content = json.dumps(mock_json).encode()
+        mock_box_response.status_code = 200
+        mock_box_response.ok = True
+        return mock_box_response, items[offset:limit + offset]
+    return get_response
+
+
 def _assert_collaborator_added(test_folder, collaborator, mock_box_session, mock_collab_response, notify, role, can_view_path, data):
     mock_box_session.post.return_value = mock_collab_response
     collaboration = test_folder.add_collaborator(collaborator, role, notify, can_view_path)
@@ -122,15 +144,25 @@ def test_delete_folder(test_folder, mock_box_session, recursive, etag, if_match_
     )
 
 
-@pytest.mark.parametrize('limit,offset,fields', [(1, 0, None), (100, 0, ['foo', 'bar']), (1, 1, None)])
-def test_get_items(test_folder, mock_box_session, mock_items_response, limit, offset, fields):
+@pytest.mark.parametrize('limit,offset,fields,sort,direction', [
+    (1, 0, None, None, None),
+    (100, 0, ['foo', 'bar'], None, None),
+    (1, 1, None, None, None),
+    (1, 0, None, 'name', 'ASC'),
+    (1, 1, None, 'date', 'DESC')
+])
+def test_get_items(test_folder, mock_box_session, mock_items_response, limit, offset, fields, sort, direction):
     # pylint:disable=redefined-outer-name
     expected_url = test_folder.get_url('items')
     mock_box_session.get.return_value, expected_items = mock_items_response(limit, offset)
-    items = test_folder.get_items(limit, offset, fields=fields)
+    items = test_folder.get_items(limit, offset, fields=fields, sort=sort, direction=direction)
     expected_params = {'limit': limit, 'offset': offset}
     if fields:
         expected_params['fields'] = ','.join(fields)
+    if sort:
+        expected_params['sort'] = sort
+    if direction:
+        expected_params['direction'] = direction
     for actual, expected in zip(items, expected_items):
         assert actual == expected
     mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)

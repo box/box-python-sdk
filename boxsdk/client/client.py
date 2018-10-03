@@ -505,6 +505,7 @@ class Client(Cloneable):
         return LimitOffsetBasedObjectCollection(
             url=url,
             session=self._session,
+            additional_params=additional_params,
             limit=limit,
             offset=offset,
             fields=fields,

@@ -182,9 +182,9 @@ def test_get_group_collaborations(test_group, mock_box_session):
         'offset': 0,
         'total_count': 1
     }
-    collaborations = test_group.get_collaborations()
+    collaborations = test_group.get_collaborations(fields=['type', 'id', 'created_by'])
     collaboration = collaborations.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None, 'fields': 'type,id,created_by'})
     assert isinstance(collaboration, Collaboration)
     assert collaboration.id == mock_collaboration['id']
     assert collaboration.created_by['id'] == mock_collaboration['created_by']['id']
