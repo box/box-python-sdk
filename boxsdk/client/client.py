@@ -537,7 +537,7 @@ class Client(Cloneable):
         :param triggers:
             Event types that trigger notifications for the target.
         :type triggers:
-            `list of unicode`
+            `list` of `unicode`
         :param address:
             The url to send the notification to.
         :type address:

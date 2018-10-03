@@ -76,6 +76,24 @@ def test_webhook(mock_box_session, mock_object_id):
     return Webhook(mock_box_session, mock_object_id)
 
 
+@pytest.fixture(scope='function')
+def mock_file_response(mock_object_id, make_mock_box_request):
+    # pylint:disable=redefined-outer-name
+    mock_box_response, _ = make_mock_box_request(
+        response={'type': 'file', 'id': mock_object_id},
+    )
+    return mock_box_response
+
+
+@pytest.fixture(scope='function')
+def mock_folder_response(mock_object_id, make_mock_box_request):
+    # pylint:disable=redefined-outer-name
+    mock_box_response, _ = make_mock_box_request(
+        response={'type': 'folder', 'id': mock_object_id},
+    )
+    return mock_box_response
+
+
 @pytest.fixture(scope='module')
 def marker_id():
     return 'marker_1'
@@ -218,42 +236,30 @@ def create_user_response():
     return mock_network_response
 
 
+@pytest.fixture(params=('file', 'folder'))
+def test_item_and_response(mock_file, test_folder, mock_file_response, mock_folder_response, request):
+    if request.param == 'file':
+        return mock_file, mock_file_response
+    return test_folder, mock_folder_response
+
+
 @pytest.fixture()
-def create_webhook_on_folder_response(test_folder, test_webhook):
+def create_webhook_response(test_item_and_response, test_webhook):
     # pylint:disable=redefined-outer-name
+    test_item, _ = test_item_and_response
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'type': test_webhook.object_type,
         'id': test_webhook.object_id,
         'target': {
-            'type': test_folder.object_type,
-            'id': test_folder.object_id,
+            'type': test_item.object_type,
+            'id': test_item.object_id,
         },
         'created_at': '2016-05-09T17:41:27-07:00',
         'address': 'https://test.com',
         'triggers': [
             'FILE.UPLOADED',
             'FOLDER.CREATED',
-        ],
-    }
-    return mock_network_response
-
-
-@pytest.fixture()
-def create_webhook_on_file_response(mock_file, test_webhook):
-    # pylint:disable=redefined-outer-name
-    mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.json.return_value = {
-        'type': test_webhook.object_type,
-        'id': test_webhook.object_id,
-        'target': {
-            'type': mock_file.object_type,
-            'id': mock_file.object_id,
-        },
-        'created_at': '2016-05-09T17:41:27-07:00',
-        'address': 'https://test.com',
-        'triggers': [
-            'COMMENT.CREATED',
         ],
     }
     return mock_network_response
@@ -585,26 +591,27 @@ def test_webhook_initializer(mock_client):
     assert webhook.object_id == expected_id
 
 
-def test_create_webhook_on_folder_returns_the_correct_policy_object(
-        test_folder,
+def test_create_webhook_returns_the_correct_policy_object(
+        test_item_and_response,
         test_webhook,
         mock_client,
         mock_box_session,
-        create_webhook_on_folder_response,
+        create_webhook_response,
 ):
     # pylint:disable=redefined-outer-name
+    test_item, _ = test_item_and_response
     expected_url = "{0}/webhooks".format(API.BASE_API_URL)
     expected_body = {
         'target': {
-            'type': test_folder.object_type,
-            'id': test_folder.object_id,
+            'type': test_item.object_type,
+            'id': test_item.object_id,
         },
         'triggers': ['FILE.UPLOADED', 'FOLDER.CREATED'],
         'address': 'https://test.com',
     }
     value = json.dumps(expected_body)
-    mock_box_session.post.return_value = create_webhook_on_folder_response
-    new_webhook = mock_client.create_webhook(test_folder, ['FILE.UPLOADED', 'FOLDER.CREATED'], 'https://test.com')
+    mock_box_session.post.return_value = create_webhook_response
+    new_webhook = mock_client.create_webhook(test_item, ['FILE.UPLOADED', 'FOLDER.CREATED'], 'https://test.com')
     mock_box_session.post.assert_called_once_with(
         expected_url,
         data=value,
@@ -612,42 +619,9 @@ def test_create_webhook_on_folder_returns_the_correct_policy_object(
     assert isinstance(new_webhook, Webhook)
     assert new_webhook.id == test_webhook.object_id
     assert new_webhook.type == test_webhook.object_type
-    assert new_webhook.target['type'] == test_folder.object_type
-    assert new_webhook.target['id'] == test_folder.object_id
+    assert new_webhook.target['type'] == test_item.object_type
+    assert new_webhook.target['id'] == test_item.object_id
     assert new_webhook.triggers == ['FILE.UPLOADED', 'FOLDER.CREATED']
-    assert new_webhook.address == 'https://test.com'
-
-
-def test_create_webhook_on_file_returns_the_correct_policy_object(
-        mock_file,
-        test_webhook,
-        mock_client,
-        mock_box_session,
-        create_webhook_on_file_response,
-):
-    # pylint:disable=redefined-outer-name
-    expected_url = "{0}/webhooks".format(API.BASE_API_URL)
-    expected_body = {
-        'target': {
-            'type': mock_file.object_type,
-            'id': mock_file.object_id,
-        },
-        'triggers': ['COMMENT.CREATED'],
-        'address': 'https://test.com',
-    }
-    value = json.dumps(expected_body)
-    mock_box_session.post.return_value = create_webhook_on_file_response
-    new_webhook = mock_client.create_webhook(mock_file, ['COMMENT.CREATED'], 'https://test.com')
-    mock_box_session.post.assert_called_once_with(
-        expected_url,
-        data=value,
-    )
-    assert isinstance(new_webhook, Webhook)
-    assert new_webhook.id == test_webhook.object_id
-    assert new_webhook.type == test_webhook.object_type
-    assert new_webhook.target['type'] == mock_file.object_type
-    assert new_webhook.target['id'] == mock_file.object_id
-    assert new_webhook.triggers == ['COMMENT.CREATED']
     assert new_webhook.address == 'https://test.com'
 
 
