@@ -511,6 +511,88 @@ class Client(Cloneable):
             return_full_pages=False,
         )
 
+    def webhook(self, webhook_id):
+        """
+        Initialize a :class:`Webhook` object, whose box id is webhook_id.
+
+        :param webhook_id:
+            The box ID of the :class: `Webhook` object.
+        :type webhook_id:
+            `unicode`
+        :return:
+            A :class:`Webhook` object with the given entry ID.
+        :rtype:
+            :class:`Webhook`
+        """
+        return self.translator.get('webhook')(session=self._session, object_id=webhook_id)
+
+    def create_webhook(self, target, triggers, address):
+        """
+        Create a webhook on the given file.
+
+        :param target:
+            Either a :class:`File` or :class:`Folder` to assign a webhook to.
+        :type target:
+            :class:`File` or :class`Folder`
+        :param triggers:
+            Event types that trigger notifications for the target.
+        :type triggers:
+            `list` of `unicode`
+        :param address:
+            The url to send the notification to.
+        :type address:
+            `unicode`
+        :return:
+            A :class:`Webhook` object with the given entry ID.
+        :rtype:
+            :class:`Webhook`
+        """
+        url = self.get_url('webhooks')
+        webhook_attributes = {
+            'target': {
+                'type': target.object_type,
+                'id': target.object_id,
+            },
+            'triggers': triggers,
+            'address': address,
+        }
+        box_response = self._session.post(url, data=json.dumps(webhook_attributes))
+        response = box_response.json()
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+    def get_webhooks(self, limit=None, marker=None, fields=None):
+        """
+        Get all webhooks in an enterprise.
+
+        :param limit:
+            The maximum number of entries to return.
+        :type limit:
+            `int` or None
+        :param marker:
+            The position marker at which to begin the response.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request on the file or folder which the `RecentItem` references.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the webhook
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('webhooks'),
+            limit=limit,
+            marker=marker,
+            fields=fields,
+        )
+
     @api_call
     def create_group(
             self,

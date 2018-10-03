@@ -22,6 +22,7 @@ from boxsdk.object.user import User
 from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 from boxsdk.object.search import Search
+from boxsdk.object.webhook import Webhook
 from boxsdk.object.task import Task
 from boxsdk.object.task_assignment import TaskAssignment
 from boxsdk.object.web_link import WebLink
@@ -139,6 +140,11 @@ def test_legal_hold(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_search(mock_box_session):
     return Search(mock_box_session)
+
+
+@pytest.fixture()
+def test_webhook(mock_box_session, mock_object_id):
+    return Webhook(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()
