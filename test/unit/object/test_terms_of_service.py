@@ -114,3 +114,14 @@ def test_get_user_status(test_terms_of_service, test_terms_of_service_user_statu
     assert isinstance(new_terms_of_service_user_status, TermsOfServiceUserStatus)
     assert new_terms_of_service_user_status.type == 'terms_of_service_user_status'
     assert new_terms_of_service_user_status.id == test_terms_of_service_user_status.object_id
+
+
+def test_set_user_status(test_terms_of_service, mock_box_session):
+    mock_box_session.post.return_value.json.return_value = {
+        'status': 409
+    }
+    mock_box_session.put.return_value.json.return_value = {
+        'is_accepted': True
+    }
+    new_terms_of_service_user_status = test_terms_of_service.set_user_status(True)
+    assert isinstance(new_terms_of_service_user_status, TermsOfServiceUserStatus)
