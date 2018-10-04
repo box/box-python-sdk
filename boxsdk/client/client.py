@@ -165,7 +165,7 @@ class Client(Cloneable):
         Initialize a :class:`Trash` object.
 
         :return:
-            A :class:`Trash` object with the given trash id.
+            A :class:`Trash` object.
         :rtype:
             :class:`Trash`
         """
