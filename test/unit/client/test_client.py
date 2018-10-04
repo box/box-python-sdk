@@ -1,4 +1,5 @@
 # coding: utf-8
+# pylint: disable=too-many-lines
 
 from __future__ import unicode_literals
 import json
