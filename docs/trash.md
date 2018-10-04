@@ -5,6 +5,16 @@ Under normal circumstances, when an item in Box is deleted, it is not actually e
 moved to the Trash. The Trash allows you to recover files and folders that have been deleted. By default, items in
 the Trash will be purged after 30 days.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [List Trashed Items](#list-trashed-items)
+- [Get Trashed File, Folder or WebLink](#get-trashed-file-folder-or-weblink)
+- [Restore File, Folder, or WebLink from Trash](#restore-file-folder-or-weblink-from-trash)
+- [Permanently Delete File, Folder or WebLink](#permanently-delete-file-folder-or-weblink)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 List Trashed Items
 ------------------
