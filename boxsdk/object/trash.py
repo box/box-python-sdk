@@ -23,9 +23,9 @@ class Trash(BaseEndpoint):
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            A `dict` containing the trashed file, folder or weblink.
+            A trashed :class:`File`, :class:`Folder`, or :class:`WebLink` object.
         :rtype:
-            `dict`
+            :class:`File`, :class:`Folder`, or :class:`WebLink`
         """
         url = self._session.get_url(item.object_type + 's', item.object_id, 'trash')
         params = {}
@@ -33,7 +33,11 @@ class Trash(BaseEndpoint):
             params['fields'] = ','.join(fields)
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        return response
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
 
     def restore_from_trash(self, item, name=None, parent_id=None, fields=None):
         """
@@ -56,9 +60,9 @@ class Trash(BaseEndpoint):
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            A `dict` containing the restored file, folder or weblink.
+            A restored :class:`File`, :class:`Folder`, or :class:`WebLink`.
         :rtype:
-            `dict`
+            :class:`File`, :class:`Folder`, or :class:`WebLink`.
         """
         url = self._session.get_url(item.object_type + 's', item.object_id)
         body = {}
@@ -71,7 +75,11 @@ class Trash(BaseEndpoint):
             params['fields'] = ','.join(fields)
         box_response = self._session.post(url, data=json.dumps(body), params=params)
         response = box_response.json()
-        return response
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
 
     def permanently_delete_item(self, item):
         """

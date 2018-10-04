@@ -46,12 +46,12 @@ def test_get_from_trash(test_item_and_response, test_trash, mock_box_session):
     }
     trashed_item_info = test_trash.get_from_trash(item=test_item, fields=['created_at', 'modified_at'])
     mock_box_session.get.assert_called_once_with(expected_url, params={'fields': 'created_at,modified_at'})
-    assert trashed_item_info['type'] == test_item.object_type
-    assert trashed_item_info['id'] == test_item.object_id
-    assert trashed_item_info['created_at'] == '2015-05-07T14:31:16-07:00'
-    assert trashed_item_info['modified_at'] == '2015-05-07T14:31:16-07:00'
-    assert trashed_item_info['created_by']['type'] == 'user'
-    assert trashed_item_info['created_by']['id'] == '11111'
+    assert trashed_item_info.object_type == test_item.object_type
+    assert trashed_item_info.object_id == test_item.object_id
+    assert trashed_item_info.created_at == '2015-05-07T14:31:16-07:00'
+    assert trashed_item_info.modified_at == '2015-05-07T14:31:16-07:00'
+    assert trashed_item_info.created_by['type'] == 'user'
+    assert trashed_item_info.created_by['id'] == '11111'
 
 
 def test_restore_from_trash(test_item_and_response, test_trash, mock_box_session):
@@ -78,12 +78,12 @@ def test_restore_from_trash(test_item_and_response, test_trash, mock_box_session
     }
     restored_item = test_trash.restore_from_trash(test_item, new_name, parent_id, ['created_at', 'modified_at'])
     mock_box_session.post.assert_called_once_with(expected_url, data=value, params={'fields': 'created_at,modified_at'})
-    assert restored_item['type'] == test_item.object_type
-    assert restored_item['id'] == test_item.object_id
-    assert restored_item['created_at'] == '2015-05-07T14:31:16-07:00'
-    assert restored_item['modified_at'] == '2015-05-07T14:31:16-07:00'
-    assert restored_item['created_by']['type'] == 'user'
-    assert restored_item['created_by']['id'] == '11111'
+    assert restored_item.object_type == test_item.object_type
+    assert restored_item.object_id == test_item.object_id
+    assert restored_item.created_at == '2015-05-07T14:31:16-07:00'
+    assert restored_item.modified_at == '2015-05-07T14:31:16-07:00'
+    assert restored_item.created_by['type'] == 'user'
+    assert restored_item.created_by['id'] == '11111'
 
 
 def test_permanently_delete(test_item_and_response, test_trash, mock_box_session):
