@@ -21,6 +21,7 @@ __all__ = list(map(str, [
     'legal_hold_policy_assignment',
     'recent_item',
     'search',
+    'trash',
     'user',
     'watermark',
     'web_link',

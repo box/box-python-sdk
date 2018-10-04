@@ -9,6 +9,7 @@ from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
+from ..object.trash import Trash
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
@@ -158,6 +159,17 @@ class Client(Cloneable):
             :class:`Collaboration`
         """
         return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
+
+    def trash(self):
+        """
+        Initialize a :class:`Trash` object.
+
+        :return:
+            A :class:`Trash` object with the given trash id.
+        :rtype:
+            :class:`Trash`
+        """
+        return Trash(self._session)
 
     def legal_hold_policy(self, policy_id):
         """
@@ -583,36 +595,6 @@ class Client(Cloneable):
             session=self._session,
             object_id=response['id'],
             response_object=response,
-        )
-
-    def get_trashed_items(self, limit=None, offset=None, fields=None):
-        """
-        Using limit-offset paging, get the files, folders and web links that are in the user's trash.
-
-        :param limit:
-            The maximum number of entries to return per page. If not specified, then will use the server-side default.
-        :type limit:
-            `int` or None
-        :param offset:
-            The offset of the item at which to begin the response.
-        :type offset:
-            `unicode` or None
-        :param fields:
-            List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
-        :returns:
-            An iterator of the entries in the trash
-        :rtype:
-            :class:`BoxObjectCollection`
-        """
-        return LimitOffsetBasedObjectCollection(
-            session=self._session,
-            url=self.get_url('folders', 'trash', 'items'),
-            limit=limit,
-            offset=offset,
-            fields=fields,
-            return_full_pages=False,
         )
 
     def web_link(self, web_link_id):
