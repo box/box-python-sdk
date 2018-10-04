@@ -9,6 +9,7 @@ from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
+from ..object.collaboration_whitelist import CollaborationWhitelist
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
@@ -159,6 +160,17 @@ class Client(Cloneable):
         """
         return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
 
+    def collaboration_whitelist(self):
+        """
+        Initilializes a :class:`CollaborationWhitelist` object.
+
+        :return:
+            A :class:`CollaborationWhitelist` object.
+        :rype:
+            :class:`CollaborationWhitelist`.
+        """
+        return CollaborationWhitelist(self._session)
+
     def collaboration_whitelist_entry(self, entry_id):
         """
         Initialize a :class:`CollaborationWhitelistEntry` object, whose box id is entry_id.
@@ -172,7 +184,7 @@ class Client(Cloneable):
         :rtype:
             :class:`CollaborationWhitelistEntry`
         """
-        return self.translator.translate('collaboration_whitelist_entry')(session=self._session, object_id=entry_id)
+        return self.translator.get('collaboration_whitelist_entry')(session=self._session, object_id=entry_id)
 
     def collaboration_whitelist_exempty_target(self, target_id):
         """
@@ -187,7 +199,7 @@ class Client(Cloneable):
         :rtype:
             :class:`CollaborationWhitelistExemptTarget`
         """
-        return self.translator.translate('collaboration_whitelist_exempt_target')(session=self._session, object_id=target_id)
+        return self.translator.get('collaboration_whitelist_exempt_target')(session=self._session, object_id=target_id)
 
     def collection(self, collection_id):
         """

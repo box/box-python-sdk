@@ -6,6 +6,16 @@ import json
 from .base_endpoint import BaseEndpoint
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.api_call_decorator import api_call
+from ..util.text_enum import TextEnum
+
+
+class Direction(TextEnum):
+    """
+    Used to determine the direction of the whitelist.
+    """
+    INBOUND = 'inbound'
+    OUTBOUNT = 'outbound'
+    BOTH = 'both'
 
 
 class CollaborationWhitelist(BaseEndpoint):
