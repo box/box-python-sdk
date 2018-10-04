@@ -44,8 +44,8 @@ def test_get_from_trash(test_item_and_response, test_trash, mock_box_session):
             'id': '11111',
         },
     }
-    trashed_item_info = test_trash.get_from_trash(test_item)
-    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    trashed_item_info = test_trash.get_from_trash(item=test_item, fields=['created_at', 'modified_at'])
+    mock_box_session.get.assert_called_once_with(expected_url, params={'fields': 'created_at,modified_at'})
     assert trashed_item_info['type'] == test_item.object_type
     assert trashed_item_info['id'] == test_item.object_id
     assert trashed_item_info['created_at'] == '2015-05-07T14:31:16-07:00'
@@ -76,8 +76,8 @@ def test_restore_from_trash(test_item_and_response, test_trash, mock_box_session
             'id': '11111',
         },
     }
-    restored_item = test_trash.restore_from_trash(test_item, new_name, parent_id)
-    mock_box_session.post.assert_called_once_with(expected_url, data=value, params={})
+    restored_item = test_trash.restore_from_trash(test_item, new_name, parent_id, ['created_at', 'modified_at'])
+    mock_box_session.post.assert_called_once_with(expected_url, data=value, params={'fields': 'created_at,modified_at'})
     assert restored_item['type'] == test_item.object_type
     assert restored_item['id'] == test_item.object_id
     assert restored_item['created_at'] == '2015-05-07T14:31:16-07:00'
@@ -111,9 +111,9 @@ def test_get_trashed_items(test_item_and_response, test_trash, mock_box_session)
         'limit': 100,
         'entries': [mock_trash]
     }
-    trashed_items = test_trash.get_trashed_items()
+    trashed_items = test_trash.get_trashed_items(fields=['name'])
     trashed_item = trashed_items.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
+    mock_box_session.get.assert_called_once_with(expected_url, params={'fields': 'name', 'offset': None})
     assert trashed_item['type'] == mock_trash['type']
     assert trashed_item['id'] == mock_trash['id']
     assert trashed_item['name'] == item_name
