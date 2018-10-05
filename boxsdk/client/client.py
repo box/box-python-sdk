@@ -169,7 +169,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Trash`
         """
-        return Trash(self._session)
+        return self.translator.get('trash')(session=self._session)
 
     def legal_hold_policy(self, policy_id):
         """

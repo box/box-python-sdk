@@ -44,7 +44,7 @@ def test_get_from_trash(test_item_and_response, test_trash, mock_box_session):
             'id': '11111',
         },
     }
-    trashed_item_info = test_trash.get_from_trash(item=test_item, fields=['created_at', 'modified_at'])
+    trashed_item_info = test_trash.get_info(item=test_item, fields=['created_at', 'modified_at'])
     mock_box_session.get.assert_called_once_with(expected_url, params={'fields': 'created_at,modified_at'})
     assert trashed_item_info.object_type == test_item.object_type
     assert trashed_item_info.object_id == test_item.object_id

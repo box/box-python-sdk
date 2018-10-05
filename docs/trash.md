@@ -30,21 +30,21 @@ for trashed_item in trashed_items:
 Get Trashed File, Folder or WebLink
 -----------------------------------
 
-To retrieve a file, folder, weblink from the trash, use `client.trash.get_from_trash(item, fields=None)`. 
+To retrieve a file, folder, weblink from the trash, use `client.trash.get_info(item, fields=None)`. 
 
 ```python
 file = client.file('11111')
-file_from_trash = client.trash().get_from_trash(file)
+file_from_trash = client.trash().get_info(file)
 ```
 
 ```python
 folder = client.folder('22222')
-folder_from_trash = client.trash().get_from_trash(folder)
+folder_from_trash = client.trash().get_info(folder)
 ```
 
 ```python
 web_link = client.web_link('33333')
-web_link_from_Trash = client.trash().get_from_trash(web_link)
+web_link_from_Trash = client.trash().get_info(web_link)
 ```
 
 Restore File, Folder, or WebLink from Trash

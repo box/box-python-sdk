@@ -10,24 +10,24 @@ from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedOb
 class Trash(BaseEndpoint):
     """Box API endpoint for performing trash related actions in Box."""
 
-    def get_from_trash(self, item, fields=None):
+    def get_info(self, item, fields=None):
         """
         Get item from trash.
 
         :param item:
-            The :class:`File` or :class:`Folder` or :class:`WebLink` object to restore from trash.
+            The :class:`Item` object to get info on.
         :type item:
-            :class:`File` or :class:`Folder` or :class:`WebLink`.
+            :class:`Item`
         :param fields:
             List of fields to request
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            A trashed :class:`File`, :class:`Folder`, or :class:`WebLink` object.
+            Information for a trashed :class:`Item` object.
         :rtype:
-            :class:`File`, :class:`Folder`, or :class:`WebLink`
+            :class:`Item`
         """
-        url = self._session.get_url(item.object_type + 's', item.object_id, 'trash')
+        url = item.get_url('trash')
         params = {}
         if fields:
             params['fields'] = ','.join(fields)
