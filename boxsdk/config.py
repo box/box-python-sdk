@@ -23,5 +23,5 @@ class Client(object):
         VERSION,
         py_version.major,
         py_version.minor,
-        py_version.micro
+        py_version.micro,
     )
