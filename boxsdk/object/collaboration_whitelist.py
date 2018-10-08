@@ -9,7 +9,7 @@ from ..util.api_call_decorator import api_call
 from ..util.text_enum import TextEnum
 
 
-class Direction(TextEnum):
+class WhitelistDirection(TextEnum):
     """
     Used to determine the direction of the whitelist.
     """
