@@ -4,11 +4,14 @@ from __future__ import unicode_literals, absolute_import
 import json
 
 from .base_endpoint import BaseEndpoint
+from .base_api_json_object import BaseAPIJSONObject
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
 
-class Trash(BaseEndpoint):
+class Trash(BaseEndpoint, BaseAPIJSONObject):
     """Box API endpoint for performing trash related actions in Box."""
+
+    _item_type = 'trash'
 
     def get_info(self, item, fields=None):
         """
