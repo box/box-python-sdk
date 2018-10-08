@@ -19,52 +19,52 @@ the Trash will be purged after 30 days.
 List Trashed Items
 ------------------
 
-To retrieve a list of all trashed items, you can use `client.trash().get_trashed_items(offset=None, limit=None, fields=None)`
+To retrieve a list of all trashed items, you can use `client.trash().get__items(limit=None, offset=None, fields=None)`
 
 ```python
-trashed_items = client.trash().get_trashed_items()
+trashed_items = client.trash().get_items()
 for trashed_item in trashed_items:
     # Do something
 ```
 
-Get Trashed File, Folder or WebLink
------------------------------------
+Get Trashed Items
+-----------------
 
-To retrieve a file, folder, weblink from the trash, use `client.trash.get_info(item, fields=None)`. 
+To retrieve a file, folder, weblink from the trash, use `client.trash.get_item_info(item, fields=None)`. 
 
 ```python
-file = client.file('11111')
-file_from_trash = client.trash().get_info(file)
+file_info_to_retrieve = client.file('11111')
+file_from_trash = client.trash().get_item_info(file_info_to_retrieve)
 ```
 
 ```python
 folder = client.folder('22222')
-folder_from_trash = client.trash().get_info(folder)
+folder_from_trash = client.trash().get_item_info(folder)
 ```
 
 ```python
 web_link = client.web_link('33333')
-web_link_from_Trash = client.trash().get_info(web_link)
+web_link_from_trash = client.trash().get_item_info(web_link)
 ```
 
 Restore File, Folder, or WebLink from Trash
 -------------------------------------------
 
-To retore a trashed item, effectively undeleting it, call `client.trash().restore_from_trash(item, name=None, parent_id=None, fields=None)`.
+To retore a trashed item, effectively undeleting it, call `client.trash().restore_item(item, name=None, parent_folder=None, fields=None)`.
 
 ```python
 file_to_restore = client.file('11111')
-restored_file = client.trash().restore_from_trash(file_to_restore)
+restored_file = client.trash().restore_item(file_to_restore)
 ```
 
 ```python
 folder_to_restore = client.folder('22222')
-restored_folder = client.trash().restore_from_trash(folder_to_restore)
+restored_folder = client.trash().restore_item(folder_to_restore)
 ```
 
 ```python
 web_link_to_restore = client.web_link('33333')
-restored_web_link = client.trash().restore_from_trash(web_link_to_restore)
+restored_web_link = client.trash().restore_item(web_link_to_restore)
 ```
 
 In order to avoid conflicts, you can set a new name and new parent folder for the item you wish to restore.
@@ -72,8 +72,8 @@ In order to avoid conflicts, you can set a new name and new parent folder for th
 ```python
 file = client.file('11111')
 new_name = 'New File Name'
-new_parent_id = '1111'
-restored_file = client.trash().restore_from_trash(file, new_name, new_parent_id)
+new_parent_folder = client.folder('22222')
+restored_file = client.trash().restore_item(file, new_name, new_parent_folder)
 ```
 
 Permanently Delete File, Folder or WebLink

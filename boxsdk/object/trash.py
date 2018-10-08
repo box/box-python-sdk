@@ -8,12 +8,10 @@ from .base_api_json_object import BaseAPIJSONObject
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
 
-class Trash(BaseEndpoint, BaseAPIJSONObject):
+class Trash(BaseEndpoint):
     """Box API endpoint for performing trash related actions in Box."""
 
-    _item_type = 'trash'
-
-    def get_info(self, item, fields=None):
+    def get_item_info(self, item, fields=None):
         """
         Get item from trash.
 
@@ -42,37 +40,37 @@ class Trash(BaseEndpoint, BaseAPIJSONObject):
             response_object=response,
         )
 
-    def restore_from_trash(self, item, name=None, parent_id=None, fields=None):
+    def restore_item(self, item, name=None, parent_folder=None, fields=None):
         """
         Restores an item from the trash. Could be files, folders, or weblinks.
 
         :param item:
-            The :class:`File` or :class:`Folder` or :class:`WebLink` object to restore from trash.
+            The :class:`Item` object to restore from trash.
         :type item:
-            :class:`File` or :class:`Folder` or :class:`WebLink`.
+            :class:`Item`.
         :param name:
             The new name for this item. Only used if the item can't be restored due to name conflict.
         :type name:
             `unicode` or None
-        :param parent_id:
-            The id of the new parent folder. Only used if the previous parent folder no longer exists.
-        :type parent_id:
-            `unicode` or None
+        :param parent_folder:
+            The new parent folder. Only used if the previous parent folder no longer exists.
+        :type parent_folder:
+            :class:`Item` or None
         :param fields:
             List of fields to request
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            A restored :class:`File`, :class:`Folder`, or :class:`WebLink`.
+            A restored :class:`Item`.
         :rtype:
-            :class:`File`, :class:`Folder`, or :class:`WebLink`.
+            :class:`Item`.
         """
-        url = self._session.get_url(item.object_type + 's', item.object_id)
+        url = item.get_url()
         body = {}
         if name is not None:
             body['name'] = name
-        if parent_id is not None:
-            body['parent'] = {'id': parent_id}
+        if parent_folder is not None:
+            body['parent'] = {'id': parent_folder.object_id}
         params = {}
         if fields:
             params['fields'] = ','.join(fields)
@@ -87,12 +85,21 @@ class Trash(BaseEndpoint, BaseAPIJSONObject):
     def permanently_delete_item(self, item):
         """
         Permanently delete an item that is in the trash. The item will no longer exist in Box.
+
+        :param item:
+            The :class:`Item` to delete from trash.
+        :type item:
+            :class:`Item`
+        :returns:
+            Whether or not the delete was successful.
+        :rtype:
+            `bool`
         """
-        url = self._session.get_url(item.object_type + 's', item.object_id, 'trash')
+        url = item.get_url('trash')
         box_response = self._session.delete(url, expect_json_response=False)
         return box_response.ok
 
-    def get_trashed_items(self, limit=None, offset=None, fields=None):
+    def get_items(self, limit=None, offset=None, fields=None):
         """
         Using limit-offset paging, get the files, folders and web links that are in the user's trash.
 
