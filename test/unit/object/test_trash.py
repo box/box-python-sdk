@@ -5,9 +5,6 @@ import json
 import pytest
 
 from boxsdk.config import API
-from boxsdk.object.file import File
-from boxsdk.object.folder import Folder
-from boxsdk.object.web_link import WebLink
 from boxsdk.object.trash import Trash
 
 
