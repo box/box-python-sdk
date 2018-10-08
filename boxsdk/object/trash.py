@@ -4,7 +4,6 @@ from __future__ import unicode_literals, absolute_import
 import json
 
 from .base_endpoint import BaseEndpoint
-from .base_api_json_object import BaseAPIJSONObject
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
 
