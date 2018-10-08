@@ -64,7 +64,10 @@ class Session(object):
         self._client_config = client_config or Client()
         super(Session, self).__init__()
         self._network_layer = network_layer or DefaultNetwork()
-        self._default_headers = {'User-Agent': self._client_config.USER_AGENT_STRING}
+        self._default_headers = {
+            'User-Agent': self._client_config.USER_AGENT_STRING,
+            'X-Box-UA': self._client_config.BOX_UA_STRING,
+        }
         self._translator = translator
         self._default_network_request_kwargs = {}
         if default_headers:
