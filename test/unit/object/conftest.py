@@ -9,7 +9,6 @@ from six import int2byte, PY2
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
-from boxsdk.object.email_alias import EmailAlias
 from boxsdk.object.device_pinner import DevicePinner
 from boxsdk.object.file import File
 from boxsdk.object.file_version_retention import FileVersionRetention
@@ -120,11 +119,6 @@ def test_folder(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_group(mock_box_session, mock_group_id):
     return Group(mock_box_session, mock_group_id)
-
-
-@pytest.fixture()
-def test_email_alias(mock_box_session, mock_object_id):
-    return EmailAlias(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()
