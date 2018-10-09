@@ -347,6 +347,21 @@ class Client(Cloneable):
             return_full_pages=False,
         )
 
+    def enterprise(self, enterprise_id):
+        """
+        Initialize a :class:`Enterprise` object, whose box ID is enterprise_id.
+
+        :param enterprise_id:
+            The box id of the :class:`Enterprise` object.
+        :type enterprise_id:
+            `unicode`
+        :return:
+            A :class:`Enterprise` object with the given enterprise ID.
+        :rtype:
+            :class:`Enterprise`
+        """
+        return self.translator.get('enterprise')(session=self._session, object_id=enterprise_id)
+
     @api_call
     def users(self, limit=None, offset=0, filter_term=None, user_type=None, fields=None):
         """

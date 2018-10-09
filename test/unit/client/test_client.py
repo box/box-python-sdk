@@ -18,6 +18,7 @@ from boxsdk.client import Client, DeveloperTokenClient, DevelopmentClient, Loggi
 from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.collaboration import Collaboration
+from boxsdk.object.enterprise import Enterprise
 from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
@@ -337,6 +338,8 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
     (User, 'user'),
     (Group, 'group'),
     (GroupMembership, 'group_membership'),
+    (Enterprise, 'enterprise'),
+    (Webhook, 'webhook')
 ])
 def test_factory_returns_the_correct_object(mock_client, test_class, factory_method_name):
     """ Tests the various id-only factory methods in the Client class """
@@ -588,13 +591,6 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
-
-
-def test_webhook_initializer(mock_client):
-    expected_id = '1234'
-    webhook = mock_client.webhook(expected_id)
-    assert isinstance(webhook, Webhook)
-    assert webhook.object_id == expected_id
 
 
 def test_create_webhook_returns_the_correct_policy_object(
