@@ -8,12 +8,11 @@ import json
 from mock import Mock, MagicMock
 import pytest
 
-from boxsdk.auth.oauth2 import DefaultNetwork
 from boxsdk.config import API, Client
 from boxsdk.network import default_network
-from boxsdk.network.default_network import DefaultNetworkResponse
+from boxsdk.network.default_network import DefaultNetworkResponse, DefaultNetwork
 from boxsdk.session.box_response import BoxResponse
-from boxsdk.session.box_session import BoxSession
+from boxsdk.session.session import Session
 from boxsdk.util.translator import Translator
 
 
@@ -47,24 +46,24 @@ def translator(default_translator):   # pylint:disable=unused-argument
 
 @pytest.fixture(scope='function')
 def mock_box_session(translator):
-    mock_session = MagicMock(BoxSession)
+    mock_session = MagicMock(Session)
     # pylint:disable=protected-access
     mock_session._api_config = mock_session.api_config = API()
     mock_session._client_config = mock_session.client_config = Client()
     # pylint:enable=protected-access
-    mock_session.get_url.side_effect = lambda *args, **kwargs: BoxSession.get_url(mock_session, *args, **kwargs)
+    mock_session.get_url.side_effect = lambda *args, **kwargs: Session.get_url(mock_session, *args, **kwargs)
     mock_session.translator = translator
     return mock_session
 
 
 @pytest.fixture()
 def mock_box_session_2():
-    mock_session = MagicMock(BoxSession)
+    mock_session = MagicMock(Session)
     # pylint:disable=protected-access
     mock_session._api_config = API()
     mock_session._client_config = Client()
     # pylint:enable=protected-access
-    mock_session.get_url.side_effect = lambda *args, **kwargs: BoxSession.get_url(mock_session, *args, **kwargs)
+    mock_session.get_url.side_effect = lambda *args, **kwargs: Session.get_url(mock_session, *args, **kwargs)
     return mock_session
 
 
@@ -128,5 +127,14 @@ def mock_folder_response(mock_object_id, make_mock_box_request):
     # pylint:disable=redefined-outer-name
     mock_box_response, _ = make_mock_box_request(
         response={'type': 'folder', 'id': mock_object_id},
+    )
+    return mock_box_response
+
+
+@pytest.fixture(scope='function')
+def mock_web_link_response(mock_object_id, make_mock_box_request):
+    # pylint:disable=redefined-outer-name
+    mock_box_response, _ = make_mock_box_request(
+        response={'type': 'web_link', 'id': mock_object_id},
     )
     return mock_box_response

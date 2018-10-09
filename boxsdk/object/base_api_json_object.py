@@ -126,6 +126,15 @@ class BaseAPIJSONObject(object):
         return ""
 
     @property
+    def object_type(self):
+        """Return the Box type for the object.
+
+        :rtype:
+            `unicode`
+        """
+        return self._item_type
+
+    @property
     def response_object(self):
         """
         Return the JSON object representing the object returned from a Box API request.

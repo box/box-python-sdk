@@ -2,12 +2,12 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from collections import OrderedDict
 from enum import Enum
 import pytest
 
 from boxsdk.util.compat import with_metaclass
 from boxsdk.util.enum import ExtendableEnumMeta
-from boxsdk.util.ordered_dict import OrderedDict
 
 
 # pylint:disable=invalid-name

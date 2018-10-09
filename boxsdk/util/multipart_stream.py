@@ -2,9 +2,9 @@
 
 from __future__ import unicode_literals
 
-from requests_toolbelt.multipart.encoder import MultipartEncoder
+from collections import OrderedDict
 
-from boxsdk.util.ordered_dict import OrderedDict
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 
 class MultipartStream(MultipartEncoder):

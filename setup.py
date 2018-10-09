@@ -54,7 +54,13 @@ class PyTest(TestCommand):
 
 def main():
     base_dir = dirname(__file__)
-    install_requires = ['requests>=2.4.3', 'six>=1.9.0', 'requests-toolbelt>=0.4.0']
+    install_requires = [
+        'attrs>=16.0.0',
+        'requests>=2.4.3',
+        'requests-toolbelt>=0.4.0',
+        'six>=1.9.0',
+        'wrapt>=1.10.1',
+    ]
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=0.9.2']
     extra_requires = defaultdict(list)
@@ -71,9 +77,8 @@ def main():
         #
         # [1] <https://www.python.org/dev/peps/pep-0426/#environment-markers>
         # [2] <https://www.python.org/dev/peps/pep-0345/#environment-markers>
-        'chainmap>=1.0.2': ['2.6', '2.7'],  # <'3.3'
-        'enum34>=1.0.4': ['2.6', '2.7', '3.3'],   # <'3.4'
-        'ordereddict>=1.1': ['2.6'],   # <'2.7'
+        'chainmap>=1.0.2': ['2.7'],  # <'3.4'
+        'enum34>=1.0.4': ['2.7'],   # <'3.4'
     }
     for requirement, python_versions in conditional_dependencies.items():
         for python_version in python_versions:
@@ -89,18 +94,12 @@ def main():
         'pylint',
         'sqlalchemy',
         'tox',
+        'pytest>=2.8.3',
         'pytest-cov',
         'pytest-xdist',
+        'python-coveralls',
         'pytz',
     ]
-    # pytest>=3.3.0 has dropped support for python 2.6 and 3.3; we pin lower than 3.3.0 for those python versions
-    # we require attrs >= 16.0.0 but newer versions have also dropped support for 2.6 and 3.3, so we pin to 16.0.0
-    if sys.version_info[:2] <= (2, 6) or (sys.version_info[0] == 3 and sys.version_info[1] <= 3):
-        test_requires.append('pytest>=2.8.3,<3.3.0')
-        install_requires.append('attrs==16.0.0')
-    else:
-        test_requires.append('pytest>=2.8.3')
-        install_requires.append('attrs>=16.0.0')
     extra_requires['test'] = test_requires
     with open('boxsdk/version.py', 'r', encoding='utf-8') as config_py:
         version = re.search(r'^\s+__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE).group(1)

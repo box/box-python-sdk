@@ -11,10 +11,9 @@ from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.file import File
+from boxsdk.object.web_link import WebLink
 from boxsdk.object.collaboration import Collaboration, CollaborationRole
 from boxsdk.object.folder import Folder, FolderSyncState
-from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
-from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from boxsdk.session.box_response import BoxResponse
 
 
@@ -56,10 +55,16 @@ def mock_items_response(mock_items):
     # pylint:disable=redefined-outer-name
     def get_response(limit, offset):
         items_json, items = mock_items
+        entries = items_json[offset:limit + offset]
         mock_box_response = Mock(BoxResponse)
         mock_network_response = Mock(DefaultNetworkResponse)
         mock_box_response.network_response = mock_network_response
-        mock_box_response.json.return_value = mock_json = {'entries': items_json[offset:limit + offset]}
+        mock_box_response.json.return_value = mock_json = {
+            'entries': entries,
+            'total_count': len(entries),
+            'limit': limit,
+            'offset': offset,
+        }
         mock_box_response.content = json.dumps(mock_json).encode()
         mock_box_response.status_code = 200
         mock_box_response.ok = True
@@ -122,23 +127,14 @@ def test_get_items(test_folder, mock_box_session, mock_items_response, limit, of
     # pylint:disable=redefined-outer-name
     expected_url = test_folder.get_url('items')
     mock_box_session.get.return_value, expected_items = mock_items_response(limit, offset)
-    items = test_folder.get_items(limit, offset, fields)
+    items = test_folder.get_items(limit, offset, fields=fields)
     expected_params = {'limit': limit, 'offset': offset}
     if fields:
         expected_params['fields'] = ','.join(fields)
+    for actual, expected in zip(items, expected_items):
+        assert actual == expected
     mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
-    assert items == expected_items
     assert all([i.id == e.object_id for i, e in zip(items, expected_items)])
-
-
-def test_get_items_marker_returns_marker_instance(test_folder):
-    limit_offset_object_collection = test_folder.get_items_limit_offset()
-    assert isinstance(limit_offset_object_collection, LimitOffsetBasedObjectCollection)
-
-
-def test_get_items_limit_offset_returns_limit_offset_instance(test_folder):
-    marker_object_collection = test_folder.get_items_marker()
-    assert isinstance(marker_object_collection, MarkerBasedObjectCollection)
 
 
 @pytest.mark.parametrize('is_stream', (True, False))
@@ -290,3 +286,35 @@ def test_preflight(test_folder, mock_object_id, mock_box_session):
             }
         ),
     )
+
+
+def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_box_session):
+    expected_url = "{0}/web_links".format(API.BASE_API_URL)
+    expected_name = 'Test WebLink'
+    description = 'Test Description'
+    test_web_link_url = 'https://test.com'
+    mock_box_session.post.return_value.json.return_value = {
+        'type': 'web_link',
+        'id': '42',
+        'url': test_web_link_url,
+        'name': expected_name,
+        'description': description
+    }
+    new_web_link = test_folder.create_web_link(test_web_link_url, expected_name, description)
+    data = {
+        'url': test_web_link_url,
+        'parent': {
+            'id': '42',
+        },
+        'name': expected_name,
+        'description': description,
+    }
+    mock_box_session.post.assert_called_once_with(
+        expected_url,
+        data=json.dumps(data),
+    )
+    assert isinstance(new_web_link, WebLink)
+    assert new_web_link.object_id == '42'
+    assert new_web_link.url == test_web_link_url
+    assert new_web_link.name == expected_name
+    assert new_web_link.description == description

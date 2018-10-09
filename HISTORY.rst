@@ -10,6 +10,9 @@ Release History
 
 - Python 2.6 is no longer supported.
 - Python 3.3 is no longer supported.
+- ``client.get_memberships`` has a change in signature. The limit and offset parameters have swapped positions to keep
+  consistency with the rest of the SDK.
+- ``client.groups`` has been changed to ``client.get_groups``. The limit and offset parameters have swapped positions.
 - ``Events.get_events(...)`` now returns a list of ``Event`` instances rather than a list of ``dict``
   representing events.  ``Event`` inherits from ``Mapping`` but will not have all the same capabilities as
   ``dict``.
@@ -24,7 +27,8 @@ Release History
   + Migration: If you still need to treat an ``Event`` as a ``dict``, you can get a deepcopy of the original ``dict``
     using the new property on ``BaseAPIJSONObject``, ``response_object``.
 
-- The logging format strings in ``LoggingNetwork`` have changed in a way that
+- ``LoggingNetwork`` has been removed. Logging calls are now made from the ``DefaultNetwork`` class. In addition,
+  the logging format strings in this class have changed in a way that
   will break logging for any applications that have overridden any of these
   strings. They now use keyword format placeholders instead of positional
   placeholders. All custom format strings will now have to use the same keyword
@@ -38,6 +42,25 @@ Release History
   Previously it would return a ``File`` object where the file JSON is hidden
   inside ``file['entries'][0]``. This is a bugfix, but will be a breaking
   change for any clients that have already written code to handle the bug.
+
+- Comparing two objects (e.g. a ``File`` and a ``Folder``) that have the same Box ID but different types with ``==``
+  will now correctly return `False`.
+
+- The following methods now return iterators over the entire collection of returned objects, rather than
+  a single page:
+
+  + ``client.users()``
+  + ``client.groups()``
+  + ``client.search()``
+  + ``folder.get_items()``
+
+  Since ``folder.get_items()`` now returns an iterator, ``folder.get_items_limit_offset()`` and
+  ``folder.get_items_marker()`` have been removed.  To use marker based paging with ``folder.get_items()``,
+  pass the ``use_marker=True`` parameter and optionally specify a ``marker`` parameter to begin paging from that
+  point in the collection.
+
+  Additionally, ``group.membership()`` has been renamed to ``group.get_memberships()``, and returns an iterator of
+  membership objects.  This method no longer provides the option to return tuples with paging information.
 
 **Features**
 

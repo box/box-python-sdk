@@ -3,14 +3,13 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from collections import OrderedDict
 from itertools import chain
 import sys
 
 from enum import EnumMeta
 from six import reraise
 from six.moves import map   # pylint:disable=redefined-builtin
-
-from .ordered_dict import OrderedDict
 
 
 __all__ = list(map(str, ['ExtendableEnumMeta']))

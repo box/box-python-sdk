@@ -7,7 +7,9 @@ import pytest
 from six import BytesIO
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
+from boxsdk.object.comment import Comment
 from boxsdk.object.file import File
+from boxsdk.object.task import Task
 
 
 # pylint:disable=protected-access
@@ -38,6 +40,62 @@ def test_delete_file(test_file, mock_box_session, etag, if_match_header):
         params={},
         headers=if_match_header,
     )
+
+
+def test_create_task(test_file, test_task, mock_box_session):
+    # pylint:disable=redefined-outer-name
+    expected_url = "{0}/tasks".format(API.BASE_API_URL)
+    due_at = '2014-04-03T11:09:43-07:00'
+    action = 'review'
+    message = 'Test Message'
+    expected_body = {
+        'item': {
+            'type': 'file',
+            'id': '42',
+        },
+        'action': action,
+        'message': message,
+        'due_at': due_at,
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'type': test_task.object_type,
+        'id': test_task.object_id,
+        'due_at': due_at,
+        'action': action,
+        'message': message,
+    }
+    value = json.dumps(expected_body)
+    new_task = test_file.create_task(message=message, due_at=due_at)
+    mock_box_session.post.assert_called_once_with(expected_url, data=value)
+    assert isinstance(new_task, Task)
+    assert new_task.object_type == test_task.object_type
+    assert new_task.object_id == test_task.object_id
+    assert new_task.action == action
+    assert new_task.message == message
+    assert new_task.due_at == due_at
+
+
+def test_get_tasks(test_file, mock_box_session):
+    expected_url = test_file.get_url('tasks')
+    task_body = {
+        'type': 'task',
+        'id': '12345',
+        'item': {
+            'type': 'file',
+            'id': '33333',
+        },
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [task_body],
+    }
+    tasks = test_file.get_tasks()
+    task = tasks.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    assert isinstance(task, Task)
+    assert task.id == task_body['id']
+    assert task.object_type == task_body['type']
+    assert task.item['id'] == task_body['item']['id']
 
 
 def test_download_to(test_file, mock_box_session, mock_content_response):
@@ -278,3 +336,54 @@ def test_get_shared_link_download_url(
         params=None,
     )
     assert url == test_url
+
+
+def test_get_comments(test_file, mock_box_session):
+    expected_url = test_file.get_url('comments')
+    mock_comment1 = {
+        'type': 'comment',
+        'id': '11111',
+        'message': 'Foo'
+    }
+    mock_comment2 = {
+        'type': 'comment',
+        'id': '22222',
+        'tagged_message': 'Well hello there, @[33333:friend]!'
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 2,
+        'offset': 0,
+        'limit': 100,
+        'entries': [mock_comment1, mock_comment2]
+    }
+    comments = test_file.get_comments()
+    comment1 = comments.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': 0})
+    assert comment1.object_id == mock_comment1['id']
+    assert comment1.message == mock_comment1['message']
+
+    comment2 = comments.next()
+    assert comment2.object_id == mock_comment2['id']
+    assert comment2.tagged_message == mock_comment2['tagged_message']
+
+
+def test_add_comment(test_file, mock_box_session, comment_params):
+    expected_url = 'https://api.box.com/2.0/comments'
+    comment_id = '12345'
+    (message_type, message) = comment_params
+    expected_data = {
+        message_type: message,
+        'item': {
+            'type': 'file',
+            'id': test_file.object_id
+        }
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'type': 'comment',
+        'id': comment_id,
+        message_type: message
+    }
+    comment = test_file.add_comment(message)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert isinstance(comment, Comment)
+    assert comment.object_id == comment_id

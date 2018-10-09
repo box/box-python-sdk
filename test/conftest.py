@@ -43,6 +43,7 @@ def generic_successful_request_response():
     _set_content_and_json_from_json(mock_request_response, json_value=dict([('key{0}'.format(i), 'value{0}'.format(i)) for i in range(8)]))
     mock_request_response.status_code = 200
     mock_request_response.ok = True
+    mock_request_response.request = Mock()
     return mock_request_response
 
 
@@ -100,6 +101,7 @@ def unauthorized_response():
     _set_content_and_json_from_content(res, content=b'')
     res.status_code = 401
     res.ok = False
+    res.request = Mock()
     return res
 
 

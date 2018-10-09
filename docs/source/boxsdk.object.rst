@@ -1,139 +1,139 @@
-boxsdk.object package
-=====================
+boxsdk\.object package
+======================
 
 Submodules
 ----------
 
-boxsdk.object.api_json_object module
-------------------------------------
+boxsdk\.object\.api\_json\_object module
+----------------------------------------
 
 .. automodule:: boxsdk.object.api_json_object
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.base_api_json_object module
------------------------------------------
+boxsdk\.object\.base\_api\_json\_object module
+----------------------------------------------
 
 .. automodule:: boxsdk.object.base_api_json_object
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.base_endpoint module
-----------------------------------
+boxsdk\.object\.base\_endpoint module
+-------------------------------------
 
 .. automodule:: boxsdk.object.base_endpoint
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.base_object module
---------------------------------
+boxsdk\.object\.base\_object module
+-----------------------------------
 
 .. automodule:: boxsdk.object.base_object
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.cloneable module
-------------------------------
+boxsdk\.object\.cloneable module
+--------------------------------
 
 .. automodule:: boxsdk.object.cloneable
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.collaboration module
-----------------------------------
+boxsdk\.object\.collaboration module
+------------------------------------
 
 .. automodule:: boxsdk.object.collaboration
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.event module
---------------------------
+boxsdk\.object\.event module
+----------------------------
 
 .. automodule:: boxsdk.object.event
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.events module
----------------------------
+boxsdk\.object\.events module
+-----------------------------
 
 .. automodule:: boxsdk.object.events
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.file module
--------------------------
+boxsdk\.object\.file module
+---------------------------
 
 .. automodule:: boxsdk.object.file
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.folder module
----------------------------
+boxsdk\.object\.folder module
+-----------------------------
 
 .. automodule:: boxsdk.object.folder
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.group module
---------------------------
+boxsdk\.object\.group module
+----------------------------
 
 .. automodule:: boxsdk.object.group
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.group_membership module
--------------------------------------
+boxsdk\.object\.group\_membership module
+----------------------------------------
 
 .. automodule:: boxsdk.object.group_membership
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.item module
--------------------------
+boxsdk\.object\.item module
+---------------------------
 
 .. automodule:: boxsdk.object.item
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.metadata module
------------------------------
+boxsdk\.object\.metadata module
+-------------------------------
 
 .. automodule:: boxsdk.object.metadata
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.recent_item module
---------------------------------
+boxsdk\.object\.recent\_item module
+-----------------------------------
 
 .. automodule:: boxsdk.object.recent_item
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.search module
----------------------------
+boxsdk\.object\.search module
+-----------------------------
 
 .. automodule:: boxsdk.object.search
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.object.user module
--------------------------
+boxsdk\.object\.user module
+---------------------------
 
 .. automodule:: boxsdk.object.user
     :members:

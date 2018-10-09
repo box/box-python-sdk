@@ -1,6 +1,11 @@
 sudo: false
 language: python
 
+branches:
+    only:
+        - master
+        - "1.5"
+
 cache:
   directories:
     - $HOME/.cache/pip
@@ -24,7 +29,7 @@ matrix:
       env: TOX_ENV=pycodestyle
     - python: 2.7
       env: TOX_ENV=pylint
-    - python: 2.7
+    - python: 3.5
       env: TOX_ENV=coverage
 
 # commands to install dependencies
@@ -33,5 +38,3 @@ install:
 # commands to run
 script:
   - ./.travis/run.sh
-after_success:
-  - if [ "-x$TOX_ENV" = "xcoverage" ]; then coveralls; fi

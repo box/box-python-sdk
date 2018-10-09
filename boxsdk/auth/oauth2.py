@@ -3,21 +3,23 @@
 from __future__ import unicode_literals
 
 from contextlib import contextmanager
-from threading import Lock
+from logging import getLogger
 import random
 import string  # pylint:disable=deprecated-module
 import sys
+from threading import Lock
 
 # pylint:disable=import-error,no-name-in-module,relative-import
 from six.moves.urllib.parse import urlencode, urlunsplit
 # pylint:enable=import-error,no-name-in-module,relative-import
 import six
 
-from boxsdk.config import API
-from boxsdk.exception import BoxOAuthException
-from boxsdk.network.default_network import DefaultNetwork
-from boxsdk.object.base_api_json_object import BaseAPIJSONObject
-from boxsdk.util.text_enum import TextEnum
+from ..config import API
+from ..exception import BoxOAuthException, BoxAPIException
+from ..object.base_api_json_object import BaseAPIJSONObject
+from ..session.session import Session
+from ..util.json import is_json_response
+from ..util.text_enum import TextEnum
 
 
 class TokenScope(TextEnum):
@@ -58,7 +60,7 @@ class OAuth2(object):
             box_device_name='',
             access_token=None,
             refresh_token=None,
-            network_layer=None,
+            session=None,
             refresh_lock=None,
     ):
         """
@@ -90,10 +92,10 @@ class OAuth2(object):
             Refresh token to use for auth until it expires or is used.
         :type refresh_token:
             `unicode`
-        :param network_layer:
-            If specified, use it to make network requests. If not, the default network implementation will be used.
-        :type network_layer:
-            :class:`Network`
+        :param session:
+            If specified, use it to make network requests. If not, the default session will be used.
+        :type session:
+            :class:`Session`
         :param refresh_lock:
             Lock used to synchronize token refresh. If not specified, then a :class:`threading.Lock` will be used.
         :type refresh_lock:
@@ -104,12 +106,13 @@ class OAuth2(object):
         self._store_tokens_callback = store_tokens
         self._access_token = access_token
         self._refresh_token = refresh_token
-        self._network_layer = network_layer if network_layer else DefaultNetwork()
+        self._session = session or Session()
         self._refresh_lock = refresh_lock or Lock()
         self._box_device_id = box_device_id
         self._box_device_name = box_device_name
         self._closed = False
         self._api_config = API()
+        self._logger = getLogger(__name__)
 
     @property
     def access_token(self):
@@ -252,6 +255,7 @@ class OAuth2(object):
         self._check_closed()
         with self._refresh_lock:
             self._check_closed()
+            self._logger.debug('Refreshing tokens.')
             access_token, refresh_token = self._get_and_update_current_tokens()
             # The lock here is for handling that case that multiple requests fail, due to access token expired, at the
             # same time to avoid multiple session renewals.
@@ -331,24 +335,51 @@ class OAuth2(object):
         self._check_closed()
         url = '{base_auth_url}/token'.format(base_auth_url=self._api_config.OAUTH2_API_URL)
         headers = {'content-type': 'application/x-www-form-urlencoded'}
-        network_response = self._network_layer.request(
-            'POST',
-            url,
-            data=data,
-            headers=headers,
-            access_token=access_token,
-        )
+        try:
+            network_response = self._session.request(
+                'POST',
+                url,
+                data=data,
+                headers=headers,
+                access_token=access_token,
+            )
+        except BoxAPIException as box_api_excpetion:
+            six.raise_from(self._oauth_exception(box_api_excpetion.network_response, url), box_api_excpetion)
         if not network_response.ok:
-            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST', network_response)
+            raise self._oauth_exception(network_response, url)
         try:
             token_response = TokenResponse(network_response.json())
         except ValueError:
-            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST', network_response)
+            raise self._oauth_exception(network_response, url)
 
         if ('access_token' not in token_response) or (expect_refresh_token and 'refresh_token' not in token_response):
-            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST', network_response)
+            raise self._oauth_exception(network_response, url)
 
         return token_response
+
+    @staticmethod
+    def _oauth_exception(network_response, url):
+        """
+        Create a BoxOAuthException instance to raise. If the error response is JSON, parse it and include the
+        code and message in the exception.
+
+        :rtype:     :class:`BoxOAuthException`
+        """
+        exception_kwargs = dict(
+            status=network_response.status_code,
+            url=url,
+            method='POST',
+            network_response=network_response,
+        )
+        if is_json_response(network_response):
+            json_response = network_response.json()
+            exception_kwargs.update(dict(
+                code=json_response.get('code'),
+                message=json_response.get('message'),
+            ))
+        else:
+            exception_kwargs['message'] = network_response.content
+        return BoxOAuthException(**exception_kwargs)
 
     def send_token_request(self, data, access_token, expect_refresh_token=True):
         """
@@ -383,18 +414,27 @@ class OAuth2(object):
             if token_to_revoke is None:
                 return
             url = '{base_auth_url}/revoke'.format(base_auth_url=self._api_config.OAUTH2_API_URL)
-            network_response = self._network_layer.request(
-                'POST',
-                url,
-                data={
-                    'client_id': self._client_id,
-                    'client_secret': self._client_secret,
-                    'token': token_to_revoke,
-                },
-                access_token=access_token,
-            )
+            try:
+                network_response = self._session.request(
+                    'POST',
+                    url,
+                    data={
+                        'client_id': self._client_id,
+                        'client_secret': self._client_secret,
+                        'token': token_to_revoke,
+                    },
+                    access_token=access_token,
+                )
+            except BoxAPIException as box_api_exception:
+                six.raise_from(self._oauth_exception(box_api_exception.network_response, url), box_api_exception)
             if not network_response.ok:
-                raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST', network_response)
+                raise BoxOAuthException(
+                    network_response.status_code,
+                    network_response.content,
+                    url,
+                    'POST',
+                    network_response,
+                )
             self._store_tokens(None, None)
 
     def close(self, revoke=True):

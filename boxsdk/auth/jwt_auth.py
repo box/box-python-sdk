@@ -16,7 +16,7 @@ from six import binary_type, string_types, raise_from, text_type
 from ..exception import BoxOAuthException
 from .oauth2 import OAuth2
 from ..object.user import User
-from ..util.compat import NoneType, total_seconds
+from ..util.compat import NoneType
 
 
 class JWTAuth(OAuth2):
@@ -38,7 +38,7 @@ class JWTAuth(OAuth2):
             box_device_id='0',
             box_device_name='',
             access_token=None,
-            network_layer=None,
+            session=None,
             jwt_algorithm='RS256',
             rsa_private_key_data=None,
             **kwargs
@@ -150,7 +150,7 @@ class JWTAuth(OAuth2):
             box_device_name=box_device_name,
             access_token=access_token,
             refresh_token=None,
-            network_layer=network_layer,
+            session=session,
             **kwargs
         )
         self._rsa_private_key = rsa_private_key
@@ -198,7 +198,7 @@ class JWTAuth(OAuth2):
                 'box_sub_type': sub_type,
                 'aud': 'https://api.box.com/oauth2/token',
                 'jti': jti,
-                'exp': int(total_seconds(now_plus_30 - datetime(1970, 1, 1))),
+                'exp': int((now_plus_30 - datetime(1970, 1, 1)).total_seconds()),
             },
             self._rsa_private_key,
             algorithm=self._jwt_algorithm,

@@ -155,8 +155,19 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         return box_response.ok
 
     def __eq__(self, other):
-        """Equality as determined by object id"""
-        return self._object_id == other.object_id
+        """Equality as determined by object id and type"""
+        if isinstance(other, BaseObject):
+            # Two objects are considered the same if they have the same address in the API
+            return self.get_url() == other.get_url()
+
+        return NotImplemented
+
+    def __ne__(self, other):
+        """Equality as determined by object id and type"""
+        return not self == other
+
+    def __hash__(self):
+        return hash((self._object_id, self._item_type))
 
     def _paging_wrapper(self, url, starting_index, limit, factory=None):
         """

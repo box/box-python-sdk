@@ -8,6 +8,10 @@ from ..exception import BoxAPIException
 from .item import Item
 from ..util.api_call_decorator import api_call
 from ..util.chunked_upload_manager import ChunkedUploadManager
+from .item import Item
+from ..util.api_call_decorator import api_call
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
 
 class File(Item):
@@ -324,3 +328,117 @@ class File(Item):
             data=json.dumps({'file_id': self.object_id, 'file_size': file_size}),
         ).json()
         return self.translator.translate(response['type'])(self.session, response['id'], response_object=response)
+
+    def get_comments(self, limit=None, offset=0, fields=None):
+        """
+        Get the comments on the file.
+
+        :param limit:
+            The maximum number of items to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param offset:
+            The index at which to start returning items.
+        :type offset:
+            `int`
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the items in the folder.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return LimitOffsetBasedObjectCollection(
+            self.session,
+            self.get_url('comments'),
+            limit=limit,
+            fields=fields,
+            offset=offset,
+            return_full_pages=False,
+        )
+
+    @api_call
+    def add_comment(self, message):
+        """
+        Add a comment to the file.
+
+        :param message:
+            The content of the reply comment.
+        :type message:
+            `unicode`
+        """
+        url = self._session.get_url('comments')
+        comment_class = self._session.translator.translate('comment')
+        data = comment_class.construct_params_from_message(message)
+        data['item'] = {
+            'type': 'file',
+            'id': self.object_id
+        }
+        box_response = self._session.post(url, data=json.dumps(data))
+        response = box_response.json()
+        return self._session.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+    def create_task(self, message=None, due_at=None):
+        """
+        Create a task on the given file.
+
+        :param message:
+            An optional message to include in the task.
+        :type message:
+            `unicode` or None
+        :param due_at:
+            When this task is due.
+        :type due_at:
+            `unicode` or None
+        :return:
+            The newly created task
+        :rtype:
+            :class:`Task`
+        """
+        url = self._session.get_url('tasks')
+        task_attributes = {
+            'item': {
+                'type': 'file',
+                'id': self.object_id
+            },
+            'action': 'review',
+        }
+        if message is not None:
+            task_attributes['message'] = message
+        if due_at is not None:
+            task_attributes['due_at'] = due_at
+        box_response = self._session.post(url, data=json.dumps(task_attributes))
+        response = box_response.json()
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+    def get_tasks(self, fields=None):
+        """
+        Get the entries in the file tasks.
+
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the file tasks
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('tasks'),
+            limit=None,
+            marker=None,
+            fields=fields,
+            return_full_pages=False,
+        )
