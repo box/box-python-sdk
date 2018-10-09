@@ -52,9 +52,9 @@ def test_get_exemptions(mock_box_session, test_collaboration_whitelist):
 
 
 @pytest.mark.parametrize(
-        'direction',
-        ['inbound', 'outbound', 'both']
-    )
+    'direction',
+    ['inbound', 'outbound', 'both']
+)
 def test_add_domain(mock_box_session, test_collaboration_whitelist, direction):
     expected_url = mock_box_session.get_url('collaboration_whitelist_entries')
     domain = 'example.com'
