@@ -27,6 +27,7 @@ __all__ = list(map(str, [
     'retention_policy',
     'retention_policy_assignment',
     'search',
+    'trash',
     'task',
     'task_assignment',
     'user',
