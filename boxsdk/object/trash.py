@@ -10,7 +10,7 @@ from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedOb
 class Trash(BaseEndpoint):
     """Box API endpoint for performing trash related actions in Box."""
 
-    def get_item_info(self, item, fields=None):
+    def get_item(self, item, fields=None):
         """
         Get item from trash.
 
