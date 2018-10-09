@@ -14,6 +14,7 @@ from boxsdk.object.file import File
 from boxsdk.object.web_link import WebLink
 from boxsdk.object.collaboration import Collaboration, CollaborationRole
 from boxsdk.object.folder import Folder, FolderSyncState
+from boxsdk.object.upload_session import UploadSession
 from boxsdk.session.box_response import BoxResponse
 
 
@@ -187,6 +188,28 @@ def test_upload(
     assert not hasattr(new_file, 'entries')
     assert 'entries' not in new_file
 
+
+def test_create_upload_session(test_folder, mock_box_session):
+    expected_url = '{0}/files/upload_sessions'.format(API.UPLOAD_URL)
+    file_size = 197520
+    file_name = 'test_file.pdf'
+    expected_data = {
+        'folder_id': test_folder.object_id,
+        'file_size': file_size,
+        'file_name': file_name,
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'id': 'F971964745A5CD0C001BBE4E58196BFD',
+        'type': 'upload_session',
+        'num_parts_processed': 0,
+        'total_parts': 16,
+        'part_size': 12345,
+    }
+    upload_session = test_folder.create_upload_session(file_size, file_name)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert isinstance(upload_session, UploadSession)
+    assert upload_session.part_size == 12345
+    assert upload_session.total_parts == 16
 
 def test_upload_stream_does_preflight_check_if_specified(
         mock_box_session,

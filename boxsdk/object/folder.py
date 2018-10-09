@@ -5,6 +5,7 @@ import json
 import os
 from six import text_type
 
+from boxsdk.config import API
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
@@ -110,6 +111,39 @@ class Folder(Item):
             size=size,
             name=name,
             parent_id=self._object_id,
+        )
+
+    def create_upload_session(self, file_size, file_name):
+        """
+        Creates a new chunked upload session for upload a new file.
+
+        :param file_size:
+            The size of the file that will be uploaded.
+        :type file_size:
+            `int`
+        :param file_name:
+            The name of the file that will be uploaded.
+        :type file_name:
+            `unicode`
+        :returns:
+            A :class:`ChunkedUploadSession` object.
+        :rtype:
+            :class:`ChunkedUploadSession`
+        """
+        url = '{0}/files/upload_sessions'.format(API.UPLOAD_URL)
+        body_params = {
+            'folder_id': self.object_id,
+            'file_size': file_size,
+            'file_name': file_name,
+        }
+        response = self._session.post(
+            url,
+            data=json.dumps(body_params),
+        ).json()
+        return self.translator.translate(response['type'])(
+            session=self.session,
+            object_id=response['id'],
+            response_object=response,
         )
 
     def _get_accelerator_upload_url_fow_new_uploads(self):

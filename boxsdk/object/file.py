@@ -1,9 +1,10 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 import json
 
+from boxsdk.config import API
 from .item import Item
 from ..util.api_call_decorator import api_call
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
@@ -34,6 +35,38 @@ class File(Item):
             size=size,
             name=name,
             file_id=self._object_id,
+        )
+
+    def create_upload_session(self, file_size, file_name=None):
+        """
+        Create a new chunked upload session for uploading a new version of the file.
+
+        :param file_size:
+            The size of the file that will be uploaded.
+        :type file_size:
+            `int`
+        :returns:
+            A :class:`ChunkedUploadSession` object.
+        :rtype:
+            :class:`ChunkedUploadSession`
+        """
+        body_params = {
+            'file_id': self.object_id,
+            'file_size': file_size,
+        }
+        if file_name is not None:
+            body_params['file_name'] = file_name
+        response = self._session.post(
+            self.get_url('{0}s'.format('upload_session')).replace(
+                API.BASE_API_URL,
+                API.UPLOAD_URL,
+            ),
+            data=json.dumps(body_params),
+        ).json()
+        return self.translator.translate(response['type'])(
+            session=self.session,
+            object_id=response['id'],
+            response_object=response,
         )
 
     def _get_accelerator_upload_url_for_update(self):
