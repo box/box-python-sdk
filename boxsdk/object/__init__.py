@@ -13,6 +13,7 @@ __all__ = list(map(str, [
     'collection',
     'comment',
     'device_pinner',
+    'enterprise',
     'events',
     'event',
     'file',
