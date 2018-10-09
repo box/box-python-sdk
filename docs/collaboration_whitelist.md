@@ -9,13 +9,14 @@ It is important to note that the collaboration whitelist functionality is only a
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [Collaboration Whitelist](#collaboration-whitelist)
-  - [List Collaboration Whitelist Entries](#list-collaboration-whitelist-entries)
-  - [Get Information for Collaboration Whitelist Entry](#get-information-for-collaboration-whitelist-entry)
-  - [Whitelist a Domain for Collaboration](#whitelist-a-domain-for-collaboration)
-  - [Remove a Domain from Whitelist](#remove-a-domain-from-whitelist)
-  - [List Exempt Users](#list-exempt-users)
-  - [Get Exempt User Information](#get-exempt-user-information)
+- [List Collaboration Whitelist Entries](#list-collaboration-whitelist-entries)
+- [Get Information for Collaboration Whitelist Entry](#get-information-for-collaboration-whitelist-entry)
+- [Whitelist a Domain for Collaboration](#whitelist-a-domain-for-collaboration)
+- [Remove a Domain from Whitelist](#remove-a-domain-from-whitelist)
+- [List Exempt Users](#list-exempt-users)
+- [Get Exempt User Information](#get-exempt-user-information)
+- [Exempt User from Whitelist](#exempt-user-from-whitelist)
+- [Remove User Exemption](#remove-user-exemption)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
