@@ -24,6 +24,7 @@ from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
+from boxsdk.object.trash import Trash
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.file_version_retention import FileVersionRetention
@@ -499,6 +500,11 @@ def test_legal_hold_policies_return_the_correct_policy_objects(
         assert policy.object_id == expected_id
         # pylint:disable=protected-access
         assert policy._session == mock_box_session
+
+
+def test_trash_initializer(mock_client):
+    trash = mock_client.trash()
+    assert isinstance(trash, Trash)
 
 
 def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_session, recent_items_response, file_id):

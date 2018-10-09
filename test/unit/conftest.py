@@ -129,3 +129,12 @@ def mock_folder_response(mock_object_id, make_mock_box_request):
         response={'type': 'folder', 'id': mock_object_id},
     )
     return mock_box_response
+
+
+@pytest.fixture(scope='function')
+def mock_web_link_response(mock_object_id, make_mock_box_request):
+    # pylint:disable=redefined-outer-name
+    mock_box_response, _ = make_mock_box_request(
+        response={'type': 'web_link', 'id': mock_object_id},
+    )
+    return mock_box_response
