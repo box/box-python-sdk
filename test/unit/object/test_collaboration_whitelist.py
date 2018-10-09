@@ -4,12 +4,13 @@ from __future__ import unicode_literals
 import json
 import pytest
 
+from boxsdk.config import API
 from boxsdk.object.collaboration_whitelist_entry import CollaborationWhitelistEntry
 from boxsdk.object.collaboration_whitelist_exempt_target import CollaborationWhitelistExemptTarget
 
 
 def test_get_entries(mock_box_session, test_collaboration_whitelist):
-    expected_url = mock_box_session.get_url('collaboration_whitelist_entries')
+    expected_url = '{0}/collaboration_whitelist_entries'.format(API.BASE_API_URL)
     mock_entry = {
         'type': 'collaboration_whitelist_entry',
         'id': '12345',
@@ -30,7 +31,7 @@ def test_get_entries(mock_box_session, test_collaboration_whitelist):
 
 
 def test_get_exemptions(mock_box_session, test_collaboration_whitelist):
-    expected_url = mock_box_session.get_url('collaboration_whitelist_exempt_targets')
+    expected_url = '{0}/collaboration_whitelist_exempt_targets'.format(API.BASE_API_URL)
     mock_exemption = {
         'type': 'collaboration_whitelist_exempt_target',
         'id': '12345',
@@ -56,7 +57,7 @@ def test_get_exemptions(mock_box_session, test_collaboration_whitelist):
     ['inbound', 'outbound', 'both']
 )
 def test_add_domain(mock_box_session, test_collaboration_whitelist, direction):
-    expected_url = mock_box_session.get_url('collaboration_whitelist_entries')
+    expected_url = '{0}/collaboration_whitelist_entries'.format(API.BASE_API_URL)
     domain = 'example.com'
     mock_entry = {
         'type': 'collaboration_whitelist_entry',
@@ -78,7 +79,7 @@ def test_add_domain(mock_box_session, test_collaboration_whitelist, direction):
 
 
 def test_add_exemption(mock_box_session, test_collaboration_whitelist, mock_user):
-    expected_url = mock_box_session.get_url('collaboration_whitelist_exempt_targets')
+    expected_url = '{0}/collaboration_whitelist_exempt_targets'.format(API.BASE_API_URL)
     expected_data = {
         'user': {
             'id': mock_user.object_id

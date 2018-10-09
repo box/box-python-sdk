@@ -49,7 +49,7 @@ a user in your enterprise collaborating on content owned by someone outside your
 
 ```python
 from boxsdk.object.collaboration_whitelist import WhitelistDirection
-domain = 'https://example.com'
+domain = 'example.com'
 whitelist_entry = client.collaboration_whitelist().add_domain(domain=domain, direction=WhitelistDirection.INBOUND)
 ```
 
@@ -92,11 +92,11 @@ user = client.user('11111')
 exempted_user = client.collaboration_whitelist().add_exemption(user)
 ```
 
-Remove User from Whitelist
---------------------------
+Remove User Exemption
+---------------------
 
 To remove a user from a collaboration whitelist, use `collaboration_whitelist_exempt_target.delete()`.
 
 ```python
-client.collaboration_whitelist_exempt_target('22222').delete
+client.collaboration_whitelist_exempt_target('22222').delete()
 ```

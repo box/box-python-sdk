@@ -76,7 +76,7 @@ class CollaborationWhitelist(BaseEndpoint):
             'direction': direction
         }
         response = self._session.post(url, data=json.dumps(data)).json()
-        return self.translator.translate('collaboration_whitelist_entry')(
+        return self.translator.translate(response['type'])(
             session=self._session,
             object_id=response['id'],
             response_object=response,
@@ -134,7 +134,7 @@ class CollaborationWhitelist(BaseEndpoint):
             }
         }
         response = self._session.post(url, data=json.dumps(data)).json()
-        return self.translator.translate('collaboration_whitelist_exempt_target')(
+        return self.translator.translate(response['type'])(
             session=self._session,
             object_id=response['id'],
             response_object=response,

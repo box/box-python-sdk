@@ -1,10 +1,12 @@
 # coding: utf-8
 from __future__ import unicode_literals, absolute_import
 
+from boxsdk.config import API
+
 
 def test_get(mock_box_session, test_collaboration_whitelist_entry):
     entry_id = test_collaboration_whitelist_entry.object_id
-    expected_url = mock_box_session.get_url('collaboration_whitelist_entries', entry_id)
+    expected_url = '{0}/collaboration_whitelist_entries/{1}'.format(API.BASE_API_URL, entry_id)
     mock_entry = {
         'type': 'collaboration_whitelist_entry',
         'id': '98765',
@@ -21,6 +23,6 @@ def test_get(mock_box_session, test_collaboration_whitelist_entry):
 
 def test_delete(mock_box_session, test_collaboration_whitelist_entry):
     entry_id = test_collaboration_whitelist_entry.object_id
-    expected_url = mock_box_session.get_url('collaboration_whitelist_entries', entry_id)
+    expected_url = '{0}/collaboration_whitelist_entries/{1}'.format(API.BASE_API_URL, entry_id)
     test_collaboration_whitelist_entry.delete()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=None, params={})
