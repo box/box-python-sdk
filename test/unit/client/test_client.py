@@ -18,6 +18,7 @@ from boxsdk.client import Client, DeveloperTokenClient, DevelopmentClient, Loggi
 from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.collaboration import Collaboration
+from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
 from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
@@ -413,6 +414,11 @@ def test_search_instantiates_search_and_calls_search(
 def test_events_returns_event_object(mock_client):
     # pylint:disable=redefined-outer-name
     assert isinstance(mock_client.events(), Events)
+
+
+def test_collaboration_whitelist_initializer(mock_client):
+    collaboration_whitelist = mock_client.collaboration_whitelist()
+    assert isinstance(collaboration_whitelist, CollaborationWhitelist)
 
 
 def test_get_groups_return_the_correct_group_objects(

@@ -9,6 +9,7 @@ from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
+from ..object.collaboration_whitelist import CollaborationWhitelist
 from ..object.trash import Trash
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
@@ -159,6 +160,47 @@ class Client(Cloneable):
             :class:`Collaboration`
         """
         return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
+
+    def collaboration_whitelist(self):
+        """
+        Initilializes a :class:`CollaborationWhitelist` object.
+
+        :return:
+            A :class:`CollaborationWhitelist` object.
+        :rype:
+            :class:`CollaborationWhitelist`.
+        """
+        return CollaborationWhitelist(self._session)
+
+    def collaboration_whitelist_entry(self, entry_id):
+        """
+        Initialize a :class:`CollaborationWhitelistEntry` object, whose box id is entry_id.
+
+        :param entry_id:
+            The box id of the :class:`CollaborationWhitelistEntry` object.
+        :type entry_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationWhitelistEntry` object with the given entry id.
+        :rtype:
+            :class:`CollaborationWhitelistEntry`
+        """
+        return self.translator.get('collaboration_whitelist_entry')(session=self._session, object_id=entry_id)
+
+    def collaboration_whitelist_exempt_target(self, target_id):
+        """
+        Initialize a :class:`CollaborationWhitelistExemptTarget` object, whose box id is target_id.
+
+        :param target_id:
+            The box id of the :class:`CollaborationWhitelistExemptTarget` object.
+        :type target_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationWhitelistExemptTarget` object with the given target id.
+        :rtype:
+            :class:`CollaborationWhitelistExemptTarget`
+        """
+        return self.translator.get('collaboration_whitelist_exempt_target')(session=self._session, object_id=target_id)
 
     def trash(self):
         """
