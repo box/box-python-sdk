@@ -10,6 +10,8 @@ Release History
 
 - Python 2.6 is no longer supported.
 - Python 3.3 is no longer supported.
+- ``client.search()`` now returns a ``Search`` object that exposes a ``query()`` method to call the Search API.
+  Use ``client.search().query(**search_params)`` instead of ``client.search(**search_params)``.
 - ``client.get_memberships`` has a change in signature. The limit and offset parameters have swapped positions to keep
   consistency with the rest of the SDK.
 - ``client.groups`` has been changed to ``client.get_groups``. The limit and offset parameters have swapped positions.
@@ -51,7 +53,7 @@ Release History
 
   + ``client.users()``
   + ``client.groups()``
-  + ``client.search()``
+  + ``client.search().query()``
   + ``folder.get_items()``
 
   Since ``folder.get_items()`` now returns an iterator, ``folder.get_items_limit_offset()`` and
