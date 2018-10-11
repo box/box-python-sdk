@@ -9,6 +9,14 @@ from .chain_map import ChainMap
 
 __all__ = list(map(str, ['Translator']))
 
+# pylint: disable=invalid-name
+inspect_signature = None
+try:
+    inspect_signature = inspect.signature
+except AttributeError:
+    import funcsigs
+    inspect_signature = funcsigs.signature
+
 
 def _get_object_id(obj):
     """
@@ -24,6 +32,17 @@ def _get_object_id(obj):
         return obj.get('event_id', None)
 
     return obj.get('id', None)
+
+
+def _is_constructor_arg(param):
+
+    if param.name == 'self':
+        return False
+    
+    if param.kind != inspect.Parameter.POSITIONAL_OR_KEYWORD:
+        return False
+
+    return True
 
 
 class Translator(ChainMap):
@@ -172,9 +191,8 @@ class Translator(ChainMap):
                 'response_object': translated_obj,
                 'object_id': _get_object_id(translated_obj),
             }
-            # NOTE: getargspec() is deprecated, and should be replaced by inspect.signature() when 2.7 support drops
-            params = inspect.getargspec(object_class.__init__).args
-            param_values = {p: param_values[p] for p in params if p != 'self'}
+            params = inspect_signature(object_class.__init__).parameters
+            param_values = {p: param_values[p] for p in params if _is_constructor_arg(params[p])}
             return object_class(**param_values)
 
         return translated_obj
