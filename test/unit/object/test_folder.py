@@ -219,6 +219,7 @@ def test_create_upload_session(test_folder, mock_box_session):
     assert upload_session.type == upload_session_type
     assert upload_session.id == upload_session_id
 
+
 def test_upload_stream_does_preflight_check_if_specified(
         mock_box_session,
         test_folder,
