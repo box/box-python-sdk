@@ -9,6 +9,7 @@ from .base_object import BaseObject
 from ..config import API
 from ..util.translator import Translator
 
+
 class UploadSession(BaseObject):
     _item_type = 'upload_session'
     _parent_item_type = 'file'
