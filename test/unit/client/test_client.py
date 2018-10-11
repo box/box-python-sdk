@@ -25,6 +25,7 @@ from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
+from boxsdk.object.upload_session import UploadSession
 from boxsdk.object.trash import Trash
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.retention_policy import RetentionPolicy
@@ -340,7 +341,8 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
     (Group, 'group'),
     (GroupMembership, 'group_membership'),
     (Enterprise, 'enterprise'),
-    (Webhook, 'webhook')
+    (Webhook, 'webhook'),
+    (UploadSession, 'upload_session'),
 ])
 def test_factory_returns_the_correct_object(mock_client, test_class, factory_method_name):
     """ Tests the various id-only factory methods in the Client class """

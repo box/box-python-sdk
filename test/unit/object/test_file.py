@@ -51,9 +51,11 @@ def test_create_upload_session(test_file, mock_box_session):
     num_parts_processed = 0
     upload_session_type = 'upload_session'
     upload_session_id = 'F971964745A5CD0C001BBE4E58196BFD'
+    file_name = 'test_file.pdf'
     expected_data = {
         'file_id': test_file.object_id,
         'file_size': file_size,
+        'file_name': file_name
     }
     mock_box_session.post.return_value.json.return_value = {
         'id': upload_session_id,
@@ -62,7 +64,7 @@ def test_create_upload_session(test_file, mock_box_session):
         'total_parts': total_parts,
         'part_size': part_size,
     }
-    upload_session = test_file.create_upload_session(file_size)
+    upload_session = test_file.create_upload_session(file_size, file_name)
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert isinstance(upload_session, UploadSession)
     assert upload_session.part_size == part_size
