@@ -11,14 +11,11 @@ __all__ = list(map(str, ['Translator']))
 
 # pylint: disable=invalid-name
 inspect_signature = None
-Parameter = None
 try:
     inspect_signature = inspect.signature
-    Parameter = inspect.Parameter
 except AttributeError:
     import funcsigs
     inspect_signature = funcsigs.signature
-    Parameter = funcsigs.Parameter
 
 
 def _get_object_id(obj):
@@ -35,17 +32,6 @@ def _get_object_id(obj):
         return obj.get('event_id', None)
 
     return obj.get('id', None)
-
-
-def _is_constructor_arg(param):
-
-    if param.name == 'self':
-        return False
-    
-    if param.kind != Parameter.POSITIONAL_OR_KEYWORD:
-        return False
-
-    return True
 
 
 class Translator(ChainMap):
@@ -195,7 +181,7 @@ class Translator(ChainMap):
                 'object_id': _get_object_id(translated_obj),
             }
             params = inspect_signature(object_class.__init__).parameters
-            param_values = {p: param_values[p] for p in params if _is_constructor_arg(params[p])}
+            param_values = {p: param_values[p] for p in params if p in param_values}
             return object_class(**param_values)
 
         return translated_obj
