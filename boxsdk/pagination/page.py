@@ -5,9 +5,6 @@ from __future__ import unicode_literals, absolute_import
 from collections import Sequence
 import copy
 
-from boxsdk.object.base_object import BaseObject
-from boxsdk.object.base_endpoint import BaseEndpoint
-
 
 class Page(Sequence, object):
     """
