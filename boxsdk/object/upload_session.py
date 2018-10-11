@@ -23,8 +23,8 @@ class UploadSession(BaseObject):
         """
         return self._session.get_url(
             '{0}s/{1}s'.format(self._parent_item_type, self._item_type),
-            self.object_id,
-            *args,
+            self._object_id,
+            *args
         ).replace(API.BASE_API_URL, API.UPLOAD_URL)
 
     def get_parts(self):
