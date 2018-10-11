@@ -7,7 +7,6 @@ import json
 
 from .base_object import BaseObject
 from ..config import API
-from ..util.translator import Translator
 
 
 class UploadSession(BaseObject):
@@ -51,11 +50,11 @@ class UploadSession(BaseObject):
         content_sha1 = hashlib.sha1()
         stream_position = content_stream.tell()
         hashed_length = 0
-        while hashed_length < self.part_size:
-            chunk = content_stream.read(self.part_size - hashed_length)
+        while hashed_length < self.part_size:  # pylint:disable=no-member
+            chunk = content_stream.read(self.part_size - hashed_length)  # pylint:disable=no-member
             if chunk is None:
                 continue
-            if len(chunk) == 0:
+            if not chunk:
                 break
             hashed_length += len(chunk)
             content_sha1.update(chunk)
@@ -90,7 +89,7 @@ class UploadSession(BaseObject):
         if part_content_sha1 is None:
             part_content_sha1 = self._calculate_part_sha1(content_stream)
 
-        range_end = min(offset + self.part_size - 1, total_size - 1)
+        range_end = min(offset + self.part_size - 1, total_size - 1)  # pylint:disable=no-member
 
         return self._session.put(
             self.get_url(),
