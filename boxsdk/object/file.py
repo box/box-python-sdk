@@ -45,6 +45,10 @@ class File(Item):
             The size of the file that will be uploaded.
         :type file_size:
             `int`
+        :param file_name:
+            The name of the file version that will be uploaded.
+        :type file_name:
+            `unicode` or None
         :returns:
             A :class:`ChunkedUploadSession` object.
         :rtype:
@@ -57,7 +61,7 @@ class File(Item):
         if file_name is not None:
             body_params['file_name'] = file_name
         response = self._session.post(
-            self.get_url('{0}s'.format('upload_session')).replace(
+            self.get_url('{0}'.format('upload_sessions')).replace(
                 API.BASE_API_URL,
                 API.UPLOAD_URL,
             ),

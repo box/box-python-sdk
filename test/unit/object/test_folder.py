@@ -193,23 +193,31 @@ def test_create_upload_session(test_folder, mock_box_session):
     expected_url = '{0}/files/upload_sessions'.format(API.UPLOAD_URL)
     file_size = 197520
     file_name = 'test_file.pdf'
+    upload_session_id = 'F971964745A5CD0C001BBE4E58196BFD'
+    upload_session_type = 'upload_session'
+    num_parts_processed = 0
+    total_parts = 16
+    part_size = 12345
     expected_data = {
         'folder_id': test_folder.object_id,
         'file_size': file_size,
         'file_name': file_name,
     }
     mock_box_session.post.return_value.json.return_value = {
-        'id': 'F971964745A5CD0C001BBE4E58196BFD',
-        'type': 'upload_session',
-        'num_parts_processed': 0,
-        'total_parts': 16,
-        'part_size': 12345,
+        'id': upload_session_id,
+        'type': upload_session_type,
+        'num_parts_processed': num_parts_processed,
+        'total_parts': total_parts,
+        'part_size': part_size,
     }
     upload_session = test_folder.create_upload_session(file_size, file_name)
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert isinstance(upload_session, UploadSession)
-    assert upload_session.part_size == 12345
-    assert upload_session.total_parts == 16
+    assert upload_session.part_size == part_size
+    assert upload_session.total_parts == total_parts
+    assert upload_session.num_parts_processed == num_parts_processed
+    assert upload_session.type == upload_session_type
+    assert upload_session.id == upload_session_id
 
 def test_upload_stream_does_preflight_check_if_specified(
         mock_box_session,

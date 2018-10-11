@@ -37,7 +37,7 @@ class UploadSession(BaseObject):
         """
         response = self.session.get(self.get_url('parts')).json()
         return response['entries']
-    
+
     def _calculate_part_sha1(self, content_stream):
         """
         Calculate the SHA1 hash of the chunk stream for a given part of the file.

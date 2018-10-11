@@ -101,6 +101,21 @@ class Client(Cloneable):
         """
         return self.translator.translate('file')(session=self._session, object_id=file_id)
 
+    def upload_session(self, session_id):
+        """
+        Initialize a :class:`UploadSession` object, whose box id is session_id.
+
+        :param session_id:
+            The box id of the :class:`UploadSession` object.
+        :type session_id:
+            `unicode`
+        :return:
+            A :class:`UploadSession` object with the given session id.
+        :rtype:
+            :class`UploadSession`
+        """
+        return self.translator.get('upload_session')(session=self._session, object_id=session_id)
+
     def comment(self, comment_id):
         """
         Initialize a :class:`Comment` object, whose Box ID is comment_id.
