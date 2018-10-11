@@ -21,7 +21,7 @@ class UploadSession(BaseObject):
         :rtype:
             `unicode`
         """
-        return self._session.get_url(
+        return self.session.get_url(
             '{0}s/{1}s'.format(self._parent_item_type, self._item_type),
             self._object_id,
             *args
