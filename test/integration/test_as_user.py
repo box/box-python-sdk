@@ -13,6 +13,7 @@ def as_user_headers(mock_user_id, access_token):
         'Authorization': 'Bearer {0}'.format(access_token),
         'As-User': mock_user_id,
         'User-Agent': Client.USER_AGENT_STRING,
+        'X-Box-UA': Client.BOX_UA_STRING,
     }
 
 

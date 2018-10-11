@@ -9,6 +9,8 @@ from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
+from ..object.collaboration_whitelist import CollaborationWhitelist
+from ..object.trash import Trash
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
@@ -158,6 +160,58 @@ class Client(Cloneable):
             :class:`Collaboration`
         """
         return self.translator.get('collaboration')(session=self._session, object_id=collab_id)
+
+    def collaboration_whitelist(self):
+        """
+        Initilializes a :class:`CollaborationWhitelist` object.
+
+        :return:
+            A :class:`CollaborationWhitelist` object.
+        :rype:
+            :class:`CollaborationWhitelist`.
+        """
+        return CollaborationWhitelist(self._session)
+
+    def collaboration_whitelist_entry(self, entry_id):
+        """
+        Initialize a :class:`CollaborationWhitelistEntry` object, whose box id is entry_id.
+
+        :param entry_id:
+            The box id of the :class:`CollaborationWhitelistEntry` object.
+        :type entry_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationWhitelistEntry` object with the given entry id.
+        :rtype:
+            :class:`CollaborationWhitelistEntry`
+        """
+        return self.translator.get('collaboration_whitelist_entry')(session=self._session, object_id=entry_id)
+
+    def collaboration_whitelist_exempt_target(self, target_id):
+        """
+        Initialize a :class:`CollaborationWhitelistExemptTarget` object, whose box id is target_id.
+
+        :param target_id:
+            The box id of the :class:`CollaborationWhitelistExemptTarget` object.
+        :type target_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationWhitelistExemptTarget` object with the given target id.
+        :rtype:
+            :class:`CollaborationWhitelistExemptTarget`
+        """
+        return self.translator.get('collaboration_whitelist_exempt_target')(session=self._session, object_id=target_id)
+
+    def trash(self):
+        """
+        Initialize a :class:`Trash` object.
+
+        :return:
+            A :class:`Trash` object.
+        :rtype:
+            :class:`Trash`
+        """
+        return Trash(self._session)
 
     def legal_hold_policy(self, policy_id):
         """
@@ -333,6 +387,21 @@ class Client(Cloneable):
             offset=offset,
             return_full_pages=False,
         )
+
+    def enterprise(self, enterprise_id):
+        """
+        Initialize a :class:`Enterprise` object, whose box ID is enterprise_id.
+
+        :param enterprise_id:
+            The box id of the :class:`Enterprise` object.
+        :type enterprise_id:
+            `unicode`
+        :return:
+            A :class:`Enterprise` object with the given enterprise ID.
+        :rtype:
+            :class:`Enterprise`
+        """
+        return self.translator.get('enterprise')(session=self._session, object_id=enterprise_id)
 
     @api_call
     def users(self, limit=None, offset=0, filter_term=None, user_type=None, fields=None):

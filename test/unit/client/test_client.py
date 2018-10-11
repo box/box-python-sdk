@@ -18,11 +18,14 @@ from boxsdk.client import Client, DeveloperTokenClient, DevelopmentClient, Loggi
 from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.collaboration import Collaboration
+from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
+from boxsdk.object.enterprise import Enterprise
 from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
+from boxsdk.object.trash import Trash
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.file_version_retention import FileVersionRetention
@@ -336,6 +339,8 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
     (User, 'user'),
     (Group, 'group'),
     (GroupMembership, 'group_membership'),
+    (Enterprise, 'enterprise'),
+    (Webhook, 'webhook')
 ])
 def test_factory_returns_the_correct_object(mock_client, test_class, factory_method_name):
     """ Tests the various id-only factory methods in the Client class """
@@ -412,6 +417,11 @@ def test_search_instantiates_search_and_calls_search(
 def test_events_returns_event_object(mock_client):
     # pylint:disable=redefined-outer-name
     assert isinstance(mock_client.events(), Events)
+
+
+def test_collaboration_whitelist_initializer(mock_client):
+    collaboration_whitelist = mock_client.collaboration_whitelist()
+    assert isinstance(collaboration_whitelist, CollaborationWhitelist)
 
 
 def test_get_groups_return_the_correct_group_objects(
@@ -493,6 +503,11 @@ def test_legal_hold_policies_return_the_correct_policy_objects(
         assert policy.object_id == expected_id
         # pylint:disable=protected-access
         assert policy._session == mock_box_session
+
+
+def test_trash_initializer(mock_client):
+    trash = mock_client.trash()
+    assert isinstance(trash, Trash)
 
 
 def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_session, recent_items_response, file_id):
@@ -582,13 +597,6 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
-
-
-def test_webhook_initializer(mock_client):
-    expected_id = '1234'
-    webhook = mock_client.webhook(expected_id)
-    assert isinstance(webhook, Webhook)
-    assert webhook.object_id == expected_id
 
 
 def test_create_webhook_returns_the_correct_policy_object(

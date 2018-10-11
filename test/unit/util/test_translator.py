@@ -11,6 +11,7 @@ from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
+from boxsdk.object.web_link import WebLink
 from boxsdk.util.translator import Translator
 
 
@@ -43,6 +44,7 @@ def translator_response(
         mock_folder_response,
         mock_group_response,
         mock_user_response,
+        mock_web_link_response,
 ):
     # pylint:disable=redefined-outer-name
     _response_to_class_mapping['bookmark'] = (bookmark_response, BaseObject)
@@ -51,6 +53,7 @@ def translator_response(
     _response_to_class_mapping['folder'] = (mock_folder_response, Folder)
     _response_to_class_mapping['group'] = (mock_group_response, Group)
     _response_to_class_mapping['user'] = (mock_user_response, User)
+    _response_to_class_mapping['web_link'] = (mock_web_link_response, WebLink)
 
 
 @pytest.mark.parametrize('response_type', ['bookmark', 'box_note', 'file', 'folder', 'group', 'user'])
