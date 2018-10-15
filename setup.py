@@ -97,6 +97,7 @@ def main():
         'pytest>=2.8.3',
         'pytest-cov',
         'pytest-xdist',
+        'python-coveralls',
         'pytz',
     ]
     extra_requires['test'] = test_requires

@@ -29,7 +29,7 @@ def test_automatic_refresh(
             'POST',
             '{0}/token'.format(API.OAUTH2_API_URL),
             data=ANY,
-            headers={'content-type': 'application/x-www-form-urlencoded', 'User-Agent': ANY},
+            headers={'content-type': 'application/x-www-form-urlencoded', 'User-Agent': ANY, 'X-Box-UA': ANY},
         ),
         call(
             'GET',
