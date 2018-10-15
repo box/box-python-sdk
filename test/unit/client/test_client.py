@@ -443,6 +443,50 @@ def test_get_groups_return_the_correct_group_objects(
     mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
 
 
+def test_create_retention_policy(mock_client, mock_box_session):
+    policy_name = 'Test Retention Policy'
+    policy_type = 'indefinite'
+    disposition_action = 'remove_retention'
+    expected_url = mock_box_session.get_url('retention_policies')
+    expected_data = {
+        'policy_name': policy_name,
+        'policy_type': policy_type,
+        'disposition_action': disposition_action,
+        'can_owner_extend_retention': False,
+        'are_owners_notified': False
+    }
+    mock_policy = {
+        'type': 'retention_policy',
+        'id': '1234',
+        'policy_name': policy_name,
+    }
+    mock_box_session.post.return_value.json.return_value = mock_policy
+    policy = mock_client.create_retention_policy(policy_name, policy_type, disposition_action)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert policy.id == mock_policy['id']
+    assert policy.type == mock_policy['type']
+
+
+def test_get_retention_policies(mock_client, mock_box_session):
+    expected_url = mock_box_session.get_url('retention_policies')
+    mock_policy = {
+        'type': 'retention_policy',
+        'id': '12345',
+        'name': 'Test Retention Policy'
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_policy],
+        'next_marker': 'testMarker'
+    }
+    policies = mock_client.retention_policies()
+    policy = policies.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'policy_name': None, 'policy_type': None, 'created_by_user_id': None})
+    assert isinstance(policy, RetentionPolicy)
+    assert policy.id == mock_policy['id']
+    assert policy.name == mock_policy['name']
+
+
 def test_create_group_returns_the_correct_group_object(mock_client, mock_box_session, create_group_response):
     # pylint:disable=redefined-outer-name
     expected_url = "{0}/groups".format(API.BASE_API_URL)
