@@ -3,8 +3,10 @@
 from __future__ import unicode_literals
 
 import json
+from time import sleep
 
 from .item import Item
+from ..exception import BoxException
 from ..util.api_call_decorator import api_call
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -48,21 +50,31 @@ class File(Item):
         return self._get_accelerator_upload_url(file_id=self._object_id)
 
     @api_call
-    def content(self):
+    def content(self, file_version=None, byte_range=None):
         """
         Get the content of a file on Box.
 
+        :param file_version:
+            The specific version of the file to retrieve the contents of.
+        :type file_version:
+            :class:`FileVersion` or None
+        :param byte_range:
+            A tuple of inclusive byte offsets to download, e.g. (100, 199) to download the second 100 bytes of a file 
+        :type byte_range:
+            (`int`, `int`)
         :returns:
             File content as bytes.
         :rtype:
             `bytes`
         """
         url = self.get_url('content')
-        box_response = self._session.get(url, expect_json_response=False)
+        params = {'version': file_version.object_id} if file_version is not None else None
+        headers = {'Range': 'bytes={0}-{1}'.format(*byte_range)} if byte_range is not None else None
+        box_response = self._session.get(url, expect_json_response=False, params=params, headers=headers)
         return box_response.content
 
     @api_call
-    def download_to(self, writeable_stream):
+    def download_to(self, writeable_stream, file_version=None, byte_range=None):
         """
         Download the file; write it to the given stream.
 
@@ -70,11 +82,33 @@ class File(Item):
             A file-like object where bytes can be written into.
         :type writeable_stream:
             `file`
+        :param file_version:
+            The specific version of the file to retrieve the contents of.
+        :type file_version:
+            :class:`FileVersion` or None
+        :param byte_range:
+            A tuple of inclusive byte offsets to download, e.g. (100, 199) to download the second 100 bytes of a file 
+        :type byte_range:
+            (`int`, `int`)
         """
         url = self.get_url('content')
-        box_response = self._session.get(url, expect_json_response=False, stream=True)
+        params = {'version': file_version.object_id} if file_version is not None else None
+        headers = {'Range': 'bytes={0}-{1}'.format(*byte_range)} if byte_range is not None else None
+        box_response = self._session.get(url, expect_json_response=False, stream=True, params=params, headers=headers)
         for chunk in box_response.network_response.response_as_stream.stream(decode_content=True):
             writeable_stream.write(chunk)
+
+    @api_call
+    def get_download_url(self, file_version=None):
+        url = self.get_url('content')
+        params = {'version': file_version.object_id} if file_version is not None else None
+        box_response = self._session.get(
+            url,
+            params=params,
+            expect_json_response=False,
+            allow_redirects=False,
+        )
+        return box_response.headers['location']
 
     @api_call
     def update_contents_with_stream(
@@ -200,7 +234,7 @@ class File(Item):
             )
 
     @api_call
-    def lock(self, prevent_download=False):
+    def lock(self, prevent_download=False, expire_time=None):
         """
         Lock a file, preventing others from modifying (or possibly even downloading) it.
 
@@ -208,6 +242,10 @@ class File(Item):
             Whether or not the lock should prevent other users from downloading the file.
         :type prevent_download:
             `bool`
+        :param expire_time:
+            The RFC-3339 datetime when the lock should automatically expire, unlocking the file.
+        :type expire_time:
+            `unicode` or None
         :return:
             A new :class:`File` instance reflecting that the file has been locked.
         :rtype:
@@ -215,10 +253,12 @@ class File(Item):
         """
         data = {
             'lock': {
-                'is_download_prevented': prevent_download,
                 'type': 'lock',
+                'is_download_prevented': prevent_download,
             }
         }
+        if expire_time is not None:
+            data['lock']['expires_at'] = expire_time
         return self.update_info(data)
 
     @api_call
@@ -399,4 +439,200 @@ class File(Item):
             marker=None,
             fields=fields,
             return_full_pages=False,
+        )
+
+    @api_call
+    def get_previous_versions(self, limit=None, offset=None, fields=None):
+        """
+        Get previous versions of the file.
+
+        :param limit:
+            The maximum number of items to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param offset:
+            The index at which to start returning items.
+        :type offset:
+            `int`
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the previous versions of the file.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return LimitOffsetBasedObjectCollection(
+            session=self.session,
+            url=self.get_url('versions'),
+            limit=limit,
+            fields=fields,
+            offset=offset,
+            return_full_pages=False,
+        )
+
+    @api_call
+    def promote_version(self, file_version):
+        """
+        Promote a file version to become the current version of this file.  This will create a new file version
+        identical to the previous version as the new current version.
+
+        :param file_version:
+            The file version to promote.
+        :type file_version:
+            :class:`FileVersion`
+        :returns:
+            The new file version created as the current.
+        :rtype:
+            :class:`FileVersion`
+        """
+        url = self.get_url('versions', 'current')
+        body = {
+            'type': 'file_version',
+            'id': file_version.object_id,
+        }
+        response = self._session.post(url, data=json.dumps(body)).json()
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
+        )
+
+    @api_call
+    def delete_version(self, file_version, etag=None):
+        """
+        Delete a specific version of a file.
+
+        :param file_version:
+            The file version to delete.
+        :type file_version:
+            :class:`FileVersion`
+        :param etag:
+            If specified, instruct the Box API to update the item only if the current version's etag matches.
+        :type etag:
+            `unicode` or None
+        :returns:
+            Whether the operation succeeded.
+        :rtype:
+            `boolean`
+        """
+        url = self.get_url('versions', file_version.object_id)
+        headers = {'If-Match': etag} if etag is not None else None
+        response = self._session.delete(url, expect_json_response=False, headers=headers)
+        return response.ok
+
+    @api_call
+    def get_embed_link(self):
+        """
+        Get a URL suitable for embedding the file in an iframe in a web application.
+
+        :returns:
+            The embed URL.
+        :rtype:
+            `unicode`
+        """
+        url = self.get_url()
+        params = {'fields': 'expiring_embed_link'}
+        response = self._session.get(url, params=params).json()
+        return response['expiring_embed_link']['url']
+
+    @api_call
+    def get_representation_info(self, rep_hints=None):
+        """
+        Get information about the representations available for a file.
+
+        :param rep_hints:
+            A formatted string describing which representations are desired.
+        :type rep_hints:
+            `unicode` or None
+        :returns:
+            The representation information
+        :rtype:
+            `list` of `dict`
+        """
+        url = self.get_url()
+        params = {'fields': 'representations'}
+        headers = {'X-Rep-Hints': rep_hints} if rep_hints is not None else None
+        response = self._session.get(url, params=params, headers=headers).json()
+        return response['representations']['entries']
+
+    @api_call
+    def get_thumbnail(self, extension='png', min_width=None, min_height=None, max_width=None, max_height=None):
+        """
+        Retrieve a thumbnail image for the file.
+
+        :param extension:
+            The file extension for the thumbnail, e.g. 'png' or 'jpg'
+        :type extension:
+            `unicode`
+        :param min_width:
+            The minimum width required for the thumbnail image
+        :type min_width:
+            `int` or None
+        :param min_height:
+            The minimum height required for the thumbnail image
+        :type min_height:
+            `int` or None
+        :param max_width:
+            The maximum width required for the thumbnail image
+        :type max_width:
+            `int` or None
+        :param max_height:
+            The maximum height required for the thumbnail image
+        :type max_height:
+            `int` or None
+        :returns:
+            The file contents of the thumbnail image
+        :rtype:
+            `bytes`
+        """
+        url = self.get_url('thumbnail.' + extension)
+        params = {}
+        if min_width is not None:
+            params['min_width'] = min_width
+        if min_height is not None:
+            params['min_height'] = min_height
+        if max_width is not None:
+            params['max_width'] = max_width
+        if max_height is not None:
+            params['max_height'] = max_height
+
+        response = self._session.get(url, params=params, expect_json_response=False)
+        return response.content
+
+    def copy(self, parent_folder, name=None, file_version=None):
+        """Copy the item to the given folder.
+
+        :param parent_folder:
+            The folder to which the item should be copied.
+        :type parent_folder:
+            :class:`Folder`
+        :param name:
+            A new name for the item, in case there is already another item in the new parent folder with the same name.
+        :type name:
+            `unicode` or None
+        :param file_version:
+            A specific version of the file to copy
+        :type file_version:
+            :class:`FileVersion`
+        :returns:
+            The copy of the file
+        :rtype:
+            :class:`File`
+        """
+        url = self.get_url('copy')
+        data = {
+            'parent': {'id': parent_folder.object_id}
+        }
+        if name is not None:
+            data['name'] = name
+        if file_version is not None:
+            data['version'] = file_version.object_id
+        box_response = self._session.post(url, data=json.dumps(data))
+        response = box_response.json()
+        return self.__class__(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response,
         )

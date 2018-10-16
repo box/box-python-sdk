@@ -85,23 +85,39 @@ def test_rename_item(test_item_and_response, mock_box_session):
     assert isinstance(rename_response, test_item.__class__)
 
 
-def test_copy_item(test_item_and_response, mock_box_session, test_folder, mock_object_id):
+@pytest.mark.parametrize('params, expected_data', [
+    ({}, {}),
+    ({'name': 'New name.pdf'}, {'name': 'New name.pdf'})
+])
+def test_copy_item(test_item_and_response, mock_box_session, test_folder, mock_object_id, params, expected_data):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, mock_item_response = test_item_and_response
     expected_url = test_item.get_url('copy')
+    expected_body = {
+        'parent': {'id': mock_object_id},
+    }
+    expected_body.update(expected_data)
     mock_box_session.post.return_value = mock_item_response
-    copy_response = test_item.copy(test_folder)
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps({'parent': {'id': mock_object_id}}))
+    copy_response = test_item.copy(test_folder, **params)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
     assert isinstance(copy_response, test_item.__class__)
 
 
-def test_move_item(test_item_and_response, mock_box_session, test_folder, mock_object_id):
+@pytest.mark.parametrize('params, expected_data', [
+    ({}, {}),
+    ({'name': 'New name.pdf'}, {'name': 'New name.pdf'})
+])
+def test_move_item(test_item_and_response, mock_box_session, test_folder, mock_object_id, params, expected_data):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, mock_item_response = test_item_and_response
     expected_url = test_item.get_url()
+    expected_body = {
+        'parent': {'id': mock_object_id},
+    }
+    expected_body.update(expected_data)
     mock_box_session.put.return_value = mock_item_response
-    move_response = test_item.move(test_folder)
-    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps({'parent': {'id': mock_object_id}}), params=None, headers=None)
+    move_response = test_item.move(test_folder, **params)
+    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body), params=None, headers=None)
     assert isinstance(move_response, test_item.__class__)
 
 

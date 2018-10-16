@@ -23,6 +23,7 @@ from boxsdk.object.enterprise import Enterprise
 from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
+from boxsdk.object.file_version import FileVersion
 from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.trash import Trash
@@ -336,6 +337,7 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
 @pytest.mark.parametrize('test_class, factory_method_name', [
     (Folder, 'folder'),
     (File, 'file'),
+    (FileVersion, 'file_version'),
     (User, 'user'),
     (Group, 'group'),
     (GroupMembership, 'group_membership'),
