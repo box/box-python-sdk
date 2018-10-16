@@ -103,7 +103,7 @@ def mock_membership_responses(mock_membership_dict_stream):
                 'offset': offset,
                 'limit': page_size,
             }
-            offset += number_entries
+            offset += page_size
             mock_box_response.status_code = 200
             mock_box_response.ok = True
             yield mock_box_response

@@ -5,7 +5,7 @@ from __future__ import absolute_import, unicode_literals
 from contextlib import contextmanager
 from datetime import datetime, timedelta
 import io
-from itertools import product
+from itertools import cycle, product
 import json
 import random
 import string
@@ -283,7 +283,10 @@ def jwt_auth_auth_mocks(jti_length, jwt_algorithm, jwt_key_id, jwt_encode):
                 system_random = mock_system_random.return_value
                 system_random.randint.return_value = jti_length
                 random_choices = [random.random() for _ in range(jti_length)]
-                system_random.random.side_effect = random_choices
+
+                # Use cycle so that we can do auth more than once inside the context manager.
+                system_random.random.side_effect = cycle(random_choices)
+
                 ascii_alphabet = string.ascii_letters + string.digits
                 ascii_len = len(ascii_alphabet)
                 jti = ''.join(ascii_alphabet[int(r * ascii_len)] for r in random_choices)
