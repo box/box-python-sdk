@@ -11,7 +11,6 @@ import pytest
 from boxsdk.config import API
 from boxsdk.object.file import File
 from boxsdk.object.upload_session import UploadSession
-from boxsdk.object.base_object import BaseObject
 
 
 @pytest.fixture()
@@ -174,28 +173,3 @@ def test_commit_with_missing_params(test_upload_session, mock_box_session):
     assert isinstance(created_file, File)
     assert created_file.id == file_id
     assert created_file.type == file_type
-
-
-def test_upload_part(test_upload_session, mock_box_session):
-    expected_url = '{0}/files/upload_sessions/{1}'.format(API.UPLOAD_URL, test_upload_session.object_id)
-    chunk = BytesIO(b'abcdefgh')
-    offset = 32
-    total_size = 80
-    expected_sha1 = 'QlrxKgdDUCsyLpOgFbz4aOMk1Wo='
-    expected_headers = {
-        'Content-Type': 'application/octet-stream',
-        'Digest': 'SHA={}'.format(expected_sha1),
-        'Content-Range': 'bytes 32-39/80',
-    }
-    mock_box_session.put.return_value = {
-        'part': {
-            'part_id': 'ABCDEF123',
-            'offset': offset,
-            'size': 8,
-            'sha1': expected_sha1,
-        },
-    }
-    part = test_upload_session.upload_part(chunk, offset, total_size)
-
-    mock_box_session.put.assert_called_once_with(expected_url, data=chunk, headers=expected_headers)
-    assert part['part']['sha1'] == expected_sha1
