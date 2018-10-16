@@ -11,6 +11,7 @@ import pytest
 from boxsdk.config import API
 from boxsdk.object.file import File
 from boxsdk.object.upload_session import UploadSession
+from boxsdk.object.base_object import BaseObject
 
 
 @pytest.fixture()
@@ -24,22 +25,25 @@ def test_upload_session(mock_box_session):
 
 def test_get_parts(test_upload_session, mock_box_session):
     expected_url = '{0}/files/upload_sessions/{1}/parts'.format(API.UPLOAD_URL, test_upload_session.object_id)
-
-    parts = mock_box_session.get.return_value.json.return_value = {
-        'entries': [
-            {
-                'part': {
-                    'part_id': '8F0966B1',
-                    'offset': 0,
-                    'size': 8,
-                    'sha1': None,
-                },
-            },
-        ],
+    mock_entry = {
+        'part_id': '8F0966B1',
+        'offset': 0,
+        'size': 8,
+        'sha1': None,
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'entries': [mock_entry],
+        'offset': 0,
+        'total_count': 1,
+        'limit': 1000,
     }
     test_parts = test_upload_session.get_parts()
-    mock_box_session.get.assert_called_once_with(expected_url)
-    assert test_parts == parts['entries']
+    part = test_parts.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
+    assert isinstance(part, dict)
+    assert part['part_id'] == mock_entry['part_id']
+    assert part['size'] == mock_entry['size']
+    assert part['offset'] == mock_entry['offset']
 
 
 def test_abort(test_upload_session, mock_box_session):
@@ -61,7 +65,7 @@ def test_upload_part(test_upload_session, mock_box_session):
         'Digest': 'SHA={}'.format(expected_sha1),
         'Content-Range': 'bytes 32-39/80',
     }
-    mock_box_session.put.return_value.json.return_value = {
+    mock_box_session.put.return_value = {
         'part': {
             'part_id': 'ABCDEF123',
             'offset': offset,
@@ -80,6 +84,8 @@ def test_commit(test_upload_session, mock_box_session):
     sha1 = hashlib.sha1()
     sha1.update(b'fake_file_data')
     file_id = '12345'
+    file_type = 'file'
+    file_attributes = ['content_modified_at']
     parts = [
         {
             'part_id': 'ABCDEF123',
@@ -95,6 +101,7 @@ def test_commit(test_upload_session, mock_box_session):
         },
     ]
     expected_data = {
+        'attributes': file_attributes,
         'parts': parts,
     }
     expected_headers = {
@@ -105,12 +112,90 @@ def test_commit(test_upload_session, mock_box_session):
     mock_box_session.post.return_value.json.return_value = {
         'entries': [
             {
-                'type': 'file',
+                'type': file_type,
+                'id': file_id,
+                'content_modified_at': '2017-11-02T15:04:38-07:00',
+            },
+        ],
+    }
+    created_file = test_upload_session.commit(content_sha1=sha1.digest(), parts=parts, file_attributes=file_attributes)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=expected_headers)
+    assert isinstance(created_file, File)
+    assert created_file.id == file_id
+    assert created_file.type == file_type
+    assert created_file.content_modified_at == '2017-11-02T15:04:38-07:00'
+
+
+def test_commit_with_missing_params(test_upload_session, mock_box_session):
+    expected_get_url = '{0}/files/upload_sessions/{1}/parts'.format(API.UPLOAD_URL, test_upload_session.object_id)
+    expected_url = '{0}/files/upload_sessions/{1}/commit'.format(API.UPLOAD_URL, test_upload_session.object_id)
+    sha1 = hashlib.sha1()
+    sha1.update(b'fake_file_data')
+    file_id = '12345'
+    file_type = 'file'
+    parts = [
+        {
+            'part_id': '8F0966B1',
+            'offset': 0,
+            'size': 8,
+            'sha1': None,
+        },
+    ]
+    expected_data = {
+        'parts': parts,
+    }
+    expected_headers = {
+        'Content-Type': 'application/json',
+        'Digest': 'SHA={}'.format(base64.b64encode(sha1.digest()).decode('utf-8')),
+    }
+    mock_entry = {
+        'part_id': '8F0966B1',
+        'offset': 0,
+        'size': 8,
+        'sha1': None,
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'entries': [mock_entry],
+        'offset': 0,
+        'total_count': 1,
+        'limit': 1000,
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'entries': [
+            {
+                'type': file_type,
                 'id': file_id,
             },
         ],
     }
-    created_file = test_upload_session.commit(parts, sha1.digest())
+    created_file = test_upload_session.commit(content_sha1=sha1.digest())
+    mock_box_session.get.assert_called_once_with(expected_get_url, params={'offset': None})
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=expected_headers)
     assert isinstance(created_file, File)
     assert created_file.id == file_id
+    assert created_file.type == file_type
+
+
+def test_upload_part(test_upload_session, mock_box_session):
+    expected_url = '{0}/files/upload_sessions/{1}'.format(API.UPLOAD_URL, test_upload_session.object_id)
+    chunk = BytesIO(b'abcdefgh')
+    offset = 32
+    total_size = 80
+    expected_sha1 = 'QlrxKgdDUCsyLpOgFbz4aOMk1Wo='
+    expected_headers = {
+        'Content-Type': 'application/octet-stream',
+        'Digest': 'SHA={}'.format(expected_sha1),
+        'Content-Range': 'bytes 32-39/80',
+    }
+    mock_box_session.put.return_value = {
+        'part': {
+            'part_id': 'ABCDEF123',
+            'offset': offset,
+            'size': 8,
+            'sha1': expected_sha1,
+        },
+    }
+    part = test_upload_session.upload_part(chunk, offset, total_size)
+
+    mock_box_session.put.assert_called_once_with(expected_url, data=chunk, headers=expected_headers)
+    assert part['part']['sha1'] == expected_sha1

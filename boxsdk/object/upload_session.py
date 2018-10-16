@@ -7,6 +7,7 @@ import json
 
 from .base_object import BaseObject
 from ..config import API
+from ..pagination.chunked_upload_part_limit_offset_based_object_collection import ChunkedUploadPartLimitOffsetBasedObjectCollection
 
 
 class UploadSession(BaseObject):
@@ -26,22 +27,44 @@ class UploadSession(BaseObject):
             *args
         ).replace(API.BASE_API_URL, API.UPLOAD_URL)
 
-    def get_parts(self):
+    def get_parts(self, limit=None, offset=None, fields=None):
         """
         Get a list of parts uploaded so far.
 
+        :param limit:
+            The maximum number of items to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param offset:
+            The index at which to start returning items.
+        :type offset:
+            `int` or None
+        :param fields:
+            Fields to include on the returned items.
+        :type fields:
+            `Iterable` of `unicode`
         :returns:
             Returns a `list` of parts uploaded so far.
         :rtype:
             `list` of `dict`
         """
-        response = self.session.get(self.get_url('parts')).json()
-        return response['entries']
+        return ChunkedUploadPartLimitOffsetBasedObjectCollection(
+            session=self.session,
+            url=self.get_url('parts'),
+            limit=limit,
+            fields=fields,
+            offset=offset,
+            return_full_pages=False,
+        )
 
     def _calculate_part_sha1(self, content_stream):
         """
         Calculate the SHA1 hash of the chunk stream for a given part of the file.
 
+        :param content_stream:
+            File-like object containing the content of the part to be uploaded.
+        :type content_stream:
+            :class:`File`
         :returns:
             The unencoded SHA1 hash of the part.
         :rtype:
@@ -99,32 +122,46 @@ class UploadSession(BaseObject):
                 'Content-Range': 'bytes {0}-{1}/{2}'.format(offset, range_end, total_size),
             },
             data=content_stream
-        ).json()
+        )
 
-    def commit(self, parts, content_sha1):
+    def commit(self, content_sha1, parts=None, file_attributes=None):
         """
         Commit a multiput upload.
 
-        :param parts:
-            List of parts that were uploaded.
-        :type parts:
-            `Iterable` of `dict`
         :param content_sha1:
             SHA-1 has of the file contents that was uploaded.
         :type content_sha1:
             `unicode`
+        :param parts:
+            List of parts that were uploaded.
+        :type parts:
+            `Iterable` of `dict` or None
+        :param file_attributes:
+            An array of attributes to set on the created file.
+        :type file_attributes:
+            `List` of `unicode`
         :returns:
             A :class:`File` object.
         :rtype:
             :class:`File`
         """
+        body = {}
+        partsList = []
+        if file_attributes is not None:
+            body['attributes'] = file_attributes
+        if parts is None:
+            parts = self.get_parts()
+            [partsList.append(part) for part in parts]
+            body['parts'] = partsList
+        else:
+            body['parts'] = parts
         response = self._session.post(
             self.get_url('commit'),
             headers={
                 'Content-Type': 'application/json',
                 'Digest': 'SHA={0}'.format(base64.b64encode(content_sha1).decode('utf-8')),
             },
-            data=json.dumps({'parts': parts}),
+            data=json.dumps(body),
         ).json()
         entry = response['entries'][0]
         return self.translator.translate(entry['type'])(

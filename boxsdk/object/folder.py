@@ -118,11 +118,11 @@ class Folder(Item):
         Creates a new chunked upload session for upload a new file.
 
         :param file_size:
-            The size of the file that will be uploaded.
+            The size of the file in bytes that will be uploaded.
         :type file_size:
             `int`
         :param file_name:
-            The name of the file that will be uploaded.
+            The new name of the file that will be uploaded.
         :type file_name:
             `unicode`
         :returns:
@@ -136,10 +136,7 @@ class Folder(Item):
             'file_size': file_size,
             'file_name': file_name,
         }
-        response = self._session.post(
-            url,
-            data=json.dumps(body_params),
-        ).json()
+        response = self._session.post(url, data=json.dumps(body_params)).json()
         return self.translator.translate(response['type'])(
             session=self.session,
             object_id=response['id'],
