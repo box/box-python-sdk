@@ -146,13 +146,14 @@ class UploadSession(BaseObject):
             :class:`File`
         """
         body = {}
-        partsList = []
+        parts_list = []
         if file_attributes is not None:
             body['attributes'] = file_attributes
         if parts is None:
             parts = self.get_parts()
-            [partsList.append(part) for part in parts]
-            body['parts'] = partsList
+            for part in parts:
+                parts_list.append(part)
+            body['parts'] = parts_list
         else:
             body['parts'] = parts
         response = self._session.post(
