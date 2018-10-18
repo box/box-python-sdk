@@ -116,6 +116,10 @@ class UploadSession(BaseObject):
             An `dict` of attributes to set on file upload.
         :type file_attributes:
             `dict`
+        :param etag:
+            etag lets you ensure that your app only alters files/folders on Box if you have the current version.
+        :type etag:
+            `unicode`
         :returns:
             A :class:`File` object.
         :rtype:
