@@ -88,7 +88,7 @@ class Client(Cloneable):
         """
         Returns a user's root folder object.
         """
-        return self.translator.translate('folder')(self._session, '0')
+        return self.folder('0')
 
     def file(self, file_id):
         """
