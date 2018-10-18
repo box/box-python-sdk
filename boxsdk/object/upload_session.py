@@ -57,41 +57,14 @@ class UploadSession(BaseObject):
             return_full_pages=False,
         )
 
-    def _calculate_part_sha1(self, content_stream):
-        """
-        Calculate the SHA1 hash of the chunk stream for a given part of the file.
-
-        :param content_stream:
-            File-like object containing the content of the part to be uploaded.
-        :type content_stream:
-            :class:`File`
-        :returns:
-            The unencoded SHA1 hash of the part.
-        :rtype:
-            `bytes`
-        """
-        content_sha1 = hashlib.sha1()
-        stream_position = content_stream.tell()
-        hashed_length = 0
-        while hashed_length < self.part_size:  # pylint:disable=no-member
-            chunk = content_stream.read(self.part_size - hashed_length)  # pylint:disable=no-member
-            if chunk is None:
-                continue
-            if not chunk:
-                break
-            hashed_length += len(chunk)
-            content_sha1.update(chunk)
-        content_stream.seek(stream_position)
-        return content_sha1.digest()
-
-    def upload_part(self, content_stream, offset, total_size, part_content_sha1=None):
+    def upload_part(self, part_bytes, offset, total_size, part_content_sha1=None):
         """
         Upload a part of a file.
 
-        :param content_stream:
-            File-like object containing the content of the part to be uploaded.
-        :type content_stream:
-            :class:`File`
+        :param part_bytes:
+            Part bytes
+        :type part_bytes:
+            `bytes`
         :param offset:
             Offset, in number of bytes, of the part compared to the beginning of the file.
         :type offset:
@@ -109,8 +82,11 @@ class UploadSession(BaseObject):
         :rtype:
             `dict`
         """
+
         if part_content_sha1 is None:
-            part_content_sha1 = self._calculate_part_sha1(content_stream)
+            sha1 = hashlib.sha1()
+            sha1.update(part_bytes)
+            part_content_sha1 = sha1.digest()
 
         range_end = min(offset + self.part_size - 1, total_size - 1)  # pylint:disable=no-member
 
@@ -121,10 +97,10 @@ class UploadSession(BaseObject):
                 'Digest': 'SHA={0}'.format(base64.b64encode(part_content_sha1).decode('utf-8')),
                 'Content-Range': 'bytes {0}-{1}/{2}'.format(offset, range_end, total_size),
             },
-            data=content_stream
+            data=part_bytes
         )
 
-    def commit(self, content_sha1, parts=None, file_attributes=None):
+    def commit(self, content_sha1, parts=None, file_attributes=None, etag=None):
         """
         Commit a multiput upload.
 
@@ -137,9 +113,9 @@ class UploadSession(BaseObject):
         :type parts:
             `Iterable` of `dict` or None
         :param file_attributes:
-            An array of attributes to set on the created file.
+            An `dict` of attributes to set on file upload.
         :type file_attributes:
-            `List` of `unicode`
+            `dict`
         :returns:
             A :class:`File` object.
         :rtype:
@@ -156,12 +132,15 @@ class UploadSession(BaseObject):
             body['parts'] = parts_list
         else:
             body['parts'] = parts
+        headers = {
+            'Content-Type': 'application/json',
+            'Digest': 'SHA={0}'.format(base64.b64encode(content_sha1).decode('utf-8')),
+        }
+        if etag is not None:
+            headers['If-Match'] = etag
         response = self._session.post(
             self.get_url('commit'),
-            headers={
-                'Content-Type': 'application/json',
-                'Digest': 'SHA={0}'.format(base64.b64encode(content_sha1).decode('utf-8')),
-            },
+            headers=headers,
             data=json.dumps(body),
         ).json()
         entry = response['entries'][0]

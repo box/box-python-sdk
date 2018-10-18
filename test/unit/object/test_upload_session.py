@@ -55,7 +55,8 @@ def test_abort(test_upload_session, mock_box_session):
 
 def test_upload_part(test_upload_session, mock_box_session):
     expected_url = '{0}/files/upload_sessions/{1}'.format(API.UPLOAD_URL, test_upload_session.object_id)
-    chunk = BytesIO(b'abcdefgh')
+    part_bytes = BytesIO(b'abcdefgh')
+    chunk = part_bytes.read(20)
     offset = 32
     total_size = 80
     expected_sha1 = 'QlrxKgdDUCsyLpOgFbz4aOMk1Wo='
