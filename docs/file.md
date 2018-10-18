@@ -49,18 +49,21 @@ upload_session = client.folder('22222').create_upload_session(file_size=file_siz
 
 #### Upload Part
 
-To upload a part of the file to this session, use `upload_session.upload_part(content_stream, offset, total_size, part_content_sha1=None)`
+To upload a part of the file to this session, use `upload_session.upload_part(part_bytes, offset, total_size, part_content_sha1=None)`
 
 ```python
 from io import BytesIO
-chunk = BytesIO(b'abcdefgh')
 offset = 32
-upload_part = client.upload_session('11493C07ED3EABB6E59874D3A1EF3581').upload_part(chunk, offset, total_size)
+part_bytes = BytesIO(b'abcdefgh')
+upload_session = client.upload_session('11493C07ED3EABB6E59874D3A1EF3581')
+chunk = part_bytes.read(upload_session.part_size)
+offset = 32
+upload_part = upload_session.upload_part(chunk, offset, total_size)
 ```
 
 #### Commit Upload Session
 
-To commit the upload session to Box, use `upload_session.commit(content_sha1, parts=None, file_attributes=None)`.
+To commit the upload session to Box, use `upload_session.commit(content_sha1, parts=None, file_attributes=None, etag=None)`.
 
 ```python
 import hashlib
