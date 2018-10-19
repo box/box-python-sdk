@@ -78,7 +78,7 @@ class UploadSession(BaseObject):
         :type part_content_sha1:
             `unicode`
         :returns:
-            The uploaded part.
+            The uploaded part record.
         :rtype:
             `dict`
         """
