@@ -105,7 +105,7 @@ class UploadSession(BaseObject):
         Commit a multiput upload.
 
         :param content_sha1:
-            SHA-1 has of the file contents that was uploaded.
+            SHA-1 hash of the file contents that was uploaded.
         :type content_sha1:
             `unicode`
         :param parts:
