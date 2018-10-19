@@ -37,19 +37,8 @@ def memberships_response():
 def test_email_alias(mock_box_session):
     return EmailAlias(
         session=mock_box_session,
-        object_id='tets_alias_id',
+        object_id='test_alias_id',
     )
-
-
-@pytest.fixture(scope='module')
-def add_email_alias_response():
-    #pylint:disable=redefined-outer-name
-    mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.json.return_value = {
-        'type': 'email_alias',
-        'id': '1234',
-    }
-    return mock_network_response
 
 
 def test_update(mock_user, mock_box_session):
@@ -103,18 +92,23 @@ def test_get_email_aliases(mock_user, mock_box_session):
         assert alias.email == alias_json['email']
 
 
-def test_add_email_alias_returns_the_correct_email_alias_object(mock_user, mock_box_session, add_email_alias_response):
+def test_add_email_alias_returns_the_correct_email_alias_object(mock_user, mock_box_session):
     # pylint:disable=redefined-outer-name
     test_email_alias = 'test@example.com'
-    value = json.dumps({
+    expected_url = '{0}/users/{1}/email_aliases'.format(API.BASE_API_URL, mock_user.object_id)
+    expected_body = json.dumps({
         'email': test_email_alias,
     })
-    mock_box_session.post.return_value = add_email_alias_response
+    mock_box_session.post.return_value.json.return_value = {
+        'type': 'email_alias',
+        'id': '1234',
+        'email': test_email_alias,
+    }
     new_email_alias = mock_user.add_email_alias(test_email_alias)
-    assert len(mock_box_session.post.call_args_list) == 1
-    assert mock_box_session.post.call_args[0] == ("{0}/users/{1}/email_aliases".format(API.BASE_API_URL, mock_user.object_id),)
-    assert mock_box_session.post.call_args[1] == {'data': value}
+    mock_box_session.post.assert_called_once_with(expected_url, data=expected_body)
     assert isinstance(new_email_alias, EmailAlias)
+    assert new_email_alias._session == mock_box_session  # pylint: disable=protected-access
+    assert new_email_alias.object_id == '1234'
 
 
 def test_remove_email_alias(mock_user, mock_box_session, test_email_alias):

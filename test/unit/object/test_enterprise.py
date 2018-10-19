@@ -40,5 +40,5 @@ def test_invite_user(test_enterprise, mock_box_session):
     mock_box_session.post.assert_called_once_with(expected_url, data=expected_body)
     assert isinstance(new_invite, Invite)
     assert new_invite.object_id == invite_json['id']
-    assert new_invite._session == mock_box_session
+    assert new_invite._session == mock_box_session  # pylint: disable=protected-access
     assert new_invite.status == invite_json['status']
