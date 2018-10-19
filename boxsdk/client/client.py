@@ -1,15 +1,14 @@
 # coding: utf-8
 # pylint: disable=too-many-lines
 from __future__ import unicode_literals, absolute_import
+
 import json
 
 from ..auth.oauth2 import TokenResponse
 from ..session.session import Session, AuthorizedSession
 from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
-from ..object.invite import Invite
 from ..object.search import Search
-from ..object.email_alias import EmailAlias
 from ..object.events import Events
 from ..object.collaboration_whitelist import CollaborationWhitelist
 from ..object.trash import Trash
@@ -137,7 +136,7 @@ class Client(Cloneable):
         :rtype:
             :class:`User`
         """
-        return self.translator.translate('user')(session=self._session, object_id=user_id)
+        return self.translator.get('user')(session=self._session, object_id=user_id)
 
     def invite(self, invite_id):
         """
@@ -152,7 +151,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Invite`
         """
-        return self.translator.translate('invite')(session=self._session, object_id=invite_id)
+        return self.translator.get('invite')(session=self._session, object_id=invite_id)
 
     def email_alias(self, alias_id):
         """
@@ -167,7 +166,7 @@ class Client(Cloneable):
         :rtype:
             :class:`EmailAlias`
         """
-        return self.translator.translate('email_alias')(session=self._session, object_id=alias_id)
+        return self.translator.get('email_alias')(session=self._session, object_id=alias_id)
 
     def group(self, group_id):
         """
@@ -427,7 +426,7 @@ class Client(Cloneable):
             return_full_pages=False,
         )
 
-    def enterprise(self, enterprise_id):
+    def enterprise(self, enterprise_id=None):
         """
         Initialize a :class:`Enterprise` object, whose box ID is enterprise_id.
 
@@ -441,6 +440,24 @@ class Client(Cloneable):
             :class:`Enterprise`
         """
         return self.translator.get('enterprise')(session=self._session, object_id=enterprise_id)
+
+    @api_call
+    def get_current_enterprise(self):
+        """
+        Get the enterprise of the current user.
+
+        :returns:
+            The authenticated user's enterprise
+        :rtype:
+            :class:`Enterprise`
+        """
+        user = self.user().get(fields=['enterprise'])
+        enterprise_object = user['enterprise']
+        return self.translator.translate(enterprise_object['type'])(
+            session=self._session,
+            object_id=enterprise_object['id'],
+            response_object=enterprise_object,
+        )
 
     @api_call
     def users(self, limit=None, offset=0, filter_term=None, user_type=None, fields=None):
@@ -490,39 +507,6 @@ class Client(Cloneable):
             offset=offset,
             fields=fields,
             return_full_pages=False,
-        )
-
-    def invite_user(self, enterprise_id, email_to_invite):
-        """
-        Invites an existing user to an Enterprise. User must already have a Box account.
-
-        :param enterprise_id:
-            The id of the enterprise the user will be invited to.
-        :type enterprise_id:
-            `unicode`
-        :param email_to_invite:
-            The login of the user that will receive the invitation.
-        :type email_to_invite:
-            `unicode`
-        :returns:
-            A :class:`Invite` object.
-        :rtype:
-            :class:`Invite`
-        """
-        url = self.get_url('invites')
-        body = {
-            'enterprise': {
-                'id': enterprise_id
-            },
-            'actionable_by': {
-                'login': email_to_invite
-            }
-        }
-        response = self._session.post(url, data=json.dumps(body)).json()
-        return self.translator.translate(response['type'])(
-            session=self._session,
-            object_id=response['id'],
-            response_object=response,
         )
 
     @api_call

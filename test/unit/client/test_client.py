@@ -491,26 +491,6 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
     assert new_group.name == test_group_name
 
 
-def test_invite_user_to_enterprise(mock_client, mock_box_session, create_invite_response):
-    # pylint:disable=redefined-outer-name
-    test_user_login = 'test@user.com'
-    value = json.dumps({
-        'enterprise': {
-            'id': '1234'
-        },
-        'actionable_by': {
-            'login': test_user_login
-        }
-    })
-    mock_box_session.post.return_value = create_invite_response
-    new_invite = mock_client.invite_user('1234', test_user_login)
-    assert len(mock_box_session.post.call_args_list) == 1
-    assert mock_box_session.post.call_args[0] == ("{0}/invites".format(API.BASE_API_URL),)
-    assert mock_box_session.post.call_args[1] == {'data': value}
-    assert isinstance(new_invite, Invite)
-    assert new_invite.object_id == 1234
-
-
 def test_create_legal_hold_policy_returns_the_correct_policy_object(mock_client, mock_box_session, create_policy_response):
     # pylint:disable=redefined-outer-name
     test_policy_name = 'Test Policy'

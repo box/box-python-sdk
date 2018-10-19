@@ -18,29 +18,6 @@ def test_user_url(mock_user):
 
 
 @pytest.fixture(scope='module')
-def alias_id_1():
-    return 101
-
-
-@pytest.fixture(scope='module')
-def alias_id_2():
-    return 202
-
-
-@pytest.fixture(scope='module')
-def alias_response(alias_id_1, alias_id_2):
-    # pylint:disable=redefined-outer-name
-    mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.json.return_value = {
-        'entries': [
-            {'type': 'email_alias', 'id': alias_id_1},
-            {'type': 'email_alias', 'id': alias_id_2},
-        ]
-    }
-    return mock_network_response
-
-
-@pytest.fixture(scope='module')
 def memberships_response():
     # pylint disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
@@ -62,17 +39,6 @@ def add_email_alias_response():
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'type': 'email_alias',
-        'id': '1234',
-    }
-    return mock_network_response
-
-
-@pytest.fixture(scope='module')
-def move_items_response():
-    #pylint:disable=redefined-outer-name
-    mock_network_response = Mock(DefaultNetworkResponse)
-    mock_network_response.json.return_value = {
-        'type': 'folder',
         'id': '1234',
     }
     return mock_network_response
@@ -105,14 +71,28 @@ def test_delete(mock_user, mock_box_session):
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=None, params={})
 
 
-def test_email_aliases(mock_user, mock_box_session, alias_response, alias_id_1, alias_id_2):
+def test_get_email_aliases(mock_user, mock_box_session):
     # pylint:disable=redefined-outer-name
-    mock_box_session.get.return_value = alias_response
-    aliases = mock_user.email_aliases()
-    for alias, expected_id in zip(aliases, [alias_id_1, alias_id_2]):
-        assert alias.object_id == expected_id
+    alias1_json = {
+        'type': 'email_alias',
+        'id': '12345',
+        'email': 'foo@example.com',
+    }
+    alias2_json = {
+        'type': 'email_alias',
+        'id': '67890',
+        'email': 'bar@example.com',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 2,
+        'entries': [alias1_json, alias2_json],
+    }
+    aliases = mock_user.get_email_aliases()
+    for alias, alias_json in zip(aliases, [alias1_json, alias2_json]):
+        assert alias.object_id == alias_json['id']
         # pylint:disable=protected-access
         assert alias._session == mock_box_session
+        assert alias.email == alias_json['email']
 
 
 def test_add_email_alias_returns_the_correct_email_alias_object(mock_user, mock_box_session, add_email_alias_response):
@@ -129,19 +109,33 @@ def test_add_email_alias_returns_the_correct_email_alias_object(mock_user, mock_
     assert isinstance(new_email_alias, EmailAlias)
 
 
-def test_move_users_owned_items(mock_user, mock_box_session, move_items_response):
+@pytest.mark.parametrize('notify,fields,expected_params', [
+    (None, None, {}),
+    (True, None, {'notify': True}),
+    (False, None, {'notify': False}),
+    (None, ['type', 'id', 'name'], {'fields': 'type,id,name'}),
+    (False, ['type', 'id'], {'notify': False, 'fields': 'type,id'}),
+])
+def test_transfer_content(mock_user, mock_box_session, notify, fields, expected_params):
     # pylint:disable=redefined-outer-name
-    value = json.dumps({
+    expected_url = "{0}/users/{1}/folders/0".format(API.BASE_API_URL, mock_user.object_id)
+    expected_body = json.dumps({
         'owned_by': {
             'id': mock_user.object_id
         },
     })
-    mock_box_session.put.return_value = move_items_response
-    moved_item = mock_user.move_owned_items(mock_user.object_id)
-    assert len(mock_box_session.put.call_args_list) == 1
-    assert mock_box_session.put.call_args[0] == ("{0}/users/fake-user-100/folders/0".format(API.BASE_API_URL),)
-    assert mock_box_session.put.call_args[1] == {'data': value}
+    move_items_response = {
+        'type': 'folder',
+        'id': '12345',
+        'name': 'That Other User\'s Content',
+    }
+    mock_box_session.put.return_value.json.return_value = move_items_response
+    moved_item = mock_user.transfer_content(mock_user, notify=notify, fields=fields)
+    mock_box_session.put.assert_called_once_with(expected_url, data=expected_body, params=expected_params)
     assert isinstance(moved_item, Folder)
+    assert moved_item.id == move_items_response['id']
+    assert moved_item.name == move_items_response['name']
+    assert moved_item._session == mock_box_session
 
 
 def test_get_group_memberships(

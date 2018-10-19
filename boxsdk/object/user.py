@@ -6,6 +6,7 @@ import json
 from .base_object import BaseObject
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+from ..util.api_call_decorator import api_call
 
 
 class User(BaseObject):
@@ -13,22 +14,23 @@ class User(BaseObject):
 
     _item_type = 'user'
 
+    @api_call
     def add_email_alias(self, email):
         """
-        Adds a new email alias to th given user's account.
+        Adds a new email alias to the given user's account.
 
         :param email:
-            The email alias to add to the uer.
+            The email alias to add to the user.
         :type email:
             `unicode`
         :returns:
-            A :class:`EmailAlias` object.
+            The new email alias object
         :rtype:
             :class:`EmailAlias`
         """
         url = self.get_url('email_aliases')
         body = {
-            'email': email
+            'email': email,
         }
         response = self._session.post(url, data=json.dumps(body)).json()
         return self.translator.translate(response['type'])(
@@ -37,7 +39,8 @@ class User(BaseObject):
             response_object=response,
         )
 
-    def email_aliases(self, limit=None, marker=None, fields=None):
+    @api_call
+    def get_email_aliases(self, limit=None, fields=None):
         """
         Gets an list of email aliases for a user.
 
@@ -45,58 +48,83 @@ class User(BaseObject):
             The maximum number of users to return. If not specified, the Box API will determine an appropriate limit.
         :type limit:
             `int` or None
-        :param marker:
-            The index at which to start returning items.
-        :type marker:
-            `unicode` or None
         :param fields:
             List of fields to request
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            An iterator of the entries email alias
+            An iterator of the user's email aliases
         :rtype:
-            :class:`MarkerBasedObjectCollection`
+            :class:`BoxObjectCollection`
         """
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self.get_url('email_aliases'),
             limit=limit,
-            marker=marker,
+            marker=None,
             fields=fields,
             return_full_pages=False,
         )
 
-    def move_owned_items(self, owned_by_id, notify=None):
+    @api_call
+    def remove_email_alias(self, email_alias):
         """
-        Move all of the items owned by a user into a new folder in another users account.
+        Remove an email alias from the user.
 
-        :param owned_by_id:
+        :param email_alias:
+            The email alias to remove.
+        :type email_alias:
+            :class:`EmailAlias`
+        :returns:
+            Whether the removal succeeded.
+        :rtype:
+            `bool`
+        """
+        url = self.get_url('email_aliases', email_alias.object_id)
+        response = self._session.delete(url, expect_json_response=False)
+        return response.ok
+
+    @api_call
+    def transfer_content(self, destination_user, notify=None, fields=None):
+        """
+        Move all of the items owned by a user into a new folder in another user's account.
+
+        :param destination_user:
             The id of the user to transfer content to.
-        :type owned_by_id:
-            `unicode`
+        :type destination_user:
+            :class:`User`
         :param notify:
             Whether the destination user should receive email notification of the transfer.
         :type notify:
             `bool` or None
+        :param fields:
+            Fields to return on the resulting :class:`Folder` object
+        :type fields:
+            `Iterable` of `unicode`
         :returns:
             A :class:`Folder` object that was transferred to another user.
         :rtype:
             :class:`Folder`
         """
-        url = self.get_url('folders/0')
+        url = self.get_url('folders', '0')
         body = {
             'owned_by': {
-                'id': owned_by_id,
-            }
+                'id': destination_user.object_id,
+            },
         }
-        response = self._session.put(url, data=json.dumps(body)).json()
+        params = {}
+        if notify is not None:
+            params['notify'] = notify
+        if fields is not None:
+            params['fields'] = ','.join(fields)
+        response = self._session.put(url, data=json.dumps(body), params=params).json()
         return self.translator.translate(response['type'])(
             session=self._session,
             object_id=response['id'],
             response_object=response,
         )
 
+    @api_call
     def get_group_memberships(self, limit=None, offset=None, fields=None):
         """
         Get the entries in the user group membership using limit-offset paging.
