@@ -25,7 +25,7 @@ class UploadSession(BaseObject):
             '{0}s/{1}s'.format(self._parent_item_type, self._item_type),
             self._object_id,
             *args
-        ).replace(API.BASE_API_URL, API.UPLOAD_URL)
+        ).replace(self.session.api_config.BASE_API_URL, self.session.api_config.UPLOAD_URL)
 
     def get_parts(self, limit=None, offset=None, fields=None):
         """
