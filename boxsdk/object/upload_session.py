@@ -119,7 +119,7 @@ class UploadSession(BaseObject):
         :param etag:
             etag lets you ensure that your app only alters files/folders on Box if you have the current version.
         :type etag:
-            `unicode`
+            `unicode` or None
         :returns:
             A :class:`File` object.
         :rtype:
