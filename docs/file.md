@@ -33,7 +33,7 @@ To create an upload session for uploading a large version, use `file.create_uplo
 
 ```python
 file_size = 197520
-upload_session = client.file('11111').create_upload_session(file_size=file_size)
+upload_session = client.file('11111').create_upload_session(file_size)
 ```
 
 #### Create Upload Session for File
