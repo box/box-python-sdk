@@ -19,6 +19,7 @@ from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
+from boxsdk.object.email_alias import EmailAlias
 from boxsdk.object.enterprise import Enterprise
 from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
@@ -346,12 +347,14 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
 
 
 @pytest.mark.parametrize('test_class, factory_method_name', [
+    (EmailAlias, 'email_alias'),
+    (Enterprise, 'enterprise'),
     (Folder, 'folder'),
     (File, 'file'),
+    (Invite, 'invite'),
     (User, 'user'),
     (Group, 'group'),
     (GroupMembership, 'group_membership'),
-    (Enterprise, 'enterprise'),
     (Webhook, 'webhook')
 ])
 def test_factory_returns_the_correct_object(mock_client, test_class, factory_method_name):
@@ -943,3 +946,31 @@ def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_r
         assert pin.object_id == expected_id
         # pylint:disable=protected-access
         assert pin._session == mock_box_session
+
+
+def test_get_current_enterprise(mock_client, mock_box_session):
+    expected_url = '{0}/users/me'.format(API.BASE_API_URL)
+    expected_params = {
+        'fields': 'enterprise'
+    }
+    enterprise_id = '44444'
+    enterprise_name = 'Acme, Inc.'
+    user_json = {
+        'type': 'user',
+        'id': '33333',
+        'enterprise': {
+            'type': 'enterprise',
+            'id': enterprise_id,
+            'name': enterprise_name,
+        },
+    }
+    mock_box_session.get.return_value.json.return_value = user_json
+
+    enterprise = mock_client.get_current_enterprise()
+
+    mock_box_session.get.assert_called_once_with(expected_url, params=expected_params, headers=None)
+    assert isinstance(enterprise, Enterprise)
+    assert enterprise.object_id == enterprise_id
+    assert enterprise._session == mock_box_session
+    assert enterprise.name == enterprise_name
+

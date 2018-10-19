@@ -426,7 +426,7 @@ class Client(Cloneable):
             return_full_pages=False,
         )
 
-    def enterprise(self, enterprise_id=None):
+    def enterprise(self, enterprise_id):
         """
         Initialize a :class:`Enterprise` object, whose box ID is enterprise_id.
 

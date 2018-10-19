@@ -33,6 +33,14 @@ def memberships_response():
     return mock_network_response
 
 
+@pytest.fixture()
+def test_email_alias(mock_box_session):
+    return EmailAlias(
+        session=mock_box_session,
+        object_id='tets_alias_id',
+    )
+
+
 @pytest.fixture(scope='module')
 def add_email_alias_response():
     #pylint:disable=redefined-outer-name
@@ -107,6 +115,16 @@ def test_add_email_alias_returns_the_correct_email_alias_object(mock_user, mock_
     assert mock_box_session.post.call_args[0] == ("{0}/users/{1}/email_aliases".format(API.BASE_API_URL, mock_user.object_id),)
     assert mock_box_session.post.call_args[1] == {'data': value}
     assert isinstance(new_email_alias, EmailAlias)
+
+
+def test_remove_email_alias(mock_user, mock_box_session, test_email_alias):
+    expected_url = '{0}/users/{1}/email_aliases/{2}'.format(API.BASE_API_URL, mock_user.object_id, test_email_alias.object_id)
+    mock_box_session.delete.return_value.ok = True
+
+    result = mock_user.remove_email_alias(test_email_alias)
+
+    mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)
+    assert result is True
 
 
 @pytest.mark.parametrize('notify,fields,expected_params', [
