@@ -42,7 +42,7 @@ def test_email_alias(mock_box_session):
 
 
 def test_update(mock_user, mock_box_session):
-    #pylint:disable=redefined-outer-name, protected-access
+    # pylint:disable=redefined-outer-name, protected-access
     user_id = mock_user.object_id
     expected_url = mock_box_session.get_url('users', user_id)
     user = {
@@ -147,7 +147,7 @@ def test_transfer_content(mock_user, mock_box_session, notify, fields, expected_
     assert isinstance(moved_item, Folder)
     assert moved_item.id == move_items_response['id']
     assert moved_item.name == move_items_response['name']
-    assert moved_item._session == mock_box_session
+    assert moved_item._session == mock_box_session  # pylint:disable=protected-access
 
 
 def test_get_group_memberships(
