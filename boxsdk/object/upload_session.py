@@ -97,7 +97,7 @@ class UploadSession(BaseObject):
                 'Digest': 'SHA={0}'.format(base64.b64encode(part_content_sha1).decode('utf-8')),
                 'Content-Range': 'bytes {0}-{1}/{2}'.format(offset, range_end, total_size),
             },
-            data=part_bytes
+            data=part_bytes,
         )
 
     def commit(self, content_sha1, parts=None, file_attributes=None, etag=None):
