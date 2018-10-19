@@ -126,7 +126,7 @@ class Folder(Item):
         :type file_name:
             `unicode`
         :returns:
-            A :class:`ChunkedUploadSession` object.
+            A :class:`UploadSession` object.
         :rtype:
             :class:`ChunkedUploadSession`
         """
