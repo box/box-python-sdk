@@ -163,5 +163,5 @@ class UploadSession(BaseObject):
         :rtype:
             `bool`
         """
-        response = self._session.delete(self.get_url())
+        return self.delete()
         return response.ok
