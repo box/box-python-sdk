@@ -7,7 +7,7 @@ import json
 
 from .base_object import BaseObject
 from ..config import API
-from ..pagination.chunked_upload_part_limit_offset_based_object_collection import ChunkedUploadPartLimitOffsetBasedObjectCollection
+from ..pagination.limit_offset_based_dict_collection import LimitOffsetBasedDictCollection
 
 
 class UploadSession(BaseObject):
@@ -27,7 +27,7 @@ class UploadSession(BaseObject):
             *args
         ).replace(API.BASE_API_URL, API.UPLOAD_URL)
 
-    def get_parts(self, limit=None, offset=None, fields=None):
+    def get_parts(self, limit=None, offset=None):
         """
         Get a list of parts uploaded so far.
 
@@ -48,12 +48,12 @@ class UploadSession(BaseObject):
         :rtype:
             `list` of `dict`
         """
-        return ChunkedUploadPartLimitOffsetBasedObjectCollection(
+        return LimitOffsetBasedDictCollection(
             session=self.session,
             url=self.get_url('parts'),
             limit=limit,
-            fields=fields,
             offset=offset,
+            fields=None,
             return_full_pages=False,
         )
 
@@ -66,7 +66,8 @@ class UploadSession(BaseObject):
         :type part_bytes:
             `bytes`
         :param offset:
-            Offset, in number of bytes, of the part compared to the beginning of the file.
+            Offset, in number of bytes, of the part compared to the beginning of the file. This number should be a
+            multiple of the part size.
         :type offset:
             `int`
         :param total_size:
@@ -76,7 +77,7 @@ class UploadSession(BaseObject):
         :param part_content_sha1:
             SHA-1 hash of the part's content. If not specified, this will be calculated.
         :type part_content_sha1:
-            `unicode`
+            `unicode` or None
         :returns:
             The uploaded part.
         :rtype:
@@ -89,16 +90,17 @@ class UploadSession(BaseObject):
             part_content_sha1 = sha1.digest()
 
         range_end = min(offset + self.part_size - 1, total_size - 1)  # pylint:disable=no-member
-
-        return self._session.put(
+        headers = {
+            'Content-Type': 'application/octet-stream',
+            'Digest': 'SHA={0}'.format(base64.b64encode(part_content_sha1).decode('utf-8')),
+            'Content-Range': 'bytes {0}-{1}/{2}'.format(offset, range_end, total_size),
+        }
+        response = self._session.put(
             self.get_url(),
-            headers={
-                'Content-Type': 'application/octet-stream',
-                'Digest': 'SHA={0}'.format(base64.b64encode(part_content_sha1).decode('utf-8')),
-                'Content-Range': 'bytes {0}-{1}/{2}'.format(offset, range_end, total_size),
-            },
-            data=part_bytes
+            headers=headers,
+            data=part_bytes,
         )
+        return response['part']
 
     def commit(self, content_sha1, parts=None, file_attributes=None, etag=None):
         """
@@ -117,11 +119,11 @@ class UploadSession(BaseObject):
         :type file_attributes:
             `dict`
         :param etag:
-            etag lets you ensure that your app only alters files/folders on Box if you have the current version.
+            If specified, instruct the Box API to delete the folder only if the current version's etag matches.
         :type etag:
             `unicode`
         :returns:
-            A :class:`File` object.
+            The newly-uploaded file object.
         :rtype:
             :class:`File`
         """
@@ -129,13 +131,10 @@ class UploadSession(BaseObject):
         parts_list = []
         if file_attributes is not None:
             body['attributes'] = file_attributes
-        if parts is None:
-            parts = self.get_parts()
-            for part in parts:
-                parts_list.append(part)
-            body['parts'] = parts_list
-        else:
+        if parts is not None:
             body['parts'] = parts
+        else:
+            body['parts'] = [parts_list.append(part) for part in self.get_parts()]
         headers = {
             'Content-Type': 'application/json',
             'Digest': 'SHA={0}'.format(base64.b64encode(content_sha1).decode('utf-8')),

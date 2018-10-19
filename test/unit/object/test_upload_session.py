@@ -76,7 +76,8 @@ def test_upload_part(test_upload_session, mock_box_session):
     part = test_upload_session.upload_part(chunk, offset, total_size)
 
     mock_box_session.put.assert_called_once_with(expected_url, data=chunk, headers=expected_headers)
-    assert part['part']['sha1'] == expected_sha1
+    assert isinstance(part, dict)
+    assert part['sha1'] == expected_sha1
 
 
 def test_commit(test_upload_session, mock_box_session):

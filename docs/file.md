@@ -21,9 +21,7 @@ without aborting the entire upload, and failed parts can then be retried.
 
 ### Manual Process
 
-For more complicated upload scenarios, such as those being coordinated across
-multiple processes or when an unrecoverable error occurs with the automatic
-uploader, the endpoints for chunked upload operations are also exposed directly.
+
 
 The individual endpoint methods are detailed below:
 
@@ -32,7 +30,7 @@ The individual endpoint methods are detailed below:
 To create an upload session for uploading a large version, use `file.create_upload_session(file_size, file_name=None)`
 
 ```python
-file_size = 197520
+file_size = 26000000
 upload_session = client.file('11111').create_upload_session(file_size=file_size)
 ```
 
@@ -42,7 +40,7 @@ To create an upload session for uploading a large file, use
 `folder.create_upload_session(file_size, file_name)`
 
 ```python
-file_size = 197520
+file_size = 26000000
 file_name = 'test_file.pdf'
 upload_session = client.folder('22222').create_upload_session(file_size=file_size, file_name=file_name)
 ```
@@ -52,12 +50,10 @@ upload_session = client.folder('22222').create_upload_session(file_size=file_siz
 To upload a part of the file to this session, use `upload_session.upload_part(part_bytes, offset, total_size, part_content_sha1=None)`
 
 ```python
-from io import BytesIO
-offset = 32
-part_bytes = BytesIO(b'abcdefgh')
+offset = 25165824
+part_bytes = b'abcdefgh'
 upload_session = client.upload_session('11493C07ED3EABB6E59874D3A1EF3581')
 chunk = part_bytes.read(upload_session.part_size)
-offset = 32
 upload_part = upload_session.upload_part(chunk, offset, total_size)
 ```
 
@@ -81,7 +77,7 @@ client.upload_session('11493C07ED3EABB6E59874D3A1EF3581').abort()
 
 #### List Upload Parts
 
-To return the list of parts uploaded so far, use `upload_session.get_parts(limit=None, offset=None, fields=None)`.
+To return the list of parts uploaded so far, use `upload_session.get_parts(limit=None, offset=None)`.
 
 ```python
 parts = client.upload_session('11493C07ED3EABB6E59874D3A1EF3581').get_parts()
