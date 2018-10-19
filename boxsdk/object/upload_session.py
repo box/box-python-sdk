@@ -149,7 +149,7 @@ class UploadSession(BaseObject):
         ).json()
         entry = response['entries'][0]
         return self.translator.translate(entry['type'])(
-            session=self.session,
+            session=self._session,
             object_id=entry['id'],
             response_object=entry,
         )
