@@ -128,7 +128,7 @@ class Folder(Item):
         :returns:
             A :class:`UploadSession` object.
         :rtype:
-            :class:`ChunkedUploadSession`
+            :class:`UploadSession`
         """
         url = '{0}/files/upload_sessions'.format(API.UPLOAD_URL)
         body_params = {
