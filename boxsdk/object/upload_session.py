@@ -113,7 +113,7 @@ class UploadSession(BaseObject):
         :type parts:
             `Iterable` of `dict` or None
         :param file_attributes:
-            An `dict` of attributes to set on file upload.
+            A `dict` of attributes to set on the uploaded file.
         :type file_attributes:
             `dict`
         :param etag:
