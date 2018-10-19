@@ -416,6 +416,45 @@ class Folder(Item):
             response_object=collaboration_response,
         )
 
+    def create_web_link(self, target_url, name=None, description=None):
+        """
+        Create a WebLink with a given url.
+
+        :param target_url:
+            The url the web link points to.
+        :type target_url:
+            `unicode`
+        :param name:
+            The name of the web link. Optional, the API will give it a default if not specified.
+        :type name:
+            `unicode` or None
+        :param description:
+            Description of the web link
+        :type name:
+            `unicode` or None
+        :return:
+            A :class:`WebLink` object.
+        :rtype:
+            :class:`WebLink`
+        """
+        url = self._session.get_url('web_links')
+        web_link_attributes = {
+            'url': target_url,
+            'parent': {
+                'id': self.object_id
+            }
+        }
+        if name is not None:
+            web_link_attributes['name'] = name
+        if description is not None:
+            web_link_attributes['description'] = description
+        response = self._session.post(url, data=json.dumps(web_link_attributes)).json()
+        return self.translator.translate(response['type'])(
+            session=self._session,
+            object_id=response['id'],
+            response_object=response
+        )
+
     @api_call
     def delete(self, recursive=True, etag=None):
         """Base class override. Delete the folder.

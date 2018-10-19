@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
 import json
 import pytest
 
@@ -35,6 +36,22 @@ def alias_response(alias_id_1, alias_id_2):
             {'type': 'email_alias', 'id': alias_id_1},
             {'type': 'email_alias', 'id': alias_id_2},
         ]
+    }
+    return mock_network_response
+
+
+@pytest.fixture(scope='module')
+def memberships_response():
+    # pylint disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'group_membership', 'id': 101, 'user': {'type': 'user', 'id': 100}, 'group': {'type': 'group', 'id': 300}},
+            {'type': 'group_membership', 'id': 202, 'user': {'type': 'user', 'id': 200}, 'group': {'type': 'group', 'id': 400}}
+        ],
+        'limit': 2,
+        'total_count': 2,
+        'offset': 0,
     }
     return mock_network_response
 
@@ -125,3 +142,19 @@ def test_move_users_owned_items(mock_user, mock_box_session, move_items_response
     assert mock_box_session.put.call_args[0] == ("{0}/users/fake-user-100/folders/0".format(API.BASE_API_URL),)
     assert mock_box_session.put.call_args[1] == {'data': value}
     assert isinstance(moved_item, Folder)
+
+
+def test_get_group_memberships(
+        mock_user,
+        mock_box_session,
+        memberships_response,
+):
+    # pylint:disable=redefined-outer-name
+    expected_url = '{0}/users/{1}/memberships'.format(API.BASE_API_URL, mock_user.object_id)
+    mock_box_session.get.return_value = memberships_response
+    memberships = mock_user.get_group_memberships()
+    for membership, expected_id in zip(memberships, [101, 202]):
+        assert membership.object_id == expected_id
+        # pylint:disable=protected-access
+        assert membership._session == mock_box_session
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
