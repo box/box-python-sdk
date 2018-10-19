@@ -49,7 +49,7 @@ class UploadSession(BaseObject):
             `list` of `dict`
         """
         return ChunkedUploadPartLimitOffsetBasedObjectCollection(
-            session=self.session,
+            session=self._session,
             url=self.get_url('parts'),
             limit=limit,
             fields=fields,
