@@ -44,7 +44,7 @@ To create an upload session for uploading a large file, use
 ```python
 file_size = 197520
 file_name = 'test_file.pdf'
-upload_session = client.folder('22222').create_upload_session(file_size=file_size, file_name=file_name)
+upload_session = client.folder('22222').create_upload_session(file_size, file_name)
 ```
 
 #### Upload Part
