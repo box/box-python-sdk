@@ -50,7 +50,7 @@ class File(Item):
         :type file_name:
             `unicode` or None
         :returns:
-            A :class:`ChunkedUploadSession` object.
+            A :class:`UploadSession` object.
         :rtype:
             :class:`ChunkedUploadSession`
         """
