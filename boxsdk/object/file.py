@@ -52,7 +52,7 @@ class File(Item):
         :returns:
             A :class:`UploadSession` object.
         :rtype:
-            :class:`ChunkedUploadSession`
+            :class:`UploadSession`
         """
         body_params = {
             'file_id': self.object_id,
