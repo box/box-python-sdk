@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import json
 
 from mock import Mock
-from ..exception import BoxAPIException
+from boxsdk.exception import BoxAPIException
 from boxsdk.config import API
 from boxsdk.object.terms_of_service import TermsOfService
 from boxsdk.object.terms_of_service_user_status import TermsOfServiceUserStatus
@@ -119,8 +119,7 @@ def test_get_user_status(test_terms_of_service, test_terms_of_service_user_statu
 
 
 def test_set_user_status(test_terms_of_service, mock_box_session):
-    mock = Mock()
-    mock.side_effect = BoxAPIException('Boom!')
+    mock = Mock(side_effect=[BoxAPIException(status=409, message="Conflict")])
     mock_box_session.post.return_value.json.return_value = {
         'status': 409
     }
