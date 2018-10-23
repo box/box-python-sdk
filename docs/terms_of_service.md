@@ -61,20 +61,15 @@ user = client.user('1234')
 user_status = client.terms_of_service('11111').accept(user)
 ```
 
-You can only create a new user status on a terms of service if the user has never accepted/declined a terms of service.
-If they have then you will need to make the update call.
 
 Accept or Decline a Terms of Service for Existing User
 ------------------------------------------------------
 
-For an existing user you can accept or decline a terms of service by calling `terms_of_service_user_status.accept()` to accept or  `terms_of_service_user_status.reject()` to reject
+For an existing user you can accept or decline a terms of service by calling `terms_of_service.set_user_status(is_accepted, user=None)` to accept or to reject.
 
 ```python
-accepted_user_status = client.terms_of_service_user_status('1234').accept()
-```
-
-```python
-rejected_user_status = client.terms_of_service_user_status('1234').reject()
+user = client.user('22222')
+user_status = client.terms_of_service('11111').set_user_status(is_accepted=True, user=user)
 ```
 
 Get User Status for a Terms of Service
