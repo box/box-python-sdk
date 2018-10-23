@@ -989,9 +989,9 @@ class Client(Cloneable):
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            An iterator of the entries in the terms of service
+            An iterator of the entries in the retention policy
         :rtype:
-            :class:`MarkerBasedObjectCollection`
+            :class:`BoxObjectCollection`
         """
         additional_params = {}
         if policy_name is not None:
