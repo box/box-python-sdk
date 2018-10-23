@@ -523,7 +523,7 @@ class File(Item):
         return response.ok
 
     @api_call
-    def get_embed_link(self):
+    def get_embed_url(self):
         """
         Get a URL suitable for embedding the file in an iframe in a web application.
 

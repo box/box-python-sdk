@@ -549,7 +549,7 @@ def test_delete_version(test_file, test_file_version, mock_box_session, params, 
     assert is_success is True
 
 
-def test_get_embed_link(test_file, mock_box_session):
+def test_get_embed_url(test_file, mock_box_session):
     expected_url = '{0}/files/{1}'.format(API.BASE_API_URL, test_file.object_id)
     expected_params = {
         'fields': 'expiring_embed_link'
@@ -563,7 +563,7 @@ def test_get_embed_link(test_file, mock_box_session):
         },
     }
 
-    url = test_file.get_embed_link()
+    url = test_file.get_embed_url()
     mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
     assert url == embed_url
 

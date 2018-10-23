@@ -96,5 +96,385 @@ Upload a File
 Files are uploaded to a folder in one of two ways: by providing a path to a file on disk, or via a readable stream
 containing the file contents.
 
-To upload a file from a path on disk, call the [`folder.upload()`][upload] method
-on the [`Folder`][folder_class] you want to upload the file into.
+To upload a file from a path on disk, call the
+[`folder.upload(file_path, file_name=None, preflight_check=False, preflight_expected_size=0)`][upload] method
+on the [`Folder`][folder_class] you want to upload the file into.  By default, the file uploaded to Box will have the
+same file name as the one on disk; you can override this by passing a different name in the `file_name` parameter.
+This method returns a [`File`][file_class] object representing the newly-uploaded file.
+
+```python
+folder_id = '22222'
+new_file = client.folder(folder_id).upload('/home/me/document.pdf')
+print('File "{0}" uploaded to Box with file ID {1}'.format(new_file.name, new_file.id))
+```
+
+To upload a file from a readable stream, call
+[`folder.upload_stream(file_stream, file_name, preflight_check=False, preflight_expected_size=0)`][upload_stream]
+with the stream and a name for the file.  This method returns a [`File`][file_class] object representing the
+newly-uploaded file.
+
+```python
+file_name = 'file.pdf'
+stream = open('/path/to/file.pdf', 'rb')
+
+folder_id = '22222'
+new_file = client.folder(folder_id).uplaod_stream(stream, file_name)
+print('File "{0}" uploaded to Box with file ID {1}'.format(new_file.name, new_file.id))
+```
+
+[folder_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder
+[upload]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.upload
+[upload_stream]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.upload_stream
+
+Move a File
+-----------
+
+To move a file from one folder into another, call [`file.move(parent_folder, name=None)`][move] with the destination
+folder to move the file into.  You can optionally provide a `name` parameter to automatically rename the file in case
+of a name conflict in the destination folder.  This method returns the updated [`File`][file_class] object in the new
+folder.
+
+```python
+file_id = '11111'
+destination_folder_id = '44444'
+
+file_to_move = client.file(file_id)
+destination_folder = client.folder(destination_folder_id)
+
+moved_file = file_to_move.move(destination_folder)
+print('File "{0}" has been moved into folder "{1}"'.format(moved_file.name, moved_file.parent.name))
+```
+
+[move]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.move
+
+Copy a File
+-----------
+
+A file can be copied to a new folder by calling [`file.copy(parent_folder, name=None)`][copy] with the destination
+folder and an optional new name for the file in case there is a name conflict in the destination folder.  This method
+returns a [`File`][file_class] object representing the copy of the file in the destination folder.
+
+```python
+file_id = '11111'
+destination_folder_id = '44444'
+
+file_to_copy = client.file(file_id)
+destination_folder = client.folder(destination_folder_id)
+
+file_copy = file_to_copy.copy(destination_folder)
+print('File "{0}" has been copied into folder "{1}"'.format(file_copy.name, file_copy.parent.name))
+```
+
+[copy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.copy
+
+Delete a File
+-------------
+
+Calling the [`file.delete()`][delete] method will delete the file.  Depending on enterprise settings, this will either move
+the file to the user's trash or permanently delete the file.  This method returns `True` to signify that the deletion
+was successful.
+
+```python
+file_id = '11111'
+file.delete()
+```
+
+[delete]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.delete
+
+Get Previous Versions of a File
+-------------------------------
+
+Previous versions of a file can be retrieved with the
+[`file.get_previous_versions(limit=None, offset=None, fields=None)`][get_previous_versions] method.  This method returns
+a [`BoxObjectCollection`][box_object_collection] that can iterate over the [`FileVersion`][file_version_class] objects
+in the collection.
+
+```python
+file_id = '11111'
+
+file_versions = client.file(file_id).get_previous_versions()
+for version in file_versions:
+    print('File version {0} was created at {1}'.format(version.id, version.created_at))
+```
+
+[get_previous_versions]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_previous_versions
+[box_object_collection]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.pagination.html#boxsdk.pagination.box_object_collection.BoxObjectCollection
+
+Upload a New Version of a File
+------------------------------
+
+New versions of a file can be uploaded in one of two ways: by providing a path to a file on disk, or via a readable
+stream containing the file contents.
+
+To upload a new file version from a path on disk, call the
+[`file.update_contents(file_path, etag=None, preflight_check=False, preflight_expected_size=0)`][update_contents]
+method.  This method returns a [`File`][file_class] object representing the updated file.
+
+```python
+file_id = '11111'
+file_path = '/path/to/file.pdf'
+
+updated_file = client.file(file_id).update_contents(file_path)
+print('File "{0}" has been updated'.format(updated_file.name))
+```
+
+To upload a file version from a readable stream, call
+[`file.update_contents_with_stream(file_stream, etag=None, preflight_check=False, preflight_expected_size=0)`][update_contents_with_stream]
+with the stream.  This method returns a [`File`][file_class] object representing the
+newly-uploaded file.
+
+```python
+file_id = '11111'
+stream = open('/path/to/file.pdf', 'rb')
+
+updated_file = client.file(file_id).update_contents_with_stream(stream)
+print('File "{0}" has been updated'.format(updated_file.name))
+```
+
+[update_contents]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.update_contents
+[update_contents_with_stream]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.update_contents_with_stream
+
+Promote a Previous Version of a File
+------------------------------------
+
+A previous version of a file can be promoted by calling the [`file.promote_version(file_version)`][promote_version]
+method to become the current version of the file with the [`FileVersion`][file_version_class] to promote.  This create a
+copy of the old file version and puts it on the top of the versions stack.  This method returns the new copy
+[`FileVersion`][file_version_class] object.
+
+```python
+file_id = '11111'
+file_version_id = '12345'
+
+version_to_promote = client.file_version(file_version_id)
+
+new_version = client.file(file_id).promote_version(version_to_promote)
+print('Version {0} promoted; new version {1} created'.format(file_version_id, new_version.id))
+```
+
+[promote_version]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.promote_version
+
+Delete a Previous Version of a File
+-----------------------------------
+
+A version of a file can be deleted and moved to the trash by calling
+[`file.delete_version(file_version, etag=None)`][delete_version] with the [`FileVersion`] to delete.
+
+```python
+file_id = '11111'
+version_id = '12345'
+
+version_to_delete = client.file_version(version_id)
+client.file(file_id).delete_version(version_to_delete)
+```
+
+[delete_version]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.delete_version
+
+Lock a File
+-----------
+
+A locked file cannot be modified by any other user until it is unlocked.  This is useful if you want to "check out" a
+file while you're working on it, to ensure that other collaborators do not make changes while your changes are in
+progress.
+
+To lock a file, call [`file.lock(prevent_download=False, expire_time=None)`][lock].  You can optionally prevent other
+users from downloading the file while it is locked by passing `True` for the `prevent_download` parameter.  You can also
+set an expiration time for the lock, which will automatically release the lock at the specified time.  The expiration
+time is formatted as an [RFC3339 datetime][rfc3339].
+
+This method returns the updated [`File`][file_class] object.
+
+```python
+file_id = '11111'
+
+updated_file = client.file(file_id).lock(expiration_time='2020-01-01T00:00:00-08:00')
+print('File "{0}" has been locked!'.format(updated_file.name))
+```
+
+[lock]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.lock
+[rfc3339]: https://tools.ietf.org/html/rfc3339#section-5.8
+
+Unlock a File
+-------------
+
+A locked file can be unlocked by calling [`file.unlock()`][unlock].  This method returns the updated
+[`File`][file_class] object.
+
+```python
+file_id = '11111'
+
+updated_file = client.file(file_id).unlock()
+print('File "{0}" has been unlocked!'.format(updated_file.name))
+```
+
+[unlock]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.unlock
+
+Create a Shared Link
+--------------------
+
+A shared link for a file can be generated by calling
+[`file.get_shared_link(access=None, etag=None, unshared_at=None, allow_download=None, allow_preview=None, password=None)`][get_shared_link].
+This method returns a `unicode` string containing the shared link URL.
+
+```python
+file_id = '11111'
+
+url = client.file(file_id).get_shared_link()
+print('The file shared link URL is: {0}'.format(url))
+```
+
+[get_shared_link]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_shared_link
+
+Get an Embed Link
+-----------------
+
+A file embed URL can be generated by calling [`file.get_embed_url()`][get_embed_url].  This method returns a `unicode`
+string containing a URL suitable for embedding in an `<iframe>` to embed the a file viewer in a web page.
+
+```python
+file_id = '11111'
+
+embed_url = client.file(file_id).get_embed_url()
+print('<iframe src="{0}"></iframe>'.format(embed_url))
+```
+
+[get_embed_url]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_embed_url
+
+Get File Representations
+------------------------
+
+To get the preview representations of a file, call the
+[`file.get_representation_info(rep_hints=None)`][get_representation_info] method with the
+[representation hints][rep_hints] to fetch — if no hints are provided, limited information about all available
+representations will be returned.  This method returns a `list` of `dict`s containing the information about the
+requested [representations][rep_api_obj].
+
+Note that this method only provides information about a set of available representations; your
+application will need to handle checking the status of the representations and downlaoding them
+via the provided content URL template.
+
+```python
+file_id = '11111'
+rep_hints = '[pdf][extracted_text]'
+
+representations = client.file(file_id).get_representation_info(rep_hints)
+for rep in representations:
+    print('{0} representation has status {1}'.format(rep['representation'], rep['status']['state']))
+    print('Info URL for this representation is: {0}'.format(rep['info']['url']))
+    print('Content URL template is: {0}'.format(rep['content']['url_template']))
+```
+
+[get_representation_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_representation_info
+[rep_hints]: https://developer.box.com/v2.0/reference/#section-x-rep-hints-header
+[rep_api_obj]: https://developer.box.com/v2.0/reference/#representations
+
+Get Thumbnail
+-------------
+
+A thumbnail for a file can be retrieved by calling
+[`file.get_thumbnail(extension='png', min_width=None, min_height=None, max_width=None, max_height=None)`][get_thumbnail].
+This method returns the `bytes` of the thumbnail image.
+
+```python
+file_id = '11111'
+
+thumbnail = client.file(file_id).get_thumbnail(extension='jpg')
+```
+
+[get_thumbnail]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_thumbnail
+
+Add Metadata
+------------
+
+Metadata can be added to a file either as free-form key/value pairs or from an existing template.  To add metadata to
+a file, first call [`file.metadata(metadata(scope='global', template='properties')`][metadata] to specify the scope and
+template key of the metadata template to attach (or use the default values to attach free-form keys and values).  Then,
+call [`metadata.create(data)`][metadata_create] with the key/value pairs to attach.  This method can only be used to
+attach a given metadata template to the file for the first time, and returns a `dict` containing the applied metadata
+instance.
+
+```python
+metadata = {
+    'foo': 'bar',
+    'baz': 'quux',
+}
+
+applied_metadata = client.file(file_id='11111').metadata().create(metadata)
+print('Applied metadata in instance ID {0}'.format(applied_metadata['$id']))
+```
+
+[metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.metadata
+[metadata_create]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.create
+
+Get Metadata
+------------
+
+To retrieve the metadata instance on a file for a specific metadata template, first call
+[`file.metadata(metadata(scope='global', template='properties')`][metadata] to specify the scope and template key of the
+metadata template to retrieve, then call [`metadata.get()`][metadata_get] to retrieve the metadata values attached to
+the file.  This method returns a `dict` containing the applied metadata instance.
+
+```python
+metadata = client.file(file_id='11111').metadata(scope='enterprise', template='myMetadata').get()
+print('Got metadata instance {0}'.format(metadata['$id']))
+```
+
+[metadata_get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.get
+
+Update Metadata Values
+----------------------
+
+Updating metadata values is performed via a series of discrete operations, which are applied atomically against the
+existing file metadata.  First, specify which metadata will be updated by calling
+[`file.metadata(metadata(scope='global', template='properties')`][metadata].  Then, start an update sequence by calling
+[`metadata.start_update()`][metadata_start_update] and add update operations to the returned
+[`MetadataUpdate`][metadata_update_obj].  Finally, perform the update by calling
+[`metadata.update(metadata_update)`][metadata_update].  This final method returns a `dict` of the updated metadata
+instance.
+
+```python
+file_obj = client.file(file_id='11111')
+file_metadata = file_obj.metadata(scope='enterprise', template='myMetadata')
+
+updates = file_metadata.start_update()
+updates.add('/foo', 'bar')
+updates.update('/baz', 'murp', old_value='quux')  # Ensure the old value was "quux" before updating to "murp"
+
+updated_metadata = file_metadata.update(updates)
+print('Updated metadata on file!')
+print('foo is now {0} and baz is now {1}'.format(updated_metadata['foo'], updated_metadata['baz']))
+```
+
+[metadata_start_update]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.start_update
+[metadata_update_obj]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.MetadataUpdate
+[metadata_update]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.update
+
+Remove Metadata
+---------------
+
+To remove a metadata instance from a file, call
+[`file.metadata(metadata(scope='global', template='properties')`][metadata] to specify the scope and template key of the
+metadata template to remove, then call [`metadata.delete()`][metadata_delete] to remove the metadata from the file.
+This method returns `True` to indicate that the removal succeeded.
+
+```python
+client.file(file_id='11111').metadata(scope='enterprise', template='myMetadata').delete()
+```
+
+[metadata_delete]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.delete
+
+Get All Metadata
+----------------
+
+To retrieve all metadata attached to a file, call [`file.get_all_metadata()`][get_all_metadata].  This method returns a
+[`BoxObjectCollection`][box_object_collection] that can be used to iterate over the `dict`s representing each metadata instance attached to the
+file.
+
+```python
+file_metadata = client.file(file_id='11111').get_all_metadata()
+for instance in file_metadata:
+    if 'foo' in instance:
+        print('Metadata instance {0} has value "{1}" for foo'.format(instance['id'], instance['foo']))
+```
+
+[get_all_metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_all_metadata
