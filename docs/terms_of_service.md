@@ -58,7 +58,7 @@ For new users you can accept or decline a terms of service by calling `terms_of_
 
 ```python
 user = client.user('1234')
-user_status = client.terms_of_service.accept(user)
+user_status = client.terms_of_service('11111').accept(user)
 ```
 
 You can only create a new user status on a terms of service if the user has never accepted/declined a terms of service.

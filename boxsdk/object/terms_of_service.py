@@ -67,27 +67,7 @@ class TermsOfService(BaseObject):
         :rtype:
             :class:`TermsOfServiceUserStatus`
         """
-        url = self._session.get_url('terms_of_service_user_statuses')
-        body = {
-            'tos': {
-                'type': self.object_type,
-                'id': self.object_id,
-            },
-            'is_accepted': True,
-        }
-        if user is not None:
-            user_json = {
-                'type': user.object_type,
-                'id': user.object_id,
-            }
-            body['user'] = user_json
-        box_response = self._session.post(url, data=json.dumps(body))
-        response = box_response.json()
-        return self.translator.translate(response['type'])(
-            session=self._session,
-            object_id=response['id'],
-            response_object=response,
-        )
+        return self.set_user_status(is_accepted=True, user=user)
 
     def reject(self, user=None):
         """
@@ -102,27 +82,7 @@ class TermsOfService(BaseObject):
         :rtype:
             :class:`TermsOfServiceUserStatus`
         """
-        url = self._session.get_url('terms_of_service_user_statuses')
-        body = {
-            'tos': {
-                'type': self.object_type,
-                'id': self.object_id,
-            },
-            'is_accepted': False,
-        }
-        if user is not None:
-            user_json = {
-                'type': user.object_type,
-                'id': user.object_id,
-            }
-            body['user'] = user_json
-        box_response = self._session.post(url, data=json.dumps(body))
-        response = box_response.json()
-        return self.translator.translate(response['type'])(
-            session=self._session,
-            object_id=response['id'],
-            response_object=response,
-        )
+        return self.set_user_status(is_accepted=False, user=user)
 
     def set_user_status(self, is_accepted, user=None):
         """
@@ -162,12 +122,7 @@ class TermsOfService(BaseObject):
         except BoxAPIException as err:
             if err.status == 409:
                 user_status = self.get_user_status(user)
-                update_url = self._session.get_url('terms_of_service_user_statuses', user_status.id)
-                update_body = {
-                    'is_accepted': is_accepted,
-                }
-                box_response = self._session.put(update_url, data=json.dumps(update_body))
-                response = box_response.json()
+                response = user_status.update_info({'is_accepted': is_accepted})
         return self.translator.translate(response['type'])(
             session=self._session,
             object_id=response['id'],

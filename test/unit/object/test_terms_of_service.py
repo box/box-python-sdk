@@ -55,8 +55,8 @@ def test_accept_terms_of_service(test_terms_of_service, test_terms_of_service_us
         },
         'is_accepted': True,
         'user': {
-            'type': 'user',
-            'id': 'fake-user-100',
+            'type': mock_user.object_type,
+            'id': mock_user.object_id,
         },
     })
     mock_box_session.post.return_value.json.return_value = {
@@ -83,8 +83,8 @@ def test_reject_terms_of_service(test_terms_of_service, test_terms_of_service_us
         },
         'is_accepted': False,
         'user': {
-            'type': 'user',
-            'id': 'fake-user-100',
+            'type': mock_user.object_type,
+            'id': mock_user.object_id,
         },
     })
     mock_box_session.post.return_value.json.return_value = {

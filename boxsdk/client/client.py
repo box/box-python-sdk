@@ -755,7 +755,7 @@ class Client(Cloneable):
         :rtype:
             :class:`TermsOfService`
         """
-        return self.translator.translate('terms_of_service')(session=self._session, object_id=tos_id)
+        return self.translator.get('terms_of_service')(session=self._session, object_id=tos_id)
 
     def terms_of_service_user_status(self, tos_user_status_id):
         """
@@ -770,21 +770,7 @@ class Client(Cloneable):
         :rtype:
             :class:`TermsOfServiceUserStatus`
         """
-        return self.translator.translate('terms_of_service_user_status')(session=self._session, object_id=tos_user_status_id)
-
-    def terms_of_service_user_status(self, tos_user_status_id):
-        """
-        Initialize a :class:`TermsOfServiceUserStatus` object, whose box id is tos_user_status_id.
-         :param tos_user_status_id:
-            The box id of the :class:`TermsOfServiceUserStatus` object.
-        :type tos_id:
-            `unicode`
-        :return:
-            A :class:`TermsOfServiceUserStatus` object with the given terms of service user status id.
-        :rtype:
-            :class:`TermsOfServiceUserStatus`
-        """
-        return self.translator.translate('terms_of_service_user_status')(session=self._session, object_id=tos_user_status_id)
+        return self.translator.get('terms_of_service_user_status')(session=self._session, object_id=tos_user_status_id)
 
     def get_terms_of_services(self, tos_type=None, limit=None, marker=None, fields=None):
         """

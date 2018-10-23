@@ -32,7 +32,6 @@ from boxsdk.object.task import Task
 from boxsdk.object.task_assignment import TaskAssignment
 from boxsdk.object.web_link import WebLink
 
-
 # pylint:disable=redefined-outer-name
 
 
@@ -170,6 +169,9 @@ def test_terms_of_service(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_terms_of_service_user_status(mock_box_session, mock_object_id):
     return TermsOfServiceUserStatus(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
 def test_webhook(mock_box_session, mock_object_id):
     return Webhook(mock_box_session, mock_object_id)
 
