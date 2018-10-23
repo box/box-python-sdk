@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import json
 
-from mock import Mock
 from boxsdk.exception import BoxAPIException
 from boxsdk.config import API
 from boxsdk.object.terms_of_service import TermsOfService
@@ -70,6 +69,7 @@ def test_accept_terms_of_service(test_terms_of_service, test_terms_of_service_us
     assert isinstance(new_terms_of_service_user_status, TermsOfServiceUserStatus)
     assert new_terms_of_service_user_status.id == test_terms_of_service_user_status.object_id
     assert new_terms_of_service_user_status.type == test_terms_of_service_user_status.object_type
+    assert new_terms_of_service_user_status.created_at == created_at
 
 
 def test_reject_terms_of_service(test_terms_of_service, test_terms_of_service_user_status, mock_user, mock_box_session):
@@ -97,10 +97,16 @@ def test_reject_terms_of_service(test_terms_of_service, test_terms_of_service_us
     assert isinstance(new_terms_of_service_user_status, TermsOfServiceUserStatus)
     assert new_terms_of_service_user_status.id == test_terms_of_service_user_status.object_id
     assert new_terms_of_service_user_status.type == test_terms_of_service_user_status.object_type
+    assert new_terms_of_service_user_status.created_at == created_at
 
 
-def test_get_user_status(test_terms_of_service, test_terms_of_service_user_status, mock_box_session):
+def test_get_user_status(test_terms_of_service, mock_user, test_terms_of_service_user_status, mock_box_session):
+    expected_url = "{0}/terms_of_service_user_statuses".format(API.BASE_API_URL)
     created_at = '2016-05-18T17:38:03-07:00'
+    expected_params = {
+        'tos_id': test_terms_of_service.object_id,
+        'user_id': mock_user.object_id,
+    }
     mock_user_status = {
         'type': 'terms_of_service_user_status',
         'id': test_terms_of_service_user_status.object_id,
@@ -110,21 +116,55 @@ def test_get_user_status(test_terms_of_service, test_terms_of_service_user_statu
         'limit': 500,
         'entries': [mock_user_status],
     }
-    new_terms_of_service_user_status = test_terms_of_service.get_user_status()
-    assert len(mock_box_session.get.call_args_list) == 1
-    assert mock_box_session.get.call_args[0] == ("{0}/terms_of_service_user_statuses".format(API.BASE_API_URL),)
+    new_terms_of_service_user_status = test_terms_of_service.get_user_status(user=mock_user)
+    mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
     assert isinstance(new_terms_of_service_user_status, TermsOfServiceUserStatus)
     assert new_terms_of_service_user_status.type == 'terms_of_service_user_status'
     assert new_terms_of_service_user_status.id == test_terms_of_service_user_status.object_id
+    assert new_terms_of_service_user_status.created_at == created_at
 
 
-def test_set_user_status(test_terms_of_service, mock_box_session):
-    mock = Mock(side_effect=[BoxAPIException(status=409, message="Conflict")])
-    mock_box_session.post.return_value.json.return_value = {
-        'status': 409
+def test_set_user_status(test_terms_of_service, mock_user, mock_box_session):
+    expected_post_url = "{0}/terms_of_service_user_statuses".format(API.BASE_API_URL)
+    expected_put_url = "{0}/terms_of_service_user_statuses/{1}".format(API.BASE_API_URL, test_terms_of_service.object_id)
+    post_value = json.dumps({
+        'tos': {
+            'type': test_terms_of_service.object_type,
+            'id': test_terms_of_service.object_id,
+        },
+        'is_accepted': True,
+        'user': {
+            'type': mock_user.object_type,
+            'id': mock_user.object_id,
+        },
+    })
+    put_value = json.dumps({
+        'is_accepted': True
+    })
+    mock_box_session.post.side_effect = [BoxAPIException(status=409, message="Conflict")]
+    mock_box_session.get.return_value.json.return_value = {
+        'entries': [
+            {
+                'type': 'terms_of_service_user_status',
+                'id': '42',
+            },
+        ],
     }
     mock_box_session.put.return_value.json.return_value = {
-        'is_accepted': True
+        'type': 'terms_of_service_user_status',
+        'id': '12345',
+        'tos': {
+            'type': test_terms_of_service.object_type,
+            'id': test_terms_of_service.object_id,
+        },
+        'is_accepted': True,
     }
-    new_terms_of_service_user_status = test_terms_of_service.set_user_status(True)
+    new_terms_of_service_user_status = test_terms_of_service.set_user_status(True, mock_user)
+    mock_box_session.post.assert_called_once_with(expected_post_url, data=post_value)
+    mock_box_session.put.assert_called_once_with(expected_put_url, data=put_value)
     assert isinstance(new_terms_of_service_user_status, TermsOfServiceUserStatus)
+    assert new_terms_of_service_user_status.type == 'terms_of_service_user_status'
+    assert new_terms_of_service_user_status.id == '12345'
+    assert new_terms_of_service_user_status.tos['type'] == test_terms_of_service.object_type
+    assert new_terms_of_service_user_status.tos['id'] == test_terms_of_service.object_id
+    assert new_terms_of_service_user_status.is_accepted is True
