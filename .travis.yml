@@ -23,13 +23,18 @@ matrix:
       env: TOX_ENV=py35
     - python: 3.6
       env: TOX_ENV=py36
+    - python: 3.7
+      env: TOX_ENV=py37
+      # Python3.7 isn't available on the standard Trusty build that Travis uses
+      dist: xenial
+      sudo: true
     - python: pypy
       env: TOX_ENV=pypy PYPY_VERSION='2.7-5.10.0'
     - python: 2.7
       env: TOX_ENV=pycodestyle
     - python: 2.7
       env: TOX_ENV=pylint
-    - python: 2.7
+    - python: 3.5
       env: TOX_ENV=coverage
 
 # commands to install dependencies
@@ -38,5 +43,3 @@ install:
 # commands to run
 script:
   - ./.travis/run.sh
-after_success:
-  - if [ "-x$TOX_ENV" = "xcoverage" ]; then coveralls; fi

@@ -26,6 +26,7 @@ def box_api_headers(shared_link, shared_link_password, access_token):
         'Authorization': 'Bearer {0}'.format(access_token),
         'BoxApi': box_api_header,
         'User-Agent': Client.USER_AGENT_STRING,
+        'X-Box-UA': Client.BOX_UA_STRING,
     }
 
 
