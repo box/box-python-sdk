@@ -64,8 +64,16 @@ def test_update(mock_user, mock_box_session):
 def test_delete(mock_user, mock_box_session):
     user_id = mock_user.object_id
     expected_url = mock_box_session.get_url('users', user_id)
+    expected_params = {
+        'notify': True,
+        'force': False,
+    }
     mock_user.delete()
-    mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=None, params={})
+    mock_box_session.delete.assert_called_once_with(
+        expected_url,
+        expect_json_response=False,
+        params=expected_params,
+    )
 
 
 def test_get_email_aliases(mock_user, mock_box_session):

@@ -157,3 +157,27 @@ class User(BaseObject):
             offset=offset,
             return_full_pages=False,
         )
+
+    @api_call
+    def delete(self, notify=True, force=False):
+        """
+        Delete a user's account.  This user will no longer be able to access Box.
+
+        :param notify:
+            Whether a notification should be sent about the deletion
+        :type notify:
+            `bool`
+        :param force:
+            Whether the user should be deleted even if they still own files
+        :returns:
+            Whether the deletion succeeded
+        :rtype:
+            `bool`
+        """
+        url = self.get_url()
+        params = {
+            'notify': notify,
+            'force': force,
+        }
+        response = self._session.delete(url, params=params, expect_json_response=False)
+        return response.ok
