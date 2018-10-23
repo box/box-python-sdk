@@ -161,7 +161,7 @@ def test_set_user_status(test_terms_of_service, mock_user, mock_box_session):
     }
     new_terms_of_service_user_status = test_terms_of_service.set_user_status(True, mock_user)
     mock_box_session.post.assert_called_once_with(expected_post_url, data=post_value)
-    mock_box_session.put.assert_called_once_with(expected_put_url, data=put_value)
+    mock_box_session.put.assert_called_once_with(expected_put_url, data=put_value, headers=None, params=None)
     assert isinstance(new_terms_of_service_user_status, TermsOfServiceUserStatus)
     assert new_terms_of_service_user_status.type == 'terms_of_service_user_status'
     assert new_terms_of_service_user_status.id == '12345'

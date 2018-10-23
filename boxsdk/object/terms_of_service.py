@@ -116,15 +116,17 @@ class TermsOfService(BaseObject):
             }
             body['user'] = user_json
         response = None
+        translated_response = None
         try:
             box_response = self._session.post(url, data=json.dumps(body))
             response = box_response.json()
+            translated_response = self.translator.translate(response['type'])(
+                session=self._session,
+                object_id=response['id'],
+                response_object=response,
+            )
         except BoxAPIException as err:
             if err.status == 409:
                 user_status = self.get_user_status(user)
-                response = user_status.update_info({'is_accepted': is_accepted})
-        return self.translator.translate(response['type'])(
-            session=self._session,
-            object_id=response['id'],
-            response_object=response,
-        )
+                translated_response = user_status.update_info({'is_accepted': is_accepted})
+        return translated_response
