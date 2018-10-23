@@ -3,6 +3,25 @@ Users
 
 Users represent an individual's account on Box.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Get User Information](#get-user-information)
+- [Get the Current User's Information](#get-the-current-users-information)
+- [Create An Enterprise User](#create-an-enterprise-user)
+- [Create An App User](#create-an-app-user)
+- [Update User](#update-user)
+- [Delete User](#delete-user)
+- [Invite User to Enterprise](#invite-user-to-enterprise)
+- [Get Email Aliases](#get-email-aliases)
+- [Add Email Alias](#add-email-alias)
+- [Remove Email Alias](#remove-email-alias)
+- [Get Enterprise Users](#get-enterprise-users)
+- [Transfer User Content](#transfer-user-content)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 Get User Information
 --------------------
 
