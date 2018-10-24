@@ -19,6 +19,11 @@ def test_get(test_storage_policy, mock_box_session):
 
 def test_assign(test_storage_policy, mock_user, mock_box_session):
     expected_url = '{0}/storage_policy_assignments'.format(API.BASE_API_URL)
+    
+
+
+def test_create_assignment(test_storage_policy, mock_user, mock_box_session):
+    expected_url = '{0}/storage_policy_assignments'.format(API.BASE_API_URL)
     expected_data = {
         'storage_policy': {
             'type': 'storage_policy',
@@ -38,7 +43,7 @@ def test_assign(test_storage_policy, mock_user, mock_box_session):
         }
     }
     mock_box_session.post.return_value.json.return_value = mock_assignment
-    assignment = test_storage_policy.assign(mock_user)
+    assignment = test_storage_policy.create_assignment(mock_user)
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert assignment.id == mock_assignment['id']
     assert assignment.storage_policy['id'] == mock_assignment['storage_policy']['id']

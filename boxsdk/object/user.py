@@ -31,6 +31,7 @@ class User(BaseObject):
             session=self._session,
             object_id=response['id'],
             response_object=response,
+        )
 
     def get_group_memberships(self, limit=None, offset=None, fields=None):
         """

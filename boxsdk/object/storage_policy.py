@@ -17,12 +17,40 @@ class StoragePolicy(BaseObject):
         """
         return self._session.get_url('storage_policies', self._object_id, *args)
 
-    def assign(self, assignee):
+    def assign(self, user):
         """
-        Assign a storage policy to a `user` or `enterprise`
+        Assign a storage policy to a user
 
-        :param assignee:
-            The `user` or `enterprise` to assign the storage policy to
+        :param user:
+            The class:`User` to assign the storage policy to
+        :type user:
+            :class:`User`
+        :returns:
+            Information about the :class:`StoragePolicyAssignment` object.
+        :rtype:
+            :class:`StoragePolicyAssignment`
+        """
+        assignment = user.get_storage_policy_assignment()
+        if assignment.id == self.object_id:
+            return assignment
+
+        if assignment.assigned_to['type'] == 'enterprise':
+            return self.create_assignment(user)
+
+        update_object = {
+            'storage_policy': {
+                'type': self.object_type,
+                'id': self.object_id,
+            },
+        }
+        return self.update_info(update_object)
+
+    def create_assignment(self, user):
+        """
+        Assign a storage policy to a :class:`User`.
+
+        :param user:
+            The :class:'User` to assign the storage policy to.
         :type:
             :class:`User`
         :returns:
@@ -37,13 +65,13 @@ class StoragePolicy(BaseObject):
                 'id': self.object_id,
             },
             'assigned_to': {
-                'type': assignee.object_type,
-                'id': assignee.object_id,
+                'type': user.object_type,
+                'id': user.object_id,
             }
         }
         response = self._session.post(url, data=json.dumps(body)).json()
         return self.translator.translate(response['type'])(
-            self._session,
-            response['id'],
-            response,
+            session=self._session,
+            object_id=response['id'],
+            respons_object=response,
         )
