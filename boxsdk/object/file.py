@@ -328,7 +328,7 @@ class File(Item):
             `unicode`
         """
         url = self._session.get_url('comments')
-        comment_class = self._session.translator.translate('comment')
+        comment_class = self._session.translator.get('comment')
         data = comment_class.construct_params_from_message(message)
         data['item'] = {
             'type': 'file',
@@ -336,9 +336,8 @@ class File(Item):
         }
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
-        return self._session.translator.translate(response['type'])(
+        return self._session.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
@@ -373,9 +372,8 @@ class File(Item):
             task_attributes['due_at'] = due_at
         box_response = self._session.post(url, data=json.dumps(task_attributes))
         response = box_response.json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
