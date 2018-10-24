@@ -13,16 +13,16 @@ class User(BaseObject):
 
     def get_storage_policy_assignment(self):
         """
-        Get the entries in the storage policy assignment using limit-offset paging.
+        Get the storage policy assignment assigned to the user.
 
         :returns:
             The :class:`StoragePolicyAssignment` object information
         :rtype:
             :class:`StoragePolicyAssignment`
         """
-        url = self._session.get_url('storage_policy_assignments')
+    url = self._session.get_url('storage_policy_assignments')
         additional_params = {
-            'resolved_for_type': 'user',
+            'resolved_for_type': self.object_type,
             'resolved_for_id': self.object_id,
         }
         box_response = self._session.get(url, params=additional_params)

@@ -640,6 +640,11 @@ class Client(Cloneable):
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self.get_url('storage_policies'),
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
 
     def retention_policy(self, retention_id):
         """

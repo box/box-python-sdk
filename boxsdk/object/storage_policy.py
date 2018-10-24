@@ -19,7 +19,8 @@ class StoragePolicy(BaseObject):
 
     def assign(self, user):
         """
-        Assign a storage policy to a user
+        Checks to see if a user is already assigned a storage policy or if the storage policy assigned
+        to user belongs to the enterprise. If neither, then update the user storage policy to the new one.
 
         :param user:
             The class:`User` to assign the storage policy to
@@ -43,7 +44,7 @@ class StoragePolicy(BaseObject):
                 'id': self.object_id,
             },
         }
-        return self.update_info(update_object)
+        return assignment.update_info(update_object)
 
     def create_assignment(self, user):
         """
@@ -73,5 +74,5 @@ class StoragePolicy(BaseObject):
         return self.translator.translate(response['type'])(
             session=self._session,
             object_id=response['id'],
-            respons_object=response,
+            response_object=response,
         )
