@@ -28,10 +28,31 @@ def _get_object_id(obj):
         `dict`
     :return:
     """
-    if obj.get('type', '') == 'event':
+    obj_type = obj.get('type')
+    if obj_type == 'event':
         return obj.get('event_id', None)
 
+    if obj_type == 'metadata_template':
+        return '{0}/{1}'.format(obj.get('scope', ''), obj.get('templateKey'))
+
     return obj.get('id', None)
+
+
+def _is_metadata_field(obj):
+    """
+    Check if an object is a metadata field, which we don't really want to translate.
+    Since 'displayName' is a non-standard field name in the V2 API, that should be sufficient
+    to identify it.
+
+    :param obj:
+        The object to check
+    :type obj:
+        `dict`
+    :rtype:
+        `bool`
+    """
+
+    return 'displayName' in obj and obj['type'] != 'metadata_template'
 
 
 class Translator(ChainMap):
@@ -173,7 +194,9 @@ class Translator(ChainMap):
         # Try to translate any API object with a `type` property, except for metadata instances
         # The $type value in metadata instances isn't directly usable, so we avoid it altogether
         # NOTE: Currently, we represent metadata as just a `dict`, so there's no need to translate it anyway
-        if 'type' in translated_obj and '$type' not in translated_obj:
+        # Metadata field objects are another issue; they contain a 'type' property that doesn't really
+        # map to a Box object.  We probably want to treat these as just `dict`s, so they're excluded here
+        if 'type' in translated_obj and '$type' not in translated_obj and not _is_metadata_field(translated_obj):
             object_class = self.get(translated_obj.get('type', ''))
             param_values = {
                 'session': session,
