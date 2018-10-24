@@ -20,14 +20,14 @@ class User(BaseObject):
         :rtype:
             :class:`StoragePolicyAssignment`
         """
-    url = self._session.get_url('storage_policy_assignments')
+        url = self._session.get_url('storage_policy_assignments')
         additional_params = {
             'resolved_for_type': self.object_type,
             'resolved_for_id': self.object_id,
         }
         box_response = self._session.get(url, params=additional_params)
         response = box_response.json()['entries'][0]
-        return self.translator.translate('storage_policy_assignment')(
+        return self.translator.translate(response['type'])(
             session=self._session,
             object_id=response['id'],
             response_object=response,

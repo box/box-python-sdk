@@ -633,7 +633,7 @@ class Client(Cloneable):
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            An iterator of the entries in the storage policy
+            Returns the storage policies available for the current enterprise.
         :rtype:
             :class:`BoxObjectCollection`
         """
