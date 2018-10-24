@@ -4,6 +4,19 @@ Terms of Service
 Terms of Service allows Box Admins to configure a custom Terms of Service for end users to
 accept/re-accept/decline for custom applications
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Create a Terms of Service](#create-a-terms-of-service)
+- [Edit a Terms of Service](#edit-a-terms-of-service)
+- [Get Terms of Service](#get-terms-of-service)
+- [List Terms of Service](#list-terms-of-service)
+- [Accept or Decline a Terms of Service for Existing User](#accept-or-decline-a-terms-of-service-for-existing-user)
+- [Accept or Decline a Terms of Service](#accept-or-decline-a-terms-of-service)
+- [Get User Status for a Terms of Service](#get-user-status-for-a-terms-of-service)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 Create a Terms of Service
 -------------------------
@@ -51,8 +64,8 @@ for terms_of_service in terms_of_services:
     # Do something
 ```
 
-Accept or Decline a Terms of Service for New User
--------------------------------------------------
+Accept or Decline a Terms of Service for Existing User
+------------------------------------------------------
 
 For new users you can accept or decline a terms of service by calling `terms_of_service.accept(user=None)` or `terms_of_service.reject(user=None)`.
 
@@ -62,23 +75,25 @@ user_status = client.terms_of_service('11111').accept(user)
 ```
 
 
-Accept or Decline a Terms of Service for Existing User
-------------------------------------------------------
+Accept or Decline a Terms of Service
+------------------------------------
 
-For an existing user you can accept or decline a terms of service by calling `terms_of_service.set_user_status(is_accepted, user=None)` to accept or to reject.
+To create user/terms of service association and accept/decline call the  `terms_of_service.set_user_status(is_accepted, user=None)` method.
 
 ```python
 user = client.user('22222')
 user_status = client.terms_of_service('11111').set_user_status(is_accepted=True, user=user)
 ```
 
+It is important to note that regardless of whether the user has taken action on this terms of service. This will create and update the user status on the terms of service.
+
 Get User Status for a Terms of Service
 -------------------------------------
 
 You can retrieve an iterable of terms of service status for a user by calling
-`terms_of_service.get_user_status(user_id=None)`.
+`terms_of_service.get_user_status(user)`.
 
 ```python
-user_id = '5678'
-user_status = client.terms_of_service('1234').get_user_status(user_id)
+user = client.user('11111')
+user_status = client.terms_of_service('1234').get_user_status(user)
 ```

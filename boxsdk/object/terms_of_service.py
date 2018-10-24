@@ -110,12 +110,10 @@ class TermsOfService(BaseObject):
             'is_accepted': is_accepted,
         }
         if user is not None:
-            user_json = {
+            body['user'] = {
                 'type': user.object_type,
                 'id': user.object_id,
             }
-            body['user'] = user_json
-        response = None
         translated_response = None
         try:
             box_response = self._session.post(url, data=json.dumps(body))

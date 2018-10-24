@@ -772,24 +772,19 @@ class Client(Cloneable):
         """
         return self.translator.get('terms_of_service_user_status')(session=self._session, object_id=tos_user_status_id)
 
-    def get_terms_of_services(self, tos_type=None, limit=None, marker=None, fields=None):
+    def get_terms_of_services(self, tos_type=None, limit=None, fields=None):
         """
-        Get the entries in the legal hold policy assignment using limit-offset paging.
+        Get the entries in the terms of service using limit-offset paging.
 
         :param tos_type:
             Can be set to `managed` or `external` for the type of terms of service.
         :type tos_type:
-            `unicode`
+            :class:`TermsOfServiceType`
         :param: limit
             The maximum number of items to return. If limit is set to None, then the default
-            limit (returned by Box in the response) is used. See https://developer.box.com/reference#get-recent-items
-            for default.
+            limit (returned by Box in the response) is used.
         :type: limit
             `int` or None
-        :param marker:
-            The index at which to start returning items.
-        :type marker:
-            `unicode` or None
         :param fields:
             List of fields to request
         :type fields:
@@ -797,7 +792,7 @@ class Client(Cloneable):
         :returns:
             An iterator of the entries in the terms of service
         :rtype:
-            :class:`MarkerBasedObjectCollection`
+            :class:`BoxObjectCollection`
         """
         additional_params = {}
         if tos_type is not None:
@@ -807,7 +802,7 @@ class Client(Cloneable):
             url=self._session.get_url('terms_of_services'),
             additional_params=additional_params,
             limit=limit,
-            marker=marker,
+            marker=None,
             fields=fields,
             return_full_pages=False,
         )
@@ -1017,11 +1012,11 @@ class Client(Cloneable):
         :param status:
             The status of the terms of service.
         :type status:
-            `unicode`
+            :class:`TermsOfServiceStatus`
         :param tos_type:
             The type of the terms of service. Can be set to `managed` or `external`.
         :type tos_type:
-            `unicode`
+            :class:`TermsOfServiceType`
         :param text:
             The message of the terms of service.
         :type text:
