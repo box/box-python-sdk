@@ -258,14 +258,16 @@ def test_generate_events_with_long_polling(
         events_response,
         new_change_long_poll_response,
         empty_events_response,
+        EscapeGenerator("A fake exception for the session to throw so that the generator won't block forever"),
     ]
     events = test_events.generate_events_with_long_polling(**stream_type_kwargs)
+
     event = next(events)
     assert isinstance(event, Event)
     assert event.event_id == mock_event_json['event_id']
     assert isinstance(event.source, Folder)
     assert event.source.id == mock_event_json['source']['id']
-    with pytest.raises(StopIteration):
+    with pytest.raises(EscapeGenerator):
         next(events)
     events.close()
     mock_box_session.options.assert_called_with(expected_url, params=expected_stream_type_params)
@@ -280,3 +282,7 @@ def test_generate_events_with_long_polling(
         timeout=retry_timeout,
         params={'stream_position': initial_stream_position},
     )
+
+
+class EscapeGenerator(RuntimeError):
+    pass
