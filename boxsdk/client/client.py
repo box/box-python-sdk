@@ -9,6 +9,8 @@ from ..object.cloneable import Cloneable
 from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
+from ..object.collaboration_whitelist import CollaborationWhitelist
+from ..object.trash import Trash
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
@@ -82,7 +84,13 @@ class Client(Cloneable):
         :rtype:
             :class:`Folder`
         """
-        return self.translator.translate('folder')(session=self._session, object_id=folder_id)
+        return self.translator.get('folder')(session=self._session, object_id=folder_id)
+
+    def root_folder(self):
+        """
+        Returns a user's root folder object.
+        """
+        return self.folder('0')
 
     def file(self, file_id):
         """
@@ -97,7 +105,7 @@ class Client(Cloneable):
         :rtype:
             :class:`File`
         """
-        return self.translator.translate('file')(session=self._session, object_id=file_id)
+        return self.translator.get('file')(session=self._session, object_id=file_id)
 
     def comment(self, comment_id):
         """
@@ -112,7 +120,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Comment`
         """
-        return self.translator.translate('comment')(session=self._session, object_id=comment_id)
+        return self.translator.get('comment')(session=self._session, object_id=comment_id)
 
     def user(self, user_id='me'):
         """
@@ -127,7 +135,7 @@ class Client(Cloneable):
         :rtype:
             :class:`User`
         """
-        return self.translator.translate('user')(session=self._session, object_id=user_id)
+        return self.translator.get('user')(session=self._session, object_id=user_id)
 
     def group(self, group_id):
         """
@@ -142,7 +150,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Group`
         """
-        return self.translator.translate('group')(session=self._session, object_id=group_id)
+        return self.translator.get('group')(session=self._session, object_id=group_id)
 
     def collaboration(self, collab_id):
         """
@@ -157,7 +165,59 @@ class Client(Cloneable):
         :rtype:
             :class:`Collaboration`
         """
-        return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
+        return self.translator.get('collaboration')(session=self._session, object_id=collab_id)
+
+    def collaboration_whitelist(self):
+        """
+        Initilializes a :class:`CollaborationWhitelist` object.
+
+        :return:
+            A :class:`CollaborationWhitelist` object.
+        :rype:
+            :class:`CollaborationWhitelist`.
+        """
+        return CollaborationWhitelist(self._session)
+
+    def collaboration_whitelist_entry(self, entry_id):
+        """
+        Initialize a :class:`CollaborationWhitelistEntry` object, whose box id is entry_id.
+
+        :param entry_id:
+            The box id of the :class:`CollaborationWhitelistEntry` object.
+        :type entry_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationWhitelistEntry` object with the given entry id.
+        :rtype:
+            :class:`CollaborationWhitelistEntry`
+        """
+        return self.translator.get('collaboration_whitelist_entry')(session=self._session, object_id=entry_id)
+
+    def collaboration_whitelist_exempt_target(self, target_id):
+        """
+        Initialize a :class:`CollaborationWhitelistExemptTarget` object, whose box id is target_id.
+
+        :param target_id:
+            The box id of the :class:`CollaborationWhitelistExemptTarget` object.
+        :type target_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationWhitelistExemptTarget` object with the given target id.
+        :rtype:
+            :class:`CollaborationWhitelistExemptTarget`
+        """
+        return self.translator.get('collaboration_whitelist_exempt_target')(session=self._session, object_id=target_id)
+
+    def trash(self):
+        """
+        Initialize a :class:`Trash` object.
+
+        :return:
+            A :class:`Trash` object.
+        :rtype:
+            :class:`Trash`
+        """
+        return Trash(self._session)
 
     def legal_hold_policy(self, policy_id):
         """
@@ -172,7 +232,7 @@ class Client(Cloneable):
         :rtype:
             :class:`LegalHoldPolicy`
         """
-        return self.translator.translate('legal_hold_policy')(session=self._session, object_id=policy_id)
+        return self.translator.get('legal_hold_policy')(session=self._session, object_id=policy_id)
 
     def legal_hold_policy_assignment(self, policy_assignment_id):
         """
@@ -187,7 +247,7 @@ class Client(Cloneable):
         :rtype:
             :class:`LegalHoldPolicyAssignment`
         """
-        return self.translator.translate('legal_hold_policy_assignment')(session=self._session, object_id=policy_assignment_id)
+        return self.translator.get('legal_hold_policy_assignment')(session=self._session, object_id=policy_assignment_id)
 
     def legal_hold(self, hold_id):
         """
@@ -202,7 +262,7 @@ class Client(Cloneable):
         :rtype:
             :class:`LegalHold`
         """
-        return self.translator.translate('legal_hold')(session=self._session, object_id=hold_id)
+        return self.translator.get('legal_hold')(session=self._session, object_id=hold_id)
 
     def create_legal_hold_policy(
             self,
@@ -253,9 +313,8 @@ class Client(Cloneable):
             policy_attributes['is_ongoing'] = is_ongoing
         box_response = self._session.post(url, data=json.dumps(policy_attributes))
         response = box_response.json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
@@ -310,7 +369,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Collection`
         """
-        return self.translator.translate('collection')(session=self._session, object_id=collection_id)
+        return self.translator.get('collection')(session=self._session, object_id=collection_id)
 
     @api_call
     def collections(self, limit=None, offset=0, fields=None):
@@ -334,6 +393,21 @@ class Client(Cloneable):
             offset=offset,
             return_full_pages=False,
         )
+
+    def enterprise(self, enterprise_id):
+        """
+        Initialize a :class:`Enterprise` object, whose box ID is enterprise_id.
+
+        :param enterprise_id:
+            The box id of the :class:`Enterprise` object.
+        :type enterprise_id:
+            `unicode`
+        :return:
+            A :class:`Enterprise` object with the given enterprise ID.
+        :rtype:
+            :class:`Enterprise`
+        """
+        return self.translator.get('enterprise')(session=self._session, object_id=enterprise_id)
 
     @api_call
     def users(self, limit=None, offset=0, filter_term=None, user_type=None, fields=None):
@@ -467,7 +541,7 @@ class Client(Cloneable):
         :rtype:
             :class:`GroupMembership`
         """
-        return self.translator.translate('group_membership')(
+        return self.translator.get('group_membership')(
             session=self._session,
             object_id=group_membership_id,
         )
@@ -509,6 +583,87 @@ class Client(Cloneable):
             offset=offset,
             fields=fields,
             return_full_pages=False,
+        )
+
+    def webhook(self, webhook_id):
+        """
+        Initialize a :class:`Webhook` object, whose box id is webhook_id.
+
+        :param webhook_id:
+            The box ID of the :class: `Webhook` object.
+        :type webhook_id:
+            `unicode`
+        :return:
+            A :class:`Webhook` object with the given entry ID.
+        :rtype:
+            :class:`Webhook`
+        """
+        return self.translator.get('webhook')(session=self._session, object_id=webhook_id)
+
+    def create_webhook(self, target, triggers, address):
+        """
+        Create a webhook on the given file.
+
+        :param target:
+            Either a :class:`File` or :class:`Folder` to assign a webhook to.
+        :type target:
+            :class:`File` or :class`Folder`
+        :param triggers:
+            Event types that trigger notifications for the target.
+        :type triggers:
+            `list` of `unicode`
+        :param address:
+            The url to send the notification to.
+        :type address:
+            `unicode`
+        :return:
+            A :class:`Webhook` object with the given entry ID.
+        :rtype:
+            :class:`Webhook`
+        """
+        url = self.get_url('webhooks')
+        webhook_attributes = {
+            'target': {
+                'type': target.object_type,
+                'id': target.object_id,
+            },
+            'triggers': triggers,
+            'address': address,
+        }
+        box_response = self._session.post(url, data=json.dumps(webhook_attributes))
+        response = box_response.json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
+        )
+
+    def get_webhooks(self, limit=None, marker=None, fields=None):
+        """
+        Get all webhooks in an enterprise.
+
+        :param limit:
+            The maximum number of entries to return.
+        :type limit:
+            `int` or None
+        :param marker:
+            The position marker at which to begin the response.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request on the file or folder which the `RecentItem` references.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the webhook
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('webhooks'),
+            limit=limit,
+            marker=marker,
+            fields=fields,
         )
 
     @api_call
@@ -579,12 +734,10 @@ class Client(Cloneable):
             additional_params['fields'] = ','.join(fields)
         box_response = self._session.post(url, data=json.dumps(body_attributes), params=additional_params)
         response = box_response.json()
-        return self.translator.translate('group')(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
-
 
     def storage_policy(self, policy_id):
         """
@@ -599,7 +752,7 @@ class Client(Cloneable):
         :rtype:
             :class:`StoragePolicy`
         """
-        return self.translator.translate('storage_policy')(session=self._session, object_id=policy_id)
+        return self.translator.get('storage_policy')(session=self._session, object_id=policy_id)
 
     def storage_policy_assignment(self, assignment_id):
         """
@@ -614,7 +767,7 @@ class Client(Cloneable):
         :rtype:
             :class:`StoragePolicyAssignment`
         """
-        return self.translator.translate('storage_policy_assignment')(session=self._session, object_id=assignment_id)
+        return self.translator.get('storage_policy_assignment')(session=self._session, object_id=assignment_id)
 
     def get_storage_policies(self, limit=None, marker=None, fields=None):
         """
@@ -646,6 +799,36 @@ class Client(Cloneable):
             return_full_pages=False,
         )
 
+    def task(self, task_id):
+        """
+        Initialize a :class:`Task` object, whose box id is task_id.
+
+        :param task_id:
+            The box ID of the :class:`Task` object.
+        :type task_id:
+            `unicode`
+        :return:
+            A :class:`Task` object with the given entry ID.
+        :rtype:
+            :class:`Task`
+        """
+        return self.translator.get('task')(session=self._session, object_id=task_id)
+
+    def task_assignment(self, assignment_id):
+        """
+        Initialize a :class:`TaskAssignment` object, whose box id is assignment_id.
+
+        :param assignment_id:
+            The box ID of the :class:`TaskAssignment` object.
+        :type assignment_id:
+            `unicode`
+        :return:
+            A :class:`TaskAssignment` object with the given entry ID.
+        :rtype:
+            :class:`TaskAssignment`
+        """
+        return self.translator.get('task_assignment')(session=self._session, object_id=assignment_id)
+
     def retention_policy(self, retention_id):
         """
         Initialize a :class:`RetentionPolicy` object, whose box id is retention_id.
@@ -659,7 +842,7 @@ class Client(Cloneable):
         :rtype:
             :class:`RetentionPolicy`
         """
-        return self.translator.translate('retention_policy')(session=self._session, object_id=retention_id)
+        return self.translator.get('retention_policy')(session=self._session, object_id=retention_id)
 
     def file_version_retention(self, retention_id):
         """
@@ -674,7 +857,7 @@ class Client(Cloneable):
         :rtype:
             :class:`FileVersionRetention`
         """
-        return self.translator.translate('file_version_retention')(session=self._session, object_id=retention_id)
+        return self.translator.get('file_version_retention')(session=self._session, object_id=retention_id)
 
     def retention_policy_assignment(self, assignment_id):
         """
@@ -689,7 +872,7 @@ class Client(Cloneable):
         :rtype:
             :class:`RetentionPolicyAssignment`
         """
-        return self.translator.translate('retention_policy_assignment')(session=self._session, object_id=assignment_id)
+        return self.translator.get('retention_policy_assignment')(session=self._session, object_id=assignment_id)
 
     def create_retention_policy(
             self,
@@ -754,7 +937,10 @@ class Client(Cloneable):
             retention_attributes['custom_notification_recipients'] = user_list
         box_response = self._session.post(url, data=json.dumps(retention_attributes))
         response = box_response.json()
-        return self.translator.translate(response['type'])(session=self._session, object_id=response['id'], response_object=response)
+        return self.translator.translate(
+            session=self._session,
+            response_object=response
+        )
 
     def get_retention_policies(
             self,
@@ -905,7 +1091,7 @@ class Client(Cloneable):
         :rtype:
             :class:`WebLink`
         """
-        return self.translator.translate('web_link')(session=self._session, object_id=web_link_id)
+        return self.translator.get('web_link')(session=self._session, object_id=web_link_id)
 
     @api_call
     def get_recent_items(self, limit=None, marker=None, fields=None, **collection_kwargs):
@@ -969,9 +1155,8 @@ class Client(Cloneable):
             self.get_url('shared_items'),
             headers=get_shared_link_header(shared_link, password),
         ).json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session.with_shared_link(shared_link, password),
-            object_id=response['id'],
             response_object=response,
         )
 
@@ -1024,9 +1209,8 @@ class Client(Cloneable):
             user_attributes['is_platform_access_only'] = True
         box_response = self._session.post(url, data=json.dumps(user_attributes))
         response = box_response.json()
-        return self.translator.translate('user')(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
@@ -1133,7 +1317,7 @@ class Client(Cloneable):
         :rtype:
             :class:`DevicePinner`
         """
-        return self.translator.translate('device_pinner')(session=self._session, object_id=device_pin_id)
+        return self.translator.get('device_pinner')(session=self._session, object_id=device_pin_id)
 
     def device_pinners(self, enterprise_id, direction=None, limit=None, marker=None, fields=None):
         """

@@ -24,6 +24,12 @@ from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 from boxsdk.object.search import Search
 from boxsdk.object.storage_policy import StoragePolicy
 from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
+from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
+from boxsdk.object.collaboration_whitelist_entry import CollaborationWhitelistEntry
+from boxsdk.object.collaboration_whitelist_exempt_target import CollaborationWhitelistExemptTarget
+from boxsdk.object.webhook import Webhook
+from boxsdk.object.task import Task
+from boxsdk.object.task_assignment import TaskAssignment
 from boxsdk.object.web_link import WebLink
 
 
@@ -93,6 +99,21 @@ def test_comment(mock_box_session, mock_object_id):
 
 
 @pytest.fixture()
+def test_collaboration_whitelist(mock_box_session):
+    return CollaborationWhitelist(mock_box_session)
+
+
+@pytest.fixture()
+def test_collaboration_whitelist_entry(mock_box_session, mock_object_id):
+    return CollaborationWhitelistEntry(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_collaboration_whitelist_exemption(mock_box_session, mock_object_id):
+    return CollaborationWhitelistExemptTarget(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
 def test_folder(mock_box_session, mock_object_id):
     return Folder(mock_box_session, mock_object_id)
 
@@ -151,6 +172,22 @@ def test_storage_policy_assignment(mock_box_session, mock_object_id):
     return StoragePolicyAssignment(mock_box_session, mock_object_id)
 
 
+@pytest.fixture()
+def test_webhook(mock_box_session, mock_object_id):
+    return Webhook(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_task(mock_box_session, mock_object_id):
+    return Task(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_task_assignment(mock_box_session, mock_object_id):
+    return TaskAssignment(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
 def test_web_link(mock_box_session, mock_object_id):
     return WebLink(mock_box_session, mock_object_id)
 
