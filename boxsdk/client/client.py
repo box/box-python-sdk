@@ -193,20 +193,23 @@ class Client(Cloneable):
         """
         return self.translator.get('collaboration_whitelist_entry')(session=self._session, object_id=entry_id)
 
-    def collaboration_whitelist_exempt_target(self, target_id):
+    def collaboration_whitelist_exempt_target(self, exemption_id):
         """
         Initialize a :class:`CollaborationWhitelistExemptTarget` object, whose box id is target_id.
 
-        :param target_id:
+        :param exemption_id:
             The box id of the :class:`CollaborationWhitelistExemptTarget` object.
-        :type target_id:
+        :type exemption_id:
             `unicode`
         :return:
             A :class:`CollaborationWhitelistExemptTarget` object with the given target id.
         :rtype:
             :class:`CollaborationWhitelistExemptTarget`
         """
-        return self.translator.get('collaboration_whitelist_exempt_target')(session=self._session, object_id=target_id)
+        return self.translator.get('collaboration_whitelist_exempt_target')(
+            session=self._session,
+            object_id=exemption_id
+        )
 
     def trash(self):
         """
