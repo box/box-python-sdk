@@ -6,6 +6,7 @@ import json
 
 from .item import Item
 from ..util.api_call_decorator import api_call
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
 
@@ -327,7 +328,7 @@ class File(Item):
             `unicode`
         """
         url = self._session.get_url('comments')
-        comment_class = self._session.translator.translate('comment')
+        comment_class = self._session.translator.get('comment')
         data = comment_class.construct_params_from_message(message)
         data['item'] = {
             'type': 'file',
@@ -335,8 +336,65 @@ class File(Item):
         }
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
-        return self._session.translator.translate(response['type'])(
+        return self._session.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
+        )
+
+    def create_task(self, message=None, due_at=None):
+        """
+        Create a task on the given file.
+
+        :param message:
+            An optional message to include in the task.
+        :type message:
+            `unicode` or None
+        :param due_at:
+            When this task is due.
+        :type due_at:
+            `unicode` or None
+        :return:
+            The newly created task
+        :rtype:
+            :class:`Task`
+        """
+        url = self._session.get_url('tasks')
+        task_attributes = {
+            'item': {
+                'type': 'file',
+                'id': self.object_id
+            },
+            'action': 'review',
+        }
+        if message is not None:
+            task_attributes['message'] = message
+        if due_at is not None:
+            task_attributes['due_at'] = due_at
+        box_response = self._session.post(url, data=json.dumps(task_attributes))
+        response = box_response.json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
+        )
+
+    def get_tasks(self, fields=None):
+        """
+        Get the entries in the file tasks.
+
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the file tasks
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('tasks'),
+            limit=None,
+            marker=None,
+            fields=fields,
+            return_full_pages=False,
         )
