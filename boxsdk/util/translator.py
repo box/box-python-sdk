@@ -13,7 +13,7 @@ __all__ = list(map(str, ['Translator']))
 inspect_signature = None
 try:
     inspect_signature = inspect.signature
-except AttributeError:
+except AttributeError:  # pragma: no cover
     import funcsigs
     inspect_signature = funcsigs.signature
 
