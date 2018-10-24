@@ -37,9 +37,8 @@ class Comment(BaseObject):
         }
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
-        return self.__class__(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 

@@ -370,7 +370,7 @@ class Item(BaseObject):
         url = self.get_url('watermark')
         box_response = self._session.get(url)
         response = box_response.json()
-        return self.translator.translate('watermark')(response['watermark'])
+        return self.translator.get('watermark')(response['watermark'])
 
     def apply_watermark(self):
         """
@@ -389,7 +389,7 @@ class Item(BaseObject):
         }
         box_response = self._session.put(url, data=json.dumps(body_attributes))
         response = box_response.json()
-        return self.translator.translate('watermark')(response['watermark'])
+        return self.translator.get('watermark')(response['watermark'])
 
     def delete_watermark(self):
         """
@@ -494,9 +494,8 @@ class Item(BaseObject):
         if notify is not None:
             params['notify'] = notify
         response = self._session.post(url, data=json.dumps(body), params=params).json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
@@ -548,9 +547,8 @@ class Item(BaseObject):
         if notify is not None:
             params['notify'] = notify
         response = self._session.post(url, data=json.dumps(body), params=params).json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
