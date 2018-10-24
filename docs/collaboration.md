@@ -4,6 +4,19 @@ Collaborations
 Collaborations are used to share folders between users or groups. They also
 define what permissions a user has for a folder.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Add a Collaboration](#add-a-collaboration)
+- [Edit a Collaboration](#edit-a-collaboration)
+- [Remove a Collaboration](#remove-a-collaboration)
+- [Get a Collaboration's Information](#get-a-collaborations-information)
+- [List Collaborations on a Folder or File](#list-collaborations-on-a-folder-or-file)
+- [List Pending Collaborations](#list-pending-collaborations)
+- [Accept or Reject a Pending Collaboration](#accept-or-reject-a-pending-collaboration)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 Add a Collaboration
 -------------------
