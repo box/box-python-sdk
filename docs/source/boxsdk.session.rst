@@ -20,10 +20,10 @@ boxsdk\.session\.box\_response module
     :undoc-members:
     :show-inheritance:
 
-boxsdk\.session\.box\_session module
-------------------------------------
+boxsdk\.session\.session module
+-------------------------------
 
-.. automodule:: boxsdk.session.box_session
+.. automodule:: boxsdk.session.session
     :members:
     :undoc-members:
     :show-inheritance:

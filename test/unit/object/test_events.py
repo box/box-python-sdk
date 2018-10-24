@@ -17,6 +17,7 @@ from six.moves.urllib.parse import urlencode, urlunsplit
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.events import Events, EventsStreamType, UserEventsStreamType
 from boxsdk.object.event import Event
+from boxsdk.object.folder import Folder
 from boxsdk.session.box_response import BoxResponse
 
 
@@ -208,10 +209,9 @@ def test_get_events(
         expected_url,
         params=dict(limit=100, stream_position=0, **expected_stream_type_params),
     )
-    event_entries = events['entries']
-    assert event_entries == events_response.json.return_value['entries']
-    for event in event_entries:
+    for event, json in zip(events['entries'], events_response.json.return_value['entries']):
         assert isinstance(event, Event)
+        assert event.event_id == json['event_id']
 
 
 def test_get_long_poll_options(
@@ -261,7 +261,12 @@ def test_generate_events_with_long_polling(
         EscapeGenerator("A fake exception for the session to throw so that the generator won't block forever"),
     ]
     events = test_events.generate_events_with_long_polling(**stream_type_kwargs)
-    assert next(events) == Event(mock_event_json)
+
+    event = next(events)
+    assert isinstance(event, Event)
+    assert event.event_id == mock_event_json['event_id']
+    assert isinstance(event.source, Folder)
+    assert event.source.id == mock_event_json['source']['id']
     with pytest.raises(EscapeGenerator):
         next(events)
     events.close()
