@@ -27,9 +27,8 @@ class User(BaseObject):
         }
         box_response = self._session.get(url, params=additional_params)
         response = box_response.json()['entries'][0]
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 

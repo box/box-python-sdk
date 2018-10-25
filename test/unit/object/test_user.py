@@ -14,18 +14,23 @@ def test_user_url(mock_user):
     assert mock_user.get_url() == '{0}/{1}/{2}'.format(API.BASE_API_URL, 'users', mock_user.object_id)
 
 
-def test_get_storage_policy_assignments(mock_user, mock_box_session):
+def test_get_storage_policy_assignments(test_storage_policy_assignment, mock_user, mock_box_session):
     expected_url = mock_box_session.get_url('storage_policy_assignments')
     mock_assignment = {
-        'type': 'storage_policy_assignment',
-        'id': '12345',
+        'type': test_storage_policy_assignment.object_type,
+        'id': test_storage_policy_assignment.object_id,
+        'assigned_to': {
+            'type': mock_user.object_type,
+            'id': mock_user.object_id,
+        },
     }
     mock_box_session.get.return_value.json.return_value = {
-        'limit': 100,
-        'entries': [mock_assignment]
+        'next_marker': None,
+        'limit': 1,
+        'entries': [mock_assignment],
     }
     expected_params = {
-        'resolved_for_type': 'user',
+        'resolved_for_type': mock_user.object_type,
         'resolved_for_id': mock_user.object_id,
     }
     assignment = mock_user.get_storage_policy_assignment()
