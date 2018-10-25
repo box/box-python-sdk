@@ -621,6 +621,9 @@ def test_get_storage_policies(mock_client, mock_box_session):
     policy = policies.next()
     mock_box_session.get.assert_called_once_with(expected_url, params={})
     assert isinstance(policy, StoragePolicy)
+    assert policy.type == 'storage_policy'
+    assert policy.id == '12345'
+    assert policy.name == 'Test Storage Policy'
 
 
 def test_create_webhook_returns_the_correct_policy_object(
