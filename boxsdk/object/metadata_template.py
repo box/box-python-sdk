@@ -5,6 +5,8 @@ from __future__ import unicode_literals, absolute_import
 import json
 
 from .base_object import BaseObject
+from ..util.api_call_decorator import api_call
+from ..util.text_enum import TextEnum
 
 
 class MetadataTemplateUpdate(object):
@@ -46,6 +48,20 @@ class MetadataTemplateUpdate(object):
         self.ops.append({
             'op': 'addField',
             'data': field.json(),
+        })
+
+    def edit_template(self, data):
+        """
+        Edit top-level template properties.
+
+        :param data:
+            The properties to modify
+        :type data:
+            `dict`
+        """
+        self.ops.append({
+            'op': 'editTemplate',
+            'data': data,
         })
 
     def reorder_enum_options(self, field_key, option_keys):
@@ -160,6 +176,14 @@ class MetadataTemplateUpdate(object):
         })
 
 
+class MetadataFieldType(TextEnum):
+    STRING = 'string'
+    DATE = 'date'
+    ENUM = 'enum'
+    MULTISELECT = 'multiSelect'
+    FLOAT = 'float'
+
+
 class MetadataField(object):
     """Represents a metadata field when creating or updating a metadata template."""
 
@@ -224,7 +248,9 @@ class MetadataTemplate(BaseObject):
         """
         return MetadataTemplateUpdate()
 
-    def update(self, updates):
+    @api_call
+    def update_info(self, updates):
+        # pylint: disable=arguments-differ
         """
         Update a metadata template with a set of update operations.
 

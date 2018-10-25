@@ -27,6 +27,7 @@ from boxsdk.object.group import Group
 from boxsdk.object.user import User
 from boxsdk.object.trash import Trash
 from boxsdk.object.group_membership import GroupMembership
+from boxsdk.object.metadata_template import MetadataTemplate, MetadataField, MetadataFieldType
 from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.file_version_retention import FileVersionRetention
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
@@ -931,3 +932,119 @@ def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_r
         assert pin.object_id == expected_id
         # pylint:disable=protected-access
         assert pin._session == mock_box_session
+
+
+def test_metadata_template_initializer(mock_client, mock_box_session):
+    template = mock_client.metadata_template('enterprise', 'VendorContract')
+    assert isinstance(template, MetadataTemplate)
+    # pylint:disable=protected-access
+    assert template._session == mock_box_session
+    assert template.object_id == 'enterprise/VendorContract'
+    assert template._scope == 'enterprise'
+    assert template._template_key == 'VendorContract'
+
+
+def test_get_metadata_template_by_id(mock_client, mock_box_session):
+    template_id = 'sdkjfhgsdg-nb34745bndfg-qw4hbsajdg'
+    expected_url = '{0}/metadata_templates/{1}'.format(API.BASE_API_URL, template_id)
+    mock_box_session.get.return_value.json.return_value = {
+        'type': 'metadata_template',
+        'id': template_id,
+        'scope': 'enterprise_33333',
+        'displayName': 'Vendor Contract',
+        'templateKey': 'vendorContract',
+    }
+
+    template = mock_client.get_metadata_template_by_id(template_id)
+
+    mock_box_session.get.assert_called_once_with(expected_url)
+    assert isinstance(template, MetadataTemplate)
+    # pylint:disable=protected-access
+    assert template._session == mock_box_session
+    assert template.object_id == 'enterprise_33333/vendorContract'
+    assert template._scope == 'enterprise_33333'
+    assert template._template_key == 'vendorContract'
+    assert template.id == template_id
+    assert template.displayName == 'Vendor Contract'
+
+
+def test_get_metadata_templates(mock_client, mock_box_session):
+    expected_url = '{0}/metadata_templates/enterprise'.format(API.BASE_API_URL)
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 1,
+        'entries': [
+            {
+                'type': 'metadata_template',
+                'scope': 'enterprise_33333',
+                'displayName': 'Vendor Contract',
+                'templateKey': 'vendorContract',
+                'fields': [
+                    {
+                        'type': 'string',
+                        'displayName': 'Name',
+                        'key': 'name',
+                    },
+                ],
+            },
+        ],
+        'next_marker': None,
+        'previous_marker': None,
+    }
+
+    templates = mock_client.get_metadata_templates()
+    template = templates.next()
+
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    assert isinstance(template, MetadataTemplate)
+    assert template.object_id == 'enterprise_33333/vendorContract'
+    assert template.displayName == 'Vendor Contract'
+    fields = template.fields
+    assert len(fields) == 1
+    field = fields[0]
+    assert isinstance(field, dict)
+    assert field['type'] == 'string'
+    assert field['key'] == 'name'
+
+
+def test_create_metadata_template(mock_client, mock_box_session):
+    expected_url = '{0}/metadata_templates/schema'.format(API.BASE_API_URL)
+    name = 'Vendor Contract'
+    key = 'vContract'
+    field1 = MetadataField(MetadataFieldType.DATE, 'Birthday', 'bday')
+    field2 = MetadataField(MetadataFieldType.ENUM, 'State', options=['CA', 'TX', 'NY'])
+    expected_body = {
+        'scope': 'enterprise',
+        'displayName': 'Vendor Contract',
+        'hidden': True,
+        'fields': [
+            {
+                'type': 'date',
+                'displayName': 'Birthday',
+                'key': 'bday',
+            },
+            {
+                'type': 'enum',
+                'displayName': 'State',
+                'options': [
+                    {'key': 'CA'},
+                    {'key': 'TX'},
+                    {'key': 'NY'},
+                ],
+            },
+        ],
+        'templateKey': 'vContract',
+    }
+    mock_box_session.post.return_value.json.return_value = expected_body
+
+    template = mock_client.create_metadata_template(name, [field1, field2], key, hidden=True)
+
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
+    assert isinstance(template, MetadataTemplate)
+    assert template.object_id == 'enterprise/vContract'
+    assert template.displayName == 'Vendor Contract'
+    fields = template.fields
+    assert len(fields) == 2
+    field = fields[0]
+    assert isinstance(field, dict)
+    assert field['type'] == 'date'
+    assert field['key'] == 'bday'
