@@ -323,17 +323,23 @@ def shared_link_unshared_at(request):
 def comment_params(request):
     return request.param
 
+
 @pytest.fixture()
 def test_timezone():
+
     class LocalTimezone(tzinfo):
-        def utcoffset(self, dt):
+
+        def utcoffset(self):
             return timedelta(minutes=-8 * 60)
-        def tzname(self, dt):
+
+        def tzname(self):
             return 'America/Los_Angeles'
-        def dst(self, dt):
+
+        def dst(self):
             return timedelta(minutes=-7 * 60)
 
     return LocalTimezone()
+
 
 @pytest.fixture(params=['datetime', 'date', 'string'])
 def test_datetime_param(request, test_timezone):
