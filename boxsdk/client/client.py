@@ -1355,6 +1355,16 @@ class Client(Cloneable):
             The scope to retrieve templates for
         :type scope:
             `unicode`
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
         :returns:
             The collection of metadata templates for the given scope
         :rtype:
