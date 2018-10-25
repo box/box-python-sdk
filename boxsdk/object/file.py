@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 
+from datetime import date
 import json
 
 from .item import Item
@@ -350,9 +351,9 @@ class File(Item):
         :type message:
             `unicode` or None
         :param due_at:
-            When this task is due.
+            When this task is due.  Takes a `date` or RFC3339-formatted string.
         :type due_at:
-            `unicode` or None
+            `datetime.date` or `unicode` or None
         :return:
             The newly created task
         :rtype:
@@ -369,7 +370,7 @@ class File(Item):
         if message is not None:
             task_attributes['message'] = message
         if due_at is not None:
-            task_attributes['due_at'] = due_at
+            task_attributes['due_at'] = due_at.isoformat() if isinstance(due_at, date) else due_at
         box_response = self._session.post(url, data=json.dumps(task_attributes))
         response = box_response.json()
         return self.translator.translate(

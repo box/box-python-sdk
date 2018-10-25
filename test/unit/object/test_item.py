@@ -109,7 +109,7 @@ def test_get_shared_link(
         test_item_and_response,
         mock_box_session,
         shared_link_access,
-        shared_link_unshared_at,
+        test_datetime_param,
         shared_link_password,
         shared_link_can_download,
         shared_link_can_preview,
@@ -120,12 +120,12 @@ def test_get_shared_link(
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
     expected_url = test_item.get_url()
+    unshared_at, unshared_at_string = test_datetime_param
     mock_box_session.put.return_value.json.return_value = {'shared_link': {'url': test_url}}
     expected_data = {'shared_link': {}}
     if shared_link_access is not None:
         expected_data['shared_link']['access'] = shared_link_access
-    if shared_link_unshared_at is not None:
-        expected_data['shared_link']['unshared_at'] = shared_link_unshared_at.isoformat()
+    expected_data['shared_link']['unshared_at'] = unshared_at_string
     if shared_link_can_download is not None or shared_link_can_preview is not None:
         expected_data['shared_link']['permissions'] = permissions = {}
         if shared_link_can_download is not None:
@@ -137,7 +137,7 @@ def test_get_shared_link(
     url = test_item.get_shared_link(
         etag=etag,
         access=shared_link_access,
-        unshared_at=shared_link_unshared_at,
+        unshared_at=unshared_at,
         password=shared_link_password,
         allow_download=shared_link_can_download,
         allow_preview=shared_link_can_preview,

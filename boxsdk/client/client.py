@@ -1,6 +1,8 @@
 # coding: utf-8
 # pylint: disable=too-many-lines
 from __future__ import unicode_literals, absolute_import
+
+from datetime import date
 import json
 
 from ..auth.oauth2 import TokenResponse
@@ -286,11 +288,11 @@ class Client(Cloneable):
         :param filter_starting_at:
             The start time filter for legal hold policy
         :type filter_starting_at:
-            `unicode` or None
+            `datetime.date` or None
         :param filter_ending_at:
             The end time filter for legal hold policy
         :type filter_ending_at:
-            `unicode` or None
+            `datetime.date` or None
         :param is_ongoing:
             After initialization, Assignments under this Policy will continue applying to
             files based on events, indefinitely.
@@ -306,9 +308,15 @@ class Client(Cloneable):
         if description is not None:
             policy_attributes['description'] = description
         if filter_starting_at is not None:
-            policy_attributes['filter_starting_at'] = filter_starting_at
+            if isinstance(filter_starting_at, date):
+                policy_attributes['filter_starting_at'] = filter_starting_at.isoformat()
+            else:
+                policy_attributes['filter_starting_at'] = filter_starting_at
         if filter_ending_at is not None:
-            policy_attributes['filter_ending_at'] = filter_ending_at
+            if isinstance(filter_ending_at, date):
+                policy_attributes['filter_ending_at'] = filter_ending_at.isoformat()
+            else:
+                policy_attributes['filter_ending_at'] = filter_ending_at
         if is_ongoing is not None:
             policy_attributes['is_ongoing'] = is_ongoing
         box_response = self._session.post(url, data=json.dumps(policy_attributes))

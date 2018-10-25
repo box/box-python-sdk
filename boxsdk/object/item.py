@@ -1,6 +1,8 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, absolute_import
+
+from datetime import date
 import json
 
 from .base_object import BaseObject
@@ -193,9 +195,9 @@ class Item(BaseObject):
             `unicode` or None
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates.
+            and has permission to set expiration dates.  This accepts a `date` or RFC3339-formatted string.
         :type unshared_at:
-            :class:`datetime.date` or None
+            :class:`datetime.date` or `unicode` None
         :param allow_download:
             Whether or not the item being shared can be downloaded when accessed via the shared link.
             If this parameter is None, the default setting will be used.
@@ -225,7 +227,7 @@ class Item(BaseObject):
         }
 
         if unshared_at is not None:
-            data['shared_link']['unshared_at'] = unshared_at.isoformat()
+            data['shared_link']['unshared_at'] = unshared_at.isoformat() if isinstance(unshared_at, date) else unshared_at
 
         if allow_download is not None or allow_preview is not None:
             data['shared_link']['permissions'] = permissions = {}

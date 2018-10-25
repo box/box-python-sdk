@@ -12,8 +12,8 @@ from boxsdk.object.file import File
 from boxsdk.object.task import Task
 
 
-# pylint:disable=protected-access
 # pylint:disable=redefined-outer-name
+# pylint:disable=protected-access
 
 @pytest.fixture()
 def mock_accelerator_upload_url_for_update():
@@ -42,10 +42,10 @@ def test_delete_file(test_file, mock_box_session, etag, if_match_header):
     )
 
 
-def test_create_task(test_file, test_task, mock_box_session):
+def test_create_task(test_file, test_task, mock_box_session, test_datetime_param):
     # pylint:disable=redefined-outer-name
     expected_url = "{0}/tasks".format(API.BASE_API_URL)
-    due_at = '2014-04-03T11:09:43-07:00'
+    due_at, due_at_string = test_datetime_param
     action = 'review'
     message = 'Test Message'
     expected_body = {
@@ -55,12 +55,12 @@ def test_create_task(test_file, test_task, mock_box_session):
         },
         'action': action,
         'message': message,
-        'due_at': due_at,
+        'due_at': due_at_string,
     }
     mock_box_session.post.return_value.json.return_value = {
         'type': test_task.object_type,
         'id': test_task.object_id,
-        'due_at': due_at,
+        'due_at': due_at_string,
         'action': action,
         'message': message,
     }
@@ -72,7 +72,7 @@ def test_create_task(test_file, test_task, mock_box_session):
     assert new_task.object_id == test_task.object_id
     assert new_task.action == action
     assert new_task.message == message
-    assert new_task.due_at == due_at
+    assert new_task.due_at == due_at_string
 
 
 def test_get_tasks(test_file, mock_box_session):

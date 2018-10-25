@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from datetime import date
+from datetime import date, datetime, tzinfo, timedelta
 import os
 from mock import Mock
 import pytest
@@ -322,3 +322,33 @@ def shared_link_unshared_at(request):
 ])
 def comment_params(request):
     return request.param
+
+@pytest.fixture()
+def test_timezone():
+    class LocalTimezone(tzinfo):
+        def utcoffset(self, dt):
+            return timedelta(minutes=-8 * 60)
+        def tzname(self, dt):
+            return 'America/Los_Angeles'
+        def dst(self, dt):
+            return timedelta(minutes=-7 * 60)
+
+    return LocalTimezone()
+
+@pytest.fixture(params=['datetime', 'date', 'string'])
+def test_datetime_param(request, test_timezone):
+    datetime_obj = datetime(2020, 11, 18, 9, 30, 55, tzinfo=test_timezone)
+
+    if request.param == 'datetime':
+        param = datetime_obj
+        string = datetime_obj.isoformat()
+    elif request.param == 'date':
+        param = datetime_obj.date()
+        string = param.isoformat()
+    elif request.param == 'string':
+        param = datetime_obj.isoformat()
+        string = param
+    else:
+        raise NotImplementedError
+
+    return (param, string)
