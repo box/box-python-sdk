@@ -30,6 +30,7 @@ from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.file_version_retention import FileVersionRetention
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
+from boxsdk.object.metadata_cascade_policy import MetadataCascadePolicy
 from boxsdk.object.webhook import Webhook
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
@@ -340,7 +341,8 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
     (Group, 'group'),
     (GroupMembership, 'group_membership'),
     (Enterprise, 'enterprise'),
-    (Webhook, 'webhook')
+    (Webhook, 'webhook'),
+    (MetadataCascadePolicy, 'metadata_cascade_policy')
 ])
 def test_factory_returns_the_correct_object(mock_client, test_class, factory_method_name):
     """ Tests the various id-only factory methods in the Client class """
