@@ -941,8 +941,8 @@ def test_metadata_template_initializer(mock_client, mock_box_session):
     # pylint:disable=protected-access
     assert template._session == mock_box_session
     assert template.object_id == 'enterprise/VendorContract'
-    assert template._scope == 'enterprise'
-    assert template._template_key == 'VendorContract'
+    assert template.scope == 'enterprise'
+    assert template.template_key == 'VendorContract'
 
 
 def test_get_metadata_template_by_id(mock_client, mock_box_session):
@@ -963,8 +963,8 @@ def test_get_metadata_template_by_id(mock_client, mock_box_session):
     # pylint:disable=protected-access
     assert template._session == mock_box_session
     assert template.object_id == 'enterprise_33333/vendorContract'
-    assert template._scope == 'enterprise_33333'
-    assert template._template_key == 'vendorContract'
+    assert template.scope == 'enterprise_33333'
+    assert template.template_key == 'vendorContract'
     assert template.id == template_id
     assert template.displayName == 'Vendor Contract'
 

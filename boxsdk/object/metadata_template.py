@@ -228,6 +228,14 @@ class MetadataTemplate(BaseObject):
         super(MetadataTemplate, self).__init__(session, object_id, response_object)
         self._scope, self._template_key = object_id.split('/')
 
+    @property
+    def scope(self):
+        return self._scope
+
+    @property
+    def template_key(self):
+        return self._template_key
+
     def get_url(self, *args):
         """
         Base class override, since metadata templates have a weird compound ID and non-standard URL format
