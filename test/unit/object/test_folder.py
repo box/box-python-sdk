@@ -377,7 +377,7 @@ def test_cascade_metadata(test_folder, mock_box_session, test_metadata_template)
             'id': test_folder.object_id,
         },
         'scope': test_metadata_template.scope,
-        'templateKey': test_metadata_template.template_key, 
+        'templateKey': test_metadata_template.template_key,
     }
 
     cascade_policy = test_folder.cascade_metadata(test_metadata_template)
@@ -391,5 +391,5 @@ def test_cascade_metadata(test_folder, mock_box_session, test_metadata_template)
     folder = cascade_policy.parent
     assert isinstance(folder, Folder)
     assert folder.object_id == test_folder.object_id
-    assert cascade_policy.scope == test_metadata_template.scope 
-    assert cascade_policy.templateKey == test_metadata_template.template_key 
+    assert cascade_policy.scope == test_metadata_template.scope
+    assert cascade_policy.templateKey == test_metadata_template.template_key
