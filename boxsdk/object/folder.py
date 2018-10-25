@@ -475,3 +475,72 @@ class Folder(Item):
         """
         # pylint:disable=arguments-differ
         return super(Folder, self).delete({'recursive': recursive}, etag)
+
+    @api_call
+    def get_metadata_cascade_policies(self, owner_enterprise=None, limit=None, marker=None, fields=None):
+        """
+        Get the metadata cascade policies current applied to the folder.
+
+        :param owner_enterprise:
+            Which enterprise's metadata templates to get cascade policies for.  This defauls to the current
+            enterprise.
+        :type owner_enterprise:
+            :class:`Enterprise`
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the cascade policies attached on the folder.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {
+            'folder_id': self.object_id,
+        }
+        if owner_enterprise is not None:
+            additional_params['owner_enterprise_id'] = owner_enterprise.object_id
+
+        return MarkerBasedObjectCollection(
+            url=self._session.get_url('metadata_cascade_policies'),
+            session=self._session,
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
+
+    @api_call
+    def cascade_metadata(self, metadata_template):
+        """
+        Create a metadata cascade policy to apply the metadata instance values on the folder for the given metadata
+        template to all files within the folder.
+
+        :param metadata_template:
+            The metadata template to cascade values for
+        :type metadata_template:
+            :class:`MetadataTemplate`
+        :returns:
+            The created metadata cascade policy
+        :rtype:
+            :class:`MetadataCascadePolicy`
+        """
+        url = self._session.get_url('metadata_cascade_policies')
+
+        body = {
+            'folder_id': self.object_id,
+            'scope': metadata_template.scope,
+            'templateKey': metadata_template.template_key,
+        }
+
+        response = self._session.post(url, data=json.dumps(body)).json()
+        return self.translator.translate(self._session, response)

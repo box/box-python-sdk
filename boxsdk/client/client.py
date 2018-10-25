@@ -1302,3 +1302,21 @@ class Client(Cloneable):
             fields=fields,
             return_full_pages=False,
         )
+
+    def metadata_cascade_policy(self, policy_id):
+        """
+        Initializes a :class:`MetadataCascadePolicy` object with the given policy ID.
+
+        :param policy_id:
+            The ID of the cascade policy object
+        :type policy_id:
+            `unicode`
+        :returns:
+            The cascade policy object
+        :rtype:
+            :class:`MetadataCascadePolicy`
+        """
+        return self.translator.get('metadata_cascade_policy')(
+            session=self._session,
+            object_id=policy_id
+        )
