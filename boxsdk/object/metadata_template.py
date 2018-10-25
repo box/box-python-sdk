@@ -235,9 +235,10 @@ class MetadataTemplate(BaseObject):
         :rtype:
             `unicode`
         """
-        return self._session.get_url('metadata_templates', self._scope, self._template_key, 'schema')
+        return self._session.get_url('metadata_templates', self._scope, self._template_key, 'schema', *args)
 
-    def start_update(self):
+    @staticmethod
+    def start_update():
         """
         Start an update operation on the template.
 
@@ -270,4 +271,3 @@ class MetadataTemplate(BaseObject):
             object_id=self.object_id,
             response_object=response,
         )
-    

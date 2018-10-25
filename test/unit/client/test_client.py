@@ -12,6 +12,7 @@ from six import text_type
 from six.moves import zip
 # pylint:enable=redefined-builtin
 # pylint:enable=import-error
+# pylint: disable=too-many-lines
 
 from boxsdk.auth.oauth2 import OAuth2, TokenScope
 from boxsdk.client import Client, DeveloperTokenClient, DevelopmentClient, LoggingClient

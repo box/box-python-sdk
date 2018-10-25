@@ -155,7 +155,7 @@ def test_update_info(test_metadata_template, mock_box_session):
 
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body))
     assert isinstance(updated_template, MetadataTemplate)
-    assert updated_template.hidden == False
+    assert updated_template.hidden is False
     assert updated_template.object_id == 'enterprise/vContract'
     fields = updated_template.fields
     assert len(fields) == 2
