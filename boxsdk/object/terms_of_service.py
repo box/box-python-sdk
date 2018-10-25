@@ -48,9 +48,8 @@ class TermsOfService(BaseObject):
         box_response = self._session.get(url, params=additional_params)
         response_object = box_response.json()
         response = response_object['entries'][0]
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
@@ -118,9 +117,8 @@ class TermsOfService(BaseObject):
         try:
             box_response = self._session.post(url, data=json.dumps(body))
             response = box_response.json()
-            translated_response = self.translator.translate(response['type'])(
+            translated_response = self.translator.translate(
                 session=self._session,
-                object_id=response['id'],
                 response_object=response,
             )
         except BoxAPIException as err:
