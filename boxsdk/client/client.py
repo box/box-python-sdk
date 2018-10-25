@@ -452,9 +452,8 @@ class Client(Cloneable):
         """
         user = self.user().get(fields=['enterprise'])
         enterprise_object = user['enterprise']
-        return self.translator.translate(enterprise_object['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=enterprise_object['id'],
             response_object=enterprise_object,
         )
 
