@@ -33,9 +33,8 @@ class Trash(BaseEndpoint):
             params['fields'] = ','.join(fields)
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
@@ -75,9 +74,8 @@ class Trash(BaseEndpoint):
             params['fields'] = ','.join(fields)
         box_response = self._session.post(url, data=json.dumps(body), params=params)
         response = box_response.json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
