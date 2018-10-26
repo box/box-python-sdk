@@ -655,6 +655,7 @@ def test_get_storage_policies(mock_client, mock_box_session):
     assert policy.id == '12345'
     assert policy.name == 'Test Storage Policy'
 
+
 def test_create_terms_of_service(mock_client, mock_box_session):
     # pylint:disable=redefined-outer-name
     expected_url = "{0}/terms_of_services".format(API.BASE_API_URL)
