@@ -60,10 +60,12 @@ class Collaboration(BaseObject):
             data['status'] = status
         return super(Collaboration, self).update_info(data=data)
 
+    @api_call
     def accept(self):
         """Accepts a pending collaboration"""
         return self.update_info(status='accepted')
 
+    @api_call
     def reject(self):
         """Rejects a pending collaboration"""
         return self.update_info(status='rejected')
