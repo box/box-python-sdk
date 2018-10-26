@@ -130,7 +130,7 @@ class Folder(Item):
         :rtype:
             :class:`UploadSession`
         """
-        url = '{0}/files/upload_sessions'.format(self._session.api_config.UPLOAD_URL))
+        url = '{0}/files/upload_sessions'.format(self._session.api_config.UPLOAD_URL)
         body_params = {
             'folder_id': self.object_id,
             'file_size': file_size,

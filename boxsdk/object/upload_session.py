@@ -57,7 +57,7 @@ class UploadSession(BaseObject):
             return_full_pages=False,
         )
 
-    def upload_part(self, part_bytes, offset, total_size, part_content_sha1=None):
+    def upload_part_bytes(self, part_bytes, offset, total_size, part_content_sha1=None):
         """
         Upload a part of a file.
 
@@ -109,7 +109,7 @@ class UploadSession(BaseObject):
         :param content_sha1:
             SHA-1 hash of the file contents that was uploaded.
         :type content_sha1:
-            `unicode`
+            `bytes`
         :param parts:
             List of parts that were uploaded.
         :type parts:

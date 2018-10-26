@@ -21,7 +21,45 @@ without aborting the entire upload, and failed parts can then be retried.
 
 ### Manual Process
 
+For more complicated upload scenarios, such as those being coordinated across multiple processes or when an unrecoverable error occurs with the automatic uploader, the endpoints for chunked upload operations are also exposed directly.
 
+For example, this is roughly how a chunked upload is done manually:
+
+```python
+import hashlib
+import os
+
+
+test_file_path = '/path/to/large_file.mp4'
+total_size = os.stat(test_file_path).st_size
+sha1 = hashlib.sha1()
+content_stream = open(test_file_path, 'rb')
+upload_session = client.folder(folder_id='11111').create_upload_session(file_size=total_size, file_name='test_file_name.mp4')
+part_array = []
+
+for part_num in range(upload_session.total_parts):
+
+    copied_length = 0
+    chunk = b''
+    while copied_length < upload_session.part_size:
+        bytes_read = content_stream.read(upload_session.part_size - copied_length)
+        if bytes_read is None:
+            # stream returns none when no bytes are ready currently but there are 
+            # potentially more bytes in the stream to be read.
+            continue
+        if len(bytes_read) == 0:
+            # stream is exhausted.
+            break
+        chunk += bytes_read
+        copied_length += len(bytes_read)
+
+    uploaded_part = upload_session.upload_part_bytes(chunk, part_num*upload_session.part_size, total_size)
+    part_array.append(uploaded_part)
+    updated_sha1 = sha1.update(chunk)
+content_sha1 = sha1.digest()
+uploaded_file = upload_session.commit(content_sha1=content_sha1, parts=part_array)
+print('File ID: {0} and File Name: {1}', uploaded_file.id, uploaded_file.name)
+```
 
 The individual endpoint methods are detailed below:
 
