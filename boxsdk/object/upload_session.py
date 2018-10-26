@@ -100,7 +100,7 @@ class UploadSession(BaseObject):
             headers=headers,
             data=part_bytes,
         )
-        return response['part']
+        return response.json()['part']
 
     def commit(self, content_sha1, parts=None, file_attributes=None, etag=None):
         """
