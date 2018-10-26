@@ -357,6 +357,12 @@ def test_factory_returns_the_correct_object(mock_client, test_class, factory_met
     assert obj.object_id == fake_id
 
 
+def test_root_folder(mock_client):
+    folder = mock_client.root_folder()
+    assert isinstance(folder, Folder)
+    assert folder.object_id == '0'
+
+
 @pytest.fixture(scope='module', params=(None, 'user1'))
 def users_filter_term(request):
     return request.param
