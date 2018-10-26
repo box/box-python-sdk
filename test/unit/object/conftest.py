@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from datetime import date
 import os
 from mock import Mock
 import pytest
