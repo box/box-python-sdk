@@ -63,9 +63,8 @@ class File(Item):
             body_params['file_name'] = file_name
         url = self.get_url('upload_sessions').replace(API.BASE_API_URL, API.UPLOAD_URL)
         response = self._session.post(url, data=json.dumps(body_params)).json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
