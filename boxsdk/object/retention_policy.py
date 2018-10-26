@@ -4,6 +4,7 @@ import json
 
 from .base_object import BaseObject
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+from ..util.api_call_decorator import api_call
 
 
 class RetentionPolicy(BaseObject):
@@ -16,6 +17,7 @@ class RetentionPolicy(BaseObject):
         """
         return self._session.get_url('retention_policies', self._object_id, *args)
 
+    @api_call
     def assign(self, assignee, fields=None):
         """Assign a retention policy to a Box item
 
@@ -44,12 +46,12 @@ class RetentionPolicy(BaseObject):
         if fields is not None:
             params['fields'] = ','.join(fields)
         response = self._session.post(url, data=json.dumps(body), params=params).json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
+    @api_call
     def assignments(self, assignment_type=None, limit=None, marker=None, fields=None):
         """Get the assignments for the retention policy.
 

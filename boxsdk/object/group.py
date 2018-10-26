@@ -80,8 +80,9 @@ class Group(BaseObject):
             body_attributes['configurable_permissions'] = configurable_permissions
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
-        return self.translator.translate(response['type'])(self._session, response['id'], response, user=user, group=self)
+        return self.translator.translate(self._session, response)
 
+    @api_call
     def get_collaborations(self, limit=None, offset=None, fields=None):
         """
         Get the entries in the collaboration for the group using limit-offset paging.

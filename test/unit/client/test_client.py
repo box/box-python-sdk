@@ -9,20 +9,26 @@ from six import text_type
 
 # pylint:disable=redefined-builtin
 # pylint:disable=import-error
+# pylint: disable=too-many-lines
 from six.moves import zip
 # pylint:enable=redefined-builtin
 # pylint:enable=import-error
+
 
 from boxsdk.auth.oauth2 import OAuth2, TokenScope
 from boxsdk.client import Client, DeveloperTokenClient, DevelopmentClient, LoggingClient
 from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.collaboration import Collaboration
+from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
+from boxsdk.object.enterprise import Enterprise
 from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
 from boxsdk.object.group import Group
+from boxsdk.object.terms_of_service import TermsOfService
 from boxsdk.object.user import User
+from boxsdk.object.trash import Trash
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.file_version_retention import FileVersionRetention
@@ -225,6 +231,30 @@ def create_group_response():
 
 
 @pytest.fixture(scope='module')
+def tos_id_1():
+    return 101
+
+
+@pytest.fixture(scope='module')
+def tos_id_2():
+    return 202
+
+
+@pytest.fixture(scope='module')
+def terms_of_services_response(tos_id_1, tos_id_2):
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'terms_of_service', 'id': tos_id_1},
+            {'type': 'terms_of_service', 'id': tos_id_2},
+        ],
+        'total_count': 2,
+    }
+    return mock_network_response
+
+
+@pytest.fixture(scope='module')
 def create_user_response():
     # pylint:disable=redefined-outer-name
     mock_network_response = Mock(DefaultNetworkResponse)
@@ -336,6 +366,8 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
     (User, 'user'),
     (Group, 'group'),
     (GroupMembership, 'group_membership'),
+    (Enterprise, 'enterprise'),
+    (Webhook, 'webhook')
 ])
 def test_factory_returns_the_correct_object(mock_client, test_class, factory_method_name):
     """ Tests the various id-only factory methods in the Client class """
@@ -348,6 +380,12 @@ def test_factory_returns_the_correct_object(mock_client, test_class, factory_met
 
     assert isinstance(obj, test_class)
     assert obj.object_id == fake_id
+
+
+def test_root_folder(mock_client):
+    folder = mock_client.root_folder()
+    assert isinstance(folder, Folder)
+    assert folder.object_id == '0'
 
 
 @pytest.fixture(scope='module', params=(None, 'user1'))
@@ -412,6 +450,11 @@ def test_search_instantiates_search_and_calls_search(
 def test_events_returns_event_object(mock_client):
     # pylint:disable=redefined-outer-name
     assert isinstance(mock_client.events(), Events)
+
+
+def test_collaboration_whitelist_initializer(mock_client):
+    collaboration_whitelist = mock_client.collaboration_whitelist()
+    assert isinstance(collaboration_whitelist, CollaborationWhitelist)
 
 
 def test_get_groups_return_the_correct_group_objects(
@@ -493,6 +536,11 @@ def test_legal_hold_policies_return_the_correct_policy_objects(
         assert policy.object_id == expected_id
         # pylint:disable=protected-access
         assert policy._session == mock_box_session
+
+
+def test_trash_initializer(mock_client):
+    trash = mock_client.trash()
+    assert isinstance(trash, Trash)
 
 
 def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_session, recent_items_response, file_id):
@@ -584,11 +632,54 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert new_user.name == test_user_name
 
 
-def test_webhook_initializer(mock_client):
-    expected_id = '1234'
-    webhook = mock_client.webhook(expected_id)
-    assert isinstance(webhook, Webhook)
-    assert webhook.object_id == expected_id
+def test_create_terms_of_service(mock_client, mock_box_session):
+    # pylint:disable=redefined-outer-name
+    expected_url = "{0}/terms_of_services".format(API.BASE_API_URL)
+    test_text = 'This is a test text'
+    test_tos_type = 'external'
+    test_status = 'enabled'
+    value = json.dumps({
+        'status': 'enabled',
+        'tos_type': 'external',
+        'text': 'This is a test text',
+    })
+    mock_box_session.post.return_value.json.return_value = {
+        'type': 'terms_of_service',
+        'id': '12345',
+        'status': test_status,
+        'tos_type': test_tos_type,
+        'text': test_text,
+    }
+    new_terms_of_service = mock_client.create_terms_of_service('enabled', 'external', 'This is a test text')
+    mock_box_session.post.assert_called_once_with(expected_url, data=value)
+    assert isinstance(new_terms_of_service, TermsOfService)
+    assert new_terms_of_service.type == 'terms_of_service'
+    assert new_terms_of_service.id == '12345'
+    assert new_terms_of_service.status == test_status
+    assert new_terms_of_service.tos_type == test_tos_type
+    assert new_terms_of_service.text == test_text
+
+
+def test_get_all_terms_of_services(mock_client, mock_box_session):
+    expected_url = "{0}/terms_of_services".format(API.BASE_API_URL)
+    tos_body = {
+        'type': 'terms_of_service',
+        'id': '12345',
+        'status': 'enabled',
+        'tos_type': 'external',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 1,
+        'entries': [tos_body],
+    }
+    services = mock_client.get_terms_of_services(tos_type='external')
+    service = services.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'tos_type': 'external'})
+    assert isinstance(service, TermsOfService)
+    assert service.type == 'terms_of_service'
+    assert service.id == '12345'
+    assert service.status == 'enabled'
+    assert service.tos_type == 'external'
 
 
 def test_create_webhook_returns_the_correct_policy_object(
