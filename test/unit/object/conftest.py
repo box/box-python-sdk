@@ -22,6 +22,10 @@ from boxsdk.object.user import User
 from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 from boxsdk.object.search import Search
+from boxsdk.object.storage_policy import StoragePolicy
+from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
+from boxsdk.object.terms_of_service import TermsOfService
+from boxsdk.object.terms_of_service_user_status import TermsOfServiceUserStatus
 from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
 from boxsdk.object.collaboration_whitelist_entry import CollaborationWhitelistEntry
 from boxsdk.object.collaboration_whitelist_exempt_target import CollaborationWhitelistExemptTarget
@@ -29,7 +33,6 @@ from boxsdk.object.webhook import Webhook
 from boxsdk.object.task import Task
 from boxsdk.object.task_assignment import TaskAssignment
 from boxsdk.object.web_link import WebLink
-
 
 # pylint:disable=redefined-outer-name
 
@@ -158,6 +161,26 @@ def test_legal_hold(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_search(mock_box_session):
     return Search(mock_box_session)
+
+
+@pytest.fixture()
+def test_storage_policy(mock_box_session, mock_object_id):
+    return StoragePolicy(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_storage_policy_assignment(mock_box_session, mock_object_id):
+    return StoragePolicyAssignment(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_terms_of_service(mock_box_session, mock_object_id):
+    return TermsOfService(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_terms_of_service_user_status(mock_box_session, mock_object_id):
+    return TermsOfServiceUserStatus(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()
