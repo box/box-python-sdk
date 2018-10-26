@@ -17,11 +17,10 @@ corporate-managed Box account to a particular mobile device or Box Sync client.
 List Enterprise Device Pins
 ---------------------------
 
-To retrieve all device pins for the enterprise, use `client.device_pinners(enterprise_id, limit=None, marker=None, direction=None, fields=None)`.
+To retrieve all device pins for the enterprise, use `client.device_pinners(enterprise=None, limit=None, marker=None, direction=None, fields=None)`.
 
 ```python
-enterprise_id = '1234'
-device_pins = client.device_pinners(enterprise_id)
+device_pins = client.device_pinners()
 for device_in in device_pins:
     # Do something
 ```
