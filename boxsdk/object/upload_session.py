@@ -6,7 +6,6 @@ import hashlib
 import json
 
 from .base_object import BaseObject
-from ..config import API
 from ..pagination.limit_offset_based_dict_collection import LimitOffsetBasedDictCollection
 
 
@@ -164,4 +163,3 @@ class UploadSession(BaseObject):
             `bool`
         """
         return self.delete()
-        return response.ok
