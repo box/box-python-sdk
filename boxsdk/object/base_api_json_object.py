@@ -72,6 +72,7 @@ class BaseAPIJSONObject(object):
     # also important to add the module name to __all__ in object/__init__.py,
     # so that it will be imported and registered with the default translator.
     _item_type = None
+    _untranslated_fields = None
 
     def __init__(self, response_object=None, **kwargs):
         """

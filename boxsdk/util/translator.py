@@ -38,23 +38,6 @@ def _get_object_id(obj):
     return obj.get('id', None)
 
 
-def _is_metadata_field(obj):
-    """
-    Check if an object is a metadata field, which we don't really want to translate.
-    Since 'displayName' is a non-standard field name in the V2 API, that should be sufficient
-    to identify it.
-
-    :param obj:
-        The object to check
-    :type obj:
-        `dict`
-    :rtype:
-        `bool`
-    """
-
-    return 'displayName' in obj and obj['type'] != 'metadata_template'
-
-
 class Translator(ChainMap):
     """
     Translate item responses from the Box API to Box objects.
@@ -183,7 +166,14 @@ class Translator(ChainMap):
             return response_object
 
         translated_obj = {}
+        object_type = response_object.get('type', '')
+        if object_type is not None:
+            # Parent classes have the ability to "blacklist" fields that they do not want translated
+            blacklisted_fields = self.get(object_type)._untranslated_fields or []  # pylint: disable=protected-access
         for key in response_object:
+            if key in blacklisted_fields:
+                translated_obj[key] = response_object[key]
+                continue
             if isinstance(response_object[key], dict):
                 translated_obj[key] = self.translate(session, response_object[key])
             elif isinstance(response_object[key], list):
@@ -196,8 +186,9 @@ class Translator(ChainMap):
         # NOTE: Currently, we represent metadata as just a `dict`, so there's no need to translate it anyway
         # Metadata field objects are another issue; they contain a 'type' property that doesn't really
         # map to a Box object.  We probably want to treat these as just `dict`s, so they're excluded here
-        if 'type' in translated_obj and '$type' not in translated_obj and not _is_metadata_field(translated_obj):
-            object_class = self.get(translated_obj.get('type', ''))
+        if 'type' in translated_obj and '$type' not in translated_obj:
+            object_type = translated_obj.get('type', '')
+            object_class = self.get(object_type)
             param_values = {
                 'session': session,
                 'response_object': translated_obj,

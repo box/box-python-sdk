@@ -221,6 +221,7 @@ class MetadataTemplate(BaseObject):
     """Represents a metadata template, which contains the the type information for associated metadata fields."""
 
     _item_type = 'metadata_template'
+    _untranslated_fields = ['fields']
     _scope = None
     _template_key = None
 
