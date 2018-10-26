@@ -113,55 +113,6 @@ def test_commit(test_upload_session, mock_box_session):
         'Digest': 'SHA={}'.format(base64.b64encode(sha1.digest()).decode('utf-8')),
         'If-Match': '7',
     }
-
-    mock_box_session.post.return_value.json.return_value = {
-        'entries': [
-            {
-                'type': file_type,
-                'id': file_id,
-                'description': 'This is a test description.',
-            },
-        ],
-    }
-    created_file = test_upload_session.commit(content_sha1=sha1.digest(), parts=parts, file_attributes=file_attributes, etag=file_etag)
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=expected_headers)
-    assert isinstance(created_file, File)
-    assert created_file.id == file_id
-    assert created_file.type == file_type
-    assert created_file.description == 'This is a test description.'
-
-
-def test_commit(test_upload_session, mock_box_session):
-    expected_url = '{0}/files/upload_sessions/{1}/commit'.format(API.UPLOAD_URL, test_upload_session.object_id)
-    sha1 = hashlib.sha1()
-    sha1.update(b'fake_file_data')
-    file_id = '12345'
-    file_type = 'file'
-    file_etag = '7'
-    file_attributes = {'description': 'This is a test description.'}
-    parts = [
-        {
-            'part_id': 'ABCDEF123',
-            'offset': 0,
-            'size': 8,
-            'sha1': 'fake_sha1',
-        },
-        {
-            'part_id': 'ABCDEF456',
-            'offset': 8,
-            'size': 8,
-            'sha1': 'fake_sha1',
-        },
-    ]
-    expected_data = {
-        'attributes': file_attributes,
-        'parts': parts,
-    }
-    expected_headers = {
-        'Content-Type': 'application/json',
-        'Digest': 'SHA={}'.format(base64.b64encode(sha1.digest()).decode('utf-8')),
-        'If-Match': '7',
-    }
     mock_box_session.post.return_value.json.return_value = {
         'entries': [
             {
