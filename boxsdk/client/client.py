@@ -692,6 +692,66 @@ class Client(Cloneable):
             response_object=response,
         )
 
+    def storage_policy(self, policy_id):
+        """
+        Initialize a :class:`StoragePolicy` object, whose box id is policy_id.
+
+        :param policy_id:
+            The box ID of the :class:`StoragePolicy` object.
+        :type policy_id:
+            `unicode`
+        :return:
+            A :class:`StoragePolicy` object with the given entry ID.
+        :rtype:
+            :class:`StoragePolicy`
+        """
+        return self.translator.get('storage_policy')(session=self._session, object_id=policy_id)
+
+    def storage_policy_assignment(self, assignment_id):
+        """
+        Initialize a :class:`StoragePolicyAssignment` object, whose box id is assignment_id.
+
+        :param assignment_id:
+            The box ID of the :class:`StoragePolicyAssignment` object.
+        :type assignment_id:
+            `unicode`
+        :return:
+            A :class:`StoragePolicyAssignment` object with the given entry ID.
+        :rtype:
+            :class:`StoragePolicyAssignment`
+        """
+        return self.translator.get('storage_policy_assignment')(session=self._session, object_id=assignment_id)
+
+    def get_storage_policies(self, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the storage policy using marker-based paging.
+
+        :param limit:
+            The maximum number of items to return.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start returning items from when using marker-based paging.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            Returns the storage policies available for the current enterprise.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('storage_policies'),
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
+
     def terms_of_service(self, tos_id):
         """
         Initialize a :class:`TermsOfService` object, whose box id is tos_id.

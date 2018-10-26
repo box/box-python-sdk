@@ -26,6 +26,8 @@ from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
 from boxsdk.object.group import Group
+from boxsdk.object.storage_policy import StoragePolicy
+from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.object.terms_of_service import TermsOfService
 from boxsdk.object.user import User
 from boxsdk.object.trash import Trash
@@ -367,7 +369,9 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
     (Group, 'group'),
     (GroupMembership, 'group_membership'),
     (Enterprise, 'enterprise'),
-    (Webhook, 'webhook')
+    (Webhook, 'webhook'),
+    (StoragePolicy, 'storage_policy'),
+    (StoragePolicyAssignment, 'storage_policy_assignment'),
 ])
 def test_factory_returns_the_correct_object(mock_client, test_class, factory_method_name):
     """ Tests the various id-only factory methods in the Client class """
@@ -630,6 +634,26 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
     assert new_user.name == test_user_name
+
+
+def test_get_storage_policies(mock_client, mock_box_session):
+    expected_url = mock_box_session.get_url('storage_policies')
+    mock_policy = {
+        'type': 'storage_policy',
+        'id': '12345',
+        'name': 'Test Storage Policy'
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_policy]
+    }
+    policies = mock_client.get_storage_policies()
+    policy = policies.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    assert isinstance(policy, StoragePolicy)
+    assert policy.type == 'storage_policy'
+    assert policy.id == '12345'
+    assert policy.name == 'Test Storage Policy'
 
 
 def test_create_terms_of_service(mock_client, mock_box_session):
