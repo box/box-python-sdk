@@ -5,7 +5,6 @@ import json
 import os
 from six import text_type
 
-from boxsdk.config import API
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
