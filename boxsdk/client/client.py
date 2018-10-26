@@ -799,6 +799,9 @@ class Client(Cloneable):
             url=self.get_url('storage_policies'),
             limit=limit,
             marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
 
     def terms_of_service(self, tos_id):
         """
