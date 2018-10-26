@@ -50,9 +50,9 @@ class File(Item):
         :type file_name:
             `unicode` or None
         :returns:
-            A :class:`ChunkedUploadSession` object.
+            A :class:`UploadSession` object.
         :rtype:
-            :class:`ChunkedUploadSession`
+            :class:`UploadSession`
         """
         body_params = {
             'file_id': self.object_id,
@@ -60,10 +60,10 @@ class File(Item):
         }
         if file_name is not None:
             body_params['file_name'] = file_name
-        url = self.get_url('{0}'.format('upload_sessions')).replace(API.BASE_API_URL, API.UPLOAD_URL)
+        url = self.get_url('upload_sessions').replace(API.BASE_API_URL, API.UPLOAD_URL)
         response = self._session.post(url, data=json.dumps(body_params)).json()
         return self.translator.translate(response['type'])(
-            session=self.session,
+            session=self._session,
             object_id=response['id'],
             response_object=response,
         )

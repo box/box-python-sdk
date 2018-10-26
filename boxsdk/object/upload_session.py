@@ -21,11 +21,11 @@ class UploadSession(BaseObject):
         :rtype:
             `unicode`
         """
-        return self.session.get_url(
+        return self._session.get_url(
             '{0}s/{1}s'.format(self._parent_item_type, self._item_type),
             self._object_id,
             *args
-        ).replace(API.BASE_API_URL, API.UPLOAD_URL)
+        ).replace(self.session.api_config.BASE_API_URL, self.session.api_config.UPLOAD_URL)
 
     def get_parts(self, limit=None, offset=None):
         """
@@ -79,7 +79,7 @@ class UploadSession(BaseObject):
         :type part_content_sha1:
             `unicode` or None
         :returns:
-            The uploaded part.
+            The uploaded part record.
         :rtype:
             `dict`
         """
@@ -107,7 +107,7 @@ class UploadSession(BaseObject):
         Commit a multiput upload.
 
         :param content_sha1:
-            SHA-1 has of the file contents that was uploaded.
+            SHA-1 hash of the file contents that was uploaded.
         :type content_sha1:
             `unicode`
         :param parts:
@@ -115,13 +115,13 @@ class UploadSession(BaseObject):
         :type parts:
             `Iterable` of `dict` or None
         :param file_attributes:
-            An `dict` of attributes to set on file upload.
+            A `dict` of attributes to set on the uploaded file.
         :type file_attributes:
             `dict`
         :param etag:
             If specified, instruct the Box API to delete the folder only if the current version's etag matches.
         :type etag:
-            `unicode`
+            `unicode` or None
         :returns:
             The newly-uploaded file object.
         :rtype:
@@ -148,7 +148,7 @@ class UploadSession(BaseObject):
         ).json()
         entry = response['entries'][0]
         return self.translator.translate(entry['type'])(
-            session=self.session,
+            session=self._session,
             object_id=entry['id'],
             response_object=entry,
         )
@@ -162,5 +162,5 @@ class UploadSession(BaseObject):
         :rtype:
             `bool`
         """
-        response = self._session.delete(self.get_url())
+        return self.delete()
         return response.ok
