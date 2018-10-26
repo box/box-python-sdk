@@ -78,6 +78,7 @@ def main():
         # [1] <https://www.python.org/dev/peps/pep-0426/#environment-markers>
         # [2] <https://www.python.org/dev/peps/pep-0345/#environment-markers>
         'chainmap>=1.0.2': ['2.7'],  # <'3.4'
+        'funcsigs>=1.0.0': ['2.7'],  # <'3.4'
         'enum34>=1.0.4': ['2.7'],   # <'3.4'
     }
     for requirement, python_versions in conditional_dependencies.items():

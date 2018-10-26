@@ -46,7 +46,7 @@ def test_meta_registers_new_item_type_in_default_translator(default_translator, 
     class Foo(BaseAPIJSONObject):
         _item_type = item_type
 
-    assert default_translator.translate(item_type) is Foo
+    assert default_translator.get(item_type) is Foo
     assert (set(default_translator) - set(original_default_translator)) == set([item_type])
 
 
@@ -69,5 +69,5 @@ def test_meta_overrides_registration_if_subclass_redefines_item_type(default_tra
     class FolderSubclass(Folder):
         _item_type = 'folder'
 
-    assert default_translator.translate('folder') is FolderSubclass
+    assert default_translator.get('folder') is FolderSubclass
     assert set(default_translator.keys()) == set(original_default_translator.keys())

@@ -104,4 +104,4 @@ def test_translation_of_page_entries(page_builder, mock_session, item_checker):
     response = {"entries": response_entries}
     page = page_builder(response=response)
     for i, item in enumerate(page):
-        item_checker(mock_session.translator.translate(response_entries[i]['type']), response_entries[i], item)
+        item_checker(mock_session.translator.get(response_entries[i]['type']), response_entries[i], item)
