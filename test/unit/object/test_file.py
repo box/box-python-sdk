@@ -67,6 +67,7 @@ def test_create_upload_session(test_file, mock_box_session):
     upload_session = test_file.create_upload_session(file_size, file_name)
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert isinstance(upload_session, UploadSession)
+    assert upload_session._session == mock_box_session
     assert upload_session.part_size == part_size
     assert upload_session.total_parts == total_parts
     assert upload_session.num_parts_processed == num_parts_processed
