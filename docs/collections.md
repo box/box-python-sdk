@@ -18,7 +18,7 @@ Get a User's Collections
 ------------------------
 
 To get all collections belonging to a user, call [`client.collections(limit=None, offset=0, fields=None)`][collections].
-This method returns a [`BoxObjectCollection`][box_object_collection] that you can use to iterate over all the
+This method returns a `BoxObjectCollection` that you can use to iterate over all the
 [`Collection`][collection_class] objects in the set.
 
 ```python
@@ -28,7 +28,6 @@ for collection in collections:
 ```
 
 [collections]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.collections
-[box_object_collection]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.pagination.html#boxsdk.pagination.box_object_collection.BoxObjectCollection
 [collection_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.collection.Collection
 
 Get the Items in a Collection
@@ -36,7 +35,7 @@ Get the Items in a Collection
 
 To retrieve a list of items contained in a collection, call
 [`collection.get_items(limit=None, offset=0, fields=None)`][get_items].  This method returns a
-[`BoxObjectCollection`][box_object_collection] that you can use to iterate over all the [`Item`][item_class] objects in
+`BoxObjectCollection` that you can use to iterate over all the [`Item`][item_class] objects in
 the collection.
 
 ```python

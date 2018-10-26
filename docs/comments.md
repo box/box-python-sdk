@@ -37,7 +37,7 @@ Get the Comments on a File
 --------------------------
 
 To retrieve the comment left on a file, call [`file.get_comments(limit=None, offset=0, fields=None)`][get_comments].
-This method returns a [`BoxObjectCollection`][box_object_collection] that you can use to iterate over all the
+This method returns a `BoxObjectCollection` that you can use to iterate over all the
 [`Comment`][comment_class] objects in the set.
 
 ```python
@@ -47,7 +47,6 @@ for comment in comments:
 ```
 
 [get_comments]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_comments
-[box_object_collection]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.pagination.html#boxsdk.pagination.box_object_collection.BoxObjectCollection
 
 Add a Comment to a File
 -----------------------

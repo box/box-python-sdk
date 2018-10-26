@@ -27,7 +27,7 @@ List Collaboration Whitelist Entries
 
 To retrieve a list of collaboration whitelist entries, call
 [`collaboration_whitelist.get_entries(limit=None, marker=None, fields=None)`][get_entries].  This method returns a
-[`BoxObjectCollection`][box_object_collection] which can iterate over the [`CollaborationWhitelistEntry`][entry_class]
+`BoxObjectCollection` which can iterate over the [`CollaborationWhitelistEntry`][entry_class]
 objects in the collection.
 
 ```python
@@ -38,7 +38,6 @@ for entry in whitelist_entries:
 ```
 
 [get_entries]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.collaboration_whitelist.CollaborationWhitelist.get_entries
-[box_object_collection]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.pagination.html#boxsdk.pagination.box_object_collection.BoxObjectCollection
 [entry_class]:  https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.collaboration_whitelist_entry.CollaborationWhitelistEntry
 
 Get Information for Collaboration Whitelist Entry
@@ -90,7 +89,7 @@ List Exempt Users
 
 To get all exempt users from the collaboration whitelist, call
 [`collaboration_whitelist.get_exemptions(limit=None, marker=None, fields=None)`][get_exemptions].  This method returns
-a [`BoxObjectCollection`][box_object_collection] that allows you to iterate over each
+a `BoxObjectCollection` that allows you to iterate over each
 [`CollaborationWhitelistExemptTarget`][exemption_class] in the collection.
 
 ```python

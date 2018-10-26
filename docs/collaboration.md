@@ -99,7 +99,7 @@ List Collaborations on a Folder or File
 
 To retrieve all collaborations on a specified [`Folder`][folder_class] or [`File`][file_class], call
 [`item.get_collaborations(limit=None, marker=None, fields=None)`][get_collaborations].  This method returns a
-[`BoxObjectCollection`][box_object_collection] that you can use to iterate over all
+`BoxObjectCollection` that you can use to iterate over all
 [`Collaboration`][collaboration_class] objects in the collection.
 
 ```python
@@ -119,14 +119,13 @@ for collab in collaborations
 [folder_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder
 [file_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File
 [get_collaborations]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_collaborations
-[box_object_collection]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.pagination.html#boxsdk.pagination.box_object_collection.BoxObjectCollection
 
 List Pending Collaborations
 ---------------------------
 
 To retrieve all pending collaborations for the current user, call
 [`client.get_pending_collaborations(limit=None, offset=None, fields=None)`][get_pending_collaborations].  The user can
-accept or reject these collaborations.  This method returns a [`BoxObjectCollection`][box_object_collection] that you
+accept or reject these collaborations.  This method returns a `BoxObjectCollection` that you
 can use to iterate over all pending [`Collaboration`][collaboration_class] objects in the collection.
 
 ```python
