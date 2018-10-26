@@ -55,7 +55,7 @@ class TermsOfService(BaseObject):
 
     def accept(self, user=None):
         """
-        Create a terms of service user status.
+        Accept a terms of service.
 
         :param user:
             The :class:`User` to assign the terms of service to.
@@ -70,7 +70,7 @@ class TermsOfService(BaseObject):
 
     def reject(self, user=None):
         """
-        Create a terms of service user status.
+        Reject a terms of service.
 
         :param user:
             The :class:`User` to assign the terms of service to.

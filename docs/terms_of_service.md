@@ -12,7 +12,7 @@ accept/re-accept/decline for custom applications
 - [Edit a Terms of Service](#edit-a-terms-of-service)
 - [Get Terms of Service](#get-terms-of-service)
 - [List Terms of Service](#list-terms-of-service)
-- [Accept or Decline a Terms of Service for Existing User](#accept-or-decline-a-terms-of-service-for-existing-user)
+- [Update User Status on Terms of Service](#update-user-status-on-terms-of-service)
 - [Accept or Decline a Terms of Service](#accept-or-decline-a-terms-of-service)
 - [Get User Status for a Terms of Service](#get-user-status-for-a-terms-of-service)
 
@@ -64,16 +64,16 @@ for terms_of_service in terms_of_services:
     # Do something
 ```
 
-Accept or Decline a Terms of Service for Existing User
-------------------------------------------------------
+Update User Status on Terms of Service
+--------------------------------------
 
-For new users you can accept or decline a terms of service by calling `terms_of_service.accept(user=None)` or `terms_of_service.reject(user=None)`.
+To update user status on a terms of service call the `terms_of_service_user_status.update_info(update_object)` method.
 
 ```python
-user = client.user('1234')
-user_status = client.terms_of_service('11111').accept(user)
+user_status = client.terms_of_service_user_status('12345').update_info({'is_accepted': True})
 ```
 
+It is important to note that this will accept or decline a custom terms of service for a user. For a user that has taken action in this terms of service, this will update their status. If the user has never taken action on this terms of service then this will return a 404 Not Found Error.
 
 Accept or Decline a Terms of Service
 ------------------------------------
@@ -90,7 +90,7 @@ It is important to note that regardless of whether the user has taken action on 
 Get User Status for a Terms of Service
 -------------------------------------
 
-You can retrieve an iterable of terms of service status for a user by calling
+You can retrieve a terms of service status for a user by calling
 `terms_of_service.get_user_status(user)`.
 
 ```python
