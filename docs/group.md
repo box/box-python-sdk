@@ -14,7 +14,7 @@ Groups are sets of users that can be used in collaborations.
 - [Get a Group's Collaborations](#get-a-groups-collaborations)
 - [Add User to Group](#add-user-to-group)
 - [Get Information about a Group Membership](#get-information-about-a-group-membership)
-- [Update Membership](#update-membership)
+- [Update Group Membership](#update-group-membership)
 - [Remove User from Group](#remove-user-from-group)
 - [List Group Members](#list-group-members)
 - [List Memberships for User](#list-memberships-for-user)
