@@ -72,7 +72,7 @@ class BaseAPIJSONObject(object):
     # also important to add the module name to __all__ in object/__init__.py,
     # so that it will be imported and registered with the default translator.
     _item_type = None
-    _untranslated_fields = None
+    _untranslated_fields = ()
 
     def __init__(self, response_object=None, **kwargs):
         """
@@ -134,6 +134,16 @@ class BaseAPIJSONObject(object):
             `unicode`
         """
         return self._item_type
+
+    @property
+    def object_untranslated_fields(self):
+        """
+        The fields that should not be translated on this object.
+
+        :rtype:
+            `tuple`
+        """
+        return self._untranslated_fields
 
     @property
     def response_object(self):

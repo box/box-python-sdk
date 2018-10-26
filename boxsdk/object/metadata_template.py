@@ -188,6 +188,24 @@ class MetadataField(object):
     """Represents a metadata field when creating or updating a metadata template."""
 
     def __init__(self, field_type, display_name, key=None, options=None):
+        """
+        :param field_type:
+            The type of the metadata field
+        :type field_type:
+            :class:`MetadataFieldType`
+        :param display_name:
+            The human-readable name of the metadata field
+        :type display_name:
+            `uniocode`
+        :param key:
+            The machine-readable key for the metadata field
+        :type key:
+            `unicode` or None
+        :param options:
+            For 'enum' or 'multiSelect' fields, the selectable options
+        :type options:
+            `Iterable` of `unicode`
+        """
         self.type = field_type
         self.name = display_name
         self.key = key
@@ -195,7 +213,7 @@ class MetadataField(object):
 
     def json(self):
         """
-        Returns the correct representation of the temnplate field for the API.
+        Returns the correct representation of the template field for the API.
 
         :rtype:
             `dict`
@@ -212,7 +230,7 @@ class MetadataField(object):
             values['key'] = self.key
 
         if self.type in ['enum', 'multiSelect']:
-            values['options'] = [{'key': opt} for opt in self.options] if self.options is not None else []
+            values['options'] = [{'key': opt} for opt in self.options or ()]
 
         return values
 
@@ -221,11 +239,25 @@ class MetadataTemplate(BaseObject):
     """Represents a metadata template, which contains the the type information for associated metadata fields."""
 
     _item_type = 'metadata_template'
-    _untranslated_fields = ['fields']
+    _untranslated_fields = ('fields',)
     _scope = None
     _template_key = None
 
     def __init__(self, session, object_id, response_object=None):
+        """
+        :param session:
+            The Box session used to make requests.
+        :type session:
+            :class:`BoxSession`
+        :param object_id:
+            The compound ID for the metadata template, formatted as "<scope>/templateKey>"
+        :type object_id:
+            `unicode`
+        :param response_object:
+            A JSON object representing the object returned from a Box API request.
+        :type response_object:
+            `dict` or None
+        """
         super(MetadataTemplate, self).__init__(session, object_id, response_object)
         self._scope, self._template_key = object_id.split('/')
 
