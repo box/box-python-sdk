@@ -9,9 +9,11 @@ from six import text_type
 
 # pylint:disable=redefined-builtin
 # pylint:disable=import-error
+# pylint: disable=too-many-lines
 from six.moves import zip
 # pylint:enable=redefined-builtin
 # pylint:enable=import-error
+
 
 from boxsdk.auth.oauth2 import OAuth2, TokenScope
 from boxsdk.client import Client, DeveloperTokenClient, DevelopmentClient, LoggingClient
@@ -26,6 +28,7 @@ from boxsdk.object.file import File
 from boxsdk.object.group import Group
 from boxsdk.object.storage_policy import StoragePolicy
 from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
+from boxsdk.object.terms_of_service import TermsOfService
 from boxsdk.object.user import User
 from boxsdk.object.trash import Trash
 from boxsdk.object.group_membership import GroupMembership
@@ -225,6 +228,30 @@ def create_group_response():
         'type': 'group',
         'id': 1234,
         'name': 'test_group_name',
+    }
+    return mock_network_response
+
+
+@pytest.fixture(scope='module')
+def tos_id_1():
+    return 101
+
+
+@pytest.fixture(scope='module')
+def tos_id_2():
+    return 202
+
+
+@pytest.fixture(scope='module')
+def terms_of_services_response(tos_id_1, tos_id_2):
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'entries': [
+            {'type': 'terms_of_service', 'id': tos_id_1},
+            {'type': 'terms_of_service', 'id': tos_id_2},
+        ],
+        'total_count': 2,
     }
     return mock_network_response
 
@@ -627,6 +654,55 @@ def test_get_storage_policies(mock_client, mock_box_session):
     assert policy.type == 'storage_policy'
     assert policy.id == '12345'
     assert policy.name == 'Test Storage Policy'
+
+def test_create_terms_of_service(mock_client, mock_box_session):
+    # pylint:disable=redefined-outer-name
+    expected_url = "{0}/terms_of_services".format(API.BASE_API_URL)
+    test_text = 'This is a test text'
+    test_tos_type = 'external'
+    test_status = 'enabled'
+    value = json.dumps({
+        'status': 'enabled',
+        'tos_type': 'external',
+        'text': 'This is a test text',
+    })
+    mock_box_session.post.return_value.json.return_value = {
+        'type': 'terms_of_service',
+        'id': '12345',
+        'status': test_status,
+        'tos_type': test_tos_type,
+        'text': test_text,
+    }
+    new_terms_of_service = mock_client.create_terms_of_service('enabled', 'external', 'This is a test text')
+    mock_box_session.post.assert_called_once_with(expected_url, data=value)
+    assert isinstance(new_terms_of_service, TermsOfService)
+    assert new_terms_of_service.type == 'terms_of_service'
+    assert new_terms_of_service.id == '12345'
+    assert new_terms_of_service.status == test_status
+    assert new_terms_of_service.tos_type == test_tos_type
+    assert new_terms_of_service.text == test_text
+
+
+def test_get_all_terms_of_services(mock_client, mock_box_session):
+    expected_url = "{0}/terms_of_services".format(API.BASE_API_URL)
+    tos_body = {
+        'type': 'terms_of_service',
+        'id': '12345',
+        'status': 'enabled',
+        'tos_type': 'external',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 1,
+        'entries': [tos_body],
+    }
+    services = mock_client.get_terms_of_services(tos_type='external')
+    service = services.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'tos_type': 'external'})
+    assert isinstance(service, TermsOfService)
+    assert service.type == 'terms_of_service'
+    assert service.id == '12345'
+    assert service.status == 'enabled'
+    assert service.tos_type == 'external'
 
 
 def test_create_webhook_returns_the_correct_policy_object(

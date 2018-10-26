@@ -30,6 +30,8 @@ __all__ = list(map(str, [
     'search',
     'storage_policy',
     'storage_policy_assignment',
+    'terms_of_service',
+    'terms_of_service_user_status',
     'trash',
     'task',
     'task_assignment',

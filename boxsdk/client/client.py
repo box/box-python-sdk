@@ -799,6 +799,68 @@ class Client(Cloneable):
             url=self.get_url('storage_policies'),
             limit=limit,
             marker=marker,
+
+    def terms_of_service(self, tos_id):
+        """
+        Initialize a :class:`TermsOfService` object, whose box id is tos_id.
+
+        :param tos_id:
+            The box id of the :class:`TermsOfService` object.
+        :type tos_id:
+            `unicode`
+        :return:
+            A :class:`TermsOfService` object with the given terms of service id.
+        :rtype:
+            :class:`TermsOfService`
+        """
+        return self.translator.get('terms_of_service')(session=self._session, object_id=tos_id)
+
+    def terms_of_service_user_status(self, tos_user_status_id):
+        """
+        Initialize a :class:`TermsOfServiceUserStatus` object, whose box id is tos_user_status_id.
+
+        :param tos_user_status_id:
+            The box id of the :class:`TermsOfServiceUserStatus` object.
+        :type tos_id:
+            `unicode`
+        :return:
+            A :class:`TermsOfServiceUserStatus` object with the given terms of service user status id.
+        :rtype:
+            :class:`TermsOfServiceUserStatus`
+        """
+        return self.translator.get('terms_of_service_user_status')(session=self._session, object_id=tos_user_status_id)
+
+    def get_terms_of_services(self, tos_type=None, limit=None, fields=None):
+        """
+        Get the entries in the terms of service using limit-offset paging.
+
+        :param tos_type:
+            Can be set to `managed` or `external` for the type of terms of service.
+        :type tos_type:
+            :class:`TermsOfServiceType`
+        :param: limit
+            The maximum number of items to return. If limit is set to None, then the default
+            limit (returned by Box in the response) is used.
+        :type: limit
+            `int` or None
+        :param fields:
+            List of fields to request
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the terms of service
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {}
+        if tos_type is not None:
+            additional_params['tos_type'] = tos_type
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self._session.get_url('terms_of_services'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=None,
             fields=fields,
             return_full_pages=False,
         )
@@ -1004,6 +1066,40 @@ class Client(Cloneable):
             marker=marker,
             fields=fields,
             return_full_pages=False,
+        )
+
+    def create_terms_of_service(self, status, tos_type, text):
+        """
+        Create a terms of service.
+
+        :param status:
+            The status of the terms of service.
+        :type status:
+            :class:`TermsOfServiceStatus`
+        :param tos_type:
+            The type of the terms of service. Can be set to `managed` or `external`.
+        :type tos_type:
+            :class:`TermsOfServiceType`
+        :param text:
+            The message of the terms of service.
+        :type text:
+            `unicode`
+        :returns:
+            A newly created :class:`TermsOfService` object
+        :rtype:
+            :class:`TermsOfService`
+        """
+        url = self.get_url('terms_of_services')
+        body = {
+            'status': status,
+            'tos_type': tos_type,
+            'text': text
+        }
+        box_response = self._session.post(url, data=json.dumps(body))
+        response = box_response.json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
         )
 
     @api_call
