@@ -24,7 +24,7 @@ class MusicPlayer(object):
 
     def _get_all_mp3_files(self, client):
         # music_folder = client.folder(folder_id='0').get_subfolder('music')
-        return client.search(query='*.mp3', limit=100, offset=0, file_extensions=['mp3'])
+        return client.search().query(query='*.mp3', limit=100, offset=0, file_extensions=['mp3'])
 
     def play(self):
         for item in self._mp3_files:
