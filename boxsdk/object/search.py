@@ -7,6 +7,19 @@ import json
 from .base_endpoint import BaseEndpoint
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..util.api_call_decorator import api_call
+from ..util.text_enum import TextEnum
+
+
+class SearchScope(TextEnum):
+    """Enum of possible serach scopes."""
+    USER = 'user_content'
+    ENTERPRISE = 'enterprise_content'
+
+
+class TrashContent(TextEnum):
+    """Enum of trash content values."""
+    NONE = 'non_trashed_only'
+    ONLY = 'trashed_only'
 
 
 class MetadataSearchFilter(object):
@@ -159,7 +172,8 @@ class Search(BaseEndpoint):
         return MetadataSearchFilter(template_key, scope)
 
     @api_call
-    def search(
+    # pylint: disable=too-many-arguments,too-many-locals
+    def query(
             self,
             query,
             limit=None,
@@ -169,6 +183,12 @@ class Search(BaseEndpoint):
             metadata_filters=None,
             result_type=None,
             content_types=None,
+            scope=None,
+            created_at_range=None,
+            updated_at_range=None,
+            size_range=None,
+            owner_users=None,
+            trash_content=None,
             fields=None,
             **kwargs
     ):
@@ -207,6 +227,30 @@ class Search(BaseEndpoint):
             Which content types to search. Valid types include name, description, file_content, comments, and tags.
         :type content_types:
             `Iterable` of `unicode`
+        :param scope:
+            The scope of content to search over
+        :type scope:
+            `unicode` or None
+        :param created_at_range:
+            A tuple of the form (lower_bound, upper_bound) for the creation datetime of items to search.
+        :type created_at_range:
+            (`unicode` or None, `unicode` or None)
+        :param updated_at_range:
+            A tuple of the form (lower_bound, upper_bound) for the update datetime of items to search.
+        :type updated_at_range:
+            (`unicode` or None, `unicode` or None)
+        :param size_range:
+            A tuple of the form (lower_bound, upper_bound) for the size in bytes of items to search.
+        :type size_range:
+            (`int` or None, `int` or None)
+        :param owner_users:
+            Owner users to filter content by; only content belonging to these users will be returned.
+        :type owner_users:
+            `iterable` of :class:`User`
+        :param trash_content:
+            Whether to search trashed or non-trashed content.
+        :type trash_content:
+            `unicode` or None
         :param fields:
             Fields to include on the returned items.
         :type fields:
@@ -218,16 +262,29 @@ class Search(BaseEndpoint):
         """
         url = self.get_url()
         additional_params = {'query': query}
-        if ancestor_folders:
+        if ancestor_folders is not None:
             additional_params['ancestor_folder_ids'] = ','.join([folder.object_id for folder in ancestor_folders])
-        if file_extensions:
+        if file_extensions is not None:
             additional_params['file_extensions'] = ','.join(file_extensions)
-        if metadata_filters:
+        if metadata_filters is not None:
             additional_params['mdfilters'] = json.dumps(metadata_filters.as_list())
-        if content_types:
+        if content_types is not None:
             additional_params['content_types'] = ','.join(content_types)
-        if result_type:
+        if result_type is not None:
             additional_params['type'] = result_type
+        if scope is not None:
+            additional_params['scope'] = scope
+        if created_at_range is not None:
+            additional_params['created_at_range'] = '{},{}'.format(created_at_range[0] or '', created_at_range[1] or '')
+        if updated_at_range is not None:
+            additional_params['updated_at_range'] = '{},{}'.format(updated_at_range[0] or '', updated_at_range[1] or '')
+        if size_range is not None:
+            additional_params['size_range'] = '{},{}'.format(size_range[0] or '', size_range[1] or '')
+        if owner_users is not None:
+            additional_params['owner_user_ids'] = ','.join([user.object_id for user in owner_users])
+        if trash_content is not None:
+            additional_params['trash_content'] = trash_content
+
         additional_params.update(kwargs)
 
         return LimitOffsetBasedObjectCollection(
