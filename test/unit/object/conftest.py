@@ -329,13 +329,15 @@ def test_timezone():
 
     class LocalTimezone(tzinfo):
 
-        def utcoffset(self):
+        # pylint: disable=unused-argument
+
+        def utcoffset(self, dt):
             return timedelta(minutes=-8 * 60)
 
-        def tzname(self):
+        def tzname(self, dt):
             return 'America/Los_Angeles'
 
-        def dst(self):
+        def dst(self, dt):
             return timedelta(minutes=-7 * 60)
 
     return LocalTimezone()
