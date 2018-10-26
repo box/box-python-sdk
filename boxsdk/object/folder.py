@@ -91,6 +91,7 @@ class Folder(Item):
 
     _item_type = 'folder'
 
+    @api_call
     def preflight_check(self, size, name):
         """
         Make an API call to check if a new file with given name and size can be uploaded to this folder.
@@ -411,6 +412,7 @@ class Folder(Item):
             response_object=collaboration_response,
         )
 
+    @api_call
     def create_web_link(self, target_url, name=None, description=None):
         """
         Create a WebLink with a given url.

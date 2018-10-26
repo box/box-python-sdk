@@ -264,6 +264,7 @@ class Client(Cloneable):
         """
         return self.translator.get('legal_hold')(session=self._session, object_id=hold_id)
 
+    @api_call
     def create_legal_hold_policy(
             self,
             policy_name,
@@ -318,6 +319,7 @@ class Client(Cloneable):
             response_object=response,
         )
 
+    @api_call
     def get_legal_hold_policies(self, policy_name=None, limit=None, marker=None, fields=None):
         """
         Get the entries in the legal hold policy using limit-offset paging.
@@ -600,6 +602,7 @@ class Client(Cloneable):
         """
         return self.translator.get('webhook')(session=self._session, object_id=webhook_id)
 
+    @api_call
     def create_webhook(self, target, triggers, address):
         """
         Create a webhook on the given file.
@@ -637,6 +640,7 @@ class Client(Cloneable):
             response_object=response,
         )
 
+    @api_call
     def get_webhooks(self, limit=None, marker=None, fields=None):
         """
         Get all webhooks in an enterprise.
@@ -814,6 +818,7 @@ class Client(Cloneable):
         """
         return self.translator.get('retention_policy_assignment')(session=self._session, object_id=assignment_id)
 
+    @api_call
     def create_retention_policy(
             self,
             policy_name,
@@ -882,6 +887,7 @@ class Client(Cloneable):
             response_object=response
         )
 
+    @api_call
     def get_retention_policies(
             self,
             policy_name=None,
@@ -940,6 +946,7 @@ class Client(Cloneable):
             return_full_pages=False,
         )
 
+    @api_call
     def get_file_version_retentions(
             self,
             target_file=None,
@@ -1154,6 +1161,7 @@ class Client(Cloneable):
             response_object=response,
         )
 
+    @api_call
     def get_pending_collaborations(self, limit=None, offset=None, fields=None):
         """
         Get the entries in the pending collaborations using limit-offset paging.
@@ -1185,6 +1193,7 @@ class Client(Cloneable):
             return_full_pages=False,
         )
 
+    @api_call
     def downscope_token(self, scopes, item=None, additional_data=None):
         """
         Generate a downscoped token for the provided file or folder with the provided scopes.

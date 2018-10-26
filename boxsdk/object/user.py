@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from .base_object import BaseObject
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..util.api_call_decorator import api_call
 
 
 class User(BaseObject):
@@ -11,6 +12,7 @@ class User(BaseObject):
 
     _item_type = 'user'
 
+    @api_call
     def get_group_memberships(self, limit=None, offset=None, fields=None):
         """
         Get the entries in the user group membership using limit-offset paging.
