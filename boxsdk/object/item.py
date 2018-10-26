@@ -358,6 +358,7 @@ class Item(BaseObject):
         """
         return Metadata(self._session, self, scope, template)
 
+    @api_call
     def get_watermark(self):
         """
         Return the watermark info for a Box file
@@ -372,6 +373,7 @@ class Item(BaseObject):
         response = box_response.json()
         return self.translator.get('watermark')(response['watermark'])
 
+    @api_call
     def apply_watermark(self):
         """
         Apply watermark on a Box file
@@ -391,6 +393,7 @@ class Item(BaseObject):
         response = box_response.json()
         return self.translator.get('watermark')(response['watermark'])
 
+    @api_call
     def delete_watermark(self):
         """
         Deletes the watermark info for a Box file
@@ -446,6 +449,7 @@ class Item(BaseObject):
         }
         return self.update_info(data)
 
+    @api_call
     def collaborate(self, accessible_by, role, can_view_path=None, notify=None, fields=None):
         """Collaborate user or group onto a Box item.
 
@@ -499,6 +503,7 @@ class Item(BaseObject):
             response_object=response,
         )
 
+    @api_call
     def collaborate_with_login(self, login, role, can_view_path=None, notify=None, fields=None):
         """Collaborate user onto a Box item with the user login.
 
@@ -552,6 +557,7 @@ class Item(BaseObject):
             response_object=response,
         )
 
+    @api_call
     def get_collaborations(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the collaboration.

@@ -15,6 +15,7 @@ class File(Item):
 
     _item_type = 'file'
 
+    @api_call
     def preflight_check(self, size, name=None):
         """
         Make an API call to check if the file can be updated with the new name and size of the file.
@@ -341,6 +342,7 @@ class File(Item):
             response_object=response,
         )
 
+    @api_call
     def create_task(self, message=None, due_at=None):
         """
         Create a task on the given file.
@@ -377,6 +379,7 @@ class File(Item):
             response_object=response,
         )
 
+    @api_call
     def get_tasks(self, fields=None):
         """
         Get the entries in the file tasks.
