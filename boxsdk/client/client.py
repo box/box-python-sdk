@@ -462,67 +462,16 @@ class Client(Cloneable):
         )
 
     @api_call
-    def search(
-            self,
-            query,
-            limit,
-            offset,
-            ancestor_folders=None,
-            file_extensions=None,
-            metadata_filters=None,
-            result_type=None,
-            content_types=None
-    ):
+    def search(self):
         """
-        Search Box for items matching the given query.
+        Get a Search object that can be used for searching Box content.
 
-        :param query:
-            The string to search for.
-        :type query:
-            `unicode`
-        :param limit:
-            The maximum number of items to return.
-        :type limit:
-            `int`
-        :param offset:
-            The search result at which to start the response.
-        :type offset:
-            `int`
-        :param ancestor_folders:
-            Folder ids to limit the search to.
-        :type ancestor_folders:
-            `iterable` of :class:`Folder`
-        :param file_extensions:
-            File extensions to limit the search to.
-        :type file_extensions:
-            `iterable` of `unicode`
-        :param metadata_filters:
-            Filters used for metadata search
-        :type metadata_filters:
-            :class:`MetadataSearchFilters`
-        :param result_type:
-            Which type of result you want. Can be file or folder.
-        :type result_type:
-            `unicode`
-        :param content_types:
-            Which content types to search. Valid types include name, description, file_content, comments, and tags.
-        :type content_types:
-            `Iterable` of `unicode`
         :return:
-            A list of items that match the search query.
+            The Search object
         :rtype:
-            `list` of :class:`Item`
+            :class:`Search`
         """
-        return Search(self._session).search(
-            query=query,
-            limit=limit,
-            offset=offset,
-            ancestor_folders=ancestor_folders,
-            file_extensions=file_extensions,
-            metadata_filters=metadata_filters,
-            result_type=result_type,
-            content_types=content_types,
-        )
+        return Search(self._session)
 
     def events(self):
         """

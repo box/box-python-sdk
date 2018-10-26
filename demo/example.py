@@ -115,7 +115,7 @@ def update_file(client):
 
 
 def search_files(client):
-    search_results = client.search(
+    search_results = client.search().query(
         'i-am-a-file.txt',
         limit=2,
         offset=0,

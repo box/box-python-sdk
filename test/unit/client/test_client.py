@@ -440,7 +440,7 @@ def test_search_instantiates_search_and_calls_search(
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = search_response
     search_term = 'lolcatz'
-    search_result = mock_client.search(
+    search_result = mock_client.search().query(
         search_term,
         10,
         0,
