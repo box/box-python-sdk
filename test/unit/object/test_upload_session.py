@@ -49,11 +49,11 @@ def test_abort(test_upload_session, mock_box_session):
     expected_url = '{0}/files/upload_sessions/{1}'.format(API.UPLOAD_URL, test_upload_session.object_id)
     mock_box_session.delete.return_value.ok = True
     result = test_upload_session.abort()
-    mock_box_session.delete.assert_called_once_with(expected_url)
+    mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=None, params={})
     assert result is True
 
 
-def test_upload_part(test_upload_session, mock_box_session):
+def test_upload_part_bytes(test_upload_session, mock_box_session):
     expected_url = '{0}/files/upload_sessions/{1}'.format(API.UPLOAD_URL, test_upload_session.object_id)
     part_bytes = BytesIO(b'abcdefgh')
     chunk = part_bytes.read(20)
@@ -65,7 +65,7 @@ def test_upload_part(test_upload_session, mock_box_session):
         'Digest': 'SHA={}'.format(expected_sha1),
         'Content-Range': 'bytes 32-39/80',
     }
-    mock_box_session.put.return_value = {
+    mock_box_session.put.return_value.json.return_value = {
         'part': {
             'part_id': 'ABCDEF123',
             'offset': offset,
@@ -73,11 +73,13 @@ def test_upload_part(test_upload_session, mock_box_session):
             'sha1': expected_sha1,
         },
     }
-    part = test_upload_session.upload_part(chunk, offset, total_size)
+    part = test_upload_session.upload_part_bytes(chunk, offset, total_size)
 
     mock_box_session.put.assert_called_once_with(expected_url, data=chunk, headers=expected_headers)
     assert isinstance(part, dict)
     assert part['sha1'] == expected_sha1
+    assert part['size'] == 8
+    assert part['part_id'] == 'ABCDED123'
 
 
 def test_commit(test_upload_session, mock_box_session):

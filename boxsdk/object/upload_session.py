@@ -147,9 +147,8 @@ class UploadSession(BaseObject):
             data=json.dumps(body),
         ).json()
         entry = response['entries'][0]
-        return self.translator.translate(entry['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=entry['id'],
             response_object=entry,
         )
 

@@ -58,7 +58,7 @@ for part_num in range(upload_session.total_parts):
     updated_sha1 = sha1.update(chunk)
 content_sha1 = sha1.digest()
 uploaded_file = upload_session.commit(content_sha1=content_sha1, parts=part_array)
-print('File ID: {0} and File Name: {1}', uploaded_file.id, uploaded_file.name)
+print('File ID: {0} and File Name: {1}'.format(uploaded_file.id, uploaded_file.name))
 ```
 
 The individual endpoint methods are detailed below:
