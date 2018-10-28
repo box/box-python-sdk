@@ -67,3 +67,5 @@ To delete a web link, call [`web_link.delete()`][delete] This method return `Tru
 client.web_link('12345').delete()
 print('The web link was deleted!')
 ```
+
+[delete]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.delete
