@@ -43,9 +43,9 @@ class UploadSession(BaseObject):
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            Returns a `list` of parts uploaded so far.
+            Returns a :class:`BoxObjectCollection` object containing the uploaded parts.
         :rtype:
-            `list` of `dict`
+            :class:`BoxObjectCollection`
         """
         return LimitOffsetBasedDictCollection(
             session=self.session,
@@ -76,7 +76,7 @@ class UploadSession(BaseObject):
         :param part_content_sha1:
             SHA-1 hash of the part's content. If not specified, this will be calculated.
         :type part_content_sha1:
-            `unicode` or None
+            `bytes` or None
         :returns:
             The uploaded part record.
         :rtype:
@@ -133,9 +133,7 @@ class UploadSession(BaseObject):
         if parts is not None:
             body['parts'] = parts
         else:
-            for part in self.get_parts():
-                parts_list.append(part)
-            body['parts'] = parts_list
+            body['parts'] = [part for part in self.get_parts()]
         headers = {
             'Content-Type': 'application/json',
             'Digest': 'SHA={0}'.format(base64.b64encode(content_sha1).decode('utf-8')),

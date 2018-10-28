@@ -19,19 +19,21 @@ similarly to file objects.
 Create Web Link
 ---------------
 
-Calling `folder.create_web_link(target_url, name=None, description=None)` will let you create a new web link with a specified name and description.
+To create a web link object, first call `[client.folder(folder_id)]`[folder] to construct the appropriate ['Folder'][folder_class] object, and then calling [`folder.create_web_link(target_url, name=None, description=None)`][create] will let you create a new web link with a specified name and description. This method return an updated [`WebLink`][web_link_class] object populated with data from the API, leaving the original unmodified.
 
 ```python
-folder_id = '1234'
-target_url = 'https://example.com'
-link_name = 'Example Link'
-link_description = 'This is the description'
-web_link = client.folder(folder_id).create_web_link(target_url, link_name, link_description)
+web_link = client.folder('12345').create_web_link('https://example.com', 'Example Link', 'This is the description')
 ```
+
+[folder]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.Folder
+[folder_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder
+[create]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.create_web_link
+[web_link_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.web_link.WebLink
 
 Get Web Link
 ------------
 
+To get a web link object, first call `[client.web_link(web_link_id)]`[web_link] to construct the appropriate [`WebLink`][web_link_class] object, and then calling []
 Calling `web_link.get()` can be used to retrieve information regarding a specific weblink.
 
 ```python
