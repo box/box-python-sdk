@@ -127,7 +127,6 @@ class UploadSession(BaseObject):
             :class:`File`
         """
         body = {}
-        parts_list = []
         if file_attributes is not None:
             body['attributes'] = file_attributes
         if parts is not None:
