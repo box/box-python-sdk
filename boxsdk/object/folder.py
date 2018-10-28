@@ -122,7 +122,7 @@ class Folder(Item):
         :type file_size:
             `int`
         :param file_name:
-            The new name of the file that will be uploaded.
+            The name of the file that will be uploaded.
         :type file_name:
             `unicode`
         :returns:
