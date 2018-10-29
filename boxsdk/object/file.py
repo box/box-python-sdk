@@ -4,7 +4,6 @@ from __future__ import unicode_literals, absolute_import
 
 import json
 
-from boxsdk.config import API
 from .item import Item
 from ..util.api_call_decorator import api_call
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
