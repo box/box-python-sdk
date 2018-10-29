@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from datetime import date
 import os
 from mock import Mock
 import pytest
@@ -325,7 +324,7 @@ def shared_link_password(request):
     return request.param
 
 
-@pytest.fixture(params=(date(2015, 5, 5), None))
+@pytest.fixture(params=('2018-10-31', '2018-10-31T23:59:59-07:00', None))
 def shared_link_unshared_at(request):
     return request.param
 

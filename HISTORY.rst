@@ -15,6 +15,10 @@ Release History
 - ``client.get_memberships(...)`` has a change in signature. The limit and offset parameters have swapped positions to keep
   consistency with the rest of the SDK.
 - ``client.groups(...)`` has been changed to ``client.get_groups``. The limit and offset parameters have swapped positions.
+- The ``unshared_at`` parameter for ``item.create_shared_link(...)`` and ``file.get_shared_link_download_url(...)``
+  now takes an `RFC3339-formatted <https://tools.ietf.org/html/rfc3339#section-5.8>` ``unicode`` string instead of a
+  ``datetime.date``.  Users migrating from v1.x can pass the value of ``date.isoformat()`` instead of the ``date``
+  object itself.
 - ``Events.get_events(...)`` now returns a list of ``Event`` instances rather than a list of ``dict``
   representing events.  ``Event`` inherits from ``Mapping`` but will not have all the same capabilities as
   ``dict``.
