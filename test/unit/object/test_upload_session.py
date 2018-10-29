@@ -55,8 +55,7 @@ def test_abort(test_upload_session, mock_box_session):
 
 def test_upload_part_bytes(test_upload_session, mock_box_session):
     expected_url = '{0}/files/upload_sessions/{1}'.format(API.UPLOAD_URL, test_upload_session.object_id)
-    part_bytes = BytesIO(b'abcdefgh')
-    chunk = part_bytes.read(20)
+    part_bytes = b'abcdefgh'
     offset = 32
     total_size = 80
     expected_sha1 = 'QlrxKgdDUCsyLpOgFbz4aOMk1Wo='
@@ -73,9 +72,9 @@ def test_upload_part_bytes(test_upload_session, mock_box_session):
             'sha1': expected_sha1,
         },
     }
-    part = test_upload_session.upload_part_bytes(chunk, offset, total_size)
+    part = test_upload_session.upload_part_bytes(part_bytes, offset, total_size)
 
-    mock_box_session.put.assert_called_once_with(expected_url, data=chunk, headers=expected_headers)
+    mock_box_session.put.assert_called_once_with(expected_url, data=part_bytes, headers=expected_headers)
     assert isinstance(part, dict)
     assert part['sha1'] == expected_sha1
     assert part['size'] == 8

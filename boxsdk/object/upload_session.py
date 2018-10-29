@@ -38,10 +38,6 @@ class UploadSession(BaseObject):
             The index at which to start returning items.
         :type offset:
             `int` or None
-        :param fields:
-            Fields to include on the returned items.
-        :type fields:
-            `Iterable` of `unicode`
         :returns:
             Returns a :class:`BoxObjectCollection` object containing the uploaded parts.
         :rtype:
