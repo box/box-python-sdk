@@ -193,9 +193,11 @@ class Item(BaseObject):
             `unicode` or None
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates.
+            and has permission to set expiration dates.  Takes an RFC3339-formatted string, e.g.
+            '2018-10-31T23:59:59-07:00' for 11:59:59 PM on October 31, 2018 in the America/Los_Angeles timezone.
+            The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
         :type unshared_at:
-            :class:`datetime.date` or None
+            `unicode` or None
         :param allow_download:
             Whether or not the item being shared can be downloaded when accessed via the shared link.
             If this parameter is None, the default setting will be used.
@@ -225,7 +227,7 @@ class Item(BaseObject):
         }
 
         if unshared_at is not None:
-            data['shared_link']['unshared_at'] = unshared_at.isoformat()
+            data['shared_link']['unshared_at'] = unshared_at
 
         if allow_download is not None or allow_preview is not None:
             data['shared_link']['permissions'] = permissions = {}
