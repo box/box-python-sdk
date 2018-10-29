@@ -559,7 +559,7 @@ def test_get_embed_url(test_file, mock_box_session):
         'type': 'file',
         'id': test_file.object_id,
         'expiring_embed_link': {
-            'url':  embed_url,
+            'url': embed_url,
         },
     }
 
@@ -610,16 +610,16 @@ def test_get_representation_info(test_file, mock_box_session, rep_hints, expecte
     ('png', 1, 2, 3, 4, {'min_width': 1, 'min_height': 2, 'max_width': 3, 'max_height': 4}),
 ])
 def test_get_thumbnail(
-        test_file,
-        mock_box_session,
-        mock_content_response,
-        extension,
-        min_width,
-        min_height,
-        max_width,
-        max_height,
-        expected_params,
-    ):
+    test_file,
+    mock_box_session,
+    mock_content_response,
+    extension,
+    min_width,
+    min_height,
+    max_width,
+    max_height,
+    expected_params,
+):
     expected_url = '{0}/files/{1}/thumbnail.{2}'.format(API.BASE_API_URL, test_file.object_id, extension)
     mock_box_session.get.return_value = mock_content_response
 

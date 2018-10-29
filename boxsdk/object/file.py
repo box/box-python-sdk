@@ -3,10 +3,8 @@
 from __future__ import unicode_literals
 
 import json
-from time import sleep
 
 from .item import Item
-from ..exception import BoxException
 from ..util.api_call_decorator import api_call
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -60,7 +58,7 @@ class File(Item):
         :type file_version:
             :class:`FileVersion` or None
         :param byte_range:
-            A tuple of inclusive byte offsets to download, e.g. (100, 199) to download the second 100 bytes of a file 
+            A tuple of inclusive byte offsets to download, e.g. (100, 199) to download the second 100 bytes of a file
         :type byte_range:
             (`int`, `int`)
         :returns:
@@ -88,7 +86,7 @@ class File(Item):
         :type file_version:
             :class:`FileVersion` or None
         :param byte_range:
-            A tuple of inclusive byte offsets to download, e.g. (100, 199) to download the second 100 bytes of a file 
+            A tuple of inclusive byte offsets to download, e.g. (100, 199) to download the second 100 bytes of a file
         :type byte_range:
             (`int`, `int`)
         """
@@ -605,6 +603,7 @@ class File(Item):
         return response.content
 
     def copy(self, parent_folder, name=None, file_version=None):
+        # pylint: disable=arguments-differ
         """Copy the item to the given folder.
 
         :param parent_folder:
