@@ -84,7 +84,13 @@ class Client(Cloneable):
         :rtype:
             :class:`Folder`
         """
-        return self.translator.translate('folder')(session=self._session, object_id=folder_id)
+        return self.translator.get('folder')(session=self._session, object_id=folder_id)
+
+    def root_folder(self):
+        """
+        Returns a user's root folder object.
+        """
+        return self.folder('0')
 
     def file(self, file_id):
         """
@@ -99,7 +105,7 @@ class Client(Cloneable):
         :rtype:
             :class:`File`
         """
-        return self.translator.translate('file')(session=self._session, object_id=file_id)
+        return self.translator.get('file')(session=self._session, object_id=file_id)
 
     def comment(self, comment_id):
         """
@@ -114,7 +120,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Comment`
         """
-        return self.translator.translate('comment')(session=self._session, object_id=comment_id)
+        return self.translator.get('comment')(session=self._session, object_id=comment_id)
 
     def user(self, user_id='me'):
         """
@@ -129,7 +135,7 @@ class Client(Cloneable):
         :rtype:
             :class:`User`
         """
-        return self.translator.translate('user')(session=self._session, object_id=user_id)
+        return self.translator.get('user')(session=self._session, object_id=user_id)
 
     def group(self, group_id):
         """
@@ -144,7 +150,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Group`
         """
-        return self.translator.translate('group')(session=self._session, object_id=group_id)
+        return self.translator.get('group')(session=self._session, object_id=group_id)
 
     def collaboration(self, collab_id):
         """
@@ -159,7 +165,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Collaboration`
         """
-        return self.translator.translate('collaboration')(session=self._session, object_id=collab_id)
+        return self.translator.get('collaboration')(session=self._session, object_id=collab_id)
 
     def collaboration_whitelist(self):
         """
@@ -226,7 +232,7 @@ class Client(Cloneable):
         :rtype:
             :class:`LegalHoldPolicy`
         """
-        return self.translator.translate('legal_hold_policy')(session=self._session, object_id=policy_id)
+        return self.translator.get('legal_hold_policy')(session=self._session, object_id=policy_id)
 
     def legal_hold_policy_assignment(self, policy_assignment_id):
         """
@@ -241,7 +247,7 @@ class Client(Cloneable):
         :rtype:
             :class:`LegalHoldPolicyAssignment`
         """
-        return self.translator.translate('legal_hold_policy_assignment')(session=self._session, object_id=policy_assignment_id)
+        return self.translator.get('legal_hold_policy_assignment')(session=self._session, object_id=policy_assignment_id)
 
     def legal_hold(self, hold_id):
         """
@@ -256,8 +262,9 @@ class Client(Cloneable):
         :rtype:
             :class:`LegalHold`
         """
-        return self.translator.translate('legal_hold')(session=self._session, object_id=hold_id)
+        return self.translator.get('legal_hold')(session=self._session, object_id=hold_id)
 
+    @api_call
     def create_legal_hold_policy(
             self,
             policy_name,
@@ -307,12 +314,12 @@ class Client(Cloneable):
             policy_attributes['is_ongoing'] = is_ongoing
         box_response = self._session.post(url, data=json.dumps(policy_attributes))
         response = box_response.json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
+    @api_call
     def get_legal_hold_policies(self, policy_name=None, limit=None, marker=None, fields=None):
         """
         Get the entries in the legal hold policy using limit-offset paging.
@@ -364,7 +371,7 @@ class Client(Cloneable):
         :rtype:
             :class:`Collection`
         """
-        return self.translator.translate('collection')(session=self._session, object_id=collection_id)
+        return self.translator.get('collection')(session=self._session, object_id=collection_id)
 
     @api_call
     def collections(self, limit=None, offset=0, fields=None):
@@ -455,67 +462,16 @@ class Client(Cloneable):
         )
 
     @api_call
-    def search(
-            self,
-            query,
-            limit,
-            offset,
-            ancestor_folders=None,
-            file_extensions=None,
-            metadata_filters=None,
-            result_type=None,
-            content_types=None
-    ):
+    def search(self):
         """
-        Search Box for items matching the given query.
+        Get a Search object that can be used for searching Box content.
 
-        :param query:
-            The string to search for.
-        :type query:
-            `unicode`
-        :param limit:
-            The maximum number of items to return.
-        :type limit:
-            `int`
-        :param offset:
-            The search result at which to start the response.
-        :type offset:
-            `int`
-        :param ancestor_folders:
-            Folder ids to limit the search to.
-        :type ancestor_folders:
-            `iterable` of :class:`Folder`
-        :param file_extensions:
-            File extensions to limit the search to.
-        :type file_extensions:
-            `iterable` of `unicode`
-        :param metadata_filters:
-            Filters used for metadata search
-        :type metadata_filters:
-            :class:`MetadataSearchFilters`
-        :param result_type:
-            Which type of result you want. Can be file or folder.
-        :type result_type:
-            `unicode`
-        :param content_types:
-            Which content types to search. Valid types include name, description, file_content, comments, and tags.
-        :type content_types:
-            `Iterable` of `unicode`
         :return:
-            A list of items that match the search query.
+            The Search object
         :rtype:
-            `list` of :class:`Item`
+            :class:`Search`
         """
-        return Search(self._session).search(
-            query=query,
-            limit=limit,
-            offset=offset,
-            ancestor_folders=ancestor_folders,
-            file_extensions=file_extensions,
-            metadata_filters=metadata_filters,
-            result_type=result_type,
-            content_types=content_types,
-        )
+        return Search(self._session)
 
     def events(self):
         """
@@ -536,7 +492,7 @@ class Client(Cloneable):
         :rtype:
             :class:`GroupMembership`
         """
-        return self.translator.translate('group_membership')(
+        return self.translator.get('group_membership')(
             session=self._session,
             object_id=group_membership_id,
         )
@@ -596,6 +552,7 @@ class Client(Cloneable):
         """
         return self.translator.get('webhook')(session=self._session, object_id=webhook_id)
 
+    @api_call
     def create_webhook(self, target, triggers, address):
         """
         Create a webhook on the given file.
@@ -628,12 +585,12 @@ class Client(Cloneable):
         }
         box_response = self._session.post(url, data=json.dumps(webhook_attributes))
         response = box_response.json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
+    @api_call
     def get_webhooks(self, limit=None, marker=None, fields=None):
         """
         Get all webhooks in an enterprise.
@@ -731,10 +688,134 @@ class Client(Cloneable):
             additional_params['fields'] = ','.join(fields)
         box_response = self._session.post(url, data=json.dumps(body_attributes), params=additional_params)
         response = box_response.json()
-        return self.translator.translate('group')(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
+        )
+
+    def storage_policy(self, policy_id):
+        """
+        Initialize a :class:`StoragePolicy` object, whose box id is policy_id.
+
+        :param policy_id:
+            The box ID of the :class:`StoragePolicy` object.
+        :type policy_id:
+            `unicode`
+        :return:
+            A :class:`StoragePolicy` object with the given entry ID.
+        :rtype:
+            :class:`StoragePolicy`
+        """
+        return self.translator.get('storage_policy')(session=self._session, object_id=policy_id)
+
+    def storage_policy_assignment(self, assignment_id):
+        """
+        Initialize a :class:`StoragePolicyAssignment` object, whose box id is assignment_id.
+
+        :param assignment_id:
+            The box ID of the :class:`StoragePolicyAssignment` object.
+        :type assignment_id:
+            `unicode`
+        :return:
+            A :class:`StoragePolicyAssignment` object with the given entry ID.
+        :rtype:
+            :class:`StoragePolicyAssignment`
+        """
+        return self.translator.get('storage_policy_assignment')(session=self._session, object_id=assignment_id)
+
+    def get_storage_policies(self, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the storage policy using marker-based paging.
+
+        :param limit:
+            The maximum number of items to return.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start returning items from when using marker-based paging.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            Returns the storage policies available for the current enterprise.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('storage_policies'),
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
+
+    def terms_of_service(self, tos_id):
+        """
+        Initialize a :class:`TermsOfService` object, whose box id is tos_id.
+
+        :param tos_id:
+            The box id of the :class:`TermsOfService` object.
+        :type tos_id:
+            `unicode`
+        :return:
+            A :class:`TermsOfService` object with the given terms of service id.
+        :rtype:
+            :class:`TermsOfService`
+        """
+        return self.translator.get('terms_of_service')(session=self._session, object_id=tos_id)
+
+    def terms_of_service_user_status(self, tos_user_status_id):
+        """
+        Initialize a :class:`TermsOfServiceUserStatus` object, whose box id is tos_user_status_id.
+
+        :param tos_user_status_id:
+            The box id of the :class:`TermsOfServiceUserStatus` object.
+        :type tos_id:
+            `unicode`
+        :return:
+            A :class:`TermsOfServiceUserStatus` object with the given terms of service user status id.
+        :rtype:
+            :class:`TermsOfServiceUserStatus`
+        """
+        return self.translator.get('terms_of_service_user_status')(session=self._session, object_id=tos_user_status_id)
+
+    def get_terms_of_services(self, tos_type=None, limit=None, fields=None):
+        """
+        Get the entries in the terms of service using limit-offset paging.
+
+        :param tos_type:
+            Can be set to `managed` or `external` for the type of terms of service.
+        :type tos_type:
+            :class:`TermsOfServiceType`
+        :param: limit
+            The maximum number of items to return. If limit is set to None, then the default
+            limit (returned by Box in the response) is used.
+        :type: limit
+            `int` or None
+        :param fields:
+            List of fields to request
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the terms of service
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {}
+        if tos_type is not None:
+            additional_params['tos_type'] = tos_type
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self._session.get_url('terms_of_services'),
+            additional_params=additional_params,
+            limit=limit,
+            marker=None,
+            fields=fields,
+            return_full_pages=False,
         )
 
     def task(self, task_id):
@@ -780,7 +861,7 @@ class Client(Cloneable):
         :rtype:
             :class:`RetentionPolicy`
         """
-        return self.translator.translate('retention_policy')(session=self._session, object_id=retention_id)
+        return self.translator.get('retention_policy')(session=self._session, object_id=retention_id)
 
     def file_version_retention(self, retention_id):
         """
@@ -795,7 +876,7 @@ class Client(Cloneable):
         :rtype:
             :class:`FileVersionRetention`
         """
-        return self.translator.translate('file_version_retention')(session=self._session, object_id=retention_id)
+        return self.translator.get('file_version_retention')(session=self._session, object_id=retention_id)
 
     def retention_policy_assignment(self, assignment_id):
         """
@@ -810,8 +891,9 @@ class Client(Cloneable):
         :rtype:
             :class:`RetentionPolicyAssignment`
         """
-        return self.translator.translate('retention_policy_assignment')(session=self._session, object_id=assignment_id)
+        return self.translator.get('retention_policy_assignment')(session=self._session, object_id=assignment_id)
 
+    @api_call
     def create_retention_policy(
             self,
             policy_name,
@@ -875,8 +957,12 @@ class Client(Cloneable):
             retention_attributes['custom_notification_recipients'] = user_list
         box_response = self._session.post(url, data=json.dumps(retention_attributes))
         response = box_response.json()
-        return self.translator.translate(response['type'])(session=self._session, object_id=response['id'], response_object=response)
+        return self.translator.translate(
+            session=self._session,
+            response_object=response
+        )
 
+    @api_call
     def get_retention_policies(
             self,
             policy_name=None,
@@ -935,6 +1021,41 @@ class Client(Cloneable):
             return_full_pages=False,
         )
 
+    def create_terms_of_service(self, status, tos_type, text):
+        """
+        Create a terms of service.
+
+        :param status:
+            The status of the terms of service.
+        :type status:
+            :class:`TermsOfServiceStatus`
+        :param tos_type:
+            The type of the terms of service. Can be set to `managed` or `external`.
+        :type tos_type:
+            :class:`TermsOfServiceType`
+        :param text:
+            The message of the terms of service.
+        :type text:
+            `unicode`
+        :returns:
+            A newly created :class:`TermsOfService` object
+        :rtype:
+            :class:`TermsOfService`
+        """
+        url = self.get_url('terms_of_services')
+        body = {
+            'status': status,
+            'tos_type': tos_type,
+            'text': text
+        }
+        box_response = self._session.post(url, data=json.dumps(body))
+        response = box_response.json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
+        )
+
+    @api_call
     def get_file_version_retentions(
             self,
             target_file=None,
@@ -1026,7 +1147,7 @@ class Client(Cloneable):
         :rtype:
             :class:`WebLink`
         """
-        return self.translator.translate('web_link')(session=self._session, object_id=web_link_id)
+        return self.translator.get('web_link')(session=self._session, object_id=web_link_id)
 
     @api_call
     def get_recent_items(self, limit=None, marker=None, fields=None, **collection_kwargs):
@@ -1090,9 +1211,8 @@ class Client(Cloneable):
             self.get_url('shared_items'),
             headers=get_shared_link_header(shared_link, password),
         ).json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session.with_shared_link(shared_link, password),
-            object_id=response['id'],
             response_object=response,
         )
 
@@ -1145,12 +1265,12 @@ class Client(Cloneable):
             user_attributes['is_platform_access_only'] = True
         box_response = self._session.post(url, data=json.dumps(user_attributes))
         response = box_response.json()
-        return self.translator.translate('user')(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
+    @api_call
     def get_pending_collaborations(self, limit=None, offset=None, fields=None):
         """
         Get the entries in the pending collaborations using limit-offset paging.
@@ -1182,6 +1302,7 @@ class Client(Cloneable):
             return_full_pages=False,
         )
 
+    @api_call
     def downscope_token(self, scopes, item=None, additional_data=None):
         """
         Generate a downscoped token for the provided file or folder with the provided scopes.
@@ -1254,7 +1375,7 @@ class Client(Cloneable):
         :rtype:
             :class:`DevicePinner`
         """
-        return self.translator.translate('device_pinner')(session=self._session, object_id=device_pin_id)
+        return self.translator.get('device_pinner')(session=self._session, object_id=device_pin_id)
 
     def device_pinners(self, enterprise_id, direction=None, limit=None, marker=None, fields=None):
         """

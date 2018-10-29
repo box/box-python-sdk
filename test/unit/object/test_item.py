@@ -125,7 +125,7 @@ def test_get_shared_link(
     if shared_link_access is not None:
         expected_data['shared_link']['access'] = shared_link_access
     if shared_link_unshared_at is not None:
-        expected_data['shared_link']['unshared_at'] = shared_link_unshared_at.isoformat()
+        expected_data['shared_link']['unshared_at'] = shared_link_unshared_at
     if shared_link_can_download is not None or shared_link_can_preview is not None:
         expected_data['shared_link']['permissions'] = permissions = {}
         if shared_link_can_download is not None:

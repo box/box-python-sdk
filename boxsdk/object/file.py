@@ -15,6 +15,7 @@ class File(Item):
 
     _item_type = 'file'
 
+    @api_call
     def preflight_check(self, size, name=None):
         """
         Make an API call to check if the file can be updated with the new name and size of the file.
@@ -258,9 +259,11 @@ class File(Item):
             `unicode` or None
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates.
+            and has permission to set expiration dates.  Takes an RFC3339-formatted string, e.g.
+            '2018-10-31T23:59:59-07:00' for 11:59:59 PM on October 31, 2018 in the America/Los_Angeles timezone.
+            The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
         :type unshared_at:
-            :class:`datetime.date` or None
+            `unicode` or None
         :param allow_preview:
             Whether or not the item being shared can be previewed when accessed via the shared link.
             If this parameter is None, the default setting will be used.
@@ -328,7 +331,7 @@ class File(Item):
             `unicode`
         """
         url = self._session.get_url('comments')
-        comment_class = self._session.translator.translate('comment')
+        comment_class = self._session.translator.get('comment')
         data = comment_class.construct_params_from_message(message)
         data['item'] = {
             'type': 'file',
@@ -336,12 +339,12 @@ class File(Item):
         }
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
-        return self._session.translator.translate(response['type'])(
+        return self._session.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
+    @api_call
     def create_task(self, message=None, due_at=None):
         """
         Create a task on the given file.
@@ -373,12 +376,12 @@ class File(Item):
             task_attributes['due_at'] = due_at
         box_response = self._session.post(url, data=json.dumps(task_attributes))
         response = box_response.json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
+    @api_call
     def get_tasks(self, fields=None):
         """
         Get the entries in the file tasks.

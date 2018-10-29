@@ -91,6 +91,7 @@ class Folder(Item):
 
     _item_type = 'folder'
 
+    @api_call
     def preflight_check(self, size, name):
         """
         Make an API call to check if a new file with given name and size can be uploaded to this folder.
@@ -255,10 +256,8 @@ class Folder(Item):
         file_response = self._session.post(url, data=data, files=files, expect_json_response=False).json()
         if 'entries' in file_response:
             file_response = file_response['entries'][0]
-        file_id = file_response['id']
-        return self.translator.translate(file_response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=file_id,
             response_object=file_response,
         )
 
@@ -337,9 +336,8 @@ class Folder(Item):
         }
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
-        return self.__class__(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
@@ -409,13 +407,12 @@ class Folder(Item):
         params = {'notify': notify}
         box_response = self._session.post(url, expect_json_response=True, data=data, params=params)
         collaboration_response = box_response.json()
-        collab_id = collaboration_response['id']
-        return self.translator.translate(collaboration_response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=collab_id,
             response_object=collaboration_response,
         )
 
+    @api_call
     def create_web_link(self, target_url, name=None, description=None):
         """
         Create a WebLink with a given url.
@@ -449,9 +446,8 @@ class Folder(Item):
         if description is not None:
             web_link_attributes['description'] = description
         response = self._session.post(url, data=json.dumps(web_link_attributes)).json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response
         )
 
