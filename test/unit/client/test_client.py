@@ -34,6 +34,7 @@ from boxsdk.object.storage_policy import StoragePolicy
 from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.object.terms_of_service import TermsOfService
 from boxsdk.object.user import User
+from boxsdk.object.upload_session import UploadSession
 from boxsdk.object.trash import Trash
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.retention_policy import RetentionPolicy
@@ -380,6 +381,7 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
     (GroupMembership, 'group_membership'),
     (Enterprise, 'enterprise'),
     (Webhook, 'webhook'),
+    (UploadSession, 'upload_session'),
     (StoragePolicy, 'storage_policy'),
     (StoragePolicyAssignment, 'storage_policy_assignment'),
 ])

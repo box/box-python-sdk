@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 import json
 
@@ -35,6 +35,36 @@ class File(Item):
             size=size,
             name=name,
             file_id=self._object_id,
+        )
+
+    def create_upload_session(self, file_size, file_name=None):
+        """
+        Create a new chunked upload session for uploading a new version of the file.
+
+        :param file_size:
+            The size of the file in bytes that will be uploaded.
+        :type file_size:
+            `int`
+        :param file_name:
+            The new name of the file version that will be uploaded.
+        :type file_name:
+            `unicode` or None
+        :returns:
+            A :class:`UploadSession` object.
+        :rtype:
+            :class:`UploadSession`
+        """
+        body_params = {
+            'file_id': self.object_id,
+            'file_size': file_size,
+        }
+        if file_name is not None:
+            body_params['file_name'] = file_name
+        url = self.get_url('upload_sessions').replace(self.session.api_config.BASE_API_URL, self.session.api_config.UPLOAD_URL)
+        response = self._session.post(url, data=json.dumps(body_params)).json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
         )
 
     def _get_accelerator_upload_url_for_update(self):

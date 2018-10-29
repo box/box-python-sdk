@@ -10,6 +10,7 @@ from boxsdk.exception import BoxAPIException
 from boxsdk.object.comment import Comment
 from boxsdk.object.file import File
 from boxsdk.object.task import Task
+from boxsdk.object.upload_session import UploadSession
 
 
 # pylint:disable=protected-access
@@ -40,6 +41,38 @@ def test_delete_file(test_file, mock_box_session, etag, if_match_header):
         params={},
         headers=if_match_header,
     )
+
+
+def test_create_upload_session(test_file, mock_box_session):
+    expected_url = '{0}/files/{1}/upload_sessions'.format(API.UPLOAD_URL, test_file.object_id)
+    file_size = 197520
+    part_size = 12345
+    total_parts = 16
+    num_parts_processed = 0
+    upload_session_type = 'upload_session'
+    upload_session_id = 'F971964745A5CD0C001BBE4E58196BFD'
+    file_name = 'test_file.pdf'
+    expected_data = {
+        'file_id': test_file.object_id,
+        'file_size': file_size,
+        'file_name': file_name
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'id': upload_session_id,
+        'type': upload_session_type,
+        'num_parts_processed': num_parts_processed,
+        'total_parts': total_parts,
+        'part_size': part_size,
+    }
+    upload_session = test_file.create_upload_session(file_size, file_name)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert isinstance(upload_session, UploadSession)
+    assert upload_session._session == mock_box_session
+    assert upload_session.part_size == part_size
+    assert upload_session.total_parts == total_parts
+    assert upload_session.num_parts_processed == num_parts_processed
+    assert upload_session.type == upload_session_type
+    assert upload_session.id == upload_session_id
 
 
 def test_create_task(test_file, test_task, mock_box_session):
