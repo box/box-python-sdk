@@ -113,6 +113,35 @@ class Folder(Item):
             parent_id=self._object_id,
         )
 
+    def create_upload_session(self, file_size, file_name):
+        """
+        Creates a new chunked upload session for upload a new file.
+
+        :param file_size:
+            The size of the file in bytes that will be uploaded.
+        :type file_size:
+            `int`
+        :param file_name:
+            The name of the file that will be uploaded.
+        :type file_name:
+            `unicode`
+        :returns:
+            A :class:`UploadSession` object.
+        :rtype:
+            :class:`UploadSession`
+        """
+        url = '{0}/files/upload_sessions'.format(self.session.api_config.UPLOAD_URL)
+        body_params = {
+            'folder_id': self.object_id,
+            'file_size': file_size,
+            'file_name': file_name,
+        }
+        response = self._session.post(url, data=json.dumps(body_params)).json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
+        )
+
     def _get_accelerator_upload_url_fow_new_uploads(self):
         """
         Get Accelerator upload url for uploading new files.
