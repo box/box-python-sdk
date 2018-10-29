@@ -38,16 +38,19 @@ To get a trashed item, first construct a [`Folder`][folder_class], [`File`][file
 ```python
 file_to_retrieve = client.file('11111')
 file_from_trash = client.trash().get_item(file_to_retrieve)
+print('File id is {0} and name is {1}'.format(file_from_trash.id, file_from_trash.name))
 ```
 
 ```python
 folder = client.folder('22222')
 folder_from_trash = client.trash().get_item(folder)
+print('Folder id is {0} and name is {1}'.format(folder_from_trash.id, folder_from_trash.name))
 ```
 
 ```python
 web_link = client.web_link('33333')
 web_link_from_trash = client.trash().get_item(web_link)
+print('Web link id is {0} and name is {1}'.format(web_link_from_trash.id, web_link_from_trash.name))
 ```
 
 [folder_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder
@@ -64,16 +67,19 @@ To retore a trashed item, effectively undeleting it, first construct a [`Folder`
 ```python
 file_to_restore = client.file('11111')
 restored_file = client.trash().restore_item(file_to_restore)
+print('File id is {0} and name is {1}'.format(restored_file.id, restored_file.name))
 ```
 
 ```python
 folder_to_restore = client.folder('22222')
 restored_folder = client.trash().restore_item(folder_to_restore)
+print('Folder id is {0} and name is {1}'.format(restored_folder.id, restored_folder.name))
 ```
 
 ```python
 web_link_to_restore = client.web_link('33333')
 restored_web_link = client.trash().restore_item(web_link_to_restore)
+print('Web link id is {0} and name is {1}'.format(restored_web_link.id, restored_web_link.name))
 ```
 
 In order to avoid conflicts, you can set a new name and new parent folder for the item you wish to restore.
@@ -83,6 +89,7 @@ file_to_restore = client.file('11111')
 new_name = 'New File Name'
 new_parent_folder = client.folder('22222')
 restored_file = client.trash().restore_item(file_to_restore, new_name, new_parent_folder)
+print('New name for file is {0} and new parent folder is {1}'.format(restored_file.name, restored_file.parent.name))
 ```
 
 [folder_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder
@@ -99,16 +106,19 @@ To delete an [`Item`][item_class] object from trash, call [`client.trash().perma
 ```python
 file_to_delete = client.file('11111')
 client.trash().permanently_delete_item(file_to_delete)
+print('The file was deleted from trash!')
 ```
 
 ```python
 folder = client.folder('22222')
 client.trash().permanently_delete_item(folder)
+print('The folder was deleted from trash!')
 ```
 
 ```python
 web_link = client.web_link('33333')
 client.trash().permanently_delete_item(web_link)
+print('The web link was deleted from trash!')
 ```
 
 [item_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item
