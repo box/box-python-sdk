@@ -4,7 +4,6 @@ from __future__ import unicode_literals, absolute_import
 
 import base64
 import hashlib
-from io import BytesIO
 import json
 import pytest
 
