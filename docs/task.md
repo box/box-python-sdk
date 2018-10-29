@@ -1,8 +1,7 @@
 Tasks
 =====
 
-Task objects represent a user-created task on a file.
-
+Tasks enable file-centric workflows in Box. User can create tasks on files and assign them to collaborators on Box.
 
 Get a Task's Information
 ------------------------

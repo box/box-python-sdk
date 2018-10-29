@@ -56,10 +56,8 @@ web_link_from_trash = client.trash().get_item(web_link)
 [item]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item
 [get_item]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.trash.Trash.get_item
 
-
 Restore Item from Trash
 -----------------------
-
 
 To retore a trashed item, effectively undeleting it, first construct a [`Folder`][folder_class], [`File`][file_class], or [`Web Link`][web_link_class] object and then calling [`client.trash().restore(item, name=None, parent_folder, fields=None)`][restore_item] with the constructed [`Item`][item_class] object will let you restore the specific object from your trash. This method will return a [`Item`][item_class] object populated with data from the API, leaving the original object unmodified.
 
@@ -95,6 +93,7 @@ restored_file = client.trash().restore_item(file_to_restore, new_name, new_paren
 
 Permanently Delete Item
 -----------------------
+
 To delete an [`Item`][item_class] object from trash, call [`client.trash().permanently_delete_item(item)`][delete]. This method returns `True` to indicate that the deletion was successful.
 
 ```python
