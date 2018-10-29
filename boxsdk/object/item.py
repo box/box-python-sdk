@@ -7,6 +7,7 @@ from .base_object import BaseObject
 from ..exception import BoxAPIException
 from .metadata import Metadata
 from ..util.api_call_decorator import api_call
+from ..pagination.marker_based_dict_collection import MarkerBasedDictCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
@@ -376,11 +377,9 @@ class Item(BaseObject):
         """
         Get all metadata attached to the item.
         """
-        url = self.get_url('metadata')
-        # TODO: Depends on object collection that returns dicts
-        return MarkerBasedObjectCollection(
+        return MarkerBasedDictCollection(
             session=self._session,
-            url=url,
+            url=self.get_url('metadata'),
             limit=None,
             marker=None,
             return_full_pages=False,

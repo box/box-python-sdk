@@ -399,3 +399,32 @@ def test_collaborations(test_item_and_response, mock_box_session):
     assert collaboration.type == mock_collaboration['type']
     assert collaboration['created_by']['type'] == 'user'
     assert collaboration['created_by']['id'] == '33333'
+
+
+def test_get_all_metadata(test_item_and_response, mock_box_session):
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/{1}s/{2}/metadata'.format(API.BASE_API_URL, test_item.object_type, test_item.object_id)
+    mock_metadata = {
+        'currentDocumentStage': 'prioritization',
+        'needsApprovalFrom': 'planning team',
+        '$type': 'documentFlow-452b4c9d-c3ad-4ac7-b1ad-9d5192f2fc5f',
+        '$parent': 'folder_998951261',
+        '$id': 'e57f90ff-0044-48c2-807d-06b908765baf',
+        '$version': 1,
+        '$typeVersion': 2,
+        'maximumDaysAllowedInCurrentStage': 5,
+        '$template': 'documentFlow',
+        '$scope': 'enterprise_12345',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_metadata]
+    }
+
+    all_metadata = test_item.get_all_metadata()
+    metadata = all_metadata.next()
+
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    assert isinstance(metadata, dict)
+    for key, value in metadata:
+        assert value == mock_metadata[key]
