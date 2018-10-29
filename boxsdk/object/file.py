@@ -61,7 +61,7 @@ class File(Item):
         }
         if file_name is not None:
             body_params['file_name'] = file_name
-        url = self.get_url('upload_sessions').replace(API.BASE_API_URL, API.UPLOAD_URL)
+        url = self.get_url('upload_sessions').replace(self.session.api_config.BASE_API_URL, self.session.api_config.UPLOAD_URL)
         response = self._session.post(url, data=json.dumps(body_params)).json()
         return self.translator.translate(
             session=self._session,
