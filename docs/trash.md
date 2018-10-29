@@ -19,13 +19,16 @@ the Trash will be purged after 30 days.
 List Trashed Items
 ------------------
 
-To retrieve a list of all trashed items, you can use `client.trash().get__items(limit=None, offset=None, fields=None)`
+To retrieve all trashed items for an enterprise, call [`client.trash().get_items(imit=None, offset=None, fields=None)`][get_trashed_items]. This method returns a `BoxObjectCollection` that allows you to iterate over the [`Trash`][trash] objects in the collection.
 
 ```python
 trashed_items = client.trash().get_items()
 for trashed_item in trashed_items:
-    # Do something
+    print('The item id is {0} and the item name is {1}'.format(trashed_item.id, trashed_item.name))
 ```
+
+[get_trashed_item]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.trash.Trash.get_trashed_items
+[trash]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.trash.Trash
 
 Get Trashed Items
 -----------------

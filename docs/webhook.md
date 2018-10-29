@@ -25,7 +25,7 @@ webhook = client.webhook('12345').get()
 print('Webhooks id is {0} and the address is {1}'.format(webhook.id, webhook.address))
 ```
 
-[webhook]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.webhook
+[webhook]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.Client.webhook
 [webhook_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.webhook.Webhook
 [get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
 
@@ -40,7 +40,7 @@ for webhook in webhooks:
     print('The webhook id is {0} and the address is {1}'.format(webhook.id, webhook.address))
 ```
 
-[get_webhooks]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.get_webhooks
+[get_webhooks]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.Client.get_webhooks
 [webhook_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.webhook.Webhook
 
 Create Webhook
@@ -56,7 +56,7 @@ webhook = client.create_webhook(folder, ['FILE.UPLOADED', 'FILE.PREVIEWED'], 'ht
 print('Webhook id is {0} and the address is {1}'.format(webhook.id, webhook.address))
 ```
 
-[create]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_webhook
+[create]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.Client.create_webhook
 [webhook_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.webhook.Webhook
 
 Delete Webhook
@@ -85,6 +85,6 @@ webhook = client.webhook('12345').update_info(update_object)
 print('Updated the webhook info for triggers: {0} and address: {1}'.format(webhook.triggers, webhook.address))
 ```
 
-[webhook]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_webhook
+[webhook]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.Client.create_webhook
 [webhook_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.webhook.Webhook
 
