@@ -132,7 +132,7 @@ def test_get_assignments(
         policy_id_2,
         assign_to_type,
         assign_to_id,
-        params
+        params,
 ):
     # pylint:disable=redefined-outer-name
     expected_url = '{0}/legal_hold_policy_assignments'.format(API.BASE_API_URL)
