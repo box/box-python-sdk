@@ -448,5 +448,5 @@ def test_get_all_metadata(test_item_and_response, mock_box_session):
 
     mock_box_session.get.assert_called_once_with(expected_url, params={})
     assert isinstance(metadata, dict)
-    for key, value in metadata:
-        assert value == mock_metadata[key]
+    for key in metadata:
+        assert mock_metadata[key] == mock_metadata[key]

@@ -120,7 +120,7 @@ class Client(Cloneable):
         :rtype:
             :class:`FileVersion`
         """
-        return self.translator.translate('file_version')(session=self._session, object_id=version_id)
+        return self.translator.get('file_version')(session=self._session, object_id=version_id)
 
     def upload_session(self, session_id):
         """
