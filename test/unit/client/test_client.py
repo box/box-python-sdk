@@ -1,4 +1,5 @@
 # coding: utf-8
+# pylint: disable=too-many-lines
 
 from __future__ import unicode_literals
 import json
@@ -21,6 +22,9 @@ from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
+from boxsdk.object.collection import Collection
+from boxsdk.object.comment import Comment
+from boxsdk.object.device_pinner import DevicePinner
 from boxsdk.object.enterprise import Enterprise
 from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
@@ -34,9 +38,15 @@ from boxsdk.object.upload_session import UploadSession
 from boxsdk.object.trash import Trash
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.retention_policy import RetentionPolicy
+from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 from boxsdk.object.file_version_retention import FileVersionRetention
+from boxsdk.object.legal_hold import LegalHold
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
+from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
+from boxsdk.object.task import Task
+from boxsdk.object.task_assignment import TaskAssignment
 from boxsdk.object.webhook import Webhook
+from boxsdk.object.web_link import WebLink
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
@@ -409,6 +419,11 @@ def users_limit(request):
     return request.param
 
 
+@pytest.fixture(scope='module', params=(None, 'all', 'external', 'managed'))
+def users_type(request):
+    return request.param
+
+
 def test_users_return_the_correct_user_objects(
         mock_client,
         mock_box_session,
@@ -416,17 +431,20 @@ def test_users_return_the_correct_user_objects(
         user_id_1,
         user_id_2,
         users_filter_term,
+        users_type,
         users_offset,
         users_limit,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = users_response
-    users = mock_client.users(users_limit, users_offset, users_filter_term)
+    users = mock_client.users(users_limit, users_offset, users_filter_term, users_type)
     expected_params = {'offset': users_offset}
     if users_limit is not None:
         expected_params['limit'] = users_limit
     if users_filter_term is not None:
         expected_params['filter_term'] = users_filter_term
+    if users_type is not None:
+        expected_params['user_type'] = users_type
     assert users.next().object_id == user_id_1
     assert users.next().object_id == user_id_2
     mock_box_session.get.assert_called_once_with('{0}/users'.format(API.BASE_API_URL), params=expected_params)
@@ -471,15 +489,16 @@ def test_get_groups_return_the_correct_group_objects(
         group_id_2,
 ):
     # pylint:disable=redefined-outer-name
+    group_name = 'Employees'
     expected_url = '{0}/groups'.format(API.BASE_API_URL)
     mock_box_session.get.return_value = groups_response
-    groups = mock_client.get_groups()
+    groups = mock_client.get_groups(group_name)
     for group, expected_id in zip(groups, [group_id_1, group_id_2]):
         assert group.object_id == expected_id
         assert group.name == str(expected_id)
         # pylint:disable=protected-access
         assert group._session == mock_box_session
-    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None, 'name': group_name})
 
 
 def test_create_group_returns_the_correct_group_object(mock_client, mock_box_session, create_group_response):
@@ -502,33 +521,47 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
         description='Description of group',
         invitability_level='admins_and_members',
         member_viewability_level='admins_only',
+        fields=['name,description'],
     )
 
-    assert len(mock_box_session.post.call_args_list) == 1
-
-    mock_box_session.post.assert_called_once_with(expected_url, data=value, params={})
+    mock_box_session.post.assert_called_once_with(expected_url, data=value, params={'fields': 'name,description'})
     assert isinstance(new_group, Group)
     assert new_group.object_id == 1234
     assert new_group.name == test_group_name
 
 
-def test_create_legal_hold_policy_returns_the_correct_policy_object(mock_client, mock_box_session, create_policy_response):
+@pytest.mark.parametrize('params', [
+    {
+        'description': 'My test policy',
+    },
+    {
+        'filter_starting_at': '2016-01-01T00:00:00Z',
+        'filter_ending_at': '2020-01-01T00:00:00Z',
+    },
+    {
+        'is_ongoing': True,
+    }
+])
+def test_create_legal_hold_policy_returns_the_correct_policy_object(mock_client, mock_box_session, create_policy_response, params):
     # pylint:disable=redefined-outer-name
     test_policy_name = 'Test Policy'
+    expected_url = "{0}/legal_hold_policies".format(API.BASE_API_URL)
     expected_body = {
         'policy_name': test_policy_name
     }
+    expected_body.update(params)
     value = json.dumps(expected_body)
+    create_policy_response.json.return_value.update(params)
     mock_box_session.post.return_value = create_policy_response
-    new_policy = mock_client.create_legal_hold_policy(test_policy_name)
-    assert len(mock_box_session.post.call_args_list) == 1
-    assert mock_box_session.post.call_args[0] == ("{0}/legal_hold_policies".format(API.BASE_API_URL),)
-    assert mock_box_session.post.call_args[1] == {'data': value}
+    new_policy = mock_client.create_legal_hold_policy(test_policy_name, **params)
+    mock_box_session.post.assert_called_once_with(expected_url, data=value)
     assert isinstance(new_policy, LegalHoldPolicy)
     assert new_policy.policy_name == test_policy_name
+    for param in params:
+        assert new_policy[param] == params[param]
 
 
-def test_legal_hold_policies_return_the_correct_policy_objects(
+def test_get_legal_hold_policies_return_the_correct_policy_objects(
         mock_client,
         mock_box_session,
         legal_hold_policies_response,
@@ -536,12 +569,15 @@ def test_legal_hold_policies_return_the_correct_policy_objects(
         legal_hold_policy_id_2,
 ):
     # pylint:disable=redefined-outer-name
+    policy_name = 'Arbitration'
+    expected_url = '{0}/legal_hold_policies'.format(API.BASE_API_URL)
     mock_box_session.get.return_value = legal_hold_policies_response
-    policies = mock_client.get_legal_hold_policies()
+    policies = mock_client.get_legal_hold_policies(policy_name)
     for policy, expected_id in zip(policies, [legal_hold_policy_id_1, legal_hold_policy_id_2]):
         assert policy.object_id == expected_id
         # pylint:disable=protected-access
         assert policy._session == mock_box_session
+    mock_box_session.get.assert_called_once_with(expected_url, params={'policy_name': policy_name})
 
 
 def test_trash_initializer(mock_client):
@@ -1028,9 +1064,156 @@ def test_downscope_token_sends_downscope_request_with_additional_data(
 
 def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_response, device_pin_id_1, device_pin_id_2):
     # pylint:disable=redefined-outer-name
+    enterprise_id = '33333'
     mock_box_session.get.return_value = device_pins_response
-    pins = mock_client.device_pinners('1234')
+    expected_url = '{0}/enterprises/{1}/device_pinners'.format(API.BASE_API_URL, enterprise_id)
+    pins = mock_client.device_pinners(enterprise_id, direction='asc')
     for pin, expected_id in zip(pins, [device_pin_id_1, device_pin_id_2]):
         assert pin.object_id == expected_id
         # pylint:disable=protected-access
         assert pin._session == mock_box_session
+    mock_box_session.get.assert_called_once_with(expected_url, params={'direction': 'asc'})
+
+
+def test_comment(mock_client):
+    # pylint:disable=redefined-outer-name
+    comment_id = '12345'
+    comment = mock_client.comment(comment_id)
+
+    assert isinstance(comment, Comment)
+    assert comment.object_id == comment_id
+
+
+def test_collaboration(mock_client):
+    # pylint:disable=redefined-outer-name
+    collaboration_id = '12345'
+    collaboration = mock_client.collaboration(collaboration_id)
+
+    assert isinstance(collaboration, Collaboration)
+    assert collaboration.object_id == collaboration_id
+
+
+def test_legal_hold_policy(mock_client):
+    # pylint:disable=redefined-outer-name
+    policy_id = '12345'
+    policy = mock_client.legal_hold_policy(policy_id)
+
+    assert isinstance(policy, LegalHoldPolicy)
+    assert policy.object_id == policy_id
+
+
+def test_legal_hold_policy_assignment(mock_client):
+    # pylint:disable=redefined-outer-name
+    assignment_id = '12345'
+    assignment = mock_client.legal_hold_policy_assignment(assignment_id)
+
+    assert isinstance(assignment, LegalHoldPolicyAssignment)
+    assert assignment.object_id == assignment_id
+
+
+def test_legal_hold(mock_client):
+    # pylint:disable=redefined-outer-name
+    hold_id = '12345'
+    legal_hold = mock_client.legal_hold(hold_id)
+
+    assert isinstance(legal_hold, LegalHold)
+    assert legal_hold.object_id == hold_id
+
+
+def test_collection(mock_client):
+    # pylint:disable=redefined-outer-name
+    collection_id = '12345'
+    collection = mock_client.collection(collection_id)
+
+    assert isinstance(collection, Collection)
+    assert collection.object_id == collection_id
+
+
+def test_collections(mock_client, mock_box_session):
+    # pylint:disable=redefined-outer-name, protected-access
+    expected_url = '{0}/collections'.format(API.BASE_API_URL)
+    mock_collection = {
+        'type': 'collection',
+        'id': '12345',
+        'created_by': {
+            'type': 'user',
+            'id': '33333',
+        },
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 1,
+        'limit': 2,
+        'offset': 0,
+        'entries': [mock_collection],
+    }
+    collections = mock_client.collections(limit=2)
+    collection = collections.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 2, 'offset': 0})
+    assert isinstance(collection, Collection)
+    assert collection.id == mock_collection['id']
+    assert collection.type == mock_collection['type']
+    assert collection['created_by']['type'] == 'user'
+    assert collection['created_by']['id'] == '33333'
+
+
+def test_task(mock_client):
+    # pylint:disable=redefined-outer-name
+    task_id = '12345'
+    task = mock_client.task(task_id)
+
+    assert isinstance(task, Task)
+    assert task.object_id == task_id
+
+
+def test_task_assignment(mock_client):
+    # pylint:disable=redefined-outer-name
+    assignment_id = '12345'
+    assignment = mock_client.task_assignment(assignment_id)
+
+    assert isinstance(assignment, TaskAssignment)
+    assert assignment.object_id == assignment_id
+
+
+def test_retention_policy(mock_client):
+    # pylint:disable=redefined-outer-name
+    policy_id = '12345'
+    policy = mock_client.retention_policy(policy_id)
+
+    assert isinstance(policy, RetentionPolicy)
+    assert policy.object_id == policy_id
+
+
+def test_retention_policy_assignment(mock_client):
+    # pylint:disable=redefined-outer-name
+    assignment_id = '12345'
+    assignment = mock_client.retention_policy_assignment(assignment_id)
+
+    assert isinstance(assignment, RetentionPolicyAssignment)
+    assert assignment.object_id == assignment_id
+
+
+def test_file_version_retention(mock_client):
+    # pylint:disable=redefined-outer-name
+    retention_id = '12345'
+    file_version_retention = mock_client.file_version_retention(retention_id)
+
+    assert isinstance(file_version_retention, FileVersionRetention)
+    assert file_version_retention.object_id == retention_id
+
+
+def test_web_link(mock_client):
+    # pylint:disable=redefined-outer-name
+    web_link_id = '12345'
+    web_link = mock_client.web_link(web_link_id)
+
+    assert isinstance(web_link, WebLink)
+    assert web_link.object_id == web_link_id
+
+
+def test_device_pinner(mock_client):
+    # pylint:disable=redefined-outer-name
+    pin_id = '12345'
+    pin = mock_client.device_pinner(pin_id)
+
+    assert isinstance(pin, DevicePinner)
+    assert pin.object_id == pin_id
