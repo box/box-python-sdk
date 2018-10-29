@@ -5,11 +5,13 @@ import json
 
 from .base_endpoint import BaseEndpoint
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..util.api_call_decorator import api_call
 
 
 class Trash(BaseEndpoint):
     """Box API endpoint for performing trash related actions in Box."""
 
+    @api_call
     def get_item(self, item, fields=None):
         """
         Get item from trash.
@@ -33,12 +35,12 @@ class Trash(BaseEndpoint):
             params['fields'] = ','.join(fields)
         box_response = self._session.get(url, params=params)
         response = box_response.json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
+    @api_call
     def restore_item(self, item, name=None, parent_folder=None, fields=None):
         """
         Restores an item from the trash. Could be files, folders, or weblinks.
@@ -75,12 +77,12 @@ class Trash(BaseEndpoint):
             params['fields'] = ','.join(fields)
         box_response = self._session.post(url, data=json.dumps(body), params=params)
         response = box_response.json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
+    @api_call
     def permanently_delete_item(self, item):
         """
         Permanently delete an item that is in the trash. The item will no longer exist in Box.
@@ -98,6 +100,7 @@ class Trash(BaseEndpoint):
         box_response = self._session.delete(url, expect_json_response=False)
         return box_response.ok
 
+    @api_call
     def get_items(self, limit=None, offset=None, fields=None):
         """
         Using limit-offset paging, get the files, folders and web links that are in the user's trash.

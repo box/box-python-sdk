@@ -59,7 +59,7 @@ def translator_response(
 @pytest.mark.parametrize('response_type', ['bookmark', 'box_note', 'file', 'folder', 'group', 'user'])
 def test_translator_converts_response_to_correct_type(response_type):
     response, object_class = _response_to_class_mapping[response_type]
-    assert type(Translator().translate(response.json()['type']) == object_class)
+    assert type(Translator().get(response.json()['type']) == object_class)
 
 
 def test_default_translator():
@@ -116,7 +116,7 @@ def test_with_new_child(new_child, extend_default_translator):
         pass
 
     translator.register(item_type, Bar)
-    assert translator.translate(item_type) is Bar
+    assert translator.get(item_type) is Bar
     assert mapping == {item_type: Foo}
 
 
@@ -137,8 +137,61 @@ def test_without_new_child(extend_default_translator):
         pass
 
     translator.register(item_type, Bar)
-    assert translator.translate(item_type) is Bar
+    assert translator.get(item_type) is Bar
     assert mapping == {item_type: Bar}
 
     del translator[item_type]
     assert not mapping
+
+
+def test_translate(default_translator, mock_box_session):
+    response_object = {
+        'entries': [
+            {
+                'type': 'folder',
+                'id': '11111',
+                'name': 'Test Folder',
+                'created_by': {
+                    'type': 'user',
+                    'id': '33333',
+                    'name': 'Test User',
+                },
+            },
+            {
+                'type': 'file',
+                'id': '22222',
+                'name': 'Test File',
+                'modified_by': {
+                    'type': 'user',
+                    'id': '33333',
+                    'name': 'Test User',
+                },
+            },
+        ],
+    }
+
+    results = default_translator.translate(mock_box_session, response_object=response_object)
+    test_folder = results['entries'][0]
+    test_file = results['entries'][1]
+
+    assert isinstance(test_folder, Folder)
+    assert isinstance(test_file, File)
+    assert test_folder.object_id == '11111'
+    assert test_folder.name == 'Test Folder'
+    assert test_file.object_id == '22222'
+    assert test_file.name == 'Test File'
+
+    user_1 = test_folder.created_by
+    user_2 = test_file.modified_by
+    assert isinstance(user_1, User)
+    assert isinstance(user_2, User)
+    assert user_1 == user_2
+
+    assert test_folder._session == mock_box_session  # pylint:disable=protected-access
+    assert test_file._session == mock_box_session  # pylint:disable=protected-access
+    assert user_1._session == mock_box_session  # pylint:disable=protected-access
+    assert user_2._session == mock_box_session  # pylint:disable=protected-access
+
+    # It should not modify the original
+    assert isinstance(response_object['entries'][0], dict)
+    assert isinstance(response_object['entries'][1], dict)

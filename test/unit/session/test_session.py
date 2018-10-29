@@ -254,7 +254,7 @@ def test_translator(box_session, translator, default_translator, original_defaul
 
     item_type = u'ƒøø'
     box_session.translator.register(item_type, Foo)
-    assert box_session.translator.translate(item_type) is Foo
+    assert box_session.translator.get(item_type) is Foo
 
     # Test that adding new registrations does not affect global state.
     assert default_translator == original_default_translator
