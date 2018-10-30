@@ -163,6 +163,7 @@ To get a file version retention object, first call [`client.file_version_retenti
 
 ```python
 retention_info = client.file_version_retention('12345').get()
+print('The file version retention id is {0} and the data time applied at is {1}'.format(retention.id, retention.applied_at))
 ```
 
 [file_version_retention]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.file_version_retention
