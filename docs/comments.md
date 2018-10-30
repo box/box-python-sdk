@@ -93,7 +93,7 @@ edited_comment = client.comment(comment_id='98765').edit('If possible, please fi
 Delete a Comment
 ----------------
 
-To delete a comment, call [`comment.delete()`][delete].  This will remove the comment from the file.  This mmethod
+To delete a comment, call [`comment.delete()`][delete].  This will remove the comment from the file.  This method
 returns `True` to indicate that the deletion succeeded.
 
 ```python

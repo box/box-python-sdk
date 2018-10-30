@@ -66,7 +66,7 @@ print('Created group with ID {0}'.format(created_group.id))
 Get Information about a Group
 -----------------------------
 
-To retrieve information about a group, first call [`client.group(group_id)`][group] to intialize a
+To retrieve information about a group, first call [`client.group(group_id)`][group] to initialize a
 [`Group`][group_class] object.  Then, call [`group.get(fields=None)`][get] to retrieve the data about that group.  This
 method returns a new [`Group`][group_class] object with fields populated by data form the API, leaving the original
 object unmodified.
