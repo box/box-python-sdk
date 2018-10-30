@@ -82,7 +82,7 @@ print('The task was successfully delete!')
 Assign a Task
 --------------
 
-To assign a task object, first call [`client.task(task_id)`][task] to construct the appropriate task object, then call [`client.user(user_id)`][user] to construct the appropriate user object you wish to assign the task to. Finally, calling [`task.assign(user)`][assign] will return an [`Assignment`][assignment_class] object, populated with data from the API.
+To assign a task object, first call [`client.task(task_id)`][task] to construct the appropriate task object, then call [`client.user(user_id)`][user] to construct the appropriate user object you wish to assign the task to. Finally, calling [`task.assign(user)`][assign] will return an [`TaskAssignment`][assignment_class] object, populated with data from the API.
 
 ```python
 user = client.user('11111')
@@ -98,49 +98,67 @@ print('Assignment id is {0} and is assigned to user {1}'.format(assignment.id, a
 Assign a Task with User Login
 -----------------------------
 
-To assign a task to a user on a file, use `task.assign_with_login(assignee_login)`
+To assign a task object with a user login, first call [`client.task(task_id)`][task] to construct the appropriate task object, you can then pass in a `unicode` value representing the login of the user you wish to assign the task to. This method will return a [`Task Assignment`][assignment_class] object, populated with data from the API.
 
 ```python
-assignment = client.task('1234').assign_with_login('test_user@example.com')
+assignment = client.task('12345').assign_with_login('test_user@example.com')
+print('Assignment id is {0} and the assignee is {1}'.format(assignment.id, assignment.assigned_to.login))
 ```
+
+[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.task
+[assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task_assignment.TaskAssignment
 
 List Task Assignments
 ---------------------
 
-To retrieve all task assignments for a given task use `task.get_assignments(fields=None)`
+To retrieve all assignments for an enterprise, first call [`client.task(task_id)`][task] to construct the appropriate task object. Then call ['task.get_assignments(fields=None)'][get_assignments]. This method returns a `BoxObjectCollection` that allows you to iterate over the ['Task Assignment'][assignment_class] objects in the collection.
 
 ```python
-assignments = client.task('1234').get_assignments()
+assignments = client.task('12345').get_assignments()
 for assignment in assignments:
-    # Do something
+    print('Assignment id is {0} and the assignee is {1}'.format(assignment.id, assignment.assigned_to.login))
 ```
+
+[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.task
+[get_assignments]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task.Task.get_assignments
+[assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task_assignment.TaskAssignment
 
 Get Information about Task Assignment
 -------------------------------------
 
-To retrieve information about a task assignment use, `task_assignment.get(fields=None, headers=None)`
+To get a task assignment object, first call [`client.task_assignment(assignment_id)`][assignment] to construct the appropriate [`TaskAssignment`][assignment_class] object, and then calling ['task_assignment.get(fields=None)'][get] will return the [`Task Assignment`][task_assignment] object populated with data from the API.
 
 ```python
-task_assignment_id = '2222'
-assignment_info = client.task_assignment(task_assignment_id).get()
+assignment= client.task_assignment('12345').get()
+print('Assignment id is {0} and assignment type is {1}'.format(assignment.id, assignment.type))
 ```
+
+[assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.task_assignment
+[assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task_assignment.TaskAssignment
+[get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
 
 Update Task Assignment
 ----------------------
 
-To update information about a task assignment use, `task_assignment.update_info(data)`
+To update a task assignment object, first call [`client.task_assignment(assignment_id)`][assignment] to construct the appropriate [`TaskAssignment`][assignment_class] object, and then calling [`assignment.update_info(data)`][update_info] with a `dict` of properties to update on a task assignment. This method returns a newly update [`Task Assignment`][assignment_class] object, leaving the original object unmodified.
 
 ```python
 from boxsdk.object.task_assignment import ResolutionState
 updated_task = {'resolution_state': ResolutionState.APPROVED}
-updated_assignment = client.task_assignment('5678').update_info(updated_task)
+updated_assignment = client.task_assignment('12345').update_info(updated_task)
+print('Assignment id is {0} and resolution state is {1}'.format(updated_assignment.id, updated_assignment.resolution_state))
 ```
+
+[assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.task_assignment
+[assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task_assignment.TaskAssignment
+[update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
 
 Delete Task Assignment
 ----------------------
 
-To delete a task assignment use, `task_assignment.delete()`
+To delete a task assignment, call [`task_assignment.delete()`][delete]. This method returns `True` to indicate that the deletion was successful.
 
 ```python
-client.task_assignment('2222').delete()
+client.task_assignment('12345').delete()
+print('The task assignment was successfully delete!')
 ```
