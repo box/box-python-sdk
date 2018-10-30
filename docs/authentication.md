@@ -20,6 +20,7 @@ overview of how the Box API handles authentication.
   - [Box View Authentication with App Tokens](#box-view-authentication-with-app-tokens)
 - [As-User](#as-user)
 - [Token Exchange](#token-exchange)
+- [Revoking Tokens](#revoking-tokens)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
