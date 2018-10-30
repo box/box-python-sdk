@@ -5,6 +5,44 @@ File objects represent individual files in Box. They can be used to download a
 file's contents, upload new versions, and perform other common file operations
 (move, copy, delete, etc.).
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Get a File's Information](#get-a-files-information)
+- [Update a File's Information](#update-a-files-information)
+- [Download a File](#download-a-file)
+- [Get Download URL](#get-download-url)
+- [Upload a File](#upload-a-file)
+- [Chunked Upload](#chunked-upload)
+  - [Manual Process](#manual-process)
+    - [Create Upload Session for File Version](#create-upload-session-for-file-version)
+    - [Create Upload Session for File](#create-upload-session-for-file)
+    - [Upload Part](#upload-part)
+    - [Commit Upload Session](#commit-upload-session)
+    - [Abort Upload Session](#abort-upload-session)
+    - [List Upload Parts](#list-upload-parts)
+- [Move a File](#move-a-file)
+- [Copy a File](#copy-a-file)
+- [Delete a File](#delete-a-file)
+- [Get Previous Versions of a File](#get-previous-versions-of-a-file)
+- [Upload a New Version of a File](#upload-a-new-version-of-a-file)
+- [Promote a Previous Version of a File](#promote-a-previous-version-of-a-file)
+- [Delete a Previous Version of a File](#delete-a-previous-version-of-a-file)
+- [Lock a File](#lock-a-file)
+- [Unlock a File](#unlock-a-file)
+- [Create a Shared Link](#create-a-shared-link)
+- [Get an Embed Link](#get-an-embed-link)
+- [Get File Representations](#get-file-representations)
+- [Get Thumbnail](#get-thumbnail)
+- [Add Metadata](#add-metadata)
+- [Get Metadata](#get-metadata)
+- [Update Metadata Values](#update-metadata-values)
+- [Remove Metadata](#remove-metadata)
+- [Get All Metadata](#get-all-metadata)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 Get a File's Information
 ------------------------
 
@@ -126,6 +164,161 @@ print('File "{0}" uploaded to Box with file ID {1}'.format(new_file.name, new_fi
 [upload]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.upload
 [upload_stream]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.upload_stream
 
+Chunked Upload
+--------------
+
+For large files or in cases where the network connection is less reliable,
+you may want to upload the file in parts.  This allows a single part to fail
+without aborting the entire upload, and failed parts can then be retried.
+
+### Manual Process
+
+For more complicated upload scenarios, such as those being coordinated across multiple processes or when an unrecoverable error occurs with the automatic uploader, the endpoints for chunked upload operations are also exposed directly.
+
+For example, this is roughly how a chunked upload is done manually:
+
+```python
+import hashlib
+import os
+
+
+test_file_path = '/path/to/large_file.mp4'
+total_size = os.stat(test_file_path).st_size
+sha1 = hashlib.sha1()
+content_stream = open(test_file_path, 'rb')
+upload_session = client.folder(folder_id='11111').create_upload_session(file_size=total_size, file_name='test_file_name.mp4')
+part_array = []
+
+for part_num in range(upload_session.total_parts):
+
+    copied_length = 0
+    chunk = b''
+    while copied_length < upload_session.part_size:
+        bytes_read = content_stream.read(upload_session.part_size - copied_length)
+        if bytes_read is None:
+            # stream returns none when no bytes are ready currently but there are 
+            # potentially more bytes in the stream to be read.
+            continue
+        if len(bytes_read) == 0:
+            # stream is exhausted.
+            break
+        chunk += bytes_read
+        copied_length += len(bytes_read)
+
+    uploaded_part = upload_session.upload_part_bytes(chunk, part_num*upload_session.part_size, total_size)
+    part_array.append(uploaded_part)
+    updated_sha1 = sha1.update(chunk)
+content_sha1 = sha1.digest()
+uploaded_file = upload_session.commit(content_sha1=content_sha1, parts=part_array)
+print('File ID: {0} and File Name: {1}'.format(uploaded_file.id, uploaded_file.name))
+```
+
+The individual endpoint methods are detailed below:
+
+#### Create Upload Session for File Version
+
+To create an upload session for uploading a large version, call
+[`file.create_upload_session(file_size, file_name=None)`][create_version_upload_session] with the size of the file to be
+uploaded.  You can optionally specify a new `file_name` to rename the file on upload.  This method returns an
+[`UploadSession`][upload_session_class] object representing the created upload session.
+
+```python
+file_size = 26000000
+upload_session = client.file('11111').create_upload_session(file_size)
+print('Created upload session {0} with chunk size of {1} bytes'.format(upload_session.id, uplaod_session.part_size))
+```
+
+[create_version_upload_session]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.create_upload_session
+[upload_session_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession
+
+#### Create Upload Session for File
+
+To create an upload session for uploading a new large file, call
+[`folder.create_upload_session(file_size, file_name)`][create_upload_session] with the size and filename of the file
+to be uploaded.  This method returns an [`UploadSession`][upload_session_class] object representing the created upload
+session.
+
+```python
+file_size = 26000000
+file_name = 'test_file.pdf'
+upload_session = client.folder('22222').create_upload_session(file_size, file_name)
+print('Created upload session {0} with chunk size of {1} bytes'.format(upload_session.id, uplaod_session.part_size))
+```
+
+[create_upload_session]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.create_upload_session
+
+#### Upload Part
+
+To upload a part of the file to this session, call
+[`upload_session.upload_part_bytes(part_bytes, offset, total_size, part_content_sha1=None)`][upload_part_bytes] with
+the `bytes` to be uploaded, the byte offset within the file (which should be a multiple of the upload session
+`part_size`), and the total size of the file being uploaded.  This method returns a `dict` for the part record; these
+records should be kept for the commit operation.
+
+> __Note:__ The number of bytes uploaded for each part must be exactly `upload_sesion.part_size`, except for the last
+> part (which just includes however many bytes are left in the file).
+
+```python
+upload_session = client.upload_session('11493C07ED3EABB6E59874D3A1EF3581')
+offset = upload_session.part_size * 3
+total_size = 26000000
+part_bytes = b'abcdefgh'
+part = upload_session.upload_part_bytes(part_bytes, offset, total_size)
+print('Successfully uploaded part ID {0}'.format(part['part_id']))
+```
+
+[upload_part_bytes]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.upload_part_bytes
+
+#### Commit Upload Session
+
+After uploading all parts of the file, commit the upload session to Box by calling
+[`upload_session.commit(content_sha1, parts=None, file_attributes=None, etag=None)`][commit] with the SHA1 hash of the
+entire file.  For best consistency guarantees, you should also pass an `Iterable` of the parts `dict`s via the `parts`
+parameter; otherwise, the list of parts will be retrieved from the API.  You may also pass a `dict` of `file_attributes`
+to set on the new file.
+
+```python
+import hashlib
+
+sha1 = hashlib.sha1()
+# sha1 should have been updated with all the bytes of the file
+
+file_atributes = {
+    'description': 'A file uploaded via Chunked Upload',
+}
+
+upload_session = client.upload_session('11493C07ED3EABB6E59874D3A1EF3581')
+uploaded_file = upload_session.commit(sha1.digest(), file_atributes=file_atributes)
+print('Successfully uploaded file {0} with description {1}'.format(uplaoded_file.id, uploaded_file.description))
+```
+
+[commit]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.commit
+
+#### Abort Upload Session
+
+To abort a chunked upload and lose all uploaded file parts, call [`upload_session.abort()`][abort].  This method returns
+`True` to indicate that the deletion succeeded.
+
+```python
+client.upload_session('11493C07ED3EABB6E59874D3A1EF3581').abort()
+print('Upload was successfully canceled')
+```
+
+[abort]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.abort
+
+#### List Upload Parts
+
+To return the list of parts uploaded so far, call [`upload_session.get_parts(limit=None, offset=None)`][get_parts].
+This method returns a `BoxObjectCollection` that allows you to iterate over the part `dict`s in the collection.
+
+```python
+parts = client.upload_session('11493C07ED3EABB6E59874D3A1EF3581').get_parts()
+for part in parts:
+    print('Part {0} at offset {1} has already been uploaded'.format(part['part_id'], part['offset']))
+```
+
+[get_parts]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.get_parts
+
 Move a File
 -----------
 
@@ -175,8 +368,7 @@ the file to the user's trash or permanently delete the file.  This method return
 was successful.
 
 ```python
-file_id = '11111'
-file.delete()
+client.file(file_id='11111').delete()
 ```
 
 [delete]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.delete
@@ -387,7 +579,7 @@ Add Metadata
 ------------
 
 Metadata can be added to a file either as free-form key/value pairs or from an existing template.  To add metadata to
-a file, first call [`file.metadata(metadata(scope='global', template='properties')`][metadata] to specify the scope and
+a file, first call [`file.metadata(scope='global', template='properties')`][metadata] to specify the scope and
 template key of the metadata template to attach (or use the default values to attach free-form keys and values).  Then,
 call [`metadata.create(data)`][metadata_create] with the key/value pairs to attach.  This method can only be used to
 attach a given metadata template to the file for the first time, and returns a `dict` containing the applied metadata
@@ -410,7 +602,7 @@ Get Metadata
 ------------
 
 To retrieve the metadata instance on a file for a specific metadata template, first call
-[`file.metadata(metadata(scope='global', template='properties')`][metadata] to specify the scope and template key of the
+[`file.metadata(scope='global', template='properties')`][metadata] to specify the scope and template key of the
 metadata template to retrieve, then call [`metadata.get()`][metadata_get] to retrieve the metadata values attached to
 the file.  This method returns a `dict` containing the applied metadata instance.
 
@@ -426,7 +618,7 @@ Update Metadata Values
 
 Updating metadata values is performed via a series of discrete operations, which are applied atomically against the
 existing file metadata.  First, specify which metadata will be updated by calling
-[`file.metadata(metadata(scope='global', template='properties')`][metadata].  Then, start an update sequence by calling
+[`file.metadata(scope='global', template='properties')`][metadata].  Then, start an update sequence by calling
 [`metadata.start_update()`][metadata_start_update] and add update operations to the returned
 [`MetadataUpdate`][metadata_update_obj].  Finally, perform the update by calling
 [`metadata.update(metadata_update)`][metadata_update].  This final method returns a `dict` of the updated metadata
@@ -453,7 +645,7 @@ Remove Metadata
 ---------------
 
 To remove a metadata instance from a file, call
-[`file.metadata(metadata(scope='global', template='properties')`][metadata] to specify the scope and template key of the
+[`file.metadata(scope='global', template='properties')`][metadata] to specify the scope and template key of the
 metadata template to remove, then call [`metadata.delete()`][metadata_delete] to remove the metadata from the file.
 This method returns `True` to indicate that the removal succeeded.
 
