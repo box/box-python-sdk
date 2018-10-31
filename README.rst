@@ -183,7 +183,7 @@ Search
 
 .. code-block:: python
 
-    client.search('some_query', limit=100, offset=0)
+    client.search().query('some_query', limit=100, offset=0)
 
 Metadata Search
 ~~~~~~~~~~~~~~~
@@ -199,7 +199,7 @@ Metadata Search
     metadata_search_filters = MetadataSearchFilters()
     metadata_search_filters.add_filter(metadata_search_filter)
 
-    client.search('some_query', limit=100, offset=0, metadata_filters=metadata_search_filters)
+    client.search().query('some_query', limit=100, offset=0, metadata_filters=metadata_search_filters)
 
 Events
 ~~~~~~
