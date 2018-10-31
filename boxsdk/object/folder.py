@@ -91,6 +91,7 @@ class Folder(Item):
 
     _item_type = 'folder'
 
+    @api_call
     def preflight_check(self, size, name):
         """
         Make an API call to check if a new file with given name and size can be uploaded to this folder.
@@ -110,6 +111,35 @@ class Folder(Item):
             size=size,
             name=name,
             parent_id=self._object_id,
+        )
+
+    def create_upload_session(self, file_size, file_name):
+        """
+        Creates a new chunked upload session for upload a new file.
+
+        :param file_size:
+            The size of the file in bytes that will be uploaded.
+        :type file_size:
+            `int`
+        :param file_name:
+            The name of the file that will be uploaded.
+        :type file_name:
+            `unicode`
+        :returns:
+            A :class:`UploadSession` object.
+        :rtype:
+            :class:`UploadSession`
+        """
+        url = '{0}/files/upload_sessions'.format(self.session.api_config.UPLOAD_URL)
+        body_params = {
+            'folder_id': self.object_id,
+            'file_size': file_size,
+            'file_name': file_name,
+        }
+        response = self._session.post(url, data=json.dumps(body_params)).json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
         )
 
     def _get_accelerator_upload_url_fow_new_uploads(self):
@@ -411,6 +441,7 @@ class Folder(Item):
             response_object=collaboration_response,
         )
 
+    @api_call
     def create_web_link(self, target_url, name=None, description=None):
         """
         Create a WebLink with a given url.
