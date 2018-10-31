@@ -1115,8 +1115,8 @@ def test_get_current_enterprise(mock_client, mock_box_session):
     assert enterprise.object_id == enterprise_id
     assert enterprise._session == mock_box_session  # pylint:disable=protected-access
     assert enterprise.name == enterprise_name
-        # pylint:disable=protected-access
-        assert pin._session == mock_box_session
+    # pylint:disable=protected-access
+    assert pin._session == mock_box_session
     mock_box_session.get.assert_called_once_with(expected_url, params={'direction': 'asc'})
 
 
