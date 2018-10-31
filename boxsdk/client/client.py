@@ -1509,8 +1509,7 @@ class Client(Cloneable):
             },
         )
 
-    @api_call
-    def get_metadata_template_by_id(self, template_id):
+    def metadata_template_by_id(self, template_id):
         """
         Retrieves a metadata template by ID
 
@@ -1523,11 +1522,9 @@ class Client(Cloneable):
         :rtype:
             :class:`MetadataTemplate`
         """
-        url = self._session.get_url('metadata_templates', template_id)
-        response = self._session.get(url).json()
-        return self.translator.translate(
+        return self.translator.get('metadata_template')(
             session=self._session,
-            response_object=response,
+            object_id=template_id,
         )
 
     @api_call

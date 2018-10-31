@@ -223,3 +223,6 @@ def test_translator_translates_metadata_template(default_translator, mock_box_se
     if metadata_template_response.get('scope') and metadata_template_response.get('templateKey'):
         assert metadata_template.scope == metadata_template_response['scope']
         assert metadata_template.template_key == metadata_template_response['templateKey']
+
+    if metadata_template_response.get('id') is None:
+        assert metadata_template.object_id is None

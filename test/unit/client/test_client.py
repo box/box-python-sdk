@@ -1102,28 +1102,17 @@ def test_metadata_template_initializer(mock_client, mock_box_session):
     assert template.template_key == 'VendorContract'
 
 
-def test_get_metadata_template_by_id(mock_client, mock_box_session):
+def test_metadata_template_by_id(mock_client, mock_box_session):
     template_id = 'sdkjfhgsdg-nb34745bndfg-qw4hbsajdg'
-    expected_url = '{0}/metadata_templates/{1}'.format(API.BASE_API_URL, template_id)
-    mock_box_session.get.return_value.json.return_value = {
-        'type': 'metadata_template',
-        'id': template_id,
-        'scope': 'enterprise_33333',
-        'displayName': 'Vendor Contract',
-        'templateKey': 'vendorContract',
-    }
 
-    template = mock_client.get_metadata_template_by_id(template_id)
+    template = mock_client.metadata_template_by_id(template_id)
 
-    mock_box_session.get.assert_called_once_with(expected_url)
     assert isinstance(template, MetadataTemplate)
     # pylint:disable=protected-access
     assert template._session == mock_box_session
     assert template.object_id == template_id
-    assert template.scope == 'enterprise_33333'
-    assert template.template_key == 'vendorContract'
-    assert template.id == template_id
-    assert template.displayName == 'Vendor Contract'
+    assert template.scope is None
+    assert template.template_key is None
 
 
 def test_get_metadata_templates(mock_client, mock_box_session):
@@ -1210,7 +1199,7 @@ def test_create_metadata_template(mock_client, mock_box_session):
     field = fields[0]
     assert isinstance(field, dict)
     assert field['type'] == 'date'
-    assert field['key'] == 'bday'        
+    assert field['key'] == 'bday'
 
 
 def test_get_current_enterprise(mock_client, mock_box_session):
