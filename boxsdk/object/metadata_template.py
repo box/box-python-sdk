@@ -13,6 +13,7 @@ class MetadataTemplateUpdate(object):
     """Represents a set of update operations to a metadata template."""
 
     def __init__(self):
+        super(MetadataTemplateUpdate, self).__init__()
         self.ops = []
 
     def add_enum_option(self, field_key, option_key):
@@ -206,6 +207,7 @@ class MetadataField(object):
         :type options:
             `Iterable` of `unicode`
         """
+        super(MetadataField, self).__init__()
         self.type = field_type
         self.name = display_name
         self.key = key

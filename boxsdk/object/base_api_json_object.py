@@ -135,15 +135,15 @@ class BaseAPIJSONObject(object):
         """
         return self._item_type
 
-    @property
-    def object_untranslated_fields(self):
+    @classmethod
+    def untranslated_fields(cls):
         """
         The fields that should not be translated on this object.
 
         :rtype:
             `tuple`
         """
-        return self._untranslated_fields
+        return cls._untranslated_fields
 
     @property
     def response_object(self):

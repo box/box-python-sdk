@@ -167,9 +167,10 @@ class Translator(ChainMap):
 
         translated_obj = {}
         object_type = response_object.get('type', '')
+        object_class = self.get(object_type)
         if object_type is not None:
             # Parent classes have the ability to "blacklist" fields that they do not want translated
-            blacklisted_fields = self.get(object_type)._untranslated_fields or []  # pylint: disable=protected-access
+            blacklisted_fields = object_class.untranslated_fields() or []
         for key in response_object:
             if key in blacklisted_fields:
                 translated_obj[key] = response_object[key]
@@ -187,8 +188,6 @@ class Translator(ChainMap):
         # Metadata field objects are another issue; they contain a 'type' property that doesn't really
         # map to a Box object.  We probably want to treat these as just `dict`s, so they're excluded here
         if 'type' in translated_obj and '$type' not in translated_obj:
-            object_type = translated_obj.get('type', '')
-            object_class = self.get(object_type)
             param_values = {
                 'session': session,
                 'response_object': translated_obj,
