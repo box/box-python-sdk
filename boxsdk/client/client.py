@@ -1,6 +1,7 @@
 # coding: utf-8
 # pylint: disable=too-many-lines
 from __future__ import unicode_literals, absolute_import
+
 import json
 
 from ..auth.oauth2 import TokenResponse
@@ -166,6 +167,36 @@ class Client(Cloneable):
             :class:`User`
         """
         return self.translator.get('user')(session=self._session, object_id=user_id)
+
+    def invite(self, invite_id):
+        """
+        Initialize a :class:`Invite` object, whose box id is invite_id.
+
+        :param invite_id:
+            The invite ID of the :class:`Invite` object.
+        :type invite_id:
+            `unicode`
+        :return:
+            A :class:`Invite` object with the given entry ID.
+        :rtype:
+            :class:`Invite`
+        """
+        return self.translator.get('invite')(session=self._session, object_id=invite_id)
+
+    def email_alias(self, alias_id):
+        """
+        Initialize a :class: `EmailAlias` object, whose box id is alias_id.
+
+        :param alias_id:
+            The aliad id of the :class:`EmailAlias` object.
+        :type alias_id:
+            `unicode`
+        :return:
+            A :class:`EmailAlias` object with the given entry ID.
+        :rtype:
+            :class:`EmailAlias`
+        """
+        return self.translator.get('email_alias')(session=self._session, object_id=alias_id)
 
     def group(self, group_id):
         """
@@ -440,6 +471,23 @@ class Client(Cloneable):
             :class:`Enterprise`
         """
         return self.translator.get('enterprise')(session=self._session, object_id=enterprise_id)
+
+    @api_call
+    def get_current_enterprise(self):
+        """
+        Get the enterprise of the current user.
+
+        :returns:
+            The authenticated user's enterprise
+        :rtype:
+            :class:`Enterprise`
+        """
+        user = self.user().get(fields=['enterprise'])
+        enterprise_object = user['enterprise']
+        return self.translator.translate(
+            session=self._session,
+            response_object=enterprise_object,
+        )
 
     @api_call
     def users(self, limit=None, offset=0, filter_term=None, user_type=None, fields=None):
