@@ -14,7 +14,10 @@ class MetadataTemplateUpdate(object):
 
     def __init__(self):
         super(MetadataTemplateUpdate, self).__init__()
-        self.ops = []
+        self._ops = []
+
+    def json(self):
+        return self._ops
 
     def add_enum_option(self, field_key, option_key):
         """
@@ -29,7 +32,7 @@ class MetadataTemplateUpdate(object):
         :type option_key:
             `unicode`
         """
-        self.ops.append({
+        self.add_operation({
             'op': 'addEnumOption',
             'fieldKey': field_key,
             'data': {
@@ -46,7 +49,7 @@ class MetadataTemplateUpdate(object):
         :type field:
             :class:`MetadataField`
         """
-        self.ops.append({
+        self.add_operation({
             'op': 'addField',
             'data': field.json(),
         })
@@ -60,7 +63,7 @@ class MetadataTemplateUpdate(object):
         :type data:
             `dict`
         """
-        self.ops.append({
+        self.add_operation({
             'op': 'editTemplate',
             'data': data,
         })
@@ -78,7 +81,7 @@ class MetadataTemplateUpdate(object):
         :type option_keys:
             `list` of `unicode`
         """
-        self.ops.append({
+        self.add_operation({
             'op': 'reorderEnumOptions',
             'fieldKey': field_key,
             'enumOptionKeys': option_keys,
@@ -93,7 +96,7 @@ class MetadataTemplateUpdate(object):
         :type field_keys:
             `list` of `unicode`
         """
-        self.ops.append({
+        self.add_operation({
             'op': 'reorderFields',
             'fieldKeys': field_keys,
         })
@@ -111,7 +114,7 @@ class MetadataTemplateUpdate(object):
         :type field:
             :class:`MetadataField`
         """
-        self.ops.append({
+        self.add_operation({
             'op': 'editField',
             'fieldKey': field_key,
             'data': field.json(),
@@ -134,7 +137,7 @@ class MetadataTemplateUpdate(object):
         :type new_option_key:
             `unicode`
         """
-        self.ops.append({
+        self.add_operation({
             'op': 'editEnumOption',
             'fieldKey': field_key,
             'enumOptionKey': old_option_key,
@@ -156,7 +159,7 @@ class MetadataTemplateUpdate(object):
         :type option_key:
             `unicode`
         """
-        self.ops.append({
+        self.add_operation({
             'op': 'removeEnumOption',
             'fieldKey': field_key,
             'enumOptionKey': option_key,
@@ -171,10 +174,21 @@ class MetadataTemplateUpdate(object):
         :type field_key:
             `unicode`
         """
-        self.ops.append({
+        self.add_operation({
             'op': 'removeField',
             'fieldKey': field_key,
         })
+
+    def add_operation(self, operation):
+        """
+        Adds an update operation.
+
+        :param operation:
+            The operation to add.
+        :type operation:
+            `dict`
+        """
+        self._ops.append(operation)
 
 
 class MetadataFieldType(TextEnum):
@@ -197,7 +211,7 @@ class MetadataField(object):
         :param display_name:
             The human-readable name of the metadata field
         :type display_name:
-            `uniocode`
+            `unicode`
         :param key:
             The machine-readable key for the metadata field
         :type key:
@@ -252,16 +266,22 @@ class MetadataTemplate(BaseObject):
         :type session:
             :class:`BoxSession`
         :param object_id:
-            The compound ID for the metadata template, formatted as "<scope>/templateKey>"
+            The primary GUID key for the metadata template
         :type object_id:
-            `unicode`
+            `unicode` or None
         :param response_object:
-            A JSON object representing the object returned from a Box API request.
+            A JSON object representing the object returned from a Box API request.  This should
+            contain 'scope' and 'templateKey' properties if the instance is being constructed without
+            a primary GUID object_id.
         :type response_object:
             `dict` or None
         """
         super(MetadataTemplate, self).__init__(session, object_id, response_object)
-        self._scope, self._template_key = object_id.split('/')
+        if response_object:
+            self._scope = response_object.get('scope', None)
+            self._template_key = response_object.get('templateKey', None)
+        elif not object_id:
+            raise ValueError('Metadata template must be constructed with an ID or scope and templateKey')
 
     @property
     def scope(self):
@@ -278,7 +298,10 @@ class MetadataTemplate(BaseObject):
         :rtype:
             `unicode`
         """
-        return self._session.get_url('metadata_templates', self._scope, self._template_key, 'schema', *args)
+        if self._scope and self._template_key:
+            return self._session.get_url('metadata_templates', self._scope, self._template_key, 'schema', *args)
+
+        return super(MetadataTemplate, self).get_url(*args)
 
     @staticmethod
     def start_update():
@@ -308,7 +331,7 @@ class MetadataTemplate(BaseObject):
             :class:`MetadataTemplate`
         """
         url = self.get_url()
-        response = self._session.put(url, data=json.dumps(updates.ops)).json()
+        response = self._session.put(url, data=json.dumps(updates.json())).json()
         return self.__class__(
             session=self._session,
             object_id=self.object_id,

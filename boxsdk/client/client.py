@@ -1320,7 +1320,12 @@ class Client(Cloneable):
         """
         return self.translator.get('metadata_template')(
             session=self._session,
-            object_id='{0}/{1}'.format(scope, template_key),
+            object_id=None,
+            response_object={
+                'type': 'metadata_template',
+                'scope': scope,
+                'templateKey': template_key,
+            },
         )
 
     @api_call
@@ -1339,9 +1344,8 @@ class Client(Cloneable):
         """
         url = self._session.get_url('metadata_templates', template_id)
         response = self._session.get(url).json()
-        return self.translator.get('metadata_template')(
+        return self.translator.translate(
             session=self._session,
-            object_id='{0}/{1}'.format(response['scope'], response['templateKey']),
             response_object=response,
         )
 
@@ -1419,8 +1423,7 @@ class Client(Cloneable):
             body['templateKey'] = template_key
 
         response = self._session.post(url, data=json.dumps(body)).json()
-        return self.translator.get('metadata_template')(
+        return self.translator.translate(
             session=self._session,
-            object_id='{0}/{1}'.format(response['scope'], response['templateKey']),
             response_object=response,
         )

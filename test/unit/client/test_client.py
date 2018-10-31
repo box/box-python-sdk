@@ -940,7 +940,7 @@ def test_metadata_template_initializer(mock_client, mock_box_session):
     assert isinstance(template, MetadataTemplate)
     # pylint:disable=protected-access
     assert template._session == mock_box_session
-    assert template.object_id == 'enterprise/VendorContract'
+    assert template.object_id is None
     assert template.scope == 'enterprise'
     assert template.template_key == 'VendorContract'
 
@@ -962,7 +962,7 @@ def test_get_metadata_template_by_id(mock_client, mock_box_session):
     assert isinstance(template, MetadataTemplate)
     # pylint:disable=protected-access
     assert template._session == mock_box_session
-    assert template.object_id == 'enterprise_33333/vendorContract'
+    assert template.object_id == template_id
     assert template.scope == 'enterprise_33333'
     assert template.template_key == 'vendorContract'
     assert template.id == template_id
@@ -997,7 +997,7 @@ def test_get_metadata_templates(mock_client, mock_box_session):
 
     mock_box_session.get.assert_called_once_with(expected_url, params={})
     assert isinstance(template, MetadataTemplate)
-    assert template.object_id == 'enterprise_33333/vendorContract'
+    assert template.object_id is None
     assert template.displayName == 'Vendor Contract'
     fields = template.fields
     assert len(fields) == 1
@@ -1035,13 +1035,18 @@ def test_create_metadata_template(mock_client, mock_box_session):
         ],
         'templateKey': 'vContract',
     }
-    mock_box_session.post.return_value.json.return_value = expected_body
+
+    response = {
+        'type': 'metadata_template',
+    }
+    response.update(expected_body)
+    mock_box_session.post.return_value.json.return_value = response
 
     template = mock_client.create_metadata_template(name, [field1, field2], key, hidden=True)
 
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
     assert isinstance(template, MetadataTemplate)
-    assert template.object_id == 'enterprise/vContract'
+    assert template.object_id is None
     assert template.displayName == 'Vendor Contract'
     fields = template.fields
     assert len(fields) == 2

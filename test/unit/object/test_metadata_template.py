@@ -9,11 +9,20 @@ from boxsdk.object.metadata_template import MetadataTemplate, MetadataField, Met
 
 @pytest.fixture()
 def test_metadata_template(mock_box_session):
-    return MetadataTemplate(mock_box_session, 'enterprise/vContract')
+    fake_response = {
+        'type': 'metadata_template',
+        'scope': 'enterprise',
+        'templateKey': 'vContract',
+    }
+    return MetadataTemplate(mock_box_session, None, fake_response)
 
 
 def test_get(test_metadata_template, mock_box_session):
-    expected_url = '{0}/metadata_templates/{1}/schema'.format(API.BASE_API_URL, test_metadata_template.object_id)
+    expected_url = '{0}/metadata_templates/{1}/{2}/schema'.format(
+        API.BASE_API_URL,
+        test_metadata_template.scope,
+        test_metadata_template.template_key,
+    )
     mock_box_session.get.return_value.json.return_value = {
         'scope': 'enterprise',
         'displayName': 'Vendor Contract',
@@ -41,7 +50,7 @@ def test_get(test_metadata_template, mock_box_session):
 
     mock_box_session.get.assert_called_once_with(expected_url, params=None, headers=None)
     assert isinstance(template, MetadataTemplate)
-    assert template.object_id == 'enterprise/vContract'
+    assert template.object_id is None
     assert template.displayName == 'Vendor Contract'
     fields = template.fields
     assert len(fields) == 2
@@ -52,7 +61,11 @@ def test_get(test_metadata_template, mock_box_session):
 
 
 def test_delete(test_metadata_template, mock_box_session):
-    expected_url = '{0}/metadata_templates/{1}/schema'.format(API.BASE_API_URL, test_metadata_template.object_id)
+    expected_url = '{0}/metadata_templates/{1}/{2}/schema'.format(
+        API.BASE_API_URL,
+        test_metadata_template.scope,
+        test_metadata_template.template_key,
+    )
     mock_box_session.delete.return_value.ok = True
 
     result = test_metadata_template.delete()
@@ -62,7 +75,11 @@ def test_delete(test_metadata_template, mock_box_session):
 
 
 def test_update_info(test_metadata_template, mock_box_session):
-    expected_url = '{0}/metadata_templates/{1}/schema'.format(API.BASE_API_URL, test_metadata_template.object_id)
+    expected_url = '{0}/metadata_templates/{1}/{2}/schema'.format(
+        API.BASE_API_URL,
+        test_metadata_template.scope,
+        test_metadata_template.template_key,
+    )
 
     updates = test_metadata_template.start_update()
     updates.add_enum_option('state', 'WI')
@@ -156,7 +173,7 @@ def test_update_info(test_metadata_template, mock_box_session):
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body))
     assert isinstance(updated_template, MetadataTemplate)
     assert updated_template.hidden is False
-    assert updated_template.object_id == 'enterprise/vContract'
+    assert updated_template.object_id is None
     fields = updated_template.fields
     assert len(fields) == 2
     field = fields[1]
