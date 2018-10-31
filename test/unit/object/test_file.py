@@ -172,6 +172,7 @@ def test_get_download_url_file_version(test_file, test_file_version, mock_box_se
 @pytest.mark.parametrize('params,expected_query,expected_headers', [
     ({}, None, None),
     ({'byte_range': (100, 199)}, None, {'Range': 'bytes=100-199'}),
+    ({'byte_range': (100,)}, None, {'Range': 'bytes=100-'}),
 ])
 def test_download_to(test_file, mock_box_session, mock_content_response, params, expected_query, expected_headers):
     expected_url = '{0}/files/{1}/content'.format(API.BASE_API_URL, test_file.object_id)
