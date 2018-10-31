@@ -1087,6 +1087,7 @@ def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_r
     for pin, expected_id in zip(pins, [device_pin_id_1, device_pin_id_2]):
         assert pin.object_id == expected_id
         assert pin._session == mock_box_session  # pylint:disable=protected-access
+    mock_box_session.get.assert_called_once_with(expected_url, params={'direction': 'asc'})
 
 
 def test_get_current_enterprise(mock_client, mock_box_session):
@@ -1114,8 +1115,6 @@ def test_get_current_enterprise(mock_client, mock_box_session):
     assert enterprise.object_id == enterprise_id
     assert enterprise._session == mock_box_session  # pylint:disable=protected-access
     assert enterprise.name == enterprise_name
-    # pylint:disable=protected-access
-    # assert pin._session == mock_box_session
     mock_box_session.get.assert_called_once_with(expected_url, headers=None, params={'fields': 'enterprise'})
 
 
