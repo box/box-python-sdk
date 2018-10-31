@@ -117,6 +117,10 @@ class User(BaseObject):
         if fields is not None:
             params['fields'] = ','.join(fields)
         response = self._session.put(url, data=json.dumps(body), params=params).json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
+        )
 
     def get_storage_policy_assignment(self):
         """
