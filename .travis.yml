@@ -16,6 +16,10 @@ before_cache:
 matrix:
   include:
     - python: 2.7
+      env: TOX_ENV=pycodestyle
+    - python: 2.7
+      env: TOX_ENV=pylint
+    - python: 2.7
       env: TOX_ENV=py27
     - python: 3.4
       env: TOX_ENV=py34
@@ -30,10 +34,6 @@ matrix:
       sudo: true
     - python: pypy
       env: TOX_ENV=pypy PYPY_VERSION='2.7-5.10.0'
-    - python: 2.7
-      env: TOX_ENV=pycodestyle
-    - python: 2.7
-      env: TOX_ENV=pylint
     - python: 3.5
       env: TOX_ENV=coverage
 

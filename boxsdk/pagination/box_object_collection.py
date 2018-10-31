@@ -27,6 +27,8 @@ class BoxObjectCollection(collections.Iterator, object):
     will be used to retrieve the next page of Box objects. This pointer can be used when requesting new
     BoxObjectCollection instances that start off from a particular page, instead of from the very beginning.
     """
+    _page_constructor = Page
+
     def __init__(
             self,
             session,
@@ -101,7 +103,7 @@ class BoxObjectCollection(collections.Iterator, object):
 
             self._update_pointer_to_next_page(response_object)
             self._has_retrieved_all_items = not self._has_more_pages(response_object)
-            page = Page(self._session, response_object)
+            page = self._page_constructor(self._session, response_object)
 
             if self._return_full_pages:
                 yield page
