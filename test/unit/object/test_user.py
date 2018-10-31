@@ -73,6 +73,7 @@ def test_delete(mock_user, mock_box_session):
         expected_url,
         expect_json_response=False,
         params=expected_params,
+        headers=None,
     )
 
 

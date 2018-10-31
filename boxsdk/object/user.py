@@ -173,10 +173,8 @@ class User(BaseObject):
         :rtype:
             `bool`
         """
-        url = self.get_url()
         params = {
             'notify': notify,
             'force': force,
         }
-        response = self._session.delete(url, params=params, expect_json_response=False)
-        return response.ok
+        return super(User, self).delete(params=params)
