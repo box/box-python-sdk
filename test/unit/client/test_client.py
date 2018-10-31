@@ -395,7 +395,6 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
     (User, 'user'),
     (Group, 'group'),
     (GroupMembership, 'group_membership'),
-    (Webhook, 'webhook')
     (Enterprise, 'enterprise'),
     (Webhook, 'webhook'),
     (UploadSession, 'upload_session'),
@@ -1116,8 +1115,8 @@ def test_get_current_enterprise(mock_client, mock_box_session):
     assert enterprise._session == mock_box_session  # pylint:disable=protected-access
     assert enterprise.name == enterprise_name
     # pylint:disable=protected-access
-    assert pin._session == mock_box_session
-    mock_box_session.get.assert_called_once_with(expected_url, params={'direction': 'asc'})
+    # assert pin._session == mock_box_session
+    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params={'fields': 'enterprise'})
 
 
 def test_comment(mock_client):
