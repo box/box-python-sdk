@@ -25,7 +25,7 @@ A terms of service can be created in an enterprise. Please note that only two ca
 and one managed. If a terms of service already exists please use the update call to change the current
 terms of service.
 
-To create a terms of service object, calling [`client.create_terms_of_service(status, tos_type, text)`][create] will let you create a new terms of service object with the specified status, type, and text. This method will return a newly created [`Terms of Service`][terms_of_service_class] object populated with data from the API.
+To create a terms of service object, calling [`client.create_terms_of_service(status, tos_type, text)`][create] will let you create a new [`Terms of Service`][terms_of_service_class] object with the specified status, type, and text. This method will return a newly created [`Terms of Service`][terms_of_service_class] object populated with data from the API.
 
 ```python
 from boxsdk.object.terms_of_service import TermsOfServiceType, TermsOfServiceStatus
@@ -33,13 +33,13 @@ terms_of_service = client.create_terms_of_service(TermsOfServiceStatus.ENABLED,T
 print('Terms of Service status is {0} and the message is {1}'.format(terms_of_service.status, terms_of_service.text))
 ```
 
-[create]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.Client.create_terms_of_service
+[create]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_terms_of_service
 [terms_of_service_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.terms_of_service.TermsOfService
 
 Edit a Terms of Service
 -----------------------
 
-To update a terms of service object, first call [`client.terms_of_service(service_id)`][terms_of_service] to construct the appropriate [`Terms of Service`][terms_of_service_class] object, and then calling [`terms_of_service.update_info(data)`][update_info] with a `dict` of properties to update on the terms of service. This method retusn a newly updated [`Terms of Service`][terms_of_service] object, leaving the original object unmodified.
+To update a terms of service object, first call [`client.terms_of_service(service_id)`][terms_of_service] to construct the appropriate [`Terms of Service`][terms_of_service_class] object, and then calling [`terms_of_service.update_info(data)`][update_info] with a `dict` of properties to update on the terms of service. This method returns a newly updated [`Terms of Service`][terms_of_service] object, leaving the original object unmodified.
 
 ```python
 update_object = {'text': 'New Text'}
@@ -47,7 +47,7 @@ updated_tos = client.terms_of_service('12345').update_info(update_object)
 print('The updated message for your custom terms of service is {0} with id {1}'.format(updated_tos.text, updated_tos.id))
 ```
 
-[terms_of_service]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.terms_of_service
+[terms_of_service]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.terms_of_service
 [terms_of_service_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.terms_of_service.TermsOfService
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
 

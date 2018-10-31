@@ -5,6 +5,20 @@ Allows the enterprise admin to manage the Storage Policies for users in their
 enterprise. Used for an enterprise to decide storage location for users based on
 where they work/reside. 
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Get Storage Policy](#get-storage-policy)
+- [List Available Storage Policies](#list-available-storage-policies)
+- [Create Storage Policy Assignment](#create-storage-policy-assignment)
+- [Assign a Storage Policy to a User](#assign-a-storage-policy-to-a-user)
+- [Update Existing Assignment](#update-existing-assignment)
+- [Get Assignment](#get-assignment)
+- [Get Assignment for User](#get-assignment-for-user)
+- [Delete Assignment](#delete-assignment)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 Get Storage Policy
 ------------------
@@ -16,7 +30,7 @@ storage_policy = client.storage_policy('12345').get()
 print('Storage Policy id is {0} and name is {1}'.format(storage_policy.id, storage_policy.name))
 ```
 
-[storage_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.Client.storage_policy
+[storage_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.storage_policy
 [storage_policy_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.storage_policy.StoragePolicy
 [get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
 
@@ -31,7 +45,7 @@ for storage_policy in storage_policies:
     print('The storage policy id is {0} and name is {1}'.format(storage_policy.id, storage_policy.name)))
 ```
 
-[get_storage_policies]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.get_storage_policies
+[get_storage_policies]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.get_storage_policies
 [storage_policy_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.storage_policy.StoragePolicy
 
 Create Storage Policy Assignment
@@ -41,18 +55,18 @@ To create a storage policy assignment object, call [`client.storage_policy(polic
 
 ```python
 user = client.user('56781')
-storage_policy_assignment = client.storage_policy('12345').create_assignment(user)
-print('Storage Policy Assignment id is {0} and the assignee id is {1}'.format(storage_policy_assignment.id, storage_policy_assignment.assigned_to.id))
+assignment = client.storage_policy('12345').create_assignment(user)
+print('Storage Policy Assignment id is {0} and the assignee id is {1}'.format(assignment.id, assignment.assigned_to.id))
 ```
 
 Note: This method only works if the user does not already have an assignment. If the current state of the user is not known, use the [`storage_policy.assign(user)`][assign] method instead.
 
-[storage_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.Client.storage_policy
+[storage_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.storage_policy
 [storage_policy_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.storage_policy.StoragePolicy
-[user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.user
+[user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.user
 [create_assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.storage_policy.StoragePolicy.create_assignment
 [storage_policy_assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.storage_policy_assignment.StoragePolicyAssignment
-[assign]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.storage_policy.assign
+[assign]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.storage_policy.StoragePolicy.assign
 
 Assign a Storage Policy to a User
 ---------------------------------
@@ -61,20 +75,20 @@ To assign a storage policy to a user, first call [`client.storage_policy(policy_
 
 ```python
 user = client.user('12345')
-storage_policy_assignment = client.storage_policy('56781').assign(user)
-print('Assignment id is {0} and the assignee id is {1}'.format(storage_policy_assignment.id, storage_policy_assignment.assigned_to.id))
+assignment = client.storage_policy('56781').assign(user)
+print('Assignment id is {0} and the assignee id is {1}'.format(assignment.id,assignment.assigned_to.id))
 ```
 
-[storage_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.Client.storage_policy
+[storage_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.storage_policy
 [storage_policy_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.storage_policy.StoragePolicy
 [storage_policy_assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.storage_policy_assignment.StoragePolicyAssignment
-[user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.Client.user
+[user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.user
 [assign]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.object.storage_policy.StoragePolicy.assign
 
 Update Existing Assignment
 --------------------------
 
-To update a storage policy object, first call [`client.storage_policy_assignment(assignment_id)`][storage_policy_assignment] to construct the appropriate [`Storage Policy Assignmennt`][storage_policy_assignment_class] object, and then calling [storage_policy_assignment.update_info(data)][update_info] with a `dict` of properties to update on the storage policy assignment. This method returns a newly update [`Storage Policy Assignment`][storage_policy_assignment] object, leaving the original object unmodified.
+To update a storage policy object, first call [`client.storage_policy_assignment(assignment_id)`][storage_policy_assignment] to construct the appropriate [`Storage Policy Assignment`][storage_policy_assignment_class] object, and then calling [storage_policy_assignment.update_info(data)][update_info] with a `dict` of properties to update on the storage policy assignment. This method returns a newly update [`Storage Policy Assignment`][storage_policy_assignment] object with data populated from the API, leaving the original object unmodified.
 
 ```python
 updated_storage_policy = {'storage_policy': {'type': 'storage_policy', 'id': '12345'}}
@@ -82,7 +96,7 @@ updated_assignment = client.storage_policy_assignment('ZW50ZXJwcmldfgeV82MDMwMDQ
 print('Update storage policy id is {0}'.format(updated_assignment.storage_policy.id))
 ```
 
-[storage_policy_assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.storage_policy_assignment
+[storage_policy_assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.storage_policy_assignment
 [storage_policy_assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.storage_policy_assignment.StoragePolicyAssignment
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
 
@@ -96,7 +110,7 @@ assignment = client.storage_policy_assignment('12345').get()
 print('Assignment id is {0} and the storage policy id is {1}'.format(assignment.id, assignment.storage_policy.id))
 ```
 
-[storage_policy_assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.storage_policy_assignment
+[storage_policy_assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.storage_policy_assignment
 [storage_policy_assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.storage_policy_assignment.StoragePolicyAssignment
 [get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
 
@@ -110,7 +124,7 @@ assignment = client.user('12345').get_storage_policy_assignment()
 print('Assignment id is {0} and the storage policy id is {1}'.format(assignment.id, assignment.storage_policy.id))
 ```
 
-[user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.user
+[user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.user
 [user_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.user.User
 [storage_policy_assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.user.User.get_storage_policy_assignment
 
@@ -123,3 +137,5 @@ To delete a storage policy assignment, call [`storage_policy_assignment.delete()
 client.storage_policy_assignment('12345').delete()
 print('The storage policy assignment was successfully delete!')
 ```
+
+[delete]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.delete
