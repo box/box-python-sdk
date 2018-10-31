@@ -117,6 +117,23 @@ class User(BaseObject):
         if fields is not None:
             params['fields'] = ','.join(fields)
         response = self._session.put(url, data=json.dumps(body), params=params).json()
+
+    def get_storage_policy_assignment(self):
+        """
+        Get the storage policy assignment assigned to the user.
+
+        :returns:
+            The :class:`StoragePolicyAssignment` object information
+        :rtype:
+            :class:`StoragePolicyAssignment`
+        """
+        url = self._session.get_url('storage_policy_assignments')
+        additional_params = {
+            'resolved_for_type': self.object_type,
+            'resolved_for_id': self.object_id,
+        }
+        box_response = self._session.get(url, params=additional_params)
+        response = box_response.json()['entries'][0]
         return self.translator.translate(
             session=self._session,
             response_object=response,

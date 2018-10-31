@@ -5,12 +5,14 @@ import json
 
 from boxsdk.object.base_object import BaseObject
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+from ..util.api_call_decorator import api_call
 
 
 class Task(BaseObject):
     """Represents a Box task."""
     _item_type = 'task'
 
+    @api_call
     def assign(self, assignee):
         """
         Assign a task to a single user on a single file.
@@ -40,6 +42,7 @@ class Task(BaseObject):
             response_object=response,
         )
 
+    @api_call
     def assign_with_login(self, assignee_login):
         """
         Used to assign a task to a single user with the login email address of the assignee.
@@ -69,6 +72,7 @@ class Task(BaseObject):
             response_object=response,
         )
 
+    @api_call
     def get_assignments(self, fields=None):
         """
         Get the entries in the file task assignment.

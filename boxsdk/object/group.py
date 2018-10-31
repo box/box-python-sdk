@@ -82,6 +82,7 @@ class Group(BaseObject):
         response = box_response.json()
         return self.translator.translate(self._session, response)
 
+    @api_call
     def get_collaborations(self, limit=None, offset=None, fields=None):
         """
         Get the entries in the collaboration for the group using limit-offset paging.

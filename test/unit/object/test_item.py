@@ -125,7 +125,7 @@ def test_get_shared_link(
     if shared_link_access is not None:
         expected_data['shared_link']['access'] = shared_link_access
     if shared_link_unshared_at is not None:
-        expected_data['shared_link']['unshared_at'] = shared_link_unshared_at.isoformat()
+        expected_data['shared_link']['unshared_at'] = shared_link_unshared_at
     if shared_link_can_download is not None or shared_link_can_preview is not None:
         expected_data['shared_link']['permissions'] = permissions = {}
         if shared_link_can_download is not None:
@@ -297,7 +297,16 @@ def test_collaborate_with_group(test_item_and_response, test_group, mock_box_ses
     assert collaboration['created_by']['id'] == mock_collaboration['created_by']['id']
 
 
-def test_collaborate_with_user(test_item_and_response, mock_user, mock_box_session):
+@pytest.mark.parametrize('can_view_path,fields,notify,data,params', [
+    (None, None, None, {}, {}),
+    (True, None, None, {'can_view_path': True}, {}),
+    (False, None, None, {'can_view_path': False}, {}),
+    (None, ['type', 'id', 'created_by'], None, {}, {'fields': 'type,id,created_by'}),
+    (None, None, True, {}, {'notify': True}),
+    (None, None, False, {}, {'notify': False}),
+    (True, ['type', 'id', 'created_by'], False, {'can_view_path': True}, {'fields': 'type,id,created_by', 'notify': False})
+])
+def test_collaborate_with_user(test_item_and_response, mock_user, mock_box_session, can_view_path, fields, notify, data, params):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
     expected_url = '{0}/collaborations'.format(API.BASE_API_URL)
@@ -312,6 +321,7 @@ def test_collaborate_with_user(test_item_and_response, mock_user, mock_box_sessi
         },
         'role': 'editor',
     }
+    expected_data.update(data)
     mock_collaboration = {
         'type': 'collaboration',
         'id': '1234',
@@ -320,15 +330,25 @@ def test_collaborate_with_user(test_item_and_response, mock_user, mock_box_sessi
             'id': '1111',
         }
     }
+    expected_params = params
     mock_box_session.post.return_value.json.return_value = mock_collaboration
-    collaboration = test_item.collaborate(mock_user, 'editor')
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), params={})
+    collaboration = test_item.collaborate(mock_user, 'editor', can_view_path=can_view_path, fields=fields, notify=notify)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), params=expected_params)
     assert collaboration.id == mock_collaboration['id']
     assert collaboration['type'] == mock_collaboration['type']
     assert collaboration['created_by']['id'] == mock_collaboration['created_by']['id']
 
 
-def test_collaborate_with_login(test_item_and_response, mock_box_session):
+@pytest.mark.parametrize('can_view_path,fields,notify,data,params', [
+    (None, None, None, {}, {}),
+    (True, None, None, {'can_view_path': True}, {}),
+    (False, None, None, {'can_view_path': False}, {}),
+    (None, ['type', 'id', 'created_by'], None, {}, {'fields': 'type,id,created_by'}),
+    (None, None, True, {}, {'notify': True}),
+    (None, None, False, {}, {'notify': False}),
+    (True, ['type', 'id', 'created_by'], False, {'can_view_path': True}, {'fields': 'type,id,created_by', 'notify': False})
+])
+def test_collaborate_with_login(test_item_and_response, mock_box_session, can_view_path, fields, notify, data, params):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
     expected_url = '{0}/collaborations'.format(API.BASE_API_URL)
@@ -343,6 +363,7 @@ def test_collaborate_with_login(test_item_and_response, mock_box_session):
         },
         'role': 'editor',
     }
+    expected_data.update(data)
     mock_collaboration = {
         'type': 'collaboration',
         'id': '1234',
@@ -351,9 +372,10 @@ def test_collaborate_with_login(test_item_and_response, mock_box_session):
             'id': '1111',
         }
     }
+    expected_params = params
     mock_box_session.post.return_value.json.return_value = mock_collaboration
-    collaboration = test_item.collaborate_with_login('test@example.com', 'editor')
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), params={})
+    collaboration = test_item.collaborate_with_login('test@example.com', 'editor', can_view_path=can_view_path, fields=fields, notify=notify)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), params=expected_params)
     assert collaboration.id == mock_collaboration['id']
     assert collaboration['type'] == mock_collaboration['type']
     assert collaboration['created_by']['id'] == mock_collaboration['created_by']['id']
