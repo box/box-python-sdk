@@ -19,7 +19,7 @@ similarly to file objects.
 Create Web Link
 ---------------
 
-To create a web link object, first call `[client.folder(folder_id)]`[folder] to construct the appropriate ['Folder'][folder_class] object, and then calling [`folder.create_web_link(target_url, name=None, description=None)`][create] will let you create a new web link with a specified name and description. This method return an updated [`WebLink`][web_link_class] object populated with data from the API, leaving the original object unmodified.
+To create a web link object, first call [`client.folder(folder_id)`][folder] to construct the appropriate ['Folder'][folder_class] object, and then calling [`folder.create_web_link(target_url, name=None, description=None)`][create] will let you create a new web link with a specified name and description. This method return an updated [`WebLink`][web_link_class] object populated with data from the API, leaving the original object unmodified.
 
 ```python
 web_link = client.folder('12345').create_web_link('https://example.com', 'Example Link', 'This is the description')
@@ -48,7 +48,7 @@ print('WebLink id is {0} and its type is {1}'.format(web_link.id, web_link.type)
 Update Web Link
 ---------------
 
-To update a web link object, first call [`client.web_link(web_link_id)`][web_link] to construct the appropriate [`WebLink`][web_link_class] object, and then calling [`web_link.update_info(data)`][update_info] with a `dict` of peroperties to update on the web link. This method returns a new updated ['WebLink'][web_link_class] object, leaving the original object unmodified.
+To update a web link object, first call [`client.web_link(web_link_id)`][web_link] to construct the appropriate [`WebLink`][web_link_class] object, and then calling [`web_link.update_info(data)`][update_info] with a `dict` of properties to update on the web link. This method returns a newly updated ['WebLink'][web_link_class] object, leaving the original object unmodified.
 
 ```python
 updated_web_link = client.web_link('12345').update_info({'url': 'https://newurl.com'})
@@ -61,7 +61,7 @@ updated_web_link = client.web_link('12345').update_info({'url': 'https://newurl.
 Delete Web Link
 ---------------
 
-To delete a web link, call [`web_link.delete()`][delete] This method return `True` to indicate that th deletion was successful.
+To delete a web link, call [`web_link.delete()`][delete]. This method returns `True` to indicate that the deletion was successful.
 
 ```python
 client.web_link('12345').delete()

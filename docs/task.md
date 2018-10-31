@@ -3,6 +3,24 @@ Tasks
 
 Tasks enable file-centric workflows in Box. User can create tasks on files and assign them to collaborators on Box.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Get a Task's Information](#get-a-tasks-information)
+- [List Tasks on File](#list-tasks-on-file)
+- [Add Task to File](#add-task-to-file)
+- [Update Task Info](#update-task-info)
+- [Delete a Task](#delete-a-task)
+- [Assign a Task](#assign-a-task)
+- [Assign a Task with User Login](#assign-a-task-with-user-login)
+- [List Task Assignments](#list-task-assignments)
+- [Get Information about Task Assignment](#get-information-about-task-assignment)
+- [Update Task Assignment](#update-task-assignment)
+- [Delete Task Assignment](#delete-task-assignment)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 Get a Task's Information
 ------------------------
 
@@ -13,7 +31,7 @@ task = client.task('12345').get()
 print('Task id is {0} and the type is {1}'.format(task.id, task.type))
 ```
 
-[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.task
+[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.task
 [task_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task.Task
 [get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
 
@@ -28,7 +46,7 @@ for task in tasks:
     print('Task id is {0} and the type is {1}'.format(task.id, task.type))
 ```
 
-[file]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.file
+[file]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.file
 [file_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File
 [get_tasks]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_tasks()
 [task_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task.Task
@@ -36,7 +54,7 @@ for task in tasks:
 Add Task to File
 ----------------
 
-To create a single task for a single user on a single file, call [`client.file(file_id)`][file] to construct the appropriate [`File`][file_class] object. Calling [`file.create_task(message=None, due_at=None)`][create_task] will return a newly created [`Task`][task_class] object populated with data from the API, leaving the original object unmodified.
+To create a single task for a single user on a single file, call [`client.file(file_id)`][file] to construct the appropriate [`File`][file_class] object. Calling [`file.create_task(message=None, due_at=None)`][create_task] will return a newly created [`Task`][task_class] object populated with data from the API.
 
 ```python
 message = 'Please review this'
@@ -45,7 +63,7 @@ task = client.file('11111').create_task(message, due_at)
 print('Task message is {0} and it is due at {1}'.format(task.message, task.due_at))
 ```
 
-[file]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.task
+[file]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.task
 [file_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File
 [create_task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.create_Task
 [task_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task.Task
@@ -61,7 +79,7 @@ updated_task = client.task('12345').update_info(task_update)
 print('New task message is {1} and the new due time is {1}'.format{updated_task.message, updated_Task.due_at})
 ```
 
-[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.task
+[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.task
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
 [task_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task.Task
 
@@ -75,14 +93,14 @@ client.client.task('12345').delete()
 print('The task was successfully delete!')
 ```
 
-[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.task
+[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.task
 [delete]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.delete
 
 
 Assign a Task
 --------------
 
-To assign a task object, first call [`client.task(task_id)`][task] to construct the appropriate task object, then call [`client.user(user_id)`][user] to construct the appropriate user object you wish to assign the task to. Finally, calling [`task.assign(user)`][assign] will return an [`TaskAssignment`][assignment_class] object, populated with data from the API.
+To assign a task object, first call [`client.task(task_id)`][task] to construct the appropriate task object, then call [`client.user(user_id)`][user] to construct the appropriate user object you wish to assign the task to. Finally, calling [`task.assign(user)`][assign] will return an [`Task Assignment`][assignment_class] object, populated with data from the API.
 
 ```python
 user = client.user('11111')
@@ -90,22 +108,23 @@ assignment = client.task('12345').assign(user)
 print('Assignment id is {0} and is assigned to user {1}'.format(assignment.id, assignment.assigned_to.name))
 ```
 
-[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.task
-[user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client/user
+[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.task
+[user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.user
 [assign]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task.Task.assign
 [assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task_assignment.TaskAssignment
 
 Assign a Task with User Login
 -----------------------------
 
-To assign a task object with a user login, first call [`client.task(task_id)`][task] to construct the appropriate task object, you can then pass in a `unicode` value representing the login of the user you wish to assign the task to. This method will return a [`Task Assignment`][assignment_class] object, populated with data from the API.
+To assign a task object with a user login, first call [`client.task(task_id)`][task] to construct the appropriate [`Task`][task_class] object, you can then pass in a `unicode` value representing the login of the user you wish to assign the task to. This method will return a [`Task Assignment`][assignment_class] object, populated with data from the API.
 
 ```python
 assignment = client.task('12345').assign_with_login('test_user@example.com')
 print('Assignment id is {0} and the assignee is {1}'.format(assignment.id, assignment.assigned_to.login))
 ```
 
-[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.task
+[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.task
+[task_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task.Task
 [assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task_assignment.TaskAssignment
 
 List Task Assignments
@@ -119,21 +138,21 @@ for assignment in assignments:
     print('Assignment id is {0} and the assignee is {1}'.format(assignment.id, assignment.assigned_to.login))
 ```
 
-[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.task
+[task]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.task
 [get_assignments]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task.Task.get_assignments
 [assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task_assignment.TaskAssignment
 
 Get Information about Task Assignment
 -------------------------------------
 
-To get a task assignment object, first call [`client.task_assignment(assignment_id)`][assignment] to construct the appropriate [`TaskAssignment`][assignment_class] object, and then calling ['task_assignment.get(fields=None)'][get] will return the [`Task Assignment`][task_assignment] object populated with data from the API.
+To get a task assignment object, first call [`client.task_assignment(assignment_id)`][assignment] to construct the appropriate [`Task Assignment`][assignment_class] object, and then calling ['task_assignment.get(fields=None)'][get] will return the [`Task Assignment`][task_assignment] object populated with data from the API.
 
 ```python
 assignment= client.task_assignment('12345').get()
 print('Assignment id is {0} and assignment type is {1}'.format(assignment.id, assignment.type))
 ```
 
-[assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.task_assignment
+[assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.task_assignment
 [assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task_assignment.TaskAssignment
 [get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
 
@@ -149,7 +168,7 @@ updated_assignment = client.task_assignment('12345').update_info(updated_task)
 print('Assignment id is {0} and resolution state is {1}'.format(updated_assignment.id, updated_assignment.resolution_state))
 ```
 
-[assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.task_assignment
+[assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.task_assignment
 [assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task_assignment.TaskAssignment
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
 
@@ -162,3 +181,5 @@ To delete a task assignment, call [`task_assignment.delete()`][delete]. This met
 client.task_assignment('12345').delete()
 print('The task assignment was successfully delete!')
 ```
+
+[delete]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.delete

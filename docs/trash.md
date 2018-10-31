@@ -33,7 +33,7 @@ for trashed_item in trashed_items:
 Get Trashed Items
 -----------------
 
-To get a trashed item, first construct a [`Folder`][folder_class], [`File`][file_class], or [`Web Link`][web_link_class]object and then calling [`client.trash().get_item(item, fields)`][get_item] with the constructed object passed in will return the ['Item'][item] object populated with data from the API, leaving the original object unmodified.
+To get a trashed item, first construct a [`Folder`][folder_class], [`File`][file_class], or [`Web Link`][web_link_class] object and then calling [`client.trash().get_item(item, fields)`][get_item] with the constructed object passed in. This method will return the ['Item'][item] object populated with data from the API.
 
 ```python
 file_to_retrieve = client.file('11111')

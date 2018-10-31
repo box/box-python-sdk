@@ -17,7 +17,7 @@ The ability to watermark files and folders is represented as a sub-resource on t
 Get Watermark on File or Folder
 -------------------------------
 
-To get a watermark object, first call [`client.file(file_id)`][file]] or [`client.folder(folder_id)`][folder]] to construct the appropriate ['Folder'][folder_class] object, and then calling [`file.get_watermark()`][get] or  [`folder.get_watermark()`][get] will return the [`Watermark`][watermark_class] object populated with data from the API, leaving the original object unmodified.
+To get a watermark object, first call [`client.file(file_id)`][file] or [`client.folder(folder_id)`][folder] to construct the appropriate ['Folder'][folder_class] or ['File'][file_class] object, and then calling [`file.get_watermark()`][get_file_watermark] or  [`folder.get_watermark()`][get_folder_watermark] will return the [`Watermark`][watermark_class] object populated with data from the API.
 
 ```python
 watermark = client.file('12345').get_watermark()
@@ -33,32 +33,51 @@ print('Watermark created at {0} and modified at {1}'.format(watermark.created_at
 [file_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File
 [folder]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.folder
 [folder_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder
-[get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
+[get_file_watermark]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.object.file.File.get_watermark()
+[get_folder_watermark]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.object.folder.Folder.get_watermark()
 [watermark_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.watermark.Watermark
 
 Apply Watermark on File or Folder
 ---------------------------------
 
-To assign a watermark on a file or folder, first call 
-To assign a watermark on a file, use `file.apply_watermark()`. To assign a watermark on a folder, use `folder.apply_watermark()`.
+To assign a watermark on a file or folder, first call [`client.file(file_id)`][file]] or [`client.folder(folder_id)`][folder]] to construct the appropriate ['Folder'][folder_class] or ['File'][file_class] object, and then calling [file.apply_watermark()][apply-file-watermark] or [folder.apply_watermark()][apply-folder-watermark] will return the [`Watermark`][watermark_class] object populated with data from the API.
 
 ```python
-watermark_info = client.file('1234').apply_watermark()
+watermark = client.file('12345').apply_watermark()
+print('Watermark created at {0} and modified at {1}'.format(watermark.created_at, watermark.modified_at))
 ```
 
 ```python
-watermark_info = client.folder('5678').apply_watermark()
+watermark = client.folder('11111').apply_watermark()
+print('Watermark created at {0} and modified at {1}'.format(watermark.created_at, watermark.modified_at))
 ```
+
+[file]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.file
+[file_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File
+[folder]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.folder
+[folder_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder
+[apply-file-watermark]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.file.File.apply_watermark()
+[apply_folder_watermark]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.folder.Folder.apply_watermark()
+[watermark_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.watermark.Watermark
 
 Remove Watermark on File or Folder
 ----------------------------------
 
-To remove watermark on a file, use `file.delete_watermark()`. To remove a watermark on a folder, use `folder.delete_watermark()`
+To remove a watermark from a file or folder, first call [`client.file(file_id)`][file]] or [`client.folder(folder_id)`][folder]] to construct the appropriate ['Folder'][folder_class] or ['File'][file_class] object, and then calling [file.delete_watermark()][delete-file-watermark] or [folder.delete_watermark()][delete-folder-watermark] will return `True` to indicate that the deletion was successful.
 
 ```python
-client.file('1234').delete_watermark()
+client.file('12345').delete_watermark()
+print('The file watermark was deleted!')
 ```
 
 ```python
-client.folder('5678').delete_watermark()
+client.folder('11111').delete_watermark()
+print('The folder watermark was deleted!')
 ```
+
+[file]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.file
+[file_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File
+[folder]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.folder
+[folder_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder
+[delete-file-watermark]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.file.File.delete_watermark()
+[delete_folder_watermark]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.folder.Folder.delete_watermark()

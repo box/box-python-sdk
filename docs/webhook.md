@@ -18,14 +18,14 @@ Webhooks enable you to attach event triggers to Box files and folders. Event tri
 Get Information about Webhook
 -----------------------------
 
-To get a webhook object, first call [`client.webhook(webhook_id)`][webhook] to construct the appropriate [`Webhook`][webhook_class] object, and then calling [`webhook.get(fields=None)`][get] will return the [`Webhook`][webhook_class] object populated with data from the API, leaving the original object unmodified.
+To get a webhook object, first call [`client.webhook(webhook_id)`][webhook] to construct the appropriate [`Webhook`][webhook_class] object, and then calling [`webhook.get(fields=None)`][get] will return the [`Webhook`][webhook_class] object populated with data from the API.
 
 ```python
 webhook = client.webhook('12345').get()
 print('Webhooks id is {0} and the address is {1}'.format(webhook.id, webhook.address))
 ```
 
-[webhook]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.Client.webhook
+[webhook]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.webhook
 [webhook_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.webhook.Webhook
 [get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
 
@@ -40,7 +40,7 @@ for webhook in webhooks:
     print('The webhook id is {0} and the address is {1}'.format(webhook.id, webhook.address))
 ```
 
-[get_webhooks]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.Client.get_webhooks
+[get_webhooks]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.get_webhooks
 [webhook_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.webhook.Webhook
 
 Create Webhook
@@ -66,6 +66,7 @@ To delete a webhook, call [`webhook.delete()`][delete]. This method returns `Tru
 
 ```python
 client.webhook('12345').delete()
+print('The webhook was successfully deleted!')
 ```
 
 [delete]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.delete
@@ -87,4 +88,4 @@ print('Updated the webhook info for triggers: {0} and address: {1}'.format(webho
 
 [webhook]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.Client.create_webhook
 [webhook_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.webhook.Webhook
-
+[update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info

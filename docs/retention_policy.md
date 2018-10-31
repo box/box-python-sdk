@@ -41,7 +41,7 @@ finite_retention_policy = client.create_retention_policy(policy_name=policy_name
 print('Finite Retention Policy is {0} and the policy name is {1}'.format(finite_retention_policy.id, finite_retention_policy.policy_name))
 ```
 
-[create_retention_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.Client.create_retention_policy
+[create_retention_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_retention_policy
 [retention_policy_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.retention_policy.RetentionPolicy
 
 Get Retention Policy
@@ -54,8 +54,8 @@ retention_policy = client.retention_policy('12345').get()
 print('Retention Policy id is {0} and the name is {1}'.format(retention_policy.id, retention_policy.policy_name))
 ```
 
-[retention_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.retention_policy
-[retention_policy_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.retention_policy
+[retention_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.retention_policy
+[retention_policy_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.retention_policy.RetentionPolicy
 [get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
 
 Get Retention Policies
@@ -69,7 +69,7 @@ for policy in retention_policies:
     print('The policy id is {0} and the name is {1}'.format(policy.id, policy.policy_name))
 ```
 
-[get_retention_policies]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.get_retention_policies
+[get_retention_policies]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.get_retention_policies
 [retention_policy_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.retention_policy.RetentionPolicy
 
 Update Retention Policy
@@ -83,22 +83,23 @@ updated_retention_policy = client.retention_policy('12345').update_info(policy_u
 print('Retention Policy id is {0} and the new policy name is {1}'.format(updated_retention_policy.id, updated_retention_policy.policy_name))
 ```
 
-[retention_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.retention_policy
-[retention_policy_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.retention_policy
+[retention_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.retention_policy
+[retention_policy_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.retention_policy.RetentionPolicy
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
 
 Assign Retention Policy
 -----------------------
 
-To assign a retention policy, first call [`client.retention_policy(policy_id)`][retention_policy] to construct the appropriate [`Retention Policy`][retention_policy_class] object. Then calling [`client.folder('56781')`][folder] to construct the folder you wish to assign a retention policy to. Finally calling [`retention_policy.assign(folder)`][assign] will create a new [`Retention Policy Assignment`][retention_policy_assignment_class] object populated with data from the API.
+To assign a retention policy, first call [`client.retention_policy(policy_id)`][retention_policy] to construct the appropriate [`Retention Policy`][retention_policy_class] object. Then calling [`client.folder('folder_id')`][folder] to construct the folder you wish to assign a retention policy to. Finally calling [`retention_policy.assign(folder)`][assign] will create a new [`Retention Policy Assignment`][retention_policy_assignment_class] object populated with data from the API.
 
 ```python
 folder = client.folder('1111')
-policy_assignment = client.retention_policy('12345').assign(folder)
+assignment = client.retention_policy('12345').assign(folder)
+print('Assignment id is {0} and it is assigned by {1}'.format(assignment.id, assignment.assigned_by.name))
 ```
 
-[folder]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.folder
-[retention_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.retention_policy
+[folder]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.folder
+[retention_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.retention_policy
 [retention_policy_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.retention_policy.RetentionPolicy
 [retention_policy_assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.retention_policy_assignment.RetentionPolicyAssignment
 [assign]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.retention_policy.RetentionPolicy.assign
@@ -113,7 +114,7 @@ assignment = client.retention_policy_assignment('12345').get()
 print('Assignment id is {0} and it is assigned by {1}'.format(assignment.id, assignment.assigned_by.name))
 ```
 
-[retention_policy_assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.retention_policy_assignment
+[retention_policy_assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.retention_policy_assignment
 [retention_policy_assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.retention_policy_assignment.RetentionPolicyAssignment
 [get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
 
@@ -136,7 +137,7 @@ for assignment in assignments:
     print('Assignment id is {0} and it is assigned by {1}'.format(assignment.id, assignment.assigned_by.name))
 ```
 
-[retention_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.retention_policy
+[retention_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.retention_policy
 [retention_policy_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.retention_policy.RetentionPolicy
 [retention_policy_assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.retention_policy_assignment.RetentionPolicyAssignment
 [get_assignments]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.retention_policy.assignments
@@ -152,7 +153,7 @@ for retention in retentions:
     print('The file version retention id is {0} and the data time applied at is {1}'.format(retention.id, retention.applied_at))
 ```
 
-[get_file_version_retentions]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.get_file_version_retentions
+[get_file_version_retentions]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client,Client.get_file_version_retentions
 [file_version_rention_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file_version_retention.FileVersionRetention
 
 
@@ -166,6 +167,6 @@ retention_info = client.file_version_retention('12345').get()
 print('The file version retention id is {0} and the data time applied at is {1}'.format(retention.id, retention.applied_at))
 ```
 
-[file_version_retention]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.file_version_retention
+[file_version_retention]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.file_version_retention
 [file_version_retention_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file_version_retention.FileVersionRetention
 [get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
