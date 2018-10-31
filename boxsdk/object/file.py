@@ -78,6 +78,28 @@ class File(Item):
         """
         return self._get_accelerator_upload_url(file_id=self._object_id)
 
+    @staticmethod
+    def _construct_range_header(boundaries):
+        """
+        Construct the correct value for the Range header, given a closed or open-ended range.
+
+        :param boundaries:
+            The range of bytes (inclusive)
+        :type boundaries:
+            (`int`) or (`int`, `int`)
+        :returns:
+            The value for the Range header
+        :rtype:
+            `unicode`
+        :raises ValueError:
+        """
+        if len(boundaries) == 1:
+            return 'bytes={0}-'.format(*boundaries)
+        elif len(boundaries) == 2:
+            return 'bytes={0}-{1}'.format(*boundaries)
+        else:
+            raise ValueError('Expected a 1-tuple or 2-tuple for byte range')
+
     @api_call
     def content(self, file_version=None, byte_range=None):
         """
@@ -98,7 +120,7 @@ class File(Item):
         """
         url = self.get_url('content')
         params = {'version': file_version.object_id} if file_version is not None else None
-        headers = {'Range': 'bytes={0}-{1}'.format(*byte_range)} if byte_range is not None else None
+        headers = {'Range': self._construct_range_header(byte_range)} if byte_range is not None else None
         box_response = self._session.get(url, expect_json_response=False, params=params, headers=headers)
         return box_response.content
 
@@ -122,7 +144,7 @@ class File(Item):
         """
         url = self.get_url('content')
         params = {'version': file_version.object_id} if file_version is not None else None
-        headers = {'Range': 'bytes={0}-{1}'.format(*byte_range)} if byte_range is not None else None
+        headers = {'Range': self._construct_range_header(byte_range)} if byte_range is not None else None
         box_response = self._session.get(url, expect_json_response=False, stream=True, params=params, headers=headers)
         for chunk in box_response.network_response.response_as_stream.stream(decode_content=True):
             writeable_stream.write(chunk)
