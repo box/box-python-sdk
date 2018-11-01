@@ -19,26 +19,28 @@ similarly to file objects.
 Create Web Link
 ---------------
 
-To create a web link object, first call [`client.folder(folder_id)`][folder] to construct the appropriate ['Folder'][folder_class] object, and then calling [`folder.create_web_link(target_url, name=None, description=None)`][create] will let you create a new web link with a specified name and description. This method return an updated [`WebLink`][web_link_class] object populated with data from the API, leaving the original object unmodified.
+To create a web link object, calling [`folder.create_web_link(target_url, name=None, description=None)`][create] 
+will let you create a new web link with a specified name and description. This method return an newly created [`WebLink`][web_link_class] 
+object populated with data from the API, leaving the original object unmodified.
 
 ```python
-web_link = client.folder('12345').create_web_link('https://example.com', 'Example Link', 'This is the description')
-print('WebLink url is {0} and its description is {1}'.format(web_link.url, web_link.description))
+web_link = client.folder(folder_id='12345').create_web_link('https://example.com', 'Example Link', 'This is the description')
+print('Web Link url is {0} and its description is {1}'.format(web_link.url, web_link.description))
 ```
 
-[folder]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.folder
-[folder_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder
 [create]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.create_web_link
 [web_link_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.web_link.WebLink
 
 Get Web Link
 ------------
 
-To get a web link object, first call [`client.web_link(web_link_id)`][web_link] to construct the appropriate [`WebLink`][web_link_class] object, and then calling [`web_link.get(fields=None)`][get] will return the [`WebLink`][web_link_class] object populated with data from the API, leaving the original object unmodified.
+To get a web link object, first call [`client.web_link(web_link_id)`][web_link] to construct the appropriate 
+[`WebLink`][web_link_class] object, and then calling [`web_link.get(fields=None)`][get] will return the 
+[`WebLink`][web_link_class] object populated with data from the API, leaving the original object unmodified.
 
 ```python
-web_link = client.web_link('12345').get()
-print('WebLink id is {0} and its type is {1}'.format(web_link.id, web_link.type))
+web_link = client.web_link(web_link_id='12345').get()
+print('Web Link ID is {0} and its type is {1}'.format(web_link.id, web_link.type))
 ```
 
 [web_link]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.web_link
@@ -48,20 +50,22 @@ print('WebLink id is {0} and its type is {1}'.format(web_link.id, web_link.type)
 Update Web Link
 ---------------
 
-To update a web link object, first call [`client.web_link(web_link_id)`][web_link] to construct the appropriate [`WebLink`][web_link_class] object, and then calling [`web_link.update_info(data)`][update_info] with a `dict` of properties to update on the web link. This method returns a newly updated ['WebLink'][web_link_class] object, leaving the original object unmodified.
+To update a web link object, call [`web_link.update_info(data)`][update_info] with a `dict` of 
+properties to update on the web link. This method returns a newly updated ['WebLink'][web_link_class] object, leaving 
+the original object unmodified.
 
 ```python
-updated_web_link = client.web_link('12345').update_info({'url': 'https://newurl.com'})
+updated_web_link = client.web_link(web_link_id='12345').update_info({'url': 'https://newurl.com'})
 ```
 
-[web_link]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.web_link
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
 [web_link_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.web_link.WebLink
 
 Delete Web Link
 ---------------
 
-To delete a web link, call [`web_link.delete()`][delete]. This method returns `True` to indicate that the deletion was successful.
+To delete a web link, call [`web_link.delete()`][delete]. This method returns `True` to indicate that the deletion was 
+successful.
 
 ```python
 client.web_link('12345').delete()
