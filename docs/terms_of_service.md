@@ -12,7 +12,6 @@ accept/re-accept/decline for custom applications
 - [Edit a Terms of Service](#edit-a-terms-of-service)
 - [Get Terms of Service](#get-terms-of-service)
 - [List Terms of Service](#list-terms-of-service)
-- [Update User Status on Terms of Service](#update-user-status-on-terms-of-service)
 - [Accept or Decline a Terms of Service](#accept-or-decline-a-terms-of-service)
 - [Get User Status for a Terms of Service](#get-user-status-for-a-terms-of-service)
 
@@ -21,11 +20,13 @@ accept/re-accept/decline for custom applications
 Create a Terms of Service
 -------------------------
 
-A terms of service can be created in an enterprise. Please note that only two can be created. One external
+A Terms of Service can be created in an enterprise. Please note that only two can be created. One external
 and one managed. If a terms of service already exists please use the update call to change the current
 terms of service.
 
-To create a terms of service object, calling [`client.create_terms_of_service(status, tos_type, text)`][create] will let you create a new [`Terms of Service`][terms_of_service_class] object with the specified status, type, and text. This method will return a newly created [`Terms of Service`][terms_of_service_class] object populated with data from the API.
+To create a Terms of Service object, calling [`client.create_terms_of_service(status, tos_type, text)`][create] will let 
+you create a new [`TermsOfService`][terms_of_service_class] object with the specified status, type, and text. This 
+method will return a newly created [`TermsOfService`][terms_of_service_class] object populated with data from the API.
 
 ```python
 from boxsdk.object.terms_of_service import TermsOfServiceType, TermsOfServiceStatus
@@ -39,93 +40,107 @@ print('Terms of Service status is {0} and the message is {1}'.format(terms_of_se
 Edit a Terms of Service
 -----------------------
 
-To update a terms of service object, first call [`client.terms_of_service(service_id)`][terms_of_service] to construct the appropriate [`Terms of Service`][terms_of_service_class] object, and then calling [`terms_of_service.update_info(data)`][update_info] with a `dict` of properties to update on the terms of service. This method returns a newly updated [`Terms of Service`][terms_of_service] object, leaving the original object unmodified.
+To update a terms of service object, first call [`terms_of_service.update_info(data)`][update_info] with a `dict` of 
+properties to update on the terms of service. This method returns a newly updated [`TermsOfService`][terms_of_service] 
+object, leaving the original object unmodified.
 
 ```python
 update_object = {'text': 'New Text'}
-updated_tos = client.terms_of_service('12345').update_info(update_object)
-print('The updated message for your custom terms of service is {0} with id {1}'.format(updated_tos.text, updated_tos.id))
+updated_tos = client.terms_of_service(tos_id='12345').update_info(update_object)
+print('The updated message for your custom terms of service is {0} with ID {1}'.format(updated_tos.text, updated_tos.id))
 ```
 
-[terms_of_service]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.client.Client.terms_of_service
+[terms_of_service]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.terms_of_service
 [terms_of_service_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.terms_of_service.TermsOfService
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
 
 Get Terms of Service
 --------------------
 
-To get a terms of service object, first call [`client.terms_of_service(service_id)`][terms_of_service] to construct the appropriate [`Terms of Service`][terms_of_service_class], and then calling [`terms_of_service.get(fields=None)`][get] will return the [`Terms of Service`][terms_of_service_class] object populated with data from the API.
+To get a terms of service object, call [`client.terms_of_service(service_id)`][terms_of_service] to construct the 
+appropriate [`TermsOfService`][terms_of_service_class], and then calling [`terms_of_service.get(fields=None)`][get] 
+will return the [`TermsOfService`][terms_of_service_class] object populated with data from the API.
 
 ```python
-terms_of_service = client.terms_of_service('12345').get()
-print('Terms of Service id is {0} and the message is {1}'.format(terms_of_service.id, terms_of_service.text))
+terms_of_service = client.terms_of_service(tos_id='12345').get()
+print('Terms of Service ID is {0} and the message is {1}'.format(terms_of_service.id, terms_of_service.text))
 ```
 
-[terms_of_service]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.terms_of_service
+[terms_of_service]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.terms_of_service
 [terms_of_service_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.terms_of_service.TermsOfService
 [get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
 
 List Terms of Service
 ---------------------
 
-To retrieve all terms of service for an enterprise, call [`client.get_terms_of_services(limit=None, marker=None, fields=None)`][get_terms_of_services]. This method returns a `BoxObjectCollection` that allows you to iterate over the [`Term of Service`][terms_of_service_class] objects in the collection.
+To retrieve all terms of service for an enterprise, call 
+[`client.get_terms_of_services(limit=None, marker=None, fields=None)`][get_terms_of_services]. This method returns a 
+`BoxObjectCollection` that allows you to iterate over the [`TermOfService`][terms_of_service_class] objects in the 
+collection.
 
 ```python
 terms_of_services = client.get_terms_of_services()
 for terms_of_service in terms_of_services:
-    print('Terms of Service id is {0} and the message is {1}'.format(terms_of_service.id, terms_of_service.text))
+    print('Terms of Service ID is {0} and the message is {1}'.format(terms_of_service.id, terms_of_service.text))
 ```
 
-[get_terms_of_services]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.terms_of_service
-[terms_of_service_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.terms_of_service.TermsOfService
-
-Update User Status on Terms of Service
---------------------------------------
-
-To update a terms of service object, first call [`client.terms_of_service_user_status(status_id)`][terms_of_service_user_status] to construct the appropriate [`Terms of Service`][terms_of_service_user_status_class] object, and then calling [`terms_of_service_user_status.update_info(data)`][update_info] with a `dict` of properties to update on the terms of service user status. This method returns a newly updated [`Terms of Service User Status`][terms_of_service_user_status_class] object, leaving the original object unmodified.
-
-```python
-user_status = client.terms_of_service_user_status('12345').update_info({'is_accepted': True})
-print('Terms of Service User Status is is {0} and the accepted status is {1}'.format(user_status.id, user_status.is_accepted))
-```
-
-It is important to note that this will accept or decline a custom terms of service for a user. For a user that has taken action in this terms of service, this will update their status. If the user has never taken action on this terms of service then this will return a 404 Not Found Error.
-
-[terms_of_service_user_status]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.terms_of_service_user_status
-[terms_of_service_user_status_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.terms_of_service_user_status.TermsOfServiceUserStatus
-[update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
+[get_terms_of_services]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.terms_of_service
 
 Accept or Decline a Terms of Service
 ------------------------------------
 
-To accept or decline a terms of service, first call [`client.terms_of_service(service_id)`][terms_of_service] to construct the appropriate terms of service object. Then calling [`client.user(user_id)`][user] will construct the user you wish to accept or decline a terms of service for. Finally, calling [`terms_of_service.set_user_status(is_accepted, user)`][set_user_status] will allow you to create a newly updated [`terms_of_service_user_status`][terms_of_service_user_status_class] object populated with data from the API, leaving the original object umodified if a [`Terms of Service`][terms_of_service_class] object already exists for a user. If the user does not have a [`Terms of Service`][terms_of_service_class] object assigned then [`terms_of_service.set_user_status(is_accepted, user)`][set_user_status] will create a new [`terms_of_service_user_status`][terms_of_service_user_status_class] object populated with data from the API.
+To accept or decline a terms of service, calling [`terms_of_service.set_user_status(is_accepted, user)`][set_user_status] 
+will allow you to create a newly updated [`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object 
+populated with data from the API, leaving the original object umodified if a [`TermsOfService`][terms_of_service_class] 
+object already exists for a user. If the user does not have a [`TermsOfService`][terms_of_service_class] object 
+assigned then [`terms_of_service.set_user_status(is_accepted, user)`][set_user_status] will create a new 
+[`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object populated with data from the API.
 
 ```python
-user = client.user('22222')
-user_status = client.terms_of_service('12345').set_user_status(is_accepted=True, user=user)
-print('User status id is {0} and the accepted status is {1}'.format(user_status.id, user_status.is_accepted)
+user = client.user(user_id='22222')
+user_status = client.terms_of_service(tos_id='12345').set_user_status(is_accepted=True, user=user)
+print('User status ID is {0} and the accepted status is {1}'.format(user_status.id, user_status.is_accepted)
 ```
 
-It is important to note that regardless of whether the user has taken action on this terms of service. This will create and update the user status on the terms of service.
+It is important to note that regardless of whether the user has taken action on this terms of service. This will create 
+and update the user status on the terms of service.
 
-[terms_of_service]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.terms_of_service
-[terms_of_service_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.terms_of_service.TermsOfService
+Note that this example will make multiple API calls, if you know that your user has already accepted or decline a 
+Terms of Service and you wish to change their status, call [`terms_of_service_user_status.update_info(data)`][update_info] 
+with a `dict` of properties to update on the terms of service user status. This method returns a newly updated 
+[`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object, leaving the original object unmodified.
+
+```python
+user_status = client.terms_of_service_user_status(tos_user_status_id='12345').update_info({'is_accepted': True})
+print('Terms of Service User Status ID is {0} and the accepted status is {1}'.format(user_status.id, user_status.is_accepted))
+```
+
+It is important to note that this will accept or decline a custom terms of service for a user. For a user that has taken 
+action in this terms of service, this will update their status. If the user has never taken action on this terms of 
+service then this will return a 404 Not Found Error.
+
 [terms_of_service_user_status_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.terms_of_service_user_status.TermsOfServiceUserStatus
-[user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.user
+[user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.user
 [set_user_status]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.terms_of_service.TermsOfService.set_user_status
+[terms_of_service_user_status]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.terms_of_service_user_status
+[update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
 
 Get User Status for a Terms of Service
 -------------------------------------
 
-To get a terms of service user status object, first call [`client.terms_of_service_user_status(status_id)`][terms_of_service_user_status] to construct the appropriate [`Terms of Service User Status`][terms_of_service_user_status_class] object. Then calling [`client.user(user_id)`][user] to construct the user you wish to retrieve a [`Terms of Service User Status`][terms_of_service_user_status_class] object for. Finally, calling [`terms_of_service_user_status.get(fields=None)`][get] will return the [`Terms of Service User Status`][terms_of_service_user_status_class] object populated with data from the API.
+To get a terms of service user status object, first call 
+[`client.terms_of_service_user_status(status_id)`][terms_of_service_user_status] 
+to construct the appropriate [`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object. Then calling 
+[`client.user(user_id)`][user] to construct the user you wish to retrieve a 
+[`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object for. Finally, calling 
+[`terms_of_service_user_status.get(fields=None)`][get] will return the 
+[`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object populated with data from the API.
 
 ```python
-user = client.user('11111')
-user_status = client.terms_of_service('12345').get_user_status(user)
-print('User status id is {0} and the accepted status is {1}'.format(user_status.id, user_status.is_accepted)
+user = client.user(user_id='11111')
+user_status = client.terms_of_service(tos_id='12345').get_user_status(user)
+print('User status ID is {0} and the accepted status is {1}'.format(user_status.id, user_status.is_accepted)
 ```
 
-[terms_of_service_user_status]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.terms_of_service_user_status
-[terms_of_service_user_status_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.terms_of_service_user_status.TermsOfServiceUserStatus
-[user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.client.Client.user
+[user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.user
 [get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
