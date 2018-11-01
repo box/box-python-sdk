@@ -25,6 +25,7 @@ __all__ = list(map(str, [
     'legal_hold',
     'legal_hold_policy',
     'legal_hold_policy_assignment',
+    'metadata_template',
     'recent_item',
     'retention_policy',
     'retention_policy_assignment',

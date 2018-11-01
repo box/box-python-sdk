@@ -1500,3 +1500,127 @@ class Client(Cloneable):
             fields=fields,
             return_full_pages=False,
         )
+
+    def metadata_template(self, scope, template_key):
+        """
+        Initialize a :class:`MetadataTemplate` object with the given scope and template key.
+
+        :param scope:
+            The scope of the metadata template, e.g. 'enterprise' or 'global'
+        :type scope:
+            `unicode`
+        :param template_key:
+            The key of the metadata template
+        :type template_key:
+            `unicode`
+        :returns:
+            The metadata template object
+        :rtype:
+            :class:`MetadataTemplate`
+        """
+        return self.translator.get('metadata_template')(
+            session=self._session,
+            object_id=None,
+            response_object={
+                'type': 'metadata_template',
+                'scope': scope,
+                'templateKey': template_key,
+            },
+        )
+
+    def metadata_template_by_id(self, template_id):
+        """
+        Retrieves a metadata template by ID
+
+        :param template_id:
+            The ID of the template object
+        :type template_id:
+            `unicode`
+        :returns:
+            The metadata template with data populated from the API
+        :rtype:
+            :class:`MetadataTemplate`
+        """
+        return self.translator.get('metadata_template')(
+            session=self._session,
+            object_id=template_id,
+        )
+
+    @api_call
+    def get_metadata_templates(self, scope='enterprise', limit=None, marker=None, fields=None):
+        """
+        Get all metadata templates for a given scope.  By default, retrieves all metadata templates for the current
+        enterprise.
+
+        :param scope:
+            The scope to retrieve templates for
+        :type scope:
+            `unicode`
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            The collection of metadata templates for the given scope
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            url=self._session.get_url('metadata_templates', scope),
+            session=self._session,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
+
+    @api_call
+    def create_metadata_template(self, display_name, fields, template_key=None, hidden=False, scope='enterprise'):
+        """
+        Create a new metadata template.  By default, only the display name and fields are required; the template key
+        will be automatically generated based on the display name and the template will be created in the enterprise
+        scope.
+
+        :param display_name:
+            The human-readable name of the template
+        :type display_name:
+            `unicode`
+        :param fields:
+            The metadata fields for the template.
+        :type fields:
+            `Iterable` of :class:`MetadataField`
+        :param template_key:
+            An optional key for the template.  If one is not provided, it will be derived from the display name.
+        :type template_key:
+            `unicode`
+        :param hidden:
+            Whether the template should be hidden in the UI
+        :type hidden:
+            `bool`
+        :param scope:
+            The scope the template should be created in
+        :type scope:
+            `unicode`
+        """
+        url = self._session.get_url('metadata_templates', 'schema')
+        body = {
+            'scope': scope,
+            'displayName': display_name,
+            'hidden': hidden,
+            'fields': [field.json() for field in fields]
+        }
+
+        if template_key is not None:
+            body['templateKey'] = template_key
+
+        response = self._session.post(url, data=json.dumps(body)).json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
+        )
