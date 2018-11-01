@@ -22,6 +22,7 @@ from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
+from boxsdk.object.email_alias import EmailAlias
 from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
 from boxsdk.object.device_pinner import DevicePinner
@@ -30,6 +31,7 @@ from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
 from boxsdk.object.group import Group
+from boxsdk.object.invite import Invite
 from boxsdk.object.storage_policy import StoragePolicy
 from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.object.terms_of_service import TermsOfService
@@ -279,6 +281,17 @@ def create_user_response():
     return mock_network_response
 
 
+@pytest.fixture(scope='module')
+def create_invite_response():
+    # pylint:disable=redefined-outer-name
+    mock_network_response = Mock(DefaultNetworkResponse)
+    mock_network_response.json.return_value = {
+        'type': 'invite',
+        'id': 1234,
+    }
+    return mock_network_response
+
+
 @pytest.fixture(params=('file', 'folder'))
 def test_item_and_response(mock_file, test_folder, mock_file_response, mock_folder_response, request):
     if request.param == 'file':
@@ -374,8 +387,11 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
 
 
 @pytest.mark.parametrize('test_class, factory_method_name', [
+    (EmailAlias, 'email_alias'),
+    (Enterprise, 'enterprise'),
     (Folder, 'folder'),
     (File, 'file'),
+    (Invite, 'invite'),
     (User, 'user'),
     (Group, 'group'),
     (GroupMembership, 'group_membership'),
@@ -1070,9 +1086,36 @@ def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_r
     pins = mock_client.device_pinners(enterprise_id, direction='asc')
     for pin, expected_id in zip(pins, [device_pin_id_1, device_pin_id_2]):
         assert pin.object_id == expected_id
-        # pylint:disable=protected-access
-        assert pin._session == mock_box_session
+        assert pin._session == mock_box_session  # pylint:disable=protected-access
     mock_box_session.get.assert_called_once_with(expected_url, params={'direction': 'asc'})
+
+
+def test_get_current_enterprise(mock_client, mock_box_session):
+    expected_url = '{0}/users/me'.format(API.BASE_API_URL)
+    expected_params = {
+        'fields': 'enterprise'
+    }
+    enterprise_id = '44444'
+    enterprise_name = 'Acme, Inc.'
+    user_json = {
+        'type': 'user',
+        'id': '33333',
+        'enterprise': {
+            'type': 'enterprise',
+            'id': enterprise_id,
+            'name': enterprise_name,
+        },
+    }
+    mock_box_session.get.return_value.json.return_value = user_json
+
+    enterprise = mock_client.get_current_enterprise()
+
+    mock_box_session.get.assert_called_once_with(expected_url, params=expected_params, headers=None)
+    assert isinstance(enterprise, Enterprise)
+    assert enterprise.object_id == enterprise_id
+    assert enterprise._session == mock_box_session  # pylint:disable=protected-access
+    assert enterprise.name == enterprise_name
+    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params={'fields': 'enterprise'})
 
 
 def test_comment(mock_client):
