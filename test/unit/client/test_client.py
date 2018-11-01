@@ -1084,12 +1084,12 @@ def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_r
     expected_url = '{0}/enterprises/{1}/device_pinners'.format(API.BASE_API_URL, enterprise_id)
     mock_box_session.get.return_value = device_pins_response
     enterprise = mock_client.enterprise(enterprise_id)
-    pins = mock_client.device_pinners(enterprise)
+    pins = mock_client.device_pinners(enterprise, direction='ASC')
     for pin, expected_id in zip(pins, [device_pin_id_1, device_pin_id_2]):
         assert pin.object_id == expected_id
         # pylint:disable=protected-access
         assert pin._session == mock_box_session
-    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    mock_box_session.get.assert_called_once_with(expected_url, params={'direction': 'ASC'})
 
 
 def test_get_current_enterprise(mock_client, mock_box_session):
