@@ -7,6 +7,7 @@ from .base_object import BaseObject
 from ..exception import BoxAPIException
 from .metadata import Metadata
 from ..util.api_call_decorator import api_call
+from ..pagination.marker_based_dict_collection import MarkerBasedDictCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
@@ -134,18 +135,24 @@ class Item(BaseObject):
         return super(Item, self).get(fields=fields, headers=headers)
 
     @api_call
-    def copy(self, parent_folder):
+    def copy(self, parent_folder, name=None):
         """Copy the item to the given folder.
 
         :param parent_folder:
             The folder to which the item should be copied.
         :type parent_folder:
             :class:`Folder`
+        :param name:
+            A new name for the item, in case there is already another item in the new parent folder with the same name.
+        :type name:
+            `unicode` or None
         """
         url = self.get_url('copy')
         data = {
             'parent': {'id': parent_folder.object_id}
         }
+        if name is not None:
+            data['name'] = name
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
         return self.__class__(
@@ -155,18 +162,24 @@ class Item(BaseObject):
         )
 
     @api_call
-    def move(self, parent_folder):
+    def move(self, parent_folder, name=None):
         """
         Move the item to the given folder.
 
         :param parent_folder:
             The parent `Folder` object, where the item will be moved to.
         :type parent_folder:
-            `Folder`
+            :class:`Folder`
+        :param name:
+            A new name for the item, in case there is already another item in the new parent folder with the same name.
+        :type name:
+            `unicode` or None
         """
         data = {
             'parent': {'id': parent_folder.object_id}
         }
+        if name is not None:
+            data['name'] = name
         return self.update_info(data)
 
     @api_call
@@ -359,6 +372,18 @@ class Item(BaseObject):
             :class:`Metadata`
         """
         return Metadata(self._session, self, scope, template)
+
+    def get_all_metadata(self):
+        """
+        Get all metadata attached to the item.
+        """
+        return MarkerBasedDictCollection(
+            session=self._session,
+            url=self.get_url('metadata'),
+            limit=None,
+            marker=None,
+            return_full_pages=False,
+        )
 
     @api_call
     def get_watermark(self):

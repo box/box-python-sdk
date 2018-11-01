@@ -108,6 +108,21 @@ class Client(Cloneable):
         """
         return self.translator.get('file')(session=self._session, object_id=file_id)
 
+    def file_version(self, version_id):
+        """
+        Initialize a :class:`FileVersion` object, whose box id is version_id.
+
+        :param version_id:
+            The box id of the :class:`FileVersion` object.
+        :type version_id:
+            `unicode`
+        :return:
+            A :class:`FileVersion` object with the given file version id.
+        :rtype:
+            :class:`FileVersion`
+        """
+        return self.translator.get('file_version')(session=self._session, object_id=version_id)
+
     def upload_session(self, session_id):
         """
         Initialize a :class:`UploadSession` object, whose box id is session_id.
@@ -239,20 +254,23 @@ class Client(Cloneable):
         """
         return self.translator.get('collaboration_whitelist_entry')(session=self._session, object_id=entry_id)
 
-    def collaboration_whitelist_exempt_target(self, target_id):
+    def collaboration_whitelist_exempt_target(self, exemption_id):
         """
         Initialize a :class:`CollaborationWhitelistExemptTarget` object, whose box id is target_id.
 
-        :param target_id:
+        :param exemption_id:
             The box id of the :class:`CollaborationWhitelistExemptTarget` object.
-        :type target_id:
+        :type exemption_id:
             `unicode`
         :return:
             A :class:`CollaborationWhitelistExemptTarget` object with the given target id.
         :rtype:
             :class:`CollaborationWhitelistExemptTarget`
         """
-        return self.translator.get('collaboration_whitelist_exempt_target')(session=self._session, object_id=target_id)
+        return self.translator.get('collaboration_whitelist_exempt_target')(
+            session=self._session,
+            object_id=exemption_id
+        )
 
     def trash(self):
         """
@@ -1440,14 +1458,14 @@ class Client(Cloneable):
         """
         return self.translator.get('device_pinner')(session=self._session, object_id=device_pin_id)
 
-    def device_pinners(self, enterprise_id, direction=None, limit=None, marker=None, fields=None):
+    def device_pinners(self, enterprise=None, direction=None, limit=None, marker=None, fields=None):
         """
         Returns all of the device pins for the given enterprise.
 
-        :param enterprise_id:
-            The id of the enterprise to retrieve device pinners for.
-        :type enterprise_id:
-            `unicode`
+        :param enterprise:
+            The enterprise to retrieve device pinners for, defaulting to the current enterprise.
+        :type enterprise:
+            :class`Enterprise` or None
         :param direction:
             The sorting direction. Set to `ASC` or `DESC`
         :type direction:
@@ -1469,6 +1487,7 @@ class Client(Cloneable):
         :rtype:
             :class:`BoxObjectCollection`
         """
+        enterprise_id = enterprise.object_id if enterprise is not None else self.get_current_enterprise().id
         additional_params = {}
         if direction is not None:
             additional_params['direction'] = direction

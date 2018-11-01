@@ -46,6 +46,16 @@ class BoxResponse(object):
         return self._network_response.status_code
 
     @property
+    def headers(self):
+        """
+        Get the response headers.
+
+        :rtype:
+            `dict`
+        """
+        return self._network_response.headers
+
+    @property
     def network_response(self):
         """Return the underlying network response.
 
