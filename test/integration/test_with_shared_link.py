@@ -1,10 +1,9 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from mock import call, patch
+from mock import call
 import pytest
 from boxsdk.config import API, Client
-from boxsdk.object.group_membership import GroupMembership
 from boxsdk.util.shared_link import get_shared_link_header
 
 
@@ -88,9 +87,7 @@ def test_group_membership_object_with_shared_link_causes_box_api_header_to_be_ad
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
-    with patch.object(GroupMembership, '_init_user_and_group_instances') as init:
-        init.return_value = None, None
-        box_client.group_membership('0').with_shared_link(shared_link, shared_link_password).get()
+    box_client.group_membership('0').with_shared_link(shared_link, shared_link_password).get()
     assert mock_box_network.session.request.mock_calls == [
         call(
             'GET',

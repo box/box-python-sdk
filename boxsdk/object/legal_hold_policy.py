@@ -5,6 +5,7 @@ import json
 
 from .base_object import BaseObject
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+from ..util.api_call_decorator import api_call
 
 
 class LegalHoldPolicy(BaseObject):
@@ -15,6 +16,7 @@ class LegalHoldPolicy(BaseObject):
     def get_url(self, *args):
         return self._session.get_url('legal_hold_policies', self._object_id, *args)
 
+    @api_call
     def assign(self, assignee):
         """Assign legal hold policy
 
@@ -36,12 +38,12 @@ class LegalHoldPolicy(BaseObject):
             }
         }
         response = self._session.post(url, data=json.dumps(body)).json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             self._session,
-            response['id'],
             response,
         )
 
+    @api_call
     def get_assignments(self, assign_to_type=None, assign_to_id=None, limit=None, marker=None, fields=None):
         """
         Get the entries in the legal hold policy assignment using limit-offset paging.
@@ -88,6 +90,7 @@ class LegalHoldPolicy(BaseObject):
             return_full_pages=False,
         )
 
+    @api_call
     def get_file_version_legal_holds(self, limit=None, marker=None, fields=None):
         """
         Get legal holds for a file version.

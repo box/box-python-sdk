@@ -10,9 +10,15 @@ Release History
 
 - Python 2.6 is no longer supported.
 - Python 3.3 is no longer supported.
-- ``client.get_memberships`` has a change in signature. The limit and offset parameters have swapped positions to keep
+- ``client.search()`` now returns a ``Search`` object that exposes a ``query()`` method to call the Search API.
+  Use ``client.search().query(**search_params)`` instead of ``client.search(**search_params)``.
+- ``client.get_memberships(...)`` has a change in signature. The limit and offset parameters have swapped positions to keep
   consistency with the rest of the SDK.
-- ``client.groups`` has been changed to ``client.get_groups``. The limit and offset parameters have swapped positions.
+- ``client.groups(...)`` has been changed to ``client.get_groups``. The limit and offset parameters have swapped positions.
+- The ``unshared_at`` parameter for ``item.create_shared_link(...)`` and ``file.get_shared_link_download_url(...)``
+  now takes an `RFC3339-formatted <https://tools.ietf.org/html/rfc3339#section-5.8>` ``unicode`` string instead of a
+  ``datetime.date``.  Users migrating from v1.x can pass the value of ``date.isoformat()`` instead of the ``date``
+  object itself.
 - ``Events.get_events(...)`` now returns a list of ``Event`` instances rather than a list of ``dict``
   representing events.  ``Event`` inherits from ``Mapping`` but will not have all the same capabilities as
   ``dict``.
@@ -51,7 +57,7 @@ Release History
 
   + ``client.users()``
   + ``client.groups()``
-  + ``client.search()``
+  + ``client.search().query()``
   + ``folder.get_items()``
 
   Since ``folder.get_items()`` now returns an iterator, ``folder.get_items_limit_offset()`` and
@@ -61,6 +67,13 @@ Release History
 
   Additionally, ``group.membership()`` has been renamed to ``group.get_memberships()``, and returns an iterator of
   membership objects.  This method no longer provides the option to return tuples with paging information.
+
+- The ``Translator`` class has been reworked; ``translator.get(...)`` still returns the constructor for the object class
+  corresponding to the passed in type, but ``translator.translate(...)`` now takes a ``Session`` and response object
+  directly and produces the translated object.  This method will also translate any nested objects found.
+
+  + This change obviates the need for ``GroupMembership`` to have a custom constructor; it now uses the default
+    ``BaseObject`` constructor.
 
 **Features**
 

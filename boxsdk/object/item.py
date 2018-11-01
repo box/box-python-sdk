@@ -193,9 +193,11 @@ class Item(BaseObject):
             `unicode` or None
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates.
+            and has permission to set expiration dates.  Takes an RFC3339-formatted string, e.g.
+            '2018-10-31T23:59:59-07:00' for 11:59:59 PM on October 31, 2018 in the America/Los_Angeles timezone.
+            The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
         :type unshared_at:
-            :class:`datetime.date` or None
+            `unicode` or None
         :param allow_download:
             Whether or not the item being shared can be downloaded when accessed via the shared link.
             If this parameter is None, the default setting will be used.
@@ -225,7 +227,7 @@ class Item(BaseObject):
         }
 
         if unshared_at is not None:
-            data['shared_link']['unshared_at'] = unshared_at.isoformat()
+            data['shared_link']['unshared_at'] = unshared_at
 
         if allow_download is not None or allow_preview is not None:
             data['shared_link']['permissions'] = permissions = {}
@@ -358,6 +360,7 @@ class Item(BaseObject):
         """
         return Metadata(self._session, self, scope, template)
 
+    @api_call
     def get_watermark(self):
         """
         Return the watermark info for a Box file
@@ -370,8 +373,9 @@ class Item(BaseObject):
         url = self.get_url('watermark')
         box_response = self._session.get(url)
         response = box_response.json()
-        return self.translator.translate('watermark')(response['watermark'])
+        return self.translator.get('watermark')(response['watermark'])
 
+    @api_call
     def apply_watermark(self):
         """
         Apply watermark on a Box file
@@ -389,8 +393,9 @@ class Item(BaseObject):
         }
         box_response = self._session.put(url, data=json.dumps(body_attributes))
         response = box_response.json()
-        return self.translator.translate('watermark')(response['watermark'])
+        return self.translator.get('watermark')(response['watermark'])
 
+    @api_call
     def delete_watermark(self):
         """
         Deletes the watermark info for a Box file
@@ -446,6 +451,7 @@ class Item(BaseObject):
         }
         return self.update_info(data)
 
+    @api_call
     def collaborate(self, accessible_by, role, can_view_path=None, notify=None, fields=None):
         """Collaborate user or group onto a Box item.
 
@@ -494,12 +500,12 @@ class Item(BaseObject):
         if notify is not None:
             params['notify'] = notify
         response = self._session.post(url, data=json.dumps(body), params=params).json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
+    @api_call
     def collaborate_with_login(self, login, role, can_view_path=None, notify=None, fields=None):
         """Collaborate user onto a Box item with the user login.
 
@@ -548,12 +554,12 @@ class Item(BaseObject):
         if notify is not None:
             params['notify'] = notify
         response = self._session.post(url, data=json.dumps(body), params=params).json()
-        return self.translator.translate(response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
+    @api_call
     def get_collaborations(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the collaboration.

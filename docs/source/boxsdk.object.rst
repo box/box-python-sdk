@@ -52,6 +52,30 @@ boxsdk\.object\.collaboration module
     :undoc-members:
     :show-inheritance:
 
+boxsdk\.object\.collection module
+---------------------------------
+
+.. automodule:: boxsdk.object.collection
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk\.object\.comment module
+------------------------------
+
+.. automodule:: boxsdk.object.comment
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk\.object\.device\_pinner module
+-------------------------------------
+
+.. automodule:: boxsdk.object.device_pinner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk\.object\.event module
 ----------------------------
 
@@ -72,6 +96,14 @@ boxsdk\.object\.file module
 ---------------------------
 
 .. automodule:: boxsdk.object.file
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk\.object\.file\_version\_retention module
+-----------------------------------------------
+
+.. automodule:: boxsdk.object.file_version_retention
     :members:
     :undoc-members:
     :show-inheritance:
@@ -108,6 +140,30 @@ boxsdk\.object\.item module
     :undoc-members:
     :show-inheritance:
 
+boxsdk\.object\.legal\_hold module
+----------------------------------
+
+.. automodule:: boxsdk.object.legal_hold
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk\.object\.legal\_hold\_policy module
+------------------------------------------
+
+.. automodule:: boxsdk.object.legal_hold_policy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk\.object\.legal\_hold\_policy\_assignment module
+------------------------------------------------------
+
+.. automodule:: boxsdk.object.legal_hold_policy_assignment
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk\.object\.metadata module
 -------------------------------
 
@@ -124,6 +180,22 @@ boxsdk\.object\.recent\_item module
     :undoc-members:
     :show-inheritance:
 
+boxsdk\.object\.retention\_policy module
+----------------------------------------
+
+.. automodule:: boxsdk.object.retention_policy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk\.object\.retention\_policy\_assignment module
+----------------------------------------------------
+
+.. automodule:: boxsdk.object.retention_policy_assignment
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk\.object\.search module
 -----------------------------
 
@@ -136,6 +208,22 @@ boxsdk\.object\.user module
 ---------------------------
 
 .. automodule:: boxsdk.object.user
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk\.object\.watermark module
+--------------------------------
+
+.. automodule:: boxsdk.object.watermark
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+boxsdk\.object\.web\_link module
+--------------------------------
+
+.. automodule:: boxsdk.object.web_link
     :members:
     :undoc-members:
     :show-inheritance:
