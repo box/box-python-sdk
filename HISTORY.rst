@@ -3,7 +3,7 @@
 Release History
 ---------------
 
-2.0.0 (Upcoming)
+2.0.0
 ++++++++++++++++
 
 **Breaking Changes**
@@ -77,6 +77,7 @@ Release History
 
 **Features**
 
+- All publicly documented API endpoints and parameters should now be supported by the SDK
 - Added more flexibility to the object translation system:
 
   - Can create non-global ``Translator`` instances, which can extend or
@@ -87,6 +88,7 @@ Release History
   - All translation of API responses now use the ``Translator`` that is
     referenced by the ``BoxSession``, instead of directly using the global
     default ``Translator``.
+  - Nested objects are now translated by ``translator.translate()``
 
 - When the ``auto_session_renewal`` is ``True`` when calling any of the request
   methods on ``BoxSession``, if there is no access token, ``BoxSession`` will
