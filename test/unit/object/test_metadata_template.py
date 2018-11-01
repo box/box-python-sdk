@@ -1,20 +1,9 @@
 from __future__ import unicode_literals, absolute_import
 
 import json
-import pytest
 
 from boxsdk.config import API
 from boxsdk.object.metadata_template import MetadataTemplate, MetadataField, MetadataFieldType
-
-
-@pytest.fixture()
-def test_metadata_template(mock_box_session):
-    fake_response = {
-        'type': 'metadata_template',
-        'scope': 'enterprise',
-        'templateKey': 'vContract',
-    }
-    return MetadataTemplate(mock_box_session, None, fake_response)
 
 
 def test_get(test_metadata_template, mock_box_session):
@@ -24,6 +13,7 @@ def test_get(test_metadata_template, mock_box_session):
         test_metadata_template.template_key,
     )
     mock_box_session.get.return_value.json.return_value = {
+        'type': 'metadata_template',
         'scope': 'enterprise',
         'displayName': 'Vendor Contract',
         'hidden': True,
@@ -145,6 +135,7 @@ def test_update_info(test_metadata_template, mock_box_session):
     ]
 
     mock_box_session.put.return_value.json.return_value = {
+        'type': 'metadata_template',
         'scope': 'enterprise',
         'displayName': 'Vendor Contract',
         'hidden': False,

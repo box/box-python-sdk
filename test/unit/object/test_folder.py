@@ -392,22 +392,18 @@ def test_get_metadata_cascade_policies(test_folder, mock_box_session):
     mock_box_session.get.return_value.json.return_value = {
         'entries': [
             {
-                'entries': [
-                    {
-                        'id': '84113349-794d-445c-b93c-d8481b223434',
-                        'type': 'metadata_cascade_policy',
-                        'parent': {
-                            'type': 'folder',
-                            'id': test_folder.object_id,
-                        },
-                        'scope': 'enterprise_11111',
-                        'templateKey': 'testTemplate',
-                    }
-                ],
-                'next_marker': None,
-                'prev_marker': None,
-            },
+                'id': '84113349-794d-445c-b93c-d8481b223434',
+                'type': 'metadata_cascade_policy',
+                'parent': {
+                    'type': 'folder',
+                    'id': test_folder.object_id,
+                },
+                'scope': 'enterprise_11111',
+                'templateKey': 'testTemplate',
+            }
         ],
+        'next_marker': None,
+        'prev_marker': None,
     }
 
     cascade_policies = test_folder.get_metadata_cascade_policies()

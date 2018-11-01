@@ -57,13 +57,14 @@ def mock_box_session(translator):
 
 
 @pytest.fixture()
-def mock_box_session_2():
+def mock_box_session_2(translator):
     mock_session = MagicMock(Session)
     # pylint:disable=protected-access
     mock_session._api_config = API()
     mock_session._client_config = Client()
     # pylint:enable=protected-access
     mock_session.get_url.side_effect = lambda *args, **kwargs: Session.get_url(mock_session, *args, **kwargs)
+    mock_session.translator = translator
     return mock_session
 
 

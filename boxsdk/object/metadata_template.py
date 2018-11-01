@@ -332,8 +332,7 @@ class MetadataTemplate(BaseObject):
         """
         url = self.get_url()
         response = self._session.put(url, data=json.dumps(updates.json())).json()
-        return self.__class__(
+        return self.translator.translate(
             session=self._session,
-            object_id=self.object_id,
             response_object=response,
         )

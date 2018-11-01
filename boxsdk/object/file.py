@@ -224,9 +224,8 @@ class File(Item):
         file_response = self._session.post(url, expect_json_response=False, files=files, headers=headers).json()
         if 'entries' in file_response:
             file_response = file_response['entries'][0]
-        return self.__class__(
+        return self.translator.translate(
             session=self._session,
-            object_id=self._object_id,
             response_object=file_response,
         )
 
@@ -684,8 +683,7 @@ class File(Item):
             data['version'] = file_version.object_id
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
-        return self.__class__(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
