@@ -1080,14 +1080,16 @@ def test_downscope_token_sends_downscope_request_with_additional_data(
 
 def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_response, device_pin_id_1, device_pin_id_2):
     # pylint:disable=redefined-outer-name
-    enterprise_id = '33333'
-    mock_box_session.get.return_value = device_pins_response
+    enterprise_id = '11111'
     expected_url = '{0}/enterprises/{1}/device_pinners'.format(API.BASE_API_URL, enterprise_id)
-    pins = mock_client.device_pinners(enterprise_id, direction='asc')
+    mock_box_session.get.return_value = device_pins_response
+    enterprise = mock_client.enterprise(enterprise_id)
+    pins = mock_client.device_pinners(enterprise, direction='ASC')
     for pin, expected_id in zip(pins, [device_pin_id_1, device_pin_id_2]):
         assert pin.object_id == expected_id
-        assert pin._session == mock_box_session  # pylint:disable=protected-access
-    mock_box_session.get.assert_called_once_with(expected_url, params={'direction': 'asc'})
+        # pylint:disable=protected-access
+        assert pin._session == mock_box_session
+    mock_box_session.get.assert_called_once_with(expected_url, params={'direction': 'ASC'})
 
 
 def test_get_current_enterprise(mock_client, mock_box_session):

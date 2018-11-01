@@ -1440,14 +1440,14 @@ class Client(Cloneable):
         """
         return self.translator.get('device_pinner')(session=self._session, object_id=device_pin_id)
 
-    def device_pinners(self, enterprise_id, direction=None, limit=None, marker=None, fields=None):
+    def device_pinners(self, enterprise=None, direction=None, limit=None, marker=None, fields=None):
         """
         Returns all of the device pins for the given enterprise.
 
-        :param enterprise_id:
-            The id of the enterprise to retrieve device pinners for.
-        :type enterprise_id:
-            `unicode`
+        :param enterprise:
+            The enterprise to retrieve device pinners for, defaulting to the current enterprise.
+        :type enterprise:
+            :class`Enterprise` or None
         :param direction:
             The sorting direction. Set to `ASC` or `DESC`
         :type direction:
@@ -1469,6 +1469,7 @@ class Client(Cloneable):
         :rtype:
             :class:`BoxObjectCollection`
         """
+        enterprise_id = enterprise.object_id if enterprise is not None else self.get_current_enterprise().id
         additional_params = {}
         if direction is not None:
             additional_params['direction'] = direction
