@@ -113,7 +113,7 @@ class Events(BaseEndpoint):
         :returns:
             The latest stream position.
         :rtype:
-            `unicode`
+            `int`
         """
         return self.get_events(limit=0, stream_position='now', stream_type=stream_type)['next_stream_position']
 

@@ -6,7 +6,7 @@ corporate-managed Box account to a particular mobile device or Box Sync client.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
 
 - [List Enterprise Device Pins](#list-enterprise-device-pins)
 - [Get Device Pin Information](#get-device-pin-information)
@@ -17,30 +17,44 @@ corporate-managed Box account to a particular mobile device or Box Sync client.
 List Enterprise Device Pins
 ---------------------------
 
-To retrieve all device pins for the enterprise, use `client.device_pinners(enterprise=None, limit=None, marker=None, direction=None, fields=None)`.
+To retrieve all device pins for an enterprise, call
+[`client.device_pinners(enterprise=None, limit=None, marker=None, direction=None, fields=None)`][device_pinners].
+If an `enterprise` is not specified, this defaults to the current enterprise.  This method returns a
+`BoxObjectCollection` that allows you to iterate over the [`DevicePinner`][device_pin_class] objects in the collection.
 
 ```python
 device_pins = client.device_pinners()
-for device_in in device_pins:
-    # Do something
+for pin in device_pins:
+    print('Pinned {0} device for {1}'.format(pin.product_name, pin.owned_by.name))
 ```
+
+[device_pinners]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.device_pinners
+[device_pin_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.device_pinner.DevicePinner
 
 Get Device Pin Information
 --------------------------
 
-To get information about a specific device pin. use `device_pinner.get()`
+To get information about a specific device pin, call [`device_pinner.get(fields=None)`][get].  This method returns a new
+[`DevicePinner`][device_pin_class] object with fields populated by data from the API.
 
 ```python
 device_pin_id = '1111'
-device_pin_info = client.device_pinner('device_pin_id).get()
+device_pin = client.device_pinner(device_pin_id).get()
+print('{0} device for {1} is pinned'.format(pin.product_name, pin.owned_by.name))
 ```
+
+[get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
 
 Delete Device Pin
 -----------------
 
-To delete a specific device pin, use `device_pinner.delete()`
+To delete a specific device pin, call [`device_pinner.delete()`][delete].  This method returns `True` to indicate that
+the deletion was successful.
 
 ```python
 device_pin_id = '1111'
 client.device_pin(device_pin_id).delete()
+print('Device pin deleted!')
 ```
+
+[delete]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.delete
