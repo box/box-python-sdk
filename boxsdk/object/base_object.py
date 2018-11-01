@@ -83,7 +83,10 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         url = self.get_url()
         params = {'fields': ','.join(fields)} if fields else None
         box_response = self._session.get(url, params=params, headers=headers)
-        return self.__class__(self._session, self._object_id, box_response.json())
+        return self.translator.translate(
+            session=self._session,
+            response_object=box_response.json(),
+        )
 
     @api_call
     def update_info(self, data, params=None, headers=None, **kwargs):
@@ -122,11 +125,9 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         """
         url = self.get_url()
         box_response = self._session.put(url, data=json.dumps(data), params=params, headers=headers, **kwargs)
-        response = box_response.json()
-        return self.__class__(
+        return self.translator.translate(
             session=self._session,
-            object_id=self._object_id,
-            response_object=response,
+            response_object=box_response.json(),
         )
 
     @api_call

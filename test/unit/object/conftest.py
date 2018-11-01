@@ -17,6 +17,7 @@ from boxsdk.object.group import Group
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
 from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
+from boxsdk.object.metadata_template import MetadataTemplate
 from boxsdk.object.user import User
 from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
@@ -344,3 +345,13 @@ def shared_link_unshared_at(request):
 ])
 def comment_params(request):
     return request.param
+
+
+@pytest.fixture()
+def test_metadata_template(mock_box_session):
+    fake_response = {
+        'type': 'metadata_template',
+        'scope': 'enterprise',
+        'templateKey': 'vContract',
+    }
+    return MetadataTemplate(mock_box_session, None, fake_response)

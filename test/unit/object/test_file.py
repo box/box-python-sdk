@@ -445,8 +445,17 @@ def test_get_shared_link_download_url(
 ):
     # pylint:disable=redefined-outer-name, protected-access
     expected_url = test_file.get_url()
-    mock_box_session.put.return_value.json.return_value = {'shared_link': {'url': None, 'download_url': test_url}}
-    expected_data = {'shared_link': {}}
+    mock_box_session.put.return_value.json.return_value = {
+        'type': test_file.object_type,
+        'id': test_file.object_id,
+        'shared_link': {
+            'url': None,
+            'download_url': test_url,
+        },
+    }
+    expected_data = {
+        'shared_link': {},
+    }
     if shared_link_access is not None:
         expected_data['shared_link']['access'] = shared_link_access
     if shared_link_unshared_at is not None:

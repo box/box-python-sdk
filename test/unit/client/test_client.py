@@ -48,6 +48,7 @@ from boxsdk.object.file_version_retention import FileVersionRetention
 from boxsdk.object.legal_hold import LegalHold
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
 from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
+from boxsdk.object.metadata_cascade_policy import MetadataCascadePolicy
 from boxsdk.object.task import Task
 from boxsdk.object.task_assignment import TaskAssignment
 from boxsdk.object.webhook import Webhook
@@ -401,6 +402,7 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
     (GroupMembership, 'group_membership'),
     (Enterprise, 'enterprise'),
     (Webhook, 'webhook'),
+    (MetadataCascadePolicy, 'metadata_cascade_policy'),
     (UploadSession, 'upload_session'),
     (StoragePolicy, 'storage_policy'),
     (StoragePolicyAssignment, 'storage_policy_assignment'),

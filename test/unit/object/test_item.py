@@ -136,7 +136,13 @@ def test_get_shared_link(
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
     expected_url = test_item.get_url()
-    mock_box_session.put.return_value.json.return_value = {'shared_link': {'url': test_url}}
+    mock_box_session.put.return_value.json.return_value = {
+        'type': test_item.object_type,
+        'id': test_item.object_id,
+        'shared_link': {
+            'url': test_url,
+        },
+    }
     expected_data = {'shared_link': {}}
     if shared_link_access is not None:
         expected_data['shared_link']['access'] = shared_link_access
@@ -171,7 +177,11 @@ def test_remove_shared_link(test_item_and_response, mock_box_session, etag, if_m
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
     expected_url = test_item.get_url()
-    mock_box_session.put.return_value.json.return_value = {'shared_link': None}
+    mock_box_session.put.return_value.json.return_value = {
+        'type': test_item.object_type,
+        'id': test_item.object_id,
+        'shared_link': None,
+    }
     removed = test_item.remove_shared_link(etag=etag)
     mock_box_session.put.assert_called_once_with(
         expected_url,
@@ -205,7 +215,9 @@ def test_add_to_collection(test_item_and_response, mock_box_session, mock_collec
         'collections': expected_collections
     }
     mock_response = {
-        'collections': current_collections
+        'type': test_item.object_type,
+        'id': test_item.object_id,
+        'collections': current_collections,
     }
     mock_box_session.get.return_value.json.return_value = mock_response
     mock_box_session.put.return_value = mock_item_response
@@ -226,7 +238,9 @@ def test_remove_from_collection(test_item_and_response, mock_box_session, mock_c
         'collections': expected_collections
     }
     mock_response = {
-        'collections': current_collections
+        'type': test_item.object_type,
+        'id': test_item.object_id,
+        'collections': current_collections,
     }
     mock_box_session.get.return_value.json.return_value = mock_response
     mock_box_session.put.return_value = mock_item_response

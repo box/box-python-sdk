@@ -10,7 +10,9 @@ from six.moves import zip  # pylint:disable=redefined-builtin,import-error
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.network.default_network import DefaultNetworkResponse
+from boxsdk.object.enterprise import Enterprise
 from boxsdk.object.file import File
+from boxsdk.object.metadata_cascade_policy import MetadataCascadePolicy
 from boxsdk.object.web_link import WebLink
 from boxsdk.object.collaboration import Collaboration, CollaborationRole
 from boxsdk.object.folder import Folder, FolderSyncState
@@ -382,3 +384,72 @@ def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_b
     assert new_web_link.url == test_web_link_url
     assert new_web_link.name == expected_name
     assert new_web_link.description == description
+
+
+def test_get_metadata_cascade_policies(test_folder, mock_box_session):
+    expected_url = '{0}/metadata_cascade_policies'.format(API.BASE_API_URL)
+    params = {'folder_id': test_folder.object_id}
+    mock_box_session.get.return_value.json.return_value = {
+        'entries': [
+            {
+                'id': '84113349-794d-445c-b93c-d8481b223434',
+                'type': 'metadata_cascade_policy',
+                'parent': {
+                    'type': 'folder',
+                    'id': test_folder.object_id,
+                },
+                'scope': 'enterprise_11111',
+                'templateKey': 'testTemplate',
+            }
+        ],
+        'next_marker': None,
+        'prev_marker': None,
+    }
+
+    cascade_policies = test_folder.get_metadata_cascade_policies()
+    policy = cascade_policies.next()
+
+    mock_box_session.get.assert_called_once_with(expected_url, params=params)
+    assert isinstance(policy, MetadataCascadePolicy)
+    assert policy.object_id == '84113349-794d-445c-b93c-d8481b223434'
+    assert policy.scope == 'enterprise_11111'
+    assert policy.templateKey == 'testTemplate'
+    # pylint: disable=protected-access
+    assert policy._session == mock_box_session
+
+
+def test_cascade_metadata(test_folder, mock_box_session, test_metadata_template):
+    expected_url = '{0}/metadata_cascade_policies'.format(API.BASE_API_URL)
+    expected_body = {
+        'folder_id': test_folder.object_id,
+        'scope': test_metadata_template.scope,
+        'templateKey': test_metadata_template.template_key,
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'id': '84113349-794d-445c-b93c-d8481b223434',
+        'type': 'metadata_cascade_policy',
+        'owner_enterprise': {
+            'type': 'enterprise',
+            'id': '11111',
+        },
+        'parent': {
+            'type': 'folder',
+            'id': test_folder.object_id,
+        },
+        'scope': test_metadata_template.scope,
+        'templateKey': test_metadata_template.template_key,
+    }
+
+    cascade_policy = test_folder.cascade_metadata(test_metadata_template)
+
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
+    assert isinstance(cascade_policy, MetadataCascadePolicy)
+    assert cascade_policy.object_id == '84113349-794d-445c-b93c-d8481b223434'
+    enterprise = cascade_policy.owner_enterprise
+    assert isinstance(enterprise, Enterprise)
+    assert enterprise.object_id == '11111'
+    folder = cascade_policy.parent
+    assert isinstance(folder, Folder)
+    assert folder.object_id == test_folder.object_id
+    assert cascade_policy.scope == test_metadata_template.scope
+    assert cascade_policy.templateKey == test_metadata_template.template_key
