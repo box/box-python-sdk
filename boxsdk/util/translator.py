@@ -28,9 +28,6 @@ def _get_object_id(obj):
         `dict`
     :return:
     """
-    if obj.get('type', '') == 'event':
-        return obj.get('event_id', None)
-
     return obj.get('id', None)
 
 
@@ -162,7 +159,14 @@ class Translator(ChainMap):
             return response_object
 
         translated_obj = {}
+        object_type = response_object.get('type', None)
+        object_class = self.get(object_type) if object_type is not None else None
+        # Parent classes have the ability to "blacklist" fields that they do not want translated
+        blacklisted_fields = object_class.untranslated_fields() if object_class is not None else ()
         for key in response_object:
+            if key in blacklisted_fields:
+                translated_obj[key] = response_object[key]
+                continue
             if isinstance(response_object[key], dict):
                 translated_obj[key] = self.translate(session, response_object[key])
             elif isinstance(response_object[key], list):
@@ -173,8 +177,9 @@ class Translator(ChainMap):
         # Try to translate any API object with a `type` property, except for metadata instances
         # The $type value in metadata instances isn't directly usable, so we avoid it altogether
         # NOTE: Currently, we represent metadata as just a `dict`, so there's no need to translate it anyway
-        if 'type' in translated_obj and '$type' not in translated_obj:
-            object_class = self.get(translated_obj.get('type', ''))
+        # Metadata field objects are another issue; they contain a 'type' property that doesn't really
+        # map to a Box object.  We probably want to treat these as just `dict`s, so they're excluded here
+        if object_class is not None and '$type' not in translated_obj:
             param_values = {
                 'session': session,
                 'response_object': translated_obj,

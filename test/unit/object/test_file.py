@@ -9,7 +9,9 @@ from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.object.comment import Comment
 from boxsdk.object.file import File
+from boxsdk.object.file_version import FileVersion
 from boxsdk.object.task import Task
+from boxsdk.object.upload_session import UploadSession
 
 
 # pylint:disable=protected-access
@@ -31,6 +33,11 @@ def mock_accelerator_response_for_update(make_mock_box_request, mock_accelerator
     return mock_response
 
 
+@pytest.fixture()
+def test_file_version(mock_box_session):
+    return FileVersion(mock_box_session, 'file_version_id')
+
+
 def test_delete_file(test_file, mock_box_session, etag, if_match_header):
     test_file.delete(etag=etag)
     expected_url = test_file.get_url()
@@ -40,6 +47,38 @@ def test_delete_file(test_file, mock_box_session, etag, if_match_header):
         params={},
         headers=if_match_header,
     )
+
+
+def test_create_upload_session(test_file, mock_box_session):
+    expected_url = '{0}/files/{1}/upload_sessions'.format(API.UPLOAD_URL, test_file.object_id)
+    file_size = 197520
+    part_size = 12345
+    total_parts = 16
+    num_parts_processed = 0
+    upload_session_type = 'upload_session'
+    upload_session_id = 'F971964745A5CD0C001BBE4E58196BFD'
+    file_name = 'test_file.pdf'
+    expected_data = {
+        'file_id': test_file.object_id,
+        'file_size': file_size,
+        'file_name': file_name
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'id': upload_session_id,
+        'type': upload_session_type,
+        'num_parts_processed': num_parts_processed,
+        'total_parts': total_parts,
+        'part_size': part_size,
+    }
+    upload_session = test_file.create_upload_session(file_size, file_name)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert isinstance(upload_session, UploadSession)
+    assert upload_session._session == mock_box_session
+    assert upload_session.part_size == part_size
+    assert upload_session.total_parts == total_parts
+    assert upload_session.num_parts_processed == num_parts_processed
+    assert upload_session.type == upload_session_type
+    assert upload_session.id == upload_session_id
 
 
 def test_create_task(test_file, test_task, mock_box_session):
@@ -98,22 +137,103 @@ def test_get_tasks(test_file, mock_box_session):
     assert task.item['id'] == task_body['item']['id']
 
 
-def test_download_to(test_file, mock_box_session, mock_content_response):
-    expected_url = test_file.get_url('content')
+def test_get_download_url(test_file, mock_box_session):
+    expected_url = '{0}/files/{1}/content'.format(API.BASE_API_URL, test_file.object_id)
+    download_url = 'https://dl.boxcloud.com/sdjhfgksdjfgshdbg'
+    mock_box_session.get.return_value.headers = {
+        'location': download_url
+    }
+    url = test_file.get_download_url()
+    mock_box_session.get.assert_called_once_with(
+        expected_url,
+        params=None,
+        expect_json_response=False,
+        allow_redirects=False
+    )
+    assert url == download_url
+
+
+def test_get_download_url_file_version(test_file, test_file_version, mock_box_session):
+    expected_url = '{0}/files/{1}/content'.format(API.BASE_API_URL, test_file.object_id)
+    download_url = 'https://dl.boxcloud.com/sdjhfgksdjfgshdbg'
+    mock_box_session.get.return_value.headers = {
+        'location': download_url
+    }
+    url = test_file.get_download_url(file_version=test_file_version)
+    mock_box_session.get.assert_called_once_with(
+        expected_url,
+        params={'version': test_file_version.object_id},
+        expect_json_response=False,
+        allow_redirects=False
+    )
+    assert url == download_url
+
+
+@pytest.mark.parametrize('params,expected_query,expected_headers', [
+    ({}, None, None),
+    ({'byte_range': (100, 199)}, None, {'Range': 'bytes=100-199'}),
+    ({'byte_range': (100,)}, None, {'Range': 'bytes=100-'}),
+])
+def test_download_to(test_file, mock_box_session, mock_content_response, params, expected_query, expected_headers):
+    expected_url = '{0}/files/{1}/content'.format(API.BASE_API_URL, test_file.object_id)
     mock_box_session.get.return_value = mock_content_response
     mock_writeable_stream = BytesIO()
-    test_file.download_to(mock_writeable_stream)
+    test_file.download_to(mock_writeable_stream, **params)
     mock_writeable_stream.seek(0)
     assert mock_writeable_stream.read() == mock_content_response.content
-    mock_box_session.get.assert_called_once_with(expected_url, expect_json_response=False, stream=True)
+    mock_box_session.get.assert_called_once_with(
+        expected_url,
+        expect_json_response=False,
+        stream=True,
+        params=expected_query,
+        headers=expected_headers
+    )
 
 
-def test_get_content(test_file, mock_box_session, mock_content_response):
+def test_download_to_file_version(test_file, test_file_version, mock_box_session, mock_content_response):
+    expected_url = '{0}/files/{1}/content'.format(API.BASE_API_URL, test_file.object_id)
+    mock_box_session.get.return_value = mock_content_response
+    mock_writeable_stream = BytesIO()
+    test_file.download_to(mock_writeable_stream, file_version=test_file_version)
+    mock_writeable_stream.seek(0)
+    assert mock_writeable_stream.read() == mock_content_response.content
+    mock_box_session.get.assert_called_once_with(
+        expected_url,
+        expect_json_response=False,
+        stream=True,
+        headers=None,
+        params={'version': test_file_version.object_id}
+    )
+
+
+@pytest.mark.parametrize('params,expected_query,expected_headers', [
+    ({}, None, None),
+    ({'byte_range': (100, 199)}, None, {'Range': 'bytes=100-199'}),
+])
+def test_get_content(test_file, mock_box_session, mock_content_response, params, expected_query, expected_headers):
     expected_url = test_file.get_url('content')
     mock_box_session.get.return_value = mock_content_response
-    file_content = test_file.content()
+    file_content = test_file.content(**params)
     assert file_content == mock_content_response.content
-    mock_box_session.get.assert_called_once_with(expected_url, expect_json_response=False)
+    mock_box_session.get.assert_called_once_with(
+        expected_url,
+        expect_json_response=False,
+        params=expected_query,
+        headers=expected_headers
+    )
+
+
+def test_get_content_file_version(test_file, mock_box_session, mock_content_response, test_file_version):
+    expected_url = test_file.get_url('content')
+    mock_box_session.get.return_value = mock_content_response
+    file_content = test_file.content(file_version=test_file_version)
+    assert file_content == mock_content_response.content
+    mock_box_session.get.assert_called_once_with(
+        expected_url,
+        expect_json_response=False,
+        params={'version': test_file_version.object_id},
+        headers=None
+    )
 
 
 @pytest.mark.parametrize('is_stream', (True, False))
@@ -233,14 +353,28 @@ def test_update_contents_does_preflight_check_if_specified(
             assert not test_file.preflight_check.called
 
 
-@pytest.mark.parametrize('prevent_download', (True, False))
-def test_lock(test_file, mock_box_session, mock_file_response, prevent_download):
+@pytest.mark.parametrize('params,expected_data', [
+    ({}, {'is_download_prevented': False}),
+    ({'prevent_download': False}, {'is_download_prevented': False}),
+    ({'prevent_download': True}, {'is_download_prevented': True}),
+    ({'expire_time': '2018-11-06T19:40:00-08:00'}, {
+        'is_download_prevented': False,
+        'expires_at': '2018-11-06T19:40:00-08:00',
+    }),
+])
+def test_lock(test_file, mock_box_session, mock_file_response, params, expected_data):
     expected_url = test_file.get_url()
+    expected_body = {
+        'lock': {
+            'type': 'lock',
+        }
+    }
+    expected_body['lock'].update(expected_data)
     mock_box_session.put.return_value = mock_file_response
-    test_file.lock(prevent_download)
+    test_file.lock(**params)
     mock_box_session.put.assert_called_once_with(
         expected_url,
-        data=json.dumps({'lock': {'is_download_prevented': prevent_download, 'type': 'lock'}}),
+        data=json.dumps(expected_body),
         params=None,
         headers=None,
     )
@@ -316,7 +450,7 @@ def test_get_shared_link_download_url(
     if shared_link_access is not None:
         expected_data['shared_link']['access'] = shared_link_access
     if shared_link_unshared_at is not None:
-        expected_data['shared_link']['unshared_at'] = shared_link_unshared_at.isoformat()
+        expected_data['shared_link']['unshared_at'] = shared_link_unshared_at
     if shared_link_can_preview is not None:
         expected_data['shared_link']['permissions'] = permissions = {}
         permissions['can_preview'] = shared_link_can_preview
@@ -387,3 +521,149 @@ def test_add_comment(test_file, mock_box_session, comment_params):
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert isinstance(comment, Comment)
     assert comment.object_id == comment_id
+
+
+def test_get_previous_versions(test_file, mock_box_session):
+    expected_url = '{0}/files/{1}/versions'.format(API.BASE_API_URL, test_file.object_id)
+    mock_version1 = {
+        'type': 'file_version',
+        'id': '11111',
+        'sha1': '4788db35f85f87acaaa5ba82cc99d72c9323281f',
+    }
+    mock_version2 = {
+        'type': 'comment',
+        'id': '22222',
+        'sha1': '4788db35f85f87acaaa5ba82cc99d72c9323281f',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 2,
+        'offset': 0,
+        'limit': 100,
+        'entries': [mock_version1, mock_version2]
+    }
+    versions = test_file.get_previous_versions()
+    version1 = versions.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
+    assert version1.object_id == mock_version1['id']
+    assert version1.sha1 == mock_version1['sha1']
+
+    version2 = versions.next()
+    assert version2.object_id == mock_version2['id']
+    assert version2.sha1 == mock_version2['sha1']
+
+
+def test_promote_version(test_file, test_file_version, mock_box_session):
+    expected_url = '{0}/files/{1}/versions/current'.format(API.BASE_API_URL, test_file.object_id)
+    sha1 = '12039d6dd9a7e6eefc78846802e'
+    expected_body = {
+        'type': 'file_version',
+        'id': test_file_version.object_id,
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'type': 'file_version',
+        'id': '77777',
+        'sha1': sha1,
+    }
+    new_version = test_file.promote_version(test_file_version)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
+    assert isinstance(new_version, FileVersion)
+    assert new_version.object_id == '77777'
+    assert new_version.sha1 == sha1
+
+
+@pytest.mark.parametrize('params,expected_headers', [
+    ({}, None),
+    ({'etag': 'foobar'}, {'If-Match': 'foobar'}),
+])
+def test_delete_version(test_file, test_file_version, mock_box_session, params, expected_headers):
+    expected_url = '{0}/files/{1}/versions/{2}'.format(API.BASE_API_URL, test_file.object_id, test_file_version.object_id)
+    mock_box_session.delete.return_value.ok = True
+    is_success = test_file.delete_version(test_file_version, **params)
+    mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=expected_headers)
+    assert is_success is True
+
+
+def test_get_embed_url(test_file, mock_box_session):
+    expected_url = '{0}/files/{1}'.format(API.BASE_API_URL, test_file.object_id)
+    expected_params = {
+        'fields': 'expiring_embed_link'
+    }
+    embed_url = 'https://app.box.com/preview/mystuff'
+    mock_box_session.get.return_value.json.return_value = {
+        'type': 'file',
+        'id': test_file.object_id,
+        'expiring_embed_link': {
+            'url': embed_url,
+        },
+    }
+
+    url = test_file.get_embed_url()
+    mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
+    assert url == embed_url
+
+
+@pytest.mark.parametrize('rep_hints,expected_headers', [
+    (None, None),
+    ('[pdf]', {'X-Rep-Hints': '[pdf]'}),
+])
+def test_get_representation_info(test_file, mock_box_session, rep_hints, expected_headers):
+    expected_url = '{0}/files/{1}'.format(API.BASE_API_URL, test_file.object_id)
+    expected_params = {'fields': 'representations'}
+
+    info_url = 'https://api.box.com/2.0/representations/pdf'
+    mock_box_session.get.return_value.json.return_value = {
+        'type': 'file',
+        'id': test_file.object_id,
+        'representations': {
+            'total_count': 1,
+            'entries': [
+                {
+                    'representation': 'pdf',
+                    'info': {
+                        'url': info_url,
+                    },
+                },
+            ],
+        },
+    }
+
+    reps = test_file.get_representation_info(rep_hints=rep_hints)
+    mock_box_session.get.assert_called_once_with(expected_url, params=expected_params, headers=expected_headers)
+    assert isinstance(reps, list)
+    assert len(reps) == 1
+    rep = reps[0]
+    assert rep['representation'] == 'pdf'
+    assert rep['info']['url'] == info_url
+
+
+@pytest.mark.parametrize('extension,min_width,min_height,max_width,max_height,expected_params', [
+    ('png', None, None, None, None, {}),
+    ('png', None, None, None, None, {}),
+    ('jpg', None, None, None, None, {}),
+    ('png', 1, 2, None, None, {'min_width': 1, 'min_height': 2}),
+    ('png', 1, 2, 3, 4, {'min_width': 1, 'min_height': 2, 'max_width': 3, 'max_height': 4}),
+])
+def test_get_thumbnail(
+        test_file,
+        mock_box_session,
+        mock_content_response,
+        extension,
+        min_width,
+        min_height,
+        max_width,
+        max_height,
+        expected_params,
+):
+    expected_url = '{0}/files/{1}/thumbnail.{2}'.format(API.BASE_API_URL, test_file.object_id, extension)
+    mock_box_session.get.return_value = mock_content_response
+
+    thumb = test_file.get_thumbnail(
+        extension=extension,
+        min_width=min_width,
+        min_height=min_height,
+        max_width=max_width,
+        max_height=max_height,
+    )
+
+    mock_box_session.get.assert_called_once_with(expected_url, expect_json_response=False, params=expected_params)
+    assert thumb == mock_content_response.content

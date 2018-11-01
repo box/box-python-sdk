@@ -119,20 +119,32 @@ def test_delete_policy_return_the_correct_response(
     assert response is True
 
 
+@pytest.mark.parametrize('assign_to_type, assign_to_id, params', [
+    (None, None, {}),
+    ('file', None, {'assign_to_type': 'file'}),
+    ('folder', '22222', {'assign_to_type': 'folder', 'assign_to_id': '22222'})
+])
 def test_get_assignments(
         test_legal_hold_policy,
         mock_box_session,
         policies_response,
         policy_id_1,
         policy_id_2,
+        assign_to_type,
+        assign_to_id,
+        params,
 ):
     # pylint:disable=redefined-outer-name
+    expected_url = '{0}/legal_hold_policy_assignments'.format(API.BASE_API_URL)
+    expected_params = {'policy_id': test_legal_hold_policy.object_id}
+    expected_params.update(params)
     mock_box_session.get.return_value = policies_response
-    assignments = test_legal_hold_policy.get_assignments()
+    assignments = test_legal_hold_policy.get_assignments(assign_to_type=assign_to_type, assign_to_id=assign_to_id)
     for assignment, expected_id in zip(assignments, [policy_id_1, policy_id_2]):
         assert assignment.object_id == expected_id
         # pylint:disable=protected-access
         assert assignment._session == mock_box_session
+    mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
 
 
 def test_get_file_version_legal_holds(

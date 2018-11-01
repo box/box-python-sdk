@@ -7,6 +7,7 @@ from .base_object import BaseObject
 from ..exception import BoxAPIException
 from .metadata import Metadata
 from ..util.api_call_decorator import api_call
+from ..pagination.marker_based_dict_collection import MarkerBasedDictCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
@@ -134,18 +135,24 @@ class Item(BaseObject):
         return super(Item, self).get(fields=fields, headers=headers)
 
     @api_call
-    def copy(self, parent_folder):
+    def copy(self, parent_folder, name=None):
         """Copy the item to the given folder.
 
         :param parent_folder:
             The folder to which the item should be copied.
         :type parent_folder:
             :class:`Folder`
+        :param name:
+            A new name for the item, in case there is already another item in the new parent folder with the same name.
+        :type name:
+            `unicode` or None
         """
         url = self.get_url('copy')
         data = {
             'parent': {'id': parent_folder.object_id}
         }
+        if name is not None:
+            data['name'] = name
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
         return self.__class__(
@@ -155,18 +162,24 @@ class Item(BaseObject):
         )
 
     @api_call
-    def move(self, parent_folder):
+    def move(self, parent_folder, name=None):
         """
         Move the item to the given folder.
 
         :param parent_folder:
             The parent `Folder` object, where the item will be moved to.
         :type parent_folder:
-            `Folder`
+            :class:`Folder`
+        :param name:
+            A new name for the item, in case there is already another item in the new parent folder with the same name.
+        :type name:
+            `unicode` or None
         """
         data = {
             'parent': {'id': parent_folder.object_id}
         }
+        if name is not None:
+            data['name'] = name
         return self.update_info(data)
 
     @api_call
@@ -193,9 +206,11 @@ class Item(BaseObject):
             `unicode` or None
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates.
+            and has permission to set expiration dates.  Takes an RFC3339-formatted string, e.g.
+            '2018-10-31T23:59:59-07:00' for 11:59:59 PM on October 31, 2018 in the America/Los_Angeles timezone.
+            The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
         :type unshared_at:
-            :class:`datetime.date` or None
+            `unicode` or None
         :param allow_download:
             Whether or not the item being shared can be downloaded when accessed via the shared link.
             If this parameter is None, the default setting will be used.
@@ -225,7 +240,7 @@ class Item(BaseObject):
         }
 
         if unshared_at is not None:
-            data['shared_link']['unshared_at'] = unshared_at.isoformat()
+            data['shared_link']['unshared_at'] = unshared_at
 
         if allow_download is not None or allow_preview is not None:
             data['shared_link']['permissions'] = permissions = {}
@@ -358,6 +373,19 @@ class Item(BaseObject):
         """
         return Metadata(self._session, self, scope, template)
 
+    def get_all_metadata(self):
+        """
+        Get all metadata attached to the item.
+        """
+        return MarkerBasedDictCollection(
+            session=self._session,
+            url=self.get_url('metadata'),
+            limit=None,
+            marker=None,
+            return_full_pages=False,
+        )
+
+    @api_call
     def get_watermark(self):
         """
         Return the watermark info for a Box file
@@ -372,6 +400,7 @@ class Item(BaseObject):
         response = box_response.json()
         return self.translator.get('watermark')(response['watermark'])
 
+    @api_call
     def apply_watermark(self):
         """
         Apply watermark on a Box file
@@ -391,6 +420,7 @@ class Item(BaseObject):
         response = box_response.json()
         return self.translator.get('watermark')(response['watermark'])
 
+    @api_call
     def delete_watermark(self):
         """
         Deletes the watermark info for a Box file
@@ -446,6 +476,7 @@ class Item(BaseObject):
         }
         return self.update_info(data)
 
+    @api_call
     def collaborate(self, accessible_by, role, can_view_path=None, notify=None, fields=None):
         """Collaborate user or group onto a Box item.
 
@@ -499,6 +530,7 @@ class Item(BaseObject):
             response_object=response,
         )
 
+    @api_call
     def collaborate_with_login(self, login, role, can_view_path=None, notify=None, fields=None):
         """Collaborate user onto a Box item with the user login.
 
@@ -552,6 +584,7 @@ class Item(BaseObject):
             response_object=response,
         )
 
+    @api_call
     def get_collaborations(self, limit=None, marker=None, fields=None):
         """
         Get the entries in the collaboration.

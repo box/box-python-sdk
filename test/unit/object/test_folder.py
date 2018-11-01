@@ -16,6 +16,7 @@ from boxsdk.object.metadata_cascade_policy import MetadataCascadePolicy
 from boxsdk.object.web_link import WebLink
 from boxsdk.object.collaboration import Collaboration, CollaborationRole
 from boxsdk.object.folder import Folder, FolderSyncState
+from boxsdk.object.upload_session import UploadSession
 from boxsdk.session.box_response import BoxResponse
 
 
@@ -54,6 +55,28 @@ def mock_items(mock_box_session, mock_object_id):
 
 @pytest.fixture()
 def mock_items_response(mock_items):
+    # pylint:disable=redefined-outer-name
+    def get_response(limit, offset):
+        items_json, items = mock_items
+        entries = items_json[offset:limit + offset]
+        mock_box_response = Mock(BoxResponse)
+        mock_network_response = Mock(DefaultNetworkResponse)
+        mock_box_response.network_response = mock_network_response
+        mock_box_response.json.return_value = mock_json = {
+            'entries': entries,
+            'total_count': len(entries),
+            'limit': limit,
+            'offset': offset,
+        }
+        mock_box_response.content = json.dumps(mock_json).encode()
+        mock_box_response.status_code = 200
+        mock_box_response.ok = True
+        return mock_box_response, items[offset:limit + offset]
+    return get_response
+
+
+@pytest.fixture()
+def mock_items_response_with_marker(mock_items):
     # pylint:disable=redefined-outer-name
     def get_response(limit, offset):
         items_json, items = mock_items
@@ -124,15 +147,25 @@ def test_delete_folder(test_folder, mock_box_session, recursive, etag, if_match_
     )
 
 
-@pytest.mark.parametrize('limit,offset,fields', [(1, 0, None), (100, 0, ['foo', 'bar']), (1, 1, None)])
-def test_get_items(test_folder, mock_box_session, mock_items_response, limit, offset, fields):
+@pytest.mark.parametrize('limit,offset,fields,sort,direction', [
+    (1, 0, None, None, None),
+    (100, 0, ['foo', 'bar'], None, None),
+    (1, 1, None, None, None),
+    (1, 0, None, 'name', 'ASC'),
+    (1, 1, None, 'date', 'DESC')
+])
+def test_get_items(test_folder, mock_box_session, mock_items_response, limit, offset, fields, sort, direction):
     # pylint:disable=redefined-outer-name
     expected_url = test_folder.get_url('items')
     mock_box_session.get.return_value, expected_items = mock_items_response(limit, offset)
-    items = test_folder.get_items(limit, offset, fields=fields)
+    items = test_folder.get_items(limit, offset, fields=fields, sort=sort, direction=direction)
     expected_params = {'limit': limit, 'offset': offset}
     if fields:
         expected_params['fields'] = ','.join(fields)
+    if sort:
+        expected_params['sort'] = sort
+    if direction:
+        expected_params['direction'] = direction
     for actual, expected in zip(items, expected_items):
         assert actual == expected
     mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
@@ -188,6 +221,37 @@ def test_upload(
     assert new_file['id'] == mock_object_id
     assert not hasattr(new_file, 'entries')
     assert 'entries' not in new_file
+
+
+def test_create_upload_session(test_folder, mock_box_session):
+    expected_url = '{0}/files/upload_sessions'.format(API.UPLOAD_URL)
+    file_size = 197520
+    file_name = 'test_file.pdf'
+    upload_session_id = 'F971964745A5CD0C001BBE4E58196BFD'
+    upload_session_type = 'upload_session'
+    num_parts_processed = 0
+    total_parts = 16
+    part_size = 12345
+    expected_data = {
+        'folder_id': test_folder.object_id,
+        'file_size': file_size,
+        'file_name': file_name,
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'id': upload_session_id,
+        'type': upload_session_type,
+        'num_parts_processed': num_parts_processed,
+        'total_parts': total_parts,
+        'part_size': part_size,
+    }
+    upload_session = test_folder.create_upload_session(file_size, file_name)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert isinstance(upload_session, UploadSession)
+    assert upload_session.part_size == part_size
+    assert upload_session.total_parts == total_parts
+    assert upload_session.num_parts_processed == num_parts_processed
+    assert upload_session.type == upload_session_type
+    assert upload_session.id == upload_session_id
 
 
 def test_upload_stream_does_preflight_check_if_specified(

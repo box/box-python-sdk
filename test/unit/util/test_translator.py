@@ -56,6 +56,22 @@ def translator_response(
     _response_to_class_mapping['web_link'] = (mock_web_link_response, WebLink)
 
 
+@pytest.fixture(params=('scope', 'id', 'both'))
+def metadata_template_response(request):
+    response = {
+        'type': 'metadata_template',
+    }
+    if request.param == 'scope' or request.param == 'both':
+        response.update({
+            'scope': 'enterprise',
+            'templateKey': 'vContract',
+        })
+    if request.param == 'id' or request.param == 'both':
+        response['id'] = '2f2e84e9-afdb-4e9d-b293-d6d1d932fc85'
+
+    return response
+
+
 @pytest.mark.parametrize('response_type', ['bookmark', 'box_note', 'file', 'folder', 'group', 'user'])
 def test_translator_converts_response_to_correct_type(response_type):
     response, object_class = _response_to_class_mapping[response_type]
@@ -195,3 +211,18 @@ def test_translate(default_translator, mock_box_session):
     # It should not modify the original
     assert isinstance(response_object['entries'][0], dict)
     assert isinstance(response_object['entries'][1], dict)
+
+
+def test_translator_translates_metadata_template(default_translator, mock_box_session, metadata_template_response):
+    metadata_template = default_translator.translate(mock_box_session, metadata_template_response)
+
+    if metadata_template_response.get('id'):
+        assert metadata_template.id == metadata_template_response['id']
+        assert metadata_template.object_id == metadata_template_response['id']
+
+    if metadata_template_response.get('scope') and metadata_template_response.get('templateKey'):
+        assert metadata_template.scope == metadata_template_response['scope']
+        assert metadata_template.template_key == metadata_template_response['templateKey']
+
+    if metadata_template_response.get('id') is None:
+        assert metadata_template.object_id is None
