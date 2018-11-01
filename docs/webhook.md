@@ -56,8 +56,6 @@ To create a webhook object, call [`client.create_webhook(target_url, name=None, 
 you create a new webhook object with the specified target url, name, and description. This method will return an updated 
 [`Webhook`][webhook_class] object populated with data from the API, leaving the original object unmodified.
 
-You can create a webhook on either a `file` or a `folder`. For a full list of triggers, see [`here`](https://developer.box.com/v2.0/reference#webhooks-v2)
-
 ```python
 folder = client.folder(folder_id='12345')
 webhook = client.create_webhook(folder, ['FILE.UPLOADED', 'FILE.PREVIEWED'], 'https://example.com')
