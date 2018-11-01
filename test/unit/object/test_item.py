@@ -85,23 +85,39 @@ def test_rename_item(test_item_and_response, mock_box_session):
     assert isinstance(rename_response, test_item.__class__)
 
 
-def test_copy_item(test_item_and_response, mock_box_session, test_folder, mock_object_id):
+@pytest.mark.parametrize('params, expected_data', [
+    ({}, {}),
+    ({'name': 'New name.pdf'}, {'name': 'New name.pdf'})
+])
+def test_copy_item(test_item_and_response, mock_box_session, test_folder, mock_object_id, params, expected_data):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, mock_item_response = test_item_and_response
     expected_url = test_item.get_url('copy')
+    expected_body = {
+        'parent': {'id': mock_object_id},
+    }
+    expected_body.update(expected_data)
     mock_box_session.post.return_value = mock_item_response
-    copy_response = test_item.copy(test_folder)
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps({'parent': {'id': mock_object_id}}))
+    copy_response = test_item.copy(test_folder, **params)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
     assert isinstance(copy_response, test_item.__class__)
 
 
-def test_move_item(test_item_and_response, mock_box_session, test_folder, mock_object_id):
+@pytest.mark.parametrize('params, expected_data', [
+    ({}, {}),
+    ({'name': 'New name.pdf'}, {'name': 'New name.pdf'})
+])
+def test_move_item(test_item_and_response, mock_box_session, test_folder, mock_object_id, params, expected_data):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, mock_item_response = test_item_and_response
     expected_url = test_item.get_url()
+    expected_body = {
+        'parent': {'id': mock_object_id},
+    }
+    expected_body.update(expected_data)
     mock_box_session.put.return_value = mock_item_response
-    move_response = test_item.move(test_folder)
-    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps({'parent': {'id': mock_object_id}}), params=None, headers=None)
+    move_response = test_item.move(test_folder, **params)
+    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body), params=None, headers=None)
     assert isinstance(move_response, test_item.__class__)
 
 
@@ -405,3 +421,32 @@ def test_collaborations(test_item_and_response, mock_box_session):
     assert collaboration.type == mock_collaboration['type']
     assert collaboration['created_by']['type'] == 'user'
     assert collaboration['created_by']['id'] == '33333'
+
+
+def test_get_all_metadata(test_item_and_response, mock_box_session):
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/{1}s/{2}/metadata'.format(API.BASE_API_URL, test_item.object_type, test_item.object_id)
+    mock_metadata = {
+        'currentDocumentStage': 'prioritization',
+        'needsApprovalFrom': 'planning team',
+        '$type': 'documentFlow-452b4c9d-c3ad-4ac7-b1ad-9d5192f2fc5f',
+        '$parent': 'folder_998951261',
+        '$id': 'e57f90ff-0044-48c2-807d-06b908765baf',
+        '$version': 1,
+        '$typeVersion': 2,
+        'maximumDaysAllowedInCurrentStage': 5,
+        '$template': 'documentFlow',
+        '$scope': 'enterprise_12345',
+    }
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'entries': [mock_metadata]
+    }
+
+    all_metadata = test_item.get_all_metadata()
+    metadata = all_metadata.next()
+
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    assert isinstance(metadata, dict)
+    for key in metadata:
+        assert mock_metadata[key] == mock_metadata[key]

@@ -30,6 +30,7 @@ from boxsdk.object.enterprise import Enterprise
 from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
+from boxsdk.object.file_version import FileVersion
 from boxsdk.object.group import Group
 from boxsdk.object.invite import Invite
 from boxsdk.object.storage_policy import StoragePolicy
@@ -391,6 +392,7 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
     (Enterprise, 'enterprise'),
     (Folder, 'folder'),
     (File, 'file'),
+    (FileVersion, 'file_version'),
     (Invite, 'invite'),
     (User, 'user'),
     (Group, 'group'),

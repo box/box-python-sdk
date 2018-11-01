@@ -7,4 +7,5 @@ from .limit_offset_based_object_collection import LimitOffsetBasedObjectCollecti
 
 
 class LimitOffsetBasedDictCollection(LimitOffsetBasedObjectCollection):
+    """Represents a limit/offset-based collection of simple dicts, which are not translated into objects."""
     _page_constructor = DictPage

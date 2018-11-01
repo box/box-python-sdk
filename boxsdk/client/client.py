@@ -108,6 +108,21 @@ class Client(Cloneable):
         """
         return self.translator.get('file')(session=self._session, object_id=file_id)
 
+    def file_version(self, version_id):
+        """
+        Initialize a :class:`FileVersion` object, whose box id is version_id.
+
+        :param version_id:
+            The box id of the :class:`FileVersion` object.
+        :type version_id:
+            `unicode`
+        :return:
+            A :class:`FileVersion` object with the given file version id.
+        :rtype:
+            :class:`FileVersion`
+        """
+        return self.translator.get('file_version')(session=self._session, object_id=version_id)
+
     def upload_session(self, session_id):
         """
         Initialize a :class:`UploadSession` object, whose box id is session_id.

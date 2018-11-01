@@ -17,6 +17,7 @@ __all__ = list(map(str, [
     'events',
     'event',
     'file',
+    'file_version',
     'file_version_retention',
     'folder',
     'group',
