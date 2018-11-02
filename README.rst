@@ -108,62 +108,6 @@ Authorization
 The Box API uses OAuth2 for auth. The SDK makes it relatively painless
 to work with OAuth2 tokens.
 
-Get the authorization url
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    from boxsdk import OAuth2
-
-    oauth = OAuth2(
-        client_id='YOUR_CLIENT_ID',
-        client_secret='YOUR_CLIENT_SECRET',
-        store_tokens=your_store_tokens_callback_method,
-    )
-
-    auth_url, csrf_token = oauth.get_authorization_url('http://YOUR_REDIRECT_URL')
-
-store_tokens is a callback used to store the access token and refresh
-token. You might want to define something like this:
-
-.. code-block:: python
-
-    def store_tokens(access_token, refresh_token):
-        # store the tokens at secure storage (e.g. Keychain)
-
-The SDK will keep the tokens in memory for the duration of the Python
-script run, so you don't always need to pass store_tokens.
-
-Authenticate (get access/refresh token)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you navigate the user to the auth_url, the user will eventually get
-redirected to http://YOUR_REDIRECT_URL?code=YOUR_AUTH_CODE.  After
-getting the code, you will be able to use the code to exchange for an
-access token and refresh token.
-
-The SDK handles all the work for you; all you need to do is run:
-
-.. code-block:: python
-
-    # Make sure that the csrf token you get from the `state` parameter
-    # in the final redirect URI is the same token you get from the
-    # get_authorization_url method.
-    assert 'THE_CSRF_TOKEN_YOU_GOT' == csrf_token
-    access_token, refresh_token = oauth.authenticate('YOUR_AUTH_CODE')
-
-Create an authenticated client
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    from boxsdk import Client
-
-    client = Client(oauth)
-
-And that's it! You can start using the client to do all kinds of cool stuff
-and the SDK will handle the token refresh for you automatically.
-
 Server-to-Server Auth with JWT
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -223,10 +167,69 @@ These users can then be authenticated:
 Requests made with ``ned_client`` (or objects returned from ``ned_client``'s methods)
 will be performed on behalf of the newly created app user.
 
+Traditional 3-legged OAuth2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get the Authorization URL
+*************************
+
+.. code-block:: python
+
+    from boxsdk import OAuth2
+
+    oauth = OAuth2(
+        client_id='YOUR_CLIENT_ID',
+        client_secret='YOUR_CLIENT_SECRET',
+        store_tokens=your_store_tokens_callback_method,
+    )
+
+    auth_url, csrf_token = oauth.get_authorization_url('http://YOUR_REDIRECT_URL')
+
+store_tokens is a callback used to store the access token and refresh
+token. You might want to define something like this:
+
+.. code-block:: python
+
+    def store_tokens(access_token, refresh_token):
+        # store the tokens at secure storage (e.g. Keychain)
+
+The SDK will keep the tokens in memory for the duration of the Python
+script run, so you don't always need to pass store_tokens.
+
+Authenticate (Get Access/Refresh Tokens)
+****************************************
+
+If you navigate the user to the auth_url, the user will eventually get
+redirected to http://YOUR_REDIRECT_URL?code=YOUR_AUTH_CODE.  After
+getting the code, you will be able to use the code to exchange for an
+access token and refresh token.
+
+The SDK handles all the work for you; all you need to do is run:
+
+.. code-block:: python
+
+    # Make sure that the csrf token you get from the `state` parameter
+    # in the final redirect URI is the same token you get from the
+    # get_authorization_url method.
+    assert 'THE_CSRF_TOKEN_YOU_GOT' == csrf_token
+    access_token, refresh_token = oauth.authenticate('YOUR_AUTH_CODE')
+
+Create an Authenticated Client
+******************************
+
+.. code-block:: python
+
+    from boxsdk import Client
+
+    client = Client(oauth)
+
+And that's it! You can start using the client to do all kinds of cool stuff
+and the SDK will handle the token refresh for you automatically.
+
 Other Auth Options
 ~~~~~~~~~~~~~~~~~~
 
-For advanced uses of the SDK, two additional auth classes are provided:
+For advanced uses of the SDK, three additional auth classes are provided:
 
 - ``CooperativelyManagedOAuth2``: Allows multiple auth instances to share tokens.
 - ``RemoteOAuth2``: Allows use of the SDK on clients without access to your application's client secret. Instead, you
