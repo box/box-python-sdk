@@ -1,4 +1,4 @@
-box-python-sdk
+Box Python SDK
 ==============
 
 .. image:: http://opensource.box.com/badges/active.svg
@@ -17,10 +17,13 @@ box-python-sdk
 .. image:: https://img.shields.io/pypi/dm/boxsdk.svg
     :target: https://pypi.python.org/pypi/boxsdk
 
+.. image:: https://coveralls.io/repos/github/box/box-python-sdk/badge.svg?branch=master
+    :target: https://coveralls.io/github/box/box-python-sdk?branch=master
 
 
-.. contents:: :depth: 1
-
+.. contents::
+    :depth: 2
+    :local:
 
 
 Installing
@@ -30,6 +33,74 @@ Installing
 
     pip install boxsdk
 
+The current version of the SDK is v2.x — if you're looking for the code or documentation for v1.5.x, please see the
+`1.5 branch <https://github.com/box/box-python-sdk/tree/1.5>`_.  Note that all new features and fixes will be made on
+the 2.x branch; you should consider upgrading from 1.5.x at your earliest convenience.  See the changelog_ for a list
+of breaking changes and added features between the major versions.
+
+.. _changelog: https://github.com/box/box-python-sdk/blob/master/HISTORY.rst#200
+
+
+Getting Started
+---------------
+
+To get started with the SDK, get a Developer Token from the Configuration page of your app in the
+`Box Developer Console`_. You can use this token to make test calls for your own Box account.
+
+.. _Box Developer Console: https://app.box.com/developers/console
+
+The SDK provides an interactive ``DevelopmentClient`` that makes it easy to test out the SDK in a REPL.
+This client will automatically prompt for a new Developer Token when it requires one, and will log
+HTTP requests and responses to aid in debugging and understanding how the SDK makes API calls.
+
+.. code-block:: pycon
+
+    >>> from boxsdk import DevelopmentClient
+    >>> client = DevelopmentClient()
+    Enter developer token: <ENTER DEVELOPER TOKEN HERE>
+    >>> user = client.user().get()
+    GET https://api.box.com/2.0/users/me {'headers': {'Authorization': '---wXyZ',
+                'User-Agent': 'box-python-sdk-2.0.0',
+                'X-Box-UA': 'agent=box-python-sdk/2.0.0; env=python/3.6.5'},
+    'params': None}
+    "GET https://api.box.com/2.0/users/me" 200 454
+    {'Date': 'Thu, 01 Nov 2018 23:32:11 GMT', 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Connection': 'keep-alive', 'Strict-Transport-Security': 'max-age=31536000', 'Cache-Control': 'no-cache, no-store', 'Content-Encoding': 'gzip', 'Vary': 'Accept-Encoding', 'BOX-REQUEST-ID': '0b50luc09ahp56m2jmkla8mgmh2', 'Age': '0'}
+    {'address': '',
+    'avatar_url': 'https://cloud.app.box.com/api/avatar/large/123456789',
+    'created_at': '2012-06-07T11:14:50-07:00',
+    'id': '123456789',
+    'job_title': '',
+    'language': 'en',
+    'login': 'user@example.com',
+    'max_upload_size': 16106127360,
+    'modified_at': '2018-10-30T17:01:27-07:00',
+    'name': 'Example User',
+    'phone': '',
+    'space_amount': 1000000000000000.0,
+    'space_used': 14330018065,
+    'status': 'active',
+    'timezone': 'America/Los_Angeles',
+    'type': 'user'}
+
+    >>> print('The current user ID is {0}'.format(user.id))
+    The current user ID is 123456789
+
+Outside of a REPL, you can initialize a new ``Client`` with just the Developer Token to get started.
+
+.. code-block:: python
+
+    from boxsdk import OAuth2, Client
+
+    auth = OAuth2(
+        client_id='YOUR_CLIENT_ID',
+        client_secret='YOUR_CLIENT_SECRET',
+        access_token='YOUR_DEVELOPER_TOKEN',
+    )
+    client = Client(auth)
+
+    user = client.user().get()
+    print('The current user ID is {0}'.format(user.id))
+
 
 Authorization
 -------------
@@ -37,265 +108,14 @@ Authorization
 The Box API uses OAuth2 for auth. The SDK makes it relatively painless
 to work with OAuth2 tokens.
 
-Get the authorization url
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    from boxsdk import OAuth2
-
-    oauth = OAuth2(
-        client_id='YOUR_CLIENT_ID',
-        client_secret='YOUR_CLIENT_SECRET',
-        store_tokens=your_store_tokens_callback_method,
-    )
-
-    auth_url, csrf_token = oauth.get_authorization_url('http://YOUR_REDIRECT_URL')
-
-store_tokens is a callback used to store the access token and refresh
-token. You might want to define something like this:
-
-.. code-block:: python
-
-    def store_tokens(access_token, refresh_token):
-        # store the tokens at secure storage (e.g. Keychain)
-
-The SDK will keep the tokens in memory for the duration of the Python
-script run, so you don't always need to pass store_tokens.
-
-Authenticate (get access/refresh token)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you navigate the user to the auth_url, the user will eventually get
-redirected to http://YOUR_REDIRECT_URL?code=YOUR_AUTH_CODE.  After
-getting the code, you will be able to use the code to exchange for an
-access token and refresh token.
-
-The SDK handles all the work for you; all you need to do is run:
-
-.. code-block:: python
-
-    # Make sure that the csrf token you get from the `state` parameter
-    # in the final redirect URI is the same token you get from the
-    # get_authorization_url method.
-    assert 'THE_CSRF_TOKEN_YOU_GOT' == csrf_token
-    access_token, refresh_token = oauth.authenticate('YOUR_AUTH_CODE')
-
-Create an authenticated client
+Server-to-Server Auth with JWT
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
-
-    from boxsdk import Client
-
-    client = Client(oauth)
-
-And that's it! You can start using the client to do all kinds of cool stuff
-and the SDK will handle the token refresh for you automatically.
-
-Usage
------
-
-Get user info
-~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    me = client.user(user_id='me').get()
-    print 'user_login: ' + me['login']
-
-Get folder info
-~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    root_folder = client.folder(folder_id='0').get()
-    print 'folder owner: ' + root_folder.owned_by['login']
-    print 'folder name: ' + root_folder['name']
-
-Get items in a folder
-~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    items = client.folder(folder_id='0').get_items(limit=100, offset=0)
-
-Create subfolder
-~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    # creates folder structure /L1/L2/L3
-    client.folder(folder_id='0').create_subfolder('L1').create_subfolder('L2').create_subfolder('L3')
-
-Get shared link (file or folder)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    shared_link = client.folder(folder_id='SOME_FOLDER_ID').get_shared_link()
-
-Get shared link direct download URL (files only)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    download_url = client.file(file_id='SOME_FILE_ID').get_shared_link_download_url()
-
-Get file name
-~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    client.file(file_id='SOME_FILE_ID').get()['name']
-
-Rename an item
-~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    client.file(file_id='SOME_FILE_ID').rename('bar-2.txt')
-
-Move an item
-~~~~~~~~~~~~
-
-.. code-block:: python
-
-    client.file(file_id='SOME_FILE_ID').move(client.folder(folder_id='SOME_FOLDER_ID'))
-
-Get content of a file
-~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    client.file(file_id='SOME_FILE_ID').content()
-
-Lock/unlock a file
-~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    client.file(file_id='SOME_FILE_ID').lock()
-    client.file(file_id='SOME_FILE_ID').unlock()
-
-Search
-~~~~~~
-
-.. code-block:: python
-
-    client.search().query('some_query', limit=100, offset=0)
-
-Metadata Search
-~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    from boxsdk.object.search import MetadataSearchFilter, MetadataSearchFilters
-
-    metadata_search_filter = MetadataSearchFilter(template_key='marketingCollateral', scope='enterprise')
-    metadata_search_filter.add_value_based_filter(field_key='documentType', value='datasheet')
-    metadata_search_filter.add_value_based_filter(field_key='clientNumber', value='a123')
-
-    metadata_search_filters = MetadataSearchFilters()
-    metadata_search_filters.add_filter(metadata_search_filter)
-
-    client.search().query('some_query', limit=100, offset=0, metadata_filters=metadata_search_filters)
-
-Events
-~~~~~~
-
-.. code-block:: python
-
-    # Get events
-    client.events().get_events(limit=100, stream_position='now')
-
-    # Generate events using long polling
-    for event in client.events().generate_events_with_long_polling():
-        pass  # Do something with the event
-
-    # Get latest stream position
-    client.events().get_latest_stream_position()
-
-Metadata
-~~~~~~~~
-
-.. code-block:: python
-
-    # Get metadata
-    client.file(file_id='SOME_FILE_ID').metadata().get()
-
-    # Create metadata
-    client.file(file_id='SOME_FILE_ID').metadata().create({'key': 'value'})
-
-    # Update metadata
-    metadata = client.file(file_id='SOME_FILE_ID').metadata()
-    update = metadata.start_update()
-    update.add('/key', 'new_value')
-    metadata.update(update)
-
-As-User
-~~~~~~~
-
-The ``Client`` class and all Box objects also have an ``as_user`` method.
-
-``as-user`` returns a copy of the object on which it was called that will make Box API requests
-as though the specified user was making it.
-
-See https://box-content.readme.io/#as-user-1 for more information about how this works via the Box API.
-
-.. code-block:: python
-
-    # Logged in as admin, but rename a file as SOME USER
-    user = client.user(user_id='SOME_USER_ID')
-    client.as_user(user).file(file_id='SOME_FILE_ID').rename('bar-2.txt')
-
-
-    # Same thing, but using file's as_user method
-    client.file(file_id='SOME_FILE_ID').as_user(user).rename('bar-2.txt')
-
-Other Requests
-~~~~~~~~~~~~~~
-
-The Box API is continually evolving. As such, there are API endpoints available that are not specifically
-supported by the SDK. You can still use these endpoints by using the ``make_request`` method of the ``Client``.
-
-.. code-block:: python
-
-    # https://box-content.readme.io/reference#get-metadata-schema
-    # Returns a Python dictionary containing the result of the API request
-    json_response = client.make_request(
-        'GET',
-        client.get_url('metadata_templates', 'enterprise', 'customer', 'schema'),
-    ).json()
-
-``make_request()`` takes two parameters:
-
-- ``method`` -an HTTP verb like ``GET`` or ``POST``
-- ``url`` - the URL of the requested API endpoint
-
-The ``Client`` class and Box objects have a ``get_url`` method. Pass it an endpoint
-to get the correct URL for use with that object and endpoint.
-
-For API calls which require a body, ``make_request()`` accepts ``**kwargs`` after ``method`` and ``url``.
-
-.. code-block:: python
-
-    # https://developer.box.com/reference#update-terms-of-service-user-status
-    # Updates a user's ToS status
-
-    # JSONify the body
-    body = json.dumps({"is_accepted":true})
-
-    # Pass body as "data" argument
-    client.make_request(method, url, data = body)
-
-Box Developer Edition
----------------------
-
 The Python SDK supports your
-`Box Developer Edition <https://box-content.readme.io/docs/app-users/>`__ applications.
+`JWT Authentication <https://developer.box.com/docs/authentication-types-and-security#section-oauth-2-with-jwt>`_
+applications.
 
-Developer Edition support requires some extra dependencies. To get them, simply
+Authenticating with a JWT requires some extra dependencies. To get them, simply
 
 .. code-block:: console
 
@@ -347,10 +167,69 @@ These users can then be authenticated:
 Requests made with ``ned_client`` (or objects returned from ``ned_client``'s methods)
 will be performed on behalf of the newly created app user.
 
-Other Auth Options
-------------------
+Traditional 3-legged OAuth2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For advanced uses of the SDK, two additional auth classes are provided:
+Get the Authorization URL
+*************************
+
+.. code-block:: python
+
+    from boxsdk import OAuth2
+
+    oauth = OAuth2(
+        client_id='YOUR_CLIENT_ID',
+        client_secret='YOUR_CLIENT_SECRET',
+        store_tokens=your_store_tokens_callback_method,
+    )
+
+    auth_url, csrf_token = oauth.get_authorization_url('http://YOUR_REDIRECT_URL')
+
+store_tokens is a callback used to store the access token and refresh
+token. You might want to define something like this:
+
+.. code-block:: python
+
+    def store_tokens(access_token, refresh_token):
+        # store the tokens at secure storage (e.g. Keychain)
+
+The SDK will keep the tokens in memory for the duration of the Python
+script run, so you don't always need to pass store_tokens.
+
+Authenticate (Get Access/Refresh Tokens)
+****************************************
+
+If you navigate the user to the auth_url, the user will eventually get
+redirected to http://YOUR_REDIRECT_URL?code=YOUR_AUTH_CODE.  After
+getting the code, you will be able to use the code to exchange for an
+access token and refresh token.
+
+The SDK handles all the work for you; all you need to do is run:
+
+.. code-block:: python
+
+    # Make sure that the csrf token you get from the `state` parameter
+    # in the final redirect URI is the same token you get from the
+    # get_authorization_url method.
+    assert 'THE_CSRF_TOKEN_YOU_GOT' == csrf_token
+    access_token, refresh_token = oauth.authenticate('YOUR_AUTH_CODE')
+
+Create an Authenticated Client
+******************************
+
+.. code-block:: python
+
+    from boxsdk import Client
+
+    client = Client(oauth)
+
+And that's it! You can start using the client to do all kinds of cool stuff
+and the SDK will handle the token refresh for you automatically.
+
+Other Auth Options
+~~~~~~~~~~~~~~~~~~
+
+For advanced uses of the SDK, three additional auth classes are provided:
 
 - ``CooperativelyManagedOAuth2``: Allows multiple auth instances to share tokens.
 - ``RemoteOAuth2``: Allows use of the SDK on clients without access to your application's client secret. Instead, you
@@ -359,6 +238,52 @@ For advanced uses of the SDK, two additional auth classes are provided:
 - ``RedisManagedOAuth2``: Stores access and refresh tokens in Redis. This allows multiple processes (possibly spanning
   multiple machines) to share access tokens while synchronizing token refresh. This could be useful for a multiprocess
   web server, for example.
+
+Usage Documentation
+-------------------
+
+Full documentation of the available functionality with example code is available in the `SDK documentation pages`_, and
+there is also method-level documentation available on ReadTheDocs_.
+
+.. _SDK documentation pages: https://github.com/box/box-python-sdk/blob/master/docs/usage
+.. _ReadTheDocs: https://box-python-sdk.readthedocs.io/en/latest/index.html
+
+Making API Calls Manually
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Box API is continually evolving. As such, there are API endpoints available that are not specifically
+supported by the SDK. You can still use these endpoints by using the ``make_request`` method of the ``Client``.
+
+.. code-block:: python
+
+    # https://box-content.readme.io/reference#get-metadata-schema
+    # Returns a Python dictionary containing the result of the API request
+    json_response = client.make_request(
+        'GET',
+        client.get_url('metadata_templates', 'enterprise', 'customer', 'schema'),
+    ).json()
+
+``make_request()`` takes two parameters:
+
+- ``method`` -an HTTP verb like ``GET`` or ``POST``
+- ``url`` - the URL of the requested API endpoint
+
+The ``Client`` class and Box objects have a ``get_url`` method. Pass it an endpoint
+to get the correct URL for use with that object and endpoint.
+
+For API calls which require a body, ``make_request()`` accepts ``**kwargs`` after ``method`` and ``url``.
+
+.. code-block:: python
+
+    # https://developer.box.com/reference#update-terms-of-service-user-status
+    # Updates a user's ToS status
+
+    # JSONify the body
+    body = json.dumps({"is_accepted":true})
+
+    # Pass body as "data" argument
+    client.make_request(method, url, data = body)
+
 
 Other Client Options
 --------------------
@@ -458,16 +383,17 @@ Run all tests using -
 
 The tox tests include code style checks via pep8 and pylint.
 
-The tox tests are configured to run on Python 2.6, 2.7, 3.3, 3.4, 3.5, 3.6, and
+The tox tests are configured to run on Python 2.7, 3.4, 3.5, 3.6, 3.7, and
 PyPy (our CI is configured to run PyPy tests on PyPy 4.0).
 
 
-Support
--------
+Questions, Bugs, and Feature Requests?
+--------------------------------------
 
-Need to contact us directly? Email oss@box.com and be sure to include the name
-of this project in the subject. For questions, please contact us directly
-rather than opening an issue.
+Need to contact us directly? `Browse the issues tickets <https://github.com/box/box-python-sdk/issues>`_!  Or, if that
+doesn't work, `file a new one <https://github.com/box/box-python-sdk/issues/new>`_ and we will get back to you.
+If you have general questions about the Box API, you can post to the
+`Box Developer Forum <https://community.box.com/t5/Developer-Forum/bd-p/DeveloperForum>`_.
 
 
 Copyright and License
@@ -475,7 +401,7 @@ Copyright and License
 
 ::
 
- Copyright 2015 Box, Inc. All rights reserved.
+ Copyright 2018 Box, Inc. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
