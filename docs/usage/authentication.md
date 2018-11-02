@@ -75,7 +75,11 @@ object with the `access_token` set to the developer token and construct the clie
 ```python
 from boxsdk import Client, OAuth2
 
-auth = OAuth2(access_token='DEVELOPER_TOKEN_GOES_HERE')
+auth = OAuth2(
+    client_id='YOUR_CLIENT_ID',
+    client_secret='YOUR_CLIENT_SECRET',
+    access_token='DEVELOPER_TOKEN_GOES_HERE',
+)
 client = Client(auth)
 me = client.user().get()
 print('My user ID is {0}'.format(me.id))
