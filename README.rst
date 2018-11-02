@@ -21,7 +21,9 @@ Box Python SDK
     :target: https://coveralls.io/github/box/box-python-sdk?branch=master
 
 
-.. contents:: :depth: 2
+.. contents::
+    :depth: 2
+    :local:
 
 
 Installing
