@@ -242,8 +242,8 @@ Usage Documentation
 Full documentation of the available functionality with example code is available in the `SDK documentation pages`_, and
 there is also method-level documentation available on ReadTheDocs_.
 
-_SDK documentation pages: https://github.com/box/box-python-sdk/blob/master/docs/usage
-_ReadTheDocs: https://box-python-sdk.readthedocs.io/en/latest/index.html
+.. _SDK documentation pages: https://github.com/box/box-python-sdk/blob/master/docs/usage
+.. _ReadTheDocs: https://box-python-sdk.readthedocs.io/en/latest/index.html
 
 Making API Calls Manually
 ~~~~~~~~~~~~~~~~~~~~~~~~~
