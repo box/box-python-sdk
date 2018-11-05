@@ -87,7 +87,7 @@ metadata template.  This method returns a [`MetadataTemplate`][metadata_template
 data from the API.
 
 ```python
-template = client.get_metadata_template_by_id(template_id='abcdef-fba434-ace44')
+template = client.metadata_template_by_id(template_id='abcdef-fba434-ace44').get()
 print('The {0} template has {1} fields'.format(template.displayName, len(template.fields)))
 ```
 
