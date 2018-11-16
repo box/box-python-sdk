@@ -196,7 +196,7 @@ for part_num in range(upload_session.total_parts):
     while copied_length < upload_session.part_size:
         bytes_read = content_stream.read(upload_session.part_size - copied_length)
         if bytes_read is None:
-            # stream returns none when no bytes are ready currently but there are 
+            # stream returns none when no bytes are ready currently but there are
             # potentially more bytes in the stream to be read.
             continue
         if len(bytes_read) == 0:
