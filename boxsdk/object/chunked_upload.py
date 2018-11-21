@@ -1,11 +1,7 @@
 from __future__ import unicode_literals, absolute_import
 
-import base64
 import hashlib
-import json
 
-from .base_object import BaseObject
-from ..pagination.limit_offset_based_dict_collection import LimitOffsetBasedDictCollection
 
 class ChunkedUpload(object):
     _item_type = 'chunked_upload'
@@ -21,7 +17,7 @@ class ChunkedUpload(object):
     def start(self):
         self._upload()
         content_sha1 = self._sha1.digest()
-        self._upload_session.commit(content_sha1=content_sha1, parts=self._part_array)
+        return self._upload_session.commit(content_sha1=content_sha1, parts=self._part_array)
 
     def _upload(self):
         while len(self._part_array) < self._upload_session.total_parts:

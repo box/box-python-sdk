@@ -171,6 +171,30 @@ For large files or in cases where the network connection is less reliable,
 you may want to upload the file in parts.  This allows a single part to fail
 without aborting the entire upload, and failed parts can then be retried.
 
+## Automatic Uploader
+
+The SDK provides a method of automatically handling a chunked upload; simply call [`chunked_upload.start()`][start] with
+the path to the path you wish to upload method once you have constructed an [`upload_session`][upload_session] from the
+[`File`][file_class] you wish to upload a new version of or for a new file upload construct an [`upload_session`][upload_session]
+from the [`Folder`][folder_class].
+
+```python
+chunked_uploader = client.file('12345').chunked_upload_with_path('/path/to/file')
+chunked_uploader.start()
+```
+
+Alternatively, you can also pass in the content stream, file size, and file name.
+
+```python
+test_file_path = '/path/to/large_file.mp4'
+content_stream = open(test_file_path, 'rb')
+file_name = os.path.basename(file_path)
+chunked_uploader = client.file('12345').chunked_upload_with_stream(content_stream, file_size, file_name)
+chunked_uploader.start()
+```
+
+[start]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_upload.ChunkedUpload.start
+
 ### Manual Process
 
 For more complicated upload scenarios, such as those being coordinated across multiple processes or when an unrecoverable error occurs with the automatic uploader, the endpoints for chunked upload operations are also exposed directly.
