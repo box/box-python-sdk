@@ -143,7 +143,7 @@ class Folder(Item):
             response_object=response,
         )
 
-    def chunked_upload_with_stream(self, content_stream, file_size, file_name=None):
+    def chunked_upload_with_stream(self, content_stream, file_size, file_name):
         """
         Instantiate the chunked upload instance and create upload session.
 
