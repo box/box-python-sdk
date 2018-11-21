@@ -1,10 +1,9 @@
 # coding: utf-8
-#pylint: disable-msg=too-many-arguments
+# pylint: disable-msg=too-many-locals
 
 from __future__ import unicode_literals, absolute_import
-from unittest.mock import call
+from mock import call
 
-import hashlib
 import io
 import json
 import pytest
