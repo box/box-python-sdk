@@ -453,13 +453,3 @@ def test_cascade_metadata(test_folder, mock_box_session, test_metadata_template)
     assert folder.object_id == test_folder.object_id
     assert cascade_policy.scope == test_metadata_template.scope
     assert cascade_policy.templateKey == test_metadata_template.template_key
-
-def test_get_items():
-    folder = client.folder('50334800879').get_items(limit=10)
-    folder_items = []
-    for x in range(10):
-        folder_items.append(folder.next())
-    
-    # folder_items = [folder.next() for x in range(10) if]
-
-        
