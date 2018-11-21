@@ -1,19 +1,18 @@
 # coding: utf-8
+#pylint: disable-msg=too-many-arguments
 
 from __future__ import unicode_literals, absolute_import
+from unittest.mock import call
 
-import base64
 import hashlib
+import io
 import json
 import pytest
-import io
 
-from mock import MagicMock, Mock
-from unittest.mock import call
+from mock import Mock
 from boxsdk.config import API
 from boxsdk.object.chunked_upload import ChunkedUpload
 from boxsdk.object.upload_session import UploadSession
-from boxsdk.session.session import Session
 
 
 @pytest.fixture()
@@ -32,7 +31,6 @@ def test_upload_session(mock_box_session):
 def test_start(test_upload_session, mock_box_session):
     expected_put_url = '{0}/files/upload_sessions/{1}'.format(API.UPLOAD_URL, test_upload_session.object_id)
     expected_post_url = '{0}/files/upload_sessions/{1}/commit'.format(API.UPLOAD_URL, test_upload_session.object_id)
-    sha1 = hashlib.sha1()
     file_size = 8
     part_bytes = b'abcdefgh'
     stream = io.BytesIO(part_bytes)
@@ -127,7 +125,7 @@ def test_start(test_upload_session, mock_box_session):
     calls = [call(expected_put_url, data=b'ab', headers=expected_headers_first_upload),
              call(expected_put_url, data=b'cd', headers=expected_headers_second_upload),
              call(expected_put_url, data=b'ef', headers=expected_headers_third_upload),
-             call(expected_put_url, data=b'gh', headers=expected_headers_fourth_upload),]
+             call(expected_put_url, data=b'gh', headers=expected_headers_fourth_upload), ]
     mock_box_session.put.assert_has_calls(calls, any_order=False)
     mock_box_session.post.assert_called_once_with(expected_post_url, data=json.dumps(expected_data),
                                                   headers=expected_headers)
