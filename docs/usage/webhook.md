@@ -88,8 +88,8 @@ webhook. This method returns a new updated [`Webhook`][webhook_class] object, le
 
 ```python
 update_object = {
-    triggers: ['FILE.COPIED'],
-    address: 'https://newexample.com',
+    'triggers': ['FILE.COPIED'],
+    'address': 'https://newexample.com',
 }
 webhook = client.webhook(webhook_id='12345').update_info(update_object)
 print('Updated the webhook info for triggers: {0} and address: {1}'.format(webhook.triggers, webhook.address))
