@@ -287,7 +287,7 @@ This method returns a [`TokenResponse`][token_response] object with the downscop
 ```python
 target_file = client.file(file_id='FILE_ID_HERE')
 token_info = client.downscope_token(['item_preview'], target_file)
-print('Got downscoped access token: {0}'.format(token_info.accessToken))
+print('Got downscoped access token: {0}'.format(token_info.access_token))
 ```
 
 [downscope_token]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.downscope_token
