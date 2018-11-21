@@ -22,7 +22,7 @@ class ChunkedUpload(object):
     def _upload(self):
         while len(self._part_array) < self._upload_session.total_parts:
             chunk = self._read_chunk()
-            self._uploaded_part = self._upload_session.upload_part_bytes(chunk, len(self._part_array)*self._upload_session.part_size,
+            self._uploaded_part = self._upload_session.upload_part_bytes(chunk, len(self._part_array) * self._upload_session.part_size,
                                                                          self._file_size)
             self._part_array.append(self._uploaded_part)
             self._sha1.update(chunk)
@@ -36,7 +36,7 @@ class ChunkedUpload(object):
                 # stream returns none when no bytes are ready currently but there are
                 # potentially more bytes in the stream to be read.
                 continue
-            if len(bytes_read) == 0:
+            if not bytes_read:
                 # stream is exhausted.
                 break
             chunk += bytes_read
