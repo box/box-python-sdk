@@ -2,13 +2,12 @@
 # pylint: disable-msg=too-many-locals
 
 from __future__ import unicode_literals, absolute_import
-from mock import call
 
 import io
 import json
 import pytest
 
-from mock import Mock
+from mock import Mock, call
 from boxsdk.config import API
 from boxsdk.object.chunked_upload import ChunkedUpload
 from boxsdk.object.upload_session import UploadSession
