@@ -6,7 +6,7 @@ import json
 import os
 
 from .item import Item
-from .chunked_upload import ChunkedUpload
+from .chunked_uploader import ChunkedUploader
 from ..util.api_call_decorator import api_call
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -69,7 +69,8 @@ class File(Item):
             response_object=response,
         )
 
-    def chunked_upload_with_stream(self, content_stream, file_size, file_name=None):
+    @api_call
+    def get_chunked_uploader_for_stream(self, content_stream, file_size, file_name=None):
         """
         Instantiate the chunked upload instance and create upload session.
 
@@ -91,9 +92,10 @@ class File(Item):
             :class:`ChunkedUpload`
         """
         upload_session = self.create_upload_session(file_size, file_name)
-        return ChunkedUpload(upload_session, content_stream, file_size)
+        return ChunkedUploader(upload_session, content_stream, file_size)
 
-    def chunked_upload_with_path(self, file_path):
+    @api_call
+    def get_chunked_uploader(self, file_path, file_name=None):
         """
         Instantiate the chunked upload instance and create upload session with path to file.
 
@@ -108,8 +110,7 @@ class File(Item):
         """
         total_size = os.stat(file_path).st_size
         content_stream = open(file_path, 'rb')
-        file_name = os.path.basename(file_path)
-        return self.chunked_upload_with_stream(
+        return self.get_chunked_uploader_for_stream(
             content_stream=content_stream,
             file_size=total_size,
             file_name=file_name

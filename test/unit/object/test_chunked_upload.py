@@ -9,7 +9,8 @@ import pytest
 
 from mock import Mock, call
 from boxsdk.config import API
-from boxsdk.object.chunked_upload import ChunkedUpload
+from boxsdk.object.chunked_uploader import ChunkedUploader
+from boxsdk.object.file import File
 from boxsdk.object.upload_session import UploadSession
 
 
@@ -118,7 +119,7 @@ def test_start(test_upload_session, mock_box_session):
             }
         ]
     }
-    chunked_uploader = ChunkedUpload(test_upload_session, stream, file_size)
+    chunked_uploader = ChunkedUploader(test_upload_session, stream, file_size)
     uploaded_file = chunked_uploader.start()
     calls = [call(expected_put_url, data=b'ab', headers=expected_headers_first_upload),
              call(expected_put_url, data=b'cd', headers=expected_headers_second_upload),
@@ -130,3 +131,5 @@ def test_start(test_upload_session, mock_box_session):
     assert uploaded_file.type == 'file'
     assert uploaded_file.id == '12345'
     assert uploaded_file.description == 'This is a test description'
+    assert isinstance(uploaded_file, File)
+    assert uploaded_file._session == mock_box_session

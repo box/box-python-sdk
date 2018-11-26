@@ -171,12 +171,9 @@ For large files or in cases where the network connection is less reliable,
 you may want to upload the file in parts.  This allows a single part to fail
 without aborting the entire upload, and failed parts can then be retried.
 
-## Automatic Uploader
+### Automatic Uploader
 
-The SDK provides a method of automatically handling a chunked upload; simply call [`chunked_upload.start()`][start] with
-the path to the path you wish to upload method once you have constructed an [`upload_session`][upload_session] from the
-[`File`][file_class] you wish to upload a new version of or for a new file upload construct an [`upload_session`][upload_session]
-from the [`Folder`][folder_class].
+The SDK provides a method of automatically handling a chunked upload; simply call [`chunked_upload.start()`][start] with the path to the file you wish to upload from the [`File`][file_class] for a new version upload or from the [`Folder`][folder_class] for a new file upload.
 
 ```python
 chunked_uploader = client.file('12345').chunked_upload_with_path('/path/to/file')
@@ -194,6 +191,7 @@ chunked_uploader.start()
 ```
 
 [start]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_upload.ChunkedUpload.start
+[chunked_uploader]:
 
 ### Manual Process
 

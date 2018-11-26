@@ -5,7 +5,7 @@ import json
 import os
 from six import text_type
 
-from boxsdk.object.chunked_upload import ChunkedUpload
+from boxsdk.object.chunked_uploader import ChunkedUploader
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
@@ -143,7 +143,8 @@ class Folder(Item):
             response_object=response,
         )
 
-    def chunked_upload_with_stream(self, content_stream, file_size, file_name):
+    @api_call
+    def get_chunked_uploader_for_stream(self, content_stream, file_size, file_name):
         """
         Instantiate the chunked upload instance and create upload session.
 
@@ -165,9 +166,10 @@ class Folder(Item):
             :class:`ChunkedUpload`
         """
         upload_session = self.create_upload_session(file_size, file_name)
-        return ChunkedUpload(upload_session, content_stream, file_size)
+        return ChunkedUploader(upload_session, content_stream, file_size)
 
-    def chunked_upload_with_path(self, file_path):
+    @api_call
+    def get_chunked_uploader(self, file_path):
         """
         Instantiate the chunked upload instance and create upload session with path to file.
 
@@ -183,7 +185,7 @@ class Folder(Item):
         total_size = os.stat(file_path).st_size
         content_stream = open(file_path, 'rb')
         file_name = os.path.basename(file_path)
-        return self.chunked_upload_with_stream(
+        return self.get_chunked_uploader_for_stream(
             content_stream=content_stream,
             file_size=total_size,
             file_name=file_name
