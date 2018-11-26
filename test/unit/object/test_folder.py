@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import io
 import json
 from os.path import basename
 from mock import mock_open, patch, Mock, MagicMock
@@ -14,6 +15,7 @@ from boxsdk.object.enterprise import Enterprise
 from boxsdk.object.file import File
 from boxsdk.object.metadata_cascade_policy import MetadataCascadePolicy
 from boxsdk.object.web_link import WebLink
+from boxsdk.object.chunked_uploader import ChunkedUploader
 from boxsdk.object.collaboration import Collaboration, CollaborationRole
 from boxsdk.object.folder import Folder, FolderSyncState
 from boxsdk.object.upload_session import UploadSession
@@ -73,6 +75,34 @@ def mock_items_response(mock_items):
         mock_box_response.ok = True
         return mock_box_response, items[offset:limit + offset]
     return get_response
+
+
+def test_get_chunked_uploader(mock_box_session, test_folder):
+    expected_url = '{0}/files/upload_sessions'.format(API.UPLOAD_URL)
+    file_size = 197520
+    part_size = 12345
+    total_parts = 16
+    num_parts_processed = 0
+    upload_session_type = 'upload_session'
+    upload_session_id = 'F971964745A5CD0C001BBE4E58196BFD'
+    file_name = 'test_file.pdf'
+    part_bytes = b'abcdefgh'
+    stream = io.BytesIO(part_bytes)
+    expected_data = {
+        'folder_id': test_folder.object_id,
+        'file_size': file_size,
+        'file_name': file_name
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'id': upload_session_id,
+        'type': upload_session_type,
+        'num_parts_processed': num_parts_processed,
+        'total_parts': total_parts,
+        'part_size': part_size,
+    }
+    chunked_uploader = test_folder.get_chunked_uploader_for_stream(stream, file_size, file_name)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    assert isinstance(chunked_uploader, ChunkedUploader)
 
 
 @pytest.fixture()
