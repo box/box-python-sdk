@@ -3,8 +3,6 @@
 from __future__ import unicode_literals
 import io
 import json
-import os
-from os.path import basename
 from mock import mock_open, patch
 import pytest
 from six import BytesIO
