@@ -132,4 +132,4 @@ def test_start(test_upload_session, mock_box_session):
     assert uploaded_file.id == '12345'
     assert uploaded_file.description == 'This is a test description'
     assert isinstance(uploaded_file, File)
-    assert uploaded_file._session == mock_box_session # pylint:disable=protected-access
+    assert uploaded_file._session == mock_box_session  # pylint:disable=protected-access
