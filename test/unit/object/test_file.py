@@ -3,6 +3,8 @@
 from __future__ import unicode_literals
 import io
 import json
+import os
+from os.path import basename
 from mock import mock_open, patch
 import pytest
 from six import BytesIO
@@ -83,7 +85,7 @@ def test_create_upload_session(test_file, mock_box_session):
     assert upload_session.id == upload_session_id
 
 
-def test_get_chunked_uploader(mock_box_session, test_file):
+def test_get_chunked_uploader_for_stream(mock_box_session, test_file):
     expected_url = '{0}/files/{1}/upload_sessions'.format(API.UPLOAD_URL, test_file.object_id)
     file_size = 197520
     part_size = 12345
@@ -108,6 +110,46 @@ def test_get_chunked_uploader(mock_box_session, test_file):
     }
     chunked_uploader = test_file.get_chunked_uploader_for_stream(stream, file_size, file_name)
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    upload_session = chunked_uploader._upload_session
+    assert upload_session.part_size == part_size
+    assert upload_session.total_parts == total_parts
+    assert upload_session.num_parts_processed == num_parts_processed
+    assert upload_session.type == upload_session_type
+    assert upload_session.id == upload_session_id
+    assert isinstance(chunked_uploader, ChunkedUploader)
+
+
+def test_get_chunked_uploader(mock_box_session, mock_content_response, mock_file_path, test_file):
+    expected_url = '{0}/files/{1}/upload_sessions'.format(API.UPLOAD_URL, test_file.object_id)
+    mock_file_stream = BytesIO(mock_content_response.content)
+    file_size = 197520
+    part_size = 12345
+    total_parts = 16
+    num_parts_processed = 0
+    upload_session_type = 'upload_session'
+    upload_session_id = 'F971964745A5CD0C001BBE4E58196BFD'
+    expected_data = {
+        'file_id': test_file.object_id,
+        'file_size': file_size,
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'id': upload_session_id,
+        'type': upload_session_type,
+        'num_parts_processed': num_parts_processed,
+        'total_parts': total_parts,
+        'part_size': part_size,
+    }
+    with patch('os.stat') as stat:
+        stat.return_value.st_size = file_size
+        with patch('builtins.open', return_value=mock_file_stream):
+            chunked_uploader = test_file.get_chunked_uploader(mock_file_path)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    upload_session = chunked_uploader._upload_session
+    assert upload_session.part_size == part_size
+    assert upload_session.total_parts == total_parts
+    assert upload_session.num_parts_processed == num_parts_processed
+    assert upload_session.type == upload_session_type
+    assert upload_session.id == upload_session_id
     assert isinstance(chunked_uploader, ChunkedUploader)
 
 
