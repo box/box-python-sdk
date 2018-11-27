@@ -173,7 +173,7 @@ without aborting the entire upload, and failed parts can then be retried.
 
 ### Automatic Uploader
 
-The SDK provides a method of automatically handling a chunked upload; simply call [`chunked_upload.start()`][start] with the path to the file you wish to upload from the [`File`][file_class] for a new version upload or from the [`Folder`][folder_class] for a new file upload.
+The SDK provides a method of automatically handling a chunked upload; simply call [`chunked_upload.start()`][start] with the path to the file you wish to upload from the [`File`][file_class] with [`file.get_chunked_uploader()`][get_chunked_uploader_for_version] method to retrieve a [`ChunkedUploader`][chunked_uploader_class] object for a new version upload or from the [`Folder`][folder_class] with [`folder.get_chunked_uploader()`][get_chunked_uploader_for_file] method to retrieve a [`ChunkedUploader`][chunked_uploader_class] object for a new file upload.
 
 ```python
 chunked_uploader = client.file('12345').chunked_upload_with_path('/path/to/file')
@@ -191,7 +191,9 @@ chunked_uploader.start()
 ```
 
 [start]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_upload.ChunkedUpload.start
-[chunked_uploader]:
+[chunked_uploader_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader
+[get_chunked_uploader_for_version]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_chunked_uploader
+[get_chunked_uploader_for_file]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.get_chunked_uploader
 
 ### Manual Process
 

@@ -31,8 +31,6 @@ def test_start(test_upload_session, mock_box_session):
     expected_put_url = '{0}/files/upload_sessions/{1}'.format(API.UPLOAD_URL, test_upload_session.object_id)
     expected_post_url = '{0}/files/upload_sessions/{1}/commit'.format(API.UPLOAD_URL, test_upload_session.object_id)
     file_size = 7
-    part_bytes = b'abcdefg'
-    stream = io.BytesIO(part_bytes)
     first_sha1 = '2iNhTgJGmg18e9G9q1ycR0sZBNw='
     second_sha1 = 'A0d4GYoEXB7YC+JxzdApt2h09vw='
     third_sha1 = '+CIFFHGVe3u+u4qwiP6b1tFPQmE='
