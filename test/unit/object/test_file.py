@@ -8,12 +8,12 @@ import pytest
 from six import BytesIO
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
-from boxsdk.object.chunked_uploader import ChunkedUploader
 from boxsdk.object.comment import Comment
 from boxsdk.object.file import File
 from boxsdk.object.file_version import FileVersion
 from boxsdk.object.task import Task
 from boxsdk.object.upload_session import UploadSession
+from boxsdk.util.chunked_uploader import ChunkedUploader
 
 
 # pylint:disable=protected-access

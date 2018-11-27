@@ -15,11 +15,11 @@ from boxsdk.object.enterprise import Enterprise
 from boxsdk.object.file import File
 from boxsdk.object.metadata_cascade_policy import MetadataCascadePolicy
 from boxsdk.object.web_link import WebLink
-from boxsdk.object.chunked_uploader import ChunkedUploader
 from boxsdk.object.collaboration import Collaboration, CollaborationRole
 from boxsdk.object.folder import Folder, FolderSyncState
 from boxsdk.object.upload_session import UploadSession
 from boxsdk.session.box_response import BoxResponse
+from boxsdk.util.chunked_uploader import ChunkedUploader
 
 
 # pylint:disable=protected-access
