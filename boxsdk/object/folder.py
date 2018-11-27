@@ -5,12 +5,12 @@ import json
 import os
 from six import text_type
 
-from boxsdk.object.chunked_uploader import ChunkedUploader
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
 from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
+from boxsdk.util.chunked_uploader import ChunkedUploader
 from boxsdk.util.api_call_decorator import api_call
 from boxsdk.util.text_enum import TextEnum
 

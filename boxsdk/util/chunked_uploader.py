@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long
 from __future__ import unicode_literals, absolute_import
 
 import hashlib
@@ -22,9 +21,10 @@ class ChunkedUploader(object):
     def _upload(self):
         while len(self._part_array) < self._upload_session.total_parts:
             chunk = self._read_chunk()
-            self._uploaded_part = self._upload_session.upload_part_bytes(chunk,
-                                                                         len(self._part_array) * self._upload_session.part_size,
-                                                                         self._file_size)
+            self._uploaded_part = self._upload_session.upload_part_bytes(
+                part_bytes=chunk,
+                offset=len(self._part_array) * self._upload_session.part_size,
+                total_size=self._file_size)
             self._part_array.append(self._uploaded_part)
             self._sha1.update(chunk)
 

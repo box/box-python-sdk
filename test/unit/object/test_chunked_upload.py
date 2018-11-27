@@ -8,9 +8,9 @@ import pytest
 
 from mock import Mock, call
 from boxsdk.config import API
-from boxsdk.object.chunked_uploader import ChunkedUploader
 from boxsdk.object.file import File
 from boxsdk.object.upload_session import UploadSession
+from boxsdk.util.chunked_uploader import ChunkedUploader
 
 
 @pytest.fixture()
@@ -116,16 +116,16 @@ def test_start(test_upload_session, mock_box_session):
             }
         ]
     }
-    flaky_mock = Mock()
-    flaky_mock.read.side_effect = [b'ab', None, b'c', b'd', b'ef', b'g', b'']
+    flaky_stream = Mock()
+    flaky_stream.read.side_effect = [b'ab', None, b'c', b'd', b'ef', b'g', b'']
 
-    chunked_uploader = ChunkedUploader(test_upload_session, flaky_mock, file_size)
+    chunked_uploader = ChunkedUploader(test_upload_session, flaky_stream, file_size)
     uploaded_file = chunked_uploader.start()
     calls = [call(expected_put_url, data=b'ab', headers=expected_headers_first_upload),
              call(expected_put_url, data=b'cd', headers=expected_headers_second_upload),
              call(expected_put_url, data=b'ef', headers=expected_headers_third_upload),
              call(expected_put_url, data=b'g', headers=expected_headers_fourth_upload), ]
-    flaky_mock.read.assert_has_calls([call(2), call(2), call(2), call(1), call(2), call(2), call(1)], any_order=False)
+    flaky_stream.read.assert_has_calls([call(2), call(2), call(2), call(1), call(2), call(2), call(1)], any_order=False)
     mock_box_session.put.assert_has_calls(calls, any_order=False)
     mock_box_session.post.assert_called_once_with(expected_post_url, data=json.dumps(expected_data),
                                                   headers=expected_headers)

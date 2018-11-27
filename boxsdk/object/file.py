@@ -6,7 +6,7 @@ import json
 import os
 
 from .item import Item
-from .chunked_uploader import ChunkedUploader
+from ..util.chunked_uploader import ChunkedUploader
 from ..util.api_call_decorator import api_call
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
