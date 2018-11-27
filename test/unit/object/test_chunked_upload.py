@@ -30,13 +30,13 @@ def test_upload_session(mock_box_session):
 def test_start(test_upload_session, mock_box_session):
     expected_put_url = '{0}/files/upload_sessions/{1}'.format(API.UPLOAD_URL, test_upload_session.object_id)
     expected_post_url = '{0}/files/upload_sessions/{1}/commit'.format(API.UPLOAD_URL, test_upload_session.object_id)
-    file_size = 8
-    part_bytes = b'abcdefgh'
+    file_size = 7
+    part_bytes = b'abcdefg'
     stream = io.BytesIO(part_bytes)
     first_sha1 = '2iNhTgJGmg18e9G9q1ycR0sZBNw='
     second_sha1 = 'A0d4GYoEXB7YC+JxzdApt2h09vw='
     third_sha1 = '+CIFFHGVe3u+u4qwiP6b1tFPQmE='
-    fourth_sha1 = 'EEEXnL3aNm/XsDR/CSVfd1Fw4QM='
+    fourth_sha1 = 'VP0XESCfscB4EJI3QTLGbnniJBs='
     part_one = {
         'part_id': 'CFEB4BA9',
         'offset': 0,
@@ -58,7 +58,7 @@ def test_start(test_upload_session, mock_box_session):
     part_four = {
         'part_id': '4DBC872D',
         'offset': 6,
-        'size': 2,
+        'size': 1,
         'sha1': fourth_sha1,
     }
     parts = [part_one, part_two, part_three, part_four]
@@ -67,28 +67,28 @@ def test_start(test_upload_session, mock_box_session):
     }
     expected_headers = {
         'Content-Type': 'application/json',
-        'Digest': 'SHA=QlrxKgdDUCsyLpOgFbz4aOMk1Wo=',
+        'Digest': 'SHA=L7XhNBn8iSRoZeejJPR27GJOh0A=',
     }
 
     expected_headers_first_upload = {
         'Content-Type': 'application/octet-stream',
         'Digest': 'SHA={}'.format(first_sha1),
-        'Content-Range': 'bytes 0-1/8',
+        'Content-Range': 'bytes 0-1/7',
     }
     expected_headers_second_upload = {
         'Content-Type': 'application/octet-stream',
         'Digest': 'SHA={}'.format(second_sha1),
-        'Content-Range': 'bytes 2-3/8',
+        'Content-Range': 'bytes 2-3/7',
     }
     expected_headers_third_upload = {
         'Content-Type': 'application/octet-stream',
         'Digest': 'SHA={}'.format(third_sha1),
-        'Content-Range': 'bytes 4-5/8',
+        'Content-Range': 'bytes 4-5/7',
     }
     expected_headers_fourth_upload = {
         'Content-Type': 'application/octet-stream',
         'Digest': 'SHA={}'.format(fourth_sha1),
-        'Content-Range': 'bytes 6-7/8',
+        'Content-Range': 'bytes 6-6/7',
     }
 
     first_response_mock = Mock()
@@ -119,12 +119,16 @@ def test_start(test_upload_session, mock_box_session):
             }
         ]
     }
-    chunked_uploader = ChunkedUploader(test_upload_session, stream, file_size)
+    flaky_mock = Mock()
+    flaky_mock.read.side_effect = [b'ab', None, b'c', b'd', b'ef', b'g', b'']
+
+    chunked_uploader = ChunkedUploader(test_upload_session, flaky_mock, file_size)
     uploaded_file = chunked_uploader.start()
     calls = [call(expected_put_url, data=b'ab', headers=expected_headers_first_upload),
              call(expected_put_url, data=b'cd', headers=expected_headers_second_upload),
              call(expected_put_url, data=b'ef', headers=expected_headers_third_upload),
-             call(expected_put_url, data=b'gh', headers=expected_headers_fourth_upload), ]
+             call(expected_put_url, data=b'g', headers=expected_headers_fourth_upload), ]
+    flaky_mock.read.assert_has_calls([call(2), call(2), call(2), call(1), call(2), call(2), call(1)], any_order=False)
     mock_box_session.put.assert_has_calls(calls, any_order=False)
     mock_box_session.post.assert_called_once_with(expected_post_url, data=json.dumps(expected_data),
                                                   headers=expected_headers)

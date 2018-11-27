@@ -140,7 +140,7 @@ def test_get_chunked_uploader(mock_box_session, mock_content_response, mock_file
     }
     with patch('os.stat') as stat:
         stat.return_value.st_size = file_size
-        with patch('builtins.open', return_value=mock_file_stream):
+        with patch('boxsdk.object.file.open', return_value=mock_file_stream):
             chunked_uploader = test_file.get_chunked_uploader(mock_file_path)
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     upload_session = chunked_uploader._upload_session
