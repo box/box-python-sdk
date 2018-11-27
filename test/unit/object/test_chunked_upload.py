@@ -3,7 +3,6 @@
 
 from __future__ import unicode_literals, absolute_import
 
-import io
 import json
 import pytest
 
