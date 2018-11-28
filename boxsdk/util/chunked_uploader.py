@@ -44,11 +44,6 @@ class ChunkedUploader(object):
             copied_length += len(bytes_read)
         return InflightPart(offset, chunk, self._upload_session, self._file_size)
 
-    def resume(self):
-        uploaded_parts = self._upload_session.get_parts()
-        for part in uploaded_parts.entries():
-            self._part_array.append(part)
-        self.start()
 
 class InflightPart(object):
 
