@@ -11,7 +11,7 @@ class ChunkedUploader(object):
         self._file_size = file_size
         self._part_array = []
         self._sha1 = hashlib.sha1()
-        self._inflight_chunks = None
+        self._inflight_part = None
 
     def start(self):
         self._upload()
@@ -20,17 +20,20 @@ class ChunkedUploader(object):
 
     def _upload(self):
         while len(self._part_array) < self._upload_session.total_parts:
-            chunk = self._read_chunk()
+            next_part = self._inflight_part or self._get_next_part()
+            self._inflight_part = next_part
             uploaded_part = self._upload_session.upload_part_bytes(
-                part_bytes=chunk,
-                offset=len(self._part_array) * self._upload_session.part_size,
+                part_bytes=next_part.chunk,
+                offset=next_part.offset,
                 total_size=self._file_size)
+            self._inflight_part = None
             self._part_array.append(uploaded_part)
-            self._sha1.update(chunk)
+            self._sha1.update(next_part.chunk)
 
-    def _read_chunk(self):
+    def _get_next_part(self):
         copied_length = 0
         chunk = b''
+        offset = len(self._part_array) * self._upload_session.part_size
         while copied_length < self._upload_session.part_size:
             bytes_read = self._content_stream.read(self._upload_session.part_size - copied_length)
             if bytes_read is None:
@@ -42,10 +45,24 @@ class ChunkedUploader(object):
                 break
             chunk += bytes_read
             copied_length += len(bytes_read)
-        return chunk
+        return InflightPart(offset, chunk)
 
     def resume(self):
         uploaded_parts = self._upload_session.get_parts()
         for part in uploaded_parts.entries():
             self._part_array.append(part)
         self.start()
+
+class InflightPart(object):
+
+    def __init__(self, offset, chunk):
+        self._offset = offset
+        self._chunk = chunk
+
+    @property
+    def offset(self):
+        return self._offset
+
+    @property
+    def chunk(self):
+        return self._chunk
