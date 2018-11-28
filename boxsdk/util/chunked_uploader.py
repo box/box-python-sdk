@@ -4,7 +4,6 @@ import hashlib
 
 
 class ChunkedUploader(object):
-    _uploaded_part = None
 
     def __init__(self, upload_session, content_stream, file_size):
         self._upload_session = upload_session
@@ -12,6 +11,7 @@ class ChunkedUploader(object):
         self._file_size = file_size
         self._part_array = []
         self._sha1 = hashlib.sha1()
+        self._inflight_chunks = None
 
     def start(self):
         self._upload()
@@ -21,11 +21,11 @@ class ChunkedUploader(object):
     def _upload(self):
         while len(self._part_array) < self._upload_session.total_parts:
             chunk = self._read_chunk()
-            self._uploaded_part = self._upload_session.upload_part_bytes(
+            uploaded_part = self._upload_session.upload_part_bytes(
                 part_bytes=chunk,
                 offset=len(self._part_array) * self._upload_session.part_size,
                 total_size=self._file_size)
-            self._part_array.append(self._uploaded_part)
+            self._part_array.append(uploaded_part)
             self._sha1.update(chunk)
 
     def _read_chunk(self):
@@ -43,3 +43,9 @@ class ChunkedUploader(object):
             chunk += bytes_read
             copied_length += len(bytes_read)
         return chunk
+
+    def resume(self):
+        uploaded_parts = self._upload_session.get_parts()
+        for part in uploaded_parts.entries():
+            self._part_array.append(part)
+        self.start()
