@@ -22,10 +22,7 @@ class ChunkedUploader(object):
         while len(self._part_array) < self._upload_session.total_parts:
             next_part = self._inflight_part or self._get_next_part()
             self._inflight_part = next_part
-            uploaded_part = self._upload_session.upload_part_bytes(
-                part_bytes=next_part.chunk,
-                offset=next_part.offset,
-                total_size=self._file_size)
+            uploaded_part = self._inflight_part.upload()
             self._inflight_part = None
             self._part_array.append(uploaded_part)
             self._sha1.update(next_part.chunk)
@@ -45,7 +42,7 @@ class ChunkedUploader(object):
                 break
             chunk += bytes_read
             copied_length += len(bytes_read)
-        return InflightPart(offset, chunk)
+        return InflightPart(offset, chunk, self._upload_session, self._file_size)
 
     def resume(self):
         uploaded_parts = self._upload_session.get_parts()
@@ -55,9 +52,11 @@ class ChunkedUploader(object):
 
 class InflightPart(object):
 
-    def __init__(self, offset, chunk):
+    def __init__(self, offset, chunk, upload_session, total_size):
         self._offset = offset
         self._chunk = chunk
+        self._upload_session = upload_session
+        self._total_size = total_size
 
     @property
     def offset(self):
@@ -66,3 +65,9 @@ class InflightPart(object):
     @property
     def chunk(self):
         return self._chunk
+
+    def upload(self):
+        return self._upload_session.upload_part_bytes(
+            part_bytes=self.chunk,
+            offset=self.offset,
+            total_size=self._total_size)
