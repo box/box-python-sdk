@@ -7,7 +7,7 @@ enterprise. Leverage the parameters listed below to generate targeted advanced s
 Search for Content
 ------------------
 
-To get a list of items matching a serch query, call [`search.query()`][query] will return an `Iterable` that allows you 
+To get a list of items matching a serch query, call [`search.query(query, limit=None, offset=0, **kwargs)`][query] will return an `Iterable` that allows you 
 to iterate over the [`Item`][item_class] objects in the collection.
 
 ```python
@@ -21,7 +21,7 @@ for item in items:
 
 ### Metadata Search
 
-To filter by metadata values, call [`search.query()`][query] with [`MetadataSearchFilters`][metadata_search_filters]
+To filter by metadata values, call [`search.query(query, metadata_filters=None, **kwargs)`][query] with [`MetadataSearchFilters`][metadata_search_filters]
 passed in. To construct a [MetadataSearchFilters][metadata_search_filters] object, first create 
 [MetadataSearchFilter][metadata_search_filter] object with the specified `template_key` and `scope` as well as adding 
 filter, `field_key` and `value` with [`metadata_search_filter.add_value_based_filter`][add_value_based_filter]
@@ -33,7 +33,7 @@ metadata_search_filter.add_value_based_filter(field_key='documentType', value='d
 metadata_search_filter.add_value_based_filter(field_key='clientNumber', value='a123')
 metadata_search_filters = MetadataSearchFilters()
 metadata_search_filters.add_filter(metadata_search_filter)
-client.search('some_query', limit=100, offset=0, metadata_filters=metadata_search_filters)
+client.search(None, limit=100, offset=0, metadata_filters=metadata_search_filters)
 ```
 
 [metadata_search_filter]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.MetadataSearchFilter
