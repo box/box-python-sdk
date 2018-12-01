@@ -6,7 +6,6 @@ import json
 import os
 
 from .item import Item
-from ..util.chunked_uploader import ChunkedUploader
 from ..util.api_call_decorator import api_call
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -70,32 +69,7 @@ class File(Item):
         )
 
     @api_call
-    def get_chunked_uploader_for_stream(self, content_stream, file_size, file_name=None):
-        """
-        Instantiate the chunked upload instance and create upload session.
-
-        :param content_stream:
-            File-like object containing the content of the part to be uploaded.
-        :type content_stream:
-            :class:`File`
-        :param file_size:
-            The size of the file that this part belongs to.
-        :type file_size:
-            `int`
-        :param file_name:
-            The optional new name of the file
-        :type file_name:
-            `unicode` or None
-        :returns:
-            A :class:`ChunkedUpload` object.
-        :rtype:
-            :class:`ChunkedUpload`
-        """
-        upload_session = self.create_upload_session(file_size, file_name)
-        return ChunkedUploader(upload_session, content_stream, file_size)
-
-    @api_call
-    def get_chunked_uploader(self, file_path, file_name=None):
+    def get_chunked_uploader(self, file_path, rename_file=False):
         """
         Instantiate the chunked upload instance and create upload session with path to file.
 
@@ -110,11 +84,9 @@ class File(Item):
         """
         total_size = os.stat(file_path).st_size
         content_stream = open(file_path, 'rb')
-        return self.get_chunked_uploader_for_stream(
-            content_stream=content_stream,
-            file_size=total_size,
-            file_name=file_name
-        )
+        file_name = os.path.basename(file_path) if rename_file else None
+        upload_session = self.create_upload_session(total_size, file_name)
+        return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
 
     def _get_accelerator_upload_url_for_update(self):
         """

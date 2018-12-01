@@ -6,6 +6,7 @@ import hashlib
 import json
 
 from .base_object import BaseObject
+from boxsdk.util.chunked_uploader import ChunkedUploader
 from ..pagination.limit_offset_based_dict_collection import LimitOffsetBasedDictCollection
 
 
@@ -156,3 +157,46 @@ class UploadSession(BaseObject):
             `bool`
         """
         return self.delete()
+
+    def get_chunked_uploader_for_stream(self, content_stream, file_size):
+        """
+        Instantiate the chunked upload instance and create upload session.
+
+        :param content_stream:
+            File-like object containing the content of the part to be uploaded.
+        :type content_stream:
+            :class:`File`
+        :param file_size:
+            The size of the file that this part belongs to.
+        :type file_size:
+            `int`
+        :param file_name:
+            The optional new name of the file
+        :type file_name:
+            `unicode` or None
+        :returns:
+            A :class:`ChunkedUpload` object.
+        :rtype:
+            :class:`ChunkedUpload`
+        """
+        return ChunkedUploader(self, content_stream, file_size)
+
+    def get_chunked_uploader(self, file_path):
+        """
+        Instantiate the chunked upload instance and create upload session with path to file.
+
+        :param file_path:
+            The local path to the file you wish to upload.
+        :type file_path:
+            `unicode`
+        :returns:
+            A :class:`ChunkedUpload` object.
+        :rtype:
+            :class:`ChunkedUpload`
+        """
+        total_size = os.stat(file_path).st_size
+        content_stream = open(file_path, 'rb')
+        return self.get_chunked_uploader_for_stream(
+            content_stream=content_stream,
+            file_size=total_size,
+        )

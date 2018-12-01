@@ -10,7 +10,6 @@ from boxsdk.object.item import Item
 from boxsdk.object.user import User
 from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
-from boxsdk.util.chunked_uploader import ChunkedUploader
 from boxsdk.util.api_call_decorator import api_call
 from boxsdk.util.text_enum import TextEnum
 
@@ -185,11 +184,8 @@ class Folder(Item):
         total_size = os.stat(file_path).st_size
         content_stream = open(file_path, 'rb')
         file_name = os.path.basename(file_path)
-        return self.get_chunked_uploader_for_stream(
-            content_stream=content_stream,
-            file_size=total_size,
-            file_name=file_name
-        )
+        upload_session = self.create_upload_session(total_size, file_name)
+        return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
 
     def _get_accelerator_upload_url_fow_new_uploads(self):
         """
