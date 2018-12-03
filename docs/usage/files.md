@@ -171,6 +171,52 @@ For large files or in cases where the network connection is less reliable,
 you may want to upload the file in parts.  This allows a single part to fail
 without aborting the entire upload, and failed parts can then be retried.
 
+### Automatic Uploader
+
+The SDK provides a method of automatically handling a chunked upload; simply call [`chunked_upload.start()`][start] 
+with the path to the file you wish to upload from the [`File`][file_class] with 
+[`file.get_chunked_uploader(file_path, rename_file=False)`][get_chunked_uploader_for_version] method to retrieve a 
+[`ChunkedUploader`][chunked_uploader_class] object for a new 
+version upload or from the [`Folder`][folder_class] with [`folder.get_chunked_uploader(file_path)`][get_chunked_uploader_for_file] 
+method to retrieve a [`ChunkedUploader`][chunked_uploader_class] object for a new file upload. You can also return a 
+[`ChunkedUploader`][chunked_uploader_class] object by creating a [`UploadSession`][upload_session_class] object first 
+and calling the method, [`upload_session.get_chunked_upload(file_path)`][get_chunked_uploader] or 
+[`upload_session.get_chunked_uploader_for_stream(content_stream, file_size)`][get_chunked_uploader_for_stream].
+Calling the method [`chunked_upload.start()`][start] will kick off the chunked upload process and return the [File][file_class] 
+object that was uploaded.
+
+```python
+chunked_uploader = client.file('12345').get_chunked_uploader('/path/to/file')
+uploaded_file = chunked_uploader.start()
+print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, uploaded_file.id))
+```
+
+Alternatively, you can create an upload session and calling [`upload_session.get_chunked_uploader(file_path)`][get_chunked_uploader] 
+or [`upload_session.get_chunked_uploader_for_stream(content_stream, file_size)`][get_chunked_uploader_for_stream].
+
+```python
+chunked_uploader = client.upload_session('56781').get_chunked_uploader('/path/to/file')
+uploaded_file = chunked_uploader.start()
+print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, uploaded_file.id))
+```
+
+```python
+test_file_path = '/path/to/large_file.mp4'
+content_stream = open(test_file_path, 'rb')
+total_size = os.stat(test_file_path).st_size
+chunked_uploader = client.upload_session('56781').get_chunked_uploader_for_stream(content_stream, total_size)
+uploaded_file = chunked_uploader.start()
+print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, uploaded_file.id))
+```
+
+[start]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader.start
+[chunked_uploader_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader
+[get_chunked_uploader_for_version]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_chunked_uploader
+[get_chunked_uploader_for_file]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.get_chunked_uploader
+[upload_session_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession
+[get_chunked_uploader]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.get_chunked_uploader
+[get_chunked_uploader_for_stream]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.get_chunked_uploader_for_stream
+
 ### Manual Process
 
 For more complicated upload scenarios, such as those being coordinated across multiple processes or when an unrecoverable error occurs with the automatic uploader, the endpoints for chunked upload operations are also exposed directly.
@@ -196,7 +242,7 @@ for part_num in range(upload_session.total_parts):
     while copied_length < upload_session.part_size:
         bytes_read = content_stream.read(upload_session.part_size - copied_length)
         if bytes_read is None:
-            # stream returns none when no bytes are ready currently but there are 
+            # stream returns none when no bytes are ready currently but there are
             # potentially more bytes in the stream to be read.
             continue
         if len(bytes_read) == 0:

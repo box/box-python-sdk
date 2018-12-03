@@ -4,10 +4,13 @@ from __future__ import unicode_literals, absolute_import
 
 import base64
 import hashlib
+import io
 import json
 import pytest
 
+from mock import patch
 from boxsdk.config import API
+from boxsdk.util.chunked_uploader import ChunkedUploader
 from boxsdk.object.file import File
 from boxsdk.object.upload_session import UploadSession
 
@@ -176,3 +179,21 @@ def test_commit_with_missing_params(test_upload_session, mock_box_session):
     assert isinstance(created_file, File)
     assert created_file.id == file_id
     assert created_file.type == file_type
+
+
+def test_get_chunked_uploader_for_stream(test_upload_session):
+    file_size = 197520
+    part_bytes = b'abcdefgh'
+    stream = io.BytesIO(part_bytes)
+    chunked_uploader = test_upload_session.get_chunked_uploader_for_stream(stream, file_size)
+    assert isinstance(chunked_uploader, ChunkedUploader)
+
+
+def test_get_chunked_uploader(mock_content_response, mock_file_path, test_upload_session):
+    mock_file_stream = io.BytesIO(mock_content_response.content)
+    file_size = 197520
+    with patch('os.stat') as stat:
+        stat.return_value.st_size = file_size
+        with patch('boxsdk.object.upload_session.open', return_value=mock_file_stream):
+            chunked_uploader = test_upload_session.get_chunked_uploader(mock_file_path)
+    assert isinstance(chunked_uploader, ChunkedUploader)
