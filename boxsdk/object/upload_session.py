@@ -171,14 +171,10 @@ class UploadSession(BaseObject):
             The size of the file that this part belongs to.
         :type file_size:
             `int`
-        :param file_name:
-            The optional new name of the file
-        :type file_name:
-            `unicode` or None
         :returns:
-            A :class:`ChunkedUpload` object.
+            A :class:`ChunkedUploader` object.
         :rtype:
-            :class:`ChunkedUpload`
+            :class:`ChunkedUploader`
         """
         return ChunkedUploader(self, content_stream, file_size)
 
@@ -191,9 +187,9 @@ class UploadSession(BaseObject):
         :type file_path:
             `unicode`
         :returns:
-            A :class:`ChunkedUpload` object.
+            A :class:`ChunkedUploader` object.
         :rtype:
-            :class:`ChunkedUpload`
+            :class:`ChunkedUploader`
         """
         total_size = os.stat(file_path).st_size
         content_stream = open(file_path, 'rb')

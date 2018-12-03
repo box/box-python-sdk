@@ -77,10 +77,14 @@ class File(Item):
             The local path to the file you wish to upload.
         :type file_path:
             `unicode`
+        :param rename_file:
+            Indicates whether the file should be renamed or not.
+        :type rename_file:
+            `bool`
         :returns:
-            A :class:`ChunkedUpload` object.
+            A :class:`ChunkedUploader` object.
         :rtype:
-            :class:`ChunkedUpload`
+            :class:`ChunkedUploader`
         """
         total_size = os.stat(file_path).st_size
         content_stream = open(file_path, 'rb')

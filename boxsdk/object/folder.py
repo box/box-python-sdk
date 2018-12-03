@@ -142,6 +142,7 @@ class Folder(Item):
             response_object=response,
         )
 
+    @api_call
     def get_chunked_uploader(self, file_path):
         """
         Instantiate the chunked upload instance and create upload session with path to file.
@@ -151,9 +152,9 @@ class Folder(Item):
         :type file_path:
             `unicode`
         :returns:
-            A :class:`ChunkedUpload` object.
+            A :class:`ChunkedUploader` object.
         :rtype:
-            :class:`ChunkedUpload`
+            :class:`ChunkedUploader`
         """
         total_size = os.stat(file_path).st_size
         content_stream = open(file_path, 'rb')

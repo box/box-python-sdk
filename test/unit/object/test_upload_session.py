@@ -8,11 +8,11 @@ import io
 import json
 import pytest
 
+from mock import patch
 from boxsdk.config import API
 from boxsdk.util.chunked_uploader import ChunkedUploader
 from boxsdk.object.file import File
 from boxsdk.object.upload_session import UploadSession
-from mock import patch
 
 
 @pytest.fixture()
@@ -189,7 +189,7 @@ def test_get_chunked_uploader_for_stream(test_upload_session):
     assert isinstance(chunked_uploader, ChunkedUploader)
 
 
-def test_get_chunked_uploader(mock_box_session, mock_content_response, mock_file_path, test_upload_session):
+def test_get_chunked_uploader(mock_content_response, mock_file_path, test_upload_session):
     mock_file_stream = io.BytesIO(mock_content_response.content)
     file_size = 197520
     with patch('os.stat') as stat:
