@@ -125,7 +125,7 @@ class InflightPart(object):
     def upload(self):
         """
         Upload method for the :class:`InflightPart`
-        
+
         :returns:
             The uploaded part record.
         :rtype:
@@ -135,4 +135,4 @@ class InflightPart(object):
             part_bytes=self.chunk,
             offset=self.offset,
             total_size=self._total_size
-            )
+        )
