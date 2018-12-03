@@ -142,32 +142,6 @@ class Folder(Item):
             response_object=response,
         )
 
-    @api_call
-    def get_chunked_uploader_for_stream(self, content_stream, file_size, file_name):
-        """
-        Instantiate the chunked upload instance and create upload session.
-
-        :param content_stream:
-            File-like object containing the content of the part to be uploaded.
-        :type content_stream:
-            :class:`File`
-        :param file_size:
-            The size of the file that this part belongs to.
-        :type file_size:
-            `int`
-        :param file_name:
-            The optional new name of the file
-        :type file_name:
-            `unicode` or None
-        :returns:
-            A :class:`ChunkedUpload` object.
-        :rtype:
-            :class:`ChunkedUpload`
-        """
-        upload_session = self.create_upload_session(file_size, file_name)
-        return ChunkedUploader(upload_session, content_stream, file_size)
-
-    @api_call
     def get_chunked_uploader(self, file_path):
         """
         Instantiate the chunked upload instance and create upload session with path to file.
