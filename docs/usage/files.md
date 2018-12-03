@@ -191,7 +191,8 @@ uploaded_file = chunked_uploader.start()
 print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, uploaded_file.id))
 ```
 
-Alternatively, you can create an upload session and calling `get_chunked_uploader(file_path)` or `get_chunked_uploader_for_stream(content_stream, file_size)`.
+Alternatively, you can create an upload session and calling [`upload_session.get_chunked_uploader(file_path)`][get_chunked_uploader] 
+or [`upload_session.get_chunked_uploader_for_stream(content_stream, file_size)`][get_chunked_uploader_for_stream].
 
 ```python
 chunked_uploader = client.upload_session('56781').get_chunked_uploader('/path/to/file')

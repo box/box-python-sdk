@@ -94,6 +94,10 @@ class InflightPart(object):
             The offset for the :class:`InflightPart` that represents the position of the part to be uploaded
         :type offset:
             `int`
+        :param chunk:
+            The chunk in bytes to be uploaded.
+        :type chunk:
+            `bytes`
         :param upload_session:
             The :class:`UploadSession` for the :class:`InflightPart`.
         :type upload_session:
