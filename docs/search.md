@@ -13,7 +13,7 @@ to iterate over the [`Item`][item_class] objects in the collection.
 ```python
 items = client.search().query(query='TEST QUERY', limit=100, file_extensions=['pdf', 'doc'])
 for item in items:
-    print('The item ID is {} and the item name is {1}'.format(item.id, item.name)
+    print('The item ID is {0} and the item name is {1}'.format(item.id, item.name))
 ```
 
 [query]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.Search.query
@@ -21,21 +21,23 @@ for item in items:
 
 ### Metadata Search
 
-To filter by metadata in your search, first create [MetadataSearchFilter][metadata_search_filter] object with the 
+To filter by metadata in your search, first create [`MetadataSearchFilter`][metadata_search_filter] object with the 
 specified `template_key` and `scope` as well as adding filter, `field_key` and `value` with 
-[`metadata_search_filter.add_value_based_filter(field_key, value)`][add_value_based_filter]. Next, create a 
-[`MetadataSearchFilters`][metadata_search_filters] object and call [`metadata_search_filters.add_filter(metadata_filter)`][add_filter] 
-and pass in the [MetadataSearchFilter][metadata_search_filter] object created earlier. Finally, call 
+[`metadata_filter.add_value_based_filter(field_key, value)`][add_value_based_filter]. Next, create a 
+[`MetadataSearchFilters`][metadata_search_filters] object and call [`metadata_filters.add_filter(metadata_filter)`][add_filter] 
+and pass in the [`MetadataSearchFilter`][metadata_search_filter] object created earlier. Finally, call 
 [`search.query(query, metadata_filters=None, **kwargs)`][query] with [`MetadataSearchFilters`][metadata_search_filters] 
 object passed in.
 
 ```python
 from boxsdk.object.search import MetadataSearchFilter, MetadataSearchFilters
+
 metadata_search_filter = MetadataSearchFilter(template_key='marketingCollateral', scope='enterprise')
 metadata_search_filter.add_value_based_filter(field_key='documentType', value='datasheet')
 metadata_search_filter.add_value_based_filter(field_key='clientNumber', value='a123')
 metadata_search_filters = MetadataSearchFilters()
 metadata_search_filters.add_filter(metadata_search_filter)
+
 client.search(None, limit=100, offset=0, metadata_filters=metadata_search_filters)
 ```
 
