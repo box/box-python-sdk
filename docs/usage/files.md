@@ -173,20 +173,25 @@ without aborting the entire upload, and failed parts can then be retried.
 
 ### Automatic Uploader
 
-The SDK provides a method of automatically handling a chunked upload; simply call [`chunked_upload.start()`][start] with the path to the file you wish to upload from the [`File`][file_class] with [`file.get_chunked_uploader()`][get_chunked_uploader_for_version] method to retrieve a [`ChunkedUploader`][chunked_uploader_class] object for a new version upload or from the [`Folder`][folder_class] with [`folder.get_chunked_uploader()`][get_chunked_uploader_for_file] method to retrieve a [`ChunkedUploader`][chunked_uploader_class] object for a new file upload.
+The SDK provides a method of automatically handling a chunked upload; simply call [`chunked_upload.start()`][start] with the path to the file you wish to upload from the [`File`][file_class] with [`file.get_chunked_uploader(file_path, rename_file=False)`][get_chunked_uploader_for_version] method to retrieve a [`ChunkedUploader`][chunked_uploader_class] object for a new version upload or from the [`Folder`][folder_class] with [`folder.get_chunked_uploader(file_path)`][get_chunked_uploader_for_file] method to retrieve a [`ChunkedUploader`][chunked_uploader_class] object for a new file upload. You can also return a [`chunked_uploader`][chunked_uploader_class] object by creating a [`upload_session`][upload_session_class] object first and calling the method, [`upload_session.get_chunked_upload(file_path)`][get_chunked_uploader] or [`upload_session.get_chunked_uploader_for_stream(content_stream, file_size)`][get_chunked_uploader_for_stream].
 
 ```python
 chunked_uploader = client.file('12345').get_chunked_uploader('/path/to/file')
 chunked_uploader.start()
 ```
 
-Alternatively, you can also pass in the content stream, file size, and file name.
+Alternatively, you can create an upload session and calling `get_chunked_uploader(file_path)` or `get_chunked_uploader_for_stream(content_stream, file_size)`.
+
+```python
+chunked_uploader = client.upload_session('56781').get_chunked_uploader('/path/to/file')
+chunked_uploader.start()
+```
 
 ```python
 test_file_path = '/path/to/large_file.mp4'
 content_stream = open(test_file_path, 'rb')
-file_name = os.path.basename(file_path)
-chunked_uploader = client.file('12345').get_chunked_uploader_for_stream(content_stream, file_size, file_name)
+total_size = os.stat(test_file_path).st_size
+chunked_uploader = client.upload_session('56781').get_chunked_uploader_for_stream(content_stream, total_size)
 chunked_uploader.start()
 ```
 
@@ -194,6 +199,9 @@ chunked_uploader.start()
 [chunked_uploader_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader
 [get_chunked_uploader_for_version]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_chunked_uploader
 [get_chunked_uploader_for_file]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.get_chunked_uploader
+[upload_session_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession
+[get_chunked_uploader]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.get_chunked_uploader
+[get_chunked_uploader_for_stream]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.get_chunked_uploader_for_stream
 
 ### Manual Process
 

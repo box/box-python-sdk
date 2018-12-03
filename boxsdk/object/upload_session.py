@@ -4,9 +4,10 @@ from __future__ import unicode_literals, absolute_import
 import base64
 import hashlib
 import json
+import os
 
-from .base_object import BaseObject
 from boxsdk.util.chunked_uploader import ChunkedUploader
+from .base_object import BaseObject
 from ..pagination.limit_offset_based_dict_collection import LimitOffsetBasedDictCollection
 
 
