@@ -180,11 +180,9 @@ def test_commit_with_missing_params(test_upload_session, mock_box_session):
     assert created_file.type == file_type
 
 
-def test_get_chunked_uploader_for_stream(mock_box_session, test_upload_session):
+def test_get_chunked_uploader_for_stream(test_upload_session):
     file_size = 197520
-    file_name = 'test_file.pdf'
     part_bytes = b'abcdefgh'
     stream = io.BytesIO(part_bytes)
     chunked_uploader = test_upload_session.get_chunked_uploader_for_stream(stream, file_size)
-    upload_session = chunked_uploader._upload_session
     assert isinstance(chunked_uploader, ChunkedUploader)
