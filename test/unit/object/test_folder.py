@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-import io
 import json
 from os.path import basename
 from mock import mock_open, patch, Mock, MagicMock
