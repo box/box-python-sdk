@@ -21,10 +21,13 @@ for item in items:
 
 ### Metadata Search
 
-To filter by metadata values, call [`search.query(query, metadata_filters=None, **kwargs)`][query] with [`MetadataSearchFilters`][metadata_search_filters]
-passed in. To construct a [MetadataSearchFilters][metadata_search_filters] object, first create 
-[MetadataSearchFilter][metadata_search_filter] object with the specified `template_key` and `scope` as well as adding 
-filter, `field_key` and `value` with [`metadata_search_filter.add_value_based_filter`][add_value_based_filter]
+To filter by metadata in your search, first create [MetadataSearchFilter][metadata_search_filter] object with the 
+specified `template_key` and `scope` as well as adding filter, `field_key` and `value` with 
+[`metadata_search_filter.add_value_based_filter(field_key, value)`][add_value_based_filter]. Next, create a 
+[`MetadataSearchFilters`][metadata_search_filters] object and call [`metadata_search_filters.add_filter(metadata_filter)`][add_filter] 
+and pass in the [MetadataSearchFilter][metadata_search_filter] object created earlier. Finally, call 
+[`search.query(query, metadata_filters=None, **kwargs)`][query] with [`MetadataSearchFilters`][metadata_search_filters] 
+object passed in.
 
 ```python
 from boxsdk.object.search import MetadataSearchFilter, MetadataSearchFilters
@@ -39,3 +42,4 @@ client.search(None, limit=100, offset=0, metadata_filters=metadata_search_filter
 [metadata_search_filter]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.MetadataSearchFilter
 [metadata_search_filters]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.MetadataSearchFilters
 [add_value_based_filter]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.MetadataSearchFilter.add_value_based_filter
+[add_filter]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.MetadataSearchFilters.add_filter
