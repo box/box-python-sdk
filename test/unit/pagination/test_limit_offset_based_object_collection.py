@@ -55,6 +55,7 @@ class TestLimitOffsetBasedObjectCollection(BoxObjectCollectionTestBase):
     @pytest.fixture()
     def mock_session_with_bogus_limit(self, mock_session, mock_items_response):
         """Baseclass override."""
+        # pylint:disable=no-self-use
 
         def mock_items_side_effect(_, params):
             limit = 0
@@ -133,4 +134,3 @@ class TestLimitOffsetBasedObjectCollection(BoxObjectCollectionTestBase):
         )
         with pytest.raises(RuntimeError):
             object_collection.next()
-
