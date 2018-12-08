@@ -156,7 +156,7 @@ def test_get_memberships_with_hidden_results(test_group, mock_box_session, mock_
     mock_box_session.get.side_effect = mock_membership_responses(total, page_size, hidden_in_batch=hidden_in_batch)
 
     # Get all the members
-    all_members = test_group.get_memberships(0, page_size)
+    all_members = test_group.get_memberships(limit=page_size, offset=0)
 
     # Assert we got the expected number of membership instances
     count = 0
