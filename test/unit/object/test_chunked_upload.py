@@ -234,7 +234,7 @@ def test_resume_in_process():
                                                                 BoxAPIException(502), uploaded_part_four_mock]
     try:
         chunked_uploader.start()
-    except:
+    except BoxAPIException:
         chunked_uploader.resume()
     calls = [call(offset=6, part_bytes=b'g', total_size=7)]
     upload_session_mock_object.upload_part_bytes.assert_has_calls(calls, any_order=False)
