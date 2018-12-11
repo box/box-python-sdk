@@ -2,6 +2,8 @@ from __future__ import unicode_literals, absolute_import
 
 import hashlib
 
+from collections import defaultdict
+
 
 class ChunkedUploader(object):
 
@@ -31,6 +33,8 @@ class ChunkedUploader(object):
         self._file_size = file_size
         self._part_array = []
         self._sha1 = hashlib.sha1()
+        self._part_definitions = defaultdict(list)
+        self._is_read = False
         self._inflight_part = None
 
     def start(self):
@@ -46,6 +50,27 @@ class ChunkedUploader(object):
         content_sha1 = self._sha1.digest()
         return self._upload_session.commit(content_sha1=content_sha1, parts=self._part_array)
 
+    def resume(self):
+        """
+        Resumes the process of chunk uploading a file from where upload failed.
+
+        :returns:
+            An uploaded :class:`File`
+        :rtype:
+            :class:`File`
+        """
+        parts = self._upload_session.get_parts()
+        self._part_array = []
+        for part in parts:
+            if self._inflight_part and part['offset'] <= self._inflight_part['offset']:
+                self._part_array.append(part)
+            if self._inflight_part and part['offset'] == self._inflight_part['offset']:
+                self._inflight_part = None
+            self._part_definitions[part['offset']] = part
+        self._upload()
+        content_sha1 = self._sha1.digest()
+        return self._upload_session.commit(content_sha1=content_sha1, parts=self._part_array)
+
     def _upload(self):
         """
         Utility function for looping through all parts of of the upload session and uploading them.
@@ -53,10 +78,13 @@ class ChunkedUploader(object):
         while len(self._part_array) < self._upload_session.total_parts:
             next_part = self._inflight_part or self._get_next_part()
             self._inflight_part = next_part
-            uploaded_part = self._inflight_part.upload()
+            uploaded_part = self._part_definitions[next_part.offset]
+            self._sha1.update(next_part.chunk)
+            if not uploaded_part:
+                uploaded_part = next_part.upload()
             self._inflight_part = None
             self._part_array.append(uploaded_part)
-            self._sha1.update(next_part.chunk)
+            self._part_definitions[next_part.offset] = uploaded_part
 
     def _get_next_part(self):
         """
@@ -72,6 +100,7 @@ class ChunkedUploader(object):
         offset = len(self._part_array) * self._upload_session.part_size
         while copied_length < self._upload_session.part_size:
             bytes_read = self._content_stream.read(self._upload_session.part_size - copied_length)
+            self._is_read = True
             if bytes_read is None:
                 # stream returns none when no bytes are ready currently but there are
                 # potentially more bytes in the stream to be read.

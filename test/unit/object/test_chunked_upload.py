@@ -3,12 +3,14 @@
 
 from __future__ import unicode_literals, absolute_import
 
+import io
 import json
 import pytest
 
-from mock import Mock, call
+from mock import MagicMock, Mock, call
 from boxsdk.config import API
 from boxsdk.object.file import File
+from boxsdk.pagination.limit_offset_based_dict_collection import LimitOffsetBasedDictCollection
 from boxsdk.object.upload_session import UploadSession
 from boxsdk.util.chunked_uploader import ChunkedUploader
 
@@ -134,3 +136,82 @@ def test_start(test_upload_session, mock_box_session):
     assert uploaded_file.description == 'This is a test description'
     assert isinstance(uploaded_file, File)
     assert uploaded_file._session == mock_box_session  # pylint:disable=protected-access
+
+
+def test_resume(mock_box_session, test_upload_session):
+    file_size = 7
+    part_bytes = b'abcdefg'
+    stream = io.BytesIO(part_bytes)
+    upload_session_mock_object = Mock(UploadSession)
+    mock_iterator = MagicMock(LimitOffsetBasedDictCollection)
+    upload_session_mock_object.total_parts = 4
+    upload_session_mock_object.part_size = 2
+    upload_session_mock_object.id = 'F971964745A5CD0C001BZ4E58196BFD'
+    upload_session_mock_object.type = 'upload_session'
+    upload_session_mock_object.num_parts_processed = 0
+    first_part = {
+        'part_id': 'CFEB4BA9',
+        'offset': 0,
+        'size': 2,
+        'sha1': None,
+    }
+    fourth_part = {
+        'part_id': '4DBB872D',
+        'offset': 6,
+        'size': 1,
+        'sha1': None,
+    }
+    upload_session_mock_object.commit.return_value.json.return_value = {
+        'entries': [
+            {
+                'type': 'file',
+                'id': '12345',
+                'description': 'This is a test description',
+            }
+        ]
+    }
+    mock_iterator.__iter__.return_value = [first_part, fourth_part]
+    upload_session_mock_object.get_parts.return_value = mock_iterator
+    chunked_uploader = ChunkedUploader(upload_session_mock_object, stream, file_size)
+    uploaded_file = chunked_uploader.resume()
+    calls = [call(offset=2, part_bytes=b'cd', total_size=7),
+             call(offset=4, part_bytes=b'ef', total_size=7), ]
+    upload_session_mock_object.upload_part_bytes.assert_has_calls(calls, any_order=False)
+    assert uploaded_file._session == mock_box_session  # pylint:disable=protected-access
+
+
+def test_resume_in_process(mock_box_session, test_upload_session):
+    file_size = 7
+    part_bytes = b'abcdefg'
+    stream = io.BytesIO(part_bytes)
+    upload_session_mock_object = Mock(UploadSession)
+    mock_iterator = MagicMock(LimitOffsetBasedDictCollection)
+    upload_session_mock_object.total_parts = 4
+    upload_session_mock_object.part_size = 2
+    upload_session_mock_object.id = 'F971964745A5CD0C001BZ4E58196BFD'
+    upload_session_mock_object.type = 'upload_session'
+    upload_session_mock_object.num_parts_processed = 0
+    first_part = {
+        'part_id': 'CFEB4BA9',
+        'offset': 0,
+        'size': 2,
+        'sha1': None,
+    }
+    second_part = {
+        'part_id': '4DBB872D',
+        'offset': 2,
+        'size': 2,
+        'sha1': None,
+    }
+    third_part = {
+        'part_id': '6F2D3486',
+        'offset': 4,
+        'size': 2,
+        'sha1': None,
+    }
+    mock_iterator.__iter__.return_value = [first_part, second_part, third_part]
+    upload_session_mock_object.get_parts.return_value = mock_iterator
+    chunked_uploader = ChunkedUploader(upload_session_mock_object, stream, file_size)
+    resumed_file_upload = chunked_uploader.resume()
+    calls = [call(offset=6, part_bytes=b'g', total_size=7)]
+    upload_session_mock_object.upload_part_bytes.assert_has_calls(calls, any_order=False)
