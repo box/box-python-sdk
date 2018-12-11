@@ -9,6 +9,7 @@ import pytest
 
 from mock import MagicMock, Mock, call
 from boxsdk.config import API
+from boxsdk.exception import BoxAPIException
 from boxsdk.object.file import File
 from boxsdk.pagination.limit_offset_based_dict_collection import LimitOffsetBasedDictCollection
 from boxsdk.object.upload_session import UploadSession
@@ -138,7 +139,7 @@ def test_start(test_upload_session, mock_box_session):
     assert uploaded_file._session == mock_box_session  # pylint:disable=protected-access
 
 
-def test_resume():
+def test_resume_cross_process():
     file_size = 7
     part_bytes = b'abcdefg'
     stream = io.BytesIO(part_bytes)
@@ -194,23 +195,46 @@ def test_resume_in_process():
         'part_id': 'CFEB4BA9',
         'offset': 0,
         'size': 2,
-        'sha1': None,
+        'sha1': '2iNhTgJGmg18e9G9q1ycR0sZBNw=',
     }
     second_part = {
         'part_id': '4DBB872D',
         'offset': 2,
         'size': 2,
-        'sha1': None,
+        'sha1': 'A0d4GYoEXB7YC+JxzdApt2h09vw=',
     }
     third_part = {
         'part_id': '6F2D3486',
         'offset': 4,
         'size': 2,
-        'sha1': None,
+        'sha1': '+CIFFHGVe3u+u4qwiP6b1tFPQmE=',
+    }
+    fourth_part = {
+        'part_id': '4DBC872D',
+        'offset': 6,
+        'size': 1,
+        'sha1': 'VP0XESCfscB4EJI3QTLGbnniJBs=',
+    }
+    uploaded_part_one_mock = Mock()
+    uploaded_part_two_mock = Mock()
+    uploaded_part_four_mock = Mock()
+    uploaded_part_one_mock = {
+        'part': first_part
+    }
+    uploaded_part_two_mock = {
+        'part': second_part
+    }
+    uploaded_part_four_mock = {
+        'part': fourth_part
     }
     mock_iterator.__iter__.return_value = [first_part, second_part, third_part]
     upload_session_mock_object.get_parts.return_value = mock_iterator
     chunked_uploader = ChunkedUploader(upload_session_mock_object, stream, file_size)
-    chunked_uploader.resume()
+    upload_session_mock_object.upload_part_bytes.side_effect = [uploaded_part_one_mock, uploaded_part_two_mock,
+                                                                BoxAPIException(502), uploaded_part_four_mock]
+    try:
+        chunked_uploader.start()
+    except:
+        chunked_uploader.resume()
     calls = [call(offset=6, part_bytes=b'g', total_size=7)]
     upload_session_mock_object.upload_part_bytes.assert_has_calls(calls, any_order=False)

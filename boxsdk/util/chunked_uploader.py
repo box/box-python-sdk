@@ -62,9 +62,9 @@ class ChunkedUploader(object):
         parts = self._upload_session.get_parts()
         self._part_array = []
         for part in parts:
-            if self._inflight_part and part['offset'] <= self._inflight_part['offset']:
+            if self._inflight_part and part['offset'] <= self._inflight_part.offset:
                 self._part_array.append(part)
-            if self._inflight_part and part['offset'] == self._inflight_part['offset']:
+            if self._inflight_part and part['offset'] == self._inflight_part.offset:
                 self._inflight_part = None
             self._part_definitions[part['offset']] = part
         self._upload()
