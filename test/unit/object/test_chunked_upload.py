@@ -138,7 +138,7 @@ def test_start(test_upload_session, mock_box_session):
     assert uploaded_file._session == mock_box_session  # pylint:disable=protected-access
 
 
-def test_resume(mock_box_session, test_upload_session):
+def test_resume():
     file_size = 7
     part_bytes = b'abcdefg'
     stream = io.BytesIO(part_bytes)
@@ -177,10 +177,9 @@ def test_resume(mock_box_session, test_upload_session):
     calls = [call(offset=2, part_bytes=b'cd', total_size=7),
              call(offset=4, part_bytes=b'ef', total_size=7), ]
     upload_session_mock_object.upload_part_bytes.assert_has_calls(calls, any_order=False)
-    assert uploaded_file._session == mock_box_session  # pylint:disable=protected-access
 
 
-def test_resume_in_process(mock_box_session, test_upload_session):
+def test_resume_in_process():
     file_size = 7
     part_bytes = b'abcdefg'
     stream = io.BytesIO(part_bytes)
@@ -212,6 +211,6 @@ def test_resume_in_process(mock_box_session, test_upload_session):
     mock_iterator.__iter__.return_value = [first_part, second_part, third_part]
     upload_session_mock_object.get_parts.return_value = mock_iterator
     chunked_uploader = ChunkedUploader(upload_session_mock_object, stream, file_size)
-    resumed_file_upload = chunked_uploader.resume()
+    chunked_uploader.resume()
     calls = [call(offset=6, part_bytes=b'g', total_size=7)]
     upload_session_mock_object.upload_part_bytes.assert_has_calls(calls, any_order=False)
