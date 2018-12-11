@@ -150,4 +150,4 @@ def test_abort():
     chunked_uploader = ChunkedUploader(upload_session_mock_object, stream, file_size)
     upload_session_mock_object.abort.return_value = True
     is_aborted = chunked_uploader.abort()
-    assert is_aborted == True
+    assert is_aborted is True
