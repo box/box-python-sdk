@@ -237,6 +237,8 @@ uploaded_file = chunked_uploader.resume()
 print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, uploaded_file.id))
 ```
 
+[resume]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader.resume
+
 ### Manual Process
 
 For more complicated upload scenarios, such as those being coordinated across multiple processes or when an unrecoverable error occurs with the automatic uploader, the endpoints for chunked upload operations are also exposed directly.
