@@ -173,7 +173,7 @@ def test_resume():
     mock_iterator.__iter__.return_value = [first_part, fourth_part]
     upload_session_mock_object.get_parts.return_value = mock_iterator
     chunked_uploader = ChunkedUploader(upload_session_mock_object, stream, file_size)
-    uploaded_file = chunked_uploader.resume()
+    chunked_uploader.resume()
     calls = [call(offset=2, part_bytes=b'cd', total_size=7),
              call(offset=4, part_bytes=b'ef', total_size=7), ]
     upload_session_mock_object.upload_part_bytes.assert_has_calls(calls, any_order=False)
