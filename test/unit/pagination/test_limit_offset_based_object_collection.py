@@ -52,6 +52,19 @@ class TestLimitOffsetBasedObjectCollection(BoxObjectCollectionTestBase):
         mock_box_session.get.side_effect = mock_items_side_effect
         return mock_box_session
 
+    @pytest.fixture()
+    def mock_session_with_bogus_limit(self, mock_session, mock_items_response):
+        """Baseclass override."""
+        # pylint:disable=no-self-use
+
+        def mock_items_side_effect(_, params):
+            limit = 0
+            offset = params.get('offset', 0)
+            return mock_items_response(limit, offset)
+
+        mock_session.get.side_effect = mock_items_side_effect
+        return mock_session
+
     def _object_collection_instance(self, session, limit=None, return_full_pages=False, starting_pointer=None):
         """Baseclass override."""
         if starting_pointer is None:
@@ -107,3 +120,17 @@ class TestLimitOffsetBasedObjectCollection(BoxObjectCollectionTestBase):
         object_collection = self._object_collection_instance(mock_session, limit=(1 + self.DEFAULT_LIMIT))
         object_collection.next()
         assert object_collection._limit == self.DEFAULT_LIMIT   # pylint:disable=protected-access
+
+    def test_box_returning_bogus_limit_raises_runtime_error(self, mock_session_with_bogus_limit, entries):
+        """
+        Confirm that the SDK raises a RuntimeError is box.com happens to return a bogus `limit` in the response
+        """
+        starting_offset = len(entries) + 10
+        object_collection = self._object_collection_instance(
+            mock_session_with_bogus_limit,
+            limit=5,
+            return_full_pages=False,
+            starting_pointer=starting_offset
+        )
+        with pytest.raises(RuntimeError):
+            object_collection.next()
