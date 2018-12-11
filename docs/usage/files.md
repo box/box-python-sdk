@@ -156,7 +156,7 @@ file_name = 'file.pdf'
 stream = open('/path/to/file.pdf', 'rb')
 
 folder_id = '22222'
-new_file = client.folder(folder_id).uplaod_stream(stream, file_name)
+new_file = client.folder(folder_id).upload_stream(stream, file_name)
 print('File "{0}" uploaded to Box with file ID {1}'.format(new_file.name, new_file.id))
 ```
 
@@ -271,7 +271,7 @@ uploaded.  You can optionally specify a new `file_name` to rename the file on up
 ```python
 file_size = 26000000
 upload_session = client.file('11111').create_upload_session(file_size)
-print('Created upload session {0} with chunk size of {1} bytes'.format(upload_session.id, uplaod_session.part_size))
+print('Created upload session {0} with chunk size of {1} bytes'.format(upload_session.id, upload_session.part_size))
 ```
 
 [create_version_upload_session]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.create_upload_session
@@ -288,7 +288,7 @@ session.
 file_size = 26000000
 file_name = 'test_file.pdf'
 upload_session = client.folder('22222').create_upload_session(file_size, file_name)
-print('Created upload session {0} with chunk size of {1} bytes'.format(upload_session.id, uplaod_session.part_size))
+print('Created upload session {0} with chunk size of {1} bytes'.format(upload_session.id, upload_session.part_size))
 ```
 
 [create_upload_session]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.create_upload_session
@@ -335,7 +335,7 @@ file_atributes = {
 
 upload_session = client.upload_session('11493C07ED3EABB6E59874D3A1EF3581')
 uploaded_file = upload_session.commit(sha1.digest(), file_atributes=file_atributes)
-print('Successfully uploaded file {0} with description {1}'.format(uplaoded_file.id, uploaded_file.description))
+print('Successfully uploaded file {0} with description {1}'.format(uploaded_file.id, uploaded_file.description))
 ```
 
 [commit]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.commit
