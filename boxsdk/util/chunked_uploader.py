@@ -4,6 +4,7 @@ import hashlib
 
 from boxsdk.exception import BoxException
 
+
 class ChunkedUploader(object):
 
     def __init__(self, upload_session, content_stream, file_size):
