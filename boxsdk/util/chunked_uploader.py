@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import
 
 import hashlib
 
+from boxsdk.exception import BoxException
 
 class ChunkedUploader(object):
 
@@ -43,6 +44,8 @@ class ChunkedUploader(object):
         :rtype:
             :class:`File`
         """
+        if self._is_aborted:
+            raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
         self._upload()
         content_sha1 = self._sha1.digest()
         return self._upload_session.commit(content_sha1=content_sha1, parts=self._part_array)

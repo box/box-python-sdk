@@ -9,6 +9,7 @@ import pytest
 
 from mock import Mock, call
 from boxsdk.config import API
+from boxsdk.exception import BoxException
 from boxsdk.object.file import File
 from boxsdk.object.upload_session import UploadSession
 from boxsdk.util.chunked_uploader import ChunkedUploader
@@ -142,12 +143,12 @@ def test_abort():
     part_bytes = b'abcdefg'
     stream = io.BytesIO(part_bytes)
     upload_session_mock_object = Mock(UploadSession)
-    upload_session_mock_object.total_parts = 4
-    upload_session_mock_object.part_size = 2
-    upload_session_mock_object.id = 'F971964745A5CD0C001BZ4E58196BFD'
-    upload_session_mock_object.type = 'upload_session'
-    upload_session_mock_object.num_parts_processed = 0
     chunked_uploader = ChunkedUploader(upload_session_mock_object, stream, file_size)
     upload_session_mock_object.abort.return_value = True
     is_aborted = chunked_uploader.abort()
+    try:
+        chunked_uploader.start()
+    except BoxException:
+        pass
+    assert upload_session_mock_object.abort.called
     assert is_aborted is True

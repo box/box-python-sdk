@@ -223,13 +223,16 @@ To abort a running upload, which cancels all currently uploading chunks and abor
 [`chunked_uploader.abort()`][abort].
 
 ```python
+from boxsdk.exception import BoxNetworkException
+
 test_file_path = '/path/to/large_file.mp4'
 content_stream = open(test_file_path, 'rb')
 total_size = os.stat(test_file_path).st_size
 chunked_uploader = client.upload_session('56781').get_chunked_uploader_for_stream(content_stream, total_size)
-uploaded_file = chunked_uploader.start()
-is_aborted = chunked_uploader.abort()
-print('Process was aborted: '.format(is_aborted))
+try:
+    uploaded_file = chunked_uploader.start()
+except BoxNetworkException:
+    chunked_uploader.abort()
 
 ### Manual Process
 
