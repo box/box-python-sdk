@@ -2,8 +2,6 @@ from __future__ import unicode_literals, absolute_import
 
 import hashlib
 
-from collections import defaultdict
-
 
 class ChunkedUploader(object):
 
