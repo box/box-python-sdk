@@ -226,22 +226,6 @@ def test_resume_in_process(test_file):
         'size': 1,
         'sha1': 'VP0XESCfscB4EJI3QTLGbnniJBs=',
     }
-    uploaded_part_one_mock = Mock()
-    uploaded_part_two_mock = Mock()
-    uploaded_part_three_mock = Mock()
-    uploaded_part_four_mock = Mock()
-    uploaded_part_one_mock = {
-        'part': first_part
-    }
-    uploaded_part_two_mock = {
-        'part': second_part
-    }
-    uploaded_part_two_mock = {
-        'part': third_part
-    }
-    uploaded_part_four_mock = {
-        'part': fourth_part
-    }
     parts = [first_part, second_part, third_part, fourth_part]
     mock_iterator.__iter__.return_value = [first_part, second_part, third_part]
     upload_session_mock_object.get_parts.return_value = mock_iterator
