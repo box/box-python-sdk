@@ -244,4 +244,4 @@ def test_resume_in_process(test_file):
         content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@',
         parts=parts
     )
-    uploaded_file is test_file
+    assert uploaded_file is test_file
