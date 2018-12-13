@@ -150,5 +150,5 @@ def test_abort():
         chunked_uploader.start()
     except BoxException:
         pass
-    assert upload_session_mock_object.abort.called
+    upload_session_mock_object.abort.assert_called_once_with()
     assert is_aborted is True
