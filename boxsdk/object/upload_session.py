@@ -46,7 +46,7 @@ class UploadSession(BaseObject):
             :class:`BoxObjectCollection`
         """
         return LimitOffsetBasedDictCollection(
-            session=self.session,
+        session=self.session,
             url=self.get_url('parts'),
             limit=limit,
             offset=offset,

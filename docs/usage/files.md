@@ -229,7 +229,9 @@ print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, u
 ```
 
 Alternatively, you can also create a [`UploadSession`][upload_session_class] object by calling
-[`client.upload_session(session_id)`][upload_session] if you have the upload session id.
+[`client.upload_session(session_id)`][upload_session] if you have the upload session id. This can be helpful in 
+resuming an existing upload session.
+
 
 ```python
 chunked_uploader = client.upload_session('12345').get_chunked_uploader('/path/to/file')

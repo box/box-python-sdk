@@ -33,8 +33,7 @@ class ChunkedUploader(object):
         self._file_size = file_size
         self._part_array = []
         self._sha1 = hashlib.sha1()
-        self._part_definitions = defaultdict(list)
-        self._is_read = False
+        self._part_definitions = {}
         self._inflight_part = None
 
     def start(self):
@@ -78,7 +77,7 @@ class ChunkedUploader(object):
         while len(self._part_array) < self._upload_session.total_parts:
             next_part = self._inflight_part or self._get_next_part()
             self._inflight_part = next_part
-            uploaded_part = self._part_definitions[next_part.offset]
+            uploaded_part = self._part_definitions.get(next_part.offset)
             self._sha1.update(next_part.chunk)
             if not uploaded_part:
                 uploaded_part = next_part.upload()
@@ -100,7 +99,6 @@ class ChunkedUploader(object):
         offset = len(self._part_array) * self._upload_session.part_size
         while copied_length < self._upload_session.part_size:
             bytes_read = self._content_stream.read(self._upload_session.part_size - copied_length)
-            self._is_read = True
             if bytes_read is None:
                 # stream returns none when no bytes are ready currently but there are
                 # potentially more bytes in the stream to be read.
