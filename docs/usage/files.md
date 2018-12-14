@@ -233,6 +233,7 @@ try:
     uploaded_file = chunked_uploader.start()
 except BoxNetworkException:
     chunked_uploader.abort()
+```
 
 ### Manual Process
 
