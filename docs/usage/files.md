@@ -224,7 +224,10 @@ Sometimes an upload can be interrupted, in order to resume uploading where you l
 
 ```python
 chunked_uploader = client.file('12345').get_chunked_uploader('/path/to/file')
-uploaded_file = chunked_uploader.resume()
+try:
+    uploaded_file = chunked_uploader.start()
+except:
+    uploaded_file = chunked_uploader.resume()
 print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, uploaded_file.id))
 ```
 
