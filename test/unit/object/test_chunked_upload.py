@@ -247,7 +247,8 @@ def test_resume_in_process(test_file):
     )
     assert uploaded_file is test_file
 
-def test_abort():
+
+def test_abort_with_start():
     file_size = 7
     part_bytes = b'abcdefg'
     stream = io.BytesIO(part_bytes)
@@ -257,6 +258,22 @@ def test_abort():
     is_aborted = chunked_uploader.abort()
     try:
         chunked_uploader.start()
+    except BoxException:
+        pass
+    upload_session_mock_object.abort.assert_called_once_with()
+    assert is_aborted is True
+
+
+def test_abort_with_resume():
+    file_size = 7
+    part_bytes = b'abcdefg'
+    stream = io.BytesIO(part_bytes)
+    upload_session_mock_object = Mock(UploadSession)
+    chunked_uploader = ChunkedUploader(upload_session_mock_object, stream, file_size)
+    upload_session_mock_object.abort.return_value = True
+    is_aborted = chunked_uploader.abort()
+    try:
+        chunked_uploader.resume()
     except BoxException:
         pass
     upload_session_mock_object.abort.assert_called_once_with()

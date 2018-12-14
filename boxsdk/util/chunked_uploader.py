@@ -61,6 +61,8 @@ class ChunkedUploader(object):
         :rtype:
             :class:`File`
         """
+        if self._is_aborted:
+            raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
         parts = self._upload_session.get_parts()
         self._part_array = []
         for part in parts:
