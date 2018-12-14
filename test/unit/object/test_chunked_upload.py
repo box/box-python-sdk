@@ -3,11 +3,13 @@
 
 from __future__ import unicode_literals, absolute_import
 
+import io
 import json
 import pytest
 
 from mock import Mock, call
 from boxsdk.config import API
+from boxsdk.exception import BoxException
 from boxsdk.object.file import File
 from boxsdk.object.upload_session import UploadSession
 from boxsdk.util.chunked_uploader import ChunkedUploader
@@ -134,3 +136,19 @@ def test_start(test_upload_session, mock_box_session):
     assert uploaded_file.description == 'This is a test description'
     assert isinstance(uploaded_file, File)
     assert uploaded_file._session == mock_box_session  # pylint:disable=protected-access
+
+
+def test_abort():
+    file_size = 7
+    part_bytes = b'abcdefg'
+    stream = io.BytesIO(part_bytes)
+    upload_session_mock_object = Mock(UploadSession)
+    chunked_uploader = ChunkedUploader(upload_session_mock_object, stream, file_size)
+    upload_session_mock_object.abort.return_value = True
+    is_aborted = chunked_uploader.abort()
+    try:
+        chunked_uploader.start()
+    except BoxException:
+        pass
+    upload_session_mock_object.abort.assert_called_once_with()
+    assert is_aborted is True
