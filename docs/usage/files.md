@@ -244,6 +244,24 @@ print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, u
 
 [resume]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader.resume
 
+#### Abort Chunked Upload
+
+To abort a running upload, which cancels all currently uploading chunks and aborts the upload session, call the method
+[`chunked_uploader.abort()`][abort].
+
+```python
+from boxsdk.exception import BoxNetworkException
+
+test_file_path = '/path/to/large_file.mp4'
+content_stream = open(test_file_path, 'rb')
+total_size = os.stat(test_file_path).st_size
+chunked_uploader = client.upload_session('56781').get_chunked_uploader_for_stream(content_stream, total_size)
+try:
+    uploaded_file = chunked_uploader.start()
+except BoxNetworkException:
+    chunked_uploader.abort()
+```
+
 ### Manual Process
 
 For more complicated upload scenarios, such as those being coordinated across multiple processes or when an unrecoverable error occurs with the automatic uploader, the endpoints for chunked upload operations are also exposed directly.
