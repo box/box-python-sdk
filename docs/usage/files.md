@@ -217,6 +217,33 @@ print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, u
 [get_chunked_uploader]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.get_chunked_uploader
 [get_chunked_uploader_for_stream]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.get_chunked_uploader_for_stream
 
+#### Resume Upload
+
+Sometimes an upload can be interrupted, in order to resume uploading where you last left off, simply call the
+[`chunked_uploader.resume()`][resume] method. This will return the the [File][file_class] object that was uploaded.
+
+```python
+chunked_uploader = client.file('12345').get_chunked_uploader('/path/to/file')
+try:
+    uploaded_file = chunked_uploader.start()
+except:
+    uploaded_file = chunked_uploader.resume()
+print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, uploaded_file.id))
+```
+
+Alternatively, you can also create a [`UploadSession`][upload_session_class] object by calling
+[`client.upload_session(session_id)`][upload_session] if you have the upload session id. This can be helpful in 
+resuming an existing upload session.
+
+
+```python
+chunked_uploader = client.upload_session('12345').get_chunked_uploader('/path/to/file')
+uploaded_file = chunked_uploader.resume()
+print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, uploaded_file.id))
+```
+
+[resume]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader.resume
+
 #### Abort Chunked Upload
 
 To abort a running upload, which cancels all currently uploading chunks and aborts the upload session, call the method
