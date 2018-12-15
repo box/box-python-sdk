@@ -95,13 +95,15 @@ class ChunkedUploader(object):
         Utility function for looping through all parts of of the upload session and uploading them.
         """
         while len(self._part_array) < self._upload_session.total_parts:
+            # Retrieve the part inflight if it exists, if it does not exist then get the next part from the stream.
             next_part = self._inflight_part or self._get_next_part()
+            # Set the retrieve part to the current part inflight.
             self._inflight_part = next_part
-            uploaded_part = self._part_definitions.get(next_part.offset)
             self._sha1.update(next_part.chunk)
-            if not uploaded_part:
-                uploaded_part = next_part.upload()
+            # Retrieve the uploaded part if the part has already been uploaded. If not upload the current part.
+            uploaded_part = self._part_definitions.get(next_part.offset) or next_part.upload()
             self._inflight_part = None
+            # Record that the part has been uploaded.
             self._part_array.append(uploaded_part)
             self._part_definitions[next_part.offset] = uploaded_part
 
