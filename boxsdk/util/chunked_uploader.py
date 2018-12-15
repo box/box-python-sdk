@@ -65,6 +65,9 @@ class ChunkedUploader(object):
             raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
         parts = self._upload_session.get_parts()
         self._part_array = []
+        # Construct a part array that is the first consecutive run of uploaded parts up to an inflight part so resume
+        # has a previous state to start from for in process uploads and cross process uploads.
+        # Construct a part definition to be used later to determine if a part has been uploaded by offset.
         for part in parts:
             if self._inflight_part and part['offset'] <= self._inflight_part.offset:
                 self._part_array.append(part)
