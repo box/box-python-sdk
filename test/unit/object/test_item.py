@@ -468,7 +468,6 @@ def test_get_all_metadata(test_item_and_response, mock_box_session):
         assert mock_metadata[key] == mock_metadata[key]
 
 
-
 def test_add_classification(test_item_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name
     test_item, _ = test_item_and_response
