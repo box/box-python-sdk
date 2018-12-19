@@ -301,3 +301,57 @@ for item in items:
             metadata['vendorName'],
         ))
 ```
+
+Set a Classification
+--------------------
+
+To add classification to a [`Folder`][folder_class], call [`folder.set_classification(classification)`][set_classification].
+This method returns the classification type on the [`Folder`][folder_class] object. If a classification already exists then 
+this call will update the existing classification with the new [`ClassificationType`][classification_type_class].
+
+```python
+from boxsdk.object.item import ClassificationType
+
+classification = client.folder(folder_id='11111').set_classification(ClassificationType.PUBLIC)
+print('Classification Type is: '.format(classification))
+```
+
+The set method will always work no matter the state your [`Folder`][folder_class] is in. For cases already where a
+classification value already exists [`set_classification(classification)`][set_classification] may make multiple 
+API calls. 
+
+Alternatively, if you already know you have a classification and you are simple updating it, you can use the 
+[`update_classification(classification)`][update_classification]. This will ultimately help you save one extra API call.
+
+```python
+classification = client.folder(folder_id='11111').update_classification(ClassificationType.NONE)
+print('Classification Type is: '.format(classification))
+```
+
+[add_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.set_classification
+[update_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.update_classification
+[classification_type_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.ClassificationType
+
+Retrieve a Classification
+-------------------------
+
+To retrieve a classification from a [`Folder`][folder_class], call [`folder.get_classification()`][get_classification].
+This method returns the classification type on the [`Folder`][folder_class] object.
+
+```python
+classification = client.folder(folder_id='11111').get_classification()
+print('Classification Type is: '.format(classification))
+```
+
+[get_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_classification
+
+Remove a Classification
+-----------------------
+
+To remove a classification from a [`Folder`][folder_class], call [`folder.remove_classification()`][remove_classification].
+
+```python
+client.folder(folder_id='11111').remove_classification()
+```
+
+[remove_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.remove_classification
