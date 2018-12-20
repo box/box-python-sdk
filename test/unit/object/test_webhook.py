@@ -1,5 +1,6 @@
 # coding: utf-8
 from __future__ import unicode_literals
+
 import json
 import pytest
 
@@ -68,3 +69,41 @@ def test_update(test_webhook, mock_box_session):
     assert webhook.id == test_webhook.object_id
     assert webhook.address == 'https://testnotification.com'
     assert webhook.triggers == ['FILE.DOWNLOADED']
+
+
+@pytest.mark.parametrize(
+    'signature_version,signature_algorithm,primary_key,secondary_key,expected_result',
+    [
+        ('1', 'HmacSHA256', 'SamplePrimaryKey', 'SampleSecondaryKey', True),
+        ('1', 'HmacSHA256', 'SamplePrimaryKey', None, True),
+        ('1', 'HmacSHA256', 'WrongPrimaryKey', 'SampleSecondaryKey', True),
+        ('1', 'HmacSHA256', 'WrongPrimaryKey', 'WrongSecondaryKey', False),
+        ('1', 'HmacSHA256', None, None, False),
+        ('2', 'HmacSHA256', 'SamplePrimaryKey', 'SampleSecondaryKey', False),
+        ('1', 'WrongAlgorithm', 'SamplePrimaryKey', 'SampleSecondaryKey', False),
+    ]
+)
+
+def test_validate_message(signature_version, signature_algorithm, primary_key, secondary_key, expected_result):
+    body = {
+        'webhook': {
+            'id': '1234567890',
+        },
+        'trigger': 'FILE.UPLOADED',
+        'source': {
+            'id': '1234567890',
+            'type': 'file',
+            'name': 'Test.txt',
+        }
+    }
+    encoded_body = json.dumps(body, separators=(',', ':')).encode()
+    headers = {
+        'box-delivery-id': 'f96bb54b-ee16-4fc5-aa65-8c2d9e5b546f',
+        'box-delivery-timestamp': '2020-01-01T00:00:00-07:00',
+        'box-signature-algorithm': signature_algorithm,
+        'box-signature-primary': '4KvFa5/unRL8aaqOlnbInTwkOmieZkn1ZVzsAJuRipE=',
+        'box-signature-secondary': 'yxxwBNk7tFyQSy95/VNKAf1o+j8WMPJuo/KcFc7OS0Q=',
+        'box-signature-version': signature_version,
+    }
+    is_validated = Webhook.validate_message(encoded_body, headers, primary_key, secondary_key)
+    assert is_validated is expected_result
