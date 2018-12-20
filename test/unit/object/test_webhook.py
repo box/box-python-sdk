@@ -83,7 +83,6 @@ def test_update(test_webhook, mock_box_session):
         ('1', 'WrongAlgorithm', 'SamplePrimaryKey', 'SampleSecondaryKey', False),
     ]
 )
-
 def test_validate_message(signature_version, signature_algorithm, primary_key, secondary_key, expected_result):
     body = {
         'webhook': {
