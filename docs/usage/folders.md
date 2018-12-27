@@ -305,6 +305,8 @@ for item in items:
 Set a Classification
 --------------------
 
+It is important to note that this feature is available only if you have Governance.
+
 To add classification to a [`Folder`][folder_class], call [`folder.set_classification(classification)`][set_classification].
 This method returns the classification type on the [`Folder`][folder_class] object. If a classification already exists then 
 this call will update the existing classification with the new [`ClassificationType`][classification_type_class].
@@ -328,7 +330,7 @@ classification = client.folder(folder_id='11111').update_classification(Classifi
 print('Classification Type is: '.format(classification))
 ```
 
-[add_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.set_classification
+[set_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.set_classification
 [update_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.update_classification
 [classification_type_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.ClassificationType
 

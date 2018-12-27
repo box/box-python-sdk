@@ -16,11 +16,14 @@ class ClassificationType(TextEnum):
     """An enum of possible classification types"""
     PUBLIC = 'Public'
     INTERNAL = 'Internal'
+    CONFIDENTIAL = 'Confidential'
     NONE = 'None'
 
 
 class Item(BaseObject):
     """Box API endpoint for interacting with files and folders."""
+
+    _classification_template_key = 'securityClassification-6VMVochwUWo'
 
     def _get_accelerator_upload_url(self, file_id=None):
         """
@@ -638,8 +641,10 @@ class Item(BaseObject):
         classification_metadata = {
             'Box__Security__Classification__Key': classification,
         }
-        template_key = 'securityClassification-6VMVochwUWo'
-        metadata_classification = self.metadata('enterprise', template_key).create(classification_metadata)
+        metadata_classification = self.metadata(
+            scope='enterprise',
+            template=self._classification_template_key
+        ).create(classification_metadata)
         return metadata_classification['Box__Security__Classification__Key']
 
     def update_classification(self, classification):
@@ -655,7 +660,7 @@ class Item(BaseObject):
         :rtype:
             `unicode`
         """
-        classification_metadata = self.metadata('enterprise', 'securityClassification-6VMVochwUWo')
+        classification_metadata = self.metadata('enterprise', self._classification_template_key)
         updates = classification_metadata.start_update()
         updates.update('/Box__Security__Classification__Key', classification)
         metadata_classification = classification_metadata.update(updates)
@@ -694,13 +699,13 @@ class Item(BaseObject):
             `unicode`
         """
         try:
-            classification = self.metadata('enterprise', 'securityClassification-6VMVochwUWo').get()
+            classification = self.metadata('enterprise', self._classification_template_key).get()
         except BoxAPIException as err:
             if err.status == 404:
                 return None
             else:
                 raise
-        return classification['Box__Security__Classification__Key']
+        return classification.get('Box__Security__Classification__Key', None)
 
     def remove_classification(self):
         """
@@ -711,4 +716,4 @@ class Item(BaseObject):
         :rtype:
             `bool`
         """
-        return self.metadata('enterprise', 'securityClassification-6VMVochwUWo').delete()
+        return self.metadata('enterprise', self._classification_template_key).delete()
