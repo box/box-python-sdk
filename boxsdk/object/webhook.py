@@ -44,12 +44,14 @@ class Webhook(BaseObject):
             body = json.dumps(body, separators=(',', ':')).encode()
 
         primary_signature = _compute_signature(body, headers, primary_signature_key)
+        # print primary_signature
+        # print headers.get('box-signature-primary')
         if primary_signature is not None and primary_signature == headers.get('box-signature-primary'):
             return True
 
         if secondary_signature_key:
             secondary_signature = _compute_signature(body, headers, secondary_signature_key)
-            if secondary_signature and secondary_signature == headers.get('box-signature-secondary'):
+            if secondary_signature is not None and secondary_signature == headers.get('box-signature-secondary'):
                 return True
             return False
 
@@ -86,9 +88,10 @@ def _compute_signature(body, headers, signature_key):
 
     encoded_signature_key = signature_key.encode('utf-8')
     encoded_delivery_time_stamp = headers.get('box-delivery-timestamp').encode('utf-8')
+    # body = body.encode('utf-8')
     new_hmac = hmac.new(encoded_signature_key, digestmod=hashlib.sha256)
     new_hmac.update(body)
     new_hmac.update(encoded_delivery_time_stamp)
     signature = base64.b64encode(new_hmac.digest()).decode()
-
+    print('Signature: ' + signature)
     return signature
