@@ -40,12 +40,8 @@ class Webhook(BaseObject):
         :rtype:
             `bool`
         """
-        if isinstance(body, dict):
-            body = json.dumps(body, separators=(',', ':')).encode()
 
         primary_signature = _compute_signature(body, headers, primary_signature_key)
-        # print primary_signature
-        # print headers.get('box-signature-primary')
         if primary_signature is not None and primary_signature == headers.get('box-signature-primary'):
             return True
 
@@ -93,5 +89,4 @@ def _compute_signature(body, headers, signature_key):
     new_hmac.update(body)
     new_hmac.update(encoded_delivery_time_stamp)
     signature = base64.b64encode(new_hmac.digest()).decode()
-    print('Signature: ' + signature)
     return signature
