@@ -41,12 +41,12 @@ class Webhook(BaseObject):
         """
 
         primary_signature = _compute_signature(body, headers, primary_signature_key)
-        if primary_signature is not None and primary_signature == headers.get('box-signature-primary'):
+        if primary_signature is not None and hmac.compare_digest(primary_signature, headers.get('box-signature-primary')):
             return True
 
         if secondary_signature_key:
             secondary_signature = _compute_signature(body, headers, secondary_signature_key)
-            if secondary_signature is not None and secondary_signature == headers.get('box-signature-secondary'):
+            if secondary_signature is not None and hmac.compare_digest(secondary_signature, headers.get('box-signature-secondary')):
                 return True
             return False
 
