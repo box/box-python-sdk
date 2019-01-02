@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 import base64
-import json
 import hashlib
 import hmac
 
@@ -84,7 +83,6 @@ def _compute_signature(body, headers, signature_key):
 
     encoded_signature_key = signature_key.encode('utf-8')
     encoded_delivery_time_stamp = headers.get('box-delivery-timestamp').encode('utf-8')
-    # body = body.encode('utf-8')
     new_hmac = hmac.new(encoded_signature_key, digestmod=hashlib.sha256)
     new_hmac.update(body)
     new_hmac.update(encoded_delivery_time_stamp)
