@@ -84,13 +84,14 @@ def test_update(test_webhook, mock_box_session):
     ]
 )
 def test_validate_message(signature_version, signature_algorithm, primary_key, secondary_key, expected_result):
-    body = b'{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"Test.txt"}}'
+    # pylint: disable=C0301
+    body = b'{"type":"webhook_event","webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"Test.txt"}}'
     headers = {
         'box-delivery-id': 'f96bb54b-ee16-4fc5-aa65-8c2d9e5b546f',
         'box-delivery-timestamp': '2020-01-01T00:00:00-07:00',
         'box-signature-algorithm': signature_algorithm,
-        'box-signature-primary': '4KvFa5/unRL8aaqOlnbInTwkOmieZkn1ZVzsAJuRipE=',
-        'box-signature-secondary': 'yxxwBNk7tFyQSy95/VNKAf1o+j8WMPJuo/KcFc7OS0Q=',
+        'box-signature-primary': '6TfeAW3A1PASkgboxxA5yqHNKOwFyMWuEXny/FPD5hI=',
+        'box-signature-secondary': 'v+1CD1Jdo3muIcbpv5lxxgPglOqMfsNHPV899xWYydo=',
         'box-signature-version': signature_version,
     }
     is_validated = Webhook.validate_message(body, headers, primary_key, secondary_key)
