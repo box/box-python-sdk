@@ -111,7 +111,7 @@ from boxsdk import JWTAuth, Client
 auth = JWTAuth.from_settings_file('/path/to/settings.json')
 client = Client(auth)
 service_account = client.user().get()
-print('Service Account user ID is {0}'.format(me.id))
+print('Service Account user ID is {0}'.format(service_account.id))
 ```
 
 Otherwise, you'll need to provide the necessary configuration fields directly
