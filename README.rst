@@ -119,7 +119,7 @@ Authenticating with a JWT requires some extra dependencies. To get them, simply
 
 .. code-block:: console
 
-    pip install boxsdk[jwt]
+    pip install "boxsdk[jwt]"
 
 Instead of instantiating your ``Client`` with an instance of ``OAuth2``,
 instead use an instance of ``JWTAuth``.

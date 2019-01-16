@@ -14,6 +14,7 @@ choosing.
 - [Create Webhook](#create-webhook)
 - [Delete Webhook](#delete-webhook)
 - [Update Webhook](#update-webhook)
+- [Validate Webhook Message](#validate-webhook-message)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -98,3 +99,27 @@ print('Updated the webhook info for triggers: {0} and address: {1}'.format(webho
 [webhook]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_webhook
 [webhook_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.webhook.Webhook
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
+
+Validate Webhook Message
+------------------------
+
+When you receive a webhook message from Box, you should validate it by calling 
+[`Webhook.validate_message(body, headers, primary_key, secondary_key)`][validate_webhook]. This will protect your
+application against attacks. Verification ensures that the notifications were actually sent by Box and not by a
+malicious party and that the contents of the notification haven't been changed.
+
+```python
+body = b'{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"Test.txt"}}'
+headers = {
+    'box-delivery-id': 'f96bb54b-ee16-4fc5-aa65-8c2d9e5b546f',
+    'box-delivery-timestamp': '2020-01-01T00:00:00-07:00',
+    'box-signature-algorithm': 'HmacSHA256',
+    'box-signature-primary': '4KvFa5/unRL8aaqOlnbInTwkOmieZkn1ZVzsAJuRipE=',
+    'box-signature-secondary': 'yxxwBNk7tFyQSy95/VNKAf1o+j8WMPJuo/KcFc7OS0Q=',
+    'box-signature-version': '1',
+}
+is_validated = Webhook.validate_message(body, headers, primary_key, secondary_key)
+print('The webhook message is validated to: {0}'.format(is_validated))
+```
+
+[validated_webhook]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.webhook.Webhook.validate_message
