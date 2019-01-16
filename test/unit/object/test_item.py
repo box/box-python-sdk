@@ -504,7 +504,7 @@ def test_update_classification(test_item_and_response, mock_box_session):
     }
     metadata_response = mock_box_session.put.return_value.json.return_value = metadata_response
     data = [{
-        'op': 'replace',
+        'op': 'add',
         'path': '/Box__Security__Classification__Key',
         'value': 'Internal',
     }]
@@ -594,7 +594,7 @@ def test_get_classification_not_found(test_item_and_response, mock_box_session):
         test_item.object_type,
         test_item.object_id,
     )
-    mock_box_session.get.side_effect = [BoxAPIException(status=404)]
+    mock_box_session.get.side_effect = [BoxAPIException(status=404, code="instance_not_found")]
     metadata = test_item.get_classification()
     assert metadata is None
     mock_box_session.get.assert_called_once_with(expected_url)

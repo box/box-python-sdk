@@ -662,7 +662,7 @@ class Item(BaseObject):
         """
         classification_metadata = self.metadata('enterprise', self._classification_template_key)
         updates = classification_metadata.start_update()
-        updates.update('/Box__Security__Classification__Key', classification)
+        updates.add('/Box__Security__Classification__Key', classification)
         metadata_classification = classification_metadata.update(updates)
         return metadata_classification['Box__Security__Classification__Key']
 
@@ -701,7 +701,7 @@ class Item(BaseObject):
         try:
             classification = self.metadata('enterprise', self._classification_template_key).get()
         except BoxAPIException as err:
-            if err.status == 404:
+            if err.status == 404 and err.code == "instance_not_found":
                 return None
             else:
                 raise
