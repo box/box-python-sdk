@@ -531,7 +531,7 @@ def test_set_classification_succeeds(test_item_and_response, mock_box_session):
         'Box__Security__Classification__Key': 'Public',
     }
     put_data = [{
-        'op': 'replace',
+        'op': 'add',
         'path': '/Box__Security__Classification__Key',
         'value': 'Public',
     }]
