@@ -315,7 +315,7 @@ this call will update the existing classification with the new [`ClassificationT
 from boxsdk.object.item import ClassificationType
 
 classification = client.folder(folder_id='11111').set_classification(ClassificationType.PUBLIC)
-print('Classification Type is: '.format(classification))
+print('Classification Type is: {0}'.format(classification))
 ```
 
 The set method will always work no matter the state your [`Folder`][folder_class] is in. For cases already where a
@@ -327,7 +327,7 @@ Alternatively, if you already know you have a classification and you are simple 
 
 ```python
 classification = client.folder(folder_id='11111').update_classification(ClassificationType.NONE)
-print('Classification Type is: '.format(classification))
+print('Classification Type is: {0}'.format(classification))
 ```
 
 [set_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.set_classification
@@ -342,7 +342,7 @@ This method returns the classification type on the [`Folder`][folder_class] obje
 
 ```python
 classification = client.folder(folder_id='11111').get_classification()
-print('Classification Type is: '.format(classification))
+print('Classification Type is: {0}'.format(classification))
 ```
 
 [get_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_classification

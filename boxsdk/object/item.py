@@ -696,7 +696,7 @@ class Item(BaseObject):
         :return:
             The classification on the :class:`File` or :class:`Folder.
         :rtype:
-            `unicode`
+            `unicode` or None
         """
         try:
             classification = self.metadata('enterprise', self._classification_template_key).get()
