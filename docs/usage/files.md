@@ -750,7 +750,8 @@ Get All Metadata
 ----------------
 
 To retrieve all metadata attached to a file, call [`file.get_all_metadata()`][get_all_metadata].  This method returns a
-[`BoxObjectCollection`][box_object_collection] that can be used to iterate over the `dict`s representing each metadata instance attached to the
+[`BoxObjectCollection`][box_object_collection] that can be used to iterate over the `dict`s representing each metadata 
+instance attached to the
 file.
 
 ```python
@@ -761,3 +762,59 @@ for instance in file_metadata:
 ```
 
 [get_all_metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_all_metadata
+
+Set a Classification
+--------------------
+
+It is important to note that this feature is only available if you have Governance.
+
+To add classification to a [`File`][file_class], call [`file.set_classification(classification)`][set_classification].
+This method returns the classification type on the [`File`][file_class] object. If a classification already exists then 
+this call will update the existing classification with the new [`ClassificationType`][classification_type_class].
+
+```python
+from boxsdk.object.item import ClassificationType
+
+classification = client.file(file_id='11111').set_classification(ClassificationType.PUBLIC)
+print('Classification Type is: {0}'.format(classification))
+```
+
+The set method will always work no matter the state your [`File`][file_class] is in. For cases already where a
+classification value already exists [`set_classification(classification)`][set_classification] may make multiple 
+API calls. 
+
+Alternatively, if you already know you have a classification and you are simple updating it, you can use the 
+[`update_classification(classification)`][update_classification]. This will ultimately help you save one extra API call.
+
+```python
+classification = client.file(file_id='11111').update_classification(ClassificationType.NONE)
+print('Classification Type is: {0}'.format(classification))
+```
+
+[set_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.set_classification
+[update_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.update_classification
+[classification_type_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.ClassificationType
+
+Retrieve a Classification
+-------------------------
+
+To retrieve a classification from a [`File`][file_class], call [`file.get_classification()`][get_classification].
+This method returns the classification type on the [`File`][file_class] object.
+
+```python
+classification = client.file(file_id='11111').get_classification()
+print('Classification Type is: {0}'.format(classification))
+```
+
+[get_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_classification
+
+Remove a Classification
+-----------------------
+
+To remove a classification from a [`File`][file_class], call [`file.remove_classification()`][remove_classification].
+
+```python
+client.file(file_id='11111').remove_classification()
+```
+
+[remove_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.remove_classification

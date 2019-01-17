@@ -1,9 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
 import json
 import pytest
 
+from boxsdk.exception import BoxAPIException
 from boxsdk.config import API
 from boxsdk.object.watermark import Watermark
 from boxsdk.object.collaboration import Collaboration
@@ -464,3 +466,163 @@ def test_get_all_metadata(test_item_and_response, mock_box_session):
     assert isinstance(metadata, dict)
     for key in metadata:
         assert mock_metadata[key] == mock_metadata[key]
+
+
+def test_add_classification(test_item_and_response, mock_box_session):
+    # pylint:disable=redefined-outer-name
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
+        API.BASE_API_URL,
+        test_item.object_type,
+        test_item.object_id,
+    )
+    metadata_response = {
+        'Box__Security__Classification__Key': 'Public',
+    }
+    metadata_response = mock_box_session.post.return_value.json.return_value = metadata_response
+    data = {
+        'Box__Security__Classification__Key': 'Public'
+    }
+    headers = {
+        b'Content-Type': b'application/json'
+    }
+    metadata = test_item.add_classification('Public')
+    mock_box_session.post.assert_called_once_with(expected_url, headers=headers, data=json.dumps(data))
+    assert metadata is metadata_response['Box__Security__Classification__Key']
+
+
+def test_update_classification(test_item_and_response, mock_box_session):
+    # pylint:disable=redefined-outer-name
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
+        API.BASE_API_URL,
+        test_item.object_type,
+        test_item.object_id,
+    )
+    metadata_response = {
+        'Box__Security__Classification__Key': 'Internal',
+    }
+    metadata_response = mock_box_session.put.return_value.json.return_value = metadata_response
+    data = [{
+        'op': 'add',
+        'path': '/Box__Security__Classification__Key',
+        'value': 'Internal',
+    }]
+    headers = {
+        b'Content-Type': b'application/json-patch+json'
+    }
+    metadata = test_item.update_classification('Internal')
+    mock_box_session.put.assert_called_once_with(expected_url, headers=headers, data=json.dumps(data))
+    assert metadata is metadata_response['Box__Security__Classification__Key']
+
+
+def test_set_classification_succeeds(test_item_and_response, mock_box_session):
+    # pylint:disable=redefined-outer-name
+    test_item, _ = test_item_and_response
+    metadata_response = {
+        'Box__Security__Classification__Key': 'Public',
+    }
+    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
+        API.BASE_API_URL,
+        test_item.object_type,
+        test_item.object_id,
+    )
+    post_data = {
+        'Box__Security__Classification__Key': 'Public',
+    }
+    put_data = [{
+        'op': 'add',
+        'path': '/Box__Security__Classification__Key',
+        'value': 'Public',
+    }]
+    post_headers = {
+        b'Content-Type': b'application/json'
+    }
+    put_headers = {
+        b'Content-Type': b'application/json-patch+json'
+    }
+    mock_box_session.post.side_effect = [BoxAPIException(status=409)]
+    mock_box_session.put.return_value.json.return_value = metadata_response
+    metadata = test_item.set_classification('Public')
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(post_data), headers=post_headers)
+    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(put_data), headers=put_headers)
+    assert metadata is metadata_response['Box__Security__Classification__Key']
+
+
+def test_set_classification_fails(test_item_and_response, mock_box_session):
+    # pylint:disable=redefined-outer-name
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
+        API.BASE_API_URL,
+        test_item.object_type,
+        test_item.object_id,
+    )
+    post_data = {
+        'Box__Security__Classification__Key': 'Public',
+    }
+    post_headers = {
+        b'Content-Type': b'application/json'
+    }
+    mock_box_session.post.side_effect = [BoxAPIException(status=500)]
+    with pytest.raises(BoxAPIException):
+        test_item.set_classification('Public')
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(post_data), headers=post_headers)
+
+
+def test_get_classification_succeeds(test_item_and_response, mock_box_session):
+    # pylint:disable=redefined-outer-name
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
+        API.BASE_API_URL,
+        test_item.object_type,
+        test_item.object_id,
+    )
+    metadata_response = {
+        'Box__Security__Classification__Key': 'Public'
+    }
+    mock_box_session.get.return_value.json.return_value = metadata_response
+    metadata = test_item.get_classification()
+    assert metadata is metadata_response['Box__Security__Classification__Key']
+    mock_box_session.get.assert_called_once_with(expected_url)
+
+
+def test_get_classification_not_found(test_item_and_response, mock_box_session):
+    # pylint:disable=redefined-outer-name
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
+        API.BASE_API_URL,
+        test_item.object_type,
+        test_item.object_id,
+    )
+    mock_box_session.get.side_effect = [BoxAPIException(status=404, code="instance_not_found")]
+    metadata = test_item.get_classification()
+    assert metadata is None
+    mock_box_session.get.assert_called_once_with(expected_url)
+
+
+def test_get_classification_raises_exception(test_item_and_response, mock_box_session):
+    # pylint:disable=redefined-outer-name
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
+        API.BASE_API_URL,
+        test_item.object_type,
+        test_item.object_id,
+    )
+    mock_box_session.get.side_effect = [BoxAPIException(status=500)]
+    with pytest.raises(BoxAPIException):
+        test_item.get_classification()
+    mock_box_session.get.assert_called_once_with(expected_url)
+
+
+def test_remove_classification(test_item_and_response, mock_box_session, make_mock_box_request):
+    # pylint:disable=redefined-outer-name
+    test_item, _ = test_item_and_response
+    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
+        API.BASE_API_URL,
+        test_item.object_type,
+        test_item.object_id,
+    )
+    mock_box_session.delete.return_value, _ = make_mock_box_request(response_ok='success')
+    is_removed = test_item.remove_classification()
+    mock_box_session.delete.assert_called_once_with(expected_url)
+    assert is_removed is 'success'

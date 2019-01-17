@@ -3,6 +3,7 @@
 from __future__ import unicode_literals, absolute_import
 import json
 
+from boxsdk.util.text_enum import TextEnum
 from .base_object import BaseObject
 from ..exception import BoxAPIException
 from .metadata import Metadata
@@ -11,8 +12,18 @@ from ..pagination.marker_based_dict_collection import MarkerBasedDictCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 
+class ClassificationType(TextEnum):
+    """An enum of possible classification types"""
+    PUBLIC = 'Public'
+    INTERNAL = 'Internal'
+    CONFIDENTIAL = 'Confidential'
+    NONE = 'None'
+
+
 class Item(BaseObject):
     """Box API endpoint for interacting with files and folders."""
+
+    _classification_template_key = 'securityClassification-6VMVochwUWo'
 
     def _get_accelerator_upload_url(self, file_id=None):
         """
@@ -613,3 +624,96 @@ class Item(BaseObject):
             fields=fields,
             return_full_pages=False,
         )
+
+    def add_classification(self, classification):
+        """
+        Applies metadata classification for the specified :class:`File` or :class:`Folder` object.
+
+        :param classification:
+            The classification to add to the :class:`File` or :class:`Folder`
+        :type classification:
+            `unicode`
+        :return:
+            The classification added to the :class:`File` or :class:`Folder.
+        :rtype:
+            `unicode`
+        """
+        classification_metadata = {
+            'Box__Security__Classification__Key': classification,
+        }
+        metadata_classification = self.metadata(
+            scope='enterprise',
+            template=self._classification_template_key
+        ).create(classification_metadata)
+        return metadata_classification['Box__Security__Classification__Key']
+
+    def update_classification(self, classification):
+        """
+        Updates metadata classification for the specified :class:`File` or :class:`Folder` object.
+
+        :param classification:
+            The classification to add to the :class:`File` or :class:`Folder`
+        :type classification:
+            `unicode`
+        :return:
+            The classification updated on the :class:`File` or :class:`Folder.
+        :rtype:
+            `unicode`
+        """
+        classification_metadata = self.metadata('enterprise', self._classification_template_key)
+        updates = classification_metadata.start_update()
+        updates.add('/Box__Security__Classification__Key', classification)
+        metadata_classification = classification_metadata.update(updates)
+        return metadata_classification['Box__Security__Classification__Key']
+
+    def set_classification(self, classification):
+        """
+        Attempts to add a metadata classification to a :class:`File` or :class:`Folder`, if classification exists, then
+        do update.
+
+        :param classification:
+            The classification to add to the :class:`File` or :class:`Folder`
+        :type classification:
+            `unicode`
+        :return:
+            The classification set on the :class:`File` or :class:`Folder.
+        :rtype:
+            `unicode`
+        """
+        try:
+            metadata_classification = self.add_classification(classification)
+        except BoxAPIException as err:
+            if err.status == 409:
+                metadata_classification = self.update_classification(classification)
+            else:
+                raise
+        return metadata_classification
+
+    def get_classification(self):
+        """
+        Retrieves the classification specified for the :class:`File` or :class:`Folder`
+
+        :return:
+            The classification on the :class:`File` or :class:`Folder.
+        :rtype:
+            `unicode` or None
+        """
+        try:
+            classification = self.metadata('enterprise', self._classification_template_key).get()
+        except BoxAPIException as err:
+            if err.status == 404 and err.code == "instance_not_found":
+                return None
+            else:
+                raise
+        return classification.get('Box__Security__Classification__Key', None)
+
+    def remove_classification(self):
+        """
+        Removes a metadata classification from a :class:`File` or :class:`Folder`.
+
+        :returns:
+            Whether or not the delete was successful.
+        :rtype:
+            `bool`
+        """
+        return self.metadata('enterprise', self._classification_template_key).delete()
