@@ -1,18 +1,38 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from datetime import date
 import os
 from mock import Mock
 import pytest
 from six import int2byte, PY2
 from boxsdk.object.collaboration import Collaboration
+from boxsdk.object.collection import Collection
+from boxsdk.object.comment import Comment
+from boxsdk.object.device_pinner import DevicePinner
 from boxsdk.object.file import File
+from boxsdk.object.file_version_retention import FileVersionRetention
+from boxsdk.object.legal_hold import LegalHold
 from boxsdk.object.folder import Folder
 from boxsdk.object.group import Group
+from boxsdk.object.group_membership import GroupMembership
+from boxsdk.object.legal_hold_policy import LegalHoldPolicy
+from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
+from boxsdk.object.metadata_template import MetadataTemplate
 from boxsdk.object.user import User
+from boxsdk.object.retention_policy import RetentionPolicy
+from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 from boxsdk.object.search import Search
-
+from boxsdk.object.storage_policy import StoragePolicy
+from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
+from boxsdk.object.terms_of_service import TermsOfService
+from boxsdk.object.terms_of_service_user_status import TermsOfServiceUserStatus
+from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
+from boxsdk.object.collaboration_whitelist_entry import CollaborationWhitelistEntry
+from boxsdk.object.collaboration_whitelist_exempt_target import CollaborationWhitelistExemptTarget
+from boxsdk.object.webhook import Webhook
+from boxsdk.object.task import Task
+from boxsdk.object.task_assignment import TaskAssignment
+from boxsdk.object.web_link import WebLink
 
 # pylint:disable=redefined-outer-name
 
@@ -28,6 +48,11 @@ def mock_collaboration_id():
 
 
 @pytest.fixture(scope='module')
+def mock_collection_id():
+    return 'collection_id1'
+
+
+@pytest.fixture(scope='module')
 def mock_file_path():
     return os.path.join('path', 'to', 'file')
 
@@ -40,11 +65,22 @@ def mock_content_response(make_mock_box_request):
     return mock_box_response
 
 
+@pytest.fixture(scope='function', params=[False, True])
+def mock_upload_response_contains_entries(request):
+    """Is the upload response formatted as {"type": "file", "id": "123", ...}, or as {"entries": [{...}]}.
+
+    The v2.0 API does the latter, but future versions might do the former. So
+    we'll test both.
+    """
+    return request.param
+
+
 @pytest.fixture(scope='function')
-def mock_upload_response(mock_object_id, make_mock_box_request):
-    mock_box_response, _ = make_mock_box_request(
-        response={'entries': [{'type': 'file', 'id': mock_object_id}]},
-    )
+def mock_upload_response(mock_object_id, make_mock_box_request, mock_upload_response_contains_entries):
+    response = {'type': 'file', 'id': mock_object_id}
+    if mock_upload_response_contains_entries:
+        response = {'entries': [response]}
+    mock_box_response, _ = make_mock_box_request(response=response)
     return mock_box_response
 
 
@@ -59,6 +95,26 @@ def test_file(mock_box_session, mock_object_id):
 
 
 @pytest.fixture()
+def test_comment(mock_box_session, mock_object_id):
+    return Comment(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_collaboration_whitelist(mock_box_session):
+    return CollaborationWhitelist(mock_box_session)
+
+
+@pytest.fixture()
+def test_collaboration_whitelist_entry(mock_box_session, mock_object_id):
+    return CollaborationWhitelistEntry(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_collaboration_whitelist_exemption(mock_box_session, mock_object_id):
+    return CollaborationWhitelistExemptTarget(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
 def test_folder(mock_box_session, mock_object_id):
     return Folder(mock_box_session, mock_object_id)
 
@@ -69,8 +125,87 @@ def test_group(mock_box_session, mock_group_id):
 
 
 @pytest.fixture()
+def test_retention_policy(mock_box_session, mock_object_id):
+    return RetentionPolicy(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_file_version_retention(mock_box_session, mock_object_id):
+    return FileVersionRetention(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_retention_policy_assignment(mock_box_session, mock_object_id):
+    return RetentionPolicyAssignment(mock_box_session, mock_object_id)
+
+
+def test_group_membership(mock_box_session, mock_object_id):
+    return GroupMembership(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_legal_hold_policy(mock_box_session, mock_object_id):
+    return LegalHoldPolicy(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_legal_hold_policy_assignment(mock_box_session, mock_object_id):
+    return LegalHoldPolicyAssignment(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_legal_hold(mock_box_session, mock_object_id):
+    return LegalHold(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
 def test_search(mock_box_session):
     return Search(mock_box_session)
+
+
+@pytest.fixture()
+def test_storage_policy(mock_box_session, mock_object_id):
+    return StoragePolicy(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_storage_policy_assignment(mock_box_session, mock_object_id):
+    return StoragePolicyAssignment(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_terms_of_service(mock_box_session, mock_object_id):
+    return TermsOfService(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_terms_of_service_user_status(mock_box_session, mock_object_id):
+    return TermsOfServiceUserStatus(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_webhook(mock_box_session, mock_object_id):
+    return Webhook(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_task(mock_box_session, mock_object_id):
+    return Task(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_task_assignment(mock_box_session, mock_object_id):
+    return TaskAssignment(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_web_link(mock_box_session, mock_object_id):
+    return WebLink(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_device_pin(mock_box_session, mock_object_id):
+    return DevicePinner(mock_box_session, mock_object_id)
 
 
 @pytest.fixture(scope='function')
@@ -85,6 +220,11 @@ def mock_collab_response(make_mock_box_request, mock_collaboration_id):
 def mock_user(mock_box_session, mock_user_id):
     user = User(mock_box_session, mock_user_id)
     return user
+
+
+@pytest.fixture()
+def mock_collection(mock_box_session, mock_collection_id):
+    return Collection(mock_box_session, mock_collection_id)
 
 
 @pytest.fixture(scope='function')
@@ -185,6 +325,33 @@ def shared_link_password(request):
     return request.param
 
 
-@pytest.fixture(params=(date(2015, 5, 5), None))
+@pytest.fixture(params=('2018-10-31', '2018-10-31T23:59:59-07:00', None))
 def shared_link_unshared_at(request):
     return request.param
+
+
+@pytest.fixture(params=[
+    # Test case for plain message
+    (
+        'message',
+        'Hello there!'
+    ),
+
+    # Test case for tagged message
+    (
+        'tagged_message',
+        '@[22222:Test User] Hi!'
+    )
+])
+def comment_params(request):
+    return request.param
+
+
+@pytest.fixture()
+def test_metadata_template(mock_box_session):
+    fake_response = {
+        'type': 'metadata_template',
+        'scope': 'enterprise',
+        'templateKey': 'vContract',
+    }
+    return MetadataTemplate(mock_box_session, None, fake_response)

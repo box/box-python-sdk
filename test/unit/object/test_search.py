@@ -7,7 +7,8 @@ import json
 import pytest
 
 from boxsdk.object.file import File
-from boxsdk.object.search import MetadataSearchFilters, MetadataSearchFilter
+from boxsdk.object.user import User
+from boxsdk.object.search import MetadataSearchFilters, MetadataSearchFilter, SearchScope, TrashContent
 
 
 @pytest.fixture
@@ -68,9 +69,10 @@ def search_entries():
 
 @pytest.fixture
 def search_response():
+    entries = search_entries()
     return {
-        'entries': search_entries(),
-        'total_count': 0,
+        'entries': entries,
+        'total_count': len(entries),
         'limit': 20,
         'offset': 0
     }
@@ -102,7 +104,7 @@ def compare_params(self, other):
     return True
 
 
-def test_search_with_value_based_filters(
+def test_query_with_value_based_filters(
         mock_box_session,
         make_mock_box_request,
         test_search,
@@ -117,7 +119,7 @@ def test_search_with_value_based_filters(
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value, _ = make_mock_box_request(response=search_response)
-    response = test_search.search(
+    response = test_search.query(
         search_query,
         limit=search_limit,
         offset=search_offset,
@@ -125,7 +127,8 @@ def test_search_with_value_based_filters(
         result_type=search_result_type,
         content_types=search_content_types,
     )
-    assert response == [File(mock_box_session, search_entry['id'], search_entry) for search_entry in search_entries]
+    for actual, expected in zip(response, [File(mock_box_session, item['id'], item) for item in search_entries]):
+        assert actual == expected
 
     mock_box_session.get.assert_called_once_with(
         test_search.get_url(),
@@ -140,7 +143,7 @@ def test_search_with_value_based_filters(
     )
 
 
-def test_search_with_range_filters(
+def test_query_with_range_filters(
         mock_box_session,
         make_mock_box_request,
         test_search,
@@ -155,7 +158,7 @@ def test_search_with_range_filters(
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value, _ = make_mock_box_request(response=search_response)
-    response = test_search.search(
+    response = test_search.query(
         search_query,
         limit=search_limit,
         offset=search_offset,
@@ -163,7 +166,8 @@ def test_search_with_range_filters(
         result_type=search_result_type,
         content_types=search_content_types,
     )
-    assert response == [File(mock_box_session, search_entry['id'], search_entry) for search_entry in search_entries]
+    for actual, expected in zip(response, [File(mock_box_session, item['id'], item) for item in search_entries]):
+        assert actual == expected
 
     mock_box_session.get.assert_called_once_with(
         test_search.get_url(),
@@ -174,6 +178,79 @@ def test_search_with_range_filters(
             'offset': search_offset,
             'type': search_result_type,
             'content_types': ','.join(search_content_types) if search_content_types else search_content_types,
+        })
+    )
+
+
+@pytest.mark.parametrize('kwargs, params', [
+    ({'scope': SearchScope.ENTERPRISE}, {'scope': 'enterprise_content'}),
+    ({'scope': SearchScope.USER}, {'scope': 'user_content'}),
+    ({'created_at_range': (None, '2018-01-01T00:00:00Z')}, {'created_at_range': ',2018-01-01T00:00:00Z'}),
+    ({'created_at_range': ('2015-02-03T12:00:00-08:00', None)}, {'created_at_range': '2015-02-03T12:00:00-08:00,'}),
+    ({'created_at_range': ('2012-01-01T00:00:00Z', '2012-12-31T11:59:59Z')}, {'created_at_range': '2012-01-01T00:00:00Z,2012-12-31T11:59:59Z'}),
+    ({'updated_at_range': (None, '2018-01-01T00:00:00Z')}, {'updated_at_range': ',2018-01-01T00:00:00Z'}),
+    ({'updated_at_range': ('2015-02-03T12:00:00-08:00', None)}, {'updated_at_range': '2015-02-03T12:00:00-08:00,'}),
+    ({'updated_at_range': ('2012-01-01T00:00:00Z', '2012-12-31T11:59:59Z')}, {'updated_at_range': '2012-01-01T00:00:00Z,2012-12-31T11:59:59Z'}),
+    ({'size_range': (None, 123)}, {'size_range': ',123'}),
+    ({'size_range': (123, None)}, {'size_range': '123,'}),
+    ({'size_range': (123, 456)}, {'size_range': '123,456'}),
+    ({'trash_content': TrashContent.NONE}, {'trash_content': 'non_trashed_only'}),
+    ({'trash_content': TrashContent.ONLY}, {'trash_content': 'trashed_only'}),
+])
+def test_query_with_optional_parameters(
+        mock_box_session,
+        test_search,
+        make_mock_box_request,
+        search_query,
+        search_response,
+        search_entries,
+        kwargs,
+        params
+):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value, _ = make_mock_box_request(response=search_response)
+    response = test_search.query(
+        search_query,
+        **kwargs
+    )
+    for actual, expected in zip(response, [File(mock_box_session, item['id'], item) for item in search_entries]):
+        assert actual == expected
+
+    expected_params = {
+        'query': search_query,
+    }
+    expected_params.update(params)
+
+    mock_box_session.get.assert_called_once_with(
+        test_search.get_url(),
+        params=Matcher(compare_params, expected_params)
+    )
+
+
+def test_query_with_owner_users(
+        mock_box_session,
+        test_search,
+        make_mock_box_request,
+        search_query,
+        search_response,
+        search_entries,
+):
+    # pylint:disable=redefined-outer-name
+    user1 = User(mock_box_session, '987')
+    user2 = User(mock_box_session, '654')
+    mock_box_session.get.return_value, _ = make_mock_box_request(response=search_response)
+    response = test_search.query(
+        search_query,
+        owner_users=[user1, user2],
+    )
+    for actual, expected in zip(response, [File(mock_box_session, item['id'], item) for item in search_entries]):
+        assert actual == expected
+
+    mock_box_session.get.assert_called_once_with(
+        test_search.get_url(),
+        params=Matcher(compare_params, {
+            'query': search_query,
+            'owner_user_ids': '987,654'
         })
     )
 

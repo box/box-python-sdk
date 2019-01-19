@@ -55,6 +55,7 @@ class Events(BaseEndpoint):
 
     def get_url(self, *args):
         """Base class override."""
+        # pylint:disable=arguments-differ
         return super(Events, self).get_url('events', *args)
 
     @api_call
@@ -92,9 +93,7 @@ class Events(BaseEndpoint):
         }
         box_response = self._session.get(url, params=params)
         response = box_response.json().copy()
-        if 'entries' in response:
-            response['entries'] = [self.translator.translate(item['type'])(item) for item in response['entries']]
-        return response
+        return self.translator.translate(self._session, response_object=response)
 
     @api_call
     def get_latest_stream_position(self, stream_type=UserEventsStreamType.ALL):
@@ -114,7 +113,7 @@ class Events(BaseEndpoint):
         :returns:
             The latest stream position.
         :rtype:
-            `unicode`
+            `int`
         """
         return self.get_events(limit=0, stream_position='now', stream_type=stream_type)['next_stream_position']
 

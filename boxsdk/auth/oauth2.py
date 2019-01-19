@@ -2,20 +2,53 @@
 
 from __future__ import unicode_literals
 
-from threading import Lock
+from contextlib import contextmanager
+from logging import getLogger
 import random
 import string  # pylint:disable=deprecated-module
+import sys
+from threading import Lock
 
-from six.moves.urllib.parse import urlencode, urlunsplit  # pylint:disable=import-error,no-name-in-module
+# pylint:disable=import-error,no-name-in-module,relative-import
+from six.moves.urllib.parse import urlencode, urlunsplit
+# pylint:enable=import-error,no-name-in-module,relative-import
+import six
 
-from boxsdk.network.default_network import DefaultNetwork
-from boxsdk.config import API
-from boxsdk.exception import BoxOAuthException
+from ..config import API
+from ..exception import BoxOAuthException, BoxAPIException
+from ..object.base_api_json_object import BaseAPIJSONObject
+from ..session.session import Session
+from ..util.json import is_json_response
+from ..util.text_enum import TextEnum
+
+
+class TokenScope(TextEnum):
+    """ Scopes used for a downscope token request.
+
+    See https://developer.box.com/reference#token-exchange.
+    """
+    ITEM_READ = 'item_read'
+    ITEM_READWRITE = 'item_readwrite'
+    ITEM_PREVIEW = 'item_preview'
+    ITEM_UPLOAD = 'item_upload'
+    ITEM_SHARE = 'item_share'
+    ITEM_DELETE = 'item_delete'
+    ITEM_DOWNLOAD = 'item_download'
+
+
+class TokenResponse(BaseAPIJSONObject):
+    """ Represents the response for a token request. """
+    pass
 
 
 class OAuth2(object):
     """
     Responsible for handling OAuth2 for the Box API. Can authenticate and refresh tokens.
+
+    Can be used as a closeable resource, similar to a file. When `close()` is
+    called, the current tokens are revoked, and the object is put into a state
+    where it can no longer request new tokens. This action can also be managed
+    with the `closing()` context manager method.
     """
 
     def __init__(
@@ -27,7 +60,7 @@ class OAuth2(object):
             box_device_name='',
             access_token=None,
             refresh_token=None,
-            network_layer=None,
+            session=None,
             refresh_lock=None,
     ):
         """
@@ -59,10 +92,10 @@ class OAuth2(object):
             Refresh token to use for auth until it expires or is used.
         :type refresh_token:
             `unicode`
-        :param network_layer:
-            If specified, use it to make network requests. If not, the default network implementation will be used.
-        :type network_layer:
-            :class:`Network`
+        :param session:
+            If specified, use it to make network requests. If not, the default session will be used.
+        :type session:
+            :class:`Session`
         :param refresh_lock:
             Lock used to synchronize token refresh. If not specified, then a :class:`threading.Lock` will be used.
         :type refresh_lock:
@@ -73,10 +106,13 @@ class OAuth2(object):
         self._store_tokens_callback = store_tokens
         self._access_token = access_token
         self._refresh_token = refresh_token
-        self._network_layer = network_layer if network_layer else DefaultNetwork()
+        self._session = session or Session()
         self._refresh_lock = refresh_lock or Lock()
         self._box_device_id = box_device_id
         self._box_device_name = box_device_name
+        self._closed = False
+        self._api_config = API()
+        self._logger = getLogger(__name__)
 
     @property
     def access_token(self):
@@ -89,6 +125,24 @@ class OAuth2(object):
             `unicode`
         """
         return self._access_token
+
+    @property
+    def closed(self):
+        """True iff the auth object has been closed.
+
+        When in the closed state, it can no longer request new tokens.
+
+        :rtype:   `bool`
+        """
+        return self._closed
+
+    @property
+    def api_config(self):
+        """
+
+        :rtype:     :class:`API`
+        """
+        return self._api_config
 
     def get_authorization_url(self, redirect_url):
         """
@@ -120,7 +174,7 @@ class OAuth2(object):
         # encode the parameters as ASCII bytes.
         params = [(key.encode('utf-8'), value.encode('utf-8')) for (key, value) in params]
         query_string = urlencode(params)
-        return urlunsplit(('', '', API.OAUTH2_AUTHORIZE_URL, query_string, '')), csrf_token
+        return urlunsplit(('', '', self._api_config.OAUTH2_AUTHORIZE_URL, query_string, '')), csrf_token
 
     def authenticate(self, auth_code):
         """
@@ -198,19 +252,21 @@ class OAuth2(object):
         :rtype:
             `tuple` of (`unicode`, (`unicode` or `None`))
         """
+        self._check_closed()
         with self._refresh_lock:
+            self._check_closed()
+            self._logger.debug('Refreshing tokens.')
             access_token, refresh_token = self._get_and_update_current_tokens()
             # The lock here is for handling that case that multiple requests fail, due to access token expired, at the
             # same time to avoid multiple session renewals.
             if (access_token is None) or (access_token_to_refresh == access_token):
-                # If the active access token is the same as the token needs to
+                # If the active access token is the same as the token that needs to
                 # be refreshed, or if we don't currently have any active access
                 # token, we make the request to refresh the token.
-                return self._refresh(access_token_to_refresh)
-            else:
-                # If the active access token (self._access_token) is not the same as the token needs to be refreshed,
-                # it means the expired token has already been refreshed. Simply return the current active tokens.
-                return access_token, refresh_token
+                access_token, refresh_token = self._refresh(access_token_to_refresh)
+            # Else, if the active access token (self._access_token) is not the same as the token needs to be refreshed,
+            # it means the expired token has already been refreshed. Simply return the current active tokens.
+            return access_token, refresh_token
 
     @staticmethod
     def _get_state_csrf_token():
@@ -259,9 +315,75 @@ class OAuth2(object):
         """
         self._access_token, self._refresh_token = access_token, refresh_token
 
-    def send_token_request(self, data, access_token, expect_refresh_token=True):
+    def _execute_token_request(self, data, access_token, expect_refresh_token=True):
         """
         Send the request to acquire or refresh an access token.
+
+        :param data:
+            Dictionary containing the request parameters as specified by the Box API.
+        :type data:
+            `dict`
+        :param access_token:
+            The current access token.
+        :type access_token:
+            `unicode` or None
+        :return:
+            The response for the token request.
+        :rtype:
+            :class:`TokenResponse`
+        """
+        self._check_closed()
+        url = '{base_auth_url}/token'.format(base_auth_url=self._api_config.OAUTH2_API_URL)
+        headers = {'content-type': 'application/x-www-form-urlencoded'}
+        try:
+            network_response = self._session.request(
+                'POST',
+                url,
+                data=data,
+                headers=headers,
+                access_token=access_token,
+            )
+        except BoxAPIException as box_api_excpetion:
+            six.raise_from(self._oauth_exception(box_api_excpetion.network_response, url), box_api_excpetion)
+        if not network_response.ok:
+            raise self._oauth_exception(network_response, url)
+        try:
+            token_response = TokenResponse(network_response.json())
+        except ValueError:
+            raise self._oauth_exception(network_response, url)
+
+        if ('access_token' not in token_response) or (expect_refresh_token and 'refresh_token' not in token_response):
+            raise self._oauth_exception(network_response, url)
+
+        return token_response
+
+    @staticmethod
+    def _oauth_exception(network_response, url):
+        """
+        Create a BoxOAuthException instance to raise. If the error response is JSON, parse it and include the
+        code and message in the exception.
+
+        :rtype:     :class:`BoxOAuthException`
+        """
+        exception_kwargs = dict(
+            status=network_response.status_code,
+            url=url,
+            method='POST',
+            network_response=network_response,
+        )
+        if is_json_response(network_response):
+            json_response = network_response.json()
+            exception_kwargs.update(dict(
+                code=json_response.get('code'),
+                message=json_response.get('message'),
+            ))
+        else:
+            exception_kwargs['message'] = network_response.content
+        return BoxOAuthException(**exception_kwargs)
+
+    def send_token_request(self, data, access_token, expect_refresh_token=True):
+        """
+        Send the request to acquire or refresh an access token, and store the tokens.
 
         :param data:
             Dictionary containing the request parameters as specified by the Box API.
@@ -276,26 +398,10 @@ class OAuth2(object):
         :rtype:
             (`unicode`, `unicode`)
         """
-        url = '{base_auth_url}/token'.format(base_auth_url=API.OAUTH2_API_URL)
-        headers = {'content-type': 'application/x-www-form-urlencoded'}
-        network_response = self._network_layer.request(
-            'POST',
-            url,
-            data=data,
-            headers=headers,
-            access_token=access_token,
-        )
-        if not network_response.ok:
-            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
-        try:
-            response = network_response.json()
-            access_token = response['access_token']
-            refresh_token = response.get('refresh_token', None)
-            if refresh_token is None and expect_refresh_token:
-                raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
-        except (ValueError, KeyError):
-            raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
-        self._store_tokens(access_token, refresh_token)
+        token_response = self._execute_token_request(data, access_token, expect_refresh_token)
+        # pylint:disable=no-member
+        refresh_token = token_response.refresh_token if 'refresh_token' in token_response else None
+        self._store_tokens(token_response.access_token, refresh_token)
         return self._access_token, self._refresh_token
 
     def revoke(self):
@@ -307,17 +413,95 @@ class OAuth2(object):
             token_to_revoke = access_token or refresh_token
             if token_to_revoke is None:
                 return
-            url = '{base_auth_url}/revoke'.format(base_auth_url=API.OAUTH2_API_URL)
-            network_response = self._network_layer.request(
-                'POST',
-                url,
-                data={
-                    'client_id': self._client_id,
-                    'client_secret': self._client_secret,
-                    'token': token_to_revoke,
-                },
-                access_token=access_token,
-            )
+            url = '{base_auth_url}/revoke'.format(base_auth_url=self._api_config.OAUTH2_API_URL)
+            try:
+                network_response = self._session.request(
+                    'POST',
+                    url,
+                    data={
+                        'client_id': self._client_id,
+                        'client_secret': self._client_secret,
+                        'token': token_to_revoke,
+                    },
+                    access_token=access_token,
+                )
+            except BoxAPIException as box_api_exception:
+                six.raise_from(self._oauth_exception(box_api_exception.network_response, url), box_api_exception)
             if not network_response.ok:
-                raise BoxOAuthException(network_response.status_code, network_response.content, url, 'POST')
+                raise BoxOAuthException(
+                    network_response.status_code,
+                    network_response.content,
+                    url,
+                    'POST',
+                    network_response,
+                )
             self._store_tokens(None, None)
+
+    def close(self, revoke=True):
+        """Close the auth object.
+
+        After this action is performed, the auth object can no longer request
+        new tokens.
+
+        This method may be called even if the auth object is already closed.
+
+        :param revoke:
+            (optional) Whether the current tokens should be revoked, via `revoke()`.
+            Defaults to `True` as a security precaution, so that the tokens aren't usable
+            by any adversaries after you are done with them.
+            Note that the revoke isn't guaranteed to succeed (the network connection might
+            fail, or the API call might respond with a non-200 HTTP response), so this
+            isn't a fool-proof security mechanism.
+            If the revoke fails, an exception is raised.
+            The auth object is still considered to be closed, even if the revoke fails.
+        :type revoke:   `bool`
+        """
+        self._closed = True
+        if revoke:
+            self.revoke()
+
+    @contextmanager
+    def closing(self, **close_kwargs):
+        """Context manager to close the auth object on exit.
+
+        The behavior is somewhat similar to `contextlib.closing(self)`, but has
+        some differences.
+
+        The context manager cannot be entered if the auth object is closed.
+
+        If a non-`Exception` (e.g. `KeyboardInterrupt`) is caught from the
+        block, this context manager prioritizes re-raising the exception as
+        fast as possible, without blocking. Thus, in this case, the tokens will
+        not be revoked, even if `revoke=True` was passed to this method.
+
+        If exceptions are raised both from the block and from `close()`, the
+        exception from the block will be reraised, and the exception from
+        `close()` will be swallowed. The assumption is that the exception from
+        the block is more relevant to the client, especially since the revoke
+        can fail if the network is unavailable.
+
+        :param **close_kwargs:  Keyword arguments to pass to `close()`.
+        """
+        self._check_closed()
+        exc_infos = []
+
+        # pylint:disable=broad-except
+        try:
+            yield self
+        except Exception:
+            exc_infos.append(sys.exc_info())
+        except BaseException:
+            exc_infos.append(sys.exc_info())
+            close_kwargs['revoke'] = False
+
+        try:
+            self.close(**close_kwargs)
+        except Exception:
+            exc_infos.append(sys.exc_info())
+
+        if exc_infos:
+            six.reraise(*exc_infos[0])
+
+    def _check_closed(self):
+        if self.closed:
+            raise ValueError("operation on a closed auth object")

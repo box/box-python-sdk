@@ -1,15 +1,15 @@
 # coding: utf-8
+# pylint:disable=no-value-for-parameter
 
 from __future__ import absolute_import, unicode_literals
 
+from collections import OrderedDict
 from itertools import chain
 import sys
 
 from enum import EnumMeta
 from six import reraise
 from six.moves import map   # pylint:disable=redefined-builtin
-
-from .ordered_dict import OrderedDict
 
 
 __all__ = list(map(str, ['ExtendableEnumMeta']))
@@ -131,7 +131,7 @@ class ExtendableEnumMeta(EnumMeta):
                 # and __getitem__ have the same behavior. And __getitem__ has
                 # the advantage of never grabbing anything other than enum
                 # members.
-                return cls[name]
+                return cls[name]  # pylint:disable=unsubscriptable-object
             except KeyError:
                 pass
             # This needs to be `reraise()`, and not just `raise`. Otherwise,

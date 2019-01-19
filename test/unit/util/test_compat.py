@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from datetime import datetime, timedelta
 import pytest
-from boxsdk.util.compat import total_seconds, with_metaclass
+from boxsdk.util.compat import with_metaclass
 
 
 @pytest.fixture(params=(
@@ -18,7 +18,7 @@ def total_seconds_data(request):
 def test_total_seconds(total_seconds_data):
     # pylint:disable=redefined-outer-name
     delta, seconds = total_seconds_data
-    assert total_seconds(delta) == seconds
+    assert delta.total_seconds() == seconds
 
 
 def test_with_metaclass():

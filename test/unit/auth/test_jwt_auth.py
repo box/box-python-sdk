@@ -4,20 +4,25 @@ from __future__ import absolute_import, unicode_literals
 
 from contextlib import contextmanager
 from datetime import datetime, timedelta
-from itertools import product
+import io
+from itertools import cycle, product
 import json
 import random
 import string
 
 from cryptography.hazmat.backends import default_backend
-from mock import Mock, mock_open, patch, sentinel
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, generate_private_key as generate_rsa_private_key
+from cryptography.hazmat.primitives import serialization
+from mock import Mock, mock_open, patch, sentinel, call
 import pytest
-from six import string_types, text_type
+import pytz
+import requests
+from six import binary_type, string_types, text_type
 
 from boxsdk.auth.jwt_auth import JWTAuth
+from boxsdk.exception import BoxOAuthException
 from boxsdk.config import API
 from boxsdk.object.user import User
-from boxsdk.util.compat import total_seconds
 
 
 @pytest.fixture(params=[16, 32, 128])
@@ -35,9 +40,24 @@ def jwt_key_id():
     return 'jwt_key_id_1'
 
 
+@pytest.fixture(scope='module')
+def rsa_private_key_object():
+    return generate_rsa_private_key(public_exponent=65537, key_size=4096, backend=default_backend())
+
+
 @pytest.fixture(params=(None, b'strong_password'))
 def rsa_passphrase(request):
     return request.param
+
+
+@pytest.fixture
+def rsa_private_key_bytes(rsa_private_key_object, rsa_passphrase):
+    encryption = serialization.BestAvailableEncryption(rsa_passphrase) if rsa_passphrase else serialization.NoEncryption()
+    return rsa_private_key_object.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=encryption,
+    )
 
 
 @pytest.fixture(scope='function')
@@ -52,8 +72,76 @@ def successful_token_response(successful_token_mock, successful_token_json_respo
     return successful_token_mock
 
 
+@pytest.mark.parametrize(('key_file', 'key_data'), [(None, None), ('fake sys path', 'fake key data')])
+@pytest.mark.parametrize('rsa_passphrase', [None])
+def test_jwt_auth_init_raises_type_error_unless_exactly_one_of_rsa_private_key_file_or_data_is_given(key_file, key_data, rsa_private_key_bytes):
+    kwargs = dict(
+        rsa_private_key_data=rsa_private_key_bytes,
+        client_id=None,
+        client_secret=None,
+        jwt_key_id=None,
+        enterprise_id=None,
+    )
+    JWTAuth(**kwargs)
+    kwargs.update(rsa_private_key_file_sys_path=key_file, rsa_private_key_data=key_data)
+    with pytest.raises(TypeError):
+        JWTAuth(**kwargs)
+
+
+@pytest.mark.parametrize('key_data', [object(), u'ƒøø'])
+@pytest.mark.parametrize('rsa_passphrase', [None])
+def test_jwt_auth_init_raises_type_error_if_rsa_private_key_data_has_unexpected_type(key_data, rsa_private_key_bytes):
+    kwargs = dict(
+        rsa_private_key_data=rsa_private_key_bytes,
+        client_id=None,
+        client_secret=None,
+        jwt_key_id=None,
+        enterprise_id=None,
+    )
+    JWTAuth(**kwargs)
+    kwargs.update(rsa_private_key_data=key_data)
+    with pytest.raises(TypeError):
+        JWTAuth(**kwargs)
+
+
+@pytest.mark.parametrize('rsa_private_key_data_type', [io.BytesIO, text_type, binary_type, RSAPrivateKey])
+def test_jwt_auth_init_accepts_rsa_private_key_data(rsa_private_key_bytes, rsa_passphrase, rsa_private_key_data_type):
+    if rsa_private_key_data_type is text_type:
+        rsa_private_key_data = text_type(rsa_private_key_bytes.decode('ascii'))
+    elif rsa_private_key_data_type is RSAPrivateKey:
+        rsa_private_key_data = serialization.load_pem_private_key(
+            rsa_private_key_bytes,
+            password=rsa_passphrase,
+            backend=default_backend(),
+        )
+    else:
+        rsa_private_key_data = rsa_private_key_data_type(rsa_private_key_bytes)
+    JWTAuth(
+        rsa_private_key_data=rsa_private_key_data,
+        rsa_private_key_passphrase=rsa_passphrase,
+        client_id=None,
+        client_secret=None,
+        jwt_key_id=None,
+        enterprise_id=None,
+    )
+
+
+@pytest.fixture(params=[False, True])
+def pass_private_key_by_path(request):
+    """For jwt_auth_init_mocks, whether to pass the private key via sys_path (True) or pass the data directly (False)."""
+    return request.param
+
+
 @pytest.fixture
-def jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algorithm, jwt_key_id, rsa_passphrase):
+def jwt_auth_init_mocks(
+        mock_box_session,
+        successful_token_response,
+        jwt_algorithm,
+        jwt_key_id,
+        rsa_passphrase,
+        rsa_private_key_bytes,
+        pass_private_key_by_path,
+):
     # pylint:disable=redefined-outer-name
 
     @contextmanager
@@ -70,28 +158,29 @@ def jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algor
             'box_device_id': '0',
             'box_device_name': 'my_awesome_device',
         }
-
-        mock_network_layer.request.return_value = successful_token_response
-        key_file_read_data = b'key_file_read_data'
-        with patch('boxsdk.auth.jwt_auth.open', mock_open(read_data=key_file_read_data), create=True) as jwt_auth_open:
+        mock_box_session.request.return_value = successful_token_response
+        with patch('boxsdk.auth.jwt_auth.open', mock_open(read_data=rsa_private_key_bytes), create=True) as jwt_auth_open:
             with patch('cryptography.hazmat.primitives.serialization.load_pem_private_key') as load_pem_private_key:
                 oauth = JWTAuth(
                     client_id=fake_client_id,
                     client_secret=fake_client_secret,
-                    rsa_private_key_file_sys_path=sentinel.rsa_path,
+                    rsa_private_key_file_sys_path=(sentinel.rsa_path if pass_private_key_by_path else None),
+                    rsa_private_key_data=(None if pass_private_key_by_path else rsa_private_key_bytes),
                     rsa_private_key_passphrase=rsa_passphrase,
-                    network_layer=mock_network_layer,
+                    session=mock_box_session,
                     box_device_name='my_awesome_device',
                     jwt_algorithm=jwt_algorithm,
                     jwt_key_id=jwt_key_id,
                     enterprise_id=kwargs.pop('enterprise_id', None),
                     **kwargs
                 )
-
-                jwt_auth_open.assert_called_once_with(sentinel.rsa_path, 'rb')
-                jwt_auth_open.return_value.read.assert_called_once_with()  # pylint:disable=no-member
+                if pass_private_key_by_path:
+                    jwt_auth_open.assert_called_once_with(sentinel.rsa_path, 'rb')
+                    jwt_auth_open.return_value.read.assert_called_once_with()  # pylint:disable=no-member
+                else:
+                    jwt_auth_open.assert_not_called()
                 load_pem_private_key.assert_called_once_with(
-                    key_file_read_data,
+                    rsa_private_key_bytes,
                     password=rsa_passphrase,
                     backend=default_backend(),
                 )
@@ -99,7 +188,7 @@ def jwt_auth_init_mocks(mock_network_layer, successful_token_response, jwt_algor
                 yield oauth, assertion, fake_client_id, load_pem_private_key.return_value
 
         if assert_authed:
-            mock_network_layer.request.assert_called_once_with(
+            mock_box_session.request.assert_called_once_with(
                 'POST',
                 '{0}/token'.format(API.OAUTH2_API_URL),
                 data=data,
@@ -190,11 +279,14 @@ def jwt_auth_auth_mocks(jti_length, jwt_algorithm, jwt_key_id, jwt_encode):
                 mock_datetime.utcnow.return_value = datetime(2015, 7, 6, 12, 1, 2)
                 mock_datetime.return_value = datetime(1970, 1, 1)
                 now_plus_30 = mock_datetime.utcnow.return_value + timedelta(seconds=30)
-                exp = int(total_seconds(now_plus_30 - datetime(1970, 1, 1)))
+                exp = int((now_plus_30 - datetime(1970, 1, 1)).total_seconds())
                 system_random = mock_system_random.return_value
                 system_random.randint.return_value = jti_length
                 random_choices = [random.random() for _ in range(jti_length)]
-                system_random.random.side_effect = random_choices
+
+                # Use cycle so that we can do auth more than once inside the context manager.
+                system_random.random.side_effect = cycle(random_choices)
+
                 ascii_alphabet = string.ascii_letters + string.digits
                 ascii_len = len(ascii_alphabet)
                 jti = ''.join(ascii_alphabet[int(r * ascii_len)] for r in random_choices)
@@ -277,3 +369,151 @@ def test_refresh_instance_sends_post_request_with_correct_params(jwt_auth_init_a
     enterprise_id = 'fake_enterprise_id'
     with jwt_auth_init_and_auth_mocks(enterprise_id, 'enterprise', enterprise_id=enterprise_id) as oauth:
         oauth.refresh(None)
+
+
+@pytest.fixture()
+def jwt_subclass_that_just_stores_params():
+    class StoreParamJWTAuth(JWTAuth):
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+            super(StoreParamJWTAuth, self).__init__(**kwargs)
+
+    return StoreParamJWTAuth
+
+
+@pytest.fixture
+def fake_client_id():
+    return 'fake_client_id'
+
+
+@pytest.fixture
+def fake_client_secret():
+    return 'fake_client_secret'
+
+
+@pytest.fixture
+def fake_enterprise_id():
+    return 'fake_enterprise_id'
+
+
+@pytest.fixture
+def app_config_json_content(
+        fake_client_id,
+        fake_client_secret,
+        fake_enterprise_id,
+        jwt_key_id,
+        rsa_private_key_bytes,
+        rsa_passphrase,
+):
+    template = r"""
+{{
+  "boxAppSettings": {{
+    "clientID": "{client_id}",
+    "clientSecret": "{client_secret}",
+    "appAuth": {{
+      "publicKeyID": "{jwt_key_id}",
+      "privateKey": "{private_key}",
+      "passphrase": {passphrase}
+    }}
+  }},
+  "enterpriseID": {enterprise_id}
+}}"""
+    return template.format(
+        client_id=fake_client_id,
+        client_secret=fake_client_secret,
+        jwt_key_id=jwt_key_id,
+        private_key=rsa_private_key_bytes.replace(b"\n", b"\\n").decode(),
+        passphrase=json.dumps(rsa_passphrase and rsa_passphrase.decode()),
+        enterprise_id=json.dumps(fake_enterprise_id),
+    )
+
+
+@pytest.fixture()
+def assert_jwt_kwargs_expected(
+        fake_client_id,
+        fake_client_secret,
+        fake_enterprise_id,
+        jwt_key_id,
+        rsa_private_key_bytes,
+        rsa_passphrase,
+):
+    def _assert_jwt_kwargs_expected(jwt_auth):
+        assert jwt_auth.kwargs['client_id'] == fake_client_id
+        assert jwt_auth.kwargs['client_secret'] == fake_client_secret
+        assert jwt_auth.kwargs['enterprise_id'] == fake_enterprise_id
+        assert jwt_auth.kwargs['jwt_key_id'] == jwt_key_id
+        assert jwt_auth.kwargs['rsa_private_key_data'] == rsa_private_key_bytes.decode()
+        assert jwt_auth.kwargs['rsa_private_key_passphrase'] == (rsa_passphrase and rsa_passphrase.decode())
+
+    return _assert_jwt_kwargs_expected
+
+
+def test_from_config_file(
+        jwt_subclass_that_just_stores_params,
+        app_config_json_content,
+        assert_jwt_kwargs_expected,
+):
+    # pylint:disable=redefined-outer-name
+    with patch('boxsdk.auth.jwt_auth.open', mock_open(read_data=app_config_json_content), create=True):
+        jwt_auth_from_config_file = jwt_subclass_that_just_stores_params.from_settings_file('fake_config_file_sys_path')
+        assert_jwt_kwargs_expected(jwt_auth_from_config_file)
+
+
+def test_from_settings_dictionary(
+        jwt_subclass_that_just_stores_params,
+        app_config_json_content,
+        assert_jwt_kwargs_expected,
+):
+    jwt_auth_from_dictionary = jwt_subclass_that_just_stores_params.from_settings_dictionary(json.loads(app_config_json_content))
+    assert_jwt_kwargs_expected(jwt_auth_from_dictionary)
+
+
+@pytest.fixture
+def expect_auth_retry(status_code, error_description, include_date_header, error_code):
+    return status_code == 400 and 'exp' in error_description and include_date_header and error_code == 'invalid_grant'
+
+
+@pytest.fixture
+def box_datetime():
+    return datetime.now(tz=pytz.utc) - timedelta(100)
+
+
+@pytest.fixture
+def unsuccessful_jwt_response(box_datetime, status_code, error_description, include_date_header, error_code):
+    headers = {'Date': box_datetime.strftime('%a, %d %b %Y %H:%M:%S %Z')} if include_date_header else {}
+    unsuccessful_response = Mock(requests.Response(), headers=headers)
+    unsuccessful_response.json.return_value = {'error_description': error_description, 'error': error_code}
+    unsuccessful_response.status_code = status_code
+    unsuccessful_response.ok = False
+    return unsuccessful_response
+
+
+@pytest.mark.parametrize('jwt_algorithm', ('RS512',))
+@pytest.mark.parametrize('rsa_passphrase', (None,))
+@pytest.mark.parametrize('pass_private_key_by_path', (False,))
+@pytest.mark.parametrize('status_code', (400, 401, 429, 500))
+@pytest.mark.parametrize('error_description', ('invalid box_sub_type claim', 'invalid kid', "check the 'exp' claim"))
+@pytest.mark.parametrize('error_code', ('invalid_grant', 'bad_request'))
+@pytest.mark.parametrize('include_date_header', (True, False))
+def test_auth_retry_for_invalid_exp_claim(
+        jwt_auth_init_mocks,
+        expect_auth_retry,
+        unsuccessful_jwt_response,
+        box_datetime,
+):
+    # pylint:disable=redefined-outer-name
+    enterprise_id = 'fake_enterprise_id'
+    with jwt_auth_init_mocks(assert_authed=False) as params:
+        auth = params[0]
+        with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
+            mock_send_jwt.side_effect = [BoxOAuthException(400, network_response=unsuccessful_jwt_response), 'jwt_token']
+            if not expect_auth_retry:
+                with pytest.raises(BoxOAuthException):
+                    auth.authenticate_instance(enterprise_id)
+            else:
+                auth.authenticate_instance(enterprise_id)
+            expected_calls = [call(enterprise_id, 'enterprise')]
+            if expect_auth_retry:
+                expected_calls.append(call(enterprise_id, 'enterprise', box_datetime.replace(microsecond=0, tzinfo=None)))
+            assert len(mock_send_jwt.mock_calls) == len(expected_calls)
+            mock_send_jwt.assert_has_calls(expected_calls)

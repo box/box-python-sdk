@@ -3,15 +3,27 @@
 from __future__ import unicode_literals, absolute_import
 import json
 
+from boxsdk.util.text_enum import TextEnum
 from .base_object import BaseObject
-from ..config import API
 from ..exception import BoxAPIException
 from .metadata import Metadata
 from ..util.api_call_decorator import api_call
+from ..pagination.marker_based_dict_collection import MarkerBasedDictCollection
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+
+
+class ClassificationType(TextEnum):
+    """An enum of possible classification types"""
+    PUBLIC = 'Public'
+    INTERNAL = 'Internal'
+    CONFIDENTIAL = 'Confidential'
+    NONE = 'None'
 
 
 class Item(BaseObject):
     """Box API endpoint for interacting with files and folders."""
+
+    _classification_template_key = 'securityClassification-6VMVochwUWo'
 
     def _get_accelerator_upload_url(self, file_id=None):
         """
@@ -27,7 +39,7 @@ class Item(BaseObject):
             `unicode` or None
         """
         endpoint = '{0}/content'.format(file_id) if file_id else 'content'
-        url = '{0}/files/{1}'.format(API.BASE_API_URL, endpoint)
+        url = '{0}/files/{1}'.format(self._session.api_config.BASE_API_URL, endpoint)
         try:
             response_json = self._session.options(
                 url=url,
@@ -63,7 +75,7 @@ class Item(BaseObject):
             :class:`BoxAPIException` when preflight check fails.
         """
         endpoint = '{0}/content'.format(file_id) if file_id else 'content'
-        url = '{0}/files/{1}'.format(API.BASE_API_URL, endpoint)
+        url = '{0}/files/{1}'.format(self._session.api_config.BASE_API_URL, endpoint)
         data = {'size': size}
         if name:
             data['name'] = name
@@ -134,39 +146,50 @@ class Item(BaseObject):
         return super(Item, self).get(fields=fields, headers=headers)
 
     @api_call
-    def copy(self, parent_folder):
+    def copy(self, parent_folder, name=None):
         """Copy the item to the given folder.
 
         :param parent_folder:
             The folder to which the item should be copied.
         :type parent_folder:
             :class:`Folder`
+        :param name:
+            A new name for the item, in case there is already another item in the new parent folder with the same name.
+        :type name:
+            `unicode` or None
         """
         url = self.get_url('copy')
         data = {
             'parent': {'id': parent_folder.object_id}
         }
+        if name is not None:
+            data['name'] = name
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
-        return self.__class__(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
     @api_call
-    def move(self, parent_folder):
+    def move(self, parent_folder, name=None):
         """
         Move the item to the given folder.
 
         :param parent_folder:
             The parent `Folder` object, where the item will be moved to.
         :type parent_folder:
-            `Folder`
+            :class:`Folder`
+        :param name:
+            A new name for the item, in case there is already another item in the new parent folder with the same name.
+        :type name:
+            `unicode` or None
         """
         data = {
             'parent': {'id': parent_folder.object_id}
         }
+        if name is not None:
+            data['name'] = name
         return self.update_info(data)
 
     @api_call
@@ -193,9 +216,11 @@ class Item(BaseObject):
             `unicode` or None
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates.
+            and has permission to set expiration dates.  Takes an RFC3339-formatted string, e.g.
+            '2018-10-31T23:59:59-07:00' for 11:59:59 PM on October 31, 2018 in the America/Los_Angeles timezone.
+            The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
         :type unshared_at:
-            :class:`datetime.date` or None
+            `unicode` or None
         :param allow_download:
             Whether or not the item being shared can be downloaded when accessed via the shared link.
             If this parameter is None, the default setting will be used.
@@ -225,7 +250,7 @@ class Item(BaseObject):
         }
 
         if unshared_at is not None:
-            data['shared_link']['unshared_at'] = unshared_at.isoformat()
+            data['shared_link']['unshared_at'] = unshared_at
 
         if allow_download is not None or allow_preview is not None:
             data['shared_link']['permissions'] = permissions = {}
@@ -334,6 +359,7 @@ class Item(BaseObject):
             `bool`
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
+        # pylint:disable=arguments-differ
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).delete(params, headers)
 
@@ -356,3 +382,338 @@ class Item(BaseObject):
             :class:`Metadata`
         """
         return Metadata(self._session, self, scope, template)
+
+    def get_all_metadata(self):
+        """
+        Get all metadata attached to the item.
+        """
+        return MarkerBasedDictCollection(
+            session=self._session,
+            url=self.get_url('metadata'),
+            limit=None,
+            marker=None,
+            return_full_pages=False,
+        )
+
+    @api_call
+    def get_watermark(self):
+        """
+        Return the watermark info for a Box file
+
+        :return:
+            Watermark object.
+        :rtype:
+            :class:`Watermark`
+        """
+        url = self.get_url('watermark')
+        box_response = self._session.get(url)
+        response = box_response.json()
+        return self.translator.get('watermark')(response['watermark'])
+
+    @api_call
+    def apply_watermark(self):
+        """
+        Apply watermark on a Box file
+
+        :return:
+            Watermark object.
+        :rtype:
+            :class:`Watermark`
+        """
+        url = self.get_url('watermark')
+        body_attributes = {
+            'watermark': {
+                'imprint': 'default'
+            }
+        }
+        box_response = self._session.put(url, data=json.dumps(body_attributes))
+        response = box_response.json()
+        return self.translator.get('watermark')(response['watermark'])
+
+    @api_call
+    def delete_watermark(self):
+        """
+        Deletes the watermark info for a Box file
+
+        :return:
+            Whether or not the delete succeeded.
+        :rtype:
+            `bool`
+        """
+        url = self.get_url('watermark')
+        box_response = self._session.delete(url, expect_json_response=False)
+        return box_response.ok
+
+    @api_call
+    def add_to_collection(self, collection):
+        """
+        Add the item to a collection.  This method is not currently safe from race conditions.
+
+        :param collection:
+            The collection to add the item to.
+        :type collection:
+            :class:`Collection`
+        :return:
+            This item.
+        :rtype:
+            :class:`Item`
+        """
+        collections = self.get(fields=['collections']).collections  # pylint:disable=no-member
+        collections.append({'id': collection.object_id})
+        data = {
+            'collections': collections
+        }
+        return self.update_info(data)
+
+    @api_call
+    def remove_from_collection(self, collection):
+        """
+        Remove the item from a collection.  This method is not currently safe from race conditions.
+
+        :param collection:
+            The collection to remove the item from.
+        :type collection:
+            :class:`Collection`
+        :return:
+            This item.
+        :rtype:
+            :class:`Item`
+        """
+        collections = self.get(fields=['collections']).collections  # pylint:disable=no-member
+        updated_collections = [c for c in collections if c['id'] != collection.object_id]
+        data = {
+            'collections': updated_collections
+        }
+        return self.update_info(data)
+
+    @api_call
+    def collaborate(self, accessible_by, role, can_view_path=None, notify=None, fields=None):
+        """Collaborate user or group onto a Box item.
+
+        :param accessible_by:
+            An object containing the collaborator.
+        :type accessible_by:
+            class:`User` or class:`Group`
+        :param role:
+            The permission level to grant the collaborator.
+        :type role:
+            `unicode`
+        :param can_view_path:
+            Indicates whether the user can view the path of the folder collaborated into.
+        :type can_view_path:
+            `bool` or None
+        :param notify:
+            Determines if the collaborator should receive a notification for the collaboration.
+        :type notify:
+            `bool` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :return:
+            The new collaboration
+        :rtype:
+            :class:`Collaboration`
+        """
+        url = self._session.get_url('collaborations')
+        body = {
+            'item': {
+                'type': self.object_type,
+                'id': self.object_id,
+            },
+            'accessible_by': {
+                'type': accessible_by.object_type,
+                'id': accessible_by.object_id,
+            },
+            'role': role,
+        }
+        if can_view_path is not None:
+            body['can_view_path'] = can_view_path
+        params = {}
+        if fields is not None:
+            params['fields'] = ','.join(fields)
+        if notify is not None:
+            params['notify'] = notify
+        response = self._session.post(url, data=json.dumps(body), params=params).json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
+        )
+
+    @api_call
+    def collaborate_with_login(self, login, role, can_view_path=None, notify=None, fields=None):
+        """Collaborate user onto a Box item with the user login.
+
+        :param login:
+            The email address of the person to grant access to.
+        :type login:
+            `unicode`
+        :param role:
+            The permission level to grant the collaborator.
+        :type role:
+            `unicode`
+        :param can_view_path:
+            Indicates whether the user can view the path of the folder collaborated into.
+        :type can_view_path:
+            `bool` or None
+        :param notify:
+            Determines if the collaborator should receive a notification for the collaboration.
+        :type notify:
+            `bool` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :return:
+            The new collaboration with the user login
+        :rtype:
+            :class:`Collaboration`
+        """
+        url = self._session.get_url('collaborations')
+        body = {
+            'item': {
+                'type': self.object_type,
+                'id': self.object_id,
+            },
+            'accessible_by': {
+                'type': 'user',
+                'login': login,
+            },
+            'role': role,
+        }
+        if can_view_path is not None:
+            body['can_view_path'] = can_view_path
+        params = {}
+        if fields is not None:
+            params['fields'] = ','.join(fields)
+        if notify is not None:
+            params['notify'] = notify
+        response = self._session.post(url, data=json.dumps(body), params=params).json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
+        )
+
+    @api_call
+    def get_collaborations(self, limit=None, marker=None, fields=None):
+        """
+        Get the entries in the collaboration.
+
+        :param limit:
+            The maximum number of items to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start returning items from when using marker-based paging.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the entries in the collaboration.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url('collaborations'),
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
+
+    def add_classification(self, classification):
+        """
+        Applies metadata classification for the specified :class:`File` or :class:`Folder` object.
+
+        :param classification:
+            The classification to add to the :class:`File` or :class:`Folder`
+        :type classification:
+            `unicode`
+        :return:
+            The classification added to the :class:`File` or :class:`Folder.
+        :rtype:
+            `unicode`
+        """
+        classification_metadata = {
+            'Box__Security__Classification__Key': classification,
+        }
+        metadata_classification = self.metadata(
+            scope='enterprise',
+            template=self._classification_template_key
+        ).create(classification_metadata)
+        return metadata_classification['Box__Security__Classification__Key']
+
+    def update_classification(self, classification):
+        """
+        Updates metadata classification for the specified :class:`File` or :class:`Folder` object.
+
+        :param classification:
+            The classification to add to the :class:`File` or :class:`Folder`
+        :type classification:
+            `unicode`
+        :return:
+            The classification updated on the :class:`File` or :class:`Folder.
+        :rtype:
+            `unicode`
+        """
+        classification_metadata = self.metadata('enterprise', self._classification_template_key)
+        updates = classification_metadata.start_update()
+        updates.add('/Box__Security__Classification__Key', classification)
+        metadata_classification = classification_metadata.update(updates)
+        return metadata_classification['Box__Security__Classification__Key']
+
+    def set_classification(self, classification):
+        """
+        Attempts to add a metadata classification to a :class:`File` or :class:`Folder`, if classification exists, then
+        do update.
+
+        :param classification:
+            The classification to add to the :class:`File` or :class:`Folder`
+        :type classification:
+            `unicode`
+        :return:
+            The classification set on the :class:`File` or :class:`Folder.
+        :rtype:
+            `unicode`
+        """
+        try:
+            metadata_classification = self.add_classification(classification)
+        except BoxAPIException as err:
+            if err.status == 409:
+                metadata_classification = self.update_classification(classification)
+            else:
+                raise
+        return metadata_classification
+
+    def get_classification(self):
+        """
+        Retrieves the classification specified for the :class:`File` or :class:`Folder`
+
+        :return:
+            The classification on the :class:`File` or :class:`Folder.
+        :rtype:
+            `unicode` or None
+        """
+        try:
+            classification = self.metadata('enterprise', self._classification_template_key).get()
+        except BoxAPIException as err:
+            if err.status == 404 and err.code == "instance_not_found":
+                return None
+            else:
+                raise
+        return classification.get('Box__Security__Classification__Key', None)
+
+    def remove_classification(self):
+        """
+        Removes a metadata classification from a :class:`File` or :class:`Folder`.
+
+        :returns:
+            Whether or not the delete was successful.
+        :rtype:
+            `bool`
+        """
+        return self.metadata('enterprise', self._classification_template_key).delete()

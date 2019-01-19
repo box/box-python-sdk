@@ -9,12 +9,12 @@ def test_automatic_refresh(
         box_client,
         mock_box_network,
         generic_successful_response,
-        successful_token_response,
+        successful_token_mock,
         unauthorized_response,
 ):
     mock_box_network.session.request.side_effect = [
         unauthorized_response,
-        successful_token_response,
+        successful_token_mock,
         generic_successful_response,
     ]
     box_client.folder('0').get()
@@ -29,7 +29,7 @@ def test_automatic_refresh(
             'POST',
             '{0}/token'.format(API.OAUTH2_API_URL),
             data=ANY,
-            headers={'content-type': 'application/x-www-form-urlencoded'},
+            headers={'content-type': 'application/x-www-form-urlencoded', 'User-Agent': ANY, 'X-Box-UA': ANY},
         ),
         call(
             'GET',

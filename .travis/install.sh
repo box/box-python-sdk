@@ -46,8 +46,8 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
             pyenv global 3.6.0
             ;;
         pypy)
-            pyenv install "pypy-${PYPY_VERSION}"
-            pyenv global "pypy-${PYPY_VERSION}"
+            pyenv install "pypy${PYPY_VERSION}"
+            pyenv global "pypy${PYPY_VERSION}"
             ;;
     esac
     pyenv rehash
@@ -59,8 +59,8 @@ else
         export PYENV_ROOT="$PWD/.pyenv"
         export PATH="$PYENV_ROOT/bin:$PATH"
         eval "$(pyenv init -)"
-        pyenv install "pypy-${PYPY_VERSION}"
-        pyenv global "pypy-${PYPY_VERSION}"
+        pyenv install "pypy${PYPY_VERSION}"
+        pyenv global "pypy${PYPY_VERSION}"
     fi
     pip install -U virtualenv
 fi

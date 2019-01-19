@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals, absolute_import
 
+from collections import OrderedDict
 from itertools import chain
 import json
 
@@ -9,13 +10,15 @@ from mock import Mock
 import pytest
 from requests.exceptions import Timeout
 from six.moves import map   # pylint:disable=redefined-builtin
-from six.moves.urllib.parse import urlencode, urlunsplit  # pylint:disable=import-error,no-name-in-module
+# pylint:disable=import-error,no-name-in-module,wrong-import-order
+from six.moves.urllib.parse import urlencode, urlunsplit
+# pylint:enable=import-error,no-name-in-module,wrong-import-order
 
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.events import Events, EventsStreamType, UserEventsStreamType
 from boxsdk.object.event import Event
-from boxsdk.session.box_session import BoxResponse
-from boxsdk.util.ordered_dict import OrderedDict
+from boxsdk.object.folder import Folder
+from boxsdk.session.box_response import BoxResponse
 
 
 @pytest.fixture()
@@ -206,10 +209,9 @@ def test_get_events(
         expected_url,
         params=dict(limit=100, stream_position=0, **expected_stream_type_params),
     )
-    event_entries = events['entries']
-    assert event_entries == events_response.json.return_value['entries']
-    for event in event_entries:
+    for event, json in zip(events['entries'], events_response.json.return_value['entries']):
         assert isinstance(event, Event)
+        assert event.event_id == json['event_id']
 
 
 def test_get_long_poll_options(
@@ -256,10 +258,16 @@ def test_generate_events_with_long_polling(
         events_response,
         new_change_long_poll_response,
         empty_events_response,
+        EscapeGenerator("A fake exception for the session to throw so that the generator won't block forever"),
     ]
     events = test_events.generate_events_with_long_polling(**stream_type_kwargs)
-    assert next(events) == Event(mock_event_json)
-    with pytest.raises(StopIteration):
+
+    event = next(events)
+    assert isinstance(event, Event)
+    assert event.event_id == mock_event_json['event_id']
+    assert isinstance(event.source, Folder)
+    assert event.source.id == mock_event_json['source']['id']
+    with pytest.raises(EscapeGenerator):
         next(events)
     events.close()
     mock_box_session.options.assert_called_with(expected_url, params=expected_stream_type_params)
@@ -274,3 +282,7 @@ def test_generate_events_with_long_polling(
         timeout=retry_timeout,
         params={'stream_position': initial_stream_position},
     )
+
+
+class EscapeGenerator(RuntimeError):
+    pass

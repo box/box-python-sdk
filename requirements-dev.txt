@@ -1,12 +1,1 @@
--r requirements.txt
-bottle
-jsonpatch
-mock>=2.0.0
-pep8
-pylint
-pytest>=2.8.3
-pytest-cov
-pytest-xdist
-sphinx
-sqlalchemy
-tox
+-e .[test,all]

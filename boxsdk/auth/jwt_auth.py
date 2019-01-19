@@ -3,17 +3,20 @@
 from __future__ import absolute_import, unicode_literals
 
 from datetime import datetime, timedelta
+import json
 import random
 import string
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 import jwt
-from six import string_types, text_type
+from six import binary_type, string_types, raise_from, text_type
 
+from ..exception import BoxOAuthException
 from .oauth2 import OAuth2
 from ..object.user import User
-from ..util.compat import total_seconds
+from ..util.compat import NoneType
 
 
 class JWTAuth(OAuth2):
@@ -28,17 +31,22 @@ class JWTAuth(OAuth2):
             client_secret,
             enterprise_id,
             jwt_key_id,
-            rsa_private_key_file_sys_path,
+            rsa_private_key_file_sys_path=None,
             rsa_private_key_passphrase=None,
             user=None,
             store_tokens=None,
             box_device_id='0',
             box_device_name='',
             access_token=None,
-            network_layer=None,
+            session=None,
             jwt_algorithm='RS256',
+            rsa_private_key_data=None,
+            **kwargs
     ):
         """Extends baseclass method.
+
+        Must pass exactly one of either `rsa_private_key_file_sys_path` or
+        `rsa_private_key_data`.
 
         If both `enterprise_id` and `user` are non-`None`, the `user` takes
         precedence when `refresh()` is called. This can be overruled with a
@@ -68,13 +76,13 @@ class JWTAuth(OAuth2):
         :type jwt_key_id:
             `unicode`
         :param rsa_private_key_file_sys_path:
-            Path to an RSA private key file, used for signing the JWT assertion.
+            (optional) Path to an RSA private key file, used for signing the JWT assertion.
         :type rsa_private_key_file_sys_path:
             `unicode`
         :param rsa_private_key_passphrase:
             Passphrase used to unlock the private key. Do not pass a unicode string - this must be bytes.
         :type rsa_private_key_passphrase:
-            `str` or None
+            `bytes` or None
         :param user:
             (optional) The user to authenticate, expressed as a Box User ID or
             as a :class:`User` instance.
@@ -120,8 +128,20 @@ class JWTAuth(OAuth2):
             Which algorithm to use for signing the JWT assertion. Must be one of 'RS256', 'RS384', 'RS512'.
         :type jwt_algorithm:
             `unicode`
+        :param rsa_private_key_data:
+            (optional) Contents of RSA private key, used for signing the JWT assertion. Do not pass a
+            unicode string. Can pass a byte string, or a file-like object that returns bytes, or an
+            already-loaded `RSAPrivateKey` object.
+        :type rsa_private_key_data:   `bytes` or :class:`io.IOBase` or :class:`RSAPrivateKey`
         """
         user_id = self._normalize_user_id(user)
+        rsa_private_key = self._normalize_rsa_private_key(
+            file_sys_path=rsa_private_key_file_sys_path,
+            data=rsa_private_key_data,
+            passphrase=rsa_private_key_passphrase,
+        )
+        del rsa_private_key_data
+        del rsa_private_key_file_sys_path
         super(JWTAuth, self).__init__(
             client_id,
             client_secret,
@@ -130,23 +150,20 @@ class JWTAuth(OAuth2):
             box_device_name=box_device_name,
             access_token=access_token,
             refresh_token=None,
-            network_layer=network_layer,
+            session=session,
+            **kwargs
         )
-        with open(rsa_private_key_file_sys_path, 'rb') as key_file:
-            self._rsa_private_key = serialization.load_pem_private_key(
-                key_file.read(),
-                password=rsa_private_key_passphrase,
-                backend=default_backend(),
-            )
+        self._rsa_private_key = rsa_private_key
         self._enterprise_id = enterprise_id
         self._jwt_algorithm = jwt_algorithm
         self._jwt_key_id = jwt_key_id
         self._user_id = user_id
 
-    def _auth_with_jwt(self, sub, sub_type):
+    def _construct_and_send_jwt_auth(self, sub, sub_type, now_time=None):
         """
-        Get an access token for use with Box Developer Edition. Pass an enterprise ID to get an enterprise token
-        (which can be used to provision/deprovision users), or a user ID to get a user token.
+        Construct the claims used for JWT auth and send a request to get a JWT.
+        Pass an enterprise ID to get an enterprise token (which can be used to provision/deprovision users),
+        or a user ID to get a user token.
 
         :param sub:
             The enterprise ID or user ID to auth.
@@ -156,6 +173,11 @@ class JWTAuth(OAuth2):
             Either 'enterprise' or 'user'
         :type sub_type:
             `unicode`
+        :param now_time:
+            Optional. The current UTC time is needed in order to construct the expiration time of the JWT claim.
+            If None, `datetime.utcnow()` will be used.
+        :type now_time:
+            `datetime` or None
         :return:
             The access token for the enterprise or app user.
         :rtype:
@@ -166,7 +188,9 @@ class JWTAuth(OAuth2):
         ascii_alphabet = string.ascii_letters + string.digits
         ascii_len = len(ascii_alphabet)
         jti = ''.join(ascii_alphabet[int(system_random.random() * ascii_len)] for _ in range(jti_length))
-        now_plus_30 = datetime.utcnow() + timedelta(seconds=30)
+        if now_time is None:
+            now_time = datetime.utcnow()
+        now_plus_30 = now_time + timedelta(seconds=30)
         assertion = jwt.encode(
             {
                 'iss': self._client_id,
@@ -174,7 +198,7 @@ class JWTAuth(OAuth2):
                 'box_sub_type': sub_type,
                 'aud': 'https://api.box.com/oauth2/token',
                 'jti': jti,
-                'exp': int(total_seconds(now_plus_30 - datetime(1970, 1, 1))),
+                'exp': int((now_plus_30 - datetime(1970, 1, 1)).total_seconds()),
             },
             self._rsa_private_key,
             algorithm=self._jwt_algorithm,
@@ -193,6 +217,82 @@ class JWTAuth(OAuth2):
         if self._box_device_name:
             data['box_device_name'] = self._box_device_name
         return self.send_token_request(data, access_token=None, expect_refresh_token=False)[0]
+
+    def _auth_with_jwt(self, sub, sub_type):
+        """
+        Auth with JWT.
+        If authorization fails because the expiration time is out of sync with the Box servers,
+        retry using the time returned in the error response.
+        Pass an enterprise ID to get an enterprise token (which can be used to provision/deprovision users),
+        or a user ID to get a user token.
+
+        :param sub:
+            The enterprise ID or user ID to auth.
+        :type sub:
+            `unicode`
+        :param sub_type:
+            Either 'enterprise' or 'user'
+        :type sub_type:
+            `unicode`
+        :return:
+            The access token for the enterprise or app user.
+        :rtype:
+            `unicode`
+        """
+        try:
+            return self._construct_and_send_jwt_auth(sub, sub_type)
+        except BoxOAuthException as ex:
+            error_response = ex.network_response
+            box_datetime = self._get_date_header(error_response)
+            if box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(error_response):
+                return self._construct_and_send_jwt_auth(sub, sub_type, box_datetime)
+            raise
+
+    @staticmethod
+    def _get_date_header(network_response):
+        """
+        Get datetime object for Date header, if the Date header is available.
+
+        :param network_response:
+            The response from the Box API that should include a Date header.
+        :type network_response:
+            :class:`Response`
+        :return:
+            The datetime parsed from the Date header, or None if the header is absent or if it couldn't be parsed.
+        :rtype:
+            `datetime` or `None`
+        """
+        box_date_header = network_response.headers.get('Date', None)
+        if box_date_header is not None:
+            try:
+                return datetime.strptime(box_date_header, '%a, %d %b %Y %H:%M:%S %Z')
+            except ValueError:
+                pass
+        return None
+
+    @staticmethod
+    def _was_exp_claim_rejected_due_to_clock_skew(network_response):
+        """
+        Determine whether the network response indicates that the authorization request was rejected because of
+        the exp claim. This can happen if the current system time is too different from the Box server time.
+
+        Returns True if the status code is 400, the error code is invalid_grant, and the error description indicates
+        a problem with the exp claim; False, otherwise.
+
+        :param network_response:
+        :type network_response:
+            :class:`Response`
+        :rtype:
+            `bool`
+        """
+        status_code = network_response.status_code
+        try:
+            json_response = network_response.json()
+        except ValueError:
+            return False
+        error_code = json_response.get('error', '')
+        error_description = json_response.get('error_description', '')
+        return status_code == 400 and error_code == 'invalid_grant' and 'exp' in error_description
 
     def authenticate_user(self, user=None):
         """
@@ -291,6 +391,97 @@ class JWTAuth(OAuth2):
         """
         # pylint:disable=unused-argument
         if self._user_id is None:
-            return self.authenticate_instance()
+            new_access_token = self.authenticate_instance()
         else:
-            return self.authenticate_user()
+            new_access_token = self.authenticate_user()
+        return new_access_token, None
+
+    @classmethod
+    def _normalize_rsa_private_key(cls, file_sys_path, data, passphrase=None):
+        if len(list(filter(None, [file_sys_path, data]))) != 1:
+            raise TypeError("must pass exactly one of either rsa_private_key_file_sys_path or rsa_private_key_data")
+        if file_sys_path:
+            with open(file_sys_path, 'rb') as key_file:
+                data = key_file.read()
+        if hasattr(data, 'read') and callable(data.read):
+            data = data.read()
+        if isinstance(data, text_type):
+            try:
+                data = data.encode('ascii')
+            except UnicodeError:
+                raise_from(
+                    TypeError("rsa_private_key_data must contain binary data (bytes/str), not a text/unicode string"),
+                    None,
+                )
+        if isinstance(data, binary_type):
+            passphrase = cls._normalize_rsa_private_key_passphrase(passphrase)
+            return serialization.load_pem_private_key(
+                data,
+                password=passphrase,
+                backend=default_backend(),
+            )
+        if isinstance(data, RSAPrivateKey):
+            return data
+        raise TypeError(
+            'rsa_private_key_data must be binary data (bytes/str), '
+            'a file-like object with a read() method, '
+            'or an instance of RSAPrivateKey, '
+            'but got {0!r}'
+            .format(data.__class__.__name__)
+        )
+
+    @staticmethod
+    def _normalize_rsa_private_key_passphrase(passphrase):
+        if isinstance(passphrase, text_type):
+            try:
+                return passphrase.encode('ascii')
+            except UnicodeError:
+                raise_from(
+                    TypeError("rsa_private_key_passphrase must contain binary data (bytes/str), not a text/unicode string"),
+                    None,
+                )
+        if not isinstance(passphrase, (binary_type, NoneType)):
+            raise TypeError(
+                "rsa_private_key_passphrase must contain binary data (bytes/str), got {0!r}"
+                .format(passphrase.__class__.__name__)
+            )
+        return passphrase
+
+    @classmethod
+    def from_settings_dictionary(cls, settings_dictionary, **kwargs):
+        """
+        Create an auth instance as defined by the given settings dictionary.
+
+        The dictionary should have the structure of the JSON file downloaded from the Box Developer Console.
+
+        :param settings_dictionary:       Dictionary containing settings for configuring app auth.
+        :type settings_dictionary:        `dict`
+        :return:                        Auth instance configured as specified by the config dictionary.
+        :rtype:                         :class:`JWTAuth`
+        """
+        if 'boxAppSettings' not in settings_dictionary:
+            raise ValueError('boxAppSettings not present in configuration')
+        return cls(
+            client_id=settings_dictionary['boxAppSettings']['clientID'],
+            client_secret=settings_dictionary['boxAppSettings']['clientSecret'],
+            enterprise_id=settings_dictionary.get('enterpriseID', None),
+            jwt_key_id=settings_dictionary['boxAppSettings']['appAuth'].get('publicKeyID', None),
+            rsa_private_key_data=settings_dictionary['boxAppSettings']['appAuth'].get('privateKey', None),
+            rsa_private_key_passphrase=settings_dictionary['boxAppSettings']['appAuth'].get('passphrase', None),
+            **kwargs
+        )
+
+    @classmethod
+    def from_settings_file(cls, settings_file_sys_path, **kwargs):
+        """
+        Create an auth instance as defined by a JSON file downloaded from the Box Developer Console.
+        See https://developer.box.com/v2.0/docs/authentication-with-jwt for more information.
+
+        :param settings_file_sys_path:    Path to the JSON file containing the configuration.
+        :type settings_file_sys_path:     `unicode`
+        :return:                        Auth instance configured as specified by the JSON file.
+        :rtype:                         :class:`JWTAuth`
+        """
+        with open(settings_file_sys_path) as config_file:
+            config_dictionary = json.load(config_file)
+            return cls.from_settings_dictionary(config_dictionary, **kwargs)

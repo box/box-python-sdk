@@ -72,6 +72,7 @@ class BaseAPIJSONObject(object):
     # also important to add the module name to __all__ in object/__init__.py,
     # so that it will be imported and registered with the default translator.
     _item_type = None
+    _untranslated_fields = ()
 
     def __init__(self, response_object=None, **kwargs):
         """
@@ -118,13 +119,31 @@ class BaseAPIJSONObject(object):
         description = '<Box {0}{1}>'.format(self.__class__.__name__, extra_description)
         if six.PY2:
             return description.encode('utf-8')
-        else:
-            return description
+        return description
 
     @property
     def _description(self):
         """Return a description of the object if one exists."""
         return ""
+
+    @property
+    def object_type(self):
+        """Return the Box type for the object.
+
+        :rtype:
+            `unicode`
+        """
+        return self._item_type
+
+    @classmethod
+    def untranslated_fields(cls):
+        """
+        The fields that should not be translated on this object.
+
+        :rtype:
+            `tuple`
+        """
+        return cls._untranslated_fields
 
     @property
     def response_object(self):

@@ -2,10 +2,33 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import inspect
+
 from .chain_map import ChainMap
 
 
 __all__ = list(map(str, ['Translator']))
+
+# pylint: disable=invalid-name
+inspect_signature = None
+try:
+    inspect_signature = inspect.signature
+except AttributeError:  # pragma: no cover
+    import funcsigs
+    inspect_signature = funcsigs.signature
+
+
+def _get_object_id(obj):
+    """
+    Gets the ID for an API object.
+
+    :param obj:
+        The API object
+    :type obj:
+        `dict`
+    :return:
+    """
+    return obj.get('id', None)
 
 
 class Translator(ChainMap):
@@ -116,17 +139,57 @@ class Translator(ChainMap):
             default = BaseObject
         return super(Translator, self).get(key, default)
 
-    def translate(self, type_name):
+    def translate(self, session, response_object):
         """
-        Get the box object class associated with the given type name.
+        Translate a given API response object into SDK classes, rescursively translating any subobjects.
 
-        :param type_name:
-            The type name to be translated.
-        :type type_name:
-            `unicode`
-        :rtype:   :class:`BaseAPIJSONObjectMeta`
+        :param session:
+            The SDK session to use for any objects that require a session (i.e. classes that make API calls)
+        :type session:
+            class:`Session`
+        :param response_object:
+            The JSON response object from the API, which will be translated
+        :type response_object:
+            `dict`
+        :return:
+            The translated object
         """
-        return self.get(type_name)
+
+        if not isinstance(response_object, dict):
+            return response_object
+
+        translated_obj = {}
+        object_type = response_object.get('type', None)
+        object_class = self.get(object_type) if object_type is not None else None
+        # Parent classes have the ability to "blacklist" fields that they do not want translated
+        blacklisted_fields = object_class.untranslated_fields() if object_class is not None else ()
+        for key in response_object:
+            if key in blacklisted_fields:
+                translated_obj[key] = response_object[key]
+                continue
+            if isinstance(response_object[key], dict):
+                translated_obj[key] = self.translate(session, response_object[key])
+            elif isinstance(response_object[key], list):
+                translated_obj[key] = [self.translate(session, o) for o in response_object[key]]
+            else:
+                translated_obj[key] = response_object[key]
+
+        # Try to translate any API object with a `type` property, except for metadata instances
+        # The $type value in metadata instances isn't directly usable, so we avoid it altogether
+        # NOTE: Currently, we represent metadata as just a `dict`, so there's no need to translate it anyway
+        # Metadata field objects are another issue; they contain a 'type' property that doesn't really
+        # map to a Box object.  We probably want to treat these as just `dict`s, so they're excluded here
+        if object_class is not None and '$type' not in translated_obj:
+            param_values = {
+                'session': session,
+                'response_object': translated_obj,
+                'object_id': _get_object_id(translated_obj),
+            }
+            params = inspect_signature(object_class.__init__).parameters
+            param_values = {p: param_values[p] for p in params if p in param_values}
+            return object_class(**param_values)
+
+        return translated_obj
 
 
 Translator._default_translator = Translator(extend_default_translator=False)  # pylint:disable=protected-access

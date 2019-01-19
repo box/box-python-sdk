@@ -1,6 +1,11 @@
 sudo: false
 language: python
 
+branches:
+    only:
+        - master
+        - "1.5"
+
 cache:
   directories:
     - $HOME/.cache/pip
@@ -10,25 +15,26 @@ before_cache:
 
 matrix:
   include:
-    - python: 2.6
-      env: TOX_ENV=py26
+    - python: 2.7
+      env: TOX_ENV=pycodestyle
+    - python: 2.7
+      env: TOX_ENV=pylint
     - python: 2.7
       env: TOX_ENV=py27
-    - python: 3.3
-      env: TOX_ENV=py33
     - python: 3.4
       env: TOX_ENV=py34
     - python: 3.5
       env: TOX_ENV=py35
     - python: 3.6
       env: TOX_ENV=py36
+    - python: 3.7
+      env: TOX_ENV=py37
+      # Python3.7 isn't available on the standard Trusty build that Travis uses
+      dist: xenial
+      sudo: true
     - python: pypy
-      env: TOX_ENV=pypy PYPY_VERSION='4.0.0'
-    - python: 2.7
-      env: TOX_ENV=pep8
-    - python: 2.7
-      env: TOX_ENV=pylint
-    - python: 2.7
+      env: TOX_ENV=pypy PYPY_VERSION='2.7-5.10.0'
+    - python: 3.5
       env: TOX_ENV=coverage
 
 # commands to install dependencies
@@ -37,5 +43,3 @@ install:
 # commands to run
 script:
   - ./.travis/run.sh
-after_success:
-  - if [ "-x$TOX_ENV" = "xcoverage" ]; then coveralls; fi

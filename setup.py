@@ -17,9 +17,7 @@ CLASSIFIERS = [
     'Intended Audience :: Developers',
     'License :: OSI Approved :: Apache Software License',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 2.6',
     'Programming Language :: Python :: 2.7',
-    'Programming Language :: Python :: 3.3',
     'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
@@ -56,7 +54,13 @@ class PyTest(TestCommand):
 
 def main():
     base_dir = dirname(__file__)
-    install_requires = ['requests>=2.4.3', 'six>=1.4.0', 'requests-toolbelt>=0.4.0']
+    install_requires = [
+        'attrs>=16.0.0',
+        'requests>=2.4.3',
+        'requests-toolbelt>=0.4.0',
+        'six>=1.9.0',
+        'wrapt>=1.10.1',
+    ]
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=0.9.2']
     extra_requires = defaultdict(list)
@@ -73,9 +77,9 @@ def main():
         #
         # [1] <https://www.python.org/dev/peps/pep-0426/#environment-markers>
         # [2] <https://www.python.org/dev/peps/pep-0345/#environment-markers>
-        'chainmap>=1.0.2': ['2.6', '2.7'],  # <'3.3'
-        'enum34>=1.0.4': ['2.6', '2.7', '3.3'],   # <'3.4'
-        'ordereddict>=1.1': ['2.6'],   # <'2.7'
+        'chainmap>=1.0.2': ['2.7'],  # <'3.4'
+        'funcsigs>=1.0.0': ['2.7'],  # <'3.4'
+        'enum34>=1.0.4': ['2.7'],   # <'3.4'
     }
     for requirement, python_versions in conditional_dependencies.items():
         for python_version in python_versions:
@@ -83,6 +87,21 @@ def main():
             python_conditional = 'python_version=="{0}"'.format(python_version)
             key = ':{0}'.format(python_conditional)
             extra_requires[key].append(requirement)
+    test_requires = [
+        'bottle',
+        'jsonpatch',
+        'mock>=2.0.0',
+        'pycodestyle',
+        'pylint',
+        'sqlalchemy',
+        'tox',
+        'pytest>=2.8.3, <4.0.0',
+        'pytest-cov',
+        'pytest-xdist',
+        'python-coveralls',
+        'pytz',
+    ]
+    extra_requires['test'] = test_requires
     with open('boxsdk/version.py', 'r', encoding='utf-8') as config_py:
         version = re.search(r'^\s+__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE).group(1)
     setup(
@@ -96,7 +115,7 @@ def main():
         packages=find_packages(exclude=['demo', 'docs', 'test', 'test*', '*test', '*test*']),
         install_requires=install_requires,
         extras_require=extra_requires,
-        tests_require=['pytest', 'pytest-xdist', 'mock', 'sqlalchemy', 'bottle', 'jsonpatch'],
+        tests_require=test_requires,
         cmdclass={'test': PyTest},
         classifiers=CLASSIFIERS,
         keywords='box oauth2 sdk',

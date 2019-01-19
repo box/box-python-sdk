@@ -4,6 +4,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+.pytest_cache/
 
 # C extensions
 *.so
@@ -15,6 +16,7 @@ env*/
 build/
 develop-eggs/
 dist/
+pypi-dist/
 downloads/
 eggs/
 lib/
@@ -68,6 +70,9 @@ target/
 # IntelliJ
 .idea/
 *.iml
+
+# VSCode
+.vscode/
 
 # Mac
 .DS_Store

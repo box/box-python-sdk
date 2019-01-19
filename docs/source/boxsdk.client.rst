@@ -12,24 +12,24 @@ boxsdk.client.client module
     :undoc-members:
     :show-inheritance:
 
-boxsdk.client.developer_token_client module
--------------------------------------------
+boxsdk.client.developer\_token\_client module
+---------------------------------------------
 
 .. automodule:: boxsdk.client.developer_token_client
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.client.development_client module
----------------------------------------
+boxsdk.client.development\_client module
+----------------------------------------
 
 .. automodule:: boxsdk.client.development_client
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.client.logging_client module
------------------------------------
+boxsdk.client.logging\_client module
+------------------------------------
 
 .. automodule:: boxsdk.client.logging_client
     :members:

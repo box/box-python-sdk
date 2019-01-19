@@ -5,10 +5,11 @@ import json
 import os
 from six import text_type
 
-from boxsdk.config import API
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
+from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from boxsdk.util.api_call_decorator import api_call
 from boxsdk.util.text_enum import TextEnum
 
@@ -90,6 +91,7 @@ class Folder(Item):
 
     _item_type = 'folder'
 
+    @api_call
     def preflight_check(self, size, name):
         """
         Make an API call to check if a new file with given name and size can be uploaded to this folder.
@@ -111,6 +113,55 @@ class Folder(Item):
             parent_id=self._object_id,
         )
 
+    def create_upload_session(self, file_size, file_name):
+        """
+        Creates a new chunked upload session for upload a new file.
+
+        :param file_size:
+            The size of the file in bytes that will be uploaded.
+        :type file_size:
+            `int`
+        :param file_name:
+            The name of the file that will be uploaded.
+        :type file_name:
+            `unicode`
+        :returns:
+            A :class:`UploadSession` object.
+        :rtype:
+            :class:`UploadSession`
+        """
+        url = '{0}/files/upload_sessions'.format(self.session.api_config.UPLOAD_URL)
+        body_params = {
+            'folder_id': self.object_id,
+            'file_size': file_size,
+            'file_name': file_name,
+        }
+        response = self._session.post(url, data=json.dumps(body_params)).json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
+        )
+
+    @api_call
+    def get_chunked_uploader(self, file_path):
+        """
+        Instantiate the chunked upload instance and create upload session with path to file.
+
+        :param file_path:
+            The local path to the file you wish to upload.
+        :type file_path:
+            `unicode`
+        :returns:
+            A :class:`ChunkedUploader` object.
+        :rtype:
+            :class:`ChunkedUploader`
+        """
+        total_size = os.stat(file_path).st_size
+        content_stream = open(file_path, 'rb')
+        file_name = os.path.basename(file_path)
+        upload_session = self.create_upload_session(total_size, file_name)
+        return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
+
     def _get_accelerator_upload_url_fow_new_uploads(self):
         """
         Get Accelerator upload url for uploading new files.
@@ -123,36 +174,73 @@ class Folder(Item):
         return self._get_accelerator_upload_url()
 
     @api_call
-    def get_items(self, limit, offset=0, fields=None):
-        """Get the items in a folder.
+    def get_items(self, limit=None, offset=0, marker=None, use_marker=False, sort=None, direction=None, fields=None):
+        """
+        Get the items in a folder.
 
         :param limit:
             The maximum number of items to return.
         :type limit:
-            `int`
+            `int` or None
         :param offset:
-            The index at which to start returning items.
+            The index at which to start returning items when using offset-based pagin.
         :type offset:
             `int`
+        :param use_marker:
+            Whether to use marker-based paging instead of offset-based paging, defaults to False.
+        :type use_marker:
+            `bool`
+        :param marker:
+            The paging marker to start returning items from when using marker-based paging.
+        :type marker:
+            `unicode` or None
+        :param sort:
+            Item field to sort results on: 'id', 'name', or 'date'.
+        :type sort':
+            `unicode` or None
+        :param direction:
+            Sort direction for the items returned.
+        :type direction:
+            `unicode` or None
         :param fields:
             List of fields to request.
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            A list of items in the folder.
+            The collection of items in the folder.
         :rtype:
-            `list` of :class:`Item`
+            `Iterable` of :class:`Item`
         """
         url = self.get_url('items')
-        params = {
-            'limit': limit,
-            'offset': offset,
-        }
-        if fields:
-            params['fields'] = ','.join(fields)
-        box_response = self._session.get(url, params=params)
-        response = box_response.json()
-        return [self.translator.translate(item['type'])(self._session, item['id'], item) for item in response['entries']]
+        additional_params = {}
+        if limit is not None:
+            additional_params['limit'] = limit
+        if sort:
+            additional_params['sort'] = sort
+        if direction:
+            additional_params['direction'] = direction
+
+        if use_marker:
+            additional_params['usemarker'] = True
+            return MarkerBasedObjectCollection(
+                url=url,
+                session=self._session,
+                limit=limit,
+                marker=marker,
+                fields=fields,
+                additional_params=additional_params,
+                return_full_pages=False,
+            )
+
+        return LimitOffsetBasedObjectCollection(
+            url=url,
+            session=self._session,
+            limit=limit,
+            offset=offset,
+            fields=fields,
+            additional_params=additional_params,
+            return_full_pages=False,
+        )
 
     @api_call
     def upload_stream(
@@ -201,7 +289,7 @@ class Folder(Item):
         if preflight_check:
             self.preflight_check(size=preflight_expected_size, name=file_name)
 
-        url = '{0}/files/content'.format(API.UPLOAD_URL)
+        url = '{0}/files/content'.format(self._session.api_config.UPLOAD_URL)
         if upload_using_accelerator:
             accelerator_upload_url = self._get_accelerator_upload_url_fow_new_uploads()
             if accelerator_upload_url:
@@ -214,12 +302,11 @@ class Folder(Item):
         files = {
             'file': ('unused', file_stream),
         }
-        box_response = self._session.post(url, data=data, files=files, expect_json_response=False)
-        file_response = box_response.json()['entries'][0]
-        file_id = file_response['id']
-        return self.translator.translate(file_response['type'])(
+        file_response = self._session.post(url, data=data, files=files, expect_json_response=False).json()
+        if 'entries' in file_response:
+            file_response = file_response['entries'][0]
+        return self.translator.translate(
             session=self._session,
-            object_id=file_id,
             response_object=file_response,
         )
 
@@ -298,9 +385,8 @@ class Folder(Item):
         }
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
-        return self.__class__(
+        return self.translator.translate(
             session=self._session,
-            object_id=response['id'],
             response_object=response,
         )
 
@@ -326,7 +412,7 @@ class Folder(Item):
         return self.update_info(data=data)
 
     @api_call
-    def add_collaborator(self, collaborator, role, notify=False):
+    def add_collaborator(self, collaborator, role, notify=False, can_view_path=False):
         """Add a collaborator to the folder
 
         :param collaborator:
@@ -341,32 +427,77 @@ class Folder(Item):
             Whether to send a notification email to the collaborator
         :type notify:
             `bool`
+        :param can_view_path:
+            Whether view path collaboration feature is enabled or not. Note - only
+            folder owners can create collaborations with can_view_path.
+        :type can_view_path:
+            `bool`
         :return:
             The new collaboration
         :rtype:
             :class:`Collaboration`
         """
         collaborator_helper = _Collaborator(collaborator)
-        url = API.BASE_API_URL + '/collaborations'
+        url = self._session.get_url('collaborations')
         item = {'id': self._object_id, 'type': 'folder'}
         access_key, access_value = collaborator_helper.access
         accessible_by = {
             access_key: access_value,
-            'type': collaborator_helper.type
+            'type': collaborator_helper.type,
         }
-        data = json.dumps({
+        body_params = {
             'item': item,
             'accessible_by': accessible_by,
             'role': role,
-        })
+        }
+        if can_view_path:
+            body_params['can_view_path'] = True
+        data = json.dumps(body_params)
         params = {'notify': notify}
         box_response = self._session.post(url, expect_json_response=True, data=data, params=params)
         collaboration_response = box_response.json()
-        collab_id = collaboration_response['id']
-        return self.translator.translate(collaboration_response['type'])(
+        return self.translator.translate(
             session=self._session,
-            object_id=collab_id,
             response_object=collaboration_response,
+        )
+
+    @api_call
+    def create_web_link(self, target_url, name=None, description=None):
+        """
+        Create a WebLink with a given url.
+
+        :param target_url:
+            The url the web link points to.
+        :type target_url:
+            `unicode`
+        :param name:
+            The name of the web link. Optional, the API will give it a default if not specified.
+        :type name:
+            `unicode` or None
+        :param description:
+            Description of the web link
+        :type name:
+            `unicode` or None
+        :return:
+            A :class:`WebLink` object.
+        :rtype:
+            :class:`WebLink`
+        """
+        url = self._session.get_url('web_links')
+        web_link_attributes = {
+            'url': target_url,
+            'parent': {
+                'id': self.object_id
+            }
+        }
+        if name is not None:
+            web_link_attributes['name'] = name
+        if description is not None:
+            web_link_attributes['description'] = description
+        response = self._session.post(url, data=json.dumps(web_link_attributes)).json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response
         )
 
     @api_call
@@ -387,4 +518,74 @@ class Folder(Item):
             `bool`
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
+        # pylint:disable=arguments-differ
         return super(Folder, self).delete({'recursive': recursive}, etag)
+
+    @api_call
+    def get_metadata_cascade_policies(self, owner_enterprise=None, limit=None, marker=None, fields=None):
+        """
+        Get the metadata cascade policies current applied to the folder.
+
+        :param owner_enterprise:
+            Which enterprise's metadata templates to get cascade policies for.  This defauls to the current
+            enterprise.
+        :type owner_enterprise:
+            :class:`Enterprise`
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :type limit:
+            `int` or None
+        :param marker:
+            The paging marker to start paging from.
+        :type marker:
+            `unicode` or None
+        :param fields:
+            List of fields to request.
+        :type fields:
+            `Iterable` of `unicode`
+        :returns:
+            An iterator of the cascade policies attached on the folder.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        additional_params = {
+            'folder_id': self.object_id,
+        }
+        if owner_enterprise is not None:
+            additional_params['owner_enterprise_id'] = owner_enterprise.object_id
+
+        return MarkerBasedObjectCollection(
+            url=self._session.get_url('metadata_cascade_policies'),
+            session=self._session,
+            additional_params=additional_params,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            return_full_pages=False,
+        )
+
+    @api_call
+    def cascade_metadata(self, metadata_template):
+        """
+        Create a metadata cascade policy to apply the metadata instance values on the folder for the given metadata
+        template to all files within the folder.
+
+        :param metadata_template:
+            The metadata template to cascade values for
+        :type metadata_template:
+            :class:`MetadataTemplate`
+        :returns:
+            The created metadata cascade policy
+        :rtype:
+            :class:`MetadataCascadePolicy`
+        """
+        url = self._session.get_url('metadata_cascade_policies')
+
+        body = {
+            'folder_id': self.object_id,
+            'scope': metadata_template.scope,
+            'templateKey': metadata_template.template_key,
+        }
+
+        response = self._session.post(url, data=json.dumps(body)).json()
+        return self.translator.translate(self._session, response)

@@ -18,10 +18,10 @@ def streamable_mock_open(mock=None, read_data=b''):
         if size == -1:
             handle.position = len(read_data)
             return read_data
-        else:
-            data = read_data[handle.position:handle.position + size]
-            handle.position += size
-            return data
+
+        data = read_data[handle.position:handle.position + size]
+        handle.position += size
+        return data
 
     # pylint:disable=no-member
     handle.tell.side_effect = tell

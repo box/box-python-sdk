@@ -34,14 +34,14 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         """Base class override.  Return a description for the object."""
         if 'name' in self._response_object:
             return '{0} ({1})'.format(self._object_id, self.name)  # pylint:disable=no-member
-        else:
-            return '{0}'.format(self._object_id)
+        return '{0}'.format(self._object_id)
 
     def get_url(self, *args):
         """
         Base class override.
         Return the given object's URL, appending any optional parts as specified by args.
         """
+        # pylint:disable=arguments-differ
         return super(BaseObject, self).get_url('{0}s'.format(self._item_type), self._object_id, *args)
 
     def get_type_url(self):
@@ -83,7 +83,10 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         url = self.get_url()
         params = {'fields': ','.join(fields)} if fields else None
         box_response = self._session.get(url, params=params, headers=headers)
-        return self.__class__(self._session, self._object_id, box_response.json())
+        return self.translator.translate(
+            session=self._session,
+            response_object=box_response.json(),
+        )
 
     @api_call
     def update_info(self, data, params=None, headers=None, **kwargs):
@@ -122,11 +125,9 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         """
         url = self.get_url()
         box_response = self._session.put(url, data=json.dumps(data), params=params, headers=headers, **kwargs)
-        response = box_response.json()
-        return self.__class__(
+        return self.translator.translate(
             session=self._session,
-            object_id=self._object_id,
-            response_object=response,
+            response_object=box_response.json(),
         )
 
     @api_call
@@ -155,65 +156,19 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         return box_response.ok
 
     def __eq__(self, other):
-        """Equality as determined by object id"""
-        return self._object_id == other.object_id
+        """Equality as determined by object id and type"""
+        if isinstance(other, BaseObject):
+            # Two objects are considered the same if they have the same address in the API
+            return self.get_url() == other.get_url()
 
-    def _paging_wrapper(self, url, starting_index, limit, factory=None):
-        """
-        Helper function that turns any paging API into a generator that transparently implements the paging for
-        the caller.
+        return NotImplemented
 
-        A caller wanting to implement their own paging can do so by managing the starting_index & limit params,
-        and never iterating over more than 'limit' items per call. For example:
+    def __ne__(self, other):
+        """Equality as determined by object id and type"""
+        return not self == other
 
-            first_ten = list(itertools.islice(_paging_wrapper(..., 0, 10, ...), 10))
-            second_ten = list(itertools.islice(_paging_wrapper(..., 10, 10, ...), 10))
-            third_ten = list(itertools.islice(_paging_wrapper(..., 20, 10, ...), 10))
-            ...
-        When one of the lists has less than 10 items... the end has been reached.
-
-        Caveat: any hidden items (see the Box Developer API for more details) will render the above
-        inaccurate. Hidden results will lead the above get_slice() code to trigger API calls at non-expected places.
-
-        :param starting_index:
-            The index at which to begin.
-        :type starting_index:
-            `int`
-        :param limit:
-            The maximum number of items to return in a page.
-        :type limit:
-            `int`
-        :param factory:
-            A callable factory method which creates the object instances. Signature should match the __init__
-            signature of BaseObject. If no factory is given then the Translator factory is used.
-        :type factory:
-            `callable` or None
-        :returns:
-            A generator of 3-tuples. Each tuple contains:
-            1) An instance returned by the given factory callable.
-            2) The number of objects in the current page.
-            3) Index the current instance in the current page.
-        :rtype:
-            `generator` of `tuple` of (varies, `int`, `int`)
-        """
-        current_index = starting_index
-
-        while True:
-            params = {'limit': limit, 'offset': current_index}
-            box_response = self._session.get(url, params=params)
-            response = box_response.json()
-
-            current_page_size = len(response['entries'])
-            for index_in_current_page, item in enumerate(response['entries']):
-                instance_factory = factory
-                if not instance_factory:
-                    instance_factory = self.translator.translate(item['type'])
-                instance = instance_factory(self._session, item['id'], item)
-                yield instance, current_page_size, index_in_current_page
-
-            current_index += limit
-            if current_index >= response['total_count']:
-                break
+    def __hash__(self):
+        return hash((self._object_id, self._item_type))
 
     def clone(self, session=None):
         """Base class override."""
