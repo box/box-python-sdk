@@ -139,6 +139,7 @@ def test_retention_policy_assignment(mock_box_session, mock_object_id):
     return RetentionPolicyAssignment(mock_box_session, mock_object_id)
 
 
+@pytest.fixture()
 def test_group_membership(mock_box_session, mock_object_id):
     return GroupMembership(mock_box_session, mock_object_id)
 

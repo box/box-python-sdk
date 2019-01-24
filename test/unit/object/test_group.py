@@ -13,6 +13,7 @@ from six.moves import map  # pylint:disable=redefined-builtin,import-error
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.group_membership import GroupMembership
+from boxsdk.object.user import User
 from boxsdk.config import API
 from boxsdk.session.box_response import BoxResponse
 
@@ -188,3 +189,36 @@ def test_get_group_collaborations(test_group, mock_box_session):
     assert isinstance(collaboration, Collaboration)
     assert collaboration.id == mock_collaboration['id']
     assert collaboration.created_by['id'] == mock_collaboration['created_by']['id']
+
+
+def test_base_api_json_object_returns_correctly(test_group_membership, mock_box_session):
+    expected_data = {
+        'type': 'group_membership',
+        'id': '12345',
+        'user': {
+            'type': 'user',
+            'id': '5678',
+            'name': 'Test User',
+            'login': 'test@example.com',
+        },
+        'group': {
+            'type': 'group',
+            'id': '54321',
+            'name': 'Test'
+        },
+        'role': 'admin',
+        'configurable_permissions': {
+            'can_run_reports': False,
+            'can_instant_login': True,
+            'can_create_accounts': False,
+            'can_edit_accounts': True,
+        },
+        'created_at': '2013-05-16T15:27:57-07:00',
+        'modified_at': '2013-05-16T15:27:57-07:00',
+    }
+    mock_box_session.get.return_value.json.return_value = expected_data
+    membership = test_group_membership.get()
+    membership_response = membership.response_object
+    assert expected_data['group']['id'] == membership_response['group']['id']
+    assert expected_data['id'] == membership_response['id']
+    assert isinstance(membership.user, User)

@@ -153,4 +153,8 @@ class BaseAPIJSONObject(object):
         :rtype:
             `dict`
         """
-        return copy.deepcopy(self._response_object)
+        copied_object = copy.copy(self._response_object)
+        for key, value in copied_object.items():
+            if isinstance(value, BaseAPIJSONObject):
+                copied_object[key] = value.response_object
+        return copied_object
