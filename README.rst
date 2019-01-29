@@ -229,7 +229,7 @@ and the SDK will handle the token refresh for you automatically.
 Instantiate a Client Given an Access and a Refresh Token
 ********************************************************
 
-Alternatively, you can instantiate a OAuth2 object with the access token and refresh token. Once
+Alternatively, you can instantiate an OAuth2 object with the access token and refresh token. Once
 you have an oauth object you can pass that into the Client object to instantiate a client and begin
 making calls.
 

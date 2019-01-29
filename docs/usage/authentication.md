@@ -236,7 +236,7 @@ You can also instantiate a client given the access and refresh token. You first 
 oauth object you then pass it into your [Client][client_class] object to instantiate your client. Finally, you can begin making calls with your client.
 
 ```python
-from boxsdk import Client, Oauth2
+from boxsdk import Client, OAuth2
 
 oauth = OAuth2(
     client_id='YOUR_CLIENT_ID',
