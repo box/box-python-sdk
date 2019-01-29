@@ -226,6 +226,29 @@ Create an Authenticated Client
 And that's it! You can start using the client to do all kinds of cool stuff
 and the SDK will handle the token refresh for you automatically.
 
+Instantiate a Client Given an Access and a Refresh Token
+********************************************************
+
+Alternatively, you can instantiate an OAuth2 object with the access token and refresh token. Once
+you have an oauth object you can pass that into the Client object to instantiate a client and begin
+making calls.
+
+.. code-block:: python
+
+    from boxsdk import Client, OAuth2
+
+    oauth = OAuth2(
+        client_id='YOUR_CLIENT_ID',
+        client_secret='YOUR_CLIENT_SECRET',
+        access_token='ACCESS_TOKEN',
+        refresh_token='REFRESH_TOKEN',
+    )
+
+    client = Client(oauth)
+    user = client.user().get()
+
+This will retrieve the current user! From here you can use the client you created to start making calls.
+
 Other Auth Options
 ~~~~~~~~~~~~~~~~~~
 
