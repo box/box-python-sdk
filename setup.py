@@ -39,7 +39,7 @@ class PyTest(TestCommand):
     def initialize_options(self):
         TestCommand.initialize_options(self)
         self.pytest_args = None
-p
+
     def finalize_options(self):
         TestCommand.finalize_options(self)
         self.test_args = []
