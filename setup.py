@@ -57,7 +57,7 @@ def main():
     install_requires = [
         'attrs>=16.0.0',
         'requests>=2.4.3',
-        'requests-toolbelt>=0.4.0',
+        'requests-toolbelt>=0.4.0, <0.9.0',
         'six>=1.9.0',
         'wrapt>=1.10.1',
     ]
