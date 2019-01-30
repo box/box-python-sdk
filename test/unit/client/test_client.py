@@ -471,6 +471,29 @@ def test_users_return_the_correct_user_objects(
     assert users.next().object_id == user_id_2
     mock_box_session.get.assert_called_once_with('{0}/users'.format(API.BASE_API_URL), params=expected_params)
 
+def test_users_returns_correct_with_default_values(
+    mock_client,
+    mock_box_session,
+):
+    expected_url = '{0}/users'.format(API.BASE_API_URL)
+    mock_box_session.get.return_value.json.return_value = {
+        'limit': 100,
+        'offset': 0,
+        'total_count': 1,
+        'entries': [
+            {
+                'type': 'user',
+                'id': '12345',
+            }
+        ]
+    }
+    users = mock_client.users()
+    user = users.next()
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': 0})
+    assert isinstance(user, User)
+    assert user.type == 'user'
+    assert user.id == '12345'
+
 
 def test_search_instantiates_search_and_calls_search(
         mock_client,
