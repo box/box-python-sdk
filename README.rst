@@ -134,6 +134,7 @@ instead use an instance of ``JWTAuth``.
         enterprise_id='YOUR_ENTERPRISE_ID',
         jwt_key_id='YOUR_JWT_KEY_ID',
         rsa_private_key_file_sys_path='CERT.PEM',
+        rsa_private_key_passphrase='PASSPHRASE',
         store_tokens=your_store_tokens_callback_method,
     )
 
@@ -159,6 +160,7 @@ These users can then be authenticated:
         user=ned_stark_user,
         jwt_key_id='YOUR_JWT_KEY_ID',
         rsa_private_key_file_sys_path='CERT.PEM',
+        rsa_private_key_passphrase='PASSPHRASE',
         store_tokens=your_store_tokens_callback_method,
     )
     ned_auth.authenticate_user()

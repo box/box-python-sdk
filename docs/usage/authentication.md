@@ -126,6 +126,7 @@ service_account_auth = JWTAuth(
     enterprise_id='YOUR_ENTERPRISE_ID',
     jwt_key_id='YOUR_JWT_KEY_ID',
     rsa_private_key_file_sys_path='CERT.PEM',
+    rsa_private_key_passphrase='PASSPHRASE',
     store_tokens=your_store_tokens_callback_method,
 )
 
@@ -155,6 +156,7 @@ app_user_auth = JWTAuth(
     user=app_user,
     jwt_key_id='YOUR_JWT_KEY_ID',
     rsa_private_key_file_sys_path='CERT.PEM',
+    rsa_private_key_passphrase='PASSPHRASE',
     store_tokens=your_store_tokens_callback_method,
 )
 app_user_auth.authenticate_user()
