@@ -471,9 +471,10 @@ def test_users_return_the_correct_user_objects(
     assert users.next().object_id == user_id_2
     mock_box_session.get.assert_called_once_with('{0}/users'.format(API.BASE_API_URL), params=expected_params)
 
+
 def test_users_returns_correct_with_default_values(
-    mock_client,
-    mock_box_session,
+        mock_client,
+        mock_box_session,
 ):
     expected_url = '{0}/users'.format(API.BASE_API_URL)
     mock_box_session.get.return_value.json.return_value = {
