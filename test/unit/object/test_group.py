@@ -195,7 +195,18 @@ def test_base_api_json_object_returns_correctly(test_group_membership, mock_box_
     expected_data = {
         'type': 'group_membership',
         'id': '12345',
-        'test': [{'user': {'type': 'user'}}, {'group': {'type': 'group'}},],
+        'test': [
+            {
+                'user': {
+                    'type': 'user'
+                }
+            },
+            {
+                'group': {
+                    'type': 'group'
+                }
+            },
+        ],
         'user': {
             'type': 'user',
             'id': '5678',
