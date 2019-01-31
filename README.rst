@@ -134,6 +134,7 @@ instead use an instance of ``JWTAuth``.
         enterprise_id='YOUR_ENTERPRISE_ID',
         jwt_key_id='YOUR_JWT_KEY_ID',
         rsa_private_key_file_sys_path='CERT.PEM',
+        rsa_private_key_passphrase='PASSPHRASE',
         store_tokens=your_store_tokens_callback_method,
     )
 
@@ -159,6 +160,7 @@ These users can then be authenticated:
         user=ned_stark_user,
         jwt_key_id='YOUR_JWT_KEY_ID',
         rsa_private_key_file_sys_path='CERT.PEM',
+        rsa_private_key_passphrase='PASSPHRASE',
         store_tokens=your_store_tokens_callback_method,
     )
     ned_auth.authenticate_user()
@@ -225,6 +227,29 @@ Create an Authenticated Client
 
 And that's it! You can start using the client to do all kinds of cool stuff
 and the SDK will handle the token refresh for you automatically.
+
+Instantiate a Client Given an Access and a Refresh Token
+********************************************************
+
+Alternatively, you can instantiate an OAuth2 object with the access token and refresh token. Once
+you have an oauth object you can pass that into the Client object to instantiate a client and begin
+making calls.
+
+.. code-block:: python
+
+    from boxsdk import Client, OAuth2
+
+    oauth = OAuth2(
+        client_id='YOUR_CLIENT_ID',
+        client_secret='YOUR_CLIENT_SECRET',
+        access_token='ACCESS_TOKEN',
+        refresh_token='REFRESH_TOKEN',
+    )
+
+    client = Client(oauth)
+    user = client.user().get()
+
+This will retrieve the current user! From here you can use the client you created to start making calls.
 
 Other Auth Options
 ~~~~~~~~~~~~~~~~~~
@@ -401,7 +426,7 @@ Copyright and License
 
 ::
 
- Copyright 2018 Box, Inc. All rights reserved.
+ Copyright 2019 Box, Inc. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
