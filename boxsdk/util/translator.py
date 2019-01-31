@@ -2,9 +2,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import copy
 import inspect
-import six
 
 from .chain_map import ChainMap
 
@@ -192,5 +190,6 @@ class Translator(ChainMap):
             return object_class(**param_values)
 
         return translated_obj
+
 
 Translator._default_translator = Translator(extend_default_translator=False)  # pylint:disable=protected-access
