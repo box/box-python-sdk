@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, absolute_import
-import copy
 import six
 
 from ..util.translator import Translator
@@ -153,4 +152,4 @@ class BaseAPIJSONObject(object):
         :rtype:
             `dict`
         """
-        return Translator._default_translator.untranslate(self)
+        return Translator._default_translator.untranslate(self)  # pylint:disable=protected-access
