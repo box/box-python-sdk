@@ -126,6 +126,7 @@ service_account_auth = JWTAuth(
     enterprise_id='YOUR_ENTERPRISE_ID',
     jwt_key_id='YOUR_JWT_KEY_ID',
     rsa_private_key_file_sys_path='CERT.PEM',
+    rsa_private_key_passphrase='PASSPHRASE',
     store_tokens=your_store_tokens_callback_method,
 )
 
@@ -155,6 +156,7 @@ app_user_auth = JWTAuth(
     user=app_user,
     jwt_key_id='YOUR_JWT_KEY_ID',
     rsa_private_key_file_sys_path='CERT.PEM',
+    rsa_private_key_passphrase='PASSPHRASE',
     store_tokens=your_store_tokens_callback_method,
 )
 app_user_auth.authenticate_user()
@@ -228,6 +230,28 @@ client = Client(oauth)
 ```
 
 [authenticate]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.auth.html#boxsdk.auth.oauth2.OAuth2.authenticate
+
+#### Initialize a Client Given Access and Refresh Token
+
+You can also instantiate a client given the access and refresh token. You first need to construct an
+[OAuth2][oauth2_class] object with the access and refresh token passed in. Once you have created the
+oauth object you then pass it into your [Client][client_class] object to instantiate your client. Finally, you can begin making calls with your client.
+
+```python
+from boxsdk import Client, OAuth2
+
+oauth = OAuth2(
+    client_id='YOUR_CLIENT_ID',
+    client_secret='YOUR_CLIENT_SECRET',
+    access_token='ACCESS_TOKEN',
+    refresh_token='REFRESH_TOKEN',
+)
+
+client = Client(auth)
+
+user = client.user().get()
+print('User ID is {0}'.format(user.id))
+```
 
 ### Box View Authentication with App Tokens
 
