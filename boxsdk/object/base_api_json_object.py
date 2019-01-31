@@ -158,14 +158,11 @@ class BaseAPIJSONObject(object):
             A dictionary containing the untranslated object.
         """
         if isinstance(value, BaseAPIJSONObject):
-            new_value = cls._untranslate(value._response_object)  # pylint:disable=protected-access
-            return new_value
+            return cls._untranslate(value._response_object)
         if isinstance(value, dict):
-            new_dict = {k: cls._untranslate(v) for (k, v) in six.iteritems(value)}
-            return new_dict
+            return {k: cls._untranslate(v) for (k, v) in six.iteritems(value)}
         if isinstance(value, list):
-            new_list = [cls._untranslate(entry) for entry in value]
-            return new_list
+            return [cls._untranslate(entry) for entry in value]
 
         return copy.copy(value)
 
@@ -177,4 +174,4 @@ class BaseAPIJSONObject(object):
         :rtype:
             `dict`
         """
-        return self._untranslate(self)  # pylint:disable=protected-access
+        return self._untranslate(self)
