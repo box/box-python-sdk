@@ -204,8 +204,8 @@ class Translator(ChainMap):
         :return:
             A dictionary containing the untranslated object.
         """
-        if hasattr(value, '_response_object') and isinstance(value._response_object, dict): # pylint:disable=protected-access
-            new_value = self.untranslate(value._response_object) # pylint:disable=protected-access
+        if hasattr(value, '_response_object') and isinstance(value._response_object, dict):  # pylint:disable=protected-access
+            new_value = self.untranslate(value._response_object)  # pylint:disable=protected-access
             return new_value
         if isinstance(value, dict):
             new_dict = {k: self.untranslate(v) for (k, v) in six.iteritems(value)}
