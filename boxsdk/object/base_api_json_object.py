@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, absolute_import
+import copy
 import six
 
 from ..util.translator import Translator
@@ -144,6 +145,30 @@ class BaseAPIJSONObject(object):
         """
         return cls._untranslated_fields
 
+    @classmethod
+    def _untranslate(cls, value):
+        """
+        Untranslates a given object into a dictionary.
+
+        :param value:
+            The object to untranslate.
+        :rtype value:
+            `dict`
+        :return:
+            A dictionary containing the untranslated object.
+        """
+        if isinstance(value, BaseAPIJSONObject):
+            new_value = cls._untranslate(value._response_object)  # pylint:disable=protected-access
+            return new_value
+        if isinstance(value, dict):
+            new_dict = {k: cls._untranslate(v) for (k, v) in six.iteritems(value)}
+            return new_dict
+        if isinstance(value, list):
+            new_list = [cls._untranslate(entry) for entry in value]
+            return new_list
+
+        return copy.copy(value)
+
     @property
     def response_object(self):
         """
@@ -152,4 +177,4 @@ class BaseAPIJSONObject(object):
         :rtype:
             `dict`
         """
-        return Translator._default_translator.untranslate(self)  # pylint:disable=protected-access
+        return self._untranslate(self)  # pylint:disable=protected-access

@@ -193,28 +193,4 @@ class Translator(ChainMap):
 
         return translated_obj
 
-    def untranslate(self, value):
-        """
-        Untranslates a given object into a dictionary.
-
-        :param value:
-            The object to untranslate.
-        :rtype value:
-            `dict`
-        :return:
-            A dictionary containing the untranslated object.
-        """
-        if hasattr(value, '_response_object') and isinstance(value._response_object, dict):  # pylint:disable=protected-access
-            new_value = self.untranslate(value._response_object)  # pylint:disable=protected-access
-            return new_value
-        if isinstance(value, dict):
-            new_dict = {k: self.untranslate(v) for (k, v) in six.iteritems(value)}
-            return new_dict
-        if isinstance(value, list):
-            new_list = [self.untranslate(entry) for entry in value]
-            return new_list
-
-        return copy.copy(value)
-
-
 Translator._default_translator = Translator(extend_default_translator=False)  # pylint:disable=protected-access
