@@ -24,7 +24,7 @@ def test_get_storage_policy_assignments(test_storage_policy_assignment, mock_use
         'type': test_storage_policy_assignment.object_type,
         'id': test_storage_policy_assignment.object_id,
         'assigned_to': {
-            'type': mock_user.object_type,x
+            'type': mock_user.object_type,
             'id': mock_user.object_id,
         },
     }

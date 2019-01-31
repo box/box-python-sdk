@@ -153,20 +153,4 @@ class BaseAPIJSONObject(object):
         :rtype:
             `dict`
         """
-        def untranslate(value):
-            if isinstance(value, BaseAPIJSONObject):
-                copied_object = value.response_object
-                return copied_object.response_object
-            if isinstance(value, dict):
-                return untranslate(value)
-            if isinstance(value, list):
-                copied_object = copy.copy(value.pop(0))
-                values = copied_object.values()
-                return values.response_object
-            else:
-                return value
-
-        copied_object = copy.copy(self._response_object)
-        for key, value in copied_object.items():
-            copied_object[key] = untranslate(value)
-        return copied_object
+        return Translator._default_translator.untranslate(self)
