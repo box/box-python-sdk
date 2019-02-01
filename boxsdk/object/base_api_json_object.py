@@ -145,6 +145,27 @@ class BaseAPIJSONObject(object):
         """
         return cls._untranslated_fields
 
+    @classmethod
+    def _untranslate(cls, value):
+        """
+        Untranslates a given object into a dictionary.
+
+        :param value:
+            The object to untranslate.
+        :rtype value:
+            `dict`
+        :return:
+            A dictionary containing the untranslated object.
+        """
+        if isinstance(value, BaseAPIJSONObject):
+            return cls._untranslate(value._response_object)  # pylint:disable=protected-access
+        if isinstance(value, dict):
+            return {k: cls._untranslate(v) for (k, v) in six.iteritems(value)}
+        if isinstance(value, list):
+            return [cls._untranslate(entry) for entry in value]
+
+        return copy.copy(value)
+
     @property
     def response_object(self):
         """
@@ -153,4 +174,4 @@ class BaseAPIJSONObject(object):
         :rtype:
             `dict`
         """
-        return copy.deepcopy(self._response_object)
+        return self._untranslate(self)
