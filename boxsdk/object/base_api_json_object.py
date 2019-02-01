@@ -158,7 +158,7 @@ class BaseAPIJSONObject(object):
             A dictionary containing the untranslated object.
         """
         if isinstance(value, BaseAPIJSONObject):
-            return cls._untranslate(value._response_object)  #pylint:disable=protected-access
+            return cls._untranslate(value._response_object)  # pylint:disable=protected-access
         if isinstance(value, dict):
             return {k: cls._untranslate(v) for (k, v) in six.iteritems(value)}
         if isinstance(value, list):
