@@ -56,7 +56,7 @@ class PyTest(TestCommand):
 def main():
     base_dir = dirname(__file__)
     install_requires = [
-        'attrs>=17.0.0',
+        'attrs>=17.3.0',
         'requests>=2.4.3',
         'requests-toolbelt>=0.4.0, <0.9.0',
         'six>=1.9.0',
