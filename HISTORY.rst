@@ -10,9 +10,9 @@ Release History
 
 - Added ability for user to `chunk upload files <https://github.com/box/box-python-sdk/blob/master/docs/usage/files.md#chunked-upload>`_
   and resume uploads for interrupted uploads.
-- Added ability to `verify webhook message<https://github.com/box/box-python-sdk/blob/master/docs/usage/webhook.md#validate-webhook-message>`_.
-- Added ability for user to add metadata classification to `files<https://github.com/box/box-python-sdk/blob/master/docs/usage/files.md#set-a-classification>`_ 
-  and `folders<https://github.com/box/box-python-sdk/blob/master/docs/usage/folders.md#set-a-classification>`_.
+- Added ability to `verify webhook message <https://github.com/box/box-python-sdk/blob/master/docs/usage/webhook.md#validate-webhook-message>`_.
+- Added ability for user to add metadata classification to `files <https://github.com/box/box-python-sdk/blob/master/docs/usage/files.md#set-a-classification>`_ 
+  and `folders <https://github.com/box/box-python-sdk/blob/master/docs/usage/folders.md#set-a-classification>`_.
 - Bugfix where calling  ``.response_object()`` method on an API object could throw.
 
 2.0.0
