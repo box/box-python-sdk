@@ -8,10 +8,11 @@ Release History
 
 **Features**
 
-- Added ability for user to chunk upload files and resume uploads for interrupted uploads.
+- Added ability for user to `chunk upload files <https://github.com/box/box-python-sdk/blob/master/docs/usage/files.md#chunked-upload>` 
+  and resume uploads for interrupted uploads.
 - Added ability to verify webhook message.
 - Added ability for user to add metadata classification to files and folders.
-- Bugfix where calling  _response_object method on an api object could throw.
+- Bugfix where calling  ``.response_object()`` method on an API object could throw.
 
 2.0.0
 ++++++++++++++++
