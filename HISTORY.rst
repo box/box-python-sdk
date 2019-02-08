@@ -3,6 +3,16 @@
 Release History
 ---------------
 
+2.1.0 (2019-02-07)
+++++++++++++++++++
+
+**Features**
+
+- Added ability for user to chunk upload files and resume uploads for interrupted uploads.
+- Added ability to verify webhook message.
+- Added ability for user to add metadata classification to files and folders.
+- Bugfix where calling  _response_object method on an api object could throw.
+
 2.0.0
 ++++++++++++++++
 
