@@ -8,7 +8,7 @@ Release History
 
 **Features**
 
-- Added ability for user to `chunk upload files <https://github.com/box/box-python-sdk/blob/master/docs/usage/files.md#chunked-upload>` 
+- Added ability for user to `chunk upload files <https://github.com/box/box-python-sdk/blob/master/docs/usage/files.md#chunked-upload>`_
   and resume uploads for interrupted uploads.
 - Added ability to verify webhook message.
 - Added ability for user to add metadata classification to files and folders.
