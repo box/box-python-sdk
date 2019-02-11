@@ -6,7 +6,7 @@ from functools import partial
 from io import IOBase
 from numbers import Number
 
-from mock import MagicMock, Mock, PropertyMock, call
+from mock import MagicMock, Mock, PropertyMock, call, patch
 import pytest
 
 from boxsdk.auth.oauth2 import OAuth2
@@ -274,3 +274,20 @@ def test_session_uses_local_config(box_session, mock_network_layer, generic_succ
     box_session.api_config.BASE_API_URL = example_dot_com
     monkeypatch.setattr(API, 'BASE_API_URL', 'https://api.box.com')
     assert example_dot_com in box_session.get_url('foo', 'bar')
+
+
+@pytest.mark.parametrize(
+    'attempt_number,retry_after_header,expected_result',
+    [
+        (1, '', 1.18),
+        (2, '', 2.36),
+        (3, '', 4.72),
+        (4, '', 9.44),
+        (5, '', 18.88),
+    ]
+)
+def test_get_retry_after_time(box_session, mock_network_layer, monkeypatch, attempt_number, retry_after_header, expected_result):
+    with patch('random.uniform', return_value=0.68):
+        retry_time = box_session._get_retry_after_time(attempt_number, retry_after_header)
+    retry_time = round(retry_time, 4)
+    assert retry_time == expected_result
