@@ -22,6 +22,7 @@ import random
 class Session(object):
 
     _retry_randomization_factor = 0.5
+    _retry_base_interval = 1
 
     """
     Box API session. Provides automatic retry of failed requests.
@@ -248,7 +249,7 @@ class Session(object):
         kwargs['default_network_request_kwargs'].update(extra_network_parameters)
         return self.__class__(**kwargs)
 
-    def _get_retry_after_time(self, attempt_number, retry_after_header): #pylint disable=unused-argument
+    def _get_retry_after_time(self, attempt_number, retry_after_header):  # pylint disable=unused-argument
         """
         (2/11/2019): The retry_after_header is no longer used because we switched the calculation method to use
         exponential backoff.
@@ -271,7 +272,7 @@ class Session(object):
         max_randomization = 1 + self._retry_randomization_factor
         randomization = (random.uniform(0, 1) * (max_randomization - min_randomization)) + min_randomization
         exponential = math.pow(2, attempt_number - 1)
-        return exponential * 1 * randomization
+        return exponential * self._retry_base_interval * randomization
 
     @staticmethod
     def _raise_on_unsuccessful_request(network_response, request):
