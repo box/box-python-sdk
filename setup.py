@@ -21,6 +21,7 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: Implementation :: CPython',
     'Programming Language :: Python :: Implementation :: PyPy',
     'Operating System :: OS Independent',
@@ -55,7 +56,7 @@ class PyTest(TestCommand):
 def main():
     base_dir = dirname(__file__)
     install_requires = [
-        'attrs>=16.0.0',
+        'attrs>=17.3.0',
         'requests>=2.4.3',
         'requests-toolbelt>=0.4.0, <0.9.0',
         'six>=1.9.0',

@@ -17,24 +17,24 @@ Subpackages
 Submodules
 ----------
 
-boxsdk.config module
---------------------
+boxsdk\.config module
+---------------------
 
 .. automodule:: boxsdk.config
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.exception module
------------------------
+boxsdk\.exception module
+------------------------
 
 .. automodule:: boxsdk.exception
     :members:
     :undoc-members:
     :show-inheritance:
 
-boxsdk.version module
----------------------
+boxsdk\.version module
+----------------------
 
 .. automodule:: boxsdk.version
     :members:
