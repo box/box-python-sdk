@@ -13,6 +13,7 @@ class API(object):
     UPLOAD_URL = 'https://upload.box.com/api/2.0'
     OAUTH2_API_URL = 'https://api.box.com/oauth2'  # <https://developers.box.com/docs/#oauth-2>
     OAUTH2_AUTHORIZE_URL = 'https://account.box.com/api/oauth2/authorize'  # <https://developers.box.com/docs/#oauth-2-authorize>
+    MAX_RETRY_ATTEMPTS = 5
 
 
 class Client(object):

@@ -15,8 +15,8 @@ from ..util.multipart_stream import MultipartStream
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
-import math
 import random
+import math
 
 
 class Session(object):
@@ -249,7 +249,8 @@ class Session(object):
         kwargs['default_network_request_kwargs'].update(extra_network_parameters)
         return self.__class__(**kwargs)
 
-    def _get_retry_after_time(self, attempt_number, retry_after_header):  # pylint disable=unused-argument
+    # pylint disable=unused-argument
+    def _get_retry_after_time(self, attempt_number, retry_after_header):
         """
         (2/11/2019): The retry_after_header is no longer used because we switched the calculation method to use
         exponential backoff.
@@ -373,7 +374,7 @@ class Session(object):
         while True:
             retry = self._get_retry_request_callable(network_response, attempt_number, request)
 
-            if retry is None or attempt_number >= 5:
+            if retry is None or attempt_number >= API.MAX_RETRY_ATTEMPTS:
                 break
 
             attempt_number += 1
