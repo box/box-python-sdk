@@ -1,5 +1,8 @@
 # coding: utf-8
 
+import random
+import math
+
 from __future__ import unicode_literals, absolute_import
 
 from functools import partial
@@ -14,9 +17,6 @@ from ..util.json import is_json_response
 from ..util.multipart_stream import MultipartStream
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
-
-import random
-import math
 
 
 class Session(object):

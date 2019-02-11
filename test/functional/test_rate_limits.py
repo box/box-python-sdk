@@ -7,4 +7,4 @@ def test_too_many_requests_causes_retry(box_client, mock_box, monkeypatch):
     monkeypatch.setattr(mock_box, 'RATE_LIMIT_THRESHOLD', 1)
     box_client.folder('0').get()
     box_client.folder('0').get()
-    assert len(mock_box.requests) == 8  # 3 auth requests, 2 real requests, and a retry
+    assert len(mock_box.requests) == 7  # 3 auth requests, 2 real requests, and a retry
