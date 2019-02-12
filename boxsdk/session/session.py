@@ -255,6 +255,8 @@ class Session(object):
         (2/11/2019): The retry_after_header is no longer used because we switched the calculation method to use
         exponential backoff.
 
+        We are using the attempt number that failed to calculate the retry time for the next retry attempt.
+
         Get the amount of time to wait before retrying the API request.
 
         If the Retry-After header is supplied, use it; otherwise, use exponential backoff
@@ -272,7 +274,7 @@ class Session(object):
         min_randomization = 1 - self._retry_randomization_factor
         max_randomization = 1 + self._retry_randomization_factor
         randomization = (random.uniform(0, 1) * (max_randomization - min_randomization)) + min_randomization
-        exponential = math.pow(2, attempt_number - 1)
+        exponential = math.pow(2, attempt_number)
         return exponential * self._retry_base_interval * randomization
 
     @staticmethod
