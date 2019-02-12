@@ -6,7 +6,7 @@ from functools import partial
 from io import IOBase
 from numbers import Number
 
-from mock import MagicMock, Mock, PropertyMock, call
+from mock import MagicMock, Mock, PropertyMock, call, patch
 import pytest
 
 from boxsdk.auth.oauth2 import OAuth2
@@ -145,11 +145,12 @@ def test_box_session_retries_response_after_retry_after(
     mock_network_layer.request.side_effect = [retry_after_response, generic_successful_response]
     mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
 
-    box_response = test_method(box_session, url=test_url)
+    with patch('random.uniform', return_value=0.68):
+        box_response = test_method(box_session, url=test_url)
     assert box_response.status_code == 200
     assert len(mock_network_layer.retry_after.call_args_list) == 1
     assert isinstance(mock_network_layer.retry_after.call_args[0][0], Number)
-    assert mock_network_layer.retry_after.call_args[0][0] == float(retry_after_response.headers['Retry-After'])
+    assert round(mock_network_layer.retry_after.call_args[0][0], 4) == 1.18
 
 
 @pytest.mark.parametrize('test_method', [
@@ -172,7 +173,8 @@ def test_box_session_retries_request_after_server_error(
     mock_network_layer.request.side_effect = [server_error_response, server_error_response, generic_successful_response]
     mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
 
-    box_response = test_method(box_session, url=test_url)
+    with patch('random.uniform', return_value=0.68):
+        box_response = test_method(box_session, url=test_url)
     assert box_response.status_code == 200
     assert box_response.json() == generic_successful_response.json()
     assert box_response.ok == generic_successful_response.ok
@@ -180,8 +182,8 @@ def test_box_session_retries_request_after_server_error(
     assert len(mock_network_layer.retry_after.call_args_list) == 2
     assert isinstance(mock_network_layer.retry_after.call_args_list[0][0][0], Number)
     assert isinstance(mock_network_layer.retry_after.call_args_list[1][0][0], Number)
-    assert mock_network_layer.retry_after.call_args_list[0][0][0] == 1
-    assert mock_network_layer.retry_after.call_args_list[1][0][0] == 2
+    assert round(mock_network_layer.retry_after.call_args_list[0][0][0], 4) == 1.18
+    assert round(mock_network_layer.retry_after.call_args_list[1][0][0], 4) == 2.36
 
 
 def test_box_session_seeks_file_after_retry(box_session, mock_network_layer, server_error_response, generic_successful_response, test_url):
@@ -274,3 +276,20 @@ def test_session_uses_local_config(box_session, mock_network_layer, generic_succ
     box_session.api_config.BASE_API_URL = example_dot_com
     monkeypatch.setattr(API, 'BASE_API_URL', 'https://api.box.com')
     assert example_dot_com in box_session.get_url('foo', 'bar')
+
+
+@pytest.mark.parametrize(
+    'attempt_number,retry_after_header,expected_result',
+    [
+        (0, '', 1.18),
+        (1, '', 2.36),
+        (2, '', 4.72),
+        (3, '', 9.44),
+        (4, '', 18.88),
+    ]
+)
+def test_get_retry_after_time(box_session, attempt_number, retry_after_header, expected_result):
+    with patch('random.uniform', return_value=0.68):
+        retry_time = box_session._get_retry_after_time(attempt_number, retry_after_header)  # pylint: disable=protected-access
+    retry_time = round(retry_time, 4)
+    assert retry_time == expected_result

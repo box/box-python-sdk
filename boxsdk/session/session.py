@@ -2,6 +2,9 @@
 
 from __future__ import unicode_literals, absolute_import
 
+import random
+import math
+
 from functools import partial
 from logging import getLogger
 
@@ -17,6 +20,10 @@ from ..util.translator import Translator
 
 
 class Session(object):
+
+    _retry_randomization_factor = 0.5
+    _retry_base_interval = 1
+
     """
     Box API session. Provides automatic retry of failed requests.
     """
@@ -242,9 +249,13 @@ class Session(object):
         kwargs['default_network_request_kwargs'].update(extra_network_parameters)
         return self.__class__(**kwargs)
 
+    # We updated our retry strategy to use exponential backoff instead of the header returned from the API response.
+    # This is something we can remove in latter major bumps.
+    # pylint: disable=unused-argument
     def _get_retry_after_time(self, attempt_number, retry_after_header):
         """
-        Get the amount of time to wait before retrying the API request.
+        Get the amount of time to wait before retrying the API request, using the attempt number that failed to
+        calculate the retry time for the next retry attempt.
 
         If the Retry-After header is supplied, use it; otherwise, use exponential backoff
         For 202 Accepted (thumbnail or file not ready) and 429 (too many requests), retry later, after a delay
@@ -258,10 +269,11 @@ class Session(object):
         :return:                        Number of seconds to wait before retrying.
         :rtype:                         `Number`
         """
-        # pylint:disable=no-self-use
-        if retry_after_header is not None:
-            return float(retry_after_header)
-        return 2 ** attempt_number
+        min_randomization = 1 - self._retry_randomization_factor
+        max_randomization = 1 + self._retry_randomization_factor
+        randomization = (random.uniform(0, 1) * (max_randomization - min_randomization)) + min_randomization
+        exponential = math.pow(2, attempt_number)
+        return exponential * self._retry_base_interval * randomization
 
     @staticmethod
     def _raise_on_unsuccessful_request(network_response, request):
@@ -362,7 +374,7 @@ class Session(object):
         while True:
             retry = self._get_retry_request_callable(network_response, attempt_number, request)
 
-            if retry is None or attempt_number >= 10:
+            if retry is None or attempt_number >= API.MAX_RETRY_ATTEMPTS:
                 break
 
             attempt_number += 1
