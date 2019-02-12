@@ -249,12 +249,9 @@ class Session(object):
         kwargs['default_network_request_kwargs'].update(extra_network_parameters)
         return self.__class__(**kwargs)
 
-    # pylint disable=unused-argument
+    # pylint: disable=unused-argument
     def _get_retry_after_time(self, attempt_number, retry_after_header):
         """
-        (2/11/2019): The retry_after_header is no longer used because we switched the calculation method to use
-        exponential backoff.
-
         We are using the attempt number that failed to calculate the retry time for the next retry attempt.
 
         Get the amount of time to wait before retrying the API request.
