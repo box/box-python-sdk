@@ -254,7 +254,7 @@ class Session(object):
     # pylint: disable=unused-argument
     def _get_retry_after_time(self, attempt_number, retry_after_header):
         """
-        Get the amount of time to wait before retrying the API request, using the attempt number that failed to 
+        Get the amount of time to wait before retrying the API request, using the attempt number that failed to
         calculate the retry time for the next retry attempt.
 
         If the Retry-After header is supplied, use it; otherwise, use exponential backoff
