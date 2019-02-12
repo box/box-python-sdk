@@ -288,7 +288,7 @@ def test_session_uses_local_config(box_session, mock_network_layer, generic_succ
         (4, '', 18.88),
     ]
 )
-def test_get_retry_after_time(box_session, mock_network_layer, monkeypatch, attempt_number, retry_after_header, expected_result):
+def test_get_retry_after_time(box_session, attempt_number, retry_after_header, expected_result):
     with patch('random.uniform', return_value=0.68):
         retry_time = box_session._get_retry_after_time(attempt_number, retry_after_header)
     retry_time = round(retry_time, 4)
