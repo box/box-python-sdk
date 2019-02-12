@@ -150,7 +150,7 @@ def test_box_session_retries_response_after_retry_after(
     assert box_response.status_code == 200
     assert len(mock_network_layer.retry_after.call_args_list) == 1
     assert isinstance(mock_network_layer.retry_after.call_args[0][0], Number)
-    assert mock_network_layer.retry_after.call_args[0][0] == 1.1800000000000002
+    assert round(mock_network_layer.retry_after.call_args[0][0], 4) == 1.18
 
 
 @pytest.mark.parametrize('test_method', [
@@ -182,8 +182,8 @@ def test_box_session_retries_request_after_server_error(
     assert len(mock_network_layer.retry_after.call_args_list) == 2
     assert isinstance(mock_network_layer.retry_after.call_args_list[0][0][0], Number)
     assert isinstance(mock_network_layer.retry_after.call_args_list[1][0][0], Number)
-    assert mock_network_layer.retry_after.call_args_list[0][0][0] == 1.1800000000000002
-    assert mock_network_layer.retry_after.call_args_list[1][0][0] == 2.3600000000000003
+    assert round(mock_network_layer.retry_after.call_args_list[0][0][0], 4) == 1.18
+    assert round(mock_network_layer.retry_after.call_args_list[1][0][0], 4) == 2.36
 
 
 def test_box_session_seeks_file_after_retry(box_session, mock_network_layer, server_error_response, generic_successful_response, test_url):

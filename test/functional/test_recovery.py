@@ -66,7 +66,7 @@ def test_client_stops_retrying_after_10_server_errors(box_client, mock_box, erro
     with pytest.raises(BoxAPIException) as exc_info:
         box_client.folder('0').get()
         assert exc_info.value.status == error_code
-    assert len(mock_box.requests) == 9  # 3 auth requests, 1 try, and 10 retries
+    assert len(mock_box.requests) == 9  # 3 auth requests, 1 try, and 5 retries
 
 
 @pytest.mark.parametrize('chaos', [html, xml])

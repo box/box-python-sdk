@@ -249,12 +249,13 @@ class Session(object):
         kwargs['default_network_request_kwargs'].update(extra_network_parameters)
         return self.__class__(**kwargs)
 
+    # We updated our retry strategy to use exponential backoff instead of the header returned from the API response.
+    # This is something we can remove in latter major bumps.
     # pylint: disable=unused-argument
     def _get_retry_after_time(self, attempt_number, retry_after_header):
         """
-        We are using the attempt number that failed to calculate the retry time for the next retry attempt.
-
-        Get the amount of time to wait before retrying the API request.
+        Get the amount of time to wait before retrying the API request, using the attempt number that failed to 
+        calculate the retry time for the next retry attempt.
 
         If the Retry-After header is supplied, use it; otherwise, use exponential backoff
         For 202 Accepted (thumbnail or file not ready) and 429 (too many requests), retry later, after a delay
