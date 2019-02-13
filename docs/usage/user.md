@@ -10,6 +10,7 @@ Users represent an individual's account on Box.
 - [Get User Information](#get-user-information)
 - [Get the Current User's Information](#get-the-current-users-information)
 - [Create An Enterprise User](#create-an-enterprise-user)
+- [Get the Avatar for a User](#get-the-avatar-for-a-user)
 - [Create An App User](#create-an-app-user)
 - [Update User](#update-user)
 - [Delete User](#delete-user)
@@ -66,6 +67,16 @@ This method returns a new [`User`][user_class] object.
 
 ```python
 new_user = client.create_user('Dummy User', 'user@example.com')
+```
+
+Get the Avatar for a User
+-------------------------
+
+To get the avatar for a user call the [`user.get_avatar()`][get_avatar] method with the [`User`][user_class] 
+object for the user you wish to retrieve an avatar for.
+
+```python
+avatar_url = client.user('33333').avatar_url()
 ```
 
 [create_user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_user

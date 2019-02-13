@@ -178,6 +178,20 @@ class User(BaseObject):
         )
 
     @api_call
+    def get_avatar(self):
+        """
+        Get the avatar for the User.
+
+        :returns:
+            Avatar content as bytes.
+        :rtype:
+            `bytes`
+        """
+        url = self.get_url('avatar')
+        response = self._session.get(url, expect_json_response=False)
+        return response.content
+
+    @api_call
     def delete(self, notify=True, force=False):
         # pylint: disable=arguments-differ
         """

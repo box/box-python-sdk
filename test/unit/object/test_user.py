@@ -200,3 +200,14 @@ def test_get_group_memberships(
         # pylint:disable=protected-access
         assert membership._session == mock_box_session
     mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None})
+
+
+def test_get_user_avatar(mock_user, mock_box_session, mock_content_response):
+    expected_url = mock_user.get_url('avatar')
+    mock_box_session.get.return_value = mock_content_response
+    avatar_content = mock_user.get_avatar()
+    assert avatar_content == mock_content_response.content
+    mock_box_session.get.assert_called_once_with(
+        expected_url,
+        expect_json_response=False,
+    )
