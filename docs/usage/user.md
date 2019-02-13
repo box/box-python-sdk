@@ -75,10 +75,10 @@ Get the Avatar for a User
 -------------------------
 
 To get the avatar for a user call the [`user.get_avatar()`][get_avatar] method with the [`User`][user_class] 
-object for the user you wish to retrieve an avatar for.
+object for the user you wish to retrieve an avatar for. This will return the user avatar to you in bytes.
 
 ```python
-avatar = client.user('33333').avatar_url()
+avatar = client.user('33333').get_avatar()
 ```
 
 [get_avatar]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.user.html#boxsdk.user.User.get_avatar
