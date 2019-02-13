@@ -69,6 +69,8 @@ This method returns a new [`User`][user_class] object.
 new_user = client.create_user('Dummy User', 'user@example.com')
 ```
 
+[create_user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_user
+
 Get the Avatar for a User
 -------------------------
 
@@ -76,10 +78,10 @@ To get the avatar for a user call the [`user.get_avatar()`][get_avatar] method w
 object for the user you wish to retrieve an avatar for.
 
 ```python
-avatar_url = client.user('33333').avatar_url()
+avatar = client.user('33333').avatar_url()
 ```
 
-[create_user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_user
+[get_avatar]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.user.User.get_avatar
 
 Create An App User
 ------------------
