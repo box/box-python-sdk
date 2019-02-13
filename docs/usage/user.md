@@ -81,7 +81,7 @@ object for the user you wish to retrieve an avatar for.
 avatar = client.user('33333').avatar_url()
 ```
 
-[get_avatar]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.user.User.get_avatar
+[get_avatar]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.user.html#boxsdk.user.User.get_avatar
 
 Create An App User
 ------------------
