@@ -7,7 +7,7 @@ Release History
 ++++++++++++++++++
 
 - Added abilty for user to `retrieve an avatar <https://github.com/box/box-python-sdk/blob/master/docs/usage/user.md#get-the-avatar-for-a-user>`_
-  for a user.
+  for an user.
 - Changed retry strategy to use exponential backoff with randomized jitter.
 
 2.1.0 (2019-02-07)
