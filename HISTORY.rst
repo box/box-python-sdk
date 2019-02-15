@@ -3,6 +3,11 @@
 Release History
 ---------------
 
+2.2.1 (2019-02-15)
+++++++++++++++++++
+
+- Fixing an issue in v2.2.0 where package could not be installed.
+
 2.2.0 (2019-02-14)
 ++++++++++++++++++
 
