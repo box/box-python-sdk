@@ -3,7 +3,7 @@
 Release History
 ---------------
 
-2.2.0 (2019-02/14)
+2.2.0 (2019-02-14)
 ++++++++++++++++++
 
 - Added abilty for user to `retrieve an avatar <https://github.com/box/box-python-sdk/blob/master/docs/usage/user.md#get-the-avatar-for-a-user>`_
