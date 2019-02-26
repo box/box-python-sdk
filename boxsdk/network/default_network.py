@@ -54,6 +54,27 @@ class DefaultNetwork(Network):
         time.sleep(delay)
         return request_method(*args, **kwargs)
 
+    def set_proxy(self, proxy_url, auth=None):
+        """
+        Sets basic authenticated and unauthenticated proxies for requests.
+
+        :param proxy_url:
+            The address of the proxy.
+        :type proxy_url:
+            `unicode`
+        :param auth:
+            The username and password for BASIC authenticated proxy.
+        :type auth:
+            `dict`
+        """
+        proxy_string = {}
+        if auth:
+            proxy_string['http'] = 'http://' + auth['user'] + ":" + auth['password'] + "@" + proxy_url['http']
+        else:
+            proxy_string['http'] = proxy_url
+        proxy_string['https']: proxy_url
+        self._session.proxies = proxy_string
+
     @property
     def network_response_constructor(self):
         """Baseclass override.
