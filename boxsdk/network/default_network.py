@@ -26,7 +26,6 @@ class DefaultNetwork(Network):
         super(DefaultNetwork, self).__init__()
         self._session = requests.Session()
         self._logger = getLogger(__name__)
-        self.set_proxy()
 
     def request(self, method, url, access_token, **kwargs):
         """Base class override.
@@ -55,19 +54,6 @@ class DefaultNetwork(Network):
         """
         time.sleep(delay)
         return request_method(*args, **kwargs)
-
-    def set_proxy(self):
-        """
-        Sets basic authenticated and unauthenticated proxies for requests.
-        """
-        proxy_string = {}
-        if API.PROXY_AUTH is not None:
-            proxy_string['http'] = 'http://' + API.PROXY_AUTH['user'] + ":" + API.PROXY_AUTH['password'] + "@" 
-            + API.PROXY_URL
-        else:
-            proxy_string['http'] = API.PROXY_URL
-        proxy_string['https'] = API.PROXY_URL
-        self._session.proxies = proxy_string
 
     @property
     def network_response_constructor(self):

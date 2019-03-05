@@ -424,6 +424,20 @@ class Session(object):
 
     def _get_request_headers(self):
         return self._default_headers.copy()
+    
+    # private function here to construct proxy i.e. authenticated, non-authenticated
+    def _prepare_proxy(self):
+        """
+        Sets basic authenticated and unauthenticated proxies for requests.
+        """
+        proxy = {}
+        if API.PROXY_AUTH is not None:
+            proxy['http'] = 'http://' + API.PROXY_AUTH['user'] + ":" + API.PROXY_AUTH['password'] + "@" 
+            + API.PROXY_URL
+        else:
+            proxy['http'] = API.PROXY_URL
+        proxy['https'] = API.PROXY_URL
+        return proxy
 
     def _send_request(self, request, **kwargs):
         """
@@ -443,6 +457,9 @@ class Session(object):
         files, file_stream_positions = kwargs.get('files'), kwargs.pop('file_stream_positions')
         request_kwargs = self._default_network_request_kwargs.copy()
         request_kwargs.update(kwargs)
+        proxy_dict = self._prepare_proxy()
+        request_kwargs.update({'proxies': proxy_dict})
+        # attached ('proxies', proxy) here
         if files and file_stream_positions:
             for name, position in file_stream_positions.items():
                 files[name][1].seek(position)
