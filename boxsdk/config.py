@@ -14,8 +14,11 @@ class API(object):
     OAUTH2_API_URL = 'https://api.box.com/oauth2'  # <https://developers.box.com/docs/#oauth-2>
     OAUTH2_AUTHORIZE_URL = 'https://account.box.com/api/oauth2/authorize'  # <https://developers.box.com/docs/#oauth-2-authorize>
     MAX_RETRY_ATTEMPTS = 5
-    PROXY_URL = None
-    PROXY_AUTH = None
+    PROXY_URL = ''
+    PROXY_AUTH = {
+        'user': None,
+        'password': None,
+    }
 
 
 class Client(object):

@@ -435,9 +435,8 @@ class Session(object):
             `dict`
         """
         proxy = {}
-        if API.PROXY_AUTH is not None:
-            proxy['http'] = 'http://' + API.PROXY_AUTH['user'] + ":" + API.PROXY_AUTH['password'] + "@" 
-            + API.PROXY_URL
+        if API.PROXY_AUTH['user'] is not None and API.PROXY_AUTH['password'] is not None:
+            proxy['http'] = 'http://' + API.PROXY_AUTH['user'] + ":" + API.PROXY_AUTH['password'] + "@" + API.PROXY_URL
         else:
             proxy['http'] = API.PROXY_URL
         proxy['https'] = API.PROXY_URL
