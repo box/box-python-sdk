@@ -10,12 +10,13 @@ import time
 import requests
 from six import text_type, PY2
 
+from boxsdk.config import API
 from .network_interface import Network, NetworkResponse
 from ..util.log import sanitize_dictionary
 
 
 class DefaultNetwork(Network):
-    """Implementats the network interface using the requests library."""
+    """Implements the network interface using the requests library."""
 
     LOGGER_NAME = 'boxsdk.network'
     REQUEST_FORMAT = '\x1b[36m%(method)s %(url)s %(request_kwargs)s\x1b[0m'
@@ -25,6 +26,7 @@ class DefaultNetwork(Network):
         super(DefaultNetwork, self).__init__()
         self._session = requests.Session()
         self._logger = getLogger(__name__)
+        self.set_proxy()
 
     def request(self, method, url, access_token, **kwargs):
         """Base class override.
@@ -54,25 +56,17 @@ class DefaultNetwork(Network):
         time.sleep(delay)
         return request_method(*args, **kwargs)
 
-    def set_proxy(self, proxy_url, auth=None):
+    def set_proxy(self):
         """
         Sets basic authenticated and unauthenticated proxies for requests.
-
-        :param proxy_url:
-            The address of the proxy.
-        :type proxy_url:
-            `unicode`
-        :param auth:
-            The username and password for BASIC authenticated proxy.
-        :type auth:
-            `dict`
         """
         proxy_string = {}
-        if auth:
-            proxy_string['http'] = 'http://' + auth['user'] + ":" + auth['password'] + "@" + proxy_url['http']
+        if API.PROXY_AUTH is not None:
+            proxy_string['http'] = 'http://' + API.PROXY_AUTH['user'] + ":" + API.PROXY_AUTH['password'] + "@" 
+            + API.PROXY_URL
         else:
-            proxy_string['http'] = proxy_url
-        proxy_string['https']: proxy_url
+            proxy_string['http'] = API.PROXY_URL
+        proxy_string['https'] = API.PROXY_URL
         self._session.proxies = proxy_string
 
     @property
