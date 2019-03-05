@@ -462,7 +462,8 @@ class Session(object):
         request_kwargs = self._default_network_request_kwargs.copy()
         request_kwargs.update(kwargs)
         proxy_dict = self._prepare_proxy()
-        request_kwargs.update({'proxies': proxy_dict})
+        if proxy_dict['http'] is not None:
+            request_kwargs.update({'proxies': proxy_dict})
         if files and file_stream_positions:
             for name, position in file_stream_positions.items():
                 files[name][1].seek(position)
