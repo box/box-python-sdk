@@ -10,7 +10,6 @@ import time
 import requests
 from six import text_type, PY2
 
-from boxsdk.config import API
 from .network_interface import Network, NetworkResponse
 from ..util.log import sanitize_dictionary
 
