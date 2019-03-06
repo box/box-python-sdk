@@ -435,8 +435,8 @@ class Session(object):
             `dict`
         """
         proxy = {}
-        if API.PROXY_AUTH['user'] is not None and API.PROXY_AUTH['password'] is not None:
-            proxy['http'] = 'http://' + API.PROXY_AUTH['user'] + ":" + API.PROXY_AUTH['password'] + "@" + API.PROXY_URL
+        if API.PROXY_AUTH:
+            proxy['http'] = 'http://' + API.PROXY_AUTH.get('user') + ":" + API.PROXY_AUTH.get('password') + "@" + API.PROXY_URL
         else:
             proxy['http'] = API.PROXY_URL
         proxy['https'] = API.PROXY_URL
@@ -461,7 +461,7 @@ class Session(object):
         request_kwargs = self._default_network_request_kwargs.copy()
         request_kwargs.update(kwargs)
         proxy_dict = self._prepare_proxy()
-        if proxy_dict['http'] is not None:
+        if proxy_dict.get('http') is not None:
             request_kwargs.update({'proxies': proxy_dict})
         if files and file_stream_positions:
             for name, position in file_stream_positions.items():
