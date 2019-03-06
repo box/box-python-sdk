@@ -425,6 +425,7 @@ class Session(object):
     def _get_request_headers(self):
         return self._default_headers.copy()
 
+    @staticmethod
     def _prepare_proxy(self):
         """
         Prepares basic authenticated and unauthenticated proxies for requests.
