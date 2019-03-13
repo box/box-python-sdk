@@ -247,6 +247,7 @@ class Folder(Item):
             self,
             file_stream,
             file_name,
+            file_description,
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
@@ -262,6 +263,10 @@ class Folder(Item):
         :param file_name:
             The name to give the file on Box.
         :type file_name:
+            `unicode`
+        :param file_description:
+            The description to give the file on Box.
+        :type file_description:
             `unicode`
         :param preflight_check:
             If specified, preflight check will be performed before actually uploading the file.
@@ -298,6 +303,7 @@ class Folder(Item):
         data = {'attributes': json.dumps({
             'name': file_name,
             'parent': {'id': self._object_id},
+            'description': file_description,
         })}
         files = {
             'file': ('unused', file_stream),
@@ -315,6 +321,7 @@ class Folder(Item):
             self,
             file_path=None,
             file_name=None,
+            file_description=None,
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
@@ -331,6 +338,10 @@ class Folder(Item):
         :param file_name:
             The name to give the file on Box. If None, then use the leaf name of file_path
         :type file_name:
+            `unicode`
+        :param file_description:
+            The description to give the file on Box. If None, then use file description will be None.
+        :type file_description:
             `unicode`
         :param preflight_check:
             If specified, preflight check will be performed before actually uploading the file.
@@ -361,6 +372,7 @@ class Folder(Item):
             return self.upload_stream(
                 file_stream,
                 file_name,
+                file_description,
                 preflight_check,
                 preflight_expected_size=preflight_expected_size,
                 upload_using_accelerator=upload_using_accelerator,
