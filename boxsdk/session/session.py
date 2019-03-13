@@ -449,7 +449,7 @@ class Session(object):
             host = self._network_config.PROXY_URL
             port = host.split('//')[1]
             # pylint: disable=C0301
-            proxy['http'] = 'http://' + self._network_config.PROXY_AUTH.get('user') + ":" + self._network_config.PROXY_AUTH.get('password') + "@" + port
+            proxy['http'] = 'http://' + self._network_config.PROXY_AUTH.get('user', None) + ":" + self._network_config.PROXY_AUTH.get('password', None) + "@" + port
             proxy['https'] = proxy['http']
         else:
             proxy['http'] = self._network_config.PROXY_URL
@@ -475,7 +475,7 @@ class Session(object):
         request_kwargs = self._default_network_request_kwargs.copy()
         request_kwargs.update(kwargs)
         proxy_dict = self._prepare_proxy()
-        if proxy_dict.get('http') is not None:
+        if proxy_dict.get('http', None) is not None:
             request_kwargs.update({'proxies': proxy_dict})
         if files and file_stream_positions:
             for name, position in file_stream_positions.items():

@@ -14,8 +14,6 @@ class API(object):
     OAUTH2_API_URL = 'https://api.box.com/oauth2'  # <https://developers.box.com/docs/#oauth-2>
     OAUTH2_AUTHORIZE_URL = 'https://account.box.com/api/oauth2/authorize'  # <https://developers.box.com/docs/#oauth-2-authorize>
     MAX_RETRY_ATTEMPTS = 5
-    PROXY_URL = 'http://127.0.0.1:8080'
-    PROXY_AUTH = None
 
 class Client(object):
     """Configuration object containing the user agent string."""
