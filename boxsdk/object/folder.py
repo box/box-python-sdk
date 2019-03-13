@@ -247,7 +247,7 @@ class Folder(Item):
             self,
             file_stream,
             file_name,
-            file_description,
+            file_description=None,
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
@@ -340,7 +340,7 @@ class Folder(Item):
         :type file_name:
             `unicode`
         :param file_description:
-            The description to give the file on Box. If None, then use file description will be None.
+            The description to give the file on Box. If None, then no description will be set.
         :type file_description:
             `unicode`
         :param preflight_check:

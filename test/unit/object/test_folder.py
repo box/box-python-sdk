@@ -223,6 +223,7 @@ def test_upload(
         upload_using_accelerator_fails,
         is_stream,
 ):
+    file_description = 'Test File Description'
     expected_url = '{0}/files/content'.format(API.UPLOAD_URL)
     if upload_using_accelerator:
         if upload_using_accelerator_fails:
@@ -238,7 +239,7 @@ def test_upload(
         new_file = test_folder.upload_stream(
             mock_file_stream,
             basename(mock_file_path),
-            'Test File Description',
+            file_description,
             upload_using_accelerator=upload_using_accelerator,
         )
     else:
@@ -247,18 +248,18 @@ def test_upload(
         with patch('boxsdk.object.folder.open', mock_file, create=True):
             new_file = test_folder.upload(
                 mock_file_path,
-                file_description='Test File Description',
+                file_description=file_description,
                 upload_using_accelerator=upload_using_accelerator,
             )
 
     mock_files = {'file': ('unused', mock_file_stream)}
-    data = {'attributes': json.dumps({'name': basename(mock_file_path), 'parent': {'id': mock_object_id}, 'description': 'Test File Description'})}
+    data = {'attributes': json.dumps({'name': basename(mock_file_path), 'parent': {'id': mock_object_id}, 'description': file_description})}
     mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=False, files=mock_files, data=data)
     assert isinstance(new_file, File)
     assert new_file.object_id == mock_object_id
     assert 'id' in new_file
     assert new_file['id'] == mock_object_id
-    assert new_file.description == 'Test File Description'
+    assert new_file.description == file_description
     assert not hasattr(new_file, 'entries')
     assert 'entries' not in new_file
 
