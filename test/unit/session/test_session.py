@@ -302,7 +302,7 @@ def test_basic_prepare_proxy(box_session, monkeypatch):
         'https': proxy_url,
     }
     monkeypatch.setattr(Network, 'PROXY_URL', 'http://127.0.0.1:8080')
-    proxy = box_session._prepare_proxy()
+    proxy = box_session._prepare_proxy() # pylint:disable=protected-access
     assert proxy == proxy_dict
 
 
@@ -316,7 +316,7 @@ def test_prepare_authenticated_proxy(box_session, monkeypatch):
         'http': 'http://test_user:test_password@127.0.0.1:8080',
         'https': 'http://test_user:test_password@127.0.0.1:8080',
     }
-    monkeypatch.setattr(Network, 'PROXY_URL', 'http://127.0.0.1:8080')
+    monkeypatch.setattr(Network, 'PROXY_URL', proxy_url)
     monkeypatch.setattr(Network, 'PROXY_AUTH', proxy_auth_dict)
-    proxy = box_session._prepare_proxy()
+    proxy = box_session._prepare_proxy() # pylint:disable=protected-access
     assert proxy == expected_proxy_auth_dict

@@ -15,6 +15,7 @@ class API(object):
     OAUTH2_AUTHORIZE_URL = 'https://account.box.com/api/oauth2/authorize'  # <https://developers.box.com/docs/#oauth-2-authorize>
     MAX_RETRY_ATTEMPTS = 5
 
+
 class Client(object):
     """Configuration object containing the user agent string."""
     VERSION = version.__version__
@@ -25,6 +26,7 @@ class Client(object):
         py_version.minor,
         py_version.micro,
     )
+
 
 class Network(object):
     PROXY_URL = None
