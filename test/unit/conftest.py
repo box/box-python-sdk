@@ -8,7 +8,7 @@ import json
 from mock import Mock, MagicMock
 import pytest
 
-from boxsdk.config import API, Client
+from boxsdk.config import API, Client, Network
 from boxsdk.network import default_network
 from boxsdk.network.default_network import DefaultNetworkResponse, DefaultNetwork
 from boxsdk.session.box_response import BoxResponse
@@ -50,6 +50,7 @@ def mock_box_session(translator):
     # pylint:disable=protected-access
     mock_session._api_config = mock_session.api_config = API()
     mock_session._client_config = mock_session.client_config = Client()
+    mock_session._network_config = mock_session.network_config = Network()
     # pylint:enable=protected-access
     mock_session.get_url.side_effect = lambda *args, **kwargs: Session.get_url(mock_session, *args, **kwargs)
     mock_session.translator = translator
@@ -62,6 +63,7 @@ def mock_box_session_2(translator):
     # pylint:disable=protected-access
     mock_session._api_config = API()
     mock_session._client_config = Client()
+    mock_session._network_config = Network()
     # pylint:enable=protected-access
     mock_session.get_url.side_effect = lambda *args, **kwargs: Session.get_url(mock_session, *args, **kwargs)
     mock_session.translator = translator

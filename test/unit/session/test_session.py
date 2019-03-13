@@ -10,7 +10,7 @@ from mock import MagicMock, Mock, PropertyMock, call, patch
 import pytest
 
 from boxsdk.auth.oauth2 import OAuth2
-from boxsdk.config import API
+from boxsdk.config import API, Network
 from boxsdk.exception import BoxAPIException
 from boxsdk.network.default_network import DefaultNetwork, DefaultNetworkResponse
 from boxsdk.session.box_response import BoxResponse
@@ -293,3 +293,30 @@ def test_get_retry_after_time(box_session, attempt_number, retry_after_header, e
         retry_time = box_session._get_retry_after_time(attempt_number, retry_after_header)  # pylint: disable=protected-access
     retry_time = round(retry_time, 4)
     assert retry_time == expected_result
+
+
+def test_basic_prepare_proxy(box_session, monkeypatch):
+    proxy_url = 'http://127.0.0.1:8080'
+    proxy_dict = {
+        'http': proxy_url,
+        'https': proxy_url,
+    }
+    monkeypatch.setattr(Network, 'PROXY_URL', 'http://127.0.0.1:8080')
+    proxy = box_session._prepare_proxy()
+    assert proxy == proxy_dict
+
+
+def test_prepare_authenticated_proxy(box_session, monkeypatch):
+    proxy_url = 'http://127.0.0.1:8080'
+    proxy_auth_dict = {
+        'user': 'test_user',
+        'password': 'test_password',
+    }
+    expected_proxy_auth_dict = {
+        'http': 'http://test_user:test_password@127.0.0.1:8080',
+        'https': 'http://test_user:test_password@127.0.0.1:8080',
+    }
+    monkeypatch.setattr(Network, 'PROXY_URL', 'http://127.0.0.1:8080')
+    monkeypatch.setattr(Network, 'PROXY_AUTH', proxy_auth_dict)
+    proxy = box_session._prepare_proxy()
+    assert proxy == expected_proxy_auth_dict

@@ -10,7 +10,7 @@ from logging import getLogger
 
 from .box_request import BoxRequest as _BoxRequest
 from .box_response import BoxResponse as _BoxResponse
-from ..config import API, Client
+from ..config import API, Client, Network
 from ..exception import BoxAPIException
 from ..network.default_network import DefaultNetwork
 from ..util.json import is_json_response
@@ -35,6 +35,7 @@ class Session(object):
             default_network_request_kwargs=None,
             api_config=None,
             client_config=None,
+            network_config=None,
     ):
         """
         :param network_layer:
@@ -69,6 +70,7 @@ class Session(object):
             translator = Translator(extend_default_translator=True, new_child=True)
         self._api_config = api_config or API()
         self._client_config = client_config or Client()
+        self._network_config = network_config or Network()
         super(Session, self).__init__()
         self._network_layer = network_layer or DefaultNetwork()
         self._default_headers = {
@@ -183,6 +185,14 @@ class Session(object):
         :rtype:     :class:`Client`
         """
         return self._client_config
+
+    @property
+    def network_config(self):
+        """
+
+        :rtype:     :class:`Network`
+        """
+        return self._network_config
 
     def get_url(self, endpoint, *args):
         """
@@ -425,8 +435,7 @@ class Session(object):
     def _get_request_headers(self):
         return self._default_headers.copy()
 
-    @staticmethod
-    def _prepare_proxy():
+    def _prepare_proxy(self):
         """
         Prepares basic authenticated and unauthenticated proxies for requests.
 
@@ -436,11 +445,15 @@ class Session(object):
             `dict`
         """
         proxy = {}
-        if API.PROXY_AUTH:
-            proxy['http'] = 'http://' + API.PROXY_AUTH.get('user') + ":" + API.PROXY_AUTH.get('password') + "@" + API.PROXY_URL
+        if self._network_config.PROXY_AUTH and self._network_config.PROXY_URL:
+            host = self._network_config.PROXY_URL
+            port = host.split('//')[1]
+            # pylint: disable=C0301
+            proxy['http'] = 'http://' + self._network_config.PROXY_AUTH.get('user') + ":" + self._network_config.PROXY_AUTH.get('password') + "@" + port
+            proxy['https'] = proxy['http']
         else:
-            proxy['http'] = API.PROXY_URL
-        proxy['https'] = API.PROXY_URL
+            proxy['http'] = self._network_config.PROXY_URL
+            proxy['https'] = proxy['http']
         return proxy
 
     def _send_request(self, request, **kwargs):
