@@ -3,6 +3,11 @@
 Release History
 ---------------
 
+2.2.2 (2019-03-14)
+++++++++++++++++++
+
+- Updated requests-toolbelt dependency restriction.
+
 2.2.1 (2019-02-15)
 ++++++++++++++++++
 
