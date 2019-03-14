@@ -302,7 +302,7 @@ def test_basic_prepare_proxy(box_session, monkeypatch):
         'https': proxy_url,
     }
     monkeypatch.setattr(Network, 'PROXY_URL', 'http://127.0.0.1:8080')
-    proxy = box_session._prepare_proxy() # pylint:disable=protected-access
+    proxy = box_session._prepare_proxy()  # pylint:disable=protected-access
     assert proxy == proxy_dict
 
 
@@ -318,5 +318,30 @@ def test_prepare_authenticated_proxy(box_session, monkeypatch):
     }
     monkeypatch.setattr(Network, 'PROXY_URL', proxy_url)
     monkeypatch.setattr(Network, 'PROXY_AUTH', proxy_auth_dict)
-    proxy = box_session._prepare_proxy() # pylint:disable=protected-access
+    proxy = box_session._prepare_proxy()  # pylint:disable=protected-access
     assert proxy == expected_proxy_auth_dict
+
+
+def test_proxy(box_session, monkeypatch, mock_network_layer, generic_successful_response):
+    proxy_url = 'http://127.0.0.1:8080'
+    expected_headers = {
+        'User-Agent': 'box-python-sdk-2.2.1',
+        'X-Box-UA': 'agent=box-python-sdk/2.2.1; env=python/3.7.2',
+        'Authorization': 'Bearer fake_access_token',
+    }
+    expected_proxy = {
+        'http': proxy_url,
+        'https': proxy_url,
+    }
+
+    proxy_dict = {
+        'proxies': {
+            'http': proxy_url,
+            'https': proxy_url,
+        },
+    }
+
+    monkeypatch.setattr(Network, 'PROXY_URL', 'http://127.0.0.1:8080')
+    mock_network_layer.request.side_effect = [generic_successful_response]
+    box_session.request('GET', 'http://example.com')
+    mock_network_layer.request.assert_called_once_with('GET', 'http://example.com', access_token='fake_access_token', headers=expected_headers, proxies={'http': 'http://127.0.0.1:8080', 'https': 'http://127.0.0.1:8080'})
