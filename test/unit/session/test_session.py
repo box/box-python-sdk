@@ -6,7 +6,7 @@ from functools import partial
 from io import IOBase
 from numbers import Number
 
-from mock import MagicMock, Mock, PropertyMock, call, patch
+from mock import MagicMock, Mock, PropertyMock, call, patch, ANY
 import pytest
 
 from boxsdk.auth.oauth2 import OAuth2
@@ -304,12 +304,6 @@ def test_get_retry_after_time(box_session, attempt_number, retry_after_header, e
     ]
 )
 def test_proxy(box_session, monkeypatch, mock_network_layer, generic_successful_response, test_proxy_url, test_proxy_auth, expected_proxy_dict):  # pylint: disable=redefined-outer-name
-    expected_headers = {
-        'User-Agent': 'box-python-sdk-2.2.2',
-        'X-Box-UA': 'agent=box-python-sdk/2.2.2; env=python/3.7.2',
-        'Authorization': 'Bearer fake_access_token',
-    }
-
     monkeypatch.setattr(Network, 'PROXY_URL', test_proxy_url)
     monkeypatch.setattr(Network, 'PROXY_AUTH', test_proxy_auth)
     mock_network_layer.request.side_effect = [generic_successful_response]
@@ -318,6 +312,6 @@ def test_proxy(box_session, monkeypatch, mock_network_layer, generic_successful_
         'GET',
         'http://example.com',
         access_token='fake_access_token',
-        headers=expected_headers,
+        headers=ANY,
         proxies=expected_proxy_dict,
     )
