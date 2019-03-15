@@ -315,8 +315,8 @@ def test_proxy(box_session, monkeypatch, mock_network_layer, generic_successful_
     mock_network_layer.request.side_effect = [generic_successful_response]
     box_session.request('GET', 'http://example.com')
     mock_network_layer.request.assert_called_once_with(
-        method='GET',
-        url='http://example.com',
+        'GET',
+        'http://example.com',
         access_token='fake_access_token',
         headers=expected_headers,
         proxies=expected_proxy_dict,
