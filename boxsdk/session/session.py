@@ -447,10 +447,10 @@ class Session(object):
         proxy = {}
         if self._network_config.PROXY_AUTH and self._network_config.PROXY_URL:
             host = self._network_config.PROXY_URL
-            port = host.split('//')[1]
+            address = host.split('//')[1]
             proxy['http'] = \
                 'http://' + self._network_config.PROXY_AUTH.get('user', None) + \
-                ":" + self._network_config.PROXY_AUTH.get('password', None) + "@" + port
+                ":" + self._network_config.PROXY_AUTH.get('password', None) + "@" + address
             proxy['https'] = proxy['http']
         else:
             proxy['http'] = self._network_config.PROXY_URL
