@@ -303,7 +303,13 @@ def test_get_retry_after_time(box_session, attempt_number, retry_after_header, e
         ('http://example-proxy.com', None, {'http': 'http://example-proxy.com', 'https': 'http://example-proxy.com'}),
     ]
 )
-def test_proxy(box_session, monkeypatch, mock_network_layer, generic_successful_response, test_proxy_url, test_proxy_auth, expected_proxy_dict):  # pylint: disable=redefined-outer-name
+def test_proxy_attaches_to_request_correctly(
+        box_session, monkeypatch,
+        mock_network_layer,
+        generic_successful_response,
+        test_proxy_url, test_proxy_auth,
+        expected_proxy_dict
+    ):  # pylint: disable=redefined-outer-name
     monkeypatch.setattr(Network, 'PROXY_URL', test_proxy_url)
     monkeypatch.setattr(Network, 'PROXY_AUTH', test_proxy_auth)
     mock_network_layer.request.side_effect = [generic_successful_response]
@@ -315,3 +321,7 @@ def test_proxy(box_session, monkeypatch, mock_network_layer, generic_successful_
         headers=ANY,
         proxies=expected_proxy_dict,
     )
+
+
+def test_proxy_network_config_property(box_session):  # pylint: disable=redefined-outer-name
+    assert isinstance(box_session.network_config, Network)
