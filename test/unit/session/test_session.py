@@ -295,53 +295,29 @@ def test_get_retry_after_time(box_session, attempt_number, retry_after_header, e
     assert retry_time == expected_result
 
 
-def test_basic_prepare_proxy(box_session, monkeypatch):
-    proxy_url = 'http://127.0.0.1:8080'
-    proxy_dict = {
-        'http': proxy_url,
-        'https': proxy_url,
-    }
-    monkeypatch.setattr(Network, 'PROXY_URL', 'http://127.0.0.1:8080')
-    proxy = box_session._prepare_proxy()  # pylint:disable=protected-access
-    assert proxy == proxy_dict
-
-
-def test_prepare_authenticated_proxy(box_session, monkeypatch):
-    proxy_url = 'http://127.0.0.1:8080'
-    proxy_auth_dict = {
-        'user': 'test_user',
-        'password': 'test_password',
-    }
-    expected_proxy_auth_dict = {
-        'http': 'http://test_user:test_password@127.0.0.1:8080',
-        'https': 'http://test_user:test_password@127.0.0.1:8080',
-    }
-    monkeypatch.setattr(Network, 'PROXY_URL', proxy_url)
-    monkeypatch.setattr(Network, 'PROXY_AUTH', proxy_auth_dict)
-    proxy = box_session._prepare_proxy()  # pylint:disable=protected-access
-    assert proxy == expected_proxy_auth_dict
-
-
-def test_proxy(box_session, monkeypatch, mock_network_layer, generic_successful_response):
-    proxy_url = 'http://127.0.0.1:8080'
+@pytest.mark.parametrize(
+    'test_proxy_url,test_proxy_auth, expected_proxy_dict',
+    [
+        ('http://example-proxy.com', {'user': 'test_user', 'password': 'test_password',},
+         {'http': 'http://test_user:test_password@example-proxy.com', 'https': 'http://test_user:test_password@example-proxy.com'}),
+        ('http://example-proxy.com', None, {'http': 'http://example-proxy.com', 'https': 'http://example-proxy.com'}),
+    ]
+)
+def test_proxy(box_session, monkeypatch, mock_network_layer, generic_successful_response, test_proxy_url, test_proxy_auth, expected_proxy_dict):  # pylint: disable=redefined-outer-name
     expected_headers = {
         'User-Agent': 'box-python-sdk-2.2.1',
         'X-Box-UA': 'agent=box-python-sdk/2.2.1; env=python/3.7.2',
         'Authorization': 'Bearer fake_access_token',
     }
-    expected_proxy = {
-        'http': proxy_url,
-        'https': proxy_url,
-    }
 
-    proxy_dict = {
-        'proxies': {
-            'http': proxy_url,
-            'https': proxy_url,
-        },
-    }
-
-    monkeypatch.setattr(Network, 'PROXY_URL', 'http://127.0.0.1:8080')
+    monkeypatch.setattr(Network, 'PROXY_URL', test_proxy_url)
+    monkeypatch.setattr(Network, 'PROXY_AUTH', test_proxy_auth)
     mock_network_layer.request.side_effect = [generic_successful_response]
     box_session.request('GET', 'http://example.com')
-    mock_network_layer.request.assert_called_once_with('GET', 'http://example.com', access_token='fake_access_token', headers=expected_headers, proxies={'http': 'http://127.0.0.1:8080', 'https': 'http://127.0.0.1:8080'})
+    mock_network_layer.request.assert_called_once_with(
+        method='GET',
+        url='http://example.com',
+        access_token='fake_access_token',
+        headers=expected_headers,
+        proxies=expected_proxy_dict,
+    )
