@@ -295,7 +295,6 @@ def test_get_retry_after_time(box_session, attempt_number, retry_after_header, e
     assert retry_time == expected_result
 
 
-# pylint: disable=redefined-outer-name
 @pytest.mark.parametrize(
     'test_proxy_url,test_proxy_auth, expected_proxy_dict',
     [
@@ -324,5 +323,5 @@ def test_proxy_attaches_to_request_correctly(
     )
 
 
-def test_proxy_network_config_property(box_session):  # pylint: disable=redefined-outer-name
+def test_proxy_network_config_property(box_session):
     assert isinstance(box_session.network_config, Network)
