@@ -147,7 +147,7 @@ print('File "{0}" uploaded to Box with file ID {1}'.format(new_file.name, new_fi
 ```
 
 To upload a file from a readable stream, call
-[`folder.upload_stream(file_stream, file_name, file_description, preflight_check=False, preflight_expected_size=0)`][upload_stream]
+[`folder.upload_stream(file_stream, file_name, file_description=None, preflight_check=False, preflight_expected_size=0)`][upload_stream]
 with the stream and a name for the file.  This method returns a [`File`][file_class] object representing the
 newly-uploaded file.
 

@@ -267,7 +267,7 @@ class Folder(Item):
         :param file_description:
             The description to give the file on Box.
         :type file_description:
-            `unicode`
+            `unicode` or None
         :param preflight_check:
             If specified, preflight check will be performed before actually uploading the file.
         :type preflight_check:
@@ -342,7 +342,7 @@ class Folder(Item):
         :param file_description:
             The description to give the file on Box. If None, then no description will be set.
         :type file_description:
-            `unicode`
+            `unicode` or None
         :param preflight_check:
             If specified, preflight check will be performed before actually uploading the file.
         :type preflight_check:
