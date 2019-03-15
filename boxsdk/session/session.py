@@ -464,7 +464,7 @@ class Session(object):
             proxy['http'] = self._network_proxy_config.PROXY_URL
             proxy['https'] = proxy['http']
         else:
-            raise BoxException("The proxy auth dictionary you provided us does not match pattern {'user': 'example_user', 'password': 'example_password'}")
+            raise BoxException("The proxy auth dict you provided does not match pattern {'user': 'example_user', 'password': 'example_password'}")
         return proxy
 
     def _send_request(self, request, **kwargs):
