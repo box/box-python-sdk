@@ -298,15 +298,15 @@ def test_get_retry_after_time(box_session, attempt_number, retry_after_header, e
 @pytest.mark.parametrize(
     'test_proxy_url,test_proxy_auth, expected_proxy_dict',
     [
-        ('http://example-proxy.com', {'user': 'test_user', 'password': 'test_password',},
+        ('http://example-proxy.com', {'user': 'test_user', 'password': 'test_password', },
          {'http': 'http://test_user:test_password@example-proxy.com', 'https': 'http://test_user:test_password@example-proxy.com'}),
         ('http://example-proxy.com', None, {'http': 'http://example-proxy.com', 'https': 'http://example-proxy.com'}),
     ]
 )
 def test_proxy(box_session, monkeypatch, mock_network_layer, generic_successful_response, test_proxy_url, test_proxy_auth, expected_proxy_dict):  # pylint: disable=redefined-outer-name
     expected_headers = {
-        'User-Agent': 'box-python-sdk-2.2.1',
-        'X-Box-UA': 'agent=box-python-sdk/2.2.1; env=python/3.7.2',
+        'User-Agent': 'box-python-sdk-2.2.2',
+        'X-Box-UA': 'agent=box-python-sdk/2.2.2; env=python/3.7.2',
         'Authorization': 'Bearer fake_access_token',
     }
 
