@@ -309,7 +309,7 @@ def test_proxy_attaches_to_request_correctly(
         generic_successful_response,
         test_proxy_url, test_proxy_auth,
         expected_proxy_dict
-    ):  # pylint: disable=redefined-outer-name
+        ):  # pylint: disable=redefined-outer-name
     monkeypatch.setattr(Network, 'PROXY_URL', test_proxy_url)
     monkeypatch.setattr(Network, 'PROXY_AUTH', test_proxy_auth)
     mock_network_layer.request.side_effect = [generic_successful_response]
