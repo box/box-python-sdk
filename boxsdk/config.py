@@ -28,6 +28,6 @@ class Client(object):
     )
 
 
-class NetworkProxy(object):
-    PROXY_URL = None
-    PROXY_AUTH = None
+class Proxy(object):
+    URL = None
+    AUTH = None

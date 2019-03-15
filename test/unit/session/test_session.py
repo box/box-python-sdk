@@ -10,7 +10,7 @@ from mock import MagicMock, Mock, PropertyMock, call, patch, ANY
 import pytest
 
 from boxsdk.auth.oauth2 import OAuth2
-from boxsdk.config import API, NetworkProxy
+from boxsdk.config import API, Proxy
 from boxsdk.exception import BoxAPIException, BoxException
 from boxsdk.network.default_network import DefaultNetwork, DefaultNetworkResponse
 from boxsdk.session.box_response import BoxResponse
@@ -296,7 +296,7 @@ def test_get_retry_after_time(box_session, attempt_number, retry_after_header, e
 
 
 @pytest.mark.parametrize(
-    'test_proxy_url,test_proxy_auth, expected_proxy_dict',
+    'test_proxy_url,test_proxy_auth,expected_proxy_dict',
     [
         ('http://example-proxy.com', {'user': 'test_user', 'password': 'test_password', },
          {'http': 'http://test_user:test_password@example-proxy.com', 'https': 'http://test_user:test_password@example-proxy.com'}),
@@ -310,8 +310,8 @@ def test_proxy_attaches_to_request_correctly(
         generic_successful_response,
         test_proxy_url, test_proxy_auth,
         expected_proxy_dict):
-    monkeypatch.setattr(NetworkProxy, 'PROXY_URL', test_proxy_url)
-    monkeypatch.setattr(NetworkProxy, 'PROXY_AUTH', test_proxy_auth)
+    monkeypatch.setattr(Proxy, 'URL', test_proxy_url)
+    monkeypatch.setattr(Proxy, 'AUTH', test_proxy_auth)
     mock_network_layer.request.side_effect = [generic_successful_response]
     box_session.request('GET', test_proxy_url)
     mock_network_layer.request.assert_called_once_with(
@@ -328,8 +328,8 @@ def test_proxy_malformed_dict_does_not_attach(box_session, monkeypatch, mock_net
     test_proxy_auth = {
         'foo': 'bar',
     }
-    monkeypatch.setattr(NetworkProxy, 'PROXY_URL', test_proxy_url)
-    monkeypatch.setattr(NetworkProxy, 'PROXY_AUTH', test_proxy_auth)
+    monkeypatch.setattr(Proxy, 'URL', test_proxy_url)
+    monkeypatch.setattr(Proxy, 'AUTH', test_proxy_auth)
     mock_network_layer.request.side_effect = [generic_successful_response]
     with pytest.raises(BoxException) as exc_info:
         box_session.request('GET', test_proxy_url)
@@ -338,4 +338,4 @@ def test_proxy_malformed_dict_does_not_attach(box_session, monkeypatch, mock_net
 
 
 def test_proxy_network_config_property(box_session):
-    assert isinstance(box_session.network_proxy_config, NetworkProxy)
+    assert isinstance(box_session.network_proxy_config, Proxy)
