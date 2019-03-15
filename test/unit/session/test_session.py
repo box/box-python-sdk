@@ -294,7 +294,7 @@ def test_get_retry_after_time(box_session, attempt_number, retry_after_header, e
     retry_time = round(retry_time, 4)
     assert retry_time == expected_result
 
-
+# pylint: disable=redefined-outer-name
 @pytest.mark.parametrize(
     'test_proxy_url,test_proxy_auth, expected_proxy_dict',
     [
@@ -304,12 +304,12 @@ def test_get_retry_after_time(box_session, attempt_number, retry_after_header, e
     ]
 )
 def test_proxy_attaches_to_request_correctly(
-        box_session, monkeypatch,
+        box_session,
+        monkeypatch,
         mock_network_layer,
         generic_successful_response,
         test_proxy_url, test_proxy_auth,
-        expected_proxy_dict
-        ):  # pylint: disable=redefined-outer-name
+        expected_proxy_dict):
     monkeypatch.setattr(Network, 'PROXY_URL', test_proxy_url)
     monkeypatch.setattr(Network, 'PROXY_AUTH', test_proxy_auth)
     mock_network_layer.request.side_effect = [generic_successful_response]
