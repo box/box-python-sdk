@@ -338,4 +338,4 @@ def test_proxy_malformed_dict_does_not_attach(box_session, monkeypatch, mock_net
 
 
 def test_proxy_network_config_property(box_session):
-    assert isinstance(box_session.network_proxy_config, Proxy)
+    assert isinstance(box_session.proxy_config, Proxy)
