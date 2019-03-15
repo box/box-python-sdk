@@ -333,7 +333,8 @@ def test_proxy_malformed_dict_does_not_attach(box_session, monkeypatch, mock_net
     mock_network_layer.request.side_effect = [generic_successful_response]
     with pytest.raises(BoxException) as exc_info:
         box_session.request('GET', test_proxy_url)
-    assert exc_info.value.message == "The proxy auth dictionary you provided us does not match pattern {'user': 'example_user', 'password': 'example_password'}"
+    assert exc_info.value.message == "The proxy auth dict you provided does not match pattern " \
+                                     "{'user': 'example_user', 'password': 'example_password'}"
 
 
 def test_proxy_network_config_property(box_session):
