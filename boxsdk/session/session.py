@@ -10,7 +10,7 @@ from logging import getLogger
 
 from .box_request import BoxRequest as _BoxRequest
 from .box_response import BoxResponse as _BoxResponse
-from ..config import API, Client, Network
+from ..config import API, Client, NetworkProxy
 from ..exception import BoxAPIException
 from ..network.default_network import DefaultNetwork
 from ..util.json import is_json_response
@@ -35,7 +35,7 @@ class Session(object):
             default_network_request_kwargs=None,
             api_config=None,
             client_config=None,
-            network_config=None,
+            network_proxy_config=None,
     ):
         """
         :param network_layer:
@@ -65,12 +65,16 @@ class Session(object):
             Object containing client information, including user agent string.
         :type client_config:
             :class:`Client`
+        :param network_proxy_config:
+            Object containing network proxy information.
+        :type network_proxy_config:
+            :class:`NetworkProxy`
         """
         if translator is None:
             translator = Translator(extend_default_translator=True, new_child=True)
         self._api_config = api_config or API()
         self._client_config = client_config or Client()
-        self._network_config = network_config or Network()
+        self._network_proxy_config = network_proxy_config or NetworkProxy()
         super(Session, self).__init__()
         self._network_layer = network_layer or DefaultNetwork()
         self._default_headers = {
@@ -187,12 +191,12 @@ class Session(object):
         return self._client_config
 
     @property
-    def network_config(self):
+    def network_proxy_config(self):
         """
 
-        :rtype:     :class:`Network`
+        :rtype:     :class:`NetworkProxy`
         """
-        return self._network_config
+        return self._network_proxy_config
 
     def get_url(self, endpoint, *args):
         """
@@ -221,6 +225,7 @@ class Session(object):
             default_network_request_kwargs=self._default_network_request_kwargs.copy(),
             api_config=self._api_config,
             client_config=self._client_config,
+            network_proxy_config=self._network_proxy_config,
             default_headers=self._default_headers.copy(),
         )
 
@@ -445,16 +450,20 @@ class Session(object):
             `dict`
         """
         proxy = {}
-        if self._network_config.PROXY_AUTH and self._network_config.PROXY_URL:
-            host = self._network_config.PROXY_URL
+        if self._network_proxy_config.PROXY_URL is None:
+            return None
+        if self._network_proxy_config.PROXY_AUTH and {'user', 'password'} <= set(self._network_proxy_config.PROXY_AUTH):
+            host = self._network_proxy_config.PROXY_URL
             address = host.split('//')[1]
-            proxy['http'] = \
-                'http://' + self._network_config.PROXY_AUTH.get('user', None) + \
-                ":" + self._network_config.PROXY_AUTH.get('password', None) + "@" + address
+            proxy['http'] = 'http://{0}:{1}@{2}'.format(self._network_proxy_config.PROXY_AUTH.get('user', None),
+                                                        self._network_proxy_config.PROXY_AUTH.get('password', None),
+                                                        address)
+            proxy['https'] = proxy['http']
+        elif self._network_proxy_config.PROXY_AUTH is None:
+            proxy['http'] = self._network_proxy_config.PROXY_URL
             proxy['https'] = proxy['http']
         else:
-            proxy['http'] = self._network_config.PROXY_URL
-            proxy['https'] = proxy['http']
+            pass
         return proxy
 
     def _send_request(self, request, **kwargs):
@@ -476,7 +485,7 @@ class Session(object):
         request_kwargs = self._default_network_request_kwargs.copy()
         request_kwargs.update(kwargs)
         proxy_dict = self._prepare_proxy()
-        if proxy_dict.get('http', None) is not None:
+        if proxy_dict is not None:
             request_kwargs.update({'proxies': proxy_dict})
         if files and file_stream_positions:
             for name, position in file_stream_positions.items():
