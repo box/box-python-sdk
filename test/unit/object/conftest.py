@@ -77,7 +77,7 @@ def mock_upload_response_contains_entries(request):
 
 @pytest.fixture(scope='function')
 def mock_upload_response(mock_object_id, make_mock_box_request, mock_upload_response_contains_entries):
-    response = {'type': 'file', 'id': mock_object_id}
+    response = {'type': 'file', 'id': mock_object_id, 'description': 'Test File Description', }
     if mock_upload_response_contains_entries:
         response = {'entries': [response]}
     mock_box_response, _ = make_mock_box_request(response=response)
