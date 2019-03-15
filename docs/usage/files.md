@@ -137,7 +137,7 @@ containing the file contents.
 To upload a file from a path on disk, call the
 [`folder.upload(file_path, file_name=None, file_description=None,preflight_check=False, preflight_expected_size=0)`][upload] method
 on the [`Folder`][folder_class] you want to upload the file into.  By default, the file uploaded to Box will have the
-same file name as the one on disk; you can override this by passing a different name in the `file_name` parameter. You can optionally, also choose to set a file description upon upload by using the `file_description` parameter.
+same file name as the one on disk; you can override this by passing a different name in the `file_name` parameter. You can, optionally, also choose to set a file description upon upload by using the `file_description` parameter.
 This method returns a [`File`][file_class] object representing the newly-uploaded file.
 
 ```python
