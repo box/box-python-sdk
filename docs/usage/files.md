@@ -135,9 +135,9 @@ Files are uploaded to a folder in one of two ways: by providing a path to a file
 containing the file contents.
 
 To upload a file from a path on disk, call the
-[`folder.upload(file_path, file_name=None, preflight_check=False, preflight_expected_size=0)`][upload] method
+[`folder.upload(file_path, file_name=None, file_description=None,preflight_check=False, preflight_expected_size=0)`][upload] method
 on the [`Folder`][folder_class] you want to upload the file into.  By default, the file uploaded to Box will have the
-same file name as the one on disk; you can override this by passing a different name in the `file_name` parameter.
+same file name as the one on disk; you can override this by passing a different name in the `file_name` parameter. You can, optionally, also choose to set a file description upon upload by using the `file_description` parameter.
 This method returns a [`File`][file_class] object representing the newly-uploaded file.
 
 ```python
@@ -147,7 +147,7 @@ print('File "{0}" uploaded to Box with file ID {1}'.format(new_file.name, new_fi
 ```
 
 To upload a file from a readable stream, call
-[`folder.upload_stream(file_stream, file_name, preflight_check=False, preflight_expected_size=0)`][upload_stream]
+[`folder.upload_stream(file_stream, file_name, file_description=None, preflight_check=False, preflight_expected_size=0)`][upload_stream]
 with the stream and a name for the file.  This method returns a [`File`][file_class] object representing the
 newly-uploaded file.
 
