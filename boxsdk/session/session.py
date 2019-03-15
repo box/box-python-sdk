@@ -8,6 +8,7 @@ import math
 from functools import partial
 from logging import getLogger
 
+from boxsdk.exception import BoxException
 from .box_request import BoxRequest as _BoxRequest
 from .box_response import BoxResponse as _BoxResponse
 from ..config import API, Client, NetworkProxy
@@ -445,9 +446,9 @@ class Session(object):
         Prepares basic authenticated and unauthenticated proxies for requests.
 
         :return:
-            A prepared proxy dict to send along with the request.
+            A prepared proxy dict to send along with the request. None if incorrect parameters were passed.
         :rtype:
-            `dict`
+            `dict` or None
         """
         proxy = {}
         if self._network_proxy_config.PROXY_URL is None:
@@ -463,7 +464,7 @@ class Session(object):
             proxy['http'] = self._network_proxy_config.PROXY_URL
             proxy['https'] = proxy['http']
         else:
-            pass
+            raise BoxException("The proxy auth dictionary you provided us does not match pattern {'user': 'example_user', 'password': 'example_password'}")
         return proxy
 
     def _send_request(self, request, **kwargs):

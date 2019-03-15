@@ -11,7 +11,7 @@ import pytest
 
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.config import API, NetworkProxy
-from boxsdk.exception import BoxAPIException
+from boxsdk.exception import BoxAPIException, BoxException
 from boxsdk.network.default_network import DefaultNetwork, DefaultNetworkResponse
 from boxsdk.session.box_response import BoxResponse
 from boxsdk.session.session import Session, Translator, AuthorizedSession
@@ -310,8 +310,8 @@ def test_proxy_attaches_to_request_correctly(
         generic_successful_response,
         test_proxy_url, test_proxy_auth,
         expected_proxy_dict):
-    monkeypatch.setattr(Network, 'PROXY_URL', test_proxy_url)
-    monkeypatch.setattr(Network, 'PROXY_AUTH', test_proxy_auth)
+    monkeypatch.setattr(NetworkProxy, 'PROXY_URL', test_proxy_url)
+    monkeypatch.setattr(NetworkProxy, 'PROXY_AUTH', test_proxy_auth)
     mock_network_layer.request.side_effect = [generic_successful_response]
     box_session.request('GET', test_proxy_url)
     mock_network_layer.request.assert_called_once_with(
@@ -328,16 +328,12 @@ def test_proxy_malformed_dict_does_not_attach(box_session, monkeypatch, mock_net
     test_proxy_auth = {
         'foo': 'bar',
     }
-    monkeypatch.setattr(Network, 'PROXY_URL', test_proxy_url)
-    monkeypatch.setattr(Network, 'PROXY_AUTH', test_proxy_auth)
+    monkeypatch.setattr(NetworkProxy, 'PROXY_URL', test_proxy_url)
+    monkeypatch.setattr(NetworkProxy, 'PROXY_AUTH', test_proxy_auth)
     mock_network_layer.request.side_effect = [generic_successful_response]
-    box_session.request('GET', test_proxy_url)
-    mock_network_layer.request.assert_called_once_with(
-        'GET',
-        test_proxy_url,
-        access_token='fake_access_token',
-        headers=ANY,
-    )
+    with pytest.raises(BoxException) as exc_info:
+        box_session.request('GET', test_proxy_url)
+    assert exc_info.value.message == "The proxy auth dictionary you provided us does not match pattern {'user': 'example_user', 'password': 'example_password'}"
 
 
 def test_proxy_network_config_property(box_session):
