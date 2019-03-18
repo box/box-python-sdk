@@ -9,7 +9,7 @@ The Python SDK has helpful custom config that you can set for a variety of use c
 
 - [Proxy](#proxy)
   - [Unauthenticated Proxy](#unauthenticated-proxy)
-  - [Basic Authenticated Proxy](#basic-authenticated-proxy)
+  - [Basic Authentication Proxy](#basic-authentication-proxy)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
