@@ -6,12 +6,12 @@ from functools import partial
 from io import IOBase
 from numbers import Number
 
-from mock import MagicMock, Mock, PropertyMock, call, patch
+from mock import MagicMock, Mock, PropertyMock, call, patch, ANY
 import pytest
 
 from boxsdk.auth.oauth2 import OAuth2
-from boxsdk.config import API
-from boxsdk.exception import BoxAPIException
+from boxsdk.config import API, Proxy
+from boxsdk.exception import BoxAPIException, BoxException
 from boxsdk.network.default_network import DefaultNetwork, DefaultNetworkResponse
 from boxsdk.session.box_response import BoxResponse
 from boxsdk.session.session import Session, Translator, AuthorizedSession
@@ -293,3 +293,50 @@ def test_get_retry_after_time(box_session, attempt_number, retry_after_header, e
         retry_time = box_session._get_retry_after_time(attempt_number, retry_after_header)  # pylint: disable=protected-access
     retry_time = round(retry_time, 4)
     assert retry_time == expected_result
+
+
+@pytest.mark.parametrize(
+    'test_proxy_url,test_proxy_auth,expected_proxy_dict',
+    [
+        ('http://example-proxy.com', {'user': 'test_user', 'password': 'test_password', },
+         {'http': 'http://test_user:test_password@example-proxy.com', 'https': 'http://test_user:test_password@example-proxy.com'}),
+        ('http://example-proxy.com', None, {'http': 'http://example-proxy.com', 'https': 'http://example-proxy.com'}),
+    ]
+)
+def test_proxy_attaches_to_request_correctly(
+        box_session,
+        monkeypatch,
+        mock_network_layer,
+        generic_successful_response,
+        test_proxy_url, test_proxy_auth,
+        expected_proxy_dict):
+    monkeypatch.setattr(Proxy, 'URL', test_proxy_url)
+    monkeypatch.setattr(Proxy, 'AUTH', test_proxy_auth)
+    mock_network_layer.request.side_effect = [generic_successful_response]
+    box_session.request('GET', test_proxy_url)
+    mock_network_layer.request.assert_called_once_with(
+        'GET',
+        test_proxy_url,
+        access_token='fake_access_token',
+        headers=ANY,
+        proxies=expected_proxy_dict,
+    )
+
+
+def test_proxy_malformed_dict_does_not_attach(box_session, monkeypatch, mock_network_layer, generic_successful_response):
+    test_proxy_url = 'http://example.com'
+    test_proxy_auth = {
+        'foo': 'bar',
+    }
+    monkeypatch.setattr(Proxy, 'URL', test_proxy_url)
+    monkeypatch.setattr(Proxy, 'AUTH', test_proxy_auth)
+    mock_network_layer.request.side_effect = [generic_successful_response]
+    with pytest.raises(BoxException) as exc_info:
+        box_session.request('GET', test_proxy_url)
+    assert isinstance(exc_info.value, BoxException)
+    assert exc_info.value.args[0] == "The proxy auth dict you provided does not match pattern " \
+                                     "{'user': 'example_user', 'password': 'example_password'}"
+
+
+def test_proxy_network_config_property(box_session):
+    assert isinstance(box_session.proxy_config, Proxy)

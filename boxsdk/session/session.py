@@ -8,9 +8,10 @@ import math
 from functools import partial
 from logging import getLogger
 
+from boxsdk.exception import BoxException
 from .box_request import BoxRequest as _BoxRequest
 from .box_response import BoxResponse as _BoxResponse
-from ..config import API, Client
+from ..config import API, Client, Proxy
 from ..exception import BoxAPIException
 from ..network.default_network import DefaultNetwork
 from ..util.json import is_json_response
@@ -35,6 +36,7 @@ class Session(object):
             default_network_request_kwargs=None,
             api_config=None,
             client_config=None,
+            proxy_config=None,
     ):
         """
         :param network_layer:
@@ -64,11 +66,16 @@ class Session(object):
             Object containing client information, including user agent string.
         :type client_config:
             :class:`Client`
+        :param proxy_config:
+            Object containing proxy information.
+        :type proxy_config:
+            :class:`Proxy` or None
         """
         if translator is None:
             translator = Translator(extend_default_translator=True, new_child=True)
         self._api_config = api_config or API()
         self._client_config = client_config or Client()
+        self._proxy_config = proxy_config or Proxy()
         super(Session, self).__init__()
         self._network_layer = network_layer or DefaultNetwork()
         self._default_headers = {
@@ -184,6 +191,14 @@ class Session(object):
         """
         return self._client_config
 
+    @property
+    def proxy_config(self):
+        """
+
+        :rtype:     :class:`Proxy`
+        """
+        return self._proxy_config
+
     def get_url(self, endpoint, *args):
         """
         Return the URL for the given Box API endpoint.
@@ -211,6 +226,7 @@ class Session(object):
             default_network_request_kwargs=self._default_network_request_kwargs.copy(),
             api_config=self._api_config,
             client_config=self._client_config,
+            proxy_config=self._proxy_config,
             default_headers=self._default_headers.copy(),
         )
 
@@ -425,6 +441,34 @@ class Session(object):
     def _get_request_headers(self):
         return self._default_headers.copy()
 
+    def _prepare_proxy(self):
+        """
+        Prepares basic authenticated and unauthenticated proxies for requests.
+
+        :return:
+            A prepared proxy dict to send along with the request. None if incorrect parameters were passed.
+        :rtype:
+            `dict` or None
+        """
+        proxy = {}
+        proxy_string = ''
+        if self._proxy_config.URL is None:
+            return None
+        if self._proxy_config.AUTH and {'user', 'password'} <= set(self._proxy_config.AUTH):
+            host = self._proxy_config.URL
+            address = host.split('//')[1]
+            proxy_string = 'http://{0}:{1}@{2}'.format(self._proxy_config.AUTH.get('user', None),
+                                                       self._proxy_config.AUTH.get('password', None),
+                                                       address)
+        elif self._proxy_config.AUTH is None:
+            proxy_string = self._proxy_config.URL
+        else:
+            raise BoxException("The proxy auth dict you provided does not match pattern {'user': 'example_user', 'password': 'example_password'}")
+        proxy['http'] = proxy_string
+        proxy['https'] = proxy['http']
+
+        return proxy
+
     def _send_request(self, request, **kwargs):
         """
         Make a request to the Box API.
@@ -443,6 +487,9 @@ class Session(object):
         files, file_stream_positions = kwargs.get('files'), kwargs.pop('file_stream_positions')
         request_kwargs = self._default_network_request_kwargs.copy()
         request_kwargs.update(kwargs)
+        proxy_dict = self._prepare_proxy()
+        if proxy_dict is not None:
+            request_kwargs.update({'proxies': proxy_dict})
         if files and file_stream_positions:
             for name, position in file_stream_positions.items():
                 files[name][1].seek(position)

@@ -15,7 +15,7 @@ from ..util.log import sanitize_dictionary
 
 
 class DefaultNetwork(Network):
-    """Implementats the network interface using the requests library."""
+    """Implements the network interface using the requests library."""
 
     LOGGER_NAME = 'boxsdk.network'
     REQUEST_FORMAT = '\x1b[36m%(method)s %(url)s %(request_kwargs)s\x1b[0m'

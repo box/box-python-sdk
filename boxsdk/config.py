@@ -26,3 +26,8 @@ class Client(object):
         py_version.minor,
         py_version.micro,
     )
+
+
+class Proxy(object):
+    URL = None
+    AUTH = None
