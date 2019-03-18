@@ -3,10 +3,21 @@ Configuration
 
 The Python SDK has helpful custom config that you can set for a variety of use cases.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Configuration](#configuration)
+  - [Proxy](#proxy)
+    - [Basic](#basic)
+    - [Authenticated Proxy](#authenticated-proxy)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 Proxy
 -----
 
-### Basic Authentication
+### Basic
 
 In order to set up configuration for basic proxy with the Python SDK, simply specify the proxy address for the `PROXY.URL` field.
 
