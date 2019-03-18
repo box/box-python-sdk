@@ -67,9 +67,9 @@ class Session(object):
         :type client_config:
             :class:`Client`
         :param proxy_config:
-            Object containing network proxy information.
+            Object containing proxy information.
         :type proxy_config:
-            :class:`NetworkProxy` or None
+            :class:`Proxy` or None
         """
         if translator is None:
             translator = Translator(extend_default_translator=True, new_child=True)
@@ -451,20 +451,22 @@ class Session(object):
             `dict` or None
         """
         proxy = {}
+        proxy_string = ''
         if self._proxy_config.URL is None:
             return None
         if self._proxy_config.AUTH and {'user', 'password'} <= set(self._proxy_config.AUTH):
             host = self._proxy_config.URL
             address = host.split('//')[1]
-            proxy['http'] = 'http://{0}:{1}@{2}'.format(self._proxy_config.AUTH.get('user', None),
-                                                        self._proxy_config.AUTH.get('password', None),
-                                                        address)
-            proxy['https'] = proxy['http']
+            proxy_string = 'http://{0}:{1}@{2}'.format(self._proxy_config.AUTH.get('user', None),
+                                                       self._proxy_config.AUTH.get('password', None),
+                                                       address)
         elif self._proxy_config.AUTH is None:
-            proxy['http'] = self._proxy_config.URL
-            proxy['https'] = proxy['http']
+            proxy_string = self._proxy_config.URL
         else:
             raise BoxException("The proxy auth dict you provided does not match pattern {'user': 'example_user', 'password': 'example_password'}")
+        proxy['http'] = proxy_string
+        proxy['https'] = proxy['http']
+
         return proxy
 
     def _send_request(self, request, **kwargs):
