@@ -3,4 +3,4 @@
 from __future__ import unicode_literals, absolute_import
 
 
-__version__ = '2.2.2'
+__version__ = '2.3.0'

@@ -3,6 +3,12 @@
 Release History
 ---------------
 
+2.3.0 (2019-03-28)
+++++++++++++++++++
+
+- Added the ability to set `file description upon upload <https://github.com/box/box-python-sdk/blob/master/docs/usage/files.md#upload-a-file>`_
+- Added support for `basic authenticated proxy and unauthenticated proxy <https://github.com/box/box-python-sdk/blob/master/docs/usage/configuration.md#proxy>`_
+
 2.2.2 (2019-03-14)
 ++++++++++++++++++
 
