@@ -172,7 +172,7 @@ class Search(BaseEndpoint):
         return MetadataSearchFilter(template_key, scope)
 
     @api_call
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
     def query(
             self,
             query,
