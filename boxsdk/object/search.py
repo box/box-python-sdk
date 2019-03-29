@@ -190,6 +190,8 @@ class Search(BaseEndpoint):
             owner_users=None,
             trash_content=None,
             fields=None,
+            sort=None,
+            direction=None,
             **kwargs
     ):
         """
@@ -255,6 +257,14 @@ class Search(BaseEndpoint):
             Fields to include on the returned items.
         :type fields:
             `Iterable` of `unicode`
+        :param sort:
+            What to sort the search results by. Currently `modified_at`
+        :type sort:
+            `unicode` or None
+        :param direction:
+            The direction to display the sorted search results. Can be set to `DESC` descending or `ASC` for ascending.
+        :type direction:
+            `unicode` or None
         :return:
             The collection of items that match the search query.
         :rtype:
@@ -284,6 +294,10 @@ class Search(BaseEndpoint):
             additional_params['owner_user_ids'] = ','.join([user.object_id for user in owner_users])
         if trash_content is not None:
             additional_params['trash_content'] = trash_content
+        if sort is not None:
+            additional_params['sort'] = sort
+        if direction is not None:
+            additional_params['direction'] = direction
 
         additional_params.update(kwargs)
 
