@@ -262,7 +262,7 @@ class Search(BaseEndpoint):
         :type sort:
             `unicode` or None
         :param direction:
-            The direction to display the sorted search results. Can be set to `DESC` descending or `ASC` for ascending.
+            The direction to display the sorted search results. Can be set to `DESC` for descending or `ASC` for ascending.
         :type direction:
             `unicode` or None
         :return:
