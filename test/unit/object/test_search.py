@@ -196,6 +196,8 @@ def test_query_with_range_filters(
     ({'size_range': (123, 456)}, {'size_range': '123,456'}),
     ({'trash_content': TrashContent.NONE}, {'trash_content': 'non_trashed_only'}),
     ({'trash_content': TrashContent.ONLY}, {'trash_content': 'trashed_only'}),
+    ({'sort': 'modified_at'}, {'sort': 'modified_at'}),
+    ({'direction': 'DESC'}, {'direction': 'DESC'}),
 ])
 def test_query_with_optional_parameters(
         mock_box_session,
