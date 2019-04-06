@@ -96,9 +96,9 @@ def main():
         'pylint',
         'sqlalchemy',
         'tox',
-        'pytest>=2.8.3, <=4.4.0',
+        'pytest>=2.8.3, <4.0.0',
         'pytest-cov',
-        'pytest-xdist',
+        'pytest-xdist<1.28.0',
         'python-coveralls',
         'pytz',
     ]
