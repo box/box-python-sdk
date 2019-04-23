@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import json
 import pytest
 from boxsdk.object.metadata import MetadataUpdate
+from boxsdk.exception import BoxAPIException
 
 
 @pytest.fixture
@@ -66,6 +67,30 @@ def test_create(
         headers={b'Content-Type': b'application/json'},
     )
 
+
+def test_set(
+        mock_box_session,
+        test_object,
+        metadata_scope,
+        metadata_template,
+        metadata_response,
+):
+    post_data = {
+        'case_status': 'in-progress',
+    }
+    post_value = json.dumps(post_data)
+    put_value = json.dumps([{
+        'op': 'add',
+        'path': '/case_status',
+        'value': 'in-progress',
+    }])
+    mock_box_session.post.side_effect = [BoxAPIException(status=409, message="Conflict")]
+    mock_box_session.put.return_value.json.return_value = metadata_response
+    metadata = test_object.metadata(metadata_scope, metadata_template)
+    response = metadata.set(metadata_template, metadata_scope, post_data)
+    assert response is metadata_response
+    mock_box_session.post.assert_called_once_with(metadata.get_url(), data=post_value, headers={b'Content-Type': b'application/json'})
+    mock_box_session.put.assert_called_once_with(metadata.get_url(), data=put_value, headers={b'Content-Type': b'application/json-patch+json'})
 
 def test_get(
         mock_box_session,

@@ -14,6 +14,7 @@ group, and perform other common folder operations (move, copy, delete, etc.).
 - [Get the Items in a Folder](#get-the-items-in-a-folder)
 - [Update a Folder](#update-a-folder)
 - [Create a Folder](#create-a-folder)
+- [Set Metadata](#set-metadata)
 - [Copy a Folder](#copy-a-folder)
 - [Move a Folder](#move-a-folder)
 - [Delete a Folder](#delete-a-folder)
@@ -24,6 +25,9 @@ group, and perform other common folder operations (move, copy, delete, etc.).
 - [Remove Metadata](#remove-metadata)
 - [Get All Metadata](#get-all-metadata)
 - [Get Metadata For Folder Items](#get-metadata-for-folder-items)
+- [Set a Classification](#set-a-classification)
+- [Retrieve a Classification](#retrieve-a-classification)
+- [Remove a Classification](#remove-a-classification)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -106,6 +110,25 @@ print('Created subfolder with ID {0}'.format(subfolder.id))
 ```
 
 [create_subfolder]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.create_subfolder
+
+Set Metadata
+------------
+
+To set metadata on a folder call the [`folder.metadata(scope='global', template='properties')`][metadata]
+to specify the scope and template key of the metadata template to attach. Then, call the [`metadata.set(data)`][metadata_set] method with the key/value pairs to attach. This method returns a `dict` containing the applied metadata instance.
+
+```python
+metadata = {
+    'foo': 'bar',
+}
+applied_metadata = client.folder(folder_id='11111').metadata(scope='enterprise', template='test_template').set(metadata)
+print('Set metadata in instance ID {0}'.format(applied_metadata['$id']))
+```
+
+Note: This method will unconditionally apply the provided metadata, overwriting the existing metadata for the keys provided.
+To specifically create or update metadata, see the `create()` or `update()` methods.
+
+[set_metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.set
 
 Copy a Folder
 -------------

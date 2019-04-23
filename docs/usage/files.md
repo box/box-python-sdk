@@ -15,6 +15,9 @@ file's contents, upload new versions, and perform other common file operations
 - [Get Download URL](#get-download-url)
 - [Upload a File](#upload-a-file)
 - [Chunked Upload](#chunked-upload)
+  - [Automatic Uploader](#automatic-uploader)
+    - [Resume Upload](#resume-upload)
+    - [Abort Chunked Upload](#abort-chunked-upload)
   - [Manual Process](#manual-process)
     - [Create Upload Session for File Version](#create-upload-session-for-file-version)
     - [Create Upload Session for File](#create-upload-session-for-file)
@@ -36,10 +39,14 @@ file's contents, upload new versions, and perform other common file operations
 - [Get File Representations](#get-file-representations)
 - [Get Thumbnail](#get-thumbnail)
 - [Add Metadata](#add-metadata)
+- [Set Metadata](#set-metadata)
 - [Get Metadata](#get-metadata)
 - [Update Metadata Values](#update-metadata-values)
 - [Remove Metadata](#remove-metadata)
 - [Get All Metadata](#get-all-metadata)
+- [Set a Classification](#set-a-classification)
+- [Retrieve a Classification](#retrieve-a-classification)
+- [Remove a Classification](#remove-a-classification)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -688,6 +695,25 @@ print('Applied metadata in instance ID {0}'.format(applied_metadata['$id']))
 
 [metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.metadata
 [metadata_create]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.create
+
+Set Metadata
+------------
+
+To set metadata on a file call the [`file.metadata(scope='global', template='properties')`][metadata]
+to specify the scope and template key of the metadata template to attach. Then, call the [`metadata.set(data)`][metadata_set] method with the key/value pairs to attach. This method returns a `dict` containing the applied metadata instance.
+
+```python
+metadata = {
+    'foo': 'bar',
+}
+applied_metadata = client.file(file_id='11111').metadata(scope='enterprise', template='test_template').set(metadata)
+print('Set metadata in instance ID {0}'.format(applied_metadata['$id']))
+```
+
+Note: This method will unconditionally apply the provided metadata, overwriting the existing metadata for the keys provided.
+To specifically create or update metadata, see the `create()` or `update()` methods.
+
+[set_metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.set
 
 Get Metadata
 ------------
