@@ -3,6 +3,7 @@
 from __future__ import unicode_literals, absolute_import
 import json
 from boxsdk.object.base_endpoint import BaseEndpoint
+from boxsdk.exception import BoxAPIException
 from ..util.api_call_decorator import api_call
 
 
@@ -205,6 +206,32 @@ class Metadata(BaseEndpoint):
             data=json.dumps(metadata),
             headers={b'Content-Type': b'application/json'},
         ).json()
+
+    @api_call
+    def set(self, metadata):
+        """
+        Set the metadata instance on a :class:`Folder` or :class:`File`. Attempts to first create metadata on a
+        :class:`Folder` or :class:`File`. If metadata already exists then attempt an update.
+
+        :param metadata:
+            The key/value pairs to be stored in this metadata instance on Box.
+        :type metadata:
+            `dict`
+        :return:
+            A dictionary containing the key/value pairs for this metadata object.
+        :rtype:
+            :class:`Metadata`
+        """
+        metadata_value = None
+        try:
+            metadata_value = self.create(metadata)
+        except BoxAPIException as err:
+            if err.status == 409:
+                updates = self.start_update()
+                for key, value in metadata.items():
+                    updates.add('/' + key, value)
+                metadata_value = self.update(updates)
+        return metadata_value
 
     def clone(self, session=None):
         """ Base class override. """
