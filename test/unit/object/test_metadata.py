@@ -87,10 +87,11 @@ def test_set(
     mock_box_session.post.side_effect = [BoxAPIException(status=409, message="Conflict")]
     mock_box_session.put.return_value.json.return_value = metadata_response
     metadata = test_object.metadata(metadata_scope, metadata_template)
-    response = metadata.set(metadata_template, metadata_scope, post_data)
+    response = metadata.set(post_data)
     assert response is metadata_response
     mock_box_session.post.assert_called_once_with(metadata.get_url(), data=post_value, headers={b'Content-Type': b'application/json'})
     mock_box_session.put.assert_called_once_with(metadata.get_url(), data=put_value, headers={b'Content-Type': b'application/json-patch+json'})
+
 
 def test_get(
         mock_box_session,

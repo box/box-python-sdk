@@ -121,7 +121,7 @@ to specify the scope and template key of the metadata template to attach. Then, 
 metadata = {
     'foo': 'bar',
 }
-applied_metadata = client.folder(folder_id='11111').metadata(scope='enterprise', template='test_template').set(metadata)
+applied_metadata = client.folder(folder_id='11111').metadata(scope='enterprise', template='testtemplate').set(metadata)
 print('Set metadata in instance ID {0}'.format(applied_metadata['$id']))
 ```
 
