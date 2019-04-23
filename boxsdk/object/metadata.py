@@ -227,8 +227,7 @@ class Metadata(BaseEndpoint):
             metadata_value = self.create(metadata)
         except BoxAPIException as err:
             if err.status == 409:
-                metadata_instance = Metadata(self._session, self, self._scope, self._template)
-                updates = metadata_instance.start_update()
+                updates = self.start_update()
                 for key, value in metadata.items():
                     updates.add('/' + key, value)
                 metadata_value = self.update(updates)

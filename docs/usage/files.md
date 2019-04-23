@@ -38,10 +38,8 @@ file's contents, upload new versions, and perform other common file operations
 - [Get an Embed Link](#get-an-embed-link)
 - [Get File Representations](#get-file-representations)
 - [Get Thumbnail](#get-thumbnail)
-- [Add Metadata](#add-metadata)
 - [Set Metadata](#set-metadata)
 - [Get Metadata](#get-metadata)
-- [Update Metadata Values](#update-metadata-values)
 - [Remove Metadata](#remove-metadata)
 - [Get All Metadata](#get-all-metadata)
 - [Set a Classification](#set-a-classification)
@@ -673,8 +671,22 @@ thumbnail = client.file(file_id).get_thumbnail(extension='jpg')
 
 [get_thumbnail]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_thumbnail
 
-Add Metadata
+Set Metadata
 ------------
+
+To set metadata on a file call the [`file.metadata(scope='global', template='properties')`][metadata]
+to specify the scope and template key of the metadata template to attach. Then, call the [`metadata.set(data)`][metadata_set] method with the key/value pairs to attach. This method returns a `dict` containing the applied metadata instance.
+
+Note: This method will unconditionally apply the provided metadata, overwriting the existing metadata for the keys provided.
+To specifically create or update metadata, see the `create()` or `update()` methods.
+
+```python
+metadata = {
+    'foo': 'bar',
+}
+applied_metadata = client.file(file_id='11111').metadata(scope='enterprise', template='testtemplate').set(metadata)
+print('Set metadata in instance ID {0}'.format(applied_metadata['$id']))
+```
 
 Metadata can be added to a file either as free-form key/value pairs or from an existing template.  To add metadata to
 a file, first call [`file.metadata(scope='global', template='properties')`][metadata] to specify the scope and
@@ -682,6 +694,9 @@ template key of the metadata template to attach (or use the default values to at
 call [`metadata.create(data)`][metadata_create] with the key/value pairs to attach.  This method can only be used to
 attach a given metadata template to the file for the first time, and returns a `dict` containing the applied metadata
 instance.
+
+Note: This method will only succeed if the provided metadata template is not currently applied to the file, otherwise it will 
+fail with a Conflict error.
 
 ```python
 metadata = {
@@ -693,27 +708,37 @@ applied_metadata = client.file(file_id='11111').metadata().create(metadata)
 print('Applied metadata in instance ID {0}'.format(applied_metadata['$id']))
 ```
 
-[metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.metadata
-[metadata_create]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.create
+Updating metadata values is performed via a series of discrete operations, which are applied atomically against the
+existing file metadata.  First, specify which metadata will be updated by calling
+[`file.metadata(scope='global', template='properties')`][metadata].  Then, start an update sequence by calling
+[`metadata.start_update()`][metadata_start_update] and add update operations to the returned
+[`MetadataUpdate`][metadata_update_obj].  Finally, perform the update by calling
+[`metadata.update(metadata_update)`][metadata_update].  This final method returns a `dict` of the updated metadata
+instance.
 
-Set Metadata
-------------
-
-To set metadata on a file call the [`file.metadata(scope='global', template='properties')`][metadata]
-to specify the scope and template key of the metadata template to attach. Then, call the [`metadata.set(data)`][metadata_set] method with the key/value pairs to attach. This method returns a `dict` containing the applied metadata instance.
+Note: This method will only succeed if the provided metadata template has already been applied to the file; If the file does not
+have existing metadata, this method will fail with a Not Found error. This is useful you know the file will already have metadata applied,
+since it will save an API call compared to `set()`.
 
 ```python
-metadata = {
-    'foo': 'bar',
-}
-applied_metadata = client.file(file_id='11111').metadata(scope='enterprise', template='testtemplate').set(metadata)
-print('Set metadata in instance ID {0}'.format(applied_metadata['$id']))
+file_obj = client.file(file_id='11111')
+file_metadata = file_obj.metadata(scope='enterprise', template='myMetadata')
+
+updates = file_metadata.start_update()
+updates.add('/foo', 'bar')
+updates.update('/baz', 'murp', old_value='quux')  # Ensure the old value was "quux" before updating to "murp"
+
+updated_metadata = file_metadata.update(updates)
+print('Updated metadata on file!')
+print('foo is now {0} and baz is now {1}'.format(updated_metadata['foo'], updated_metadata['baz']))
 ```
 
-Note: This method will unconditionally apply the provided metadata, overwriting the existing metadata for the keys provided.
-To specifically create or update metadata, see the `create()` or `update()` methods.
-
 [set_metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.set
+[metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.metadata
+[metadata_create]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.create
+[metadata_start_update]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.start_update
+[metadata_update_obj]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.MetadataUpdate
+[metadata_update]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.update
 
 Get Metadata
 ------------
@@ -729,34 +754,6 @@ print('Got metadata instance {0}'.format(metadata['$id']))
 ```
 
 [metadata_get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.get
-
-Update Metadata Values
-----------------------
-
-Updating metadata values is performed via a series of discrete operations, which are applied atomically against the
-existing file metadata.  First, specify which metadata will be updated by calling
-[`file.metadata(scope='global', template='properties')`][metadata].  Then, start an update sequence by calling
-[`metadata.start_update()`][metadata_start_update] and add update operations to the returned
-[`MetadataUpdate`][metadata_update_obj].  Finally, perform the update by calling
-[`metadata.update(metadata_update)`][metadata_update].  This final method returns a `dict` of the updated metadata
-instance.
-
-```python
-file_obj = client.file(file_id='11111')
-file_metadata = file_obj.metadata(scope='enterprise', template='myMetadata')
-
-updates = file_metadata.start_update()
-updates.add('/foo', 'bar')
-updates.update('/baz', 'murp', old_value='quux')  # Ensure the old value was "quux" before updating to "murp"
-
-updated_metadata = file_metadata.update(updates)
-print('Updated metadata on file!')
-print('foo is now {0} and baz is now {1}'.format(updated_metadata['foo'], updated_metadata['baz']))
-```
-
-[metadata_start_update]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.start_update
-[metadata_update_obj]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.MetadataUpdate
-[metadata_update]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.update
 
 Remove Metadata
 ---------------
