@@ -28,6 +28,7 @@ To create a Terms of Service object, calling [`client.create_terms_of_service(st
 you create a new [`TermsOfService`][terms_of_service_class] object with the specified status, type, and text. This 
 method will return a newly created [`TermsOfService`][terms_of_service_class] object populated with data from the API.
 
+<!-- sample post_terms_of_services -->
 ```python
 from boxsdk.object.terms_of_service import TermsOfServiceType, TermsOfServiceStatus
 terms_of_service = client.create_terms_of_service(TermsOfServiceStatus.ENABLED,TermsOfServiceType.MANAGED, 'Example Text')
@@ -44,6 +45,7 @@ To update a terms of service object, first call [`terms_of_service.update_info(d
 properties to update on the terms of service. This method returns a newly updated [`TermsOfService`][terms_of_service] 
 object, leaving the original object unmodified.
 
+<!-- sample put_terms_of_services_id -->
 ```python
 update_object = {'text': 'New Text'}
 updated_tos = client.terms_of_service(tos_id='12345').update_info(update_object)
@@ -61,6 +63,7 @@ To get a terms of service object, call [`client.terms_of_service(service_id)`][t
 appropriate [`TermsOfService`][terms_of_service_class], and then calling [`terms_of_service.get(fields=None)`][get] 
 will return the [`TermsOfService`][terms_of_service_class] object populated with data from the API.
 
+<!-- sample get_terms_of_services_id -->
 ```python
 terms_of_service = client.terms_of_service(tos_id='12345').get()
 print('Terms of Service ID is {0} and the message is {1}'.format(terms_of_service.id, terms_of_service.text))
@@ -78,6 +81,7 @@ To retrieve all terms of service for an enterprise, call
 `BoxObjectCollection` that allows you to iterate over the [`TermOfService`][terms_of_service_class] objects in the 
 collection.
 
+<!-- sample get_terms_of_services -->
 ```python
 terms_of_services = client.get_terms_of_services()
 for terms_of_service in terms_of_services:
@@ -96,6 +100,7 @@ object already exists for a user. If the user does not have a [`TermsOfService`]
 assigned then [`terms_of_service.set_user_status(is_accepted, user)`][set_user_status] will create a new 
 [`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object populated with data from the API.
 
+<!-- sample put_terms_of_service_user_statuses_id -->
 ```python
 user = client.user(user_id='22222')
 user_status = client.terms_of_service(tos_id='12345').set_user_status(is_accepted=True, user=user)
@@ -136,6 +141,7 @@ to construct the appropriate [`TermsOfServiceUserStatus`][terms_of_service_user_
 [`terms_of_service_user_status.get(fields=None)`][get] will return the 
 [`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object populated with data from the API.
 
+<!-- sample get_terms_of_service_user_statuses_id -->
 ```python
 user = client.user(user_id='11111')
 user_status = client.terms_of_service(tos_id='12345').get_user_status(user)

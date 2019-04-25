@@ -27,6 +27,7 @@ You can add a collaboration on a folder or a file by calling
 `role` parameter determines what permissions the collaborator will have on the folder.  This method returns a
 [`Collaboration`][collaboration_class] object representing the new collaboration on the item.
 
+<!-- sample post_collaborations -->
 ```python
 from boxsdk.object.collaboration import CollaborationRole
 
@@ -59,6 +60,7 @@ Edit a Collaboration
 A collaboration can be edited by calling [`collaboration.update_info(role, status=None)`][update_info].  This method
 returns an updated [`Collaboration`][collaboration_class] object, leaving the original unmodified.
 
+<!-- sample put_collaborations_id -->
 ```python
 from boxsdk.object.collaboration import CollaborationRole, CollaborationStatus
 
@@ -75,6 +77,7 @@ A collaboration can be removed by calling [`collaboration.delete()`][delete].  T
 group associated with the collaboration to lose access to the item.  This method returns `True` to indicate that removal
 succeeded.
 
+<!-- sample delete_collaborations_id -->
 ```python
 collaboration_id = '1111'
 client.collaboration(collaboration_id).delete()
@@ -88,6 +91,7 @@ Get a Collaboration's Information
 To get information about a specific collaboration, call [`collaboration.get()`][get].  This method returns a new
 [`Collaboration`][collaboration_class] with fields populated by data from the API.
 
+<!-- sample get_collaborations_id -->
 ```python
 collaboration = client.collaboration(collab_id='12345').get()
 ```
@@ -102,6 +106,7 @@ To retrieve all collaborations on a specified [`Folder`][folder_class] or [`File
 `BoxObjectCollection` that you can use to iterate over all
 [`Collaboration`][collaboration_class] objects in the collection.
 
+<!-- sample get_folders_id_collaborations -->
 ```python
 collaborations = client.folder(folder_id='22222').get_collaborations()
 for collab in collaborations:
@@ -109,6 +114,7 @@ for collab in collaborations:
     print('{0} {1} is collaborated on the folder'.format(target.type.capitalize(), target.name))
 ```
 
+<!-- sample get_files_id_collaborations -->
 ```python
 collaborations = client.file(file_id='11111').get_collaborations()
 for collab in collaborations
@@ -128,6 +134,7 @@ To retrieve all pending collaborations for the current user, call
 accept or reject these collaborations.  This method returns a `BoxObjectCollection` that you
 can use to iterate over all pending [`Collaboration`][collaboration_class] objects in the collection.
 
+<!-- sample get_collaborations -->
 ```python
 pending_collaborations = client.get_pending_collaborations()
 for pending_collaboration in pending_collaborations:
@@ -143,6 +150,7 @@ To accept or reject a pending collaboration, call [`collaboration.accept()`][acc
 [`collaboration.reject()`][reject].  These methods both return the updated [`Collaboration`][collaboration_class]
 object, leaving the original unmodified.
 
+<!-- sample put_collaborations_id -->
 ```python
 accepted_collab = client.collaboration(collab_id='12345').accept()
 

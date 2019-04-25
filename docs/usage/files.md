@@ -56,6 +56,7 @@ This method returns a new [`File`][file_class] object populated with the informa
 
 You can specify an `Iterable` of fields to retrieve from the API in the `fields` parameter.
 
+<!-- sample get_file_id -->
 ```python
 file_id = '11111'
 file_info = client.file(file_id).get()
@@ -72,6 +73,7 @@ To update fields on the [`File`][file_class] object, call [`file.update_info(dat
 fields to update.  This method returns the updated [`File`][file_class] object, leaving the original it was called on
 unmodified.
 
+<!-- sample put_file_id -->
 ```python
 file_id = '11111'
 updated_file = client.file(file_id).update_info({'description': 'My file'})
@@ -88,6 +90,7 @@ parameter — the lower and upper bounds you wish to download.
 
 To get the entire contents of the file as `bytes`, call [`file.content(file_version=None, byte_range=None)`][content].
 
+<!-- sample get_file_id_content -->
 ```python
 file_id = '11111'
 
@@ -145,6 +148,7 @@ on the [`Folder`][folder_class] you want to upload the file into.  By default, t
 same file name as the one on disk; you can override this by passing a different name in the `file_name` parameter. You can, optionally, also choose to set a file description upon upload by using the `file_description` parameter.
 This method returns a [`File`][file_class] object representing the newly-uploaded file.
 
+<!-- sample post_files_content -->
 ```python
 folder_id = '22222'
 new_file = client.folder(folder_id).upload('/home/me/document.pdf')
@@ -318,6 +322,7 @@ To create an upload session for uploading a large version, call
 uploaded.  You can optionally specify a new `file_name` to rename the file on upload.  This method returns an
 [`UploadSession`][upload_session_class] object representing the created upload session.
 
+<!-- sample post_files_upload_sessions -->
 ```python
 file_size = 26000000
 upload_session = client.file('11111').create_upload_session(file_size)
@@ -334,6 +339,7 @@ To create an upload session for uploading a new large file, call
 to be uploaded.  This method returns an [`UploadSession`][upload_session_class] object representing the created upload
 session.
 
+<!-- sample post_files_id_upload_sessions -->
 ```python
 file_size = 26000000
 file_name = 'test_file.pdf'
@@ -354,6 +360,7 @@ records should be kept for the commit operation.
 > __Note:__ The number of bytes uploaded for each part must be exactly `upload_sesion.part_size`, except for the last
 > part (which just includes however many bytes are left in the file).
 
+<!-- sample put_files_upload_sessions_id -->
 ```python
 upload_session = client.upload_session('11493C07ED3EABB6E59874D3A1EF3581')
 offset = upload_session.part_size * 3
@@ -373,6 +380,7 @@ entire file.  For best consistency guarantees, you should also pass an `Iterable
 parameter; otherwise, the list of parts will be retrieved from the API.  You may also pass a `dict` of `file_attributes`
 to set on the new file.
 
+<!-- sample post_files_upload_sessions_id_commit -->
 ```python
 import hashlib
 
@@ -395,6 +403,7 @@ print('Successfully uploaded file {0} with description {1}'.format(uploaded_file
 To abort a chunked upload and lose all uploaded file parts, call [`upload_session.abort()`][abort].  This method returns
 `True` to indicate that the deletion succeeded.
 
+<!-- sample delete_files_upload_sessions_id -->
 ```python
 client.upload_session('11493C07ED3EABB6E59874D3A1EF3581').abort()
 print('Upload was successfully canceled')
@@ -407,6 +416,7 @@ print('Upload was successfully canceled')
 To return the list of parts uploaded so far, call [`upload_session.get_parts(limit=None, offset=None)`][get_parts].
 This method returns a `BoxObjectCollection` that allows you to iterate over the part `dict`s in the collection.
 
+<!-- sample get_files_upload_sessions_id_parts -->
 ```python
 parts = client.upload_session('11493C07ED3EABB6E59874D3A1EF3581').get_parts()
 for part in parts:
@@ -443,6 +453,7 @@ A file can be copied to a new folder by calling [`file.copy(parent_folder, name=
 folder and an optional new name for the file in case there is a name conflict in the destination folder.  This method
 returns a [`File`][file_class] object representing the copy of the file in the destination folder.
 
+<!-- sample post_files_id_copy -->
 ```python
 file_id = '11111'
 destination_folder_id = '44444'
@@ -463,6 +474,7 @@ Calling the [`file.delete()`][delete] method will delete the file.  Depending on
 the file to the user's trash or permanently delete the file.  This method returns `True` to signify that the deletion
 was successful.
 
+<!-- sample delete_files_id -->
 ```python
 client.file(file_id='11111').delete()
 ```
@@ -477,6 +489,7 @@ Previous versions of a file can be retrieved with the
 a [`BoxObjectCollection`][box_object_collection] that can iterate over the [`FileVersion`][file_version_class] objects
 in the collection.
 
+<!-- sample get_files_id_versions -->
 ```python
 file_id = '11111'
 
@@ -498,6 +511,7 @@ To upload a new file version from a path on disk, call the
 [`file.update_contents(file_path, etag=None, preflight_check=False, preflight_expected_size=0)`][update_contents]
 method.  This method returns a [`File`][file_class] object representing the updated file.
 
+<!-- sample post_files_id_content -->
 ```python
 file_id = '11111'
 file_path = '/path/to/file.pdf'
@@ -530,6 +544,7 @@ method to become the current version of the file with the [`FileVersion`][file_v
 copy of the old file version and puts it on the top of the versions stack.  This method returns the new copy
 [`FileVersion`][file_version_class] object.
 
+<!-- sample post_files_id_versions_current -->
 ```python
 file_id = '11111'
 file_version_id = '12345'
@@ -548,6 +563,7 @@ Delete a Previous Version of a File
 A version of a file can be deleted and moved to the trash by calling
 [`file.delete_version(file_version, etag=None)`][delete_version] with the [`FileVersion`] to delete.
 
+<!-- sample delete_files_id_versions_id -->
 ```python
 file_id = '11111'
 version_id = '12345'
@@ -663,6 +679,7 @@ A thumbnail for a file can be retrieved by calling
 [`file.get_thumbnail(extension='png', min_width=None, min_height=None, max_width=None, max_height=None)`][get_thumbnail].
 This method returns the `bytes` of the thumbnail image.
 
+<!-- sample get_files_id_thumbnail_id -->
 ```python
 file_id = '11111'
 
@@ -698,6 +715,7 @@ instance.
 Note: This method will only succeed if the provided metadata template is not currently applied to the file, otherwise it will 
 fail with a Conflict error.
 
+<!-- sample post_files_id_metadata_id_id -->
 ```python
 metadata = {
     'foo': 'bar',
@@ -720,6 +738,7 @@ Note: This method will only succeed if the provided metadata template has alread
 have existing metadata, this method will fail with a Not Found error. This is useful you know the file will already have metadata applied,
 since it will save an API call compared to `set()`.
 
+<!-- sample put_files_id_metadata_id_id -->
 ```python
 file_obj = client.file(file_id='11111')
 file_metadata = file_obj.metadata(scope='enterprise', template='myMetadata')
@@ -748,6 +767,7 @@ To retrieve the metadata instance on a file for a specific metadata template, fi
 metadata template to retrieve, then call [`metadata.get()`][metadata_get] to retrieve the metadata values attached to
 the file.  This method returns a `dict` containing the applied metadata instance.
 
+<!-- sample get_files_id_metadata_id_id -->
 ```python
 metadata = client.file(file_id='11111').metadata(scope='enterprise', template='myMetadata').get()
 print('Got metadata instance {0}'.format(metadata['$id']))
@@ -763,6 +783,7 @@ To remove a metadata instance from a file, call
 metadata template to remove, then call [`metadata.delete()`][metadata_delete] to remove the metadata from the file.
 This method returns `True` to indicate that the removal succeeded.
 
+<!-- sample delete_files_id_metadata_id_id -->
 ```python
 client.file(file_id='11111').metadata(scope='enterprise', template='myMetadata').delete()
 ```
@@ -777,6 +798,7 @@ To retrieve all metadata attached to a file, call [`file.get_all_metadata()`][ge
 instance attached to the
 file.
 
+<!-- sample get_files_id_metadata -->
 ```python
 file_metadata = client.file(file_id='11111').get_all_metadata()
 for instance in file_metadata:

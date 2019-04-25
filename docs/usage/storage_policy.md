@@ -25,6 +25,7 @@ To get a storage policy object, first call [`client.storage_policy(policy_id)`][
 appropriate [`Storage Policy`][storage_policy_class] object, and then calling [`storage_policy.get(fields=None)`][get] 
 will return the [`StoragePolicy`][storage_policy_class] object populated with data from the API.
 
+<!-- sample get_storage_policies_id -->
 ```python
 storage_policy = client.storage_policy(policy_id='12345').get()
 print('Storage Policy ID is {0} and name is {1}'.format(storage_policy.id, storage_policy.name))
@@ -41,6 +42,7 @@ To retrieve all storage policies for an enterprise, call [`client.get_storage_po
 This method returns a `BoxObjectCollection` that allows you to iterate over the [`StoragePolicy`][storage_policy_class] 
 objects in the collection.
 
+<!-- sample get_storage_policies -->
 ```python
 storage_policies = client.get_storage_policies(limit=100)
 for storage_policy in storage_policies:
@@ -55,6 +57,7 @@ Assign a Storage Policy to a User
 To assign a storage policy to a user, call [`storage_policy.assign(user)`][assign] will create a 
 [`StoragePolicyAssignment`][storage_policy_assignment_class] object with data populated from the API.
 
+<!-- sample post_storage_policy_assignments -->
 ```python
 user = client.user(user_id='12345')
 assignment = client.storage_policy(policy_id='56781').assign(user)
@@ -95,6 +98,7 @@ to construct the appropriate [`Storage Policy Assignment`][storage_policy_assign
 [`storage_policy_assignment.get(fields=None)`][get] will return the [`StoragePolicyAssignment`][storage_policy_assignment_class] 
 object populated with data from the API.
 
+<!-- sample get_storage_policy_assignments_id -->
 ```python
 assignment = client.storage_policy_assignment(assignment_id='12345').get()
 print('Assignment ID is {0} and the storage policy ID is {1}'.format(assignment.id, assignment.storage_policy.id))
@@ -110,6 +114,7 @@ Get Assignment for User
 To get a storage policy assignment object for a user, calling [`user.get_storage_policy_assignment()`][user_assignment] will 
 return the [`StoragePolicyAssignment`][storage_policy_assignment_class] object populated with data from the API.
 
+<!-- sample get_storage_policy_assignments -->
 ```python
 assignment = client.user(user_id='12345').get_storage_policy_assignment()
 print('Assignment ID is {0} and the storage policy ID is {1}'.format(assignment.id, assignment.storage_policy.id))
@@ -124,6 +129,7 @@ Delete Assignment
 To delete a storage policy assignment, call [`storage_policy_assignment.delete()`][delete]. This method returns `True` 
 to indicate that the deletion was successful.
 
+<!-- sample delete_storage_policy_assignments_id -->
 ```python
 client.storage_policy_assignment(assignment_id='12345').delete()
 print('The storage policy assignment was successfully delete!')

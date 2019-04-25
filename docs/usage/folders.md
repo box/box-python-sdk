@@ -40,6 +40,7 @@ the original object unmodified.
 You can pass a list of `fields` to retrieve from the API in order to filter to just the necessary fields or add
 ones not returned by default.
 
+<!-- sample get_folders_id -->
 ```python
 folder = client.folder(folder_id='22222').get()
 print('Folder "{0}" has {1} items in it'.format(folder.name, folder.item_collection.total_count))
@@ -69,6 +70,7 @@ To retrieve the items in a folder, call
 This method returns a `BoxObjectCollection` that allows you to iterate over all the [`Item`][item_class] objects in
 the collection.
 
+<!-- sample get_folders_id_items -->
 ```python
 items = client.folder(folder_id='22222').get_items()
 for item in items:
@@ -85,6 +87,7 @@ To update a folder's information, call [`folder.update_info(data, etag=None)`][u
 to update on the folder.  This method returns a new updated [`Folder`][folder_class] object, leaving the original
 object unmodified.
 
+<!-- sample put_folders_id -->
 ```python
 updated_folder = client.folder(folder_id='22222').update_info({
     'name': '[ARCHIVED] Planning documents',
@@ -102,6 +105,7 @@ A folder can be created by calling [`folder.create_subfolder(name)`][create_subf
 name of the subfolder to be created.  This method returns a new [`Folder`][folder_class] representing the created
 subfolder.
 
+<!-- sample post_folders -->
 ```python
 subfolder = client.folder('0').create_subfolder('My Stuff')
 print('Created subfolder with ID {0}'.format(subfolder.id))
@@ -116,6 +120,7 @@ A folder can be copied into a new parent folder by calling [`folder.copy(parent_
 destination folder and an optional new name for the file in case there is a name conflict in the destination folder.
 This method returns a new [`Folder`][folder_class] object representing the copy of the folder in the destination folder.
 
+<!-- sample post_folders_id_copy -->
 ```python
 folder_id = '22222'
 destination_folder_id = '44444'
@@ -160,6 +165,7 @@ settings, this will either move the folder to the user's trash or permanently de
 By default, the method will delete the folder and all of its contents; to fail the deletion if the folder is not empty,
 set the `recursive` parameter to `False`.
 
+<!-- sample delete_folders_id -->
 ```python
 client.folder(folder_id='22222').delete()
 ```
@@ -208,6 +214,7 @@ metadata instance.
 Note: This method will only succeed if the provided metadata template is not currently applied to the folder, otherwise it will 
 fail with a Conflict error.
 
+<!-- sample post_folders_id_metadata_id_id -->
 ```python
 metadata = {
     'foo': 'bar',
@@ -230,6 +237,7 @@ Note: This method will only succeed if the provided metadata template has alread
 have existing metadata, this method will fail with a Not Found error. This is useful you know the file will already have metadata applied,
 since it will save an API call compared to `set()`.
 
+<!-- sample put_folders_id_metadata_id_id -->
 ```python
 folder = client.folder(folder_id='22222')
 folder_metadata = folder.metadata(scope='enterprise', template='myMetadata')
@@ -258,6 +266,7 @@ To retrieve the metadata instance on a folder for a specific metadata template, 
 the metadata template to retrieve, then call [`metadata.get()`][metadata_get] to retrieve the metadata values attached
 to the folder.  This method returns a `dict` containing the applied metadata instance.
 
+<!-- sample get_folders_id_metadata_id_id -->
 ```python
 metadata = client.folder(folder_id='22222').metadata(scope='enterprise', template='myMetadata').get()
 print('Got metadata instance {0}'.format(metadata['$id']))
@@ -273,6 +282,7 @@ To remove a metadata instance from a folder, call
 metadata template to remove, then call [`metadata.delete()`][metadata_delete] to remove the metadata from the folder.
 This method returns `True` to indicate that the removal succeeded.
 
+<!-- sample delete_folders_id_metadata_id_id -->
 ```python
 client.folder(folder_id='11111').metadata(scope='enterprise', template='myMetadata').delete()
 ```
@@ -286,6 +296,7 @@ To retrieve all metadata attached to a folder, call [`folder.get_all_metadata()`
 returns a [`BoxObjectCollection`][box_object_collection] that can be used to iterate over the `dict`s representing each
 metadata instance attached to the folder.
 
+<!-- sample get_folders_id_metadata -->
 ```python
 folder_metadata = client.folder(folder_id='22222').get_all_metadata()
 for instance in folder_metadata:

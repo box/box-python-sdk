@@ -45,6 +45,7 @@ You can optionally specify a key for the template, otherwise one will be derived
 time, only `enterprise` scope templates are supported.  This method returns a
 [`MetadataTemplate`][metadata_template_class] object representing the created template.
 
+<!-- sample post_metadata_templates_schema -->
 ```python
 from boxsdk.object.metadata_template import MetadataField, MetadataFieldType
 
@@ -72,6 +73,7 @@ To retrieve a specific template by scope and template key, first use
 the template.  This method returns a new [`MetadataTemplate`][metadata_template_class] object with fields populated by
 data from the API, leaving the original object unmodified.
 
+<!-- sample get_metadata_templates_id_id_schema -->
 ```python
 template = client.metadata_template('enterprise', 'employeeRecord').get()
 print('The {0} template has {1} fields'.format(template.displayName, len(template.fields)))
@@ -86,6 +88,7 @@ To retrieve a template by ID, call [`client.get_metadata_template_by_id(template
 metadata template.  This method returns a [`MetadataTemplate`][metadata_template_class] object with fields populated by
 data from the API.
 
+<!-- sample get_metadata_templates_id -->
 ```python
 template = client.metadata_template_by_id(template_id='abcdef-fba434-ace44').get()
 print('The {0} template has {1} fields'.format(template.displayName, len(template.fields)))
@@ -102,6 +105,7 @@ necessary update operations, and then call [`template.update_info(updates)`][upd
 apply the changes to the metadata template.  This method returns an updated
 [`MetadataTemplate`][metadata_template_class] object with the changes applied, leaving the original object unmodified.
 
+<!-- sample put_metadata_templates_id_id_schema -->
 ```python
 template = client.metadata_template('enterprise', 'employeeRecord')
 updates = template.start_update()
@@ -123,6 +127,7 @@ By default, this retrieves all templates scoped to the current enterprise, but y
 retrieve templates for a different scope.  This method returns a [`BoxObjectCollection`][box_object_collection] that
 allows you to iterate over all the [`MetadataTemplate`][metadata_template_class] objects in the collection.
 
+<!-- sample get_metadata_templates_enterprise -->
 ```python
 templates = client.get_metadata_templates()
 for template in templates:
@@ -138,6 +143,7 @@ Delete Metadata Template
 To delete a metadata template, call [`template.delete()`][delete].  This method returns `True` to indicate the deletion
 was successful.
 
+<!-- sample delete_metadata_templates_id_id -->
 ```python
 client.metadata_template('enterprise', 'employeeRecord').delete()
 ```

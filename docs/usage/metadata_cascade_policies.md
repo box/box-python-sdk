@@ -28,6 +28,7 @@ To create a metadata cascade policy on a folder, call [`folder.cascade_metadata(
 with the [`MetadataTemplate`][metadata_template_class] whose values should be cascaded within the folder.  This
 method returns a [`MetadataCascadePolicy`][cascade_policy_class] object representing the newly-created policy.
 
+<!-- sample post_metadata_cascade_policies -->
 ```python
 folder = client.folder(folder_id='22222')
 metadata_template = client.metadata_template('enterprise', 'securityClassiciation')
@@ -53,6 +54,7 @@ To retrieve information about a metadata cascade policy, first call
 the policy.  This method returns a new [`MetadataCascadePolicy`][cascade_policy_class] object with fields populated by
 data from the API, leaving the original object unmodified.
 
+<!-- sample get_metadata_cascade_policies_id -->
 ```python
 cascade_policy = client.metadata_cascade_policy('84113349-794d-445c-b93c-d8481b223434').get()
 print('Cascade policy applies to a template owned by enterprise {0}'.format(cascade_policy.owner_enterprise.id))
@@ -71,6 +73,7 @@ cascade policies related to templates for a specific enterprise; if not specifie
 enterprise.  This method returns a [`BoxObjectCollection`][box_object_collection] that allows you to iterate over the
 [`MetadataCascadePolicy`][cascade_policy_class] objects in the collection.
 
+<!-- sample get_metadata_cascade_policies -->
 ```python
 cascade_policies = client.folder(folder_id='22222').get_metadata_cascade_policies()
 for policy in cascade_policies:
@@ -90,6 +93,7 @@ files in the folder already have metadata values that conflict with the ones bei
 can choose to either preserve the existing values or overwrite them with the folder's values.  This method returns
 `True` to indicate that the force application was successful.
 
+<!-- sample post_metadata_cascade_policies_id_apply -->
 ```python
 from boxsdk.object.metadata_cascade_policy import CascadePolicyConflictResolution
 
@@ -106,6 +110,7 @@ Remove Cascade Policy
 A metadata cascade policy can be removed from a folder by calling [`cascade_policy.delete()`][delete].  This method
 returns `True` to indicate that the deletion was successful.
 
+<!-- sample delete_metadata_cascade_policies_id -->
 ```python
 client.metadata_cascade_policy(policy_id='84113349-794d-445c-b93c-d8481b223434').delete()
 print('Cascade policy successfully removed')

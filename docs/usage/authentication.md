@@ -190,6 +190,7 @@ The first step in the process is to redirect the user to the Box Authorize URL, 
 (along with a CSRF token) by calling [`oauth.get_authorization_url(redirect_url)`][get_authorization_url] with
 your application's redirect URL.
 
+<!-- sample get_authorize -->
 ```python
 from boxsdk import OAuth2
 
@@ -218,6 +219,7 @@ you will be able to exchange it for an access token and refresh token.
 The SDK handles all the work for you; all you need to do is call [`oauth.authenticate(auth_code)`][authenticate] with
 the auth code pulled from the query parameters of the incoming URL:
 
+<!-- sample get_authorize -->
 ```python
 from boxsdk import Client
 
@@ -323,6 +325,7 @@ Revoking Tokens
 To revoke the tokens contained in an [`OAuth2`][oauth2_class] instance, removing the ability to call the Box API,
 call [`oauth.revoke()`][revoke].
 
+<!-- sample post_oauth2_revoke -->
 ```python
 oauth.revoke()
 ```

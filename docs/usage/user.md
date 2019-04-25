@@ -29,6 +29,7 @@ Get User Information
 To get information about a user, call the [`user.get(fields=None)`][object_get] method.  This method returns a new
 [`User`][user_class] object with fields populated by data from the API.
 
+<!-- sample get_users_id -->
 ```python
 user_id = '33333'
 user = client.user(user_id).get()
@@ -53,6 +54,7 @@ Get the Current User's Information
 To get the current user, call [`client.user(user_id='me')`][user_init] to create the [`User`][user_class] object and
 then call [`user.get(fields=None)`][object_get] to retrieve the user information from the API.
 
+<!-- sample get_users_me -->
 ```python
 current_user = client.user().get()
 ```
@@ -65,6 +67,7 @@ Create An Enterprise User
 To create an enterprise user, call the [`client.create_user(name, login, **user_attributes)`][create_user] method.
 This method returns a new [`User`][user_class] object.
 
+<!-- sample post_users -->
 ```python
 new_user = client.create_user('Dummy User', 'user@example.com')
 ```
@@ -77,6 +80,7 @@ Get the Avatar for a User
 To get the avatar for a user call the [`user.get_avatar()`][get_avatar] method with the [`User`][user_class] 
 object for the user you wish to retrieve an avatar for. This will return the user avatar to you in bytes.
 
+<!-- sample get_users_id_avatar -->
 ```python
 avatar = client.user('33333').get_avatar()
 ```
@@ -102,6 +106,7 @@ Update User
 To update a user object, call the [`user.update_info(data)`][update_info] method with a `dict` of fields to update
 on the user.
 
+<!-- sample put_users_id -->
 ```python
 user_id = '33333'
 user = client.user(user_id)
@@ -120,6 +125,7 @@ The `notify` parameter determines whether the user should receive an email about
 and the `force` parameter will cause the user to be deleted even if they still have files in their account.  If `force`
 is set to `False` and the user still has files in their account, the deletion will fail.
 
+<!-- sample delete_users_id -->
 ```python
 user_id = '33333'
 client.user(user_id).delete(force=True)
@@ -133,6 +139,7 @@ Invite User to Enterprise
 To invite an existing user to join an Enterprise call the [`enterprise.invite_user(user_email)`][invite_user] method.  This
 method returns an [`Invite`][invite_class] object representing the status of the invitation.
 
+<!-- sample post_invites -->
 ```python
 enterprise = client.get_current_enterprise()
 invitation = enterprise.invite_user('user@example.com')
@@ -148,6 +155,7 @@ To get a user's email aliases call the [`user.get_email_aliases(limit=None, fiel
 This method returns a [`BoxObjectCollection`][box_object_collection] used to iterate over the collection of
 [`EmailAlias`][email_alias_class] objects.
 
+<!-- sample get_users_id_email_aliases -->
 ```python
 user_id = '33333'
 user = client.user(user_id)
@@ -167,6 +175,7 @@ To add an email alias for a user, call the [`user.add_email_alias(email)`][add_e
 address to add as an email alias for the user.  This will allow the user to log in and be collaborated by this email
 in addition to their login email address.  The method returns an [`EmailAlias`][email_alias_class] object.
 
+<!-- sample post_users_id_email_aliases -->
 ```python
 user_id = '33333'
 user = client.user(user_id)
@@ -181,6 +190,7 @@ Remove Email Alias
 To remove an email alias from a user, call the [`user.remove_email_alias(email_alias)`][remove_email_alias] method with
 the [`EmailAlias`][email_alias_class] object to remove.  The method returns `True` to signify that the removal succeeded.
 
+<!-- sample delete_users_id_email_aliases_id -->
 ```python
 user_id = '33333'
 email_alias_id = '12345'
@@ -202,6 +212,7 @@ a `filter_term` to filter on the user's `name` and `login` fields, or select a `
 managed or external users.  This method returns a [`BoxObjectCollection`][box_object_collection] used to iterate over
 the collection of [`User`][user_class] objects.
 
+<!-- sample get_users -->
 ```python
 users = client.users(user_type='all')
 for user in users:
@@ -219,6 +230,7 @@ To move all of a user's content to a different user, call the
 account, containing all files and folders from the original user's account; the method returns a
 [`Folder`][folder_class] object representing this new folder in the destination user's account.
 
+<!-- sample put_users_id_folders_id -->
 ```python
 source_user_id = '33333'
 destination_user_id = '44444'

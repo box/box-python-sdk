@@ -22,6 +22,7 @@ To retrieve all device pins for an enterprise, call
 If an `enterprise` is not specified, this defaults to the current enterprise.  This method returns a
 `BoxObjectCollection` that allows you to iterate over the [`DevicePinner`][device_pin_class] objects in the collection.
 
+<!-- sample get_enterprises_id_device_pinners -->
 ```python
 device_pins = client.device_pinners()
 for pin in device_pins:
@@ -37,6 +38,7 @@ Get Device Pin Information
 To get information about a specific device pin, call [`device_pinner.get(fields=None)`][get].  This method returns a new
 [`DevicePinner`][device_pin_class] object with fields populated by data from the API.
 
+<!-- sample get_device_pinners_id -->
 ```python
 device_pin_id = '1111'
 device_pin = client.device_pinner(device_pin_id).get()
@@ -51,6 +53,7 @@ Delete Device Pin
 To delete a specific device pin, call [`device_pinner.delete()`][delete].  This method returns `True` to indicate that
 the deletion was successful.
 
+<!-- sample delete_device_pinners_id -->
 ```python
 device_pin_id = '1111'
 client.device_pin(device_pin_id).delete()
