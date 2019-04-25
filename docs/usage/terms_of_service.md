@@ -100,7 +100,7 @@ object already exists for a user. If the user does not have a [`TermsOfService`]
 assigned then [`terms_of_service.set_user_status(is_accepted, user)`][set_user_status] will create a new 
 [`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object populated with data from the API.
 
-<!-- sample put_terms_of_service_user_statuses_id -->
+<!-- sample post_terms_of_service_user_statuses -->
 ```python
 user = client.user(user_id='22222')
 user_status = client.terms_of_service(tos_id='12345').set_user_status(is_accepted=True, user=user)
@@ -115,6 +115,7 @@ Terms of Service and you wish to change their status, call [`terms_of_service_us
 with a `dict` of properties to update on the terms of service user status. This method returns a newly updated 
 [`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object, leaving the original object unmodified.
 
+<!-- sample put_terms_of_service_user_statuses_id -->
 ```python
 user_status = client.terms_of_service_user_status(tos_user_status_id='12345').update_info({'is_accepted': True})
 print('Terms of Service User Status ID is {0} and the accepted status is {1}'.format(user_status.id, user_status.is_accepted))

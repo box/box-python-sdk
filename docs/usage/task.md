@@ -143,7 +143,7 @@ task object. Then call ['task.get_assignments(fields=None)'][get_assignments]. T
 `BoxObjectCollection` that allows you to iterate over the ['TaskAssignment'][assignment_class] objects in the 
 collection.
 
-<!-- sample get_task_assignments -->
+<!-- sample get_task_id_assignments -->
 ```python
 assignments = client.task(task_id='12345').get_assignments()
 for assignment in assignments:

@@ -143,7 +143,7 @@ Delete Metadata Template
 To delete a metadata template, call [`template.delete()`][delete].  This method returns `True` to indicate the deletion
 was successful.
 
-<!-- sample delete_metadata_templates_id_id -->
+<!-- sample delete_metadata_templates_id_id_schema -->
 ```python
 client.metadata_template('enterprise', 'employeeRecord').delete()
 ```

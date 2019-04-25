@@ -79,6 +79,7 @@ If the user already has an assignment, you can call [storage_policy_assignment.u
 [`StoragePolicyAssignment`][storage_policy_assignment] object with data populated from the API, leaving the original 
 object unmodified.
 
+<!-- sample put_storage_policy_assignments_id -->
 ```python
 updated_storage_policy = {'storage_policy': {'type': 'storage_policy', 'id': '12345'}}
 updated_assignment = client.storage_policy_assignment(assignment_id='ZW50ZXJwcmldfgeV82MDMwMDQ=').update_info(updated_storage_policy)

@@ -96,7 +96,7 @@ To get all exempt users from the collaboration whitelist, call
 a `BoxObjectCollection` that allows you to iterate over each
 [`CollaborationWhitelistExemptTarget`][exemption_class] in the collection.
 
-<!-- sample get_collaboration_whitelist_excempt_targets -->
+<!-- sample get_collaboration_whitelist_exempt_targets -->
 ```python
 exemptions = client.collaboration_whitelist().get_exemptions()
 for exemption in exemptions:
@@ -112,7 +112,7 @@ Get Exempt User Information
 To get information about an exempted user, call [`collaboration_whitelist_exempt_target.get(fields=None)`][get].  This
 method will return a [`CollaborationWhitelistExemptTarget][exemption_class] with fields populated by data from the API.
 
-<!-- sample get_collaboration_whitelist_excempt_targets_id -->
+<!-- sample get_collaboration_whitelist_exempt_targets_id -->
 ```python
 exemption_id = '11111'
 exemption = client.collaboration_whitelist_exempt_target(exemption_id).get()
@@ -126,7 +126,7 @@ with the [`User`][user_class] to exempt from the whitelist.  This user will no l
 whitelist, and will be permitted to collaborate with users from any other domain.  This method returns a
 [`CollaborationWhitelistExemptTarget`][exemption_class] object representing the exempted user.
 
-<!-- sample post_collaboration_whitelist_excempt_targets -->
+<!-- sample post_collaboration_whitelist_exempt_targets -->
 ```python
 user = client.user(user_id='11111')
 exemption = client.collaboration_whitelist().add_exemption(user)
@@ -142,7 +142,7 @@ To remove a user exemption from the collaboration whitelist, call
 [`collaboration_whitelist_exempt_target.delete()`][delete].  This will remove the exemption and make the user subject to
 the collaboration whitelist again.  This method returns `True` to indicate that deletion was successful.
 
-<!-- sample delete_collaboration_whitelist_excempt_targets_id -->
+<!-- sample delete_collaboration_whitelist_exempt_targets_id -->
 ```python
 client.collaboration_whitelist_exempt_target(exemption_id='22222').delete()
 ```

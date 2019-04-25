@@ -219,7 +219,7 @@ you will be able to exchange it for an access token and refresh token.
 The SDK handles all the work for you; all you need to do is call [`oauth.authenticate(auth_code)`][authenticate] with
 the auth code pulled from the query parameters of the incoming URL:
 
-<!-- sample get_authorize -->
+<!-- sample post_oauth2_token -->
 ```python
 from boxsdk import Client
 

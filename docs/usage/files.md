@@ -56,7 +56,7 @@ This method returns a new [`File`][file_class] object populated with the informa
 
 You can specify an `Iterable` of fields to retrieve from the API in the `fields` parameter.
 
-<!-- sample get_file_id -->
+<!-- sample get_files_id -->
 ```python
 file_id = '11111'
 file_info = client.file(file_id).get()
@@ -73,7 +73,7 @@ To update fields on the [`File`][file_class] object, call [`file.update_info(dat
 fields to update.  This method returns the updated [`File`][file_class] object, leaving the original it was called on
 unmodified.
 
-<!-- sample put_file_id -->
+<!-- sample put_files_id -->
 ```python
 file_id = '11111'
 updated_file = client.file(file_id).update_info({'description': 'My file'})
@@ -90,7 +90,7 @@ parameter — the lower and upper bounds you wish to download.
 
 To get the entire contents of the file as `bytes`, call [`file.content(file_version=None, byte_range=None)`][content].
 
-<!-- sample get_file_id_content -->
+<!-- sample get_files_id_content -->
 ```python
 file_id = '11111'
 

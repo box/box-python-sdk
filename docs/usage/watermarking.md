@@ -48,13 +48,13 @@ To assign a watermark on a file or folder, call [file.apply_watermark()][apply-f
 [folder.apply_watermark()][apply-folder-watermark] will return the [`Watermark`][watermark_class] object populated with 
 data from the API.
 
-<!-- sample post_files_id_watermark -->
+<!-- sample put_files_id_watermark -->
 ```python
 watermark = client.file(file_id='12345').apply_watermark()
 print('Watermark created at {0} and modified at {1}'.format(watermark.created_at, watermark.modified_at))
 ```
 
-<!-- sample post_folders_id_watermark -->
+<!-- sample put_folders_id_watermark -->
 ```python
 watermark = client.folder(folder_id='11111').apply_watermark()
 print('Watermark created at {0} and modified at {1}'.format(watermark.created_at, watermark.modified_at))

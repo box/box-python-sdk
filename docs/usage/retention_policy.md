@@ -138,7 +138,7 @@ To retrieve all retention policy assignments for an enterprise, call
 will return a `BoxObjectCollection` that allows you to iterate over the 
 [`RetentionPolicyAssignment`][retention_policy_assignment_class] objects in the collection.
 
-<!-- sample get_retention_policy_assignments -->
+<!-- sample get_retention_policy_id_assignments -->
 ```python
 assignments = client.retention_policy(policy_id='12345').assignments(limit=10)
 for assignment in assignments:
