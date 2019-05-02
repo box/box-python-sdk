@@ -33,6 +33,7 @@ from boxsdk.object.webhook import Webhook
 from boxsdk.object.task import Task
 from boxsdk.object.task_assignment import TaskAssignment
 from boxsdk.object.web_link import WebLink
+from boxsdk.util.default_arg_value import SDK_VALUE_NOT_SET
 
 # pylint:disable=redefined-outer-name
 
@@ -326,7 +327,7 @@ def shared_link_password(request):
     return request.param
 
 
-@pytest.fixture(params=('2018-10-31', '2018-10-31T23:59:59-07:00', None))
+@pytest.fixture(params=('2018-10-31', '2018-10-31T23:59:59-07:00', SDK_VALUE_NOT_SET))
 def shared_link_unshared_at(request):
     return request.param
 
