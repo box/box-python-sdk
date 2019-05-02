@@ -179,7 +179,6 @@ def test_get_shared_link(
 def test_clear_unshared_at_for_shared_link(
         test_item_and_response,
         mock_box_session,
-        shared_link_can_download,
         test_url,
 ):
     test_item, _ = test_item_and_response
