@@ -220,9 +220,6 @@ class Item(BaseObject):
             and has permission to set expiration dates.  Takes an RFC3339-formatted string, e.g.
             '2018-10-31T23:59:59-07:00' for 11:59:59 PM on October 31, 2018 in the America/Los_Angeles timezone.
             The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
-
-            SDK_VALUE_NOT_SET defaults to an `object` to differentiate between default no unshared_at time set or the
-            intention to clear the unshared_at field.
         :type unshared_at:
             `unicode` or None
         :param allow_download:

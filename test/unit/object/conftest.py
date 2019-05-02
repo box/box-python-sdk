@@ -327,7 +327,7 @@ def shared_link_password(request):
     return request.param
 
 
-@pytest.fixture(params=('2018-10-31', '2018-10-31T23:59:59-07:00', SDK_VALUE_NOT_SET))
+@pytest.fixture(params=('2018-10-31', '2018-10-31T23:59:59-07:00', None, SDK_VALUE_NOT_SET))
 def shared_link_unshared_at(request):
     return request.param
 
