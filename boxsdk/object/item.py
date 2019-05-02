@@ -224,7 +224,7 @@ class Item(BaseObject):
             SDK_VALUE_NOT_SET defaults to an `object` to differentiate between default no unshared_at time set or the
             intention to clear the unshared_at field.
         :type unshared_at:
-            SDK_VALUE_NOT_SET or `unicode`
+            `unicode` or None
         :param allow_download:
             Whether or not the item being shared can be downloaded when accessed via the shared link.
             If this parameter is None, the default setting will be used.
@@ -295,7 +295,7 @@ class Item(BaseObject):
             The date on which this link should be disabled. May only be set if the current user is not a free user
             and has permission to set expiration dates.
         :type unshared_at:
-            :class:`datetime.date` or SDK_VALUE_NOT_SET
+            `unicode` or None
         :param allow_download:
             Whether or not the item being shared can be downloaded when accessed via the shared link.
             If this parameter is None, the default setting will be used.
