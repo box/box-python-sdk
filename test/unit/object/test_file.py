@@ -13,6 +13,7 @@ from boxsdk.object.file_version import FileVersion
 from boxsdk.object.task import Task
 from boxsdk.object.upload_session import UploadSession
 from boxsdk.util.chunked_uploader import ChunkedUploader
+from boxsdk.util.default_arg_value import SDK_VALUE_NOT_SET
 
 
 # pylint:disable=protected-access
@@ -493,7 +494,7 @@ def test_get_shared_link_download_url(
     }
     if shared_link_access is not None:
         expected_data['shared_link']['access'] = shared_link_access
-    if shared_link_unshared_at is not None:
+    if shared_link_unshared_at is not SDK_VALUE_NOT_SET:
         expected_data['shared_link']['unshared_at'] = shared_link_unshared_at
     if shared_link_can_preview is not None:
         expected_data['shared_link']['permissions'] = permissions = {}

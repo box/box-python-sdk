@@ -9,6 +9,7 @@ from boxsdk.exception import BoxAPIException
 from boxsdk.config import API
 from boxsdk.object.watermark import Watermark
 from boxsdk.object.collaboration import Collaboration
+from boxsdk.util.default_arg_value import SDK_VALUE_NOT_SET
 
 
 @pytest.fixture(params=('file', 'folder'))
@@ -148,7 +149,7 @@ def test_get_shared_link(
     expected_data = {'shared_link': {}}
     if shared_link_access is not None:
         expected_data['shared_link']['access'] = shared_link_access
-    if shared_link_unshared_at is not None:
+    if shared_link_unshared_at is not SDK_VALUE_NOT_SET:
         expected_data['shared_link']['unshared_at'] = shared_link_unshared_at
     if shared_link_can_download is not None or shared_link_can_preview is not None:
         expected_data['shared_link']['permissions'] = permissions = {}
@@ -173,6 +174,32 @@ def test_get_shared_link(
         params=None,
     )
     assert url == test_url
+
+
+def test_clear_unshared_at_for_shared_link(
+        test_item_and_response,
+        mock_box_session,
+        test_url,
+):
+    test_item, _ = test_item_and_response
+    expected_url = test_item.get_url()
+    mock_box_session.put.return_value.json.return_value = {
+        'type': test_item.object_type,
+        'id': test_item.object_id,
+        'shared_link': {
+            'url': test_url,
+            'unshared_at': None,
+        },
+    }
+    expected_data = {'shared_link': {'unshared_at': None, }, }
+    shared_link = test_item.get_shared_link(unshared_at=None)
+    mock_box_session.put.assert_called_once_with(
+        expected_url,
+        data=json.dumps(expected_data),
+        headers=None,
+        params=None,
+    )
+    assert shared_link is test_url
 
 
 def test_remove_shared_link(test_item_and_response, mock_box_session, etag, if_match_header):

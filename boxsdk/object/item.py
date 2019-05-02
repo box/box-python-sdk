@@ -8,6 +8,7 @@ from .base_object import BaseObject
 from ..exception import BoxAPIException
 from .metadata import Metadata
 from ..util.api_call_decorator import api_call
+from ..util.default_arg_value import SDK_VALUE_NOT_SET
 from ..pagination.marker_based_dict_collection import MarkerBasedDictCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
@@ -197,7 +198,7 @@ class Item(BaseObject):
             self,
             access=None,
             etag=None,
-            unshared_at=None,
+            unshared_at=SDK_VALUE_NOT_SET,
             allow_download=None,
             allow_preview=None,
             password=None,
@@ -249,7 +250,7 @@ class Item(BaseObject):
             }
         }
 
-        if unshared_at is not None:
+        if unshared_at is not SDK_VALUE_NOT_SET:
             data['shared_link']['unshared_at'] = unshared_at
 
         if allow_download is not None or allow_preview is not None:
@@ -269,7 +270,7 @@ class Item(BaseObject):
             self,
             access=None,
             etag=None,
-            unshared_at=None,
+            unshared_at=SDK_VALUE_NOT_SET,
             allow_download=None,
             allow_preview=None,
             password=None,
@@ -291,7 +292,7 @@ class Item(BaseObject):
             The date on which this link should be disabled. May only be set if the current user is not a free user
             and has permission to set expiration dates.
         :type unshared_at:
-            :class:`datetime.date` or None
+            `unicode` or None
         :param allow_download:
             Whether or not the item being shared can be downloaded when accessed via the shared link.
             If this parameter is None, the default setting will be used.
