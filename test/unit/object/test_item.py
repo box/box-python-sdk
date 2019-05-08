@@ -576,7 +576,7 @@ def test_set_classification_succeeds(test_item_and_response, mock_box_session):
     assert metadata is metadata_response['Box__Security__Classification__Key']
 
 
-def test_set_classification_fails(test_file, test_item_and_response, mock_box_session):
+def test_set_classification_fails(test_item_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name
     test_item, _ = test_item_and_response
     expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
