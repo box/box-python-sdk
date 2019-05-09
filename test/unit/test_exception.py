@@ -29,8 +29,6 @@ def test_box_api_exception():
         url=url,
         method=method,
         context_info=context_info,
-        error=error,
-        error_description=error_description,
     )
     assert box_exception.status == status
     assert box_exception.code == code
@@ -40,8 +38,6 @@ def test_box_api_exception():
     assert box_exception.url == url
     assert box_exception.method == method
     assert box_exception.context_info == context_info
-    assert box_exception.error == error
-    assert box_exception.error_description == error_description
     assert str(box_exception) == '''Message: {0}
 Status: {1}
 Code: {2}
@@ -49,9 +45,7 @@ Request ID: {3}
 Headers: {4}
 URL: {5}
 Method: {6}
-Context Info: {7}
-Error: {8}
-Error Description: {9}'''.format(message, status, code, request_id, headers, url, method, context_info, error, error_description)
+Context Info: {7}'''.format(message, status, code, request_id, headers, url, method, context_info)
 
 
 @pytest.mark.parametrize('has_network_response', [True, False])

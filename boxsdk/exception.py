@@ -67,14 +67,6 @@ class BoxAPIException(BoxException):
         The failed response
     :type network_response:
         Requests `Response`
-    :param error:
-        The error returned for failed app authorization.
-    :type error:
-        `unicode` or None
-    :param error_description:
-        The error description returned for failed app authorization.
-    :type error_description:
-        `unicode` or None
     """
     status = attr.ib()
     code = attr.ib(default=None)
@@ -85,8 +77,6 @@ class BoxAPIException(BoxException):
     method = attr.ib(default=None)
     context_info = attr.ib(default=None)
     network_response = attr.ib(default=None, repr=False)
-    error = attr.ib(default=None)
-    error_description = attr.ib(default=None)
 
     def __str__(self):
         return '\n'.join((
@@ -98,8 +88,6 @@ class BoxAPIException(BoxException):
             'URL: {self.url}',
             'Method: {self.method}',
             'Context Info: {self.context_info}',
-            'Error: {self.error}',
-            'Error Description: {self.error_description}',
         )).format(self=self, headers=sanitize_dictionary(self.headers))
 
 
@@ -142,20 +130,17 @@ class BoxOAuthException(BoxException):
 
     def __str__(self):
         # pylint:disable=no-member
-        response_json = self.network_response.json()
         if self.network_response:
             headers = sanitize_dictionary(self.network_response.headers)
         # pylint:enable=no-member
         else:
             headers = 'N/A'
-        return '\nMessage: {0}\nStatus: {1}\nURL: {2}\nMethod: {3}\nHeaders: {4}\nError: {5}\nError Description: {6}\n'.format(
+        return '\nMessage: {0}\nStatus: {1}\nURL: {2}\nMethod: {3}\nHeaders: {4}'.format(
             self.message,
             self.status,
             self.url,
             self.method,
             headers,
-            response_json.get('error', None),
-            response_json.get('error_description', None),
         )
 
 
