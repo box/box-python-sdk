@@ -18,8 +18,6 @@ def test_box_api_exception():
     url = 'https://example.com'
     method = 'GET'
     context_info = {'context': 'value'}
-    error = 'unauthorized client'
-    error_description = 'This app is not authorized by the enterprise admin'
     box_exception = BoxAPIException(
         status,
         code=code,
@@ -75,4 +73,4 @@ Status: {1}
 URL: {2}
 Method: {3}
 Headers: {4}'''.format(message, status, url, method, headers if has_network_response else 'N/A')
-    # assert box_exception.network_response is network_response
+    assert box_exception.network_response is network_response

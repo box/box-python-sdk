@@ -320,7 +320,7 @@ class Session(object):
                 url=request.url,
                 method=request.method,
                 context_info=response_json.get('context_info', None),
-                network_response=network_response,
+                network_response=network_response
             )
         if request.expect_json_response and not is_json_response(network_response):
             raise BoxAPIException(
