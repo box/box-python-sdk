@@ -67,6 +67,14 @@ class BoxAPIException(BoxException):
         The failed response
     :type network_response:
         Requests `Response`
+    :param error:
+        The error returned for failed app authorization.
+    :type error:
+        `unicode` or None
+    :param error_description:
+        The error description returned for failed app authorization.
+    :type error_description:
+        `unicode` or None
     """
     status = attr.ib()
     code = attr.ib(default=None)
@@ -77,6 +85,8 @@ class BoxAPIException(BoxException):
     method = attr.ib(default=None)
     context_info = attr.ib(default=None)
     network_response = attr.ib(default=None, repr=False)
+    error = attr.ib(default=None)
+    error_description = attr.ib(default=None)
 
     def __str__(self):
         return '\n'.join((
@@ -88,6 +98,8 @@ class BoxAPIException(BoxException):
             'URL: {self.url}',
             'Method: {self.method}',
             'Context Info: {self.context_info}',
+            'Error: {self.error}',
+            'Error Description: {self.error_description}',
         )).format(self=self, headers=sanitize_dictionary(self.headers))
 
 
@@ -120,6 +132,14 @@ class BoxOAuthException(BoxException):
         The 'code' field of the failed response
     :type code:
         `unicode` or None
+    :param error:
+        The error of the failed request.
+    :type error:
+        `unicode` or None
+    :param error_description:
+        The error description of the failed request.
+    :type error_description:
+        `unicode` or None
     """
     status = attr.ib()
     message = attr.ib(default=None)
@@ -127,6 +147,8 @@ class BoxOAuthException(BoxException):
     method = attr.ib(default=None)
     network_response = attr.ib(default=None, repr=False, type=NetworkResponse)
     code = attr.ib(default=None)
+    error = attr.ib(default=None)
+    error_description = attr.ib(default=None)
 
     def __str__(self):
         # pylint:disable=no-member
@@ -135,12 +157,14 @@ class BoxOAuthException(BoxException):
         # pylint:enable=no-member
         else:
             headers = 'N/A'
-        return '\nMessage: {0}\nStatus: {1}\nURL: {2}\nMethod: {3}\nHeaders: {4}'.format(
+        return '\nMessage: {0}\nStatus: {1}\nURL: {2}\nMethod: {3}\nHeaders: {4}\nError: {5}\nError Description: {6}\n'.format(
             self.message,
             self.status,
             self.url,
             self.method,
             headers,
+            self.error,
+            self.error_description,
         )
 
 
