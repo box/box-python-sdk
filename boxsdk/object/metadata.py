@@ -231,6 +231,8 @@ class Metadata(BaseEndpoint):
                 for key, value in metadata.items():
                     updates.add('/' + key, value)
                 metadata_value = self.update(updates)
+            else:
+                raise
         return metadata_value
 
     def clone(self, session=None):
