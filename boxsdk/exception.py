@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 import attr
+import json
 
 from .network.network_interface import NetworkResponse
 from .util.log import sanitize_dictionary
@@ -152,6 +153,7 @@ class BoxOAuthException(BoxException):
 
     def __str__(self):
         # pylint:disable=no-member
+        response_json = self.network_response.json()
         if self.network_response:
             headers = sanitize_dictionary(self.network_response.headers)
         # pylint:enable=no-member
@@ -163,8 +165,8 @@ class BoxOAuthException(BoxException):
             self.url,
             self.method,
             headers,
-            self.error,
-            self.error_description,
+            response_json.get('error', None),
+            response_json.get('error_description', None),
         )
 
 
