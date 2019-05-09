@@ -681,14 +681,13 @@ class Item(BaseObject):
         :rtype:
             `unicode`
         """
-        try:
-            metadata_classification = self.add_classification(classification)
-        except BoxAPIException as err:
-            if err.status == 409:
-                metadata_classification = self.update_classification(classification)
-            else:
-                raise
-        return metadata_classification
+        classification_metadata = {
+            'Box__Security__Classification__Key': classification,
+        }
+        return self.metadata(
+            scope='enterprise',
+            template=self._classification_template_key
+        ).set(metadata=classification_metadata)['Box__Security__Classification__Key']
 
     def get_classification(self):
         """
