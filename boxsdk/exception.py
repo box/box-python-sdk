@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 import attr
-import json
 
 from .network.network_interface import NetworkResponse
 from .util.log import sanitize_dictionary
@@ -133,14 +132,6 @@ class BoxOAuthException(BoxException):
         The 'code' field of the failed response
     :type code:
         `unicode` or None
-    :param error:
-        The error of the failed request.
-    :type error:
-        `unicode` or None
-    :param error_description:
-        The error description of the failed request.
-    :type error_description:
-        `unicode` or None
     """
     status = attr.ib()
     message = attr.ib(default=None)
@@ -148,8 +139,6 @@ class BoxOAuthException(BoxException):
     method = attr.ib(default=None)
     network_response = attr.ib(default=None, repr=False, type=NetworkResponse)
     code = attr.ib(default=None)
-    error = attr.ib(default=None)
-    error_description = attr.ib(default=None)
 
     def __str__(self):
         # pylint:disable=no-member
