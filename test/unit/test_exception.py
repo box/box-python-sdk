@@ -53,7 +53,7 @@ def test_box_oauth_exception(has_network_response):
     url = 'https://example.com'
     method = 'GET'
     headers = {'header': 'value'}
-    network_response = Mock(DefaultNetworkResponse, headers=headers, json=body) if has_network_response else None
+    network_response = Mock(DefaultNetworkResponse, headers=headers) if has_network_response else None
     box_exception = BoxOAuthException(
         status,
         message=message,
