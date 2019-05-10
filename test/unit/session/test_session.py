@@ -229,7 +229,7 @@ def test_box_session_raises_for_failed_response_with_error_and_error_description
     mock_network_layer.request.side_effect = [bad_network_response_400]
     try:
         box_session.get(url=test_url)
-        assert False
+        pytest.fail('Should throw exception because of bad network response')
     except BoxAPIException as exception:
         assert exception.code == 'Example Error'
         assert exception.message == 'Example Error Description'

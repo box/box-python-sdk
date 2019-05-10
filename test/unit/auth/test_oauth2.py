@@ -297,7 +297,7 @@ def test_oauth_exception_error_and_error_description(mock_box_session, bad_netwo
     )
     try:
         oauth.authenticate('fake_auth_code')
-        assert False
+        pytest.fail('Should throw exception because of bad network response')
     except BoxOAuthException as exception:
         assert exception.code == 'Example Error'
         assert exception.message == 'Example Error Description'
