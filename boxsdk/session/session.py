@@ -314,8 +314,8 @@ class Session(object):
             raise BoxAPIException(
                 status=network_response.status_code,
                 headers=network_response.headers,
-                code=response_json.get('code', None),
-                message=response_json.get('message', None),
+                code=response_json.get('code', None) or response_json.get('error', None),
+                message=response_json.get('message', None) or response_json.get('error_description', None),
                 request_id=response_json.get('request_id', None),
                 url=request.url,
                 method=request.method,

@@ -287,6 +287,22 @@ def test_token_request_raises_box_oauth_exception_when_tokens_are_not_in_the_res
         test_method(oauth)
 
 
+def test_oauth_exception_error_and_error_description(mock_box_session, bad_network_response_400):
+    mock_box_session.request.return_value = bad_network_response_400
+    oauth = OAuth2(
+        client_id='',
+        client_secret='',
+        access_token='fake_access_token',
+        session=mock_box_session,
+    )
+    try:
+        oauth.authenticate('fake_auth_code')
+        pytest.fail('Should throw exception because of bad network response')
+    except BoxOAuthException as exception:
+        assert exception.code == 'Example Error'
+        assert exception.message == 'Example Error Description'
+
+
 def test_token_request_allows_missing_refresh_token(mock_box_session):
     mock_network_response = Mock()
     mock_network_response.ok = True

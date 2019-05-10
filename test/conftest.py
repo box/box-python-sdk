@@ -184,6 +184,15 @@ def bad_network_response():
 
 
 @pytest.fixture()
+def bad_network_response_400():
+    mock_network_response = Mock(DefaultNetworkResponse, headers={})
+    mock_network_response.status_code = 400
+    _set_content_and_json_from_json(mock_network_response, json_value={'error': 'Example Error', 'error_description': 'Example Error Description'})
+    mock_network_response.ok = False
+    return mock_network_response
+
+
+@pytest.fixture()
 def failed_non_json_response():
     mock_network_response = Mock(DefaultNetworkResponse, headers={})
     mock_network_response.status_code = 404

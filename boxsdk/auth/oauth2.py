@@ -374,8 +374,8 @@ class OAuth2(object):
         if is_json_response(network_response):
             json_response = network_response.json()
             exception_kwargs.update(dict(
-                code=json_response.get('code'),
-                message=json_response.get('message'),
+                code=json_response.get('code') or json_response.get('error'),
+                message=json_response.get('message') or json_response.get('error_description'),
             ))
         else:
             exception_kwargs['message'] = network_response.content
