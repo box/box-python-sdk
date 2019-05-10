@@ -225,6 +225,16 @@ def test_box_session_raises_for_failed_response(box_session, mock_network_layer,
         box_session.get(url=test_url)
 
 
+def test_box_session_raises_for_failed_response_with_error_and_error_description(box_session, mock_network_layer, bad_network_response_400, test_url):
+    mock_network_layer.request.side_effect = [bad_network_response_400]
+    try:
+        box_session.get(url=test_url)
+        assert False
+    except BoxAPIException as exception:
+        assert exception.code == 'Example Error'
+        assert exception.message == 'Example Error Description'
+
+
 def test_box_session_raises_for_failed_non_json_response(box_session, mock_network_layer, failed_non_json_response, test_url):
     # pylint:disable=redefined-outer-name
     mock_network_layer.request.side_effect = [failed_non_json_response]

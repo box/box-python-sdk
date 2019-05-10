@@ -53,12 +53,6 @@ def test_box_oauth_exception(has_network_response):
     url = 'https://example.com'
     method = 'GET'
     headers = {'header': 'value'}
-    error = 'unauthorized client'
-    error_description = 'This app is not authorized by the enterprise admin'
-    body = {
-        'error': error,
-        'error_description': error_description,
-    }
     network_response = Mock(DefaultNetworkResponse, headers=headers, json=body) if has_network_response else None
     box_exception = BoxOAuthException(
         status,
