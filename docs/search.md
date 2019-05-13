@@ -10,6 +10,7 @@ Search for Content
 To get a list of items matching a serch query, call [`search.query(query, limit=None, offset=0, **kwargs)`][query] will return an `Iterable` that allows you 
 to iterate over the [`Item`][item_class] objects in the collection.
 
+<!-- sample get_search -->
 ```python
 items = client.search().query(query='TEST QUERY', limit=100, file_extensions=['pdf', 'doc'])
 for item in items:

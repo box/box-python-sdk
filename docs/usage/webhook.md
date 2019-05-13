@@ -25,6 +25,7 @@ To get a webhook object, first call [`client.webhook(webhook_id)`][webhook] to c
 [`Webhook`][webhook_class] object, and then calling [`webhook.get(fields=None)`][get] will return the 
 [`Webhook`][webhook_class] object populated with data from the API.
 
+<!-- sample get_webhooks_id -->
 ```python
 webhook = client.webhook(webhook_id='12345').get()
 print('Webhooks ID is {0} and the address is {1}'.format(webhook.id, webhook.address))
@@ -41,6 +42,7 @@ To retrieve all webhooks for an enterprise, call [`client.get_webhooks(limit=Non
 This method returns a `BoxObjectCollection` that allows you to iterate over the [`Webhook`][webhook_class] objects in 
 the collection.
 
+<!-- sample get_webhooks -->
 ```python
 webhooks = client.get_webhooks()
 for webhook in webhooks:
@@ -57,6 +59,7 @@ To create a webhook object, call [`client.create_webhook(target_url, name=None, 
 you create a new webhook object with the specified target url, name, and description. This method will return an updated 
 [`Webhook`][webhook_class] object populated with data from the API, leaving the original object unmodified.
 
+<!-- sample post_webhooks -->
 ```python
 folder = client.folder(folder_id='12345')
 webhook = client.create_webhook(folder, ['FILE.UPLOADED', 'FILE.PREVIEWED'], 'https://example.com')
@@ -72,6 +75,7 @@ Delete Webhook
 To delete a webhook, call [`webhook.delete()`][delete]. This method returns `True` to indicate that the deletion was 
 successful.
 
+<!-- sample delete_webhooks_id -->
 ```python
 client.webhook(webhook_id='12345').delete()
 print('The webhook was successfully deleted!')
@@ -87,6 +91,7 @@ To update a webhook object, first call [`client.webhook(webhook_id)`][webhook] t
 object, and then calling [`webhook.update_info(data)`][update_info] with a `dict` of properties to update on the 
 webhook. This method returns a new updated [`Webhook`][webhook_class] object, leaving the original object unmodified.
 
+<!-- sample put_webhooks_id -->
 ```python
 update_object = {
     'triggers': ['FILE.COPIED'],

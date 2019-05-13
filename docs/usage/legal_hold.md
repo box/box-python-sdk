@@ -37,6 +37,7 @@ to initialize the [`LegalHoldPolicy`][policy_class] and then call [`legal_hold_p
 retrieve data from the API.  This method returns a new [`LegalHoldPolicy`][policy_class] object with fields populated by
 data form the API, leaving the original object unmodified.
 
+<!-- sample get_legal_hold_policies_id -->
 ```python
 legal_hold_policy = client.legal_hold_policy(policy_id='12345').get()
 print('The "{0}" policy is {1}'.format(legal_hold_policy.policy_name, legal_hold_policy.status))
@@ -55,6 +56,7 @@ You can optionally pass a `policy_name` value to filter the results to include o
 prefix match by name.  This method returns a `BoxObjectCollection` that allows you to iterate over the
 [`LegalHoldPolicy`][policy_class] objects in the collection.
 
+<!-- sample get_legal_hold_policies -->
 ```python
 policies = client.get_legal_hold_policies()
 for policy in policies:
@@ -72,6 +74,7 @@ well as parameters describing which time period the policy applies to.  You must
 and `filter_ending_at` dates, or `is_ongoing=True`.  This method returns a new [`LegalHoldPolicy`][policy_class] object
 representing the created policy.
 
+<!-- sample post_legal_hold_policies -->
 ```python
 new_policy = client.create_legal_hold_policy('New Policy', is_ongoing=True)
 print('Created legal hold policy with ID {0}'.format(new_policy.id))
@@ -86,6 +89,7 @@ To update an existing legal hold policy, call [`legal_hold_policy.update_info(da
 properties to update on the policy.  This method returns a new [`LegalHoldPolicy`][policy_class] object with the updates
 applied, leaving the original object unmodified.
 
+<!-- sample put_legal_hold_policies_id -->
 ```python
 policy_update = {'description': 'New Description', 'release_notes': 'Example Notes'}
 updated_policy = client.legal_hold_policy(policy_id='12345').update_info(policy_update)
@@ -102,6 +106,7 @@ the deletion request was successful.
 > __Note:__ This is an asynchronous process - the policy assignment may not be fully deleted yet when the
 > response comes back.
 
+<!-- sample delete_legal_hold_policies_id -->
 ```python
 client.legal_hold_policy(policy_id='12345').delete()
 print('Legal hold policy was deleted!')
@@ -116,6 +121,7 @@ To assign a legal hold policy, call [`legal_hold_policy.assign(assignee)`][assig
 to a [`Folder`][folder_class], [`File`][file_class], [`FileVersion`][file_version_class], or [`User`][user_class].
 This will cause the associated items to be held and unable to be deleted.
 
+<!-- sample post_legal_hold_policy_assignments -->
 ```python
 folder_to_assign = client.folder(folder_id='22222')
 assignment = client.legal_hold_policy(policy_id'12345').assign(folder_to_assign)
@@ -140,6 +146,7 @@ To get the assignments for a specific legal hold policy, call
 This method returns a `BoxObjectCollection` that allows you to iterate over the
 [`LegalHoldPolicyAssignment`][assignment_class] objects in the collection.
 
+<!-- sample get_legal_hold_policy_assignments -->
 ```python
 assignments = client.legal_hold_policy(policy_id='12345').get_assignments()
 for assignment in assignments:
@@ -168,6 +175,7 @@ retrieve data about the assignment from the API.  This method returns a new
 [`LegalHoldPolicyAssignment`][assignment_class] with fields populated by data from the API, leaving the original object
 unmodified.
 
+<!-- sample get_legal_hold_policy_assignments_id -->
 ```python
 assignment_id = '98765'
 assignment = client.legal_hold_policy_assignment(assignment_id).get()
@@ -189,6 +197,7 @@ returns `True` to indicate that the deletion request was successful.
 > __Note:__ This is an asynchronous process - the policy assignment may not be fully deleted yet when the
 > response comes back.
 
+<!-- sample delete_legal_hold_policy_assignments_id -->
 ```python
 assignment_id = '1111'
 client.legal_hold_policy_assignment(assignment_id).delete()
@@ -202,6 +211,7 @@ To get the actual hold records associated with a policy, call
 `BoxObjectCollection` that allows you to iterate over the [`LegalHold`][hold_class] objects in the
 collection.
 
+<!-- sample get_file_version_legal_holds -->
 ```python
 legal_holds = client.legal_hold_policy(policy_id='12345').get_file_version_legal_holds()
 for legal_hold in legal_holds:
@@ -218,6 +228,7 @@ To retrieve information about a file version legal hold, call [`legal_hold.get(f
 returns a new [`LegalHold`][hold_class] with fields populated by data from the API, leaving the original object
 unmodified.
 
+<!-- sample get_file_version_legal_holds_id -->
 ```python
 file_version_legal_hold_id = '55555'
 legal_hold = client.legal_hold(file_version_legal_hold_id).get()

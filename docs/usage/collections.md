@@ -21,6 +21,7 @@ To get all collections belonging to a user, call [`client.collections(limit=None
 This method returns a `BoxObjectCollection` that you can use to iterate over all the
 [`Collection`][collection_class] objects in the set.
 
+<!-- sample get_collections -->
 ```python
 collections = client.collections()
 for collection in collections:
@@ -38,6 +39,7 @@ To retrieve a list of items contained in a collection, call
 `BoxObjectCollection` that you can use to iterate over all the [`Item`][item_class] objects in
 the collection.
 
+<!-- sample get_collections_id_items -->
 ```python
 items = client.collection(collection_id='12345').get_items()
 for item in items:

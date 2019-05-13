@@ -32,6 +32,7 @@ To automatically receive events as they happen, call
 the results.  By default, this will start listening for events from the current time onward; to get all available events,
 pass a `stream_position` of `0`.  The generator yields [`Event`][event_class] objects representing each event.
 
+<!-- sample options_events -->
 ```python
 events = client.events().generate_events_with_long_polling()
 for event in events:
@@ -62,6 +63,7 @@ will fetch the first available events chronologically; you can pass a specific `
 particular time.  This method returns a `dict` with the relevant [`Event`][event_class] objects in a `list` under the
 `entries` key and the next stream position value under the `next_stream_position` key.
 
+<!-- sample get_events -->
 ```python
 stream_position = 0
 events = client.events().get_events(stream_position=stream_position)

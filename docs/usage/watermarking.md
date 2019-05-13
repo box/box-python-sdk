@@ -25,11 +25,13 @@ To get a watermark object, call  [`file.get_watermark()`][get_file_watermark] or
 [`folder.get_watermark()`][get_folder_watermark] will return the [`Watermark`][watermark_class] object populated with 
 data from the API.
 
+<!-- sample get_files_id_watermark -->
 ```python
 watermark = client.file(file_id='12345').get_watermark()
 print('Watermark created at {0} and modified at {1}'.format(watermark.created_at, watermark.modified_at))
 ```
 
+<!-- sample get_folders_id_watermark -->
 ```python
 watermark = client.folder(folder_id='11111').get_watermark()
 print('Watermark created at {0} and modified at {1}'.format(watermark.created_at, watermark.modified_at))
@@ -46,11 +48,13 @@ To assign a watermark on a file or folder, call [file.apply_watermark()][apply-f
 [folder.apply_watermark()][apply-folder-watermark] will return the [`Watermark`][watermark_class] object populated with 
 data from the API.
 
+<!-- sample put_files_id_watermark -->
 ```python
 watermark = client.file(file_id='12345').apply_watermark()
 print('Watermark created at {0} and modified at {1}'.format(watermark.created_at, watermark.modified_at))
 ```
 
+<!-- sample put_folders_id_watermark -->
 ```python
 watermark = client.folder(folder_id='11111').apply_watermark()
 print('Watermark created at {0} and modified at {1}'.format(watermark.created_at, watermark.modified_at))
@@ -66,11 +70,13 @@ Remove Watermark on File or Folder
 To remove a watermark from a file or folder, call [file.delete_watermark()][delete-file-watermark] or 
 [folder.delete_watermark()][delete-folder-watermark] will return `True` to indicate that the deletion was successful.
 
+<!-- sample delete_files_id_watermark -->
 ```python
 client.file(file_id='12345').delete_watermark()
 print('The file watermark was deleted!')
 ```
 
+<!-- sample delete_folders_id_watermark -->
 ```python
 client.folder(folder_id='11111').delete_watermark()
 print('The folder watermark was deleted!')

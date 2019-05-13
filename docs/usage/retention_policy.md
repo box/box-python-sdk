@@ -26,6 +26,7 @@ Create Retention Policy
 To create a retention policy object, call [`client.create_retention_policy(policy_name, disposition_action, retention_length, can_owner_extend_retention=None, are_owners_notified=None, custom_notification_recipients=None)`][create_retention_policy]. This will let you create a new indefinite 
 [`RetentionPolicy`][retention_policy_class] object populated with data from the API.
 
+<!-- sample post_retention_policies -->
 ```python
 policy_name = 'Test Indefinite Policy Name'
 disposition_action = 'remove_retention'
@@ -54,6 +55,7 @@ To get a retention policy object, first call [`client.retention_policy(policy_id
 appropriate [`RetentionPolicy`][retention_policy_class] object, and then calling [`retention_policy.get(fields=None)`][get] 
 will return the [`RetentionPolicy`][retention_policy_class] object populated with data from the API.
 
+<!-- sample get_retention_policies_id -->
 ```python
 retention_policy = client.retention_policy(policy_id='12345').get()
 print('Retention Policy ID is {0} and the name is {1}'.format(retention_policy.id, retention_policy.policy_name))
@@ -69,6 +71,7 @@ To retrieve all retention policies for an enterprise, call [`client.get_retentio
 This method returns a `BoxObjectCollection` that allows you to iterate over the 
 [`Retention Policy`][retention_policy_class] objects in the collection.
 
+<!-- sample get_retention_policies -->
 ```python
 retention_policies = client.get_retention_policies()
 for policy in retention_policies:
@@ -84,6 +87,7 @@ To update a retention policy object, calling [`retention_policy.update_info(data
 properties to update on the retention policy. This method returns a newly updates 
 [`RetentionPolicy`][retention_policy_class] object, leaving the original object unmodified.
 
+<!-- sample put_retention_policies_id -->
 ```python
 policy_update = {'policy_name': 'New Policy Name',}
 updated_retention_policy = client.retention_policy(policy_id='12345').update_info(policy_update)
@@ -98,6 +102,7 @@ Assign Retention Policy
 To assign a retention policy, call [`retention_policy.assign(folder)`][assign] will create a new 
 [`RetentionPolicyAssignment`][retention_policy_assignment_class] object populated with data from the API.
 
+<!-- sample post_retention_policy_assignments -->
 ```python
 folder = client.folder(folder_id='1111')
 assignment = client.retention_policy(policy_id='12345').assign(folder)
@@ -115,6 +120,7 @@ to construct the appropriate [`Retention Policy Assignment`][retention_policy_as
 [`retention_policy_assignment.get(fields=None)`][get] will return the 
 [`Retention Policy Assignment`][retention_policy_assignment_class] object populated with data from the API.
 
+<!-- sample get_retention_policy_assignments_id -->
 ```python
 assignment = client.retention_policy_assignment('12345').get()
 print('Assignment id is {0} and it is assigned by {1}'.format(assignment.id, assignment.assigned_by.name))
@@ -132,6 +138,7 @@ To retrieve all retention policy assignments for an enterprise, call
 will return a `BoxObjectCollection` that allows you to iterate over the 
 [`RetentionPolicyAssignment`][retention_policy_assignment_class] objects in the collection.
 
+<!-- sample get_retention_policy_id_assignments -->
 ```python
 assignments = client.retention_policy(policy_id='12345').assignments(limit=10)
 for assignment in assignments:
@@ -156,6 +163,7 @@ To retrieve all file version retentions, call [`client.get_file_version_retentio
 `BoxObjectCollection` that allows you to iterate over the [`FileVersionRetention`][file_version_retention_class] 
 objects in the collection.
 
+<!-- sample get_file_version_retentions -->
 ```python
 retentions = client.get_file_version_retentions()
 for retention in retentions:
@@ -174,6 +182,7 @@ to construct the appropriate [`File Version Retention`][file_version_retention_c
 [`file_version_retention.get(fields=None)`][get] will return the [`FileVersionRetention`][file_version_retention] 
 object populated with data from the API.
 
+<!-- sample get_file_version_retentions_id -->
 ```python
 retention_info = client.file_version_retention(retention_id='12345').get()
 print('The file version retention ID is {0} and the data time applied at is {1}'.format(retention.id, retention.applied_at))

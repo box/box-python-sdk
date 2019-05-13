@@ -24,6 +24,7 @@ To get a specific comment object, first call `[client.comment(comment_id)`][comm
 comment.  The latter method returns a new [`Comment`][comment_class] object with fields populated by data from the API,
 leaving the original unmodified.
 
+<!-- sample get_comment_id -->
 ```python
 comment = client.comment(comment_id='55555').get()
 print('The comment says "{0}"'.format(comment.message))
@@ -40,6 +41,7 @@ To retrieve the comment left on a file, call [`file.get_comments(limit=None, off
 This method returns a `BoxObjectCollection` that you can use to iterate over all the
 [`Comment`][comment_class] objects in the set.
 
+<!-- sample get_files_id_comments -->
 ```python
 comments = client.file(file_id='11111').get_comments()
 for comment in comments:
@@ -56,6 +58,7 @@ You can at-mention other users by adding special tags within the message, in the
 example, to at-mention John Doe, whose user ID is `"33333"`: `@[33333:John Doe]`.  This method returns a
 [`Comment`][comment_class] object representing the newly-created comment.
 
+<!-- sample post_comments -->
 ```python
 comment = client.file(file_id='11111').add_comment('Hey @[44444:boss], when should I have this done by?')
 ```
@@ -84,6 +87,7 @@ You can at-mention other users by adding special tags within the message, in the
 example, to at-mention John Doe, whose user ID is `"33333"`: `@[33333:John Doe]`.  This method returns an updated
 [`Comment`][comment_class] object, leaving the original unmodified.
 
+<!-- sample put_comments_id -->
 ```python
 edited_comment = client.comment(comment_id='98765').edit('If possible, please finish this by Friday!')
 ```
@@ -96,6 +100,7 @@ Delete a Comment
 To delete a comment, call [`comment.delete()`][delete].  This will remove the comment from the file.  This method
 returns `True` to indicate that the deletion succeeded.
 
+<!-- sample delete_comments_id -->
 ```python
 client.comment(comment_id='12345').delete()
 ```

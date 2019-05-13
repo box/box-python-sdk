@@ -28,6 +28,7 @@ To get a task object, first call [`client.task(task_id)`][task] to construct the
 object, and then calling [`task.get(fields=None)`][get] will return the [`Task`][task_class] object populated with data 
 from the API, leaving the original object unmodified.
 
+<!-- sample get_tasks_id -->
 ```python
 task = client.task(task_id='12345').get()
 print('Task ID is {0} and the type is {1}'.format(task.id, task.type))
@@ -43,6 +44,7 @@ List Tasks on File
 To retrieve all tasks on a file, call [`file.get_tasks(fields=None)`]['get_tasks'] will return a `BoxObjectCollection` 
 that allows you to iterate over the [`Task`][task_class] objects in the collection.
 
+<!-- sample get_files_id_tasks -->
 ```python
 tasks = client.file(file_id='11111').get_tasks()
 for task in tasks:
@@ -58,6 +60,7 @@ Add Task to File
 To create a single task for a single user on a single file, call [`file.create_task(message=None, due_at=None)`][create_task] 
 will return a newly created [`Task`][task_class] object populated with data from the API.
 
+<!-- sample post_tasks -->
 ```python
 message = 'Please review this'
 due_at = "2014-04-03T11:09:43-07:00"
@@ -73,6 +76,7 @@ Update Task Info
 To update a task object, first call [`task.update_info(data)`][update_info] with a `dict` of properties to update on the 
 task. This method returns a newly updated [`Task`][task_class] object, leaving the original object unmodified.
 
+<!-- sample put_tasks_id -->
 ```python
 task_update = {'message': 'New Message', 'due_at': '2014-04-03T11:09:43-10:00',}
 updated_task = client.task(task_id='12345').update_info(task_update)
@@ -88,6 +92,7 @@ Delete a Task
 To delete a task, first call [`client.task(task_id)`][task] to construct the appropriate task object, and then call 
 [`task.delete()`][delete]. This method returns `True` to indicate that the deleteion was successful.
 
+<!-- sample delete_tasks_id -->
 ```python
 client.client.task('12345').delete()
 print('The task was successfully delete!')
@@ -104,6 +109,7 @@ To assign a task object, first call [`client.task(task_id)`][task] to construct 
 [`task.assign(user)`][assign] will return an [`Task Assignment`][assignment_class] object, populated with data 
 from the API.
 
+<!-- sample post_task_assignments -->
 ```python
 user = client.user(user_id='11111')
 assignment = client.task(task_id='12345').assign(user)
@@ -137,6 +143,7 @@ task object. Then call ['task.get_assignments(fields=None)'][get_assignments]. T
 `BoxObjectCollection` that allows you to iterate over the ['TaskAssignment'][assignment_class] objects in the 
 collection.
 
+<!-- sample get_task_id_assignments -->
 ```python
 assignments = client.task(task_id='12345').get_assignments()
 for assignment in assignments:
@@ -153,6 +160,7 @@ To get a task assignment object, first call [`client.task_assignment(assignment_
 appropriate [`TaskAssignment`][assignment_class] object, and then calling ['task_assignment.get(fields=None)'][get] 
 will return the [`TaskAssignment`][task_assignment] object populated with data from the API.
 
+<!-- sample get_task_assignments_id -->
 ```python
 assignment= client.task_assignment('12345').get()
 print('Assignment ID is {0} and assignment type is {1}'.format(assignment.id, assignment.type))
@@ -169,6 +177,7 @@ To update a task assignment object, call [`assignment.update_info(data)`][update
 with a `dict` of properties to update on a task assignment. This method returns a newly update 
 [`TaskAssignment`][assignment_class] object, leaving the original object unmodified.
 
+<!-- sample put_task_assignments_id -->
 ```python
 from boxsdk.object.task_assignment import ResolutionState
 updated_task = {'resolution_state': ResolutionState.APPROVED}
@@ -185,6 +194,7 @@ Delete Task Assignment
 To delete a task assignment, call [`task_assignment.delete()`][delete]. This method returns `True` to indicate that the 
 deletion was successful.
 
+<!-- sample delete_task_assignments_id -->
 ```python
 client.task_assignment(assignment_id='12345').delete()
 print('The task assignment was successfully delete!')

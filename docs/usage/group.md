@@ -28,6 +28,7 @@ Calling [`client.get_groups(name=None, limit=None, offset=None, fields=None)`][g
 `BoxObjectCollection` that allows you to iterate over the [`Group`][group_class] objects representing groups in the
 enterprise.
 
+<!-- sample get_groups -->
 ```python
 groups = client.get_groups()
 for group in groups:
@@ -56,6 +57,7 @@ returns a [`Group`][group_class] object representing the created group.
 You can read more about the optional parameters in the
 [Create Group API documentation](https://developer.box.com/v2.0/reference#create-a-group).
 
+<!-- sample post_groups -->
 ```python
 created_group = client.create_group('Example Group')
 print('Created group with ID {0}'.format(created_group.id))
@@ -71,6 +73,7 @@ To retrieve information about a group, first call [`client.group(group_id)`][gro
 method returns a new [`Group`][group_class] object with fields populated by data form the API, leaving the original
 object unmodified.
 
+<!-- sample get_groups_id -->
 ```python
 group = client.group(group_id='11111').get()
 print('Got group {0}'.format(group.name))
@@ -94,6 +97,7 @@ Update a Group
 To update a group, call [`group.update_info(data)`][update_info] with a `dict` of the group properties to update.  This
 method returns a new [`Group`][group_class] object with the updates applied, leaving the original object unmodified.
 
+<!-- sample put_groups_id -->
 ```python
 group_update = {'name': 'New Group Name'}
 updated_group = client.group(group_id='11111').update_info(group_update)
@@ -108,6 +112,7 @@ Delete a Group
 To delete a group, call [`group.delete()`][delete].  This method returns `True` to indicate that the deletion was
 successful.
 
+<!-- sample delete_groups_id -->
 ```python
 client.group(group_id='11111').delete()
 print('The group was deleted!')
@@ -123,6 +128,7 @@ To retrieve all collaborations for a group, call
 `BoxObjectCollection` that allows you to iterate over the [`Collaboration`][collaboration_class] objects in the
 collection.
 
+<!-- sample get_groups_id_collaborations -->
 ```python
 collaborations = client.group(group_id='11111').get_collaborations()
 for collaboration in collaborations:
@@ -143,6 +149,7 @@ the user in the group.
 You can optionally specify the user's `role` in the group, and for users with an admin role you can configure which
 permissions they have in the group by passing a `dict` of [group permissions][permissions] to `configurable_permissions`.
 
+<!-- sample post_group_memberships -->
 ```python
 user = client.user('1111')
 membership = client.group(group_id='11111').add_member(user)
@@ -162,6 +169,7 @@ To retrieve information about a group membership, first call
 about the group membership from the API.  This returns a new [`GroupMembership`][membership_class] object with fields
 populated by data from the API, leaving the original object unmodified.
 
+<!-- sample get_group_memberships_id -->
 ```python
 membership_id = '11111'
 membership = client.group_membership(membership_id).get()
@@ -178,6 +186,7 @@ To update a group membership, call [`membership.update_info(data)`][update_info]
 on the membership object.  This method returns a new [`GroupMembership`][membership_class] object with the changes
 applied, leaving the original object unmodified.
 
+<!-- sample put_group_memberships_id -->
 ```python
 membership_id = '1234'
 membership_update = {'role': 'admin'}
@@ -191,6 +200,7 @@ Remove User from Group
 To remove a user from a group, delete their associated group membership by calling [`group_membership.delete()`][delete].
 This method returns `True` to indicate that the deletion was successful.
 
+<!-- sample delete_group_memberships_id -->
 ```python
 membership_id = '1234'
 client.group_membership(membership_id).delete() 
@@ -205,6 +215,7 @@ To retrieve all of the memberships for a given group, call
 `BoxObjectCollection` that allows you to iterate over all of the [`GroupMembership`][membership_class] objects in the
 collection.
 
+<!-- sample get_groups_id_memberships -->
 ```python
 group_memberships = client.group(group_id='11111').get_memberships()
 for membership in group_memberships:
@@ -221,6 +232,7 @@ To retrieve all of the groups a user belongs to, get a list of their associated 
 `BoxObjectCollection` that allows you to iterate over the [`GroupMembership`][membership_class] objects in the
 collection.
 
+<!-- sample get_users_id_memberships -->
 ```python
 user_memberships = client.user(user_id='33333').get_group_memberships()
 for membership in user_memberships:
