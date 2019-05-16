@@ -3,6 +3,11 @@
 Release History
 ---------------
 
+2.4.0 (2019-05-16)
+++++++++++++++++++
+
+- Added ability to set metadata on a `file <https://github.com/box/box-python-sdk/blob/master/docs/usage/files.md#set-metadata>`_ or a `folder <https://github.com/box/box-python-sdk/blob/master/docs/usage/folders.md#set-metadata>`_
+
 2.3.2 (2019-03-29)
 ++++++++++++++++++
 
