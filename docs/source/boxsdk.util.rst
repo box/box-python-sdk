@@ -36,6 +36,14 @@ boxsdk.util.compat module
     :undoc-members:
     :show-inheritance:
 
+boxsdk.util.default\_arg\_value module
+--------------------------------------
+
+.. automodule:: boxsdk.util.default_arg_value
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 boxsdk.util.enum module
 -----------------------
 
