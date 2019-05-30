@@ -49,6 +49,8 @@ email_of_invitee = 'testuser@example.com'
 collaboration = client.folder(folder_id='22222').collaborate_with_login(email_of_invitee, CollaborationRole.VIEWER)
 ```
 
+> __Note:__ The `can_view_path` parameter is currently only available for collaborations on folders.
+
 [collaborate]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.collaborate
 [user_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.user.User
 [group_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.group.Group
