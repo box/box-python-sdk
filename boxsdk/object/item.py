@@ -500,7 +500,8 @@ class Item(BaseObject):
         :type role:
             `unicode`
         :param can_view_path:
-            Indicates whether the user can view the path of the folder collaborated into.
+            Indicates whether the user can view the path of the item collaborated into.  This can only be set for
+            collaborations on folders.
         :type can_view_path:
             `bool` or None
         :param notify:
