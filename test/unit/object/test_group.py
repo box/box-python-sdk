@@ -58,6 +58,33 @@ def test_add_member(test_group, mock_box_session, mock_add_member_response, mock
     assert isinstance(new_group_membership, GroupMembership)
 
 
+def test_add_member_default_permission(test_group, mock_box_session, mock_add_member_response, mock_user):
+    expected_url = '{0}/group_memberships'.format(API.BASE_API_URL)
+    mock_box_session.post.return_value = mock_add_member_response
+    new_group_membership = test_group.add_member(mock_user, 'member')
+    data = json.dumps({
+        'user': {'id': mock_user.object_id},
+        'group': {'id': test_group.object_id},
+        'role': 'member',
+    })
+    mock_box_session.post.assert_called_once_with(expected_url, data=data)
+    assert isinstance(new_group_membership, GroupMembership)
+
+
+def test_add_member_none_permission(test_group, mock_box_session, mock_add_member_response, mock_user):
+    expected_url = '{0}/group_memberships'.format(API.BASE_API_URL)
+    mock_box_session.post.return_value = mock_add_member_response
+    new_group_membership = test_group.add_member(mock_user, 'member', configurable_permissions=None)
+    data = json.dumps({
+        'user': {'id': mock_user.object_id},
+        'group': {'id': test_group.object_id},
+        'role': 'member',
+        'configurable_permissions': None
+    })
+    mock_box_session.post.assert_called_once_with(expected_url, data=data)
+    assert isinstance(new_group_membership, GroupMembership)
+
+
 @pytest.fixture()
 def mock_membership_dict_stream():
     def gen_data(some_id):

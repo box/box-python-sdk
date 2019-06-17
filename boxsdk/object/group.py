@@ -7,6 +7,7 @@ from boxsdk.util.text_enum import TextEnum
 from .base_object import BaseObject
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..util.api_call_decorator import api_call
+from ..util.default_arg_value import SDK_VALUE_NOT_SET
 
 
 class GroupRole(TextEnum):
@@ -48,7 +49,7 @@ class Group(BaseObject):
         )
 
     @api_call
-    def add_member(self, user, role=GroupRole.MEMBER, configurable_permissions=None):
+    def add_member(self, user, role=GroupRole.MEMBER, configurable_permissions=SDK_VALUE_NOT_SET):
         """
         Add the given user to this group under the given role
 
@@ -76,7 +77,7 @@ class Group(BaseObject):
             'group': {'id': self.object_id},
             'role': role,
         }
-        if configurable_permissions is not None:
+        if configurable_permissions is not SDK_VALUE_NOT_SET:
             body_attributes['configurable_permissions'] = configurable_permissions
         box_response = self._session.post(url, data=json.dumps(body_attributes))
         response = box_response.json()
