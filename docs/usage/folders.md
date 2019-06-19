@@ -43,8 +43,10 @@ ones not returned by default.
 <!-- sample get_folders_id -->
 ```python
 folder = client.folder(folder_id='22222').get()
-print('Folder "{0}" has {1} items in it'
-      .format(folder.name, folder.item_collection.total_count))
+print('Folder "{0}" has {1} items in it'.format(
+    folder.name,
+    folder.item_collection.total_count,
+))
 ```
 
 [folder]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.folder
