@@ -3,10 +3,9 @@
 Release History
 ---------------
 
-2.5.0 (2019-6-20)
+2.5.0 (2019-06-20)
 +++++++++++++++++
-
-- Changed default type for configurable_permissions from `None` to SDK_VALUE_NOT_SET to be explicit when users are attempting to pass default value or clearing that field in group_membership.
+- Allowed passing `None` to clear configurable_permission field in the add_member() method.
 
 2.4.1 (2019-05-16)
 ++++++++++++++++++
