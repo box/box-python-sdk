@@ -3,6 +3,10 @@
 Release History
 ---------------
 
+2.5.0 (2019-06-20)
++++++++++++++++++
+- Allowed passing `None` to clear configurable_permission field in the add_member() method.
+
 2.4.1 (2019-05-16)
 ++++++++++++++++++
 
