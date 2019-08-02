@@ -96,6 +96,52 @@ class Events(BaseEndpoint):
         return self.translator.translate(self._session, response_object=response)
 
     @api_call
+    def get_events_by_details(self, limit=100, created_after=None, created_before=None, event_type=None, stream_type=UserEventsStreamType.ALL):
+        """
+        Get Box events from a datetime, to a datetime, or between datetimes with a given event type for a given
+        stream type. Works for Enterprise and User stream types
+
+        :param limit:
+            Maximum number of events to return.
+        :type limit:
+            `int`
+        :param created_after:
+            (optional) Start date in ISO format to pull events from
+            Defaults to `None`
+        :type created_after:
+            `string`
+        :param created_before:
+            (optional) End date in ISO format to pull events to
+            Defaults to `None`
+        :type created_before:
+            `string`
+        :param event_type:
+            (optional) Which events to return (ie. LOGIN)
+        :type event_type:
+            `string`
+        :param stream_type:
+            (optional) Which type of events to return.
+            Defaults to `UserEventsStreamType.ALL`.
+        :type stream_type:
+            :enum:`EventsStreamType`
+        :returns:
+            Dictionary containing the next stream position along with a list of some number of events.
+        :rtype:
+            `dict`
+        """
+        url = self.get_url()
+        params = {
+            'limit': limit,
+            'created_after': created_after,
+            'created_before': created_before,
+            'event_type': event_type,
+            'stream_type': stream_type,
+        }
+        box_response = self._session.get(url, params=params)
+        response = box_response.json().copy()
+        return self.translator.translate(self._session, response_object=response)
+
+    @api_call
     def get_latest_stream_position(self, stream_type=UserEventsStreamType.ALL):
         """
         Get the latest stream position. The return value can be used with :meth:`get_events` or
