@@ -117,6 +117,7 @@ class Events(BaseEndpoint):
             `unicode`
         :param event_type:
             (optional) Which events to return (ie. LOGIN)
+            Defaults to `None`
         :type event_type:
             `unicode`
         :returns:
