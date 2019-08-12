@@ -214,6 +214,34 @@ def test_get_events(
         assert event.event_id == json['event_id']
 
 
+def test_get_events_by_details(
+        test_events,
+        mock_box_session,
+        events_response,
+):
+    # pylint:disable=redefined-outer-name
+    expected_url = test_events.get_url()
+    mock_box_session.get.return_value = events_response
+    events = test_events.get_events_by_details(
+        created_after='2019-07-01T22:02:24-07:00',
+        created_before='2019-08-07T22:02:24-07:00',
+        event_type='ITEM_CREATE'
+        )
+    mock_box_session.get.assert_called_with(
+        expected_url,
+        params=dict(
+            created_after='2019-07-01T22:02:24-07:00',
+            created_before='2019-08-07T22:02:24-07:00',
+            event_type='ITEM_CREATE',
+            limit=100,
+            stream_type='admin_logs'
+        )
+    )
+    for event, json in zip(events['entries'], events_response.json.return_value['entries']):
+        assert isinstance(event, Event)
+        assert event.event_id == json['event_id']
+
+
 def test_get_long_poll_options(
         mock_box_session,
         test_events,

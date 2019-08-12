@@ -96,34 +96,29 @@ class Events(BaseEndpoint):
         return self.translator.translate(self._session, response_object=response)
 
     @api_call
-    def get_events_by_details(self, limit=100, created_after=None, created_before=None, event_type=None, stream_type=UserEventsStreamType.ALL):
+    def get_admin_events_by_details(self, limit=100, created_after=None, created_before=None, event_type=None):
         """
-        Get Box events from a datetime, to a datetime, or between datetimes with a given event type for a given
-        stream type. Works for Enterprise and User stream types
+        Get Box Admin events from a datetime, to a datetime, or between datetimes with a given event type for a enterprise
+        stream type. Works for Enterprise admin_logs type.
 
         :param limit:
             Maximum number of events to return.
         :type limit:
             `int`
         :param created_after:
-            (optional) Start date in ISO format to pull events from
+            (optional) Start date in datetime format to pull events from
             Defaults to `None`
         :type created_after:
-            `string`
+            `unicode`
         :param created_before:
-            (optional) End date in ISO format to pull events to
+            (optional) End date in datetime format to pull events to
             Defaults to `None`
         :type created_before:
-            `string`
+            `unicode`
         :param event_type:
             (optional) Which events to return (ie. LOGIN)
         :type event_type:
-            `string`
-        :param stream_type:
-            (optional) Which type of events to return.
-            Defaults to `UserEventsStreamType.ALL`.
-        :type stream_type:
-            :enum:`EventsStreamType`
+            `unicode`
         :returns:
             Dictionary containing the next stream position along with a list of some number of events.
         :rtype:
@@ -135,7 +130,7 @@ class Events(BaseEndpoint):
             'created_after': created_after,
             'created_before': created_before,
             'event_type': event_type,
-            'stream_type': stream_type,
+            'stream_type': 'admin_logs',
         }
         box_response = self._session.get(url, params=params)
         response = box_response.json().copy()
