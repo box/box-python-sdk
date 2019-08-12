@@ -226,7 +226,7 @@ def test_get_events_by_details(
         created_after='2019-07-01T22:02:24-07:00',
         created_before='2019-08-07T22:02:24-07:00',
         event_type='ITEM_CREATE'
-        )
+    )
     mock_box_session.get.assert_called_with(
         expected_url,
         params=dict(
