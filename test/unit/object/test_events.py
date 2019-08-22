@@ -214,7 +214,6 @@ def test_get_events(
         assert event.event_id == json['event_id']
 
 
-
 @pytest.mark.parametrize("limit", [100, None])
 def test_get_admin_events(
         test_events,
