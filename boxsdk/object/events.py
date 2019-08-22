@@ -96,15 +96,15 @@ class Events(BaseEndpoint):
         return self.translator.translate(self._session, response_object=response)
 
     @api_call
-    def get_admin_events_by_details(self, limit=100, created_after=None, created_before=None, event_type=None):
+    def get_admin_events(self, limit=None, created_after=None, created_before=None, event_types=None):
         """
         Get Box Admin events from a datetime, to a datetime, or between datetimes with a given event type for a enterprise
         stream type. Works for Enterprise admin_logs type.
 
         :param limit:
-            Maximum number of events to return.
+            (optional) Maximum number of events to return.
         :type limit:
-            `int`
+            `int` or None
         :param created_after:
             (optional) Start date in datetime format to pull events from
             Defaults to `None`
@@ -115,11 +115,11 @@ class Events(BaseEndpoint):
             Defaults to `None`
         :type created_before:
             `unicode`
-        :param event_type:
+        :param event_types:
             (optional) Which events to return (ie. LOGIN)
             Defaults to `None`
-        :type event_type:
-            `unicode`
+        :type event_types:
+            Array of `unicode`
         :returns:
             Dictionary containing the next stream position along with a list of some number of events.
         :rtype:
@@ -127,14 +127,15 @@ class Events(BaseEndpoint):
         """
         url = self.get_url()
         params = {
-            'limit': limit,
             'created_after': created_after,
             'created_before': created_before,
-            'event_type': event_type,
+            'event_type': ','.join(event_types),
             'stream_type': 'admin_logs',
         }
+        if limit is not None:
+            params['limit'] = limit
         box_response = self._session.get(url, params=params)
-        response = box_response.json().copy()
+        response = box_response.json()
         return self.translator.translate(self._session, response_object=response)
 
     @api_call

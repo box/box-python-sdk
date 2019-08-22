@@ -214,7 +214,7 @@ def test_get_events(
         assert event.event_id == json['event_id']
 
 
-def test_get_events_by_details(
+def test_get_admin_events(
         test_events,
         mock_box_session,
         events_response,
@@ -222,18 +222,17 @@ def test_get_events_by_details(
     # pylint:disable=redefined-outer-name
     expected_url = test_events.get_url()
     mock_box_session.get.return_value = events_response
-    events = test_events.get_admin_events_by_details(
+    events = test_events.get_admin_events(
         created_after='2019-07-01T22:02:24-07:00',
         created_before='2019-08-07T22:02:24-07:00',
-        event_type='ITEM_CREATE'
+        event_types=['ITEM_CREATE', "LOGIN"]
     )
     mock_box_session.get.assert_called_with(
         expected_url,
         params=dict(
             created_after='2019-07-01T22:02:24-07:00',
             created_before='2019-08-07T22:02:24-07:00',
-            event_type='ITEM_CREATE',
-            limit=100,
+            event_type='ITEM_CREATE,LOGIN',
             stream_type='admin_logs'
         )
     )
