@@ -96,6 +96,49 @@ class Events(BaseEndpoint):
         return self.translator.translate(self._session, response_object=response)
 
     @api_call
+    def get_admin_events(self, limit=None, created_after=None, created_before=None, event_types=None):
+        """
+        Get Box Admin events from a datetime, to a datetime, or between datetimes with a given event type for a enterprise
+        stream type. Works for Enterprise admin_logs type.
+
+        :param limit:
+            (optional) Maximum number of events to return.
+        :type limit:
+            `int` or None
+        :param created_after:
+            (optional) Start date in datetime format to pull events from
+            Defaults to `None`
+        :type created_after:
+            `unicode`
+        :param created_before:
+            (optional) End date in datetime format to pull events to
+            Defaults to `None`
+        :type created_before:
+            `unicode`
+        :param event_types:
+            (optional) Which events to return (ie. LOGIN)
+            Defaults to `None`
+        :type event_types:
+            Array of `unicode`
+        :returns:
+            Dictionary containing the next stream position along with a list of some number of events.
+        :rtype:
+            `dict`
+        """
+        url = self.get_url()
+        params = {
+            'created_after': created_after,
+            'created_before': created_before,
+            'event_type': ','.join(event_types),
+            'stream_type': 'admin_logs',
+        }
+        if limit is not None:
+            params['limit'] = limit
+        box_response = self._session.get(url, params=params)
+        response = box_response.json()
+        return self.translator.translate(self._session, response_object=response)
+
+    @api_call
     def get_latest_stream_position(self, stream_type=UserEventsStreamType.ALL):
         """
         Get the latest stream position. The return value can be used with :meth:`get_events` or
