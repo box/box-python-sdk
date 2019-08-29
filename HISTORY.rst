@@ -3,7 +3,7 @@
 Release History
 ---------------
 
-Upcoming
+2.6.0 (2019-08-29)
 ++++++++++++++++++
 - Added a new get events function with created_before, created_after, and event_type parameters
 
