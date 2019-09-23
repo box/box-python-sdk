@@ -61,6 +61,13 @@ you create a new webhook object with the specified target url, name, and descrip
 
 <!-- sample post_webhooks -->
 ```python
+file = client.file(file_id='12345')
+webhook = client.create_webhook(file, ['FILE.PREVIEWED'], 'https://example.com')
+print('Webhook ID is {0} and the address is {1}'.format(webhook.id, webhook.address))
+```
+
+<!-- sample post_webhooks for_folder -->
+```python
 folder = client.folder(folder_id='12345')
 webhook = client.create_webhook(folder, ['FILE.UPLOADED', 'FILE.PREVIEWED'], 'https://example.com')
 print('Webhook ID is {0} and the address is {1}'.format(webhook.id, webhook.address))
