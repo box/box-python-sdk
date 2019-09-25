@@ -120,6 +120,7 @@ When you receive a webhook message from Box, you should validate it by calling
 application against attacks. Verification ensures that the notifications were actually sent by Box and not by a
 malicious party and that the contents of the notification haven't been changed.
 
+<!-- sample x_webhooks validate_signatures -->
 ```python
 body = b'{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"Test.txt"}}'
 headers = {
