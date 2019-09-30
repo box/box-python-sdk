@@ -179,7 +179,7 @@ class Folder(Item):
         Get the items in a folder.
 
         :param limit:
-            The maximum number of items to return.
+            The maximum number of items to return per page. If not specified, then will use the server-side default.
         :type limit:
             `int` or None
         :param offset:
