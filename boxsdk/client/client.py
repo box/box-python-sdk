@@ -1407,8 +1407,9 @@ class Client(Cloneable):
             :class:`TokenResponse`
         """
         url = '{base_auth_url}/token'.format(base_auth_url=self._session.api_config.OAUTH2_API_URL)
+        access_token = self.auth.access_token or self.auth.refresh(None)
         data = {
-            'subject_token': self.auth.access_token,
+            'subject_token': access_token,
             'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
             'scope': ' '.join(scopes),
             'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
