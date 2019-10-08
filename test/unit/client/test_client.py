@@ -1084,8 +1084,9 @@ def test_downscope_token_sends_downscope_request(
         scopes,
         expected_scopes,
 ):
+    mock_client.auth.access_token = 'existing_access_token'
     expected_data = {
-        'subject_token': mock_client.auth.access_token,
+        'subject_token': 'existing_access_token',
         'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
         'scope': expected_scopes,
         'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
@@ -1106,6 +1107,23 @@ def test_downscope_token_sends_downscope_request_with_additional_data(
         'extra_data_key': 'extra_data_value',
     }
     check_downscope_token_request(File, [TokenScope.ITEM_READWRITE], additional_data, expected_data)
+
+
+def test_downscope_token_sends_downscope_request_when_no_initial_token(
+        mock_client,
+        check_downscope_token_request,
+):
+    mock_client.auth.access_token = None
+    mock_client.auth.refresh.return_value = 'new_access_token'
+
+    expected_data = {
+        'subject_token': 'new_access_token',
+        'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
+        'scope': 'item_readwrite',
+        'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
+    }
+    check_downscope_token_request(File, [TokenScope.ITEM_READWRITE], {}, expected_data)
+    mock_client.auth.refresh.assert_called_once_with(None)
 
 
 def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_response, device_pin_id_1, device_pin_id_2):
