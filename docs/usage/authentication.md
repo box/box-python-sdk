@@ -72,6 +72,7 @@ GET https://api.box.com/2.0/users/me {'headers': {'Authorization': '---wXyZ',
 To create a [`Client`][client_class] non-interactively with a developer token, construct an [`OAuth2`][oauth2_class]
 object with the `access_token` set to the developer token and construct the client with that.
 
+<!-- sample x_auth init_with_dev_token -->
 ```python
 from boxsdk import Client, OAuth2
 
@@ -105,6 +106,7 @@ If you generated your public and private keys automatically through the
 to configure your SDK instance and create a client to make calls as the
 Service Account by calling the appropriate static [`JWTAuth`][jwt_auth_class] method:
 
+<!-- sample x_auth init_with_jwt_enterprise -->
 ```python
 from boxsdk import JWTAuth, Client
 
@@ -117,6 +119,7 @@ print('Service Account user ID is {0}'.format(service_account.id))
 Otherwise, you'll need to provide the necessary configuration fields directly
 to the [`JWTAuth`][jwt_auth_class] constructor:
 
+<!-- sample x_auth init_with_jwt_enterprise_with_config -->
 ```python
 from boxsdk import JWTAuth, Client
 
@@ -147,6 +150,7 @@ Clients for making calls as an App User can be created with the same [`JWTAuth`]
 constructor as in the above examples, similarly to creating a Service Account client.  Simply pass the
 [`User`][user_class] object for the app user instead of an `enterprise_id` when constructing the auth instance:
 
+<!-- sample x_auth init_with_jwt_with_user_id -->
 ```python
 app_user = service_account_client.user(user_id='APP_USER_ID')
 
@@ -239,6 +243,7 @@ You can also instantiate a client given the access and refresh token. You first 
 [OAuth2][oauth2_class] object with the access and refresh token passed in. Once you have created the
 oauth object you then pass it into your [Client][client_class] object to instantiate your client. Finally, you can begin making calls with your client.
 
+<!-- sample x_auth init_with_access_and_refresh_token -->
 ```python
 from boxsdk import Client, OAuth2
 
@@ -265,6 +270,7 @@ your application code.
 To use the primary or secondary access token generated in the Developer Console,
 simply create a [`Client`][client_class] with that token:
 
+<!-- sample x_auth init_with_app_token -->
 ```python
 from boxsdk import Client, OAuth2
 
@@ -288,6 +294,7 @@ Calling the [`client.as_user(user)`][as_user] method with the [`User`][user_clas
 the provided user.  All calls made with the new client will be made in context of the impersonated user, leaving the
 original client unmodified.
 
+<!-- sample x_auth init_with_as_user_header -->
 ```python
 user_to_impersonate = client.user(user_id='USER_ID_GOES_HERE')
 user_client = client.as_user(user_to_impersonate)
@@ -310,6 +317,7 @@ scope, restricted to a single file, suitable for the
 [`client.downscope_token(scopes, item=None, additional_data=None)`][downscope_token] with the scope(s) needed.
 This method returns a [`TokenResponse`][token_response] object with the downscoped token information.
 
+<!-- sample post_oauth2_token downscope_token -->
 ```python
 target_file = client.file(file_id='FILE_ID_HERE')
 token_info = client.downscope_token(['item_preview'], target_file)
