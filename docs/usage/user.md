@@ -96,6 +96,7 @@ These users can only be accessed via the API, and cannot login to the web applic
 To create a new app user, call [`client.create_user(name, login=None, **user_attributes)`][create_user] without a
 `login` value.  This returns the [`User`][user_class] object for the new app user.
 
+<!-- sample post_users_app -->
 ```python
 new_app_user = client.create_user('App User 123', login=None)
 ```
