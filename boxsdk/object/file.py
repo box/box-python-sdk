@@ -677,6 +677,7 @@ class File(Item):
         response = self._session.get(url, params=params, expect_json_response=False)
         return response.content
 
+    @api_call
     def copy(self, parent_folder, name=None, file_version=None):
         # pylint: disable=arguments-differ
         """Copy the item to the given folder.
