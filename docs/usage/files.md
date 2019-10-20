@@ -194,6 +194,7 @@ and calling the method, [`upload_session.get_chunked_upload(file_path)`][get_chu
 Calling the method [`chunked_upload.start()`][start] will kick off the chunked upload process and return the [File][file_class] 
 object that was uploaded.
 
+<!-- samples x_chunked_uploads automatic -->
 ```python
 chunked_uploader = client.file('12345').get_chunked_uploader('/path/to/file')
 uploaded_file = chunked_uploader.start()
@@ -322,7 +323,7 @@ To create an upload session for uploading a large version, call
 uploaded.  You can optionally specify a new `file_name` to rename the file on upload.  This method returns an
 [`UploadSession`][upload_session_class] object representing the created upload session.
 
-<!-- sample post_files_upload_sessions -->
+<!-- sample post_files_id_upload_sessions -->
 ```python
 file_size = 26000000
 upload_session = client.file('11111').create_upload_session(file_size)
@@ -339,7 +340,7 @@ To create an upload session for uploading a new large file, call
 to be uploaded.  This method returns an [`UploadSession`][upload_session_class] object representing the created upload
 session.
 
-<!-- sample post_files_id_upload_sessions -->
+<!-- sample post_files_upload_sessions -->
 ```python
 file_size = 26000000
 file_name = 'test_file.pdf'
