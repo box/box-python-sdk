@@ -88,20 +88,27 @@ version of the file by passing the desired [`FileVersion`][file_version_class] i
 also wish to download only a certain chunk of the file by passing a tuple of byte offsets via the `byte_range`
 parameter — the lower and upper bounds you wish to download.
 
-To get the entire contents of the file as `bytes`, call [`file.content(file_version=None, byte_range=None)`][content].
+To get the entire contents of the file as `bytes`, call [`file.content(file_version=None, byte_range=None)`][content]. 
 
 <!-- sample get_files_id_content -->
 ```python
 file_id = '11111'
-
-# Download the entire file into memory
 file_content = client.file(file_id).content()
+```
 
-# Download a specific file verison
+For users with premium accounts, previous versions of a file can be downloaded.
+
+<!-- sample get_files_id_content for_version -->
+```python
+file_id = '11111'
 file_version = client.file_version('12345')
 version_content = client.file(file_id).content(file_version=file_version)
+```
 
-# Download the first 100 bytes of the file
+Additonally, only a part of the file can be downloaded by specifying a byte range.
+
+```python
+file_id = '11111'
 beginning_of_file_content = client.file(file_id).content(byte_range=(0,99))
 ```
 
@@ -128,6 +135,7 @@ the file, call [`file.get_download_url(file_version=None)`][get_download_url].  
 containing the file's download URL.  You can optionally pass a [`FileVersion`][file_version_class] via the
 `file_version` parameter to get a download URL for a specific version of the file.
 
+<!-- sample get_files_id_content get_url -->
 ```python
 file_id = '11111'
 download_url = client.file(file_id).get_download_url()
