@@ -54,14 +54,21 @@ Add a Comment to a File
 -----------------------
 
 To leave a comment on a file, call [`file.add_comment(message)`][add_comment] with the message to leave in the comment.
-You can at-mention other users by adding special tags within the message, in the format `@[USER_ID:USER_NAME]`.  For
-example, to at-mention John Doe, whose user ID is `"33333"`: `@[33333:John Doe]`.  This method returns a
-[`Comment`][comment_class] object representing the newly-created comment.
 
 <!-- sample post_comments -->
 ```python
+comment = client.file(file_id='11111').add_comment('When should I have this done by?')
+```
+
+You can at-mention other users by adding special tags within the message, in the format `@[USER_ID:USER_NAME]`.  For
+example, to at-mention John Doe, whose user ID is `"33333"`: `@[33333:John Doe]`.
+
+<!-- sample post_comments tag_user  -->
+```python
 comment = client.file(file_id='11111').add_comment('Hey @[44444:boss], when should I have this done by?')
 ```
+
+This method returns a [`Comment`][comment_class] object representing the newly-created comment.
 
 [add_comment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.add_comment
 
@@ -69,13 +76,21 @@ Reply to a Comment
 ------------------
 
 To reply to a comment, call [`comment.reply(message)`][reply] with the message to leave in the comment.
-You can at-mention other users by adding special tags within the message, in the format `@[USER_ID:USER_NAME]`.  For
-example, to at-mention John Doe, whose user ID is `"33333"`: `@[33333:John Doe]`.  This method returns a
-[`Comment`][comment_class] object representing the newly-created comment.
 
+<!-- sample post_comments as_reply  -->
 ```python
 reply_comment = client.comment(comment_id='12345').reply('If possible, please finish this by the end of the week!')
 ```
+
+You can at-mention other users by adding special tags within the message, in the format `@[USER_ID:USER_NAME]`.  For
+example, to at-mention John Doe, whose user ID is `"33333"`: `@[33333:John Doe]`.
+
+<!-- sample post_comments as_reply_tag_user  -->
+```python
+reply_comment = client.comment(comment_id='12345').reply('@[33333:John Doe], if possible, please finish this by the end of the week!')
+```
+
+This method returns a [`Comment`][comment_class] object representing the newly-created comment.
 
 [reply]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.comment.Comment.reply
 
