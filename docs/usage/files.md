@@ -88,20 +88,27 @@ version of the file by passing the desired [`FileVersion`][file_version_class] i
 also wish to download only a certain chunk of the file by passing a tuple of byte offsets via the `byte_range`
 parameter — the lower and upper bounds you wish to download.
 
-To get the entire contents of the file as `bytes`, call [`file.content(file_version=None, byte_range=None)`][content].
+To get the entire contents of the file as `bytes`, call [`file.content(file_version=None, byte_range=None)`][content]. 
 
 <!-- sample get_files_id_content -->
 ```python
 file_id = '11111'
-
-# Download the entire file into memory
 file_content = client.file(file_id).content()
+```
 
-# Download a specific file verison
+For users with premium accounts, previous versions of a file can be downloaded.
+
+<!-- sample get_files_id_content for_version -->
+```python
+file_id = '11111'
 file_version = client.file_version('12345')
 version_content = client.file(file_id).content(file_version=file_version)
+```
 
-# Download the first 100 bytes of the file
+Additonally, only a part of the file can be downloaded by specifying a byte range.
+
+```python
+file_id = '11111'
 beginning_of_file_content = client.file(file_id).content(byte_range=(0,99))
 ```
 
@@ -128,6 +135,7 @@ the file, call [`file.get_download_url(file_version=None)`][get_download_url].  
 containing the file's download URL.  You can optionally pass a [`FileVersion`][file_version_class] via the
 `file_version` parameter to get a download URL for a specific version of the file.
 
+<!-- sample get_files_id_content get_url -->
 ```python
 file_id = '11111'
 download_url = client.file(file_id).get_download_url()
@@ -194,6 +202,7 @@ and calling the method, [`upload_session.get_chunked_upload(file_path)`][get_chu
 Calling the method [`chunked_upload.start()`][start] will kick off the chunked upload process and return the [File][file_class] 
 object that was uploaded.
 
+<!-- samples x_chunked_uploads automatic -->
 ```python
 chunked_uploader = client.file('12345').get_chunked_uploader('/path/to/file')
 uploaded_file = chunked_uploader.start()
@@ -322,7 +331,7 @@ To create an upload session for uploading a large version, call
 uploaded.  You can optionally specify a new `file_name` to rename the file on upload.  This method returns an
 [`UploadSession`][upload_session_class] object representing the created upload session.
 
-<!-- sample post_files_upload_sessions -->
+<!-- sample post_files_id_upload_sessions -->
 ```python
 file_size = 26000000
 upload_session = client.file('11111').create_upload_session(file_size)
@@ -339,7 +348,7 @@ To create an upload session for uploading a new large file, call
 to be uploaded.  This method returns an [`UploadSession`][upload_session_class] object representing the created upload
 session.
 
-<!-- sample post_files_id_upload_sessions -->
+<!-- sample post_files_upload_sessions -->
 ```python
 file_size = 26000000
 file_name = 'test_file.pdf'
