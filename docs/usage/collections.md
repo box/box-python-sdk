@@ -56,6 +56,7 @@ To add an [`Item`][item_class] to a collection, call [`item.add_to_collection(co
 [`Collection`][collection_class] you want to add the item to.  This method returns the updated [`Item`][item_class]
 object.
 
+<!-- sample put_files_id add_to_collection -->
 ```python
 collection = client.collection(collection_id='12345')
 updated_file = client.file(file_id='11111').add_to_collection(collection)
@@ -71,6 +72,7 @@ To remove an [`Item`][item_class] from a collection, call
 [`item.remove_from_collection(collection)`][remove_from_collection] with the [`Collection`][collection_class] you want
 to remove the item from.  This method returns the updated [`Item`][item_class] object.
 
+<!-- sample put_files_id remove_from_collection -->
 ```python
 collection = client.collection(collection_id='12345')
 updated_file = client.file(file_id='11111').remove_from_collection(collection)
