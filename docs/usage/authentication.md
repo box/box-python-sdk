@@ -274,7 +274,11 @@ simply create a [`Client`][client_class] with that token:
 ```python
 from boxsdk import Client, OAuth2
 
-auth = OAuth2(access_token='APP_ACCESS_TOKEN_GOES_HERE')
+auth = OAuth2(
+  client_id='YOUR_CLIENT_ID', 
+  client_secret='', 
+  access_token='APP_ACCESS_TOKEN_GOES_HERE'
+)
 client = Client(auth)
 ```
 
