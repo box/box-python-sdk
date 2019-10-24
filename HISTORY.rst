@@ -3,6 +3,10 @@
 Release History
 ---------------
 
+2.6.1 (2019-10-24)
+++++++++++++++++++
+- Added api_ call decorator for copy method.
+
 2.6.0 (2019-08-29)
 ++++++++++++++++++
 - Added a new get events function with created_before, created_after, and event_type parameters
