@@ -3,6 +3,10 @@
 Release History
 ---------------
 
+Upcoming
+++++++++
+- Fixed bug in get_admin_events function which caused errors when the optional event_types parameter was omitted.
+
 2.6.1 (2019-10-24)
 ++++++++++++++++++
 - Added api_ call decorator for copy method.

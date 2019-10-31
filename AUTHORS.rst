@@ -10,3 +10,4 @@ used to interact with the Box API. This is a list of contributors.
 - `@kelseymorris95 <https://github.com/kelseymorris95>`_
 - `@sp4x <https://github.com/sp4x>`_
 - `@capk1rk <https://github.com/capk1rk>`_
+- `@aculler <https://github.com/aculler>`_
