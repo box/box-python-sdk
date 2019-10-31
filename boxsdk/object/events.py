@@ -129,11 +129,12 @@ class Events(BaseEndpoint):
         params = {
             'created_after': created_after,
             'created_before': created_before,
-            'event_type': ','.join(event_types),
             'stream_type': 'admin_logs',
         }
         if limit is not None:
             params['limit'] = limit
+        if event_types is not None:
+            params['event_type'] = ','.join(event_types)
         box_response = self._session.get(url, params=params)
         response = box_response.json()
         return self.translator.translate(self._session, response_object=response)
