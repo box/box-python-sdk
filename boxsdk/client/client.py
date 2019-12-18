@@ -493,7 +493,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def users(self, limit=None, offset=0, marker=None, use_marker=False, filter_term=None, user_type=None, fields=None):
+    def users(self, limit=None, offset=0, filter_term=None, user_type=None, fields=None, marker=None, use_marker=False):
         """
         Get a list of all users for the Enterprise along with their user_id, public_name, and login.
 
