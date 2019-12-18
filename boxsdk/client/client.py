@@ -493,7 +493,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def users(self, limit=None, offset=0, filter_term=None, user_type=None, fields=None):
+    def users(self, limit=None, offset=0, marker=None, use_marker=False, filter_term=None, user_type=None, fields=None):
         """
         Get a list of all users for the Enterprise along with their user_id, public_name, and login.
 
@@ -505,6 +505,14 @@ class Client(Cloneable):
             The user index at which to start the response.
         :type offset:
             `int`
+        :param use_marker:
+            Whether to use marker-based paging instead of offset-based paging, defaults to False.
+        :type use_marker:
+            `bool`
+        :param marker:
+            The paging marker to start returning items from when using marker-based paging.
+        :type marker:
+            `unicode` or None
         :param filter_term:
             Filters the results to only users starting with the filter_term in either the name or the login.
         :type filter_term:
@@ -520,11 +528,7 @@ class Client(Cloneable):
         :return:
             The list of all users in the enterprise.
         :rtype:
-            `list` of :class:`User`
-        :returns:
-            An iterator on the user's recent items
-        :rtype:
-            :class:`MarkerBasedObjectCollection`
+            `Iterable` of :class:`User`
         """
         url = self.get_url('users')
         additional_params = {}
@@ -532,6 +536,18 @@ class Client(Cloneable):
             additional_params['filter_term'] = filter_term
         if user_type:
             additional_params['user_type'] = user_type
+
+        if use_marker:
+            additional_params['usemarker'] = True
+            return MarkerBasedObjectCollection(
+                url=url,
+                session=self._session,
+                limit=limit,
+                marker=marker,
+                fields=fields,
+                additional_params=additional_params,
+                return_full_pages=False,
+            )
         return LimitOffsetBasedObjectCollection(
             url=url,
             session=self._session,
