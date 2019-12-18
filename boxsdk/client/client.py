@@ -493,7 +493,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def users(self, limit=None, offset=0, filter_term=None, user_type=None, fields=None, marker=None, use_marker=False):
+    def users(self, limit=None, offset=0, filter_term=None, user_type=None, fields=None, use_marker=False, marker=None):
         """
         Get a list of all users for the Enterprise along with their user_id, public_name, and login.
 
@@ -505,14 +505,6 @@ class Client(Cloneable):
             The user index at which to start the response.
         :type offset:
             `int`
-        :param use_marker:
-            Whether to use marker-based paging instead of offset-based paging, defaults to False.
-        :type use_marker:
-            `bool`
-        :param marker:
-            The paging marker to start returning items from when using marker-based paging.
-        :type marker:
-            `unicode` or None
         :param filter_term:
             Filters the results to only users starting with the filter_term in either the name or the login.
         :type filter_term:
@@ -525,6 +517,14 @@ class Client(Cloneable):
             List of fields to request on the :class:`User` objects.
         :type fields:
             `Iterable` of `unicode`
+        :param use_marker:
+            Whether to use marker-based paging instead of offset-based paging, defaults to False.
+        :type use_marker:
+            `bool`
+        :param marker:
+            The paging marker to start returning items from when using marker-based paging.
+        :type marker:
+            `unicode` or None
         :return:
             The list of all users in the enterprise.
         :rtype:
