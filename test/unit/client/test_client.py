@@ -471,6 +471,7 @@ def test_users_return_the_correct_user_objects(
     assert users.next().object_id == user_id_2
     mock_box_session.get.assert_called_once_with('{0}/users'.format(API.BASE_API_URL), params=expected_params)
 
+
 def test_users_return_the_correct_user_objects_marker(
         mock_client,
         mock_box_session,
@@ -501,6 +502,7 @@ def test_users_return_the_correct_user_objects_marker(
     assert users.next().object_id == user_id_1
     assert users.next().object_id == user_id_2
     mock_box_session.get.assert_called_once_with('{0}/users'.format(API.BASE_API_URL), params=expected_params)
+
 
 def test_users_returns_correct_with_default_values(
         mock_client,
