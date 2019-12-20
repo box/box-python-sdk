@@ -248,6 +248,9 @@ class Folder(Item):
             file_stream,
             file_name,
             file_description=None,
+            file_created_at=None,
+            file_modified_at=None,
+            additional_attributes=None,
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
@@ -300,11 +303,17 @@ class Folder(Item):
             if accelerator_upload_url:
                 url = accelerator_upload_url
 
-        data = {'attributes': json.dumps({
+        attributes = {
             'name': file_name,
             'parent': {'id': self._object_id},
             'description': file_description,
-        })}
+            'content_created_at': file_created_at,
+            'content_modified_at': file_modified_at,
+        }
+        if additional_attributes:
+            attributes.update(additional_attributes)
+
+        data = {'attributes': json.dumps(attributes)}
         files = {
             'file': ('unused', file_stream),
         }

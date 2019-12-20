@@ -190,6 +190,9 @@ class File(Item):
     def update_contents_with_stream(
             self,
             file_stream,
+            file_name=None,
+            file_modified_at=None,
+            additional_attributes=None,
             etag=None,
             preflight_check=False,
             preflight_expected_size=0,
@@ -244,9 +247,23 @@ class File(Item):
             if accelerator_upload_url:
                 url = accelerator_upload_url
 
+        attributes = {
+            'name': file_name,
+            'content_modified_at': file_modified_at,
+        }
+        if additional_attributes:
+            attributes.update(additional_attributes)
+
+        data = {'attributes': json.dumps(attributes)}
         files = {'file': ('unused', file_stream)}
         headers = {'If-Match': etag} if etag is not None else None
-        file_response = self._session.post(url, expect_json_response=False, files=files, headers=headers).json()
+        file_response = self._session.post(
+            url,
+            expect_json_response=False,
+            data=data,
+            files=files,
+            headers=headers,
+        ).json()
         if 'entries' in file_response:
             file_response = file_response['entries'][0]
         return self.translator.translate(
