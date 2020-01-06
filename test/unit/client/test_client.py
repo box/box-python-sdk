@@ -459,8 +459,40 @@ def test_users_return_the_correct_user_objects(
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = users_response
-    users = mock_client.users(users_limit, users_offset, users_filter_term, users_type)
+    users = mock_client.users(limit=users_limit, offset=users_offset, filter_term=users_filter_term, user_type=users_type)
     expected_params = {'offset': users_offset}
+    if users_limit is not None:
+        expected_params['limit'] = users_limit
+    if users_filter_term is not None:
+        expected_params['filter_term'] = users_filter_term
+    if users_type is not None:
+        expected_params['user_type'] = users_type
+    assert users.next().object_id == user_id_1
+    assert users.next().object_id == user_id_2
+    mock_box_session.get.assert_called_once_with('{0}/users'.format(API.BASE_API_URL), params=expected_params)
+
+
+def test_users_return_the_correct_user_objects_marker(
+        mock_client,
+        mock_box_session,
+        user_id_1,
+        user_id_2,
+        users_filter_term,
+        users_type,
+        marker_id,
+        users_limit,
+):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value.json.return_value = {
+        'entries': [
+            {'type': 'user', 'id': user_id_1},
+            {'type': 'user', 'id': user_id_2}
+        ],
+        'next_marker': 'JGWUGKNJFSAH123NDSA',
+        'total_count': 2
+    }
+    users = mock_client.users(limit=users_limit, marker=marker_id, use_marker=True, filter_term=users_filter_term, user_type=users_type)
+    expected_params = {'marker': marker_id, 'usemarker': True}
     if users_limit is not None:
         expected_params['limit'] = users_limit
     if users_filter_term is not None:
