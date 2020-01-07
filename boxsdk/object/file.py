@@ -205,6 +205,18 @@ class File(Item):
             The file-like object containing the bytes
         :type file_stream:
             `file`
+        :param file_name:
+            The new name to give the file on Box.
+        :type file_name:
+            `unicode` or None
+        :param file_modified_at:
+            The RFC-3339 datetime when the file was last modified.
+        :type file_modified_at:
+            `unicode` or None
+        :param additional_attributes:
+            A dictionary containing attributes to add to the file that are not covered by other parameters.
+        :type additional_attributes:
+            `dict` or None
         :param etag:
             If specified, instruct the Box API to update the item only if the current version's etag matches.
         :type etag:
@@ -275,6 +287,9 @@ class File(Item):
     def update_contents(
             self,
             file_path,
+            file_name=None,
+            file_modified_at=None,
+            additional_attributes=None,
             etag=None,
             preflight_check=False,
             preflight_expected_size=0,
@@ -286,6 +301,18 @@ class File(Item):
             The path of the file that should be uploaded.
         :type file_path:
             `unicode`
+        :param file_name:
+            The new name to give the file on Box.
+        :type file_name:
+            `unicode` or None
+        :param file_modified_at:
+            The RFC-3339 datetime when the file was last modified.
+        :type file_modified_at:
+            `unicode` or None
+        :param additional_attributes:
+            A dictionary containing attributes to add to the file that are not covered by other parameters.
+        :type additional_attributes:
+            `dict` or None
         :param etag:
             If specified, instruct the Box API to update the item only if the current version's etag matches.
         :type etag:
@@ -319,6 +346,9 @@ class File(Item):
         with open(file_path, 'rb') as file_stream:
             return self.update_contents_with_stream(
                 file_stream,
+                file_name,
+                file_modified_at,
+                additional_attributes,
                 etag,
                 preflight_check,
                 preflight_expected_size=preflight_expected_size,
