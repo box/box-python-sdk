@@ -224,6 +224,9 @@ def test_upload(
         is_stream,
 ):
     file_description = 'Test File Description'
+    file_created_at = '1970-01-01T00:00:00+00:00'
+    file_modified_at = '1970-01-01T11:11:11+11:11'
+    additional_attributes = {'attr': 123}
     expected_url = '{0}/files/content'.format(API.UPLOAD_URL)
     if upload_using_accelerator:
         if upload_using_accelerator_fails:
@@ -240,6 +243,9 @@ def test_upload(
             mock_file_stream,
             basename(mock_file_path),
             file_description,
+            file_created_at=file_created_at,
+            file_modified_at=file_modified_at,
+            additional_attributes=additional_attributes,
             upload_using_accelerator=upload_using_accelerator,
         )
     else:
@@ -249,11 +255,22 @@ def test_upload(
             new_file = test_folder.upload(
                 mock_file_path,
                 file_description=file_description,
+                file_created_at=file_created_at,
+                file_modified_at=file_modified_at,
+                additional_attributes=additional_attributes,
                 upload_using_accelerator=upload_using_accelerator,
             )
 
     mock_files = {'file': ('unused', mock_file_stream)}
-    data = {'attributes': json.dumps({'name': basename(mock_file_path), 'parent': {'id': mock_object_id}, 'description': file_description})}
+    attributes = {
+        'name': basename(mock_file_path),
+        'parent': {'id': mock_object_id},
+        'description': file_description,
+        'content_created_at': file_created_at,
+        'content_modified_at': file_modified_at,
+        'attr': 123,
+    }
+    data = {'attributes': json.dumps(attributes)}
     mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=False, files=mock_files, data=data)
     assert isinstance(new_file, File)
     assert new_file.object_id == mock_object_id

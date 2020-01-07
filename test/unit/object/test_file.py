@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 import json
 from mock import mock_open, patch
+from os.path import basename
 import pytest
 from six import BytesIO
 from boxsdk.config import API
@@ -287,6 +288,9 @@ def test_update_contents(
         if_match_header,
         is_stream,
 ):
+    file_new_name = 'new_file_name'
+    file_modified_at = '1970-01-01T11:11:11+11:11'
+    additional_attributes = {'attr': 123}
     expected_url = test_file.get_url('content').replace(API.BASE_API_URL, API.UPLOAD_URL)
     if upload_using_accelerator:
         if upload_using_accelerator_fails:
@@ -301,6 +305,9 @@ def test_update_contents(
         mock_file_stream = BytesIO(mock_content_response.content)
         new_file = test_file.update_contents_with_stream(
             mock_file_stream,
+            file_name=file_new_name,
+            file_modified_at=file_modified_at,
+            additional_attributes=additional_attributes,
             etag=etag,
             upload_using_accelerator=upload_using_accelerator,
         )
@@ -310,15 +317,25 @@ def test_update_contents(
         with patch('boxsdk.object.file.open', mock_file, create=True):
             new_file = test_file.update_contents(
                 mock_file_path,
+                file_name=file_new_name,
+                file_modified_at=file_modified_at,
+                additional_attributes=additional_attributes,
                 etag=etag,
                 upload_using_accelerator=upload_using_accelerator,
             )
 
     mock_files = {'file': ('unused', mock_file_stream)}
+    attributes = {
+        'name': file_new_name,
+        'content_modified_at': file_modified_at,
+        'attr': 123,
+    }
+    data = {'attributes': json.dumps(attributes)}
     mock_box_session.post.assert_called_once_with(
         expected_url,
         expect_json_response=False,
         files=mock_files,
+        data=data,
         headers=if_match_header,
     )
     assert isinstance(new_file, File)
