@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 import json
 from mock import mock_open, patch
-from os.path import basename
 import pytest
 from six import BytesIO
 from boxsdk.config import API
@@ -288,6 +287,7 @@ def test_update_contents(
         if_match_header,
         is_stream,
 ):
+    # pylint:disable=too-many-locals
     file_new_name = 'new_file_name'
     file_modified_at = '1970-01-01T11:11:11+11:11'
     additional_attributes = {'attr': 123}

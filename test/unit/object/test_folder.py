@@ -223,6 +223,7 @@ def test_upload(
         upload_using_accelerator_fails,
         is_stream,
 ):
+    # pylint:disable=too-many-locals
     file_description = 'Test File Description'
     file_created_at = '1970-01-01T00:00:00+00:00'
     file_modified_at = '1970-01-01T11:11:11+11:11'
