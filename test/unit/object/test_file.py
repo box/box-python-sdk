@@ -328,8 +328,10 @@ def test_update_contents(
     attributes = {
         'name': file_new_name,
         'content_modified_at': file_modified_at,
-        'attr': 123,
     }
+    # Using `update` to mirror the actual impl, since the attributes could otherwise come through in a different order
+    # in Python 2 tests
+    attributes.update(additional_attributes)
     data = {'attributes': json.dumps(attributes)}
     mock_box_session.post.assert_called_once_with(
         expected_url,

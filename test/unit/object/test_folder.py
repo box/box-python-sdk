@@ -268,8 +268,10 @@ def test_upload(
         'description': file_description,
         'content_created_at': file_created_at,
         'content_modified_at': file_modified_at,
-        'attr': 123,
     }
+    # Using `update` to mirror the actual impl, since the attributes could otherwise come through in a different order
+    # in Python 2 tests
+    attributes.update(additional_attributes)
     data = {'attributes': json.dumps(attributes)}
     mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=False, files=mock_files, data=data)
     assert isinstance(new_file, File)
