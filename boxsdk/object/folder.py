@@ -248,12 +248,12 @@ class Folder(Item):
             file_stream,
             file_name,
             file_description=None,
-            file_created_at=None,
-            file_modified_at=None,
-            additional_attributes=None,
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            file_created_at=None,
+            file_modified_at=None,
+            additional_attributes=None,
     ):
         """
         Upload a file to the folder.
@@ -271,18 +271,6 @@ class Folder(Item):
             The description to give the file on Box.
         :type file_description:
             `unicode` or None
-        :param file_created_at:
-            The RFC-3339 datetime when the file was created.
-        :type file_created_at:
-            `unicode` or None
-        :param file_modified_at:
-            The RFC-3339 datetime when the file was last modified.
-        :type file_modified_at:
-            `unicode` or None
-        :param additional_attributes:
-            A dictionary containing attributes to add to the file that are not covered by other parameters.
-        :type additional_attributes:
-            `dict` or None
         :param preflight_check:
             If specified, preflight check will be performed before actually uploading the file.
         :type preflight_check:
@@ -301,6 +289,18 @@ class Folder(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param file_created_at:
+            The RFC-3339 datetime when the file was created.
+        :type file_created_at:
+            `unicode` or None
+        :param file_modified_at:
+            The RFC-3339 datetime when the file was last modified.
+        :type file_modified_at:
+            `unicode` or None
+        :param additional_attributes:
+            A dictionary containing attributes to add to the file that are not covered by other parameters.
+        :type additional_attributes:
+            `dict` or None
         :returns:
             The newly uploaded file.
         :rtype:
@@ -343,12 +343,12 @@ class Folder(Item):
             file_path=None,
             file_name=None,
             file_description=None,
-            file_created_at=None,
-            file_modified_at=None,
-            additional_attributes=None,
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            file_created_at=None,
+            file_modified_at=None,
+            additional_attributes=None,
     ):
         """
         Upload a file to the folder.
@@ -367,18 +367,6 @@ class Folder(Item):
             The description to give the file on Box. If None, then no description will be set.
         :type file_description:
             `unicode` or None
-        :param file_created_at:
-            The RFC-3339 datetime when the file was created.
-        :type file_created_at:
-            `unicode` or None
-        :param file_modified_at:
-            The RFC-3339 datetime when the file was last modified.
-        :type file_modified_at:
-            `unicode` or None
-        :param additional_attributes:
-            A dictionary containing attributes to add to the file that are not covered by other parameters.
-        :type additional_attributes:
-            `dict` or None
         :param preflight_check:
             If specified, preflight check will be performed before actually uploading the file.
         :type preflight_check:
@@ -397,6 +385,18 @@ class Folder(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param file_created_at:
+            The RFC-3339 datetime when the file was created.
+        :type file_created_at:
+            `unicode` or None
+        :param file_modified_at:
+            The RFC-3339 datetime when the file was last modified.
+        :type file_modified_at:
+            `unicode` or None
+        :param additional_attributes:
+            A dictionary containing attributes to add to the file that are not covered by other parameters.
+        :type additional_attributes:
+            `dict` or None
         :returns:
             The newly uploaded file.
         :rtype:
@@ -409,12 +409,12 @@ class Folder(Item):
                 file_stream,
                 file_name,
                 file_description,
-                file_created_at,
-                file_modified_at,
-                additional_attributes,
                 preflight_check,
                 preflight_expected_size=preflight_expected_size,
                 upload_using_accelerator=upload_using_accelerator,
+                file_created_at=file_created_at,
+                file_modified_at=file_modified_at,
+                additional_attributes=additional_attributes,
             )
 
     @api_call

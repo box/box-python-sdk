@@ -305,11 +305,11 @@ def test_update_contents(
         mock_file_stream = BytesIO(mock_content_response.content)
         new_file = test_file.update_contents_with_stream(
             mock_file_stream,
+            etag=etag,
+            upload_using_accelerator=upload_using_accelerator,
             file_name=file_new_name,
             file_modified_at=file_modified_at,
             additional_attributes=additional_attributes,
-            etag=etag,
-            upload_using_accelerator=upload_using_accelerator,
         )
     else:
         mock_file = mock_open(read_data=mock_content_response.content)
@@ -317,11 +317,11 @@ def test_update_contents(
         with patch('boxsdk.object.file.open', mock_file, create=True):
             new_file = test_file.update_contents(
                 mock_file_path,
+                etag=etag,
+                upload_using_accelerator=upload_using_accelerator,
                 file_name=file_new_name,
                 file_modified_at=file_modified_at,
                 additional_attributes=additional_attributes,
-                etag=etag,
-                upload_using_accelerator=upload_using_accelerator,
             )
 
     mock_files = {'file': ('unused', mock_file_stream)}

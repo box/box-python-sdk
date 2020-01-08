@@ -244,10 +244,10 @@ def test_upload(
             mock_file_stream,
             basename(mock_file_path),
             file_description,
+            upload_using_accelerator=upload_using_accelerator,
             file_created_at=file_created_at,
             file_modified_at=file_modified_at,
             additional_attributes=additional_attributes,
-            upload_using_accelerator=upload_using_accelerator,
         )
     else:
         mock_file = mock_open(read_data=mock_content_response.content)
@@ -256,10 +256,10 @@ def test_upload(
             new_file = test_folder.upload(
                 mock_file_path,
                 file_description=file_description,
+                upload_using_accelerator=upload_using_accelerator,
                 file_created_at=file_created_at,
                 file_modified_at=file_modified_at,
                 additional_attributes=additional_attributes,
-                upload_using_accelerator=upload_using_accelerator,
             )
 
     mock_files = {'file': ('unused', mock_file_stream)}
