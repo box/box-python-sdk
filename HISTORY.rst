@@ -6,6 +6,7 @@ Release History
 Upcoming
 ++++++++
 - Fixed bug in get_admin_events function which caused errors when the optional event_types parameter was omitted.
+- Combine preflight check and lookup of accelerator URL into a single request for uploads.
 
 2.6.1 (2019-10-24)
 ++++++++++++++++++
