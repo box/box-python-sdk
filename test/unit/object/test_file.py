@@ -329,6 +329,36 @@ def test_update_contents(
     assert 'entries' not in new_file
 
 
+@pytest.mark.parametrize('is_stream', (True, False))
+def test_update_contents_combines_preflight_and_accelerator_calls_if_both_are_requested(
+        test_file,
+        mock_box_session,
+        mock_file_path,
+        mock_content_response,
+        mock_accelerator_response_for_update,
+        is_stream
+):
+    mock_box_session.options.return_value = mock_accelerator_response_for_update
+
+    if is_stream:
+        mock_file_stream = BytesIO(mock_content_response.content)
+        test_file.update_contents_with_stream(
+            mock_file_stream,
+            preflight_check=True,
+            upload_using_accelerator=True,
+        )
+    else:
+        mock_file = mock_open(read_data=mock_content_response.content)
+        with patch('boxsdk.object.file.open', mock_file, create=True):
+            test_file.update_contents(
+                mock_file_path,
+                preflight_check=True,
+                upload_using_accelerator=True,
+            )
+
+    mock_box_session.options.assert_called_once()
+
+
 def test_update_contents_with_stream_does_preflight_check_if_specified(
         test_file,
         preflight_check,
@@ -450,22 +480,28 @@ def test_preflight_check(
         test_file,
         mock_object_id,
         mock_box_session,
+        mock_accelerator_response_for_update,
+        mock_accelerator_upload_url_for_update,
         size,
         name,
         expected_data,
 ):
+    mock_box_session.options.return_value = mock_accelerator_response_for_update
     kwargs = {'size': size}
     if name:
         kwargs['name'] = name
-    test_file.preflight_check(**kwargs)
+
+    accelerator_url = test_file.preflight_check(**kwargs)
+
     mock_box_session.options.assert_called_once_with(
         url='{0}/files/{1}/content'.format(
             API.BASE_API_URL,
             mock_object_id,
         ),
-        expect_json_response=False,
+        expect_json_response=True,
         data=expected_data,
     )
+    assert accelerator_url == mock_accelerator_upload_url_for_update
 
 
 def test_get_shared_link_download_url(

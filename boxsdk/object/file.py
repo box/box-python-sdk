@@ -20,6 +20,7 @@ class File(Item):
     def preflight_check(self, size, name=None):
         """
         Make an API call to check if the file can be updated with the new name and size of the file.
+        Returns an accelerator URL if one is available.
 
         :param size:
             The size of the file in bytes. Specify 0 for unknown file-sizes.
@@ -29,10 +30,14 @@ class File(Item):
             The name of the file to be updated. It's optional, if the name is not being changed.
         :type name:
             `unicode`
+        :return:
+            The Accelerator upload url or None if cannot get the Accelerator upload url.
+        :rtype:
+            `unicode` or None
         :raises:
             :class:`BoxAPIException` when preflight check fails.
         """
-        self._preflight_check(
+        return self._preflight_check(
             size=size,
             name=name,
             file_id=self._object_id,
@@ -232,17 +237,19 @@ class File(Item):
             :class:`BoxAPIException` if the specified etag doesn't match the latest version of the file or preflight
             check fails.
         """
+        accelerator_upload_url = None
         if preflight_check:
-            self.preflight_check(size=preflight_expected_size)
+            # Preflight check does double duty, returning the accelerator URL if one is available in the response.
+            accelerator_upload_url = self.preflight_check(size=preflight_expected_size)
+        elif upload_using_accelerator:
+            accelerator_upload_url = self._get_accelerator_upload_url_for_update()
 
         url = self.get_url('content').replace(
             self._session.api_config.BASE_API_URL,
             self._session.api_config.UPLOAD_URL,
         )
-        if upload_using_accelerator:
-            accelerator_upload_url = self._get_accelerator_upload_url_for_update()
-            if accelerator_upload_url:
-                url = accelerator_upload_url
+        if upload_using_accelerator and accelerator_upload_url:
+            url = accelerator_upload_url
 
         files = {'file': ('unused', file_stream)}
         headers = {'If-Match': etag} if etag is not None else None
