@@ -287,6 +287,10 @@ def test_update_contents(
         if_match_header,
         is_stream,
 ):
+    # pylint:disable=too-many-locals
+    file_new_name = 'new_file_name'
+    file_modified_at = '1970-01-01T11:11:11+11:11'
+    additional_attributes = {'attr': 123}
     expected_url = test_file.get_url('content').replace(API.BASE_API_URL, API.UPLOAD_URL)
     if upload_using_accelerator:
         if upload_using_accelerator_fails:
@@ -303,6 +307,9 @@ def test_update_contents(
             mock_file_stream,
             etag=etag,
             upload_using_accelerator=upload_using_accelerator,
+            file_name=file_new_name,
+            file_modified_at=file_modified_at,
+            additional_attributes=additional_attributes,
         )
     else:
         mock_file = mock_open(read_data=mock_content_response.content)
@@ -312,13 +319,25 @@ def test_update_contents(
                 mock_file_path,
                 etag=etag,
                 upload_using_accelerator=upload_using_accelerator,
+                file_name=file_new_name,
+                file_modified_at=file_modified_at,
+                additional_attributes=additional_attributes,
             )
 
     mock_files = {'file': ('unused', mock_file_stream)}
+    attributes = {
+        'name': file_new_name,
+        'content_modified_at': file_modified_at,
+    }
+    # Using `update` to mirror the actual impl, since the attributes could otherwise come through in a different order
+    # in Python 2 tests
+    attributes.update(additional_attributes)
+    data = {'attributes': json.dumps(attributes)}
     mock_box_session.post.assert_called_once_with(
         expected_url,
         expect_json_response=False,
         files=mock_files,
+        data=data,
         headers=if_match_header,
     )
     assert isinstance(new_file, File)

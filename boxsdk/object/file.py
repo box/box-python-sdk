@@ -199,6 +199,9 @@ class File(Item):
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            file_name=None,
+            file_modified_at=None,
+            additional_attributes=None,
     ):
         """
         Upload a new version of a file, taking the contents from the given file stream.
@@ -229,6 +232,18 @@ class File(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param file_name:
+            The new name to give the file on Box.
+        :type file_name:
+            `unicode` or None
+        :param file_modified_at:
+            The RFC-3339 datetime when the file was last modified.
+        :type file_modified_at:
+            `unicode` or None
+        :param additional_attributes:
+            A dictionary containing attributes to add to the file that are not covered by other parameters.
+        :type additional_attributes:
+            `dict` or None
         :returns:
             A new file object
         :rtype:
@@ -251,9 +266,23 @@ class File(Item):
         if upload_using_accelerator and accelerator_upload_url:
             url = accelerator_upload_url
 
+        attributes = {
+            'name': file_name,
+            'content_modified_at': file_modified_at,
+        }
+        if additional_attributes:
+            attributes.update(additional_attributes)
+
+        data = {'attributes': json.dumps(attributes)}
         files = {'file': ('unused', file_stream)}
         headers = {'If-Match': etag} if etag is not None else None
-        file_response = self._session.post(url, expect_json_response=False, files=files, headers=headers).json()
+        file_response = self._session.post(
+            url,
+            expect_json_response=False,
+            data=data,
+            files=files,
+            headers=headers,
+        ).json()
         if 'entries' in file_response:
             file_response = file_response['entries'][0]
         return self.translator.translate(
@@ -269,6 +298,9 @@ class File(Item):
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            file_name=None,
+            file_modified_at=None,
+            additional_attributes=None,
     ):
         """Upload a new version of a file. The contents are taken from the given file path.
 
@@ -298,6 +330,18 @@ class File(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param file_name:
+            The new name to give the file on Box.
+        :type file_name:
+            `unicode` or None
+        :param file_modified_at:
+            The RFC-3339 datetime when the file was last modified.
+        :type file_modified_at:
+            `unicode` or None
+        :param additional_attributes:
+            A dictionary containing attributes to add to the file that are not covered by other parameters.
+        :type additional_attributes:
+            `dict` or None
         :returns:
             A new file object
         :rtype:
@@ -313,6 +357,9 @@ class File(Item):
                 preflight_check,
                 preflight_expected_size=preflight_expected_size,
                 upload_using_accelerator=upload_using_accelerator,
+                file_name=file_name,
+                file_modified_at=file_modified_at,
+                additional_attributes=additional_attributes,
             )
 
     @api_call
