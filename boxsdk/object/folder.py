@@ -251,6 +251,9 @@ class Folder(Item):
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            file_created_at=None,
+            file_modified_at=None,
+            additional_attributes=None,
     ):
         """
         Upload a file to the folder.
@@ -286,6 +289,18 @@ class Folder(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param file_created_at:
+            The RFC-3339 datetime when the file was created.
+        :type file_created_at:
+            `unicode` or None
+        :param file_modified_at:
+            The RFC-3339 datetime when the file was last modified.
+        :type file_modified_at:
+            `unicode` or None
+        :param additional_attributes:
+            A dictionary containing attributes to add to the file that are not covered by other parameters.
+        :type additional_attributes:
+            `dict` or None
         :returns:
             The newly uploaded file.
         :rtype:
@@ -300,11 +315,17 @@ class Folder(Item):
             if accelerator_upload_url:
                 url = accelerator_upload_url
 
-        data = {'attributes': json.dumps({
+        attributes = {
             'name': file_name,
             'parent': {'id': self._object_id},
             'description': file_description,
-        })}
+            'content_created_at': file_created_at,
+            'content_modified_at': file_modified_at,
+        }
+        if additional_attributes:
+            attributes.update(additional_attributes)
+
+        data = {'attributes': json.dumps(attributes)}
         files = {
             'file': ('unused', file_stream),
         }
@@ -325,6 +346,9 @@ class Folder(Item):
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            file_created_at=None,
+            file_modified_at=None,
+            additional_attributes=None,
     ):
         """
         Upload a file to the folder.
@@ -361,6 +385,18 @@ class Folder(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param file_created_at:
+            The RFC-3339 datetime when the file was created.
+        :type file_created_at:
+            `unicode` or None
+        :param file_modified_at:
+            The RFC-3339 datetime when the file was last modified.
+        :type file_modified_at:
+            `unicode` or None
+        :param additional_attributes:
+            A dictionary containing attributes to add to the file that are not covered by other parameters.
+        :type additional_attributes:
+            `dict` or None
         :returns:
             The newly uploaded file.
         :rtype:
@@ -376,6 +412,9 @@ class Folder(Item):
                 preflight_check,
                 preflight_expected_size=preflight_expected_size,
                 upload_using_accelerator=upload_using_accelerator,
+                file_created_at=file_created_at,
+                file_modified_at=file_modified_at,
+                additional_attributes=additional_attributes,
             )
 
     @api_call
