@@ -8,6 +8,7 @@ import math
 from functools import partial
 from logging import getLogger
 
+from ..auth.jwt_auth import JWTAuth
 from boxsdk.exception import BoxException
 from .box_request import BoxRequest as _BoxRequest
 from .box_response import BoxResponse as _BoxResponse
@@ -388,7 +389,7 @@ class Session(object):
         network_response = self._send_request(request, **kwargs)
 
         while True:
-            retry = self._get_retry_request_callable(network_response, attempt_number, request)
+            retry = self._get_retry_request_callable(network_response, attempt_number, request, **kwargs)
 
             if retry is None or attempt_number >= API.MAX_RETRY_ATTEMPTS:
                 break
@@ -401,7 +402,7 @@ class Session(object):
 
         return network_response
 
-    def _get_retry_request_callable(self, network_response, attempt_number, request):
+    def _get_retry_request_callable(self, network_response, attempt_number, request, **kwargs):
         """
         Get a callable that retries a request for certain types of failure.
 
@@ -429,8 +430,9 @@ class Session(object):
             `callable`
         """
         # pylint:disable=unused-argument
+        data = kwargs.pop('data', {})
         code = network_response.status_code
-        if code in (202, 429) or code >= 500:
+        if (code in (202, 429) or code >= 500) and data['grant_type'] != JWTAuth._GRANT_TYPE:
             return partial(
                 self._network_layer.retry_after,
                 self._get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)),

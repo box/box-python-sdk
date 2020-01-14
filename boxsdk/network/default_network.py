@@ -47,7 +47,7 @@ class DefaultNetwork(Network):
             self._log_exception(method, url, sys.exc_info())
             raise
 
-    def retry_after(self, delay, request_method, *args, **kwargs):
+    def retry_after(self, delay, request_method=None, *args, **kwargs):
         """Base class override.
         Retry after sleeping for delay seconds.
         """

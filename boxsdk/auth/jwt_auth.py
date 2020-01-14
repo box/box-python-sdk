@@ -17,6 +17,7 @@ from ..exception import BoxOAuthException
 from .oauth2 import OAuth2
 from ..object.user import User
 from ..util.compat import NoneType
+from ..session.session import Session
 
 
 class JWTAuth(OAuth2):
@@ -218,7 +219,7 @@ class JWTAuth(OAuth2):
             data['box_device_name'] = self._box_device_name
         return self.send_token_request(data, access_token=None, expect_refresh_token=False)[0]
 
-    def _auth_with_jwt(self, sub, sub_type):
+    def _auth_with_jwt(self, sub, sub_type, attempt_number=None):
         """
         Auth with JWT.
         If authorization fails because the expiration time is out of sync with the Box servers,
@@ -239,14 +240,67 @@ class JWTAuth(OAuth2):
         :rtype:
             `unicode`
         """
+
+        if attempt_number == None:
+            attempt_number = 0
+
         try:
             return self._construct_and_send_jwt_auth(sub, sub_type)
         except BoxOAuthException as ex:
-            error_response = ex.network_response
-            box_datetime = self._get_date_header(error_response)
-            if box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(error_response):
+            network_response = ex.network_response
+            code = network_response.status_code
+            if (code in (202, 429) or code >= 500):
+                timeDelay = self._session._get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None))
+                self._session._network_layer.retry_after(timeDelay)
+                if attempt_number >= API.MAX_RETRY_ATTEMPTS:
+                    raise
+
+                attempt_number += 1
+                self._logger.debug('Retrying JWT request')
+                self._auth_with_jwt(sub, sub_type, attempt_number=attempt_number)
+
+            box_datetime = self._get_date_header(network_response)
+            if box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(network_response):
                 return self._construct_and_send_jwt_auth(sub, sub_type, box_datetime)
             raise
+
+    def _get_retry_request_callable(self, network_response, attempt_number, request, **kwargs):
+        """
+        Get a callable that retries a request for certain types of failure.
+
+        For 202 Accepted (thumbnail or file not ready) and 429 (too many requests), retry later, after a delay
+        specified by the Retry-After header.
+        For 5xx Server Error, retry later, after a delay; use exponential backoff to determine the delay.
+
+        Otherwise, return None.
+
+        :param network_response:
+            The response from the Box API.
+        :type network_response:
+            :class:`NetworkResponse`
+        :param attempt_number:
+            How many attempts at this request have already been tried. Used for exponential backoff calculations.
+        :type attempt_number:
+            `int`
+        :param request:
+            The API request that could require retrying.
+        :type request:
+            :class:`BoxRequest`
+        :return:
+            Callable that, when called, will retry the request. Takes the same parameters as :meth:`_send_request`.
+        :rtype:
+            `callable`
+        """
+        # pylint:disable=unused-argument
+        data = kwargs.pop('data', {})
+        code = network_response.status_code
+        if (code in (202, 429) or code >= 500) and data['grant_type'] != JWTAuth._GRANT_TYPE:
+            return partial(
+                self._network_layer.retry_after,
+                self._get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)),
+                self._send_request,
+            )
+        return None
 
     @staticmethod
     def _get_date_header(network_response):
