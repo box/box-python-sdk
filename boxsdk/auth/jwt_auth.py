@@ -17,7 +17,6 @@ from ..exception import BoxOAuthException
 from .oauth2 import OAuth2
 from ..object.user import User
 from ..util.compat import NoneType
-from ..session.session import Session
 
 
 class JWTAuth(OAuth2):
