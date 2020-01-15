@@ -241,11 +241,8 @@ class JWTAuth(OAuth2):
         """
         attempt_number = 0
         network_response = None
-        time = None
         while True:
-            if attempt_number >= API.MAX_RETRY_ATTEMPTS:
-                break
-            
+            time = None        
             try:
                 return self._construct_and_send_jwt_auth(sub, sub_type, time)
             except BoxOAuthException as ex:
@@ -253,17 +250,18 @@ class JWTAuth(OAuth2):
                 code = network_response.status_code
                 box_datetime = self._get_date_header(network_response)
 
-                if (code in (202, 429) or code >= 500):
+                if attempt_number >= API.MAX_RETRY_ATTEMPTS:
+                    raise ex
+                elif (code == 429 or code >= 500):
                     timeDelay = self._session._get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None))
                     self._session._network_layer.retry_after(timeDelay, None)
-                else if box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(network_response):
+                elif box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(network_response):
                     time = box_datetime
                 else:
-                    break
+                    raise ex
                 
                 self._logger.debug('Retrying JWT request')
                 attempt_number += 1
-        raise
 
     @staticmethod
     def _get_date_header(network_response):

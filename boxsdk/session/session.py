@@ -8,7 +8,7 @@ import math
 from functools import partial
 from logging import getLogger
 
-from ..auth.jwt_auth import JWTAuth
+# from ..auth.jwt_auth import JWTAuth
 from boxsdk.exception import BoxException
 from .box_request import BoxRequest as _BoxRequest
 from .box_response import BoxResponse as _BoxResponse

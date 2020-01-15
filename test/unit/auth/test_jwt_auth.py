@@ -517,3 +517,33 @@ def test_auth_retry_for_invalid_exp_claim(
                 expected_calls.append(call(enterprise_id, 'enterprise', box_datetime.replace(microsecond=0, tzinfo=None)))
             assert len(mock_send_jwt.mock_calls) == len(expected_calls)
             mock_send_jwt.assert_has_calls(expected_calls)
+
+# @pytest.mark.parametrize('jwt_algorithm', ('RS512',))
+# @pytest.mark.parametrize('rsa_passphrase', (None,))
+# @pytest.mark.parametrize('pass_private_key_by_path', (False,))
+# @pytest.mark.parametrize('status_code', (400, 401, 429, 500))
+# @pytest.mark.parametrize('error_description', ('invalid box_sub_type claim', 'invalid kid', "check the 'exp' claim"))
+# @pytest.mark.parametrize('error_code', ('invalid_grant', 'bad_request'))
+# @pytest.mark.parametrize('include_date_header', (True, False))
+# def test_auth_retry_for_invalid_exp_claim(
+#         jwt_auth_init_mocks,
+#         expect_auth_retry,
+#         unsuccessful_jwt_response,
+#         box_datetime,
+# ):
+#     # pylint:disable=redefined-outer-name
+#     enterprise_id = 'fake_enterprise_id'
+#     with jwt_auth_init_mocks(assert_authed=False) as params:
+#         auth = params[0]
+#         with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
+#             mock_send_jwt.side_effect = [BoxOAuthException(400, network_response=unsuccessful_jwt_response), 'jwt_token']
+#             if not expect_auth_retry:
+#                 with pytest.raises(BoxOAuthException):
+#                     auth.authenticate_instance(enterprise_id)
+#             else:
+#                 auth.authenticate_instance(enterprise_id)
+#             expected_calls = [call(enterprise_id, 'enterprise')]
+#             if expect_auth_retry:
+#                 expected_calls.append(call(enterprise_id, 'enterprise', box_datetime.replace(microsecond=0, tzinfo=None)))
+#             assert len(mock_send_jwt.mock_calls) == len(expected_calls)
+#             mock_send_jwt.assert_has_calls(expected_calls)
