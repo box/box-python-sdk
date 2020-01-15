@@ -284,6 +284,37 @@ def test_upload(
     assert 'entries' not in new_file
 
 
+@pytest.mark.parametrize('is_stream', (True, False))
+def test_upload_combines_preflight_and_accelerator_calls_if_both_are_requested(
+        test_folder,
+        mock_box_session,
+        mock_file_path,
+        mock_content_response,
+        mock_accelerator_response_for_new_uploads,
+        is_stream
+):
+    mock_box_session.options.return_value = mock_accelerator_response_for_new_uploads
+
+    if is_stream:
+        mock_file_stream = BytesIO(mock_content_response.content)
+        test_folder.upload_stream(
+            mock_file_stream,
+            basename(mock_file_path),
+            preflight_check=True,
+            upload_using_accelerator=True,
+        )
+    else:
+        mock_file = mock_open(read_data=mock_content_response.content)
+        with patch('boxsdk.object.folder.open', mock_file, create=True):
+            test_folder.upload(
+                mock_file_path,
+                preflight_check=True,
+                upload_using_accelerator=True,
+            )
+
+    mock_box_session.options.assert_called_once()
+
+
 def test_create_upload_session(test_folder, mock_box_session):
     expected_url = '{0}/files/upload_sessions'.format(API.UPLOAD_URL)
     file_size = 197520
@@ -399,12 +430,21 @@ def test_update_sync_state(test_folder, mock_folder_response, mock_box_session, 
     assert update_response.object_id == test_folder.object_id
 
 
-def test_preflight(test_folder, mock_object_id, mock_box_session):
+def test_preflight(
+        test_folder,
+        mock_object_id,
+        mock_box_session,
+        mock_accelerator_response_for_new_uploads,
+        mock_new_upload_accelerator_url,
+):
     new_file_size, new_file_name = 100, 'foo.txt'
-    test_folder.preflight_check(size=new_file_size, name=new_file_name)
+    mock_box_session.options.return_value = mock_accelerator_response_for_new_uploads
+
+    accelerator_url = test_folder.preflight_check(size=new_file_size, name=new_file_name)
+
     mock_box_session.options.assert_called_once_with(
         url='{0}/files/content'.format(API.BASE_API_URL),
-        expect_json_response=False,
+        expect_json_response=True,
         data=json.dumps(
             {
                 'size': new_file_size,
@@ -413,6 +453,7 @@ def test_preflight(test_folder, mock_object_id, mock_box_session):
             }
         ),
     )
+    assert accelerator_url == mock_new_upload_accelerator_url
 
 
 def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_box_session):

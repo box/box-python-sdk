@@ -95,6 +95,7 @@ class Folder(Item):
     def preflight_check(self, size, name):
         """
         Make an API call to check if a new file with given name and size can be uploaded to this folder.
+        Returns an accelerator URL if one is available.
 
         :param size:
             The size of the file in bytes. Specify 0 for unknown file-sizes.
@@ -104,10 +105,14 @@ class Folder(Item):
             The name of the file to be uploaded.
         :type name:
             `unicode`
+        :return:
+            The Accelerator upload url or None if cannot get the Accelerator upload url.
+        :rtype:
+            `unicode` or None
         :raises:
             :class:`BoxAPIException` when preflight check fails.
         """
-        self._preflight_check(
+        return self._preflight_check(
             size=size,
             name=name,
             parent_id=self._object_id,
@@ -306,14 +311,16 @@ class Folder(Item):
         :rtype:
             :class:`File`
         """
+        accelerator_upload_url = None
         if preflight_check:
-            self.preflight_check(size=preflight_expected_size, name=file_name)
+            # Preflight check does double duty, returning the accelerator URL if one is available in the response.
+            accelerator_upload_url = self.preflight_check(size=preflight_expected_size, name=file_name)
+        elif upload_using_accelerator:
+            accelerator_upload_url = self._get_accelerator_upload_url_fow_new_uploads()
 
         url = '{0}/files/content'.format(self._session.api_config.UPLOAD_URL)
-        if upload_using_accelerator:
-            accelerator_upload_url = self._get_accelerator_upload_url_fow_new_uploads()
-            if accelerator_upload_url:
-                url = accelerator_upload_url
+        if upload_using_accelerator and accelerator_upload_url:
+            url = accelerator_upload_url
 
         attributes = {
             'name': file_name,
