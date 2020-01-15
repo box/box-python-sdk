@@ -225,8 +225,8 @@ def test_upload(
 ):
     # pylint:disable=too-many-locals
     file_description = 'Test File Description'
-    file_created_at = '1970-01-01T00:00:00+00:00'
-    file_modified_at = '1970-01-01T11:11:11+11:11'
+    content_created_at = '1970-01-01T00:00:00+00:00'
+    content_modified_at = '1970-01-01T11:11:11+11:11'
     additional_attributes = {'attr': 123}
     expected_url = '{0}/files/content'.format(API.UPLOAD_URL)
     if upload_using_accelerator:
@@ -245,8 +245,8 @@ def test_upload(
             basename(mock_file_path),
             file_description,
             upload_using_accelerator=upload_using_accelerator,
-            file_created_at=file_created_at,
-            file_modified_at=file_modified_at,
+            content_created_at=content_created_at,
+            content_modified_at=content_modified_at,
             additional_attributes=additional_attributes,
         )
     else:
@@ -257,8 +257,8 @@ def test_upload(
                 mock_file_path,
                 file_description=file_description,
                 upload_using_accelerator=upload_using_accelerator,
-                file_created_at=file_created_at,
-                file_modified_at=file_modified_at,
+                content_created_at=content_created_at,
+                content_modified_at=content_modified_at,
                 additional_attributes=additional_attributes,
             )
 
@@ -267,8 +267,8 @@ def test_upload(
         'name': basename(mock_file_path),
         'parent': {'id': mock_object_id},
         'description': file_description,
-        'content_created_at': file_created_at,
-        'content_modified_at': file_modified_at,
+        'content_created_at': content_created_at,
+        'content_modified_at': content_modified_at,
     }
     # Using `update` to mirror the actual impl, since the attributes could otherwise come through in a different order
     # in Python 2 tests

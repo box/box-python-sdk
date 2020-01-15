@@ -200,7 +200,7 @@ class File(Item):
             preflight_expected_size=0,
             upload_using_accelerator=False,
             file_name=None,
-            file_modified_at=None,
+            content_modified_at=None,
             additional_attributes=None,
     ):
         """
@@ -236,9 +236,9 @@ class File(Item):
             The new name to give the file on Box.
         :type file_name:
             `unicode` or None
-        :param file_modified_at:
-            The RFC-3339 datetime when the file was last modified.
-        :type file_modified_at:
+        :param content_modified_at:
+            The RFC-3339 datetime when the file content was last modified.
+        :type content_modified_at:
             `unicode` or None
         :param additional_attributes:
             A dictionary containing attributes to add to the file that are not covered by other parameters.
@@ -268,7 +268,7 @@ class File(Item):
 
         attributes = {
             'name': file_name,
-            'content_modified_at': file_modified_at,
+            'content_modified_at': content_modified_at,
         }
         if additional_attributes:
             attributes.update(additional_attributes)
@@ -299,7 +299,7 @@ class File(Item):
             preflight_expected_size=0,
             upload_using_accelerator=False,
             file_name=None,
-            file_modified_at=None,
+            content_modified_at=None,
             additional_attributes=None,
     ):
         """Upload a new version of a file. The contents are taken from the given file path.
@@ -334,9 +334,9 @@ class File(Item):
             The new name to give the file on Box.
         :type file_name:
             `unicode` or None
-        :param file_modified_at:
-            The RFC-3339 datetime when the file was last modified.
-        :type file_modified_at:
+        :param content_modified_at:
+            The RFC-3339 datetime when the file content was last modified.
+        :type content_modified_at:
             `unicode` or None
         :param additional_attributes:
             A dictionary containing attributes to add to the file that are not covered by other parameters.
@@ -358,7 +358,7 @@ class File(Item):
                 preflight_expected_size=preflight_expected_size,
                 upload_using_accelerator=upload_using_accelerator,
                 file_name=file_name,
-                file_modified_at=file_modified_at,
+                content_modified_at=content_modified_at,
                 additional_attributes=additional_attributes,
             )
 
