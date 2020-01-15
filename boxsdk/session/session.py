@@ -8,7 +8,6 @@ import math
 from functools import partial
 from logging import getLogger
 
-# from ..auth.jwt_auth import JWTAuth
 from boxsdk.exception import BoxException
 from .box_request import BoxRequest as _BoxRequest
 from .box_response import BoxResponse as _BoxResponse
@@ -269,7 +268,7 @@ class Session(object):
     # We updated our retry strategy to use exponential backoff instead of the header returned from the API response.
     # This is something we can remove in latter major bumps.
     # pylint: disable=unused-argument
-    def _get_retry_after_time(self, attempt_number, retry_after_header):
+    def get_retry_after_time(self, attempt_number, retry_after_header):
         """
         Get the amount of time to wait before retrying the API request, using the attempt number that failed to
         calculate the retry time for the next retry attempt.
@@ -430,12 +429,15 @@ class Session(object):
             `callable`
         """
         # pylint:disable=unused-argument
-        data = kwargs.pop('data', {})
+        data = kwargs.get('data', {})
+        grant_type = None
+        if 'grant_type' in data:
+            grant_type = data['grant_type']
         code = network_response.status_code
-        if (code in (202, 429) or code >= 500) and data['grant_type'] != JWTAuth._GRANT_TYPE:
+        if (code in (202, 429) or code >= 500) and grant_type != 'urn:ietf:params:oauth:grant-type:jwt-bearer':
             return partial(
                 self._network_layer.retry_after,
-                self._get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)),
+                self.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)),
                 self._send_request,
             )
         return None
@@ -549,7 +551,7 @@ class AuthorizedSession(Session):
         new_access_token, _ = self._oauth.refresh(access_token_used)
         return new_access_token
 
-    def _get_retry_request_callable(self, network_response, attempt_number, request):
+    def _get_retry_request_callable(self, network_response, attempt_number, request, **kwargs):
         """
         Get a callable that retries a request for certain types of failure.
 
@@ -583,6 +585,7 @@ class AuthorizedSession(Session):
             network_response,
             attempt_number,
             request,
+            **kwargs
         )
 
     def _send_request(self, request, **kwargs):

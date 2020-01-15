@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import json
 import random
 import string
+import time
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
@@ -13,6 +14,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 import jwt
 from six import binary_type, string_types, raise_from, text_type
 
+from ..config import API
 from ..exception import BoxOAuthException
 from .oauth2 import OAuth2
 from ..object.user import User
@@ -241,27 +243,29 @@ class JWTAuth(OAuth2):
         """
         attempt_number = 0
         network_response = None
+        jwt_time = None
         while True:
-            time = None        
             try:
-                return self._construct_and_send_jwt_auth(sub, sub_type, time)
+                return self._construct_and_send_jwt_auth(sub, sub_type, jwt_time)
             except BoxOAuthException as ex:
+                jwt_time = None
                 network_response = ex.network_response
                 code = network_response.status_code
                 box_datetime = self._get_date_header(network_response)
-
+                
+                attempt_number += 1
                 if attempt_number >= API.MAX_RETRY_ATTEMPTS:
                     raise ex
-                elif (code == 429 or code >= 500):
-                    timeDelay = self._session._get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None))
-                    self._session._network_layer.retry_after(timeDelay, None)
+                
+                if (code == 429 or code >= 500):
+                    time_delay = self._session.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None))
+                    time.sleep(time_delay)
                 elif box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(network_response):
-                    time = box_datetime
+                    jwt_time = box_datetime
                 else:
                     raise ex
-                
+
                 self._logger.debug('Retrying JWT request')
-                attempt_number += 1
 
     @staticmethod
     def _get_date_header(network_response):
