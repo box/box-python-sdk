@@ -11,3 +11,4 @@ used to interact with the Box API. This is a list of contributors.
 - `@sp4x <https://github.com/sp4x>`_
 - `@capk1rk <https://github.com/capk1rk>`_
 - `@aculler <https://github.com/aculler>`_
+- `@ben-reilly <https://github.com/ben-reilly>`_

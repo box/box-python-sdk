@@ -287,6 +287,10 @@ def test_update_contents(
         if_match_header,
         is_stream,
 ):
+    # pylint:disable=too-many-locals
+    file_new_name = 'new_file_name'
+    content_modified_at = '1970-01-01T11:11:11+11:11'
+    additional_attributes = {'attr': 123}
     expected_url = test_file.get_url('content').replace(API.BASE_API_URL, API.UPLOAD_URL)
     if upload_using_accelerator:
         if upload_using_accelerator_fails:
@@ -303,6 +307,9 @@ def test_update_contents(
             mock_file_stream,
             etag=etag,
             upload_using_accelerator=upload_using_accelerator,
+            file_name=file_new_name,
+            content_modified_at=content_modified_at,
+            additional_attributes=additional_attributes,
         )
     else:
         mock_file = mock_open(read_data=mock_content_response.content)
@@ -312,13 +319,25 @@ def test_update_contents(
                 mock_file_path,
                 etag=etag,
                 upload_using_accelerator=upload_using_accelerator,
+                file_name=file_new_name,
+                content_modified_at=content_modified_at,
+                additional_attributes=additional_attributes,
             )
 
     mock_files = {'file': ('unused', mock_file_stream)}
+    attributes = {
+        'name': file_new_name,
+        'content_modified_at': content_modified_at,
+    }
+    # Using `update` to mirror the actual impl, since the attributes could otherwise come through in a different order
+    # in Python 2 tests
+    attributes.update(additional_attributes)
+    data = {'attributes': json.dumps(attributes)}
     mock_box_session.post.assert_called_once_with(
         expected_url,
         expect_json_response=False,
         files=mock_files,
+        data=data,
         headers=if_match_header,
     )
     assert isinstance(new_file, File)
@@ -327,6 +346,36 @@ def test_update_contents(
     assert new_file['id'] == test_file.object_id
     assert not hasattr(new_file, 'entries')
     assert 'entries' not in new_file
+
+
+@pytest.mark.parametrize('is_stream', (True, False))
+def test_update_contents_combines_preflight_and_accelerator_calls_if_both_are_requested(
+        test_file,
+        mock_box_session,
+        mock_file_path,
+        mock_content_response,
+        mock_accelerator_response_for_update,
+        is_stream
+):
+    mock_box_session.options.return_value = mock_accelerator_response_for_update
+
+    if is_stream:
+        mock_file_stream = BytesIO(mock_content_response.content)
+        test_file.update_contents_with_stream(
+            mock_file_stream,
+            preflight_check=True,
+            upload_using_accelerator=True,
+        )
+    else:
+        mock_file = mock_open(read_data=mock_content_response.content)
+        with patch('boxsdk.object.file.open', mock_file, create=True):
+            test_file.update_contents(
+                mock_file_path,
+                preflight_check=True,
+                upload_using_accelerator=True,
+            )
+
+    mock_box_session.options.assert_called_once()
 
 
 def test_update_contents_with_stream_does_preflight_check_if_specified(
@@ -450,22 +499,28 @@ def test_preflight_check(
         test_file,
         mock_object_id,
         mock_box_session,
+        mock_accelerator_response_for_update,
+        mock_accelerator_upload_url_for_update,
         size,
         name,
         expected_data,
 ):
+    mock_box_session.options.return_value = mock_accelerator_response_for_update
     kwargs = {'size': size}
     if name:
         kwargs['name'] = name
-    test_file.preflight_check(**kwargs)
+
+    accelerator_url = test_file.preflight_check(**kwargs)
+
     mock_box_session.options.assert_called_once_with(
         url='{0}/files/{1}/content'.format(
             API.BASE_API_URL,
             mock_object_id,
         ),
-        expect_json_response=False,
+        expect_json_response=True,
         data=expected_data,
     )
+    assert accelerator_url == mock_accelerator_upload_url_for_update
 
 
 def test_get_shared_link_download_url(
