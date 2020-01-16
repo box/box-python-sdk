@@ -537,7 +537,7 @@ def test_auth_retry_for_rate_limiting(
         with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
             side_effect = []
             expected_calls = []
-            for i in range(API.MAX_RETRY_ATTEMPTS - 2):
+            for _ in range(API.MAX_RETRY_ATTEMPTS - 2):
                 side_effect.append(BoxOAuthException(429, network_response=unsuccessful_jwt_response))
                 expected_calls.append(call(enterprise_id, 'enterprise', None))
             side_effect.append('jwt_token')
@@ -567,7 +567,7 @@ def test_auth_retry_for_rate_limiting_max_retries(
         with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
             side_effect = []
             expected_calls = []
-            for i in range(API.MAX_RETRY_ATTEMPTS + 1):
+            for _ in range(API.MAX_RETRY_ATTEMPTS + 1):
                 side_effect.append(BoxOAuthException(429, network_response=unsuccessful_jwt_response))
                 expected_calls.append(call(enterprise_id, 'enterprise', None))
             mock_send_jwt.side_effect = side_effect
@@ -597,7 +597,7 @@ def test_auth_retry_for_server(
         with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
             side_effect = []
             expected_calls = []
-            for i in range(API.MAX_RETRY_ATTEMPTS - 2):
+            for _ in range(API.MAX_RETRY_ATTEMPTS - 2):
                 side_effect.append(BoxOAuthException(500, network_response=unsuccessful_jwt_response))
                 expected_calls.append(call(enterprise_id, 'enterprise', None))
             side_effect.append('jwt_token')
@@ -627,7 +627,7 @@ def test_auth_retry_for_server_max_retries(
         with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
             side_effect = []
             expected_calls = []
-            for i in range(API.MAX_RETRY_ATTEMPTS + 1):
+            for _ in range(API.MAX_RETRY_ATTEMPTS + 1):
                 side_effect.append(BoxOAuthException(500, network_response=unsuccessful_jwt_response))
                 expected_calls.append(call(enterprise_id, 'enterprise', None))
             mock_send_jwt.side_effect = side_effect
