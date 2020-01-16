@@ -242,7 +242,6 @@ class JWTAuth(OAuth2):
             `unicode`
         """
         attempt_number = 0
-        network_response = None
         jwt_time = None
         while True:
             try:
@@ -253,18 +252,20 @@ class JWTAuth(OAuth2):
                 code = network_response.status_code
                 box_datetime = self._get_date_header(network_response)
                 
-                attempt_number += 1
                 if attempt_number >= API.MAX_RETRY_ATTEMPTS:
                     raise ex
-                
+
                 if (code == 429 or code >= 500):
-                    time_delay = self._session.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None))
+                    time_delay = self._session.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)) 
                     time.sleep(time_delay)
                 elif box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(network_response):
+                    time_delay = self._session.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)) 
+                    time.sleep(time_delay)
                     jwt_time = box_datetime
                 else:
                     raise ex
 
+                attempt_number += 1
                 self._logger.debug('Retrying JWT request')
 
     @staticmethod

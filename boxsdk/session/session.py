@@ -24,6 +24,7 @@ class Session(object):
 
     _retry_randomization_factor = 0.5
     _retry_base_interval = 1
+    _JWT_GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:jwt-bearer'
 
     """
     Box API session. Provides automatic retry of failed requests.
@@ -434,7 +435,7 @@ class Session(object):
         if 'grant_type' in data:
             grant_type = data['grant_type']
         code = network_response.status_code
-        if (code in (202, 429) or code >= 500) and grant_type != 'urn:ietf:params:oauth:grant-type:jwt-bearer':
+        if (code in (202, 429) or code >= 500) and grant_type != self._JWT_GRANT_TYPE:
             return partial(
                 self._network_layer.retry_after,
                 self.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)),
