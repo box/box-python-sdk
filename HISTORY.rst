@@ -8,6 +8,7 @@ Upcoming
 - Fixed bug in get_admin_events function which caused errors when the optional event_types parameter was omitted.
 - Added support for more attribute parameters when uploading new files and new versions of existing files.
 - Combined preflight check and lookup of accelerator URL into a single request for uploads.
+- Fixed JWT retry logic so the a new JTI claim is generated on each retry
 
 2.6.1 (2019-10-24)
 ++++++++++++++++++
