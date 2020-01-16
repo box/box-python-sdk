@@ -491,7 +491,7 @@ def unsuccessful_jwt_response(box_datetime, status_code, error_description, incl
 @pytest.mark.parametrize('jwt_algorithm', ('RS512',))
 @pytest.mark.parametrize('rsa_passphrase', (None,))
 @pytest.mark.parametrize('pass_private_key_by_path', (False,))
-@pytest.mark.parametrize('status_code', (400, 401, 429, 500))
+@pytest.mark.parametrize('status_code', (400, 401))
 @pytest.mark.parametrize('error_description', ('invalid box_sub_type claim', 'invalid kid', "check the 'exp' claim"))
 @pytest.mark.parametrize('error_code', ('invalid_grant', 'bad_request'))
 @pytest.mark.parametrize('include_date_header', (True, False))
@@ -512,8 +512,132 @@ def test_auth_retry_for_invalid_exp_claim(
                     auth.authenticate_instance(enterprise_id)
             else:
                 auth.authenticate_instance(enterprise_id)
-            expected_calls = [call(enterprise_id, 'enterprise')]
+            expected_calls = [call(enterprise_id, 'enterprise', None)]
             if expect_auth_retry:
                 expected_calls.append(call(enterprise_id, 'enterprise', box_datetime.replace(microsecond=0, tzinfo=None)))
+            assert len(mock_send_jwt.mock_calls) == len(expected_calls)
+            mock_send_jwt.assert_has_calls(expected_calls)
+
+
+@pytest.mark.parametrize('jwt_algorithm', ('RS512',))
+@pytest.mark.parametrize('rsa_passphrase', (None,))
+@pytest.mark.parametrize('pass_private_key_by_path', (False,))
+@pytest.mark.parametrize('status_code', (429,))
+@pytest.mark.parametrize('error_description', ('Request rate limit exceeded',))
+@pytest.mark.parametrize('error_code', ('rate_limit_exceeded',))
+@pytest.mark.parametrize('include_date_header', (False,))
+def test_auth_retry_for_rate_limit_error(
+        jwt_auth_init_mocks,
+        unsuccessful_jwt_response,
+):
+    # pylint:disable=redefined-outer-name
+    enterprise_id = 'fake_enterprise_id'
+    with jwt_auth_init_mocks(assert_authed=False) as params:
+        auth = params[0]
+        with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
+            side_effect = []
+            expected_calls = []
+            # Retries multiple times, but less than max retries. Then succeeds when it gets a token.
+            for _ in range(API.MAX_RETRY_ATTEMPTS - 2):
+                side_effect.append(BoxOAuthException(429, network_response=unsuccessful_jwt_response))
+                expected_calls.append(call(enterprise_id, 'enterprise', None))
+            side_effect.append('jwt_token')
+            expected_calls.append(call(enterprise_id, 'enterprise', None))
+            mock_send_jwt.side_effect = side_effect
+
+            auth.authenticate_instance(enterprise_id)
+            assert len(mock_send_jwt.mock_calls) == len(expected_calls)
+            mock_send_jwt.assert_has_calls(expected_calls)
+
+
+@pytest.mark.parametrize('jwt_algorithm', ('RS512',))
+@pytest.mark.parametrize('rsa_passphrase', (None,))
+@pytest.mark.parametrize('pass_private_key_by_path', (False,))
+@pytest.mark.parametrize('status_code', (429,))
+@pytest.mark.parametrize('error_description', ('Request rate limit exceeded',))
+@pytest.mark.parametrize('error_code', ('rate_limit_exceeded',))
+@pytest.mark.parametrize('include_date_header', (False,))
+def test_auth_max_retries_for_rate_limit_error(
+        jwt_auth_init_mocks,
+        unsuccessful_jwt_response,
+):
+    # pylint:disable=redefined-outer-name
+    enterprise_id = 'fake_enterprise_id'
+    with jwt_auth_init_mocks(assert_authed=False) as params:
+        auth = params[0]
+        with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
+            side_effect = []
+            expected_calls = []
+            # Retries max number of times, then throws the error
+            for _ in range(API.MAX_RETRY_ATTEMPTS + 1):
+                side_effect.append(BoxOAuthException(429, network_response=unsuccessful_jwt_response))
+                expected_calls.append(call(enterprise_id, 'enterprise', None))
+            mock_send_jwt.side_effect = side_effect
+
+            with pytest.raises(BoxOAuthException) as error:
+                auth.authenticate_instance(enterprise_id)
+            assert error.value.status == 429
+            assert len(mock_send_jwt.mock_calls) == len(expected_calls)
+            mock_send_jwt.assert_has_calls(expected_calls)
+
+
+@pytest.mark.parametrize('jwt_algorithm', ('RS512',))
+@pytest.mark.parametrize('rsa_passphrase', (None,))
+@pytest.mark.parametrize('pass_private_key_by_path', (False,))
+@pytest.mark.parametrize('status_code', (500,))
+@pytest.mark.parametrize('error_description', ('Internal Server Error',))
+@pytest.mark.parametrize('error_code', ('internal_server_error',))
+@pytest.mark.parametrize('include_date_header', (False,))
+def test_auth_retry_for_internal_server_error(
+        jwt_auth_init_mocks,
+        unsuccessful_jwt_response,
+):
+    # pylint:disable=redefined-outer-name
+    enterprise_id = 'fake_enterprise_id'
+    with jwt_auth_init_mocks(assert_authed=False) as params:
+        auth = params[0]
+        with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
+            side_effect = []
+            expected_calls = []
+            # Retries multiple times, but less than max retries. Then succeeds when it gets a token.
+            for _ in range(API.MAX_RETRY_ATTEMPTS - 2):
+                side_effect.append(BoxOAuthException(500, network_response=unsuccessful_jwt_response))
+                expected_calls.append(call(enterprise_id, 'enterprise', None))
+            side_effect.append('jwt_token')
+            expected_calls.append(call(enterprise_id, 'enterprise', None))
+            mock_send_jwt.side_effect = side_effect
+
+            auth.authenticate_instance(enterprise_id)
+            assert len(mock_send_jwt.mock_calls) == len(expected_calls)
+            mock_send_jwt.assert_has_calls(expected_calls)
+
+
+@pytest.mark.parametrize('jwt_algorithm', ('RS512',))
+@pytest.mark.parametrize('rsa_passphrase', (None,))
+@pytest.mark.parametrize('pass_private_key_by_path', (False,))
+@pytest.mark.parametrize('status_code', (500,))
+@pytest.mark.parametrize('error_description', ('Internal Server Error',))
+@pytest.mark.parametrize('error_code', ('internal_server_error',))
+@pytest.mark.parametrize('include_date_header', (False,))
+def test_auth_max_retries_for_internal_server_error(
+        jwt_auth_init_mocks,
+        unsuccessful_jwt_response,
+):
+    # pylint:disable=redefined-outer-name
+    enterprise_id = 'fake_enterprise_id'
+    with jwt_auth_init_mocks(assert_authed=False) as params:
+        auth = params[0]
+        with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
+            side_effect = []
+            expected_calls = []
+            # Retries max number of times, then throws the error
+            for _ in range(API.MAX_RETRY_ATTEMPTS + 1):
+                side_effect.append(BoxOAuthException(500, network_response=unsuccessful_jwt_response))
+                expected_calls.append(call(enterprise_id, 'enterprise', None))
+            mock_send_jwt.side_effect = side_effect
+
+            with pytest.raises(BoxOAuthException) as error:
+                auth.authenticate_instance(enterprise_id)
+            assert error.value.status == 500
             assert len(mock_send_jwt.mock_calls) == len(expected_calls)
             mock_send_jwt.assert_has_calls(expected_calls)

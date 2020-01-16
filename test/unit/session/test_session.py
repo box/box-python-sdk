@@ -150,7 +150,7 @@ def test_box_session_retries_response_after_retry_after(
     assert box_response.status_code == 200
     assert len(mock_network_layer.retry_after.call_args_list) == 1
     assert isinstance(mock_network_layer.retry_after.call_args[0][0], Number)
-    assert round(mock_network_layer.retry_after.call_args[0][0], 4) == 1.18
+    assert round(mock_network_layer.retry_after.call_args[0][0], 4) == 1
 
 
 @pytest.mark.parametrize('test_method', [
@@ -300,7 +300,7 @@ def test_session_uses_local_config(box_session, mock_network_layer, generic_succ
 )
 def test_get_retry_after_time(box_session, attempt_number, retry_after_header, expected_result):
     with patch('random.uniform', return_value=0.68):
-        retry_time = box_session._get_retry_after_time(attempt_number, retry_after_header)  # pylint: disable=protected-access
+        retry_time = box_session.get_retry_after_time(attempt_number, retry_after_header)  # pylint: disable=protected-access
     retry_time = round(retry_time, 4)
     assert retry_time == expected_result
 
