@@ -3,13 +3,15 @@
 Release History
 ---------------
 
-Upcoming
+2.7.0 (2020-01-16)
 ++++++++
 - Fixed bug in get_admin_events function which caused errors when the optional event_types parameter was omitted.
+- Add marker based pagination for listing users.
 - Added support for more attribute parameters when uploading new files and new versions of existing files.
 - Combined preflight check and lookup of accelerator URL into a single request for uploads.
-- Fixed JWT retry logic so the a new JTI claim is generated on each retry
-- Fixed retry logic so when a `Retry-After` header is passed back from the API, the SDK waits for the amount of time specified in the header before retrying
+- Fixed JWT retry logic so a new JTI claim is generated on each retry.
+- Fixed bug where JWT authentication requests returned incorrect error codes.
+- Fixed retry logic so when a `Retry-After` header is passed back from the API, the SDK waits for the amount of time specified in the header before retrying.
 
 2.6.1 (2019-10-24)
 ++++++++++++++++++
