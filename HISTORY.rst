@@ -9,6 +9,7 @@ Upcoming
 - Added support for more attribute parameters when uploading new files and new versions of existing files.
 - Combined preflight check and lookup of accelerator URL into a single request for uploads.
 - Fixed JWT retry logic so the a new JTI claim is generated on each retry
+- Fixed retry logic so when a `Retry-After` header is passed back from the API, the SDK waits for the amount of time specified in the header before retrying
 
 2.6.1 (2019-10-24)
 ++++++++++++++++++
