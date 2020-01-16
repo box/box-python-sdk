@@ -150,7 +150,7 @@ def test_box_session_retries_response_after_retry_after(
     assert box_response.status_code == 200
     assert len(mock_network_layer.retry_after.call_args_list) == 1
     assert isinstance(mock_network_layer.retry_after.call_args[0][0], Number)
-    assert round(mock_network_layer.retry_after.call_args[0][0], 4) == 1.18
+    assert round(mock_network_layer.retry_after.call_args[0][0], 4) == 1
 
 
 @pytest.mark.parametrize('test_method', [
