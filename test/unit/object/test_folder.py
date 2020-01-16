@@ -223,7 +223,11 @@ def test_upload(
         upload_using_accelerator_fails,
         is_stream,
 ):
+    # pylint:disable=too-many-locals
     file_description = 'Test File Description'
+    content_created_at = '1970-01-01T00:00:00+00:00'
+    content_modified_at = '1970-01-01T11:11:11+11:11'
+    additional_attributes = {'attr': 123}
     expected_url = '{0}/files/content'.format(API.UPLOAD_URL)
     if upload_using_accelerator:
         if upload_using_accelerator_fails:
@@ -241,6 +245,9 @@ def test_upload(
             basename(mock_file_path),
             file_description,
             upload_using_accelerator=upload_using_accelerator,
+            content_created_at=content_created_at,
+            content_modified_at=content_modified_at,
+            additional_attributes=additional_attributes,
         )
     else:
         mock_file = mock_open(read_data=mock_content_response.content)
@@ -250,10 +257,23 @@ def test_upload(
                 mock_file_path,
                 file_description=file_description,
                 upload_using_accelerator=upload_using_accelerator,
+                content_created_at=content_created_at,
+                content_modified_at=content_modified_at,
+                additional_attributes=additional_attributes,
             )
 
     mock_files = {'file': ('unused', mock_file_stream)}
-    data = {'attributes': json.dumps({'name': basename(mock_file_path), 'parent': {'id': mock_object_id}, 'description': file_description})}
+    attributes = {
+        'name': basename(mock_file_path),
+        'parent': {'id': mock_object_id},
+        'description': file_description,
+        'content_created_at': content_created_at,
+        'content_modified_at': content_modified_at,
+    }
+    # Using `update` to mirror the actual impl, since the attributes could otherwise come through in a different order
+    # in Python 2 tests
+    attributes.update(additional_attributes)
+    data = {'attributes': json.dumps(attributes)}
     mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=False, files=mock_files, data=data)
     assert isinstance(new_file, File)
     assert new_file.object_id == mock_object_id
@@ -262,6 +282,37 @@ def test_upload(
     assert new_file.description == file_description
     assert not hasattr(new_file, 'entries')
     assert 'entries' not in new_file
+
+
+@pytest.mark.parametrize('is_stream', (True, False))
+def test_upload_combines_preflight_and_accelerator_calls_if_both_are_requested(
+        test_folder,
+        mock_box_session,
+        mock_file_path,
+        mock_content_response,
+        mock_accelerator_response_for_new_uploads,
+        is_stream
+):
+    mock_box_session.options.return_value = mock_accelerator_response_for_new_uploads
+
+    if is_stream:
+        mock_file_stream = BytesIO(mock_content_response.content)
+        test_folder.upload_stream(
+            mock_file_stream,
+            basename(mock_file_path),
+            preflight_check=True,
+            upload_using_accelerator=True,
+        )
+    else:
+        mock_file = mock_open(read_data=mock_content_response.content)
+        with patch('boxsdk.object.folder.open', mock_file, create=True):
+            test_folder.upload(
+                mock_file_path,
+                preflight_check=True,
+                upload_using_accelerator=True,
+            )
+
+    mock_box_session.options.assert_called_once()
 
 
 def test_create_upload_session(test_folder, mock_box_session):
@@ -379,12 +430,21 @@ def test_update_sync_state(test_folder, mock_folder_response, mock_box_session, 
     assert update_response.object_id == test_folder.object_id
 
 
-def test_preflight(test_folder, mock_object_id, mock_box_session):
+def test_preflight(
+        test_folder,
+        mock_object_id,
+        mock_box_session,
+        mock_accelerator_response_for_new_uploads,
+        mock_new_upload_accelerator_url,
+):
     new_file_size, new_file_name = 100, 'foo.txt'
-    test_folder.preflight_check(size=new_file_size, name=new_file_name)
+    mock_box_session.options.return_value = mock_accelerator_response_for_new_uploads
+
+    accelerator_url = test_folder.preflight_check(size=new_file_size, name=new_file_name)
+
     mock_box_session.options.assert_called_once_with(
         url='{0}/files/content'.format(API.BASE_API_URL),
-        expect_json_response=False,
+        expect_json_response=True,
         data=json.dumps(
             {
                 'size': new_file_size,
@@ -393,6 +453,7 @@ def test_preflight(test_folder, mock_object_id, mock_box_session):
             }
         ),
     )
+    assert accelerator_url == mock_new_upload_accelerator_url
 
 
 def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_box_session):

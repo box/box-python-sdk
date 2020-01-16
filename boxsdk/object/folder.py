@@ -95,6 +95,7 @@ class Folder(Item):
     def preflight_check(self, size, name):
         """
         Make an API call to check if a new file with given name and size can be uploaded to this folder.
+        Returns an accelerator URL if one is available.
 
         :param size:
             The size of the file in bytes. Specify 0 for unknown file-sizes.
@@ -104,10 +105,14 @@ class Folder(Item):
             The name of the file to be uploaded.
         :type name:
             `unicode`
+        :return:
+            The Accelerator upload url or None if cannot get the Accelerator upload url.
+        :rtype:
+            `unicode` or None
         :raises:
             :class:`BoxAPIException` when preflight check fails.
         """
-        self._preflight_check(
+        return self._preflight_check(
             size=size,
             name=name,
             parent_id=self._object_id,
@@ -251,6 +256,9 @@ class Folder(Item):
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            content_created_at=None,
+            content_modified_at=None,
+            additional_attributes=None,
     ):
         """
         Upload a file to the folder.
@@ -286,25 +294,45 @@ class Folder(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param content_created_at:
+            The RFC-3339 datetime when the file was created.
+        :type content_created_at:
+            `unicode` or None
+        :param content_modified_at:
+            The RFC-3339 datetime when the file content was last modified.
+        :type content_modified_at:
+            `unicode` or None
+        :param additional_attributes:
+            A dictionary containing attributes to add to the file that are not covered by other parameters.
+        :type additional_attributes:
+            `dict` or None
         :returns:
             The newly uploaded file.
         :rtype:
             :class:`File`
         """
+        accelerator_upload_url = None
         if preflight_check:
-            self.preflight_check(size=preflight_expected_size, name=file_name)
+            # Preflight check does double duty, returning the accelerator URL if one is available in the response.
+            accelerator_upload_url = self.preflight_check(size=preflight_expected_size, name=file_name)
+        elif upload_using_accelerator:
+            accelerator_upload_url = self._get_accelerator_upload_url_fow_new_uploads()
 
         url = '{0}/files/content'.format(self._session.api_config.UPLOAD_URL)
-        if upload_using_accelerator:
-            accelerator_upload_url = self._get_accelerator_upload_url_fow_new_uploads()
-            if accelerator_upload_url:
-                url = accelerator_upload_url
+        if upload_using_accelerator and accelerator_upload_url:
+            url = accelerator_upload_url
 
-        data = {'attributes': json.dumps({
+        attributes = {
             'name': file_name,
             'parent': {'id': self._object_id},
             'description': file_description,
-        })}
+            'content_created_at': content_created_at,
+            'content_modified_at': content_modified_at,
+        }
+        if additional_attributes:
+            attributes.update(additional_attributes)
+
+        data = {'attributes': json.dumps(attributes)}
         files = {
             'file': ('unused', file_stream),
         }
@@ -325,6 +353,9 @@ class Folder(Item):
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            content_created_at=None,
+            content_modified_at=None,
+            additional_attributes=None,
     ):
         """
         Upload a file to the folder.
@@ -361,6 +392,18 @@ class Folder(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param content_created_at:
+            The RFC-3339 datetime when the file was created.
+        :type content_created_at:
+            `unicode` or None
+        :param content_modified_at:
+            The RFC-3339 datetime when the file content was last modified.
+        :type content_modified_at:
+            `unicode` or None
+        :param additional_attributes:
+            A dictionary containing attributes to add to the file that are not covered by other parameters.
+        :type additional_attributes:
+            `dict` or None
         :returns:
             The newly uploaded file.
         :rtype:
@@ -376,6 +419,9 @@ class Folder(Item):
                 preflight_check,
                 preflight_expected_size=preflight_expected_size,
                 upload_using_accelerator=upload_using_accelerator,
+                content_created_at=content_created_at,
+                content_modified_at=content_modified_at,
+                additional_attributes=additional_attributes,
             )
 
     @api_call

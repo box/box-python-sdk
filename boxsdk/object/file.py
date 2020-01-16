@@ -20,6 +20,7 @@ class File(Item):
     def preflight_check(self, size, name=None):
         """
         Make an API call to check if the file can be updated with the new name and size of the file.
+        Returns an accelerator URL if one is available.
 
         :param size:
             The size of the file in bytes. Specify 0 for unknown file-sizes.
@@ -29,10 +30,14 @@ class File(Item):
             The name of the file to be updated. It's optional, if the name is not being changed.
         :type name:
             `unicode`
+        :return:
+            The Accelerator upload url or None if cannot get the Accelerator upload url.
+        :rtype:
+            `unicode` or None
         :raises:
             :class:`BoxAPIException` when preflight check fails.
         """
-        self._preflight_check(
+        return self._preflight_check(
             size=size,
             name=name,
             file_id=self._object_id,
@@ -194,6 +199,9 @@ class File(Item):
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            file_name=None,
+            content_modified_at=None,
+            additional_attributes=None,
     ):
         """
         Upload a new version of a file, taking the contents from the given file stream.
@@ -224,6 +232,18 @@ class File(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param file_name:
+            The new name to give the file on Box.
+        :type file_name:
+            `unicode` or None
+        :param content_modified_at:
+            The RFC-3339 datetime when the file content was last modified.
+        :type content_modified_at:
+            `unicode` or None
+        :param additional_attributes:
+            A dictionary containing attributes to add to the file that are not covered by other parameters.
+        :type additional_attributes:
+            `dict` or None
         :returns:
             A new file object
         :rtype:
@@ -232,21 +252,37 @@ class File(Item):
             :class:`BoxAPIException` if the specified etag doesn't match the latest version of the file or preflight
             check fails.
         """
+        accelerator_upload_url = None
         if preflight_check:
-            self.preflight_check(size=preflight_expected_size)
+            # Preflight check does double duty, returning the accelerator URL if one is available in the response.
+            accelerator_upload_url = self.preflight_check(size=preflight_expected_size)
+        elif upload_using_accelerator:
+            accelerator_upload_url = self._get_accelerator_upload_url_for_update()
 
         url = self.get_url('content').replace(
             self._session.api_config.BASE_API_URL,
             self._session.api_config.UPLOAD_URL,
         )
-        if upload_using_accelerator:
-            accelerator_upload_url = self._get_accelerator_upload_url_for_update()
-            if accelerator_upload_url:
-                url = accelerator_upload_url
+        if upload_using_accelerator and accelerator_upload_url:
+            url = accelerator_upload_url
 
+        attributes = {
+            'name': file_name,
+            'content_modified_at': content_modified_at,
+        }
+        if additional_attributes:
+            attributes.update(additional_attributes)
+
+        data = {'attributes': json.dumps(attributes)}
         files = {'file': ('unused', file_stream)}
         headers = {'If-Match': etag} if etag is not None else None
-        file_response = self._session.post(url, expect_json_response=False, files=files, headers=headers).json()
+        file_response = self._session.post(
+            url,
+            expect_json_response=False,
+            data=data,
+            files=files,
+            headers=headers,
+        ).json()
         if 'entries' in file_response:
             file_response = file_response['entries'][0]
         return self.translator.translate(
@@ -262,6 +298,9 @@ class File(Item):
             preflight_check=False,
             preflight_expected_size=0,
             upload_using_accelerator=False,
+            file_name=None,
+            content_modified_at=None,
+            additional_attributes=None,
     ):
         """Upload a new version of a file. The contents are taken from the given file path.
 
@@ -291,6 +330,18 @@ class File(Item):
             Please notice that this is a premium feature, which might not be available to your app.
         :type upload_using_accelerator:
             `bool`
+        :param file_name:
+            The new name to give the file on Box.
+        :type file_name:
+            `unicode` or None
+        :param content_modified_at:
+            The RFC-3339 datetime when the file content was last modified.
+        :type content_modified_at:
+            `unicode` or None
+        :param additional_attributes:
+            A dictionary containing attributes to add to the file that are not covered by other parameters.
+        :type additional_attributes:
+            `dict` or None
         :returns:
             A new file object
         :rtype:
@@ -306,6 +357,9 @@ class File(Item):
                 preflight_check,
                 preflight_expected_size=preflight_expected_size,
                 upload_using_accelerator=upload_using_accelerator,
+                file_name=file_name,
+                content_modified_at=content_modified_at,
+                additional_attributes=additional_attributes,
             )
 
     @api_call
