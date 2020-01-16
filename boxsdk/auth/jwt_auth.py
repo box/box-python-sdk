@@ -247,7 +247,6 @@ class JWTAuth(OAuth2):
             try:
                 return self._construct_and_send_jwt_auth(sub, sub_type, jwt_time)
             except BoxOAuthException as ex:
-                jwt_time = None
                 network_response = ex.network_response
                 code = network_response.status_code  # pylint: disable=maybe-no-member
                 box_datetime = self._get_date_header(network_response)
@@ -256,15 +255,14 @@ class JWTAuth(OAuth2):
                     raise ex
 
                 if (code == 429 or code >= 500):
-                    time_delay = self._session.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None))  # pylint: disable=maybe-no-member
-                    time.sleep(time_delay)
+                    jwt_time = None
                 elif box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(network_response):
-                    time_delay = self._session.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None))  # pylint: disable=maybe-no-member
-                    time.sleep(time_delay)
                     jwt_time = box_datetime
                 else:
                     raise ex
 
+                time_delay = self._session.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None))  # pylint: disable=maybe-no-member
+                time.sleep(time_delay)
                 attempt_number += 1
                 self._logger.debug('Retrying JWT request')
 
