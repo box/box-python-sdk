@@ -251,7 +251,7 @@ class JWTAuth(OAuth2):
                 network_response = ex.network_response
                 code = network_response.status_code
                 box_datetime = self._get_date_header(network_response)
-                
+
                 if attempt_number >= API.MAX_RETRY_ATTEMPTS:
                     raise ex
 
