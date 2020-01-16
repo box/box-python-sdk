@@ -256,7 +256,7 @@ class JWTAuth(OAuth2):
                     raise ex
 
                 if (code == 429 or code >= 500):
-                    time_delay = self._session.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None))  # pylint: disable=maybe-no-member
+                    time_delay = self._session.get_retry_after_time(time_delay, network_response.headers.get('Retry-After', None))  # pylint: disable=maybe-no-member
                     time.sleep(time_delay)
                 elif box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(network_response):
                     time_delay = self._session.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None))  # pylint: disable=maybe-no-member

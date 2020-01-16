@@ -286,11 +286,14 @@ class Session(object):
         :return:                        Number of seconds to wait before retrying.
         :rtype:                         `Number`
         """
-        min_randomization = 1 - self._retry_randomization_factor
-        max_randomization = 1 + self._retry_randomization_factor
-        randomization = (random.uniform(0, 1) * (max_randomization - min_randomization)) + min_randomization
-        exponential = math.pow(2, attempt_number)
-        return exponential * self._retry_base_interval * randomization
+        try:
+            return int(retry_after_header)
+        except (ValueError, TypeError):
+            min_randomization = 1 - self._retry_randomization_factor
+            max_randomization = 1 + self._retry_randomization_factor
+            randomization = (random.uniform(0, 1) * (max_randomization - min_randomization)) + min_randomization
+            exponential = math.pow(2, attempt_number)
+            return exponential * self._retry_base_interval * randomization
 
     @staticmethod
     def _raise_on_unsuccessful_request(network_response, request):
