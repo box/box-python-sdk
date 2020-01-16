@@ -286,10 +286,10 @@ class Session(object):
         :return:                        Number of seconds to wait before retrying.
         :rtype:                         `Number`
         """
-        if retry_after_header is not None:  
+        if retry_after_header is not None:
             try:
                 return int(retry_after_header)
-            except:  # pylint:disable=bare-except
+            except (ValueError, TypeError):
                 pass
         min_randomization = 1 - self._retry_randomization_factor
         max_randomization = 1 + self._retry_randomization_factor
