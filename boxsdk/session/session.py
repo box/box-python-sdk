@@ -437,8 +437,11 @@ class Session(object):
         # pylint:disable=unused-argument
         data = kwargs.get('data', {})
         grant_type = None
-        if 'grant_type' in data:
-            grant_type = data['grant_type']
+        try:
+            if 'grant_type' in data:
+                grant_type = data['grant_type']
+        except TypeError:
+            pass
         code = network_response.status_code
         if (code in (202, 429) or code >= 500) and grant_type != self._JWT_GRANT_TYPE:
             return partial(

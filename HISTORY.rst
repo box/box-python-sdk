@@ -3,6 +3,9 @@
 Release History
 ---------------
 
+Next Release
+- Fixed bug in _get_retry_request_callable() introduced in release 2.7.0 which caused chunked uploads to fail
+
 2.7.0 (2020-01-16)
 ++++++++
 - Fixed bug in get_admin_events function which caused errors when the optional event_types parameter was omitted.
