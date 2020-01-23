@@ -3,9 +3,13 @@
 Release History
 ---------------
 
+2.7.1 (2020-01-21)
+++++++++
+- Fixed bug in `_get_retry_request_callable` introduced in release 2.7.0 which caused chunked uploads to fail
+
 2.7.0 (2020-01-16)
 ++++++++
-- Fixed bug in get_admin_events function which caused errors when the optional event_types parameter was omitted.
+- Fixed bug in `get_admin_events` function which caused errors when the optional `event_types` parameter was omitted.
 - Add marker based pagination for listing users.
 - Added support for more attribute parameters when uploading new files and new versions of existing files.
 - Combined preflight check and lookup of accelerator URL into a single request for uploads.
