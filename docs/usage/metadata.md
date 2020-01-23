@@ -134,6 +134,16 @@ for template in templates:
     print('Metadata template {0} is in enterprise scope'.format(template.templateKey))
 ```
 
+To return the metadata templates available to all enterprises pass in the
+`global` scope.
+
+<!-- sample get_metadata_templates_global -->
+```python
+templates = client.get_metadata_templates(scope='global)
+for template in templates:
+    print('Metadata template {0} is in global scope'.format(template.templateKey))
+```
+
 [get_metadata_templates]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.get_metadata_templates
 [box_object_collection]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.pagination.html#boxsdk.pagination.box_object_collection.BoxObjectCollection
 

@@ -53,7 +53,7 @@ class Item(BaseObject):
     def _preflight_check(self, size, name=None, file_id=None, parent_id=None):
         """
         Make an API call to check if certain file can be uploaded to Box or not.
-        (https://box-content.readme.io/reference#preflight-check)
+        (https://developer.box.com/en/guides/uploads/check/)
 
         Returns an accelerator URL if available, which comes for free in the response.
 
@@ -381,7 +381,7 @@ class Item(BaseObject):
             `unicode`
         :param template:
             The name of the metadata template.
-            See https://docs.box.com/reference#metadata-object for more details.
+            See https://developer.box.com/en/reference/resources/metadata/ for more details.
         :type template:
             `unicode`
         :return:

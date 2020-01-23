@@ -102,8 +102,8 @@ class JWTAuth(OAuth2):
             configured User Access Level, may also be any other App User or
             Managed User in the enterprise.
 
-            <https://docs.box.com/docs/configuring-box-platform#section-3-enabling-app-auth-and-app-users>
-            <https://docs.box.com/docs/authentication#section-choosing-an-authentication-type>
+            <https://developer.box.com/en/guides/applications/>
+            <https://developer.box.com/en/guides/authentication/select/>
         :type user:
             `unicode` or :class:`User` or `None`
         :param store_tokens:
@@ -320,8 +320,8 @@ class JWTAuth(OAuth2):
         configured User Access Level, may also be any other App User or Managed
         User in the enterprise.
 
-        <https://docs.box.com/docs/configuring-box-platform#section-3-enabling-app-auth-and-app-users>
-        <https://docs.box.com/docs/authentication#section-choosing-an-authentication-type>
+        <https://developer.box.com/en/guides/applications/>
+        <https://developer.box.com/en/guides/authentication/select/>
 
         :param user:
             (optional) The user to authenticate, expressed as a Box User ID or
@@ -493,7 +493,7 @@ class JWTAuth(OAuth2):
     def from_settings_file(cls, settings_file_sys_path, **kwargs):
         """
         Create an auth instance as defined by a JSON file downloaded from the Box Developer Console.
-        See https://developer.box.com/v2.0/docs/authentication-with-jwt for more information.
+        See https://developer.box.com/en/guides/authentication/jwt/ for more information.
 
         :param settings_file_sys_path:    Path to the JSON file containing the configuration.
         :type settings_file_sys_path:     `unicode`

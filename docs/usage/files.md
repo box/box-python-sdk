@@ -679,8 +679,8 @@ for rep in representations:
 ```
 
 [get_representation_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_representation_info
-[rep_hints]: https://developer.box.com/v2.0/reference/#section-x-rep-hints-header
-[rep_api_obj]: https://developer.box.com/v2.0/reference/#representations
+[rep_hints]: https://developer.box.com/en/reference/get-files-id/#param-X-Rep-Hints
+[rep_api_obj]: https://developer.box.com/en/reference/resources/representations
 
 Get Thumbnail
 -------------

@@ -1253,7 +1253,7 @@ class Client(Cloneable):
 
         :param: limit
             The maximum number of items to return. If limit is set to None, then the default
-            limit (returned by Box in the response) is used. See https://developer.box.com/reference#get-recent-items
+            limit (returned by Box in the response) is used. See https://developer.box.com/en/reference/get-recent-items/
             for default.
         :type: limit
             `int` or None
@@ -1286,7 +1286,7 @@ class Client(Cloneable):
     @api_call
     def get_shared_item(self, shared_link, password=None):
         """
-        Get information about a Box shared link. https://box-content.readme.io/reference#get-a-shared-item
+        Get information about a Box shared link. https://developer.box.com/en/reference/get-shared-items/
 
         :param shared_link:
             The shared link.
@@ -1351,8 +1351,7 @@ class Client(Cloneable):
             `unicode` or None
         :param user_attributes:
             Additional attributes for the user. See the documentation at
-            https://box-content.readme.io/#create-an-enterprise-user for enterprise users
-            or https://box-content.readme.io/docs/app-users for app users.
+            https://developer.box.com/en/reference/post-users/
         """
         url = self.get_url('users')
         user_attributes['name'] = name
