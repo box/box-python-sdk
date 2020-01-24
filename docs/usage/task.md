@@ -177,7 +177,7 @@ To update a task assignment object, call [`assignment.update_info(data)`][update
 with a `dict` of properties to update on a task assignment. This method returns a newly update 
 [`TaskAssignment`][assignment_class] object, leaving the original object unmodified.
 
-<!-- sample put_task_assignments_id resolution_state -->
+<!-- sample put_task_assignments_id -->
 ```python
 from boxsdk.object.task_assignment import ResolutionState
 updated_task = {'resolution_state': ResolutionState.APPROVED}
