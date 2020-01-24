@@ -25,7 +25,7 @@ from ..util.text_enum import TextEnum
 class TokenScope(TextEnum):
     """ Scopes used for a downscope token request.
 
-    See https://developer.box.com/reference#token-exchange.
+    See https://developer.box.com/en/guides/authentication/access-tokens/downscope/.
     """
     ITEM_READ = 'item_read'
     ITEM_READWRITE = 'item_readwrite'

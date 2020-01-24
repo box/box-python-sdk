@@ -10,7 +10,7 @@ class MarkerBasedObjectCollection(BoxObjectCollection):
     An iterator of Box objects (BaseObjects) that were retrieved from a Box API endpoint that supports
     marker type of pagination.
 
-    See https://developer.box.com/reference#pagination for more details.
+    See https://developer.box.com/en/guides/api-calls/pagination/ for more details.
     """
 
     def __init__(

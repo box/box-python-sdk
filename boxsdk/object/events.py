@@ -18,7 +18,7 @@ class EventsStreamType(with_metaclass(ExtendableEnumMeta, TextEnum)):
     The value of the `stream_type` parameter determines the type of events
     returned by the endpoint.
 
-    <https://box-content.readme.io/reference#events>
+    <https://developer.box.com/en/guides/events/>
     """
 
 
@@ -29,7 +29,7 @@ class UserEventsStreamType(EventsStreamType):
     - CHANGES: Returns tree changes.
     - SYNC: Returns tree changes only for sync folders.
 
-    <https://box-content.readme.io/reference#standard-user-events>
+    <https://developer.box.com/en/guides/events/for-user/>
     """
     ALL = 'all'
     CHANGES = 'changes'
@@ -44,7 +44,7 @@ class EnterpriseEventsStreamType(EventsStreamType):
     NOTE: Requires Admin: These stream types will only work with an auth token
     from an enterprise admin account.
 
-    <https://box-content.readme.io/reference#enterprise-events>
+    <https://developer.box.com/en/guides/events/for-enterprise/>
     """
     ADMIN_LOGS = 'admin_logs'
 # pylint:enable=too-many-ancestors

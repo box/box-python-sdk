@@ -21,4 +21,4 @@ Python: <!-- Replace with the version of Python your application is running on. 
 <!-- Please include the full stack trace to help us identify where the error is happening. -->
 
 [sdk-docs]: ./docs/usage
-[api-docs]: https://developer.box.com/docs
+[api-docs]: https://developer.box.com/
