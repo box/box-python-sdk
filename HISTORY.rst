@@ -385,7 +385,7 @@ Release History
   and ``create_user`` functionality.
 - Added support for setting shared link expiration dates.
 - Added support for setting shared link permissions.
-- Added support for 'As-User' requests. See https://box-content.readme.io/#as-user-1
+- Added support for 'As-User' requests. See https://developer.box.com/en/guides/authentication/oauth2/as-user/
 - Improved support for accessing shared items. Items returned from the ``client.get_shared_item`` method will
   remember the shared link (and the optionally provided shared link password) so methods called on the returned
   items will be properly authorized.

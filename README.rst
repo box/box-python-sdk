@@ -112,7 +112,7 @@ Server-to-Server Auth with JWT
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Python SDK supports your
-`JWT Authentication <https://developer.box.com/docs/authentication-types-and-security#section-oauth-2-with-jwt>`_
+`JWT Authentication <https://developer.box.com/en/guides/authentication/jwt/>`_
 applications.
 
 Authenticating with a JWT requires some extra dependencies. To get them, simply
@@ -281,7 +281,7 @@ supported by the SDK. You can still use these endpoints by using the ``make_requ
 
 .. code-block:: python
 
-    # https://box-content.readme.io/reference#get-metadata-schema
+    # https://developer.box.com/en/reference/get-metadata-templates-id/
     # Returns a Python dictionary containing the result of the API request
     json_response = client.make_request(
         'GET',
@@ -300,7 +300,7 @@ For API calls which require a body, ``make_request()`` accepts ``**kwargs`` afte
 
 .. code-block:: python
 
-    # https://developer.box.com/reference#update-terms-of-service-user-status
+    # https://developer.box.com/en/reference/put-terms-of-service-user-statuses-id/
     # Updates a user's ToS status
 
     # JSONify the body
