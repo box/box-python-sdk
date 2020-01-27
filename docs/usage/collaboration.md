@@ -152,7 +152,7 @@ To accept or reject a pending collaboration, call [`collaboration.accept()`][acc
 [`collaboration.reject()`][reject].  These methods both return the updated [`Collaboration`][collaboration_class]
 object, leaving the original unmodified.
 
-<!-- sample put_collaborations_id -->
+<!-- sample put_collaborations_id accept_or_reject -->
 ```python
 accepted_collab = client.collaboration(collab_id='12345').accept()
 
