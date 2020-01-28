@@ -185,6 +185,13 @@ updated_assignment = client.task_assignment(assignment_id='12345').update_info(u
 print('Assignment ID is {0} and resolution state is {1}'.format(updated_assignment.id, updated_assignment.resolution_state))
 ```
 
+<!-- sample put_task_assignments_id message -->
+```python
+updated_task = {'message': 'new message'}
+updated_assignment = client.task_assignment(assignment_id='12345').update_info(updated_task)
+print('Assignment ID is {0} and message is {1}'.format(updated_assignment.id, updated_task.message))
+```
+
 [assignment_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.task_assignment.TaskAssignment
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
 

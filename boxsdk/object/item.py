@@ -53,7 +53,9 @@ class Item(BaseObject):
     def _preflight_check(self, size, name=None, file_id=None, parent_id=None):
         """
         Make an API call to check if certain file can be uploaded to Box or not.
-        (https://box-content.readme.io/reference#preflight-check)
+        (https://developer.box.com/en/guides/uploads/check/)
+
+        Returns an accelerator URL if available, which comes for free in the response.
 
         :param size:
             The size of the file to be uploaded in bytes. Specify 0 for unknown file sizes.
@@ -72,6 +74,10 @@ class Item(BaseObject):
             The ID of the parent folder. Required only for new file uploads.
         :type parent_id:
             `unicode`
+        :return:
+            The Accelerator upload url or None if cannot get the Accelerator upload url.
+        :rtype:
+            `unicode` or None
         :raises:
             :class:`BoxAPIException` when preflight check fails.
         """
@@ -83,11 +89,12 @@ class Item(BaseObject):
         if parent_id:
             data['parent'] = {'id': parent_id}
 
-        self._session.options(
+        response_json = self._session.options(
             url=url,
-            expect_json_response=False,
+            expect_json_response=True,
             data=json.dumps(data),
-        )
+        ).json()
+        return response_json.get('upload_url', None)
 
     @api_call
     def update_info(self, data, etag=None):
@@ -374,7 +381,7 @@ class Item(BaseObject):
             `unicode`
         :param template:
             The name of the metadata template.
-            See https://docs.box.com/reference#metadata-object for more details.
+            See https://developer.box.com/en/reference/resources/metadata/ for more details.
         :type template:
             `unicode`
         :return:

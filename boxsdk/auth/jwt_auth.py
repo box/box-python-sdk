@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import json
 import random
 import string
+import time
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
@@ -13,6 +14,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 import jwt
 from six import binary_type, string_types, raise_from, text_type
 
+from ..config import API
 from ..exception import BoxOAuthException
 from .oauth2 import OAuth2
 from ..object.user import User
@@ -100,8 +102,8 @@ class JWTAuth(OAuth2):
             configured User Access Level, may also be any other App User or
             Managed User in the enterprise.
 
-            <https://docs.box.com/docs/configuring-box-platform#section-3-enabling-app-auth-and-app-users>
-            <https://docs.box.com/docs/authentication#section-choosing-an-authentication-type>
+            <https://developer.box.com/en/guides/applications/>
+            <https://developer.box.com/en/guides/authentication/select/>
         :type user:
             `unicode` or :class:`User` or `None`
         :param store_tokens:
@@ -239,14 +241,30 @@ class JWTAuth(OAuth2):
         :rtype:
             `unicode`
         """
-        try:
-            return self._construct_and_send_jwt_auth(sub, sub_type)
-        except BoxOAuthException as ex:
-            error_response = ex.network_response
-            box_datetime = self._get_date_header(error_response)
-            if box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(error_response):
-                return self._construct_and_send_jwt_auth(sub, sub_type, box_datetime)
-            raise
+        attempt_number = 0
+        jwt_time = None
+        while True:
+            try:
+                return self._construct_and_send_jwt_auth(sub, sub_type, jwt_time)
+            except BoxOAuthException as ex:
+                network_response = ex.network_response
+                code = network_response.status_code  # pylint: disable=maybe-no-member
+                box_datetime = self._get_date_header(network_response)
+
+                if attempt_number >= API.MAX_RETRY_ATTEMPTS:
+                    raise ex
+
+                if (code == 429 or code >= 500):
+                    jwt_time = None
+                elif box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(network_response):
+                    jwt_time = box_datetime
+                else:
+                    raise ex
+
+                time_delay = self._session.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None))  # pylint: disable=maybe-no-member
+                time.sleep(time_delay)
+                attempt_number += 1
+                self._logger.debug('Retrying JWT request')
 
     @staticmethod
     def _get_date_header(network_response):
@@ -302,8 +320,8 @@ class JWTAuth(OAuth2):
         configured User Access Level, may also be any other App User or Managed
         User in the enterprise.
 
-        <https://docs.box.com/docs/configuring-box-platform#section-3-enabling-app-auth-and-app-users>
-        <https://docs.box.com/docs/authentication#section-choosing-an-authentication-type>
+        <https://developer.box.com/en/guides/applications/>
+        <https://developer.box.com/en/guides/authentication/select/>
 
         :param user:
             (optional) The user to authenticate, expressed as a Box User ID or
@@ -475,7 +493,7 @@ class JWTAuth(OAuth2):
     def from_settings_file(cls, settings_file_sys_path, **kwargs):
         """
         Create an auth instance as defined by a JSON file downloaded from the Box Developer Console.
-        See https://developer.box.com/v2.0/docs/authentication-with-jwt for more information.
+        See https://developer.box.com/en/guides/authentication/jwt/ for more information.
 
         :param settings_file_sys_path:    Path to the JSON file containing the configuration.
         :type settings_file_sys_path:     `unicode`

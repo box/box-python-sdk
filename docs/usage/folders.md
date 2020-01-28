@@ -45,7 +45,7 @@ ones not returned by default.
 folder = client.folder(folder_id='22222').get()
 print('Folder "{0}" has {1} items in it'.format(
     folder.name,
-    folder.item_collection.total_count,
+    folder.item_collection.['total_count'],
 ))
 ```
 

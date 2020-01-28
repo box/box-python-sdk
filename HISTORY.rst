@@ -3,6 +3,24 @@
 Release History
 ---------------
 
+2.7.1 (2020-01-21)
+++++++++
+- Fixed bug in `_get_retry_request_callable` introduced in release 2.7.0 which caused chunked uploads to fail
+
+2.7.0 (2020-01-16)
+++++++++
+- Fixed bug in `get_admin_events` function which caused errors when the optional `event_types` parameter was omitted.
+- Add marker based pagination for listing users.
+- Added support for more attribute parameters when uploading new files and new versions of existing files.
+- Combined preflight check and lookup of accelerator URL into a single request for uploads.
+- Fixed JWT retry logic so a new JTI claim is generated on each retry.
+- Fixed bug where JWT authentication requests returned incorrect error codes.
+- Fixed retry logic so when a `Retry-After` header is passed back from the API, the SDK waits for the amount of time specified in the header before retrying.
+
+2.6.1 (2019-10-24)
+++++++++++++++++++
+- Added api_ call decorator for copy method.
+
 2.6.0 (2019-08-29)
 ++++++++++++++++++
 - Added a new get events function with created_before, created_after, and event_type parameters
@@ -367,7 +385,7 @@ Release History
   and ``create_user`` functionality.
 - Added support for setting shared link expiration dates.
 - Added support for setting shared link permissions.
-- Added support for 'As-User' requests. See https://box-content.readme.io/#as-user-1
+- Added support for 'As-User' requests. See https://developer.box.com/en/guides/authentication/oauth2/as-user/
 - Improved support for accessing shared items. Items returned from the ``client.get_shared_item`` method will
   remember the shared link (and the optionally provided shared link password) so methods called on the returned
   items will be properly authorized.

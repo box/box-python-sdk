@@ -174,7 +174,7 @@ Add Email Alias
 
 To add an email alias for a user, call the [`user.add_email_alias(email)`][add_email_alias] method with the email
 address to add as an email alias for the user.  This will allow the user to log in and be collaborated by this email
-in addition to their login email address.  The method returns an [`EmailAlias`][email_alias_class] object.
+in addition to their login email address. Not all emails addresses can be added as email aliases. Email addresses whose domains match the domain of the login email address can always be made aliases. Email addresses whose domains differ from the domain of the login email address can be made aliases depending on the Box account configuration. The method returns an [`EmailAlias`][email_alias_class] object. 
 
 <!-- sample post_users_id_email_aliases -->
 ```python

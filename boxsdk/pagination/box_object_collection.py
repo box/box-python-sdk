@@ -49,7 +49,7 @@ class BoxObjectCollection(collections.Iterator, object):
             `unicode`
         :param limit:
             The number of entries for each page to return. The default, as well as the upper limit of this value,
-            differs by endpoint. See https://developer.box.com/reference. If limit is set to None, then the default
+            differs by endpoint. See https://developer.box.com/en/reference. If limit is set to None, then the default
             limit (returned by Box in the response) is used.
         :type limit:
             `int` or None

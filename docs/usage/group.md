@@ -55,7 +55,7 @@ To create a new group, call
 returns a [`Group`][group_class] object representing the created group.
 
 You can read more about the optional parameters in the
-[Create Group API documentation](https://developer.box.com/v2.0/reference#create-a-group).
+[Create Group API documentation](https://developer.box.com/en/reference/post-groups/).
 
 <!-- sample post_groups -->
 ```python
@@ -158,7 +158,7 @@ print('Added {0} to the {1} group!'.format(membership.user.name, membership.grou
 
 [add_member]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.group.Group.add_member
 [user_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.user.User
-[permissions]: https://developer.box.com/v2.0/reference/#membership-object
+[permissions]: https://developer.box.com/en/reference/resources/group-membership/
 
 Get Information about a Group Membership
 ----------------------------------------
