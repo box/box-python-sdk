@@ -15,6 +15,7 @@ from ..object.trash import Trash
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
+from .rate_limiter import RateLimiter
 
 
 class Client(Cloneable):
@@ -25,6 +26,9 @@ class Client(Cloneable):
             self,
             oauth,
             session=None,
+            rate_limited=True,
+            rate_limit=12,
+            rate_period=1,
     ):
         """
         :param oauth:
@@ -43,6 +47,12 @@ class Client(Cloneable):
         else:
             session = session or self.unauthorized_session_class()
             self._session = self.authorized_session_class(self._oauth, **session.get_constructor_kwargs())
+
+        self._rate_limiter = (
+            RateLimiter(rate_limit, rate_period)
+            if rate_limited
+            else None
+        )
 
     @property
     def auth(self):
@@ -1317,7 +1327,6 @@ class Client(Cloneable):
     def make_request(self, method, url, **kwargs):
         """
         Make an authenticated request to the Box API.
-
         :param method:
             The HTTP verb to use for the request.
         :type method:
@@ -1333,7 +1342,13 @@ class Client(Cloneable):
         :raises:
             :class:`BoxAPIException`
         """
-        return self._session.request(method, url, **kwargs)
+        if self._rate_limiter:
+            with self._rate_limiter:
+                response = self._session.request(method, url, **kwargs)
+        else:
+            response = self._session.request(method, url, **kwargs)
+
+        return response
 
     @api_call
     def create_user(self, name, login=None, **user_attributes):
