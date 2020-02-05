@@ -27,8 +27,7 @@ class Client(Cloneable):
         oauth,
         session=None,
         rate_limited=True,
-        rate_limit=12,
-        rate_period=1,
+        rate_limit=12
     ):
         """
         :param oauth:
@@ -49,7 +48,7 @@ class Client(Cloneable):
             self._session = self.authorized_session_class(self._oauth, **session.get_constructor_kwargs())
 
         self._rate_limiter = (
-            RateLimiter(rate_limit, rate_period)
+            RateLimiter(rate_limit)
             if rate_limited
             else None
         )

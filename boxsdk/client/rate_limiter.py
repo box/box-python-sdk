@@ -5,11 +5,9 @@ import time
 class RateLimiter(object):
     def __init__(
         self,
-        rate_limit=1,
-        rate_period=12
+        rate_limit=12
     ):
         self._rate_limit = rate_limit
-        self._rate_period = rate_period
         self._request_pool = collections.deque()
 
     def _limiter(self):
@@ -17,7 +15,7 @@ class RateLimiter(object):
             now = time.time()
 
             while self._request_pool:
-                if now - self._request_pool[0] > self._rate_period:
+                if now - self._request_pool[0] > 1:
                     self._request_pool.popleft()
                 else:
                     break
