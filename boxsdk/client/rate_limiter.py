@@ -4,8 +4,8 @@ import time
 
 class RateLimiter(object):
     def __init__(
-        self,
-        rate_limit=12
+            self,
+            rate_limit=12
     ):
         self._rate_limit = rate_limit
         self._request_pool = collections.deque()
