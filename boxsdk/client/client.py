@@ -23,12 +23,12 @@ class Client(Cloneable):
     authorized_session_class = AuthorizedSession
 
     def __init__(
-            self,
-            oauth,
-            session=None,
-            rate_limited=True,
-            rate_limit=12,
-            rate_period=1,
+        self,
+        oauth,
+        session=None,
+        rate_limited=True,
+        rate_limit=12,
+        rate_period=1,
     ):
         """
         :param oauth:
