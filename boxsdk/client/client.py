@@ -1399,7 +1399,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def downscope_token(self, scopes, item=None, additional_data=None):
+    def downscope_token(self, scopes, item=None, shared_link=None, additional_data=None):
         """
         Generate a downscoped token for the provided file or folder with the provided scopes.
 
@@ -1412,6 +1412,11 @@ class Client(Cloneable):
             not be scoped down to just a single item.
         :type item:
             :class:`Item`
+        :param shared_link:
+            (Optional) The shared link to get a downscoped token for. If None, the resulting token will
+            not be scoped down to just a single item.
+        :type item:
+            `str`
         :param additional_data:
             (Optional) Key value pairs which can be used to add/update the default data values in the request.
         :type additional_data:
@@ -1431,6 +1436,8 @@ class Client(Cloneable):
         }
         if item:
             data['resource'] = item.get_url()
+        if shared_link:
+            data['box_shared_link'] = shared_link
         if additional_data:
             data.update(additional_data)
 
