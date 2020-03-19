@@ -1415,7 +1415,7 @@ class Client(Cloneable):
         :param shared_link:
             (Optional) The shared link to get a downscoped token for. If None, the resulting token will
             not be scoped down to just a single item.
-        :type item:
+        :type shared_link:
             `str`
         :param additional_data:
             (Optional) Key value pairs which can be used to add/update the default data values in the request.
@@ -1442,6 +1442,7 @@ class Client(Cloneable):
             data.update(additional_data)
 
         box_response = self._session.post(url, data=data)
+
         return TokenResponse(box_response.json())
 
     def clone(self, session=None):

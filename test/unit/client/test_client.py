@@ -1072,7 +1072,7 @@ def check_downscope_token_request(
         mock_object_id,
         make_mock_box_request,
 ):
-    def do_check(item_class, scopes, additional_data, expected_data):
+    def do_check(scopes, item_class, shared_link, additional_data, expected_data):
         dummy_downscoped_token = 'dummy_downscoped_token'
         dummy_expires_in = 1234
         mock_box_response, _ = make_mock_box_request(
@@ -1082,10 +1082,7 @@ def check_downscope_token_request(
 
         item = item_class(mock_box_session, mock_object_id) if item_class else None
 
-        if additional_data:
-            downscoped_token_response = mock_client.downscope_token(scopes, item, additional_data)
-        else:
-            downscoped_token_response = mock_client.downscope_token(scopes, item)
+        downscoped_token_response = mock_client.downscope_token(scopes, item, shared_link, additional_data)
 
         assert downscoped_token_response.access_token == dummy_downscoped_token
         assert downscoped_token_response.expires_in == dummy_expires_in
@@ -1123,7 +1120,35 @@ def test_downscope_token_sends_downscope_request(
         'scope': expected_scopes,
         'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
     }
-    check_downscope_token_request(item_class, scopes, {}, expected_data)
+    check_downscope_token_request(scopes, item_class, None, None, expected_data)
+
+
+def test_downscope_token_sends_downscope_request_with_no_item_shred_link_or_additional_data(
+        mock_client,
+        check_downscope_token_request,
+):
+    expected_data = {
+        'subject_token': mock_client.auth.access_token,
+        'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
+        'scope': 'item_readwrite',
+        'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
+    }
+    check_downscope_token_request([TokenScope.ITEM_READWRITE], None, None, None, expected_data)
+
+
+def test_downscope_token_sends_downscope_request_with_shared_link(
+        mock_client,
+        check_downscope_token_request,
+):
+    shared_link = 'https://cloud.box.com/s/foo'
+    expected_data = {
+        'subject_token': mock_client.auth.access_token,
+        'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
+        'scope': 'item_readwrite',
+        'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
+        'box_shared_link': shared_link
+    }
+    check_downscope_token_request([TokenScope.ITEM_READWRITE], None, shared_link, None, expected_data)
 
 
 def test_downscope_token_sends_downscope_request_with_additional_data(
@@ -1138,7 +1163,7 @@ def test_downscope_token_sends_downscope_request_with_additional_data(
         'grant_type': 'new_grant_type',
         'extra_data_key': 'extra_data_value',
     }
-    check_downscope_token_request(File, [TokenScope.ITEM_READWRITE], additional_data, expected_data)
+    check_downscope_token_request([TokenScope.ITEM_READWRITE], File, None, additional_data, expected_data)
 
 
 def test_downscope_token_sends_downscope_request_when_no_initial_token(
@@ -1154,7 +1179,7 @@ def test_downscope_token_sends_downscope_request_when_no_initial_token(
         'scope': 'item_readwrite',
         'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
     }
-    check_downscope_token_request(File, [TokenScope.ITEM_READWRITE], {}, expected_data)
+    check_downscope_token_request([TokenScope.ITEM_READWRITE], File, None, None, expected_data)
     mock_client.auth.refresh.assert_called_once_with(None)
 
 
