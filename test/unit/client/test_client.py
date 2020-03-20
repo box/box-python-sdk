@@ -1123,7 +1123,7 @@ def test_downscope_token_sends_downscope_request(
     check_downscope_token_request(scopes, item_class, None, None, expected_data)
 
 
-def test_downscope_token_sends_downscope_request_with_no_item_shred_link_or_additional_data(
+def test_downscope_token_sends_downscope_request_with_no_item_shared_link_or_additional_data(
         mock_client,
         check_downscope_token_request,
 ):

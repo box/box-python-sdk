@@ -1,7 +1,6 @@
 # coding: utf-8
 # pylint: disable=too-many-lines
 from __future__ import unicode_literals, absolute_import
-
 import json
 
 from ..auth.oauth2 import TokenResponse
