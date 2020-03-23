@@ -14,6 +14,7 @@ from ..object.trash import Trash
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
+from ..object.item import Item
 
 
 class Client(Cloneable):
@@ -1407,13 +1408,13 @@ class Client(Cloneable):
         :type scopes:
             `Iterable` of :class:`TokenScope`
         :param item:
-            (Optional) The file or folder to get a downscoped token for. If None, the resulting token will
-            not be scoped down to just a single item.
+            (Optional) The file or folder to get a downscoped token for. If None and shared_link None, the resulting
+            token will not be scoped down to just a single item.
         :type item:
-            :class:`Item`
+            :class:`Union[Item, str]`
         :param shared_link:
-            (Optional) The shared link to get a downscoped token for. If None, the resulting token will
-            not be scoped down to just a single item.
+            (Optional) The shared link to get a downscoped token for. If None and item None, the resulting token
+            will not be scoped down to just a single item.
         :type shared_link:
             `str`
         :param additional_data:
@@ -1433,8 +1434,12 @@ class Client(Cloneable):
             'scope': ' '.join(scopes),
             'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
         }
-        if item:
+
+        if item and isinstance(item, Item):
             data['resource'] = item.get_url()
+        elif item and isinstance(item, str):
+            data['resource'] = item
+
         if shared_link:
             data['box_shared_link'] = shared_link
         if additional_data:
