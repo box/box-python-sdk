@@ -1072,7 +1072,7 @@ def check_downscope_token_request(
         mock_object_id,
         make_mock_box_request,
 ):
-    def do_check(scopes, item_class, shared_link, additional_data, expected_data):
+    def do_check(scopes, item_class, additional_data, shared_link, expected_data):
         dummy_downscoped_token = 'dummy_downscoped_token'
         dummy_expires_in = 1234
         mock_box_response, _ = make_mock_box_request(
@@ -1082,7 +1082,7 @@ def check_downscope_token_request(
 
         item = item_class(mock_box_session, mock_object_id) if item_class else None
 
-        downscoped_token_response = mock_client.downscope_token(scopes, item, shared_link, additional_data)
+        downscoped_token_response = mock_client.downscope_token(scopes, item, additional_data, shared_link)
 
         assert downscoped_token_response.access_token == dummy_downscoped_token
         assert downscoped_token_response.expires_in == dummy_expires_in

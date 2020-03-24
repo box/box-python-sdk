@@ -1411,7 +1411,7 @@ class Client(Cloneable):
             (Optional) The file or folder to get a downscoped token for. If None and shared_link None, the resulting
             token will not be scoped down to just a single item.
         :type item:
-            :class:`Union[Item, str]`
+            :class:`Item`
         :param shared_link:
             (Optional) The shared link to get a downscoped token for. If None and item None, the resulting token
             will not be scoped down to just a single item.
@@ -1435,11 +1435,8 @@ class Client(Cloneable):
             'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
         }
 
-        if item and isinstance(item, Item):
+        if item:
             data['resource'] = item.get_url()
-        elif item and isinstance(item, str):
-            data['resource'] = item
-
         if shared_link:
             data['box_shared_link'] = shared_link
         if additional_data:
