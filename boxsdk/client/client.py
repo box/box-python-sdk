@@ -1399,7 +1399,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def downscope_token(self, scopes, item=None, shared_link=None, additional_data=None):
+    def downscope_token(self, scopes, item=None, additional_data=None, shared_link=None):
         """
         Generate a downscoped token for the provided file or folder with the provided scopes.
 

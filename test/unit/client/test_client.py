@@ -54,7 +54,6 @@ from boxsdk.object.task_assignment import TaskAssignment
 from boxsdk.object.webhook import Webhook
 from boxsdk.object.web_link import WebLink
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
-from boxsdk.object.item import Item
 
 
 @pytest.fixture
@@ -1073,7 +1072,7 @@ def check_downscope_token_request(
         mock_object_id,
         make_mock_box_request,
 ):
-    def do_check(scopes, item, shared_link, additional_data, expected_data):
+    def do_check(scopes, item_class, shared_link, additional_data, expected_data):
         dummy_downscoped_token = 'dummy_downscoped_token'
         dummy_expires_in = 1234
         mock_box_response, _ = make_mock_box_request(
@@ -1081,17 +1080,15 @@ def check_downscope_token_request(
         )
         mock_box_session.post.return_value = mock_box_response
 
-        if item and isinstance(item, Item):
-            item = item(mock_box_session, mock_object_id)
-            expected_data['resource'] = item.get_url()
-        elif item and isinstance(item, str):
-            expected_data['resource'] = item
+        item = item_class(mock_box_session, mock_object_id) if item_class else None
 
         downscoped_token_response = mock_client.downscope_token(scopes, item, shared_link, additional_data)
 
         assert downscoped_token_response.access_token == dummy_downscoped_token
         assert downscoped_token_response.expires_in == dummy_expires_in
 
+        if item:
+            expected_data['resource'] = item.get_url()
         mock_box_session.post.assert_called_once_with(
             '{0}/token'.format(API.OAUTH2_API_URL),
             data=expected_data,
@@ -1100,32 +1097,19 @@ def check_downscope_token_request(
     return do_check
 
 
-def test_downscope_token_sends_downscope_request(
-        mock_client,
-        check_downscope_token_request,
-):
-    expected_data = {
-        'subject_token': mock_client.auth.access_token,
-        'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
-        'scope': 'item_readwrite',
-        'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
-    }
-    check_downscope_token_request([TokenScope.ITEM_READWRITE], None, None, None, expected_data)
-
-
 @pytest.mark.parametrize(
-    'item,scopes,expected_scopes',
+    'item_class,scopes,expected_scopes',
     [
         (File, [TokenScope.ITEM_READWRITE], 'item_readwrite'),
         (Folder, [TokenScope.ITEM_PREVIEW, TokenScope.ITEM_SHARE], 'item_preview item_share'),
         (File, [TokenScope.ITEM_READ, TokenScope.ITEM_SHARE, TokenScope.ITEM_DELETE], 'item_read item_share item_delete'),
-        ("https://foo.app.box.com/file/1", [TokenScope.ITEM_DOWNLOAD], 'item_download'),
+        (None, [TokenScope.ITEM_DOWNLOAD], 'item_download'),
     ],
 )
-def test_downscope_token_sends_downscope_request_with_resource(
+def test_downscope_token_sends_downscope_request(
         mock_client,
         check_downscope_token_request,
-        item,
+        item_class,
         scopes,
         expected_scopes,
 ):
@@ -1136,7 +1120,20 @@ def test_downscope_token_sends_downscope_request_with_resource(
         'scope': expected_scopes,
         'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
     }
-    check_downscope_token_request(scopes, item, None, None, expected_data)
+    check_downscope_token_request(scopes, item_class, None, None, expected_data)
+
+
+def test_downscope_token_sends_downscope_request_with_no_item_shared_link_or_additional_data(
+        mock_client,
+        check_downscope_token_request,
+):
+    expected_data = {
+        'subject_token': mock_client.auth.access_token,
+        'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
+        'scope': 'item_readwrite',
+        'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
+    }
+    check_downscope_token_request([TokenScope.ITEM_READWRITE], None, None, None, expected_data)
 
 
 def test_downscope_token_sends_downscope_request_with_shared_link(
@@ -1151,7 +1148,7 @@ def test_downscope_token_sends_downscope_request_with_shared_link(
         'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
         'box_shared_link': shared_link
     }
-    check_downscope_token_request([TokenScope.ITEM_READWRITE], None, shared_link, None, expected_data)
+    check_downscope_token_request([TokenScope.ITEM_READWRITE], None, None, shared_link, expected_data)
 
 
 def test_downscope_token_sends_downscope_request_with_additional_data(
@@ -1166,7 +1163,7 @@ def test_downscope_token_sends_downscope_request_with_additional_data(
         'grant_type': 'new_grant_type',
         'extra_data_key': 'extra_data_value',
     }
-    check_downscope_token_request([TokenScope.ITEM_READWRITE], File, None, additional_data, expected_data)
+    check_downscope_token_request([TokenScope.ITEM_READWRITE], File, additional_data, None, expected_data)
 
 
 def test_downscope_token_sends_downscope_request_when_no_initial_token(
