@@ -1123,19 +1123,6 @@ def test_downscope_token_sends_downscope_request(
     check_downscope_token_request(scopes, item_class, None, None, expected_data)
 
 
-def test_downscope_token_sends_downscope_request_with_no_item_shared_link_or_additional_data(
-        mock_client,
-        check_downscope_token_request,
-):
-    expected_data = {
-        'subject_token': mock_client.auth.access_token,
-        'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
-        'scope': 'item_readwrite',
-        'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
-    }
-    check_downscope_token_request([TokenScope.ITEM_READWRITE], None, None, None, expected_data)
-
-
 def test_downscope_token_sends_downscope_request_with_shared_link(
         mock_client,
         check_downscope_token_request,
