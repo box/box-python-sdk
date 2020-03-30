@@ -4,6 +4,7 @@ Release History
 ---------------
 
 Next Release
+
 ++++++++
 - Added support for token exchange using shared links
 
