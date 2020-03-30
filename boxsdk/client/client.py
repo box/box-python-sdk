@@ -14,7 +14,6 @@ from ..object.trash import Trash
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
-from ..object.item import Item
 
 
 class Client(Cloneable):
