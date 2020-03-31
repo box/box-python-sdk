@@ -444,17 +444,22 @@ def test_update_contents_does_preflight_check_if_specified(
     ({'prevent_download': True}, {'is_download_prevented': True}),
     ({'expire_time': '2018-11-06T19:40:00-08:00'}, {
         'is_download_prevented': False,
-        'expires_at': '2018-11-06T19:40:00-08:00',
+        'expires_at': '2018-11-06T19:40:00-08:00'
     }),
 ])
 def test_lock(test_file, mock_box_session, mock_file_response, params, expected_data):
     expected_url = test_file.get_url()
     expected_body = {
         'lock': {
-            'type': 'lock',
+            'type': 'lock'
         }
     }
-    expected_body['lock'].update(expected_data)
+
+    if 'is_download_prevented' in expected_data.keys():
+        expected_body['lock']['is_download_prevented'] = expected_data['is_download_prevented']
+    if 'expires_at' in expected_data.keys():
+        expected_body['lock']['expires_at'] = expected_data['expires_at']
+
     mock_box_session.put.return_value = mock_file_response
     test_file.lock(**params)
     mock_box_session.put.assert_called_once_with(

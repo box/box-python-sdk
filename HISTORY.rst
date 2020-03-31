@@ -3,6 +3,10 @@
 Release History
 ---------------
 
+Next Release
+++++++++
+- Added support for token exchange using shared links
+
 2.7.1 (2020-01-21)
 ++++++++
 - Fixed bug in `_get_retry_request_callable` introduced in release 2.7.0 which caused chunked uploads to fail

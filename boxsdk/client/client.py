@@ -1,7 +1,6 @@
 # coding: utf-8
 # pylint: disable=too-many-lines
 from __future__ import unicode_literals, absolute_import
-
 import json
 
 from ..auth.oauth2 import TokenResponse
@@ -1399,7 +1398,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def downscope_token(self, scopes, item=None, additional_data=None):
+    def downscope_token(self, scopes, item=None, additional_data=None, shared_link=None):
         """
         Generate a downscoped token for the provided file or folder with the provided scopes.
 
@@ -1408,10 +1407,15 @@ class Client(Cloneable):
         :type scopes:
             `Iterable` of :class:`TokenScope`
         :param item:
-            (Optional) The file or folder to get a downscoped token for. If None, the resulting token will
-            not be scoped down to just a single item.
+            (Optional) The file or folder to get a downscoped token for. If None and shared_link None, the resulting
+            token will not be scoped down to just a single item.
         :type item:
             :class:`Item`
+        :param shared_link:
+            (Optional) The shared link to get a downscoped token for. If None and item None, the resulting token
+            will not be scoped down to just a single item.
+        :type shared_link:
+            `str`
         :param additional_data:
             (Optional) Key value pairs which can be used to add/update the default data values in the request.
         :type additional_data:
@@ -1429,12 +1433,16 @@ class Client(Cloneable):
             'scope': ' '.join(scopes),
             'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
         }
+
         if item:
             data['resource'] = item.get_url()
+        if shared_link:
+            data['box_shared_link'] = shared_link
         if additional_data:
             data.update(additional_data)
 
         box_response = self._session.post(url, data=data)
+
         return TokenResponse(box_response.json())
 
     def clone(self, session=None):
