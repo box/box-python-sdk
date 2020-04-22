@@ -224,7 +224,7 @@ def test_upload(
         is_stream,
         etag,
         sha1,
-        if_match_sha1_header
+        if_match_sha1_header,
 ):
     # pylint:disable=too-many-locals
     file_description = 'Test File Description'
