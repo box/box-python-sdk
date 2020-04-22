@@ -246,7 +246,7 @@ class File(Item):
         :type additional_attributes:
             `dict` or None
         :param sha1:
-            A content MD5 checksum for a file.
+            A sha1 checksum for a file.
         :type sha1:
             `unicode` or None
         :returns:
@@ -284,6 +284,7 @@ class File(Item):
         if etag is not None:
             headers['If-Match'] = etag
         if sha1 is not None:
+            # The Content-MD5 field accepts sha1
             headers['Content-MD5'] = sha1
         if not headers:
             headers = None
@@ -355,7 +356,7 @@ class File(Item):
         :type additional_attributes:
             `dict` or None
         :param sha1:
-            A content MD5 checksum for a file.
+            A sha1 checksum for a file.
         :type sha1:
             `unicode` or None
         :returns:
