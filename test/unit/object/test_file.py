@@ -280,11 +280,12 @@ def test_update_contents(
         mock_upload_response,
         mock_file_path,
         etag,
+        sha1,
         upload_using_accelerator,
         mock_accelerator_response_for_update,
         mock_accelerator_upload_url_for_update,
         upload_using_accelerator_fails,
-        if_match_header,
+        if_match_sha1_header,
         is_stream,
 ):
     # pylint:disable=too-many-locals
@@ -310,6 +311,7 @@ def test_update_contents(
             file_name=file_new_name,
             content_modified_at=content_modified_at,
             additional_attributes=additional_attributes,
+            sha1=sha1
         )
     else:
         mock_file = mock_open(read_data=mock_content_response.content)
@@ -322,6 +324,7 @@ def test_update_contents(
                 file_name=file_new_name,
                 content_modified_at=content_modified_at,
                 additional_attributes=additional_attributes,
+                sha1=sha1
             )
 
     mock_files = {'file': ('unused', mock_file_stream)}
@@ -338,7 +341,7 @@ def test_update_contents(
         expect_json_response=False,
         files=mock_files,
         data=data,
-        headers=if_match_header,
+        headers=if_match_sha1_header,
     )
     assert isinstance(new_file, File)
     assert new_file.object_id == test_file.object_id
