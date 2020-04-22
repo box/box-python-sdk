@@ -356,7 +356,7 @@ class File(Item):
         :type additional_attributes:
             `dict` or None
         :param sha1:
-            A sha1 checksum for a file.
+            A sha1 checksum for the new content.
         :type sha1:
             `unicode` or None
         :returns:
