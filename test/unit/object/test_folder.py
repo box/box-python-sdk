@@ -222,6 +222,9 @@ def test_upload(
         mock_new_upload_accelerator_url,
         upload_using_accelerator_fails,
         is_stream,
+        etag,
+        sha1,
+        if_match_sha1_header
 ):
     # pylint:disable=too-many-locals
     file_description = 'Test File Description'
@@ -248,6 +251,8 @@ def test_upload(
             content_created_at=content_created_at,
             content_modified_at=content_modified_at,
             additional_attributes=additional_attributes,
+            sha1=sha1,
+            etag=etag,
         )
     else:
         mock_file = mock_open(read_data=mock_content_response.content)
@@ -260,6 +265,8 @@ def test_upload(
                 content_created_at=content_created_at,
                 content_modified_at=content_modified_at,
                 additional_attributes=additional_attributes,
+                sha1=sha1,
+                etag=etag,
             )
 
     mock_files = {'file': ('unused', mock_file_stream)}
@@ -274,7 +281,7 @@ def test_upload(
     # in Python 2 tests
     attributes.update(additional_attributes)
     data = {'attributes': json.dumps(attributes)}
-    mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=False, files=mock_files, data=data)
+    mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=False, files=mock_files, data=data, headers=if_match_sha1_header)
     assert isinstance(new_file, File)
     assert new_file.object_id == mock_object_id
     assert 'id' in new_file

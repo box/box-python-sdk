@@ -259,6 +259,8 @@ class Folder(Item):
             content_created_at=None,
             content_modified_at=None,
             additional_attributes=None,
+            sha1=None,
+            etag=None,
     ):
         """
         Upload a file to the folder.
@@ -306,6 +308,14 @@ class Folder(Item):
             A dictionary containing attributes to add to the file that are not covered by other parameters.
         :type additional_attributes:
             `dict` or None
+        :param sha1:
+            A sha1 checksum for a file.
+        :type sha1:
+            `unicode` or None
+        :param etag:
+            If specified, instruct the Box API to update the item only if the current version's etag matches.
+        :type etag:
+            `unicode` or None
         :returns:
             The newly uploaded file.
         :rtype:
@@ -336,7 +346,15 @@ class Folder(Item):
         files = {
             'file': ('unused', file_stream),
         }
-        file_response = self._session.post(url, data=data, files=files, expect_json_response=False).json()
+        headers = {}
+        if etag is not None:
+            headers['If-Match'] = etag
+        if sha1 is not None:
+            # The Content-MD5 field accepts sha1
+            headers['Content-MD5'] = sha1
+        if not headers:
+            headers = None
+        file_response = self._session.post(url, data=data, files=files, expect_json_response=False, headers=headers).json()
         if 'entries' in file_response:
             file_response = file_response['entries'][0]
         return self.translator.translate(
@@ -356,6 +374,8 @@ class Folder(Item):
             content_created_at=None,
             content_modified_at=None,
             additional_attributes=None,
+            sha1=None,
+            etag=None,
     ):
         """
         Upload a file to the folder.
@@ -404,6 +424,14 @@ class Folder(Item):
             A dictionary containing attributes to add to the file that are not covered by other parameters.
         :type additional_attributes:
             `dict` or None
+        :param sha1:
+            A sha1 checksum for a file.
+        :type sha1:
+            `unicode` or None
+        :param etag:
+            If specified, instruct the Box API to update the item only if the current version's etag matches.
+        :type etag:
+            `unicode` or None
         :returns:
             The newly uploaded file.
         :rtype:
@@ -422,6 +450,8 @@ class Folder(Item):
                 content_created_at=content_created_at,
                 content_modified_at=content_modified_at,
                 additional_attributes=additional_attributes,
+                sha1=sha1,
+                etag=etag,
             )
 
     @api_call
