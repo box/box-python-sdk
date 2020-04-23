@@ -202,6 +202,7 @@ class File(Item):
             file_name=None,
             content_modified_at=None,
             additional_attributes=None,
+            sha1=None,
     ):
         """
         Upload a new version of a file, taking the contents from the given file stream.
@@ -244,6 +245,10 @@ class File(Item):
             A dictionary containing attributes to add to the file that are not covered by other parameters.
         :type additional_attributes:
             `dict` or None
+        :param sha1:
+            A sha1 checksum for the new content.
+        :type sha1:
+            `unicode` or None
         :returns:
             A new file object
         :rtype:
@@ -275,7 +280,14 @@ class File(Item):
 
         data = {'attributes': json.dumps(attributes)}
         files = {'file': ('unused', file_stream)}
-        headers = {'If-Match': etag} if etag is not None else None
+        headers = {}
+        if etag is not None:
+            headers['If-Match'] = etag
+        if sha1 is not None:
+            # The Content-MD5 field accepts sha1
+            headers['Content-MD5'] = sha1
+        if not headers:
+            headers = None
         file_response = self._session.post(
             url,
             expect_json_response=False,
@@ -301,6 +313,7 @@ class File(Item):
             file_name=None,
             content_modified_at=None,
             additional_attributes=None,
+            sha1=None,
     ):
         """Upload a new version of a file. The contents are taken from the given file path.
 
@@ -342,6 +355,10 @@ class File(Item):
             A dictionary containing attributes to add to the file that are not covered by other parameters.
         :type additional_attributes:
             `dict` or None
+        :param sha1:
+            A sha1 checksum for the new content.
+        :type sha1:
+            `unicode` or None
         :returns:
             A new file object
         :rtype:
@@ -360,6 +377,7 @@ class File(Item):
                 file_name=file_name,
                 content_modified_at=content_modified_at,
                 additional_attributes=additional_attributes,
+                sha1=sha1,
             )
 
     @api_call

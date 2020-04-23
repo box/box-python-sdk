@@ -271,8 +271,25 @@ def if_none_match_header(etag):
     return {'If-None-Match': etag} if etag is not None else None
 
 
+@pytest.fixture()
+def if_match_sha1_header(etag, sha1):
+    headers = {}
+    if etag is not None:
+        headers['If-Match'] = etag
+    if sha1 is not None:
+        headers['Content-MD5'] = sha1
+    if not headers:
+        headers = None
+    return headers
+
+
 @pytest.fixture(params=[None, 'etag'])
 def etag(request):
+    return request.param
+
+
+@pytest.fixture(params=[None, 'cf23df2207d99a74fbe169e3eba035e633b65d94'])
+def sha1(request):
     return request.param
 
 
