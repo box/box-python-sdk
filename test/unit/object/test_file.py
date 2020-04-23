@@ -311,7 +311,7 @@ def test_update_contents(
             file_name=file_new_name,
             content_modified_at=content_modified_at,
             additional_attributes=additional_attributes,
-            sha1=sha1
+            sha1=sha1,
         )
     else:
         mock_file = mock_open(read_data=mock_content_response.content)
@@ -324,7 +324,7 @@ def test_update_contents(
                 file_name=file_new_name,
                 content_modified_at=content_modified_at,
                 additional_attributes=additional_attributes,
-                sha1=sha1
+                sha1=sha1,
             )
 
     mock_files = {'file': ('unused', mock_file_stream)}
