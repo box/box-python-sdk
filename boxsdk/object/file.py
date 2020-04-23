@@ -202,7 +202,7 @@ class File(Item):
             file_name=None,
             content_modified_at=None,
             additional_attributes=None,
-            sha1=None
+            sha1=None,
     ):
         """
         Upload a new version of a file, taking the contents from the given file stream.
@@ -313,7 +313,7 @@ class File(Item):
             file_name=None,
             content_modified_at=None,
             additional_attributes=None,
-            sha1=None
+            sha1=None,
     ):
         """Upload a new version of a file. The contents are taken from the given file path.
 
@@ -377,7 +377,7 @@ class File(Item):
                 file_name=file_name,
                 content_modified_at=content_modified_at,
                 additional_attributes=additional_attributes,
-                sha1=sha1
+                sha1=sha1,
             )
 
     @api_call
