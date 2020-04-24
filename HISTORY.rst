@@ -3,7 +3,7 @@
 Release History
 ---------------
 
-Next Release
+2.8.0 (2020-04-24)
 ++++++++
 - Added support for token exchange using shared links
 - Added the ability to pass in a SHA1 value for file uploads
