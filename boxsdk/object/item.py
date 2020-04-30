@@ -5,7 +5,10 @@ import json
 
 from boxsdk.util.text_enum import TextEnum
 from .base_object import BaseObject
-from ..exception import BoxAPIException
+from ..exception import (
+    BoxAPIException,
+    BoxException
+)
 from .metadata import Metadata
 from ..util.api_call_decorator import api_call
 from ..util.default_arg_value import SDK_VALUE_NOT_SET
@@ -39,6 +42,9 @@ class Item(BaseObject):
         :rtype:
             `unicode` or None
         """
+        if not file_id.isdigit():
+            raise BoxException("Invalid item ID")
+
         endpoint = '{0}/content'.format(file_id) if file_id else 'content'
         url = '{0}/files/{1}'.format(self._session.api_config.BASE_API_URL, endpoint)
         try:
@@ -81,6 +87,9 @@ class Item(BaseObject):
         :raises:
             :class:`BoxAPIException` when preflight check fails.
         """
+        if not file_id.isdigit():
+            raise BoxException("Invalid item ID")
+
         endpoint = '{0}/content'.format(file_id) if file_id else 'content'
         url = '{0}/files/{1}'.format(self._session.api_config.BASE_API_URL, endpoint)
         data = {'size': size}
@@ -113,6 +122,7 @@ class Item(BaseObject):
             :class:`BaseObject`
         """
         # pylint:disable=arguments-differ
+        self.validate_item_id()
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).update_info(data, headers=headers)
 
@@ -150,6 +160,7 @@ class Item(BaseObject):
         :raises: :class:`BoxAPIException` if the specified etag matches the latest version of the item.
         """
         # pylint:disable=arguments-differ
+        self.validate_item_id()
         headers = {'If-None-Match': etag} if etag is not None else None
         return super(Item, self).get(fields=fields, headers=headers)
 
@@ -166,6 +177,7 @@ class Item(BaseObject):
         :type name:
             `unicode` or None
         """
+        self.validate_item_id()
         url = self.get_url('copy')
         data = {
             'parent': {'id': parent_folder.object_id}
@@ -368,6 +380,7 @@ class Item(BaseObject):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
         # pylint:disable=arguments-differ
+        self.validate_item_id()
         headers = {'If-Match': etag} if etag is not None else None
         return super(Item, self).delete(params, headers)
 
@@ -389,12 +402,14 @@ class Item(BaseObject):
         :rtype:
             :class:`Metadata`
         """
+        self.validate_item_id()
         return Metadata(self._session, self, scope, template)
 
     def get_all_metadata(self):
         """
         Get all metadata attached to the item.
         """
+        self.validate_item_id()
         return MarkerBasedDictCollection(
             session=self._session,
             url=self.get_url('metadata'),
@@ -413,6 +428,7 @@ class Item(BaseObject):
         :rtype:
             :class:`Watermark`
         """
+        self.validate_item_id()
         url = self.get_url('watermark')
         box_response = self._session.get(url)
         response = box_response.json()
@@ -428,6 +444,7 @@ class Item(BaseObject):
         :rtype:
             :class:`Watermark`
         """
+        self.validate_item_id()
         url = self.get_url('watermark')
         body_attributes = {
             'watermark': {
@@ -448,6 +465,7 @@ class Item(BaseObject):
         :rtype:
             `bool`
         """
+        self.validate_item_id()
         url = self.get_url('watermark')
         box_response = self._session.delete(url, expect_json_response=False)
         return box_response.ok
@@ -524,6 +542,7 @@ class Item(BaseObject):
         :rtype:
             :class:`Collaboration`
         """
+        self.validate_item_id()
         url = self._session.get_url('collaborations')
         body = {
             'item': {
@@ -578,6 +597,7 @@ class Item(BaseObject):
         :rtype:
             :class:`Collaboration`
         """
+        self.validate_item_id()
         url = self._session.get_url('collaborations')
         body = {
             'item': {
@@ -625,6 +645,7 @@ class Item(BaseObject):
         :rtype:
             :class:`BoxObjectCollection`
         """
+        self.validate_item_id()
         return MarkerBasedObjectCollection(
             session=self._session,
             url=self.get_url('collaborations'),
@@ -725,3 +746,7 @@ class Item(BaseObject):
             `bool`
         """
         return self.metadata('enterprise', self._classification_template_key).delete()
+
+    def validate_item_id(self):
+        if not self._object_id.isdigit():
+            raise BoxException("Invalid item ID")
