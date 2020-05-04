@@ -105,6 +105,17 @@ The SDK also allows you to retrieve enterprise events, you can specify before an
 The format for the `created_after` and `created_before` fields are supported by [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) and look
 something like this: 2019-08-12T09:12:36-00:00. For more information on the date format please see [here](https://developer.box.com/en/guides/api-calls/types-and-formats/#date-and-times).
 
+<!-- sample get_events enterprise -->
+```python
+ events = client.events()
+    .get_admin_events(created_after='2019-07-01T22:02:24-07:00')
+ for event in events['entries']:
+    print('Got {0} event that occurred at {1}'.format(event.event_type, event.created_at)) 
+```
+
+Addditionally, a list of event types can be passed along to filter down the returned events.
+
+<!-- sample get_events enterprise_filter -->
 ```python
  events = client.events()
     .get_admin_events(created_after='2019-07-01T22:02:24-07:00', event_types=['ITEM_CREATE'])
