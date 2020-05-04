@@ -659,7 +659,7 @@ def test_remove_classification(test_item_and_response, mock_box_session, make_mo
 def test_sanitize_item_id(test_item_and_response):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, mock_item_response = test_item_and_response
-    assert test_item.validate_item_id() is None
+    assert test_item.validate_item_id(test_item._object_id) is None
     test_item._object_id = "foo"
     with pytest.raises(BoxException):
-        test_item.validate_item_id()
+        test_item.validate_item_id(test_item._object_id)
