@@ -42,9 +42,7 @@ class Item(BaseObject):
         :rtype:
             `unicode` or None
         """
-        if not file_id.isdigit():
-            raise BoxException("Invalid item ID")
-
+        self.validate_item_id(file_id)
         endpoint = '{0}/content'.format(file_id) if file_id else 'content'
         url = '{0}/files/{1}'.format(self._session.api_config.BASE_API_URL, endpoint)
         try:
@@ -87,9 +85,7 @@ class Item(BaseObject):
         :raises:
             :class:`BoxAPIException` when preflight check fails.
         """
-        if not file_id.isdigit():
-            raise BoxException("Invalid item ID")
-
+        self.validate_item_id(file_id)
         endpoint = '{0}/content'.format(file_id) if file_id else 'content'
         url = '{0}/files/{1}'.format(self._session.api_config.BASE_API_URL, endpoint)
         data = {'size': size}
@@ -747,6 +743,8 @@ class Item(BaseObject):
         """
         return self.metadata('enterprise', self._classification_template_key).delete()
 
-    def validate_item_id(self):
-        if not self._object_id.isdigit():
+    def validate_item_id(self, item_id=None):
+        if not item_id:
+            item_id = self._object_id
+        if not item_id.isdigit():
             raise BoxException("Invalid item ID")
