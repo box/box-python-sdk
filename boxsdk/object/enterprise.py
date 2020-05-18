@@ -9,7 +9,7 @@ from ..util.api_call_decorator import api_call
 
 class Enterprise(BaseObject):
 
-    """Represents a Box file version retention."""
+    """Represents a single enterprise."""
     _item_type = 'enterprise'
 
     @api_call
