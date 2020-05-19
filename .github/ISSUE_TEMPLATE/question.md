@@ -39,8 +39,8 @@ assignees: PJSimon, sujaygarlanka
 <!-- If applicable, add screenshots to help explain your problem. -->
 
 ### Versions Used
-Java SDK: <!-- Replace with the version of the Java SDK you're using. -->
-Java: <!-- Replace with the version of Java your application is running on. -->
+Python SDK: <!-- Replace with the version of the Python SDK you're using. -->
+Python: <!-- Replace with the version of Python your application is running on. -->
 
 [sdk-docs]: ./doc
 [api-docs]: https://developer.box.com/docs
