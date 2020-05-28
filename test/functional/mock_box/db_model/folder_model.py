@@ -13,7 +13,7 @@ class FolderModel(DbModel):
     __tablename__ = 'box_folder'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)  # pylint:disable=invalid-name
-    folder_id = sqlalchemy.Column(sqlalchemy.String(32), default=lambda: uuid.uuid4().hex)
+    folder_id = sqlalchemy.Column(sqlalchemy.String(32), default=lambda: str(uuid.uuid4().int))
     name = sqlalchemy.Column(sqlalchemy.String(255))
     files = relationship('FileModel', backref='parent', cascade='save-update, delete')
     parent_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('box_folder.id'))
