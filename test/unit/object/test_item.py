@@ -10,7 +10,7 @@ from boxsdk.config import API
 from boxsdk.object.watermark import Watermark
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.util.default_arg_value import SDK_VALUE_NOT_SET
-from boxsdk.exception import BoxException
+from boxsdk.exception import BoxValueError
 
 
 @pytest.fixture(params=('file', 'folder'))
@@ -661,5 +661,5 @@ def test_sanitize_item_id(test_item_and_response):
     test_item, _ = test_item_and_response
     assert test_item.validate_item_id(test_item._object_id) is None
     test_item._object_id = "foo"
-    with pytest.raises(BoxException):
+    with pytest.raises(BoxValueError):
         test_item.validate_item_id(test_item._object_id)

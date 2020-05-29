@@ -7,7 +7,7 @@ from boxsdk.util.text_enum import TextEnum
 from .base_object import BaseObject
 from ..exception import (
     BoxAPIException,
-    BoxException
+    BoxValueError
 )
 from .metadata import Metadata
 from ..util.api_call_decorator import api_call
@@ -748,16 +748,16 @@ class Item(BaseObject):
     @staticmethod
     def validate_item_id(item_id):
         """
-        Validates an item ID is a digit
+        Validates an item ID is numeric
 
         :param item_id:
-        :type classification:
+        :type item_id:
             `str`
         :raises:
-            BoxException: if item_id is not a digit
+            BoxException: if item_id is not numeric
         :returns:
         :rtype:
             None
         """
         if not item_id.isdigit():
-            raise BoxException("Invalid item ID")
+            raise BoxValueError("Invalid item ID")
