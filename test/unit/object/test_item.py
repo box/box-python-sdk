@@ -10,6 +10,7 @@ from boxsdk.config import API
 from boxsdk.object.watermark import Watermark
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.util.default_arg_value import SDK_VALUE_NOT_SET
+from boxsdk.exception import BoxValueError
 
 
 @pytest.fixture(params=('file', 'folder'))
@@ -653,3 +654,12 @@ def test_remove_classification(test_item_and_response, mock_box_session, make_mo
     is_removed = test_item.remove_classification()
     mock_box_session.delete.assert_called_once_with(expected_url)
     assert is_removed is 'success'
+
+
+def test_sanitize_item_id(test_item_and_response):
+    # pylint:disable=redefined-outer-name, protected-access
+    test_item, _ = test_item_and_response
+    assert test_item.validate_item_id(test_item._object_id) is None
+    test_item._object_id = "foo"
+    with pytest.raises(BoxValueError):
+        test_item.validate_item_id(test_item._object_id)

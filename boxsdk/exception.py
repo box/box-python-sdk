@@ -19,6 +19,12 @@ class BoxException(Exception):
         return '<{}>'.format(self.__class__.__name__)
 
 
+class BoxValueError(ValueError):
+    """
+    Exception raise by SDK value errors
+    """
+
+
 class BoxNetworkException(BoxException):
     """
     Exception raised from the network layer.
