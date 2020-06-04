@@ -30,7 +30,7 @@ class EventModel(DbModel):
         'ITEM_UNSYNC',
         'ITEM_RENAME',
     ))
-    source_id = sqlalchemy.Column(sqlalchemy.Integer)
+    source_id = sqlalchemy.Column(sqlalchemy.String(32))
     source_type = sqlalchemy.Column(sqlalchemy.Enum('file', 'folder'))
     sequence_id = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
 
