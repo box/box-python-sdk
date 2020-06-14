@@ -69,7 +69,7 @@ Get the Items in a Folder
 -------------------------
 
 To retrieve the items in a folder, call
-[`folder.get_items(limit=None, offset=0, marker=None, use_marker=False, sort=None, direction=None, fields=None)][get_items].
+[`folder.get_items(limit=None, offset=0, marker=None, use_marker=False, sort=None, direction=None, fields=None)`][get_items].
 This method returns a `BoxObjectCollection` that allows you to iterate over all the [`Item`][item_class] objects in
 the collection.
 
