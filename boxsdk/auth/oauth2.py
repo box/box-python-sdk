@@ -343,8 +343,8 @@ class OAuth2(object):
                 headers=headers,
                 access_token=access_token,
             )
-        except BoxAPIException as box_api_excpetion:
-            six.raise_from(self._oauth_exception(box_api_excpetion.network_response, url), box_api_excpetion)
+        except BoxAPIException as box_api_exception:
+            six.raise_from(self._oauth_exception(box_api_excpetion.network_response, url), box_api_exception)
         if not network_response.ok:
             raise self._oauth_exception(network_response, url)
         try:
