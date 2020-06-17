@@ -6,7 +6,6 @@ Release History
 2.9.0 (2020-06-17)
 ++++++++
 - Fix exception handling for OAuth
-- Documentation updates 
 - Fix path parameter sanitization
 
 2.8.0 (2020-04-24)
