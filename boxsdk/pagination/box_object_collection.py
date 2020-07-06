@@ -10,9 +10,9 @@ from six import add_metaclass
 from boxsdk.pagination.page import Page
 
 if sys.version_info >= (3, 3):
-    from collections.abc import Iterator
+    from collections.abc import Iterator  # pylint:disable=no-name-in-module,import-error
 else:
-    from collections import Iterator
+    from collections import Iterator  # pylint:disable=no-name-in-module,import-error
 
 
 @add_metaclass(ABCMeta)

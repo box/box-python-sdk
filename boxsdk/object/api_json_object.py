@@ -9,9 +9,9 @@ from .base_api_json_object import BaseAPIJSONObject, BaseAPIJSONObjectMeta
 from ..util.compat import with_metaclass
 
 if sys.version_info >= (3, 3):
-    from collections.abc import Mapping
+    from collections.abc import Mapping  # pylint:disable=no-name-in-module,import-error
 else:
-    from collections import Mapping
+    from collections import Mapping  # pylint:disable=no-name-in-module,import-error
 
 
 class APIJSONObjectMeta(BaseAPIJSONObjectMeta, ABCMeta):

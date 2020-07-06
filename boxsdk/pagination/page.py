@@ -6,9 +6,9 @@ import copy
 import sys
 
 if sys.version_info >= (3, 3):
-    from collections.abc import Sequence
+    from collections.abc import Sequence  # pylint:disable=no-name-in-module,import-error
 else:
-    from collections import Sequence
+    from collections import Sequence  # pylint:disable=no-name-in-module,import-error
 
 
 class Page(Sequence):
