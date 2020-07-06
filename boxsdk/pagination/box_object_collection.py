@@ -2,16 +2,21 @@
 
 from __future__ import unicode_literals
 
+import sys
 from abc import ABCMeta, abstractmethod
-import collections
 
 from six import add_metaclass
 
 from boxsdk.pagination.page import Page
 
+if sys.version_info >= (3, 3):
+    from collections.abc import Iterator
+else:
+    from collections import Iterator
+
 
 @add_metaclass(ABCMeta)
-class BoxObjectCollection(collections.Iterator, object):
+class BoxObjectCollection(Iterator):
     """
     An iterator that represents a collection of Box objects (BaseObject).
 

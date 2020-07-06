@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 
-from collections import Mapping
 import logging
 try:
     from logging import NullHandler
@@ -13,6 +12,11 @@ except ImportError:
 import sys
 
 from six import string_types, iteritems
+
+if sys.version_info >= (3, 3):
+    from collections.abc import Mapping
+else:
+    from collections import Mapping
 
 
 _no_logger = object()
