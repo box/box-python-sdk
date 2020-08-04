@@ -39,7 +39,7 @@ metadata_search_filter.add_value_based_filter(field_key='clientNumber', value='a
 metadata_search_filters = MetadataSearchFilters()
 metadata_search_filters.add_filter(metadata_search_filter)
 
-client.search(None, limit=100, offset=0, metadata_filters=metadata_search_filters)
+client.search().query(None, limit=100, offset=0, metadata_filters=metadata_search_filters)
 ```
 
 [metadata_search_filter]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.MetadataSearchFilter
