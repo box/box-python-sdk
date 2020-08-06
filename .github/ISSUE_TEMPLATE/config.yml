@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: SDK documentation
+    url: https://github.com/box/box-java-sdk/tree/master/docs
+    about: Before creating an issue, I have checked that the SDK documentation doesn't solve my issue.
+  - name: API documentation
+    url: https://developer.box.com/docs
+    about: Before creating an issue, I have checked that the API documentation doesn't solve my issue.
+  - name: Box Developer Forums
+    url: https://community.box.com/t5/Platform-and-Development-Forum/bd-p/DeveloperForum
+    about: Before creating an issue, I have searched the Box Developer Forums and my issue isn't already reported there.
+  - name: Issues in this repo
+    url: https://github.com/box/box-java-sdk/search?type=Issues
+    about: Before creating an issue, I have searched Issues in this repo and my issue isn't already reported.
