@@ -2,11 +2,16 @@
 
 from __future__ import unicode_literals, absolute_import
 
-from collections import Sequence
 import copy
+import sys
+
+if sys.version_info >= (3, 3):
+    from collections.abc import Sequence  # pylint:disable=no-name-in-module,import-error
+else:
+    from collections import Sequence  # pylint:disable=no-name-in-module,import-error
 
 
-class Page(Sequence, object):
+class Page(Sequence):
     """
     A sequence of BaseObjects that belong to a page returned from a paging api call.
 
