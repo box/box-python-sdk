@@ -752,12 +752,12 @@ class Item(BaseObject):
 
         :param item_id:
         :type item_id:
-            `str`
+            `str` or `int`
         :raises:
             BoxException: if item_id is not numeric
         :returns:
         :rtype:
             None
         """
-        if not item_id.isdigit():
+        if not isinstance(item_id, int) and not item_id.isdigit():
             raise BoxValueError("Invalid item ID")
