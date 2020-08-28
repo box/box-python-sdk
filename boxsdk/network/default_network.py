@@ -203,6 +203,14 @@ class DefaultNetworkResponse(NetworkResponse):
             self.log(can_safely_log_content=False)
 
     @property
+    def iter_content(self):
+        """Base class override."""
+        try:
+            return self._request_response.iter_content
+        finally:
+            self.log(can_safely_log_content=False)
+
+    @property
     def access_token_used(self):
         """Base class override."""
         return self._access_token_used

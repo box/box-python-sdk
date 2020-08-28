@@ -27,6 +27,16 @@ class BoxResponse(object):
         return self._network_response.content
 
     @property
+    def iter_content(self):
+        """
+        Calls the Response obj's iter_content generator.
+
+        :rtype:
+            varies
+        """
+        return self._network_response.iter_content
+
+    @property
     def ok(self):
         """Return whether or not the request was successful.
 
