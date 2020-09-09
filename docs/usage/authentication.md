@@ -93,6 +93,11 @@ print('My user ID is {0}'.format(me.id))
 
 ### Server Auth with JWT
 
+Authenticating with a JWT requires some extra dependencies. To get them, simply
+```
+pip install "boxsdk[jwt]"
+```
+
 Server auth allows your application to authenticate itself with the Box API
 for a given enterprise.  By default, your application has a
 [Service Account](https://developer.box.com/en/guides/authentication/user-types/app-users/)
