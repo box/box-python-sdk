@@ -56,7 +56,6 @@ def test_update_info_returns_204(
     )
     assert is_success is True
 
-
 def test_accept_pending_collaboration(test_collaboration, mock_box_session):
     # pylint:disable=protected-access
     new_status = 'accepted'
