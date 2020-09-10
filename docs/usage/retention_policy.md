@@ -51,13 +51,13 @@ print('Finite Retention Policy ID is {0} and the policy name is {1}'.format(fini
 Get Retention Policy
 --------------------
 
-To get a retention policy object, first call [`client.retention_policy(policy_id)`][retention_policy] to construct the 
+To get a retention policy object, first call [`client.retention_policy(retention_id)`][retention_policy] to construct the 
 appropriate [`RetentionPolicy`][retention_policy_class] object, and then calling [`retention_policy.get(fields=None)`][get] 
 will return the [`RetentionPolicy`][retention_policy_class] object populated with data from the API.
 
 <!-- sample get_retention_policies_id -->
 ```python
-retention_policy = client.retention_policy(policy_id='12345').get()
+retention_policy = client.retention_policy(retention_id='12345').get()
 print('Retention Policy ID is {0} and the name is {1}'.format(retention_policy.id, retention_policy.policy_name))
 ```
 
@@ -90,7 +90,7 @@ properties to update on the retention policy. This method returns a newly update
 <!-- sample put_retention_policies_id -->
 ```python
 policy_update = {'policy_name': 'New Policy Name',}
-updated_retention_policy = client.retention_policy(policy_id='12345').update_info(policy_update)
+updated_retention_policy = client.retention_policy(retention_id='12345').update_info(policy_update)
 print('Retention Policy ID is {0} and the new policy name is {1}'.format(updated_retention_policy.id, updated_retention_policy.policy_name))
 ```
 
@@ -105,7 +105,7 @@ To assign a retention policy, call [`retention_policy.assign(folder)`][assign] w
 <!-- sample post_retention_policy_assignments -->
 ```python
 folder = client.folder(folder_id='1111')
-assignment = client.retention_policy(policy_id='12345').assign(folder)
+assignment = client.retention_policy(retention_id='12345').assign(folder)
 print('Assignment ID is {0} and it is assigned by {1}'.format(assignment.id, assignment.assigned_by.name))
 ```
 
@@ -140,7 +140,7 @@ will return a `BoxObjectCollection` that allows you to iterate over the
 
 <!-- sample get_retention_policy_id_assignments -->
 ```python
-assignments = client.retention_policy(policy_id='12345').assignments(limit=10)
+assignments = client.retention_policy(retention_id='12345').assignments(limit=10)
 for assignment in assignments:
     print('Assignment ID is {0} and it is assigned by {1}'.format(assignment.id, assignment.assigned_by.name))
 ```
@@ -149,7 +149,7 @@ Alternatively, you can also specify the `type` of assignment to retrieve with
 [`retention_policy.assignments(assignment_type='folder')`][get_assignments].
 
 ```python
-assignments = client.retention_policy(policy_id='12345').assignments(assignment_type='folder', limit=10)
+assignments = client.retention_policy(retention_id='12345').assignments(assignment_type='folder', limit=10)
 for assignment in assignments:
     print('Assignment ID is {0} and it is assigned by {1}'.format(assignment.id, assignment.assigned_by.name))
 ```
@@ -159,7 +159,7 @@ for assignment in assignments:
 Get File Version Retentions
 ---------------------------
 
-To retrieve all file version retentions, call [`client.get_file_version_retentions(target_file=None, file_version=None, policy_id=None, disposition_action=None, disposition_before=None, disposition_after=None, limit=None, marker=None, fields=None)`][get_file_version_retentions]. This method will return a 
+To retrieve all file version retentions, call [`client.get_file_version_retentions(target_file=None, file_version=None, policy=None, disposition_action=None, disposition_before=None, disposition_after=None, limit=None, marker=None, fields=None)`][get_file_version_retentions]. This method will return a 
 `BoxObjectCollection` that allows you to iterate over the [`FileVersionRetention`][file_version_retention_class] 
 objects in the collection.
 
