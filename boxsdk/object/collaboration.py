@@ -52,7 +52,7 @@ class Collaboration(BaseObject):
         :raises:
             :class:`BoxAPIException` if current user doesn't have permissions to edit the collaboration.
         """
-        # pylint:disable=arguments-differ
+        # pylint:disable=arguments-differ,no-else-return
         data = {}
         if role:
             data['role'] = role
