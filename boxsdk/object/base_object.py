@@ -123,6 +123,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         :rtype:
             :class:`BaseObject`
         """
+        # pylint:disable=no-else-return
         url = self.get_url()
         box_response = self._session.put(url, data=json.dumps(data), params=params, headers=headers, **kwargs)
         if 'expect_json_response' in kwargs and not kwargs['expect_json_response']:
