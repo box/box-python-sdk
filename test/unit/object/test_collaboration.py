@@ -37,6 +37,24 @@ def test_update_info_returns_the_correct_response(
     assert update_response.object_id == test_collaboration.object_id
 
 
+def test_update_info_returns_204(
+        test_collaboration,
+        mock_box_session):
+    # pylint:disable=protected-access
+    data = {'role': CollaborationRole.OWNER, 'status': CollaborationStatus.ACCEPTED}
+    expected_url = test_collaboration.get_url()
+    mock_box_session.put.return_value.ok = True
+    is_success = test_collaboration.update_info(**data)
+    mock_box_session.put.assert_called_once_with(
+        expected_url,
+        data=json.dumps(data),
+        expect_json_response=False,
+        headers=None,
+        params=None,
+    )
+    assert is_success is True
+
+
 def test_accept_pending_collaboration(test_collaboration, mock_box_session):
     # pylint:disable=protected-access
     new_status = 'accepted'
