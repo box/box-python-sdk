@@ -123,12 +123,16 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         :rtype:
             :class:`BaseObject`
         """
+        # pylint:disable=no-else-return
         url = self.get_url()
         box_response = self._session.put(url, data=json.dumps(data), params=params, headers=headers, **kwargs)
-        return self.translator.translate(
-            session=self._session,
-            response_object=box_response.json(),
-        )
+        if 'expect_json_response' in kwargs and not kwargs['expect_json_response']:
+            return box_response.ok
+        else:
+            return self.translator.translate(
+                session=self._session,
+                response_object=box_response.json(),
+            )
 
     @api_call
     def delete(self, params=None, headers=None):
