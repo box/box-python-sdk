@@ -40,7 +40,7 @@ file = mock_client.file('466239504569')
 folder = mock_client.folder('466239504580')
 items = [file, folder]
 output_file = open('test.zip', 'wb')
-status = client.create_zip(name, items, output_file)
+status = client.download_zip(name, items, output_file)
 print('The status of the zip download is {0}'.format(status['state']))
 ```
 
