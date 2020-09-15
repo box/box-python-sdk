@@ -1669,8 +1669,8 @@ class Client(Cloneable):
 
     @api_call
     def create_zip(self, name, items):
-        # pylint: disable=arguments-differ
-        """Creates a zip of multiple files and folders.
+        """
+        Creates a zip of multiple files and folders.
 
         :param name:
             The name of the zip file to be created.
@@ -1701,8 +1701,8 @@ class Client(Cloneable):
 
     @api_call
     def download_zip(self, name, items, writeable_stream):
-        # pylint: disable=arguments-differ
-        """Creates a zip of multiple files and folders and downloads it.
+        """
+        Creates a zip of multiple files and folders and downloads it.
 
         :param name:
             The name of the zip file to be created.
@@ -1725,7 +1725,7 @@ class Client(Cloneable):
         response = self._session.get(created_zip['download_url'], expect_json_response=False, stream=True)
         for chunk in response.network_response.response_as_stream.stream(decode_content=True):
             writeable_stream.write(chunk)
-        status = self._session.get(created_zip['status_url'], headers=None, params=None)
+        status = self._session.get(created_zip['status_url'])
         return self.translator.translate(
             session=self._session,
             response_object=status.json(),

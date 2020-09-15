@@ -1540,7 +1540,8 @@ def test_download_zip(mock_client, mock_box_session, mock_content_response):
             }
         ]
     }
-    status = {
+    status_response_mock = Mock()
+    status_response_mock.json.return_value = {
         'total_file_count': 20,
         'downloaded_file_count': 10,
         'skipped_file_count': 10,
@@ -1568,27 +1569,13 @@ def test_download_zip(mock_client, mock_box_session, mock_content_response):
             ]
         ]
     }
-    mock_box_session.get.side_effect = [mock_content_response, json.dumps(status)]
+
+    mock_box_session.get.side_effect = [mock_content_response, status_response_mock]
 
     status_returned = mock_client.download_zip(name, items, mock_writeable_stream)
     mock_box_session.post.assert_called_once_with(expected_create_url, data=json.dumps(expected_create_body))
-    # mock_box_session.get.assert_called_with('https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content', stream=True)
+    mock_box_session.get.assert_any_call('https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content', expect_json_response=False, stream=True)
     mock_box_session.get.assert_called_with('https://api.box.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/status')
     mock_writeable_stream.seek(0)
     assert mock_writeable_stream.read() == mock_content_response.content
-    assert status['total_file_count'] == status_returned['total_file_count']
-
-# def test_download_to(test_file, mock_box_session, mock_content_response, params, expected_query, expected_headers):
-#     expected_url = '{0}/files/{1}/content'.format(API.BASE_API_URL, test_file.object_id)
-#     mock_box_session.get.return_value = mock_content_response
-#     mock_writeable_stream = BytesIO()
-#     test_file.download_to(mock_writeable_stream, **params)
-#     mock_writeable_stream.seek(0)
-#     assert mock_writeable_stream.read() == mock_content_response.content
-#     mock_box_session.get.assert_called_once_with(
-#         expected_url,
-#         expect_json_response=False,
-#         stream=True,
-#         params=expected_query,
-#         headers=expected_headers
-#     )
+    assert status_returned['total_file_count'] == 20
