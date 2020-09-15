@@ -118,12 +118,14 @@ def mock_folder_response(mock_object_id, make_mock_box_request):
     )
     return mock_box_response
 
+
 @pytest.fixture(scope='function')
 def mock_content_response(make_mock_box_request):
     mock_box_response, mock_network_response = make_mock_box_request(content=b'Contents of a text file.')
     mock_network_response.response_as_stream = raw = Mock()
     raw.stream.return_value = (b if PY2 else int2byte(b) for b in mock_box_response.content)
     return mock_box_response
+
 
 @pytest.fixture(scope='module')
 def marker_id():
@@ -1471,6 +1473,7 @@ def test_device_pinner(mock_client):
     assert isinstance(pin, DevicePinner)
     assert pin.object_id == pin_id
 
+
 def test_create_zip(mock_client, mock_box_session):
     expected_url = '{0}/zip_downloads'.format(API.BASE_API_URL)
     name = 'test'
@@ -1515,6 +1518,7 @@ def test_create_zip(mock_client, mock_box_session):
     created_zip = mock_client.create_zip(name, items)
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
     assert created_zip['download_url'] == 'https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content'
+
 
 def test_download_zip(mock_client, mock_box_session, mock_content_response):
     expected_create_url = '{0}/zip_downloads'.format(API.BASE_API_URL)
