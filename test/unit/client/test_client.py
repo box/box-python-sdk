@@ -6,7 +6,7 @@ import json
 
 from mock import Mock
 import pytest
-from six import text_type
+from six import text_type, BytesIO, int2byte, PY2
 
 # pylint:disable=redefined-builtin
 # pylint:disable=import-error
@@ -118,6 +118,12 @@ def mock_folder_response(mock_object_id, make_mock_box_request):
     )
     return mock_box_response
 
+@pytest.fixture(scope='function')
+def mock_content_response(make_mock_box_request):
+    mock_box_response, mock_network_response = make_mock_box_request(content=b'Contents of a text file.')
+    mock_network_response.response_as_stream = raw = Mock()
+    raw.stream.return_value = (b if PY2 else int2byte(b) for b in mock_box_response.content)
+    return mock_box_response
 
 @pytest.fixture(scope='module')
 def marker_id():
@@ -1464,3 +1470,121 @@ def test_device_pinner(mock_client):
 
     assert isinstance(pin, DevicePinner)
     assert pin.object_id == pin_id
+
+def test_create_zip(mock_client, mock_box_session):
+    expected_url = '{0}/zip_downloads'.format(API.BASE_API_URL)
+    name = 'test'
+    file = mock_client.file('466239504569')
+    folder = mock_client.folder('466239504580')
+    items = [file, folder]
+    expected_body = {
+        'download_file_name': name,
+        'items': [
+            {
+                'type': 'file',
+                'id': '466239504569'
+            },
+            {
+                'type': 'folder',
+                'id': '466239504580'
+            }
+        ]
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'download_url': 'https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content',
+        'status_url': 'https://api.box.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/status',
+        'expires_at': '2018-04-25T11:00:18-07:00',
+        'name_conflicts': [
+            [
+                {
+                    'id': '100',
+                    'type': 'file',
+                    'original_name': 'salary.pdf',
+                    'download_name': 'aqc823.pdf'
+                },
+                {
+                    'id': '200',
+                    'type': 'file',
+                    'original_name': 'salary.pdf',
+                    'download_name': 'aci23s.pdf'
+                }
+            ]
+        ]
+    }
+
+    created_zip = mock_client.create_zip(name, items)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
+    assert created_zip['download_url'] == 'https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content'
+
+def test_download_zip(mock_client, mock_box_session, mock_content_response):
+    expected_create_url = '{0}/zip_downloads'.format(API.BASE_API_URL)
+    name = 'test'
+    file = mock_client.file('466239504569')
+    folder = mock_client.folder('466239504580')
+    items = [file, folder]
+    mock_writeable_stream = BytesIO()
+    expected_create_body = {
+        'download_file_name': name,
+        'items': [
+            {
+                'type': 'file',
+                'id': '466239504569'
+            },
+            {
+                'type': 'folder',
+                'id': '466239504580'
+            }
+        ]
+    }
+    status = {
+        'total_file_count': 20,
+        'downloaded_file_count': 10,
+        'skipped_file_count': 10,
+        'skipped_folder_count': 10,
+        'state': 'succeeded'
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'download_url': 'https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content',
+        'status_url': 'https://api.box.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/status',
+        'expires_at': '2018-04-25T11:00:18-07:00',
+        'name_conflicts': [
+            [
+                {
+                    'id': '100',
+                    'type': 'file',
+                    'original_name': 'salary.pdf',
+                    'download_name': 'aqc823.pdf'
+                },
+                {
+                    'id': '200',
+                    'type': 'file',
+                    'original_name': 'salary.pdf',
+                    'download_name': 'aci23s.pdf'
+                }
+            ]
+        ]
+    }
+    mock_box_session.get.side_effect = [mock_content_response, json.dumps(status)]
+
+    status_returned = mock_client.download_zip(name, items, mock_writeable_stream)
+    mock_box_session.post.assert_called_once_with(expected_create_url, data=json.dumps(expected_create_body))
+    # mock_box_session.get.assert_called_with('https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content', stream=True)
+    mock_box_session.get.assert_called_with('https://api.box.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/status')
+    mock_writeable_stream.seek(0)
+    assert mock_writeable_stream.read() == mock_content_response.content
+    assert status['total_file_count'] == status_returned['total_file_count']
+
+# def test_download_to(test_file, mock_box_session, mock_content_response, params, expected_query, expected_headers):
+#     expected_url = '{0}/files/{1}/content'.format(API.BASE_API_URL, test_file.object_id)
+#     mock_box_session.get.return_value = mock_content_response
+#     mock_writeable_stream = BytesIO()
+#     test_file.download_to(mock_writeable_stream, **params)
+#     mock_writeable_stream.seek(0)
+#     assert mock_writeable_stream.read() == mock_content_response.content
+#     mock_box_session.get.assert_called_once_with(
+#         expected_url,
+#         expect_json_response=False,
+#         stream=True,
+#         params=expected_query,
+#         headers=expected_headers
+#     )

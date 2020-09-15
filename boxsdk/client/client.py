@@ -1666,3 +1666,67 @@ class Client(Cloneable):
             session=self._session,
             response_object=response,
         )
+
+    @api_call
+    def create_zip(self, name, items):
+        # pylint: disable=arguments-differ
+        """Creates a zip of multiple files and folders.
+
+        :param name:
+            The name of the zip file to be created.
+        :type name:
+            `unicode`
+        :param items:
+            List of files or folders to be part of the created zip.
+        :type items:
+            `Iterable`
+        :returns:
+            A dictionary representing a created zip
+        :rtype:
+            :class:`dict`
+        """
+        url = self._session.get_url('zip_downloads')
+        data_items = []
+        for item in items:
+            data_items.append({'type': item._item_type, 'id': item.object_id})
+        data = {
+            'download_file_name': name,
+            'items': data_items
+        }
+        response = self._session.post(url, data=json.dumps(data)).json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
+        )
+
+    @api_call
+    def download_zip(self, name, items, writeable_stream):
+        # pylint: disable=arguments-differ
+        """Creates a zip of multiple files and folders and downloads it.
+
+        :param name:
+            The name of the zip file to be created.
+        :type name:
+            `unicode`
+        :param items:
+            List of files or folders to be part of the created zip.
+        :type items:
+            `Iterable`
+        :param writeable_stream:
+            Stream to pipe the readable stream of the zip file.
+        :type writeable_stream:
+            `zip`
+        :returns:
+            A status response object
+        :rtype:
+            :class:`dict`
+        """
+        created_zip = self.create_zip(name, items)
+        response = self._session.get(created_zip['download_url'], expect_json_response=False, stream=True)
+        for chunk in response.network_response.response_as_stream.stream(decode_content=True):
+            writeable_stream.write(chunk)
+        status = self._session.get(created_zip['status_url'], headers=None, params=None)
+        return self.translator.translate(
+            session=self._session,
+            response_object=status.json(),
+        )
