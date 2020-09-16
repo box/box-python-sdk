@@ -35,6 +35,7 @@ file's contents, upload new versions, and perform other common file operations
 - [Lock a File](#lock-a-file)
 - [Unlock a File](#unlock-a-file)
 - [Create a Shared Link](#create-a-shared-link)
+- [Find a File for a Shared Link](#find-a-file-for-a-shared-link)
 - [Create a Shared Link](#create-a-shared-link-1)
 - [Update a Shared Link](#update-a-shared-link)
 - [Get a Shared Link](#get-a-shared-link)
@@ -643,6 +644,18 @@ print('The file shared link URL is: {0}'.format(url))
 
 [get_shared_link]:
 https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_shared_link
+
+Find a File for a Shared Link
+-----------------------------
+
+To find a file given a shared link, use the
+[`client.get_shared_item`](https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html?highlight=get_shared_item#boxsdk.client.client.Client.get_shared_item)
+method.
+
+<!-- sample get_shared_items -->
+```python
+file = client.get_shared_item('https://app.box.com/s/gjasdasjhasd', password='letmein')
+```
 
 Create a Shared Link
 --------------------

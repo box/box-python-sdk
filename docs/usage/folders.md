@@ -17,6 +17,7 @@ group, and perform other common folder operations (move, copy, delete, etc.).
 - [Copy a Folder](#copy-a-folder)
 - [Move a Folder](#move-a-folder)
 - [Delete a Folder](#delete-a-folder)
+- [Find a Folder for a Shared Link](#find-a-folder-for-a-shared-link)
 - [Create a Shared Link](#create-a-shared-link)
 - [Update a Shared Link](#update-a-shared-link)
 - [Get a Shared Link](#get-a-shared-link)
@@ -176,7 +177,20 @@ set the `recursive` parameter to `False`.
 client.folder(folder_id='22222').delete()
 ```
 
-[delete]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.delete
+[delete]:
+https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.delete
+
+Find a Folder for a Shared Link
+-----------------------------
+
+To find a folder given a shared link, use the
+[`client.get_shared_item`](https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html?highlight=get_shared_item#boxsdk.client.client.Client.get_shared_item)
+method.
+
+<!-- sample get_shared_items folders -->
+```python
+folder = client.get_shared_item('https://app.box.com/s/gjasdasjhasd', password='letmein')
+```
 
 Create a Shared Link
 --------------------
