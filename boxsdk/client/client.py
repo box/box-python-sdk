@@ -1685,6 +1685,7 @@ class Client(Cloneable):
         :rtype:
             :class:`dict`
         """
+        # pylint: disable=protected-access
         url = self._session.get_url('zip_downloads')
         data_items = []
         for item in items:
