@@ -12,21 +12,20 @@ assign them to files. For more details on metadata templates please see the
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [Classifications](#classifications)
-	- [Add initial classifications](#add-initial-classifications)
-	- [List all classifications](#list-all-classifications)
-	- [Add another classification](#add-another-classification)
-	- [Update a classification](#update-a-classification)
-	- [Delete a classification](#delete-a-classification)
-	- [Delete all classifications](#delete-all-classifications)
-	- [Add classification to file](#add-classification-to-file)
-	- [Update classification on file](#update-classification-on-file)
-	- [Get classification on file](#get-classification-on-file)
-	- [Remove classification from file](#remove-classification-from-file)
-	- [Add classification to folder](#add-classification-to-folder)
-	- [Update classification on folder](#update-classification-on-folder)
-	- [Get classification on folder](#get-classification-on-folder)
-	- [Remove classification from folder](#remove-classification-from-folder)
+- [Add initial classifications](#add-initial-classifications)
+- [List all classifications](#list-all-classifications)
+- [Add another classification](#add-another-classification)
+- [Update a classification](#update-a-classification)
+- [Delete a classification](#delete-a-classification)
+- [Delete all classifications](#delete-all-classifications)
+- [Add classification to file](#add-classification-to-file)
+- [Update classification on file](#update-classification-on-file)
+- [Get classification on file](#get-classification-on-file)
+- [Remove classification from file](#remove-classification-from-file)
+- [Add classification to folder](#add-classification-to-folder)
+- [Update classification on folder](#update-classification-on-folder)
+- [Get classification on folder](#get-classification-on-folder)
+- [Remove classification from folder](#remove-classification-from-folder)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
