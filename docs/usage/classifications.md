@@ -1,7 +1,7 @@
 Classifications
 ===============
 
-Classfications are a type of metadata that allows users and applications 
+Classifications are a type of metadata that allows users and applications 
 to define and assign a content classification to files and folders.
 
 Classifications use the metadata APIs to add and remove classifications, and
