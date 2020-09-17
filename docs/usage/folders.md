@@ -238,7 +238,7 @@ To check for an existing shared link on a folder, simply call
 
 This method returns a `unicode` string containing the shared link URL.
 
-<!-- sample put_folders_id update_shared_link -->
+<!-- sample get_folders_id get_shared_link -->
 ```python
 folder_id = '11111'
 shared_link = client.folder(folder_id).shared_link

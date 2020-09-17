@@ -703,7 +703,7 @@ To check for an existing shared link on a file, simply call
 
 This method returns a `unicode` string containing the shared link URL.
 
-<!-- sample put_files_id update_shared_link -->
+<!-- sample get_files_id get_shared_link -->
 ```python
 file_id = '11111'
 shared_link = client.file(file_id).shared_link
