@@ -1477,9 +1477,9 @@ def test_device_pinner(mock_client):
 def test_create_zip(mock_client, mock_box_session):
     expected_url = '{0}/zip_downloads'.format(API.BASE_API_URL)
     name = 'test'
-    file = mock_client.file('466239504569')
-    folder = mock_client.folder('466239504580')
-    items = [file, folder]
+    file_item = mock_client.file('466239504569')
+    folder_item = mock_client.folder('466239504580')
+    items = [file_item, folder_item]
     expected_body = {
         'download_file_name': name,
         'items': [
@@ -1574,7 +1574,8 @@ def test_download_zip(mock_client, mock_box_session, mock_content_response):
 
     status_returned = mock_client.download_zip(name, items, mock_writeable_stream)
     mock_box_session.post.assert_called_once_with(expected_create_url, data=json.dumps(expected_create_body))
-    mock_box_session.get.assert_any_call('https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content', expect_json_response=False, stream=True)
+    mock_box_session.get.assert_any_call('https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content', 
+        expect_json_response=False, stream=True)
     mock_box_session.get.assert_called_with('https://api.box.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/status')
     mock_writeable_stream.seek(0)
     assert mock_writeable_stream.read() == mock_content_response.content
