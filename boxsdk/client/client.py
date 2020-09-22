@@ -1670,7 +1670,7 @@ class Client(Cloneable):
     @api_call
     def create_zip(self, name, items):
         """
-        Creates a zip of multiple files and folders.
+        Creates a zip file containing multiple files and/or folders for later download.
 
         :param name:
             The name of the zip file to be created.
