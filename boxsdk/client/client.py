@@ -1623,7 +1623,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def create_metadata_template(self, display_name, fields, template_key=None, hidden=False, scope='enterprise'):
+    def create_metadata_template(self, display_name, fields, template_key=None, hidden=False, scope='enterprise', copy_instance_on_item_copy=False):
         """
         Create a new metadata template.  By default, only the display name and fields are required; the template key
         will be automatically generated based on the display name and the template will be created in the enterprise
@@ -1649,13 +1649,18 @@ class Client(Cloneable):
             The scope the template should be created in
         :type scope:
             `unicode`
+        :param copy_instance_on_item_copy:
+            Tells the copy operation whether or not to copy the metadata along with the item.
+        :type copy_instance_on_item_copy:
+            `bool`
         """
         url = self._session.get_url('metadata_templates', 'schema')
         body = {
             'scope': scope,
             'displayName': display_name,
             'hidden': hidden,
-            'fields': [field.json() for field in fields]
+            'fields': [field.json() for field in fields],
+            'copyInstanceOnItemCopy': copy_instance_on_item_copy
         }
 
         if template_key is not None:
