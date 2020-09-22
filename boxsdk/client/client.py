@@ -1677,7 +1677,7 @@ class Client(Cloneable):
         :type name:
             `unicode`
         :param items:
-            List of files or folders to be part of the created zip.
+            List of files and/or folders to be contained in the zip file.
         :type items:
             `Iterable`
         :returns:
