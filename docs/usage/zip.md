@@ -1,7 +1,7 @@
 Zip
 ========
 
-Allows you to create a temporary zip file of Box files and folders and download them.
+Allows you to create a temporary zip file on Box, containing Box files and folders, and then download them.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -15,7 +15,7 @@ Allows you to create a temporary zip file of Box files and folders and download 
 Create a Zip File
 -----------------------------
 
-Calling [`client.create_zip(name, items)`][create_zip] will let you create a new zip file with the specified name and with the specified items and will return a `dict` with the download and status link. This file does not show up in your Box account, but will be temporarily available for download.
+Calling [`client.create_zip(name, items)`][create_zip] will let you create a new zip file with the specified file name and containing the specified files and/or folders.  It will return a `dict` containing the download link and status link. This zip file will not show up in your Box account, but will be temporarily available for download.
 
 ```python
 name = 'test'

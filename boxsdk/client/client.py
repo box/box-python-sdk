@@ -1687,12 +1687,12 @@ class Client(Cloneable):
         """
         # pylint: disable=protected-access
         url = self._session.get_url('zip_downloads')
-        data_items = []
+        zip_file_items = []
         for item in items:
-            data_items.append({'type': item._item_type, 'id': item.object_id})
+            zip_file_items.append({'type': item._item_type, 'id': item.object_id})
         data = {
             'download_file_name': name,
-            'items': data_items
+            'items': zip_file_items
         }
         response = self._session.post(url, data=json.dumps(data)).json()
         return self.translator.translate(
@@ -1703,7 +1703,7 @@ class Client(Cloneable):
     @api_call
     def download_zip(self, name, items, writeable_stream):
         """
-        Creates a zip of multiple files and folders and downloads it.
+        Downloads a zip file containing multiple files and/or folders.
 
         :param name:
             The name of the zip file to be created.
