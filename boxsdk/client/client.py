@@ -1650,7 +1650,7 @@ class Client(Cloneable):
         :type scope:
             `unicode`
         :param copy_instance_on_item_copy:
-            Tells the copy operation whether or not to copy the metadata along with the item.
+            Whether or not to include the metadata when a file or folder is copied.
         :type copy_instance_on_item_copy:
             `bool`
         """
