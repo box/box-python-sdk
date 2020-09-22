@@ -7,6 +7,7 @@ Next Release
 ++++++++
 - Allow ints to be passed in as item IDs
 - Fix bug with updating a collaboration role to owner
+- Add support for `copyInstanceOnItemCopy` field for metadata templates
 
 2.9.0 (2020-06-23)
 ++++++++
