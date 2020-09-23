@@ -1475,52 +1475,6 @@ def test_device_pinner(mock_client):
     assert pin.object_id == pin_id
 
 
-def test_create_zip(mock_client, mock_box_session):
-    expected_url = '{0}/zip_downloads'.format(API.BASE_API_URL)
-    name = 'test'
-    file_item = mock_client.file('466239504569')
-    folder_item = mock_client.folder('466239504580')
-    items = [file_item, folder_item]
-    expected_body = {
-        'download_file_name': name,
-        'items': [
-            {
-                'type': 'file',
-                'id': '466239504569'
-            },
-            {
-                'type': 'folder',
-                'id': '466239504580'
-            }
-        ]
-    }
-    mock_box_session.post.return_value.json.return_value = {
-        'download_url': 'https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content',
-        'status_url': 'https://api.box.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/status',
-        'expires_at': '2018-04-25T11:00:18-07:00',
-        'name_conflicts': [
-            [
-                {
-                    'id': '100',
-                    'type': 'file',
-                    'original_name': 'salary.pdf',
-                    'download_name': 'aqc823.pdf'
-                },
-                {
-                    'id': '200',
-                    'type': 'file',
-                    'original_name': 'salary.pdf',
-                    'download_name': 'aci23s.pdf'
-                }
-            ]
-        ]
-    }
-
-    created_zip = mock_client.create_zip(name, items)
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
-    assert created_zip['download_url'] == 'https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content'
-
-
 def test_download_zip(mock_client, mock_box_session, mock_content_response):
     expected_create_url = '{0}/zip_downloads'.format(API.BASE_API_URL)
     name = 'test'
@@ -1581,3 +1535,4 @@ def test_download_zip(mock_client, mock_box_session, mock_content_response):
     mock_writeable_stream.seek(0)
     assert mock_writeable_stream.read() == mock_content_response.content
     assert status_returned['total_file_count'] == 20
+    assert status_returned['name_conflicts'][0][0]['id'] == '100'

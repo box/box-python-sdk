@@ -1673,7 +1673,7 @@ class Client(Cloneable):
         )
 
     @api_call
-    def create_zip(self, name, items):
+    def __create_zip(self, name, items):
         """
         Creates a zip file containing multiple files and/or folders for later download.
 
@@ -1699,11 +1699,7 @@ class Client(Cloneable):
             'download_file_name': name,
             'items': zip_file_items
         }
-        response = self._session.post(url, data=json.dumps(data)).json()
-        return self.translator.translate(
-            session=self._session,
-            response_object=response,
-        )
+        return self._session.post(url, data=json.dumps(data)).json()
 
     @api_call
     def download_zip(self, name, items, writeable_stream):
@@ -1727,12 +1723,13 @@ class Client(Cloneable):
         :rtype:
             :class:`dict`
         """
-        created_zip = self.create_zip(name, items)
+        created_zip = self.__create_zip(name, items)
         response = self._session.get(created_zip['download_url'], expect_json_response=False, stream=True)
         for chunk in response.network_response.response_as_stream.stream(decode_content=True):
             writeable_stream.write(chunk)
-        status = self._session.get(created_zip['status_url'])
+        status = self._session.get(created_zip['status_url']).json()
+        status.update(created_zip)
         return self.translator.translate(
             session=self._session,
-            response_object=status.json(),
+            response_object=status,
         )
