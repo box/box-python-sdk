@@ -39,7 +39,7 @@ Create Metadata Template
 ------------------------
 
 To create a new metadata template, call
-[`client.create_metadata_template(display_name, fields, template_key=None, hidden=False, scope='enterprise')`][create_template]
+[`client.create_metadata_template(display_name, fields, template_key=None, hidden=False, scope='enterprise', copy_instance_on_item_copy=False)`][create_template]
 with the human-readable name of the template and the [`MetadataField`s][metadata_field_class] the template should have.
 You can optionally specify a key for the template, otherwise one will be derived from the display name.  At the current
 time, only `enterprise` scope templates are supported.  This method returns a
@@ -111,6 +111,7 @@ template = client.metadata_template('enterprise', 'employeeRecord')
 updates = template.start_update()
 updates.add_enum_option('state', 'WI')
 updates.edit_template({'hidden': False})
+updates.edit_template({'copyInstanceOnItemCopy': False})
 updated_template = template.update_info(updates)
 ```
 
