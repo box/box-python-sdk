@@ -1271,6 +1271,7 @@ def test_create_metadata_template(mock_client, mock_box_session):
                 ],
             },
         ],
+        'copyInstanceOnItemCopy': False,
         'templateKey': 'vContract',
     }
 
