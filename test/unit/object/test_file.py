@@ -150,6 +150,48 @@ def test_create_task(test_file, test_task, mock_box_session):
     assert new_task.due_at == due_at
 
 
+def test_create_task_with_review(test_file, test_task, mock_box_session):
+    # pylint:disable=redefined-outer-name
+    expected_url = "{0}/tasks".format(API.BASE_API_URL)
+    due_at = '2020-09-18T12:09:43-00:00'
+    action = 'complete'
+    message = 'Test Message'
+    completion_rule = 'any_assignee'
+    expected_body = {
+        'item': {
+            'type': 'file',
+            'id': '42',
+        },
+        'action': action,
+        'message': message,
+        'due_at': due_at,
+        'completion_rule': completion_rule,
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        'type': test_task.object_type,
+        'id': test_task.object_id,
+        'due_at': due_at,
+        'action': action,
+        'message': message,
+        'completion_rule': completion_rule,
+    }
+    value = json.dumps(expected_body)
+    new_task = test_file.create_task(
+        message=message,
+        due_at=due_at,
+        action=action,
+        completion_rule=completion_rule,
+    )
+    mock_box_session.post.assert_called_once_with(expected_url, data=value)
+    assert isinstance(new_task, Task)
+    assert new_task.object_type == test_task.object_type
+    assert new_task.object_id == test_task.object_id
+    assert new_task.action == action
+    assert new_task.message == message
+    assert new_task.due_at == due_at
+    assert new_task.completion_rule == completion_rule
+
+
 def test_get_tasks(test_file, mock_box_session):
     expected_url = test_file.get_url('tasks')
     task_body = {
