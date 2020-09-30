@@ -26,7 +26,7 @@ Box Python SDK
     :local:
 
 
-Installing
+Click To Installing
 ----------
 
 .. code-block:: console
