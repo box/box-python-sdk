@@ -330,7 +330,7 @@ Next Release
   [2] <https://www.python.org/dev/peps/pep-0459/#license>
 
 - Include entire test/ directory in source distribution. test/__init__.py was
-  previously missing.
+  previously missed.
 - Update documentation.
 
 1.4.1 (2016-02-11)
