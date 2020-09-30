@@ -531,7 +531,8 @@ class File(Item):
         )
 
     @api_call
-    def create_task(self, message=None, due_at=None):
+    def create_task(self, message=None, due_at=None, action='review',
+                    completion_rule=None):
         """
         Create a task on the given file.
 
@@ -542,6 +543,17 @@ class File(Item):
         :param due_at:
             When this task is due.
         :type due_at:
+            `unicode` or None
+        :param action:
+            The type of task the task assignee will be prompted to perform.
+            Value is one of review,complete
+        :type action:
+            `unicode`
+        :param completion_rule:
+            Defines which assignees need to complete this task before the task
+            is considered completed.
+            Value is one of all_assignees,any_assignee
+        :type completion_rule:
             `unicode` or None
         :return:
             The newly created task
@@ -554,12 +566,14 @@ class File(Item):
                 'type': 'file',
                 'id': self.object_id
             },
-            'action': 'review',
+            'action': action,
         }
         if message is not None:
             task_attributes['message'] = message
         if due_at is not None:
             task_attributes['due_at'] = due_at
+        if completion_rule is not None:
+            task_attributes['completion_rule'] = completion_rule
         box_response = self._session.post(url, data=json.dumps(task_attributes))
         response = box_response.json()
         return self.translator.translate(
