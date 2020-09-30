@@ -105,10 +105,10 @@ Outside of a REPL, you can initialize a new ``Client`` with just the Developer T
 Authorization
 -------------
 
-The Box API uses OAuth2 for auth. The SDK makes it relatively painless
+The Box API uses OAuth2 for authorization. The SDK makes it relatively painless
 to work with OAuth2 tokens.
 
-Server-to-Server Auth with JWT
+Server-to-Server Authorization with JWT
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Python SDK supports your
