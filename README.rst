@@ -1,4 +1,4 @@
-Box Python SDK
+Box Python SDK An Amazing Project
 ==============
 
 .. image:: http://opensource.box.com/badges/active.svg
