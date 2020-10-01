@@ -1,4 +1,4 @@
-Box Python SDK
+Box Python SDK an amazing project
 ==============
 
 .. image:: http://opensource.box.com/badges/active.svg
@@ -26,7 +26,7 @@ Box Python SDK
     :local:
 
 
-Installing
+Installing .
 ----------
 
 .. code-block:: console
