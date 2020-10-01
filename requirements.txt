@@ -1,1 +1,9 @@
 -e .[all]
+following should be satisfied
+__future__
+codecs
+collections
+os
+re
+sys
+setuptools 
