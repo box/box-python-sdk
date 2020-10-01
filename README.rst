@@ -30,7 +30,7 @@ Installing
 ----------
 
 .. code-block:: console
-
+# code to install bosdk in python
     pip install boxsdk
 
 The current version of the SDK is v2.x — if you're looking for the code or documentation for v1.5.x, please see the
