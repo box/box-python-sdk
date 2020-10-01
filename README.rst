@@ -1,4 +1,4 @@
-Box Python SDK
+Box Python SDK(A Better way of looking at servers)
 ==============
 
 .. image:: http://opensource.box.com/badges/active.svg
