@@ -22,11 +22,11 @@ Box Python SDK
 
 
 .. contents::
-    :depth: 2
+    :depth: "2"
     :local:
 
 
-Installing
+Installing::
 ----------
 
 .. code-block:: console
@@ -41,7 +41,7 @@ of breaking changes and added features between the major versions.
 .. _changelog: https://github.com/box/box-python-sdk/blob/master/HISTORY.rst#200
 
 
-Getting Started
+Getting Started:
 ---------------
 
 To get started with the SDK, get a Developer Token from the Configuration page of your app in the
@@ -102,13 +102,13 @@ Outside of a REPL, you can initialize a new ``Client`` with just the Developer T
     print('The current user ID is {0}'.format(user.id))
 
 
-Authorization
+Authorization:
 -------------
 
 The Box API uses OAuth2 for auth. The SDK makes it relatively painless
 to work with OAuth2 tokens.
 
-Server-to-Server Auth with JWT
+Server-to-Server Auth with JWT:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Python SDK supports your
@@ -172,7 +172,7 @@ will be performed on behalf of the newly created app user.
 Traditional 3-legged OAuth2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Get the Authorization URL
+Get the Authorization URL:
 *************************
 
 .. code-block:: python
@@ -216,7 +216,7 @@ The SDK handles all the work for you; all you need to do is run:
     assert 'THE_CSRF_TOKEN_YOU_GOT' == csrf_token
     access_token, refresh_token = oauth.authenticate('YOUR_AUTH_CODE')
 
-Create an Authenticated Client
+Create an Authenticated Client:
 ******************************
 
 .. code-block:: python
@@ -228,7 +228,7 @@ Create an Authenticated Client
 And that's it! You can start using the client to do all kinds of cool stuff
 and the SDK will handle the token refresh for you automatically.
 
-Instantiate a Client Given an Access and a Refresh Token
+Instantiate a Client Given an Access and a Refresh Token::
 ********************************************************
 
 Alternatively, you can instantiate an OAuth2 object with the access token and refresh token. Once
@@ -251,7 +251,7 @@ making calls.
 
 This will retrieve the current user! From here you can use the client you created to start making calls.
 
-Other Auth Options
+Other Auth Options:
 ~~~~~~~~~~~~~~~~~~
 
 For advanced uses of the SDK, three additional auth classes are provided:
@@ -264,7 +264,7 @@ For advanced uses of the SDK, three additional auth classes are provided:
   multiple machines) to share access tokens while synchronizing token refresh. This could be useful for a multiprocess
   web server, for example.
 
-Usage Documentation
+Usage Documentation:
 -------------------
 
 Full documentation of the available functionality with example code is available in the `SDK documentation pages`_, and
@@ -273,7 +273,7 @@ there is also method-level documentation available on ReadTheDocs_.
 .. _SDK documentation pages: https://github.com/box/box-python-sdk/blob/master/docs/usage
 .. _ReadTheDocs: https://box-python-sdk.readthedocs.io/en/stable/index.html
 
-Making API Calls Manually
+Making API Calls Manually:
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Box API is continually evolving. As such, there are API endpoints available that are not specifically
@@ -310,7 +310,7 @@ For API calls which require a body, ``make_request()`` accepts ``**kwargs`` afte
     client.make_request(method, url, data = body)
 
 
-Other Client Options
+Other Client Options:
 --------------------
 
 Logging Client
@@ -353,7 +353,7 @@ Development Client
 For exploring the Box API, or to quickly get going using the SDK, the ``DevelopmentClient`` class combines the
 ``LoggingClient`` with the ``DeveloperTokenClient``.
 
-Customization
+Customization:
 -------------
 
 Custom Subclasses
@@ -380,13 +380,13 @@ If an object subclass is registered in this way, instances of this subclass will
 returned from all SDK methods that previously returned an instance of the parent.  See ``BaseAPIJSONObjectMeta``
 and ``Translator`` to see how the SDK performs dynamic lookups to determine return types.
 
-Contributing
+Contributing:
 ------------
 
 See `CONTRIBUTING.rst <https://github.com/box/box-python-sdk/blob/master/CONTRIBUTING.rst>`_.
 
 
-Developer Setup
+Developer Setup:
 ~~~~~~~~~~~~~~~
 
 Create a virtual environment and install packages -
@@ -397,7 +397,7 @@ Create a virtual environment and install packages -
     pip install -r requirements-dev.txt
 
 
-Testing
+Testing:
 ~~~~~~~
 
 Run all tests using -
@@ -421,7 +421,7 @@ If you have general questions about the Box API, you can post to the
 `Box Developer Forum <https://community.box.com/t5/Developer-Forum/bd-p/DeveloperForum>`_.
 
 
-Copyright and License
+Copyright and License:
 ---------------------
 
 ::
