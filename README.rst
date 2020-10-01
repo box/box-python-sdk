@@ -404,7 +404,8 @@ Run all tests using -
 
 .. code-block:: console
 
-    tox
+Tox
+~~~
 
 The tox tests include code style checks via pep8 and pylint.
 
