@@ -9,6 +9,7 @@ Next Release
 - Fix bug with updating a collaboration role to owner
 - Allow creating tasks with the `action` and `completion_rule` parameters.
 - Add support for `copyInstanceOnItemCopy` field for metadata templates
+- Add zip functionality
 
 2.9.0 (2020-06-23)
 ++++++++
