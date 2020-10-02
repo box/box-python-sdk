@@ -3,13 +3,19 @@
 Release History
 ---------------
 
-Next Release
+2.10.0 (2020-10-02)
 ++++++++
-- Allow ints to be passed in as item IDs
-- Fix bug with updating a collaboration role to owner
-- Allow creating tasks with the `action` and `completion_rule` parameters.
-- Add support for `copyInstanceOnItemCopy` field for metadata templates
-- Add zip functionality
+
+**New Features and Enhancements:**
+
+- Add support for `copyInstanceOnItemCopy` field for metadata templates (`#546 <https://github.com/box/box-ios-sdk/pull/546>`_)
+- Allow creating tasks with the `action` and `completion_rule` parameters (`#544 <https://github.com/box/box-ios-sdk/pull/544>`_)
+- Add zip functionality (`#539 <https://github.com/box/box-ios-sdk/pull/539>`_)
+
+**Bug Fixes:**
+
+- Fix bug with updating a collaboration role to owner (`#536 <https://github.com/box/box-ios-sdk/pull/536>`_)
+- Allow ints to be passed in as item IDs (`#530 <https://github.com/box/box-ios-sdk/pull/530>`_)
 
 2.9.0 (2020-06-23)
 ++++++++
