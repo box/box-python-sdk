@@ -3,7 +3,7 @@
 Release History
 ---------------
 
-Next Release
+2.10.0 (2020-10-02)
 ++++++++
 - Allow ints to be passed in as item IDs
 - Fix bug with updating a collaboration role to owner
