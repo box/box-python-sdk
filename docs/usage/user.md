@@ -231,7 +231,7 @@ To move all of a user's content to a different user, call the
 account, containing all files and folders from the original user's account; the method returns a
 [`Folder`][folder_class] object representing this new folder in the destination user's account.
 
-<!-- sample put_users_id_folders_id -->
+<!-- sample put_users_id_folders_0 -->
 ```python
 source_user_id = '33333'
 destination_user_id = '44444'
