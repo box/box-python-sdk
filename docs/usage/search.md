@@ -7,7 +7,7 @@ enterprise. Leverage the parameters listed below to generate targeted advanced s
 Search for Content
 ------------------
 
-To get a list of items matching a serch query, call [`search.query(query, limit=None, offset=0, **kwargs)`][query] will return an `Iterable` that allows you 
+To get a list of items matching a search query, call [`search.query(query, limit=None, offset=0, **kwargs)`][query] will return an `Iterable` that allows you 
 to iterate over the [`Item`][item_class] objects in the collection.
 
 <!-- sample get_search -->
