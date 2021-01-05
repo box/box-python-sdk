@@ -719,6 +719,7 @@ class File(Item):
         response = self._session.get(url, params=params, headers=headers).json()
         return response['representations']['entries']
 
+    @DeprecationWarning
     @api_call
     def get_thumbnail(self, extension='png', min_width=None, min_height=None, max_width=None, max_height=None):
         """
@@ -761,6 +762,31 @@ class File(Item):
             params['max_height'] = max_height
 
         response = self._session.get(url, params=params, expect_json_response=False)
+        return response.content
+
+    @api_call
+    def get_thumbnail_representation(self, dimensions, extension='png'):
+        """
+        Retrieve a thumbnail image for the file.
+
+        :param dimensions:
+            The width by height size of this representation in pixels
+        :type dimensions:
+            `unicode`
+        :param extension:
+            The file extension for the thumbnail, e.g. 'png' or 'jpg'
+        :type extension:
+            `unicode`
+        :returns:
+            The file contents of the thumbnail image
+        :rtype:
+            `bytes`
+        """
+        rep_hints = '[{0}?dimensions={1}]'.format(extension, dimensions)
+        representation = self.get_representation_info(rep_hints)
+        url = representation[0]['content']['url_template']
+        url = url.replace('{+asset_path}', '')
+        response = self._session.get(url, expect_json_response=False)
         return response.content
 
     @api_call

@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 import json
-from mock import mock_open, patch
+from mock import mock_open, patch, Mock
 import pytest
 from six import BytesIO
 from boxsdk.config import API
@@ -817,3 +817,53 @@ def test_get_thumbnail(
 
     mock_box_session.get.assert_called_once_with(expected_url, expect_json_response=False, params=expected_params)
     assert thumb == mock_content_response.content
+
+@pytest.mark.parametrize('dimensions,extension', [
+    ('92x92', 'png'),
+    ('92x92', 'jpg'),
+])
+def test_get_thumbnail_representation(
+        test_file,
+        mock_box_session,
+        mock_content_response,
+        dimensions,
+        extension,
+):
+    representation_url = '{0}/files/{1}'.format(API.BASE_API_URL, test_file.object_id)
+    content_url = 'https://dl.boxcloud.com/api/2.0/internal_files/123/versions/345/representations/jpg/content/'
+
+    mock_representations_response = Mock()
+    mock_representations_response.json.return_value = {
+        'etag': '1',
+        'id': test_file.object_id,
+        'representations': {
+            'entries': [
+                {
+                    'content': {
+                        'url_template': content_url + '{+asset_path}'
+                    },
+                    'info': {
+                        'url': 'https://api.box.com/2.0/internal_files/123/versions/345/representations/jpg'
+                    },
+                    'properties': {},
+                    'representation': 'pdf',
+                    'status': {
+                        'state': 'success'
+                    }
+                }
+            ]
+        },
+        'type': 'file'
+    }
+
+    mock_box_session.get.side_effect = [mock_representations_response, mock_content_response]
+
+    thumb = test_file.get_thumbnail_representation(
+        dimensions=dimensions,
+        extension=extension,
+    )
+
+    mock_box_session.get.assert_any_call(representation_url, headers={'X-Rep-Hints': '[{}?dimensions=92x92]'.format(extension)}, params = {'fields': 'representations'})
+    mock_box_session.get.assert_any_call(content_url, expect_json_response=False)
+    assert thumb == mock_content_response.content
+    
