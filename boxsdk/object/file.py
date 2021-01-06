@@ -7,6 +7,7 @@ import os
 
 from .item import Item
 from ..util.api_call_decorator import api_call
+from ..util.deprecation_decorator import deprecated
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 
@@ -719,7 +720,7 @@ class File(Item):
         response = self._session.get(url, params=params, headers=headers).json()
         return response['representations']['entries']
 
-    @DeprecationWarning
+    @deprecated('Use get_thumbnail_representation')
     @api_call
     def get_thumbnail(self, extension='png', min_width=None, min_height=None, max_width=None, max_height=None):
         """
@@ -770,7 +771,7 @@ class File(Item):
         Retrieve a thumbnail image for the file.
 
         :param dimensions:
-            The width by height size of this representation in pixels
+            The width by height size of this representation in pixels (i.e. '92x92')
         :type dimensions:
             `unicode`
         :param extension:
