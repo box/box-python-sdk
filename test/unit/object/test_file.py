@@ -818,6 +818,7 @@ def test_get_thumbnail(
     mock_box_session.get.assert_called_once_with(expected_url, expect_json_response=False, params=expected_params)
     assert thumb == mock_content_response.content
 
+
 @pytest.mark.parametrize('dimensions,extension', [
     ('92x92', 'png'),
     ('92x92', 'jpg'),
@@ -863,7 +864,6 @@ def test_get_thumbnail_representation(
         extension=extension,
     )
 
-    mock_box_session.get.assert_any_call(representation_url, headers={'X-Rep-Hints': '[{}?dimensions=92x92]'.format(extension)}, params = {'fields': 'representations'})
+    mock_box_session.get.assert_any_call(representation_url, headers={'X-Rep-Hints': '[{}?dimensions=92x92]'.format(extension)}, params={'fields': 'representations'})
     mock_box_session.get.assert_any_call(content_url, expect_json_response=False)
     assert thumb == mock_content_response.content
-    
