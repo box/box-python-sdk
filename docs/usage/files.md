@@ -770,8 +770,8 @@ for rep in representations:
 [rep_hints]: https://developer.box.com/en/reference/get-files-id/#param-X-Rep-Hints
 [rep_api_obj]: https://developer.box.com/en/reference/resources/representations
 
-Get Thumbnail
--------------
+Get Thumbnail (Deprecated)
+--------------------------
 
 A thumbnail for a file can be retrieved by calling
 [`file.get_thumbnail(extension='png', min_width=None, min_height=None, max_width=None, max_height=None)`][get_thumbnail].
@@ -781,10 +781,24 @@ This method returns the `bytes` of the thumbnail image.
 ```python
 file_id = '11111'
 
-thumbnail = client.file(file_id).get_thumbnail(extension='jpg')
+thumbnail = client.file(file_id).get_thumbnail(extension='jpg') 
 ```
 
 [get_thumbnail]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_thumbnail
+
+Get Thumbnail
+-------------
+
+A thumbnail for a file can now be retrieved by calling [`file.get_thumbnail_representation(dimensions, extension='png')`][get_thumbnail_representation]. This method returns the `bytes` of the thumbnail image. You must pass in a dimension that is valid for the extension you pass in for this file. To find valid dimensions, you must first make a call with [`file.get_representation_info(rep_hints=None)`]. This will return a `dict` of all available representations with their extensions and dimensions. More details about can be found on our developer docs [here](https://developer.box.com/guides/representations/list-all-representations/). 
+
+<!-- sample get_files_id_thumbnail_id -->
+```python
+file_id = '11111'
+
+thumbnail = client.file(file_id).get_thumbnail_representation('92x92', extension='jpg') 
+```
+
+[get_thumbnail_representation]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_thumbnail_representation
 
 Set Metadata
 ------------
