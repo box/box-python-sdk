@@ -8,6 +8,13 @@ Release History
 
 **New Features and Enhancements:**
 
+- Deprecate old method and add new one for getting a thumbnail `#572 <https://github.com/box/box-python-sdk/pull/572>`_)
+
+2.10.0 (2020-10-02)
+++++++++
+
+**New Features and Enhancements:**
+
 - Add support for `copyInstanceOnItemCopy` field for metadata templates (`#546 <https://github.com/box/box-python-sdk/pull/546>`_)
 - Allow creating tasks with the `action` and `completion_rule` parameters (`#544 <https://github.com/box/box-python-sdk/pull/544>`_)
 - Add zip functionality (`#539 <https://github.com/box/box-python-sdk/pull/539>`_)
