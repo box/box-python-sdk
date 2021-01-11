@@ -864,7 +864,7 @@ def test_get_thumbnail_representation(
         extension=extension,
     )
 
-    mock_box_session.get.assert_any_call(representation_url, headers={'X-Rep-Hints': '[{}?dimensions=92x92]'.format(extension)}, 
+    mock_box_session.get.assert_any_call(representation_url, headers={'X-Rep-Hints': '[{}?dimensions=92x92]'.format(extension)},
                                          params={'fields': 'representations'})
     mock_box_session.get.assert_any_call(content_url, expect_json_response=False)
     assert thumb == mock_content_response.content
