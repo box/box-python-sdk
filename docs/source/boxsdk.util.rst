@@ -44,6 +44,14 @@ boxsdk.util.default\_arg\_value module
    :undoc-members:
    :show-inheritance:
 
+boxsdk.util.deprecation\_decorator module
+-----------------------------------------
+
+.. automodule:: boxsdk.util.deprecation_decorator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 boxsdk.util.enum module
 -----------------------
 
@@ -107,7 +115,6 @@ boxsdk.util.translator module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

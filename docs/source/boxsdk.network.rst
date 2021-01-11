@@ -20,7 +20,6 @@ boxsdk.network.network\_interface module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

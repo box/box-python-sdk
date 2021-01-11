@@ -60,7 +60,6 @@ boxsdk.auth.remote\_managed\_oauth2 module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 
