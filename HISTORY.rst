@@ -3,12 +3,12 @@
 Release History
 ---------------
 
-2.10.0 (2020-10-02)
+Next Release
 ++++++++
 
 **New Features and Enhancements:**
 
-- Deprecate and add method for getting a thumbnail `#572 <https://github.com/box/box-python-sdk/pull/572>`_)
+- Deprecate and add method for getting a thumbnail (`#572 <https://github.com/box/box-python-sdk/pull/572>`_)
 
 2.10.0 (2020-10-02)
 ++++++++
