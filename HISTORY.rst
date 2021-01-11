@@ -3,7 +3,7 @@
 Release History
 ---------------
 
-2.11.0 (2021-01-11)
+2.11.0 (2021-01-10)
 ++++++++
 
 **New Features and Enhancements:**
