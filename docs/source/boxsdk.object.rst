@@ -372,7 +372,6 @@ boxsdk.object.webhook module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

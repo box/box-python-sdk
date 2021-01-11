@@ -28,7 +28,6 @@ boxsdk.session.session module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

@@ -36,7 +36,6 @@ boxsdk.client.logging\_client module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 
