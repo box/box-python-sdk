@@ -333,6 +333,7 @@ def test_metadata_query(
         'marker': marker,
         'fields': fields
     }
+    expected_headers = {b'Content-Type': b'application/json'}
     mock_box_session.post.return_value, _ = make_mock_box_request(response=metadata_query_response)
     items = test_search.metadata_query(
         from_template,
@@ -347,7 +348,7 @@ def test_metadata_query(
     )
     item1 = items.next()
     item2 = items.next()
-    mock_box_session.post.assert_called_once_with(expected_url, data=expected_data)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=expected_headers)
     assert item1['type'] == 'file'
     assert item1['metadata']['enterprise_67890']['catalogImages']['$parent'] == 'file_50347290'
     assert item2['type'] == 'folder'

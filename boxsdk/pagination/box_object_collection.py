@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 
+import json
 import sys
 from abc import ABCMeta, abstractmethod
 
@@ -143,7 +144,7 @@ class BoxObjectCollection(Iterator):
         if self._use_post:
             if self._fields:
                 params['fields'] = self._fields
-            box_response = self._session.post(self._url, data=params)
+            box_response = self._session.post(self._url, data=json.dumps(params), headers={b'Content-Type': b'application/json'})
         else:
             if self._fields:
                 params['fields'] = ','.join(self._fields)
