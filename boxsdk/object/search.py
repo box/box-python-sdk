@@ -6,6 +6,7 @@ import json
 
 from .base_endpoint import BaseEndpoint
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.api_call_decorator import api_call
 from ..util.text_enum import TextEnum
 
@@ -309,4 +310,76 @@ class Search(BaseEndpoint):
             fields=fields,
             additional_params=additional_params,
             return_full_pages=False,
+        )
+
+    @api_call
+    def metadata_query(self, from_template, ancestor_folder_id, query=None, query_params=None, use_index=None, order_by=None,
+                       marker=None, limit=None, fields=None):
+        # pylint: disable=arguments-differ
+        """Query Box items by their metadata.
+
+        :param from_template:
+            The template used in the query. Must be in the form scope.templateKey.
+        :type from_template:
+            `unicode`
+        :param ancestor_folder_id:
+            The folder_id to which to restrain the query
+        :type ancestor_folder_id:
+            `unicode`
+        :param query:
+            The logical expression of the query
+        :type query:
+            `unicode` or None
+        :param query_params:
+            Required if query present. The arguments for the query.
+        :type query_params:
+            `dict` or None
+        :param use_index:
+            The name of the index to use
+        :type use_index:
+            `unicode` or None
+        :param order_by:
+            The field_key(s) to order on and the corresponding direction(s)
+        :type order_by:
+            `list` of `dict`
+        :param marker:
+            The marker to use for requesting the next page
+        :type marker:
+            `unicode` or None
+        :param limit:
+            Max results to return for a single request (0-100 inclusive)
+        :type limit:
+            `int`
+        :param fields:
+            List of fields to request
+        :type fields:
+            `Iterable` of `unicode` or None
+        :returns:
+            An iterator of the item search results
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        url = super(Search, self).get_url('metadata_queries/execute_read')
+        data = {
+            'from': from_template,
+            'ancestor_folder_id': ancestor_folder_id
+        }
+        if query is not None:
+            data['query'] = query
+        if query_params is not None:
+            data['query_params'] = query_params
+        if use_index is not None:
+            data['use_index'] = use_index
+        if order_by is not None:
+            data['order_by'] = order_by
+
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=url,
+            limit=limit,
+            marker=marker,
+            fields=fields,
+            additional_params=data,
+            return_full_pages=False,
+            use_post=True
         )

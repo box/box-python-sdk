@@ -42,6 +42,7 @@ class BoxObjectCollection(Iterator):
             fields=None,
             additional_params=None,
             return_full_pages=False,
+            use_post=False
     ):
         """
         :param session:
@@ -81,6 +82,7 @@ class BoxObjectCollection(Iterator):
         self._return_full_pages = return_full_pages
         self._has_retrieved_all_items = False
         self._all_items = None
+        self._use_post = use_post
 
     def next(self):
         """
@@ -135,12 +137,17 @@ class BoxObjectCollection(Iterator):
         params = {}
         if self._limit is not None:
             params['limit'] = self._limit
-        if self._fields:
-            params['fields'] = ','.join(self._fields)
         if self._additional_params:
             params.update(self._additional_params)
         params.update(self._next_page_pointer_params())
-        box_response = self._session.get(self._url, params=params)
+        if self._use_post:
+            if self._fields:
+                params['fields'] = self._fields
+            box_response = self._session.post(self._url, data=params)
+        else:
+            if self._fields:
+                params['fields'] = ','.join(self._fields)
+            box_response = self._session.get(self._url, params=params)
         return box_response.json()
 
     @abstractmethod
