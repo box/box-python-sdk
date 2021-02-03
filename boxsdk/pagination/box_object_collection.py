@@ -73,6 +73,11 @@ class BoxObjectCollection(Iterator):
             call to next(). If False, the iterator will return a single Box object on each next() call.
         :type return_full_pages:
             `bool`
+        :param use_post:
+            If True, then the returned iterator will make POST requests with all the data in the body on each
+            call to next(). If False, the iterator will make GET requets with all the data as query params on each call to next().
+        :type return_full_pages:
+            `bool`
         """
         super(BoxObjectCollection, self).__init__()
         self._session = session
