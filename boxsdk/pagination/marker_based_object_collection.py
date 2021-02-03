@@ -35,6 +35,11 @@ class MarkerBasedObjectCollection(BoxObjectCollection):
             the endpoints that support both require an special extra request parameter.
         :type supports_limit_offset_paging:
             `bool`
+        :param use_post:
+            If True, then the returned iterator will make POST requests with all the data in the body on each
+            call to next(). If False, the iterator will make GET requets with all the data as query params on each call to next().
+        :type return_full_pages:
+            `bool`
         """
         super(MarkerBasedObjectCollection, self).__init__(
             session,
