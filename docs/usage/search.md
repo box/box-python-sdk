@@ -1,8 +1,11 @@
 Search
 ======
 
-The search endpoint provides a powerful way of finding items that are accessible by a single user or an entire 
-enterprise. Leverage the parameters listed below to generate targeted advanced searches.
+Search provides a powerful way of finding items that are accessible by a single user or an entire 
+enterprise.
+
+- [Search for Content](#search-for-content)
+- [Metadata Query](#metadata-query)
 
 Search for Content
 ------------------
@@ -46,3 +49,39 @@ client.search().query(None, limit=100, offset=0, metadata_filters=metadata_searc
 [metadata_search_filters]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.MetadataSearchFilters
 [add_value_based_filter]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.MetadataSearchFilter.add_value_based_filter
 [add_filter]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.MetadataSearchFilters.add_filter
+
+Metadata Query
+--------------
+To search using SQL-like syntax to return items that match specific metadata, call `search.metadata_query(from_template, ancestor_folder_id, query=None, query_params=None, use_index=None, order_by=None, marker=None, limit=None, fields=None)` 
+
+By default, this method returns only the most basic info about the items for which the query matches. To get additional fields for each item, including any of the metadata, use the fields parameter.
+
+```python
+from_template = 'enterprise_12345.someTemplate'
+ancestor_folder_id = '5555'
+query = 'amount >= :arg'
+query_params = {'arg': 100}
+use_index = 'amountAsc'
+order_by = [
+    {
+        'field_key': 'amount',
+        'direction': 'asc'
+    }
+]
+fields = ['type', 'id', 'name', 'metadata.enterprise_67890.catalogImages.$parent']
+limit = 2
+marker = 'AAAAAmVYB1FWec8GH6yWu2nwmanfMh07IyYInaa7DZDYjgO1H4KoLW29vPlLY173OKs'
+items = client.search().metadata_query(
+        from_template,
+        ancestor_folder_id,
+        query,
+        query_params,
+        use_index,
+        order_by,
+        marker,
+        limit,
+        fields
+    )
+for item in items:
+    print('The item ID is {0} and the item name is {1}'.format(item.id, item.name))
+```

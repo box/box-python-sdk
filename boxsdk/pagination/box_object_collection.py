@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 
+import json
 import sys
 from abc import ABCMeta, abstractmethod
 
@@ -42,6 +43,7 @@ class BoxObjectCollection(Iterator):
             fields=None,
             additional_params=None,
             return_full_pages=False,
+            use_post=False
     ):
         """
         :param session:
@@ -71,6 +73,11 @@ class BoxObjectCollection(Iterator):
             call to next(). If False, the iterator will return a single Box object on each next() call.
         :type return_full_pages:
             `bool`
+        :param use_post:
+            If True, then the returned iterator will make POST requests with all the data in the body on each
+            call to next(). If False, the iterator will make GET requets with all the data as query params on each call to next().
+        :type use_post:
+            `bool`
         """
         super(BoxObjectCollection, self).__init__()
         self._session = session
@@ -81,6 +88,7 @@ class BoxObjectCollection(Iterator):
         self._return_full_pages = return_full_pages
         self._has_retrieved_all_items = False
         self._all_items = None
+        self._use_post = use_post
 
     def next(self):
         """
@@ -135,12 +143,17 @@ class BoxObjectCollection(Iterator):
         params = {}
         if self._limit is not None:
             params['limit'] = self._limit
-        if self._fields:
-            params['fields'] = ','.join(self._fields)
         if self._additional_params:
             params.update(self._additional_params)
         params.update(self._next_page_pointer_params())
-        box_response = self._session.get(self._url, params=params)
+        if self._use_post:
+            if self._fields:
+                params['fields'] = self._fields
+            box_response = self._session.post(self._url, data=json.dumps(params), headers={b'Content-Type': b'application/json'})
+        else:
+            if self._fields:
+                params['fields'] = ','.join(self._fields)
+            box_response = self._session.get(self._url, params=params)
         return box_response.json()
 
     @abstractmethod

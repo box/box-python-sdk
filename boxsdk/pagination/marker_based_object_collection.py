@@ -23,6 +23,7 @@ class MarkerBasedObjectCollection(BoxObjectCollection):
             return_full_pages=False,
             marker=None,
             supports_limit_offset_paging=False,
+            use_post=False
     ):
         """
         :param marker:
@@ -34,6 +35,11 @@ class MarkerBasedObjectCollection(BoxObjectCollection):
             the endpoints that support both require an special extra request parameter.
         :type supports_limit_offset_paging:
             `bool`
+        :param use_post:
+            If True, then the returned iterator will make POST requests with all the data in the body on each
+            call to next(). If False, the iterator will make GET requets with all the data as query params on each call to next().
+        :type use_post:
+            `bool`
         """
         super(MarkerBasedObjectCollection, self).__init__(
             session,
@@ -42,6 +48,7 @@ class MarkerBasedObjectCollection(BoxObjectCollection):
             fields=fields,
             additional_params=additional_params,
             return_full_pages=return_full_pages,
+            use_post=use_post
         )
         self._marker = marker
         self._supports_limit_offset_paging = supports_limit_offset_paging

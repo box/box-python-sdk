@@ -6,6 +6,7 @@ import json
 
 import pytest
 
+from boxsdk.config import API
 from boxsdk.object.file import File
 from boxsdk.object.user import User
 from boxsdk.object.search import MetadataSearchFilters, MetadataSearchFilter, SearchScope, TrashContent
@@ -75,6 +76,48 @@ def search_response():
         'total_count': len(entries),
         'limit': 20,
         'offset': 0
+    }
+
+
+@pytest.fixture
+def metadata_query_response():
+    return {
+        'entries': [
+            {
+                'type': 'file',
+                'id': '1244738582',
+                'name': 'Very Important.docx',
+                'metadata': {
+                    'enterprise_67890': {
+                        'catalogImages': {
+                            '$parent': 'file_50347290',
+                            '$version': 2,
+                            '$template': 'catalogImages',
+                            '$scope': 'enterprise_67890',
+                            'photographer': 'Bob Dylan'
+                        }
+                    }
+                }
+            },
+            {
+                'type': 'folder',
+                'id': '124242482',
+                'name': 'Also Important.docx',
+                'metadata': {
+                    'enterprise_67890': {
+                        'catalogImages': {
+                            '$parent': 'file_50427291',
+                            '$version': 2,
+                            '$template': 'catalogImages',
+                            '$scope': 'enterprise_67890',
+                            'photographer': 'Bob Dylan'
+                        }
+                    }
+                }
+            }
+        ],
+        'limit': 2,
+        'next_marker': ''
     }
 
 
@@ -255,6 +298,61 @@ def test_query_with_owner_users(
             'owner_user_ids': '987,654'
         })
     )
+
+
+def test_metadata_query(
+        mock_box_session,
+        make_mock_box_request,
+        test_search,
+        metadata_query_response
+):
+    # pylint:disable=redefined-outer-name
+    expected_url = '{0}/metadata_queries/execute_read'.format(API.BASE_API_URL)
+    from_template = 'enterprise_12345.someTemplate'
+    ancestor_folder_id = '5555'
+    query = 'amount >= :arg'
+    query_params = {'arg': 100}
+    use_index = 'amountAsc'
+    order_by = [
+        {
+            'field_key': 'amount',
+            'direction': 'asc'
+        }
+    ]
+    fields = ['type', 'id', 'name', 'metadata.enterprise_67890.catalogImages.$parent']
+    limit = 2
+    marker = 'AAAAAmVYB1FWec8GH6yWu2nwmanfMh07IyYInaa7DZDYjgO1H4KoLW29vPlLY173OKs'
+    expected_data = {
+        'limit': limit,
+        'from': from_template,
+        'ancestor_folder_id': ancestor_folder_id,
+        'query': query,
+        'query_params': query_params,
+        'use_index': use_index,
+        'order_by': order_by,
+        'marker': marker,
+        'fields': fields
+    }
+    expected_headers = {b'Content-Type': b'application/json'}
+    mock_box_session.post.return_value, _ = make_mock_box_request(response=metadata_query_response)
+    items = test_search.metadata_query(
+        from_template,
+        ancestor_folder_id,
+        query,
+        query_params,
+        use_index,
+        order_by,
+        marker,
+        limit,
+        fields
+    )
+    item1 = items.next()
+    item2 = items.next()
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=expected_headers)
+    assert item1['type'] == 'file'
+    assert item1['metadata']['enterprise_67890']['catalogImages']['$parent'] == 'file_50347290'
+    assert item2['type'] == 'folder'
+    assert item2['metadata']['enterprise_67890']['catalogImages']['$parent'] == 'file_50427291'
 
 
 def test_range_filter_without_gt_and_lt_will_fail_validation():
