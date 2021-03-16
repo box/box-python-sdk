@@ -693,7 +693,7 @@ class Folder(Item):
         body = {
             'folder': {
                 'type': 'folder',
-                'id': self._object_id
+                'id': self.object_id
             },
             'locked_operations': {
                 'move': True,
