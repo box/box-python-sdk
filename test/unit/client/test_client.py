@@ -30,6 +30,7 @@ from boxsdk.object.device_pinner import DevicePinner
 from boxsdk.object.enterprise import Enterprise
 from boxsdk.object.events import Events
 from boxsdk.object.folder import Folder
+from boxsdk.object.folder_lock import FolderLock
 from boxsdk.object.file import File
 from boxsdk.object.file_version import FileVersion
 from boxsdk.object.group import Group

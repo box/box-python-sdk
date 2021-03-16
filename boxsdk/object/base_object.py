@@ -42,6 +42,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         Return the given object's URL, appending any optional parts as specified by args.
         """
         # pylint:disable=arguments-differ
+        print(self._item_type)
         return super(BaseObject, self).get_url('{0}s'.format(self._item_type), self._object_id, *args)
 
     def get_type_url(self):
