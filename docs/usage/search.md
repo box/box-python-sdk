@@ -10,7 +10,7 @@ enterprise.
 Search for Content
 ------------------
 
-To get a list of items matching a search query, call [`search.query(query, limit=None, offset=0, **kwargs)`][query] will return an `Iterable` that allows you 
+To get a list of items matching a search query, call [`search.query(query, limit=None, offset=0, ancestor_folders=None, file_extensions=None, metadata_filters=None, result_type=None, content_types=None, scope=None, created_at_range=None, updated_at_range=None, size_range=None, owner_users=None, trash_content=None, fields=None, sort=None, direction=None, include_recent_shared_links=False, **kwargs)`][query] will return an `Iterable` that allows you 
 to iterate over the [`Item`][item_class] objects in the collection.
 
 <!-- sample get_search -->

@@ -241,6 +241,7 @@ def test_query_with_range_filters(
     ({'trash_content': TrashContent.ONLY}, {'trash_content': 'trashed_only'}),
     ({'sort': 'modified_at'}, {'sort': 'modified_at'}),
     ({'direction': 'DESC'}, {'direction': 'DESC'}),
+    ({'include_recent_shared_links': 'True'}, {'include_recent_shared_links': 'True'}),
 ])
 def test_query_with_optional_parameters(
         mock_box_session,
