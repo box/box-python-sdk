@@ -677,3 +677,52 @@ class Folder(Item):
 
         response = self._session.post(url, data=json.dumps(body)).json()
         return self.translator.translate(self._session, response)
+
+    @api_call
+    def create_lock(self):
+        """
+        Creates a folder lock on a folder, preventing it from being moved and/or deleted.
+
+        :returns:
+            The created folder lock
+        :rtype:
+            :class:`FolderLock`
+        """
+        url = self._session.get_url('folder_locks')
+
+        body = {
+            'folder': {
+                'type': 'folder',
+                'id': self.object_id
+            },
+            'locked_operations': {
+                'move': True,
+                'delete': True
+            }
+        }
+
+        response = self._session.post(url, data=json.dumps(body)).json()
+        return self.translator.translate(self._session, response)
+
+    @api_call
+    def get_locks(self):
+        """
+        Lists all folder locks for a given folder.
+
+        :returns:
+            The collection of locks for a folder.
+        :rtype:
+            :class:`BoxObjectCollection`
+        """
+        url = self._session.get_url('folder_locks')
+
+        additional_params = {
+            'folder_id': self.object_id,
+        }
+
+        return MarkerBasedObjectCollection(
+            url=url,
+            session=self._session,
+            additional_params=additional_params,
+            return_full_pages=False,
+        )

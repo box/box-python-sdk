@@ -1733,3 +1733,18 @@ class Client(Cloneable):
             session=self._session,
             response_object=status,
         )
+
+    def folder_lock(self, folder_lock_id):
+        """
+        Initialize a :class:`FolderLock` object, whose box id is folder_lock_id.
+
+        :param folder_lock_id:
+            The ID of the :class:`FolderLock` object.
+        :type folder_lock_id:
+            `unicode`
+        :return:
+            A :class:`FolderLock` object with the given entry ID.
+        :rtype:
+            :class:`FolderLock`
+        """
+        return self.translator.get('folder_lock')(session=self._session, object_id=folder_lock_id)
