@@ -24,7 +24,6 @@ from boxsdk.util.chunked_uploader import ChunkedUploader
 # pylint:disable=protected-access
 # pylint:disable=redefined-outer-name
 
-
 @pytest.fixture()
 def mock_new_upload_accelerator_url():
     return 'https://upload.box.com/api/2.0/files/content?upload_session_id=123'
@@ -562,3 +561,100 @@ def test_cascade_metadata(test_folder, mock_box_session, test_metadata_template)
     assert folder.object_id == test_folder.object_id
     assert cascade_policy.scope == test_metadata_template.scope
     assert cascade_policy.templateKey == test_metadata_template.template_key
+
+
+def test_get_folder_locks(test_folder, mock_box_session):
+    expected_url = '{0}/folder_locks'.format(API.BASE_API_URL)
+    params = {'folder_id': test_folder.object_id}
+    mock_box_session.get.return_value.json.return_value = {
+        "entries": [
+            {
+                "folder": {
+                    "id": "12345",
+                    "etag": "1",
+                    "type": "folder",
+                    "sequence_id": "3",
+                    "name": "Contracts"
+                },
+                "id": "12345678",
+                "type": "folder_lock",
+                "created_by": {
+                    "id": "11446498",
+                    "type": "user"
+                },
+                "created_at": "2020-09-14T23:12:53Z",
+                "locked_operations": {
+                    "move": True,
+                    "delete": True
+                },
+                "lock_type": "freeze"
+            }
+        ],
+        "limit": 1000,
+        "next_marker": None
+    }
+
+    folder_locks = test_folder.get_locks()
+    lock = folder_locks.next()
+
+    mock_box_session.get.assert_called_once_with(expected_url, params=params)
+    assert lock.id == '12345678'
+    assert lock.folder.id == '12345'
+    assert lock.locked_operations['move']
+    # pylint: disable=protected-access
+    assert lock._session == mock_box_session
+
+
+def test_create_folder_lock(test_folder, mock_box_session):
+    expected_url = '{0}/folder_locks'.format(API.BASE_API_URL)
+    expected_body = {
+        "folder": {
+            "type": "folder",
+            "id": test_folder.object_id
+        },
+        "locked_operations": {
+            "move": True,
+            "delete": True
+        }
+    }
+    mock_box_session.post.return_value.json.return_value = {
+        "id": "12345678",
+        "type": "folder_lock",
+        "created_at": "2020-09-14T23:12:53Z",
+        "created_by": {
+            "id": "11446498",
+            "type": "user"
+        },
+        "folder": {
+            "id": "12345",
+            "type": "folder",
+            "etag": "1",
+            "name": "Contracts",
+            "sequence_id": "3"
+        },
+        "lock_type": "freeze",
+        "locked_operations": {
+            "delete": True,
+            "move": True
+        }
+    }
+
+    lock = test_folder.create_lock()
+
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
+    assert lock.id == '12345678'
+    assert lock.folder.id == '12345'
+    assert lock.locked_operations['move']
+    # pylint: disable=protected-access
+    assert lock._session == mock_box_session
+
+
+def test_delete_folder_lock(test_folder_lock, mock_box_session):
+    expected_url = '{0}/folder_locks/{1}'.format(API.BASE_API_URL, test_folder_lock.object_id)
+    test_folder_lock.delete()
+    mock_box_session.delete.assert_called_once_with(
+        expected_url,
+        expect_json_response=False,
+        headers=None,
+        params={}
+    )

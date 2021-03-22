@@ -463,3 +463,46 @@ client.folder(folder_id='11111').remove_classification()
 ```
 
 [remove_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.remove_classification
+
+Create a Folder Lock
+-------------
+
+To lock a folder, call
+[`client.folders(folder_id).create_lock()`][create-folder-lock]
+with the ID of the folder. This prevents the folder from being moved and/or deleted.
+
+```python
+lock = client.folders(folder_id).create_lock()
+print('Created a lock with ID {0}'.format(lock.folder.id))
+```
+
+[create_folder_lock]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.create_lock
+
+
+Get Folder Locks
+-------------------------
+
+To retrieve a list of the locks on a folder, call
+[`client.folders(folder_id).get_locks()][get-folder-locks]
+with the ID of the folder. Currently only one lock can exist per folder. Folder locks define access restrictions placed by folder owners to prevent specific folders from being moved or deleted.
+
+```python
+locks = client.folders(folder_id).get_locks()
+lock = locks.next()
+print('A lock on a folder with ID {0}'.format(lock.folder.id))
+```
+
+[get_folder_locks]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.get_locks
+
+Delete a Folder Lock
+------------------
+
+To remove a folder lock, call
+[`client.folder_lock(folder_lock_id).delete()`][delete-folder-lock]
+with the ID of the folder lock.
+
+```python
+client.folder_lock(folder_lock_id='22222').delete()
+```
+
+[delete_folder_lock]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder_lock.FolderLock

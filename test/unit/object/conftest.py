@@ -13,6 +13,7 @@ from boxsdk.object.file import File
 from boxsdk.object.file_version_retention import FileVersionRetention
 from boxsdk.object.legal_hold import LegalHold
 from boxsdk.object.folder import Folder
+from boxsdk.object.folder_lock import FolderLock
 from boxsdk.object.group import Group
 from boxsdk.object.group_membership import GroupMembership
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
@@ -374,3 +375,8 @@ def test_metadata_template(mock_box_session):
         'templateKey': 'vContract',
     }
     return MetadataTemplate(mock_box_session, None, fake_response)
+
+
+@pytest.fixture()
+def test_folder_lock(mock_box_session, mock_object_id):
+    return FolderLock(mock_box_session, mock_object_id)
