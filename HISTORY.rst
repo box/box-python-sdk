@@ -9,7 +9,7 @@ Next Release
 **New Features and Enhancements:**
 
 - Add metadata query functionality (`#574 <https://github.com/box/box-python-sdk/pull/574>`_)
-- Add search query support for the `include_recent_shared_links` field  (`#582 <https://github.com/box/box-python-sdk/pull/574>`_)
+- Add search query support for the `include_recent_shared_links` field  (`#582 <https://github.com/box/box-python-sdk/pull/582>`_)
 
 2.11.0 (2021-01-11)
 ++++++++

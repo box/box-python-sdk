@@ -268,9 +268,8 @@ class Search(BaseEndpoint):
         :type direction:
             `unicode` or None
         :param include_recent_shared_links:
-            If False, the search results will only include items that are either owned by the user or items that the
-            user has been explicitly collaborated on.
-            If True, the search results may also include items that are only accessible via recently used shared links.
+            Whether the search results may also include items that are only accessible via recently used shared links. If true, the items returned will be in a
+            different format
         :type include_recent_shared_links:
             `bool`
         :return:
@@ -306,7 +305,7 @@ class Search(BaseEndpoint):
             additional_params['sort'] = sort
         if direction is not None:
             additional_params['direction'] = direction
-        if include_recent_shared_links == True:
+        if include_recent_shared_links:
             additional_params['include_recent_shared_links'] = include_recent_shared_links
 
         additional_params.update(kwargs)
