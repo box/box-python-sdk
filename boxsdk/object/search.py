@@ -268,8 +268,8 @@ class Search(BaseEndpoint):
         :type direction:
             `unicode` or None
         :param include_recent_shared_links:
-            Whether the search results may also include items that are only accessible via recently used shared links. If true, the items returned will be in a
-            different format
+            Whether the search results may also include items that are only accessible via recently used shared links.
+            If true, the items returned will be in a different format.
         :type include_recent_shared_links:
             `bool`
         :return:
