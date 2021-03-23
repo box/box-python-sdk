@@ -121,6 +121,33 @@ def metadata_query_response():
     }
 
 
+@pytest.fixture
+def search_with_shared_links_entries():
+    return [
+        {
+            'accessible_via_shared_link': 'https://www.box.com/s/vspke7y05sb214wjokpk',
+            'item': {'id': '1234', 'type': 'file'},
+            'type': 'search_result'
+        },
+        {
+            'accessible_via_shared_link': None,
+            'item': {'id': '1234', 'type': 'file'},
+            'type': 'search_result'
+        }
+    ]
+
+
+@pytest.fixture
+def search_with_shared_links_response():
+    entries = search_with_shared_links_entries()
+    return {
+        'entries': entries,
+        'total_count': len(entries),
+        'limit': 20,
+        'offset': 0
+    }
+
+
 class Matcher(object):
     def __init__(self, compare, some_obj):
         self.compare = compare
@@ -375,3 +402,44 @@ def test_make_single_metadata_filter(test_search):
     filter_as_dict = metadata_filter.as_dict()
     assert filter_as_dict['templateKey'] == template_key
     assert filter_as_dict['scope'] == scope
+
+
+def test_query_with_shared_links(
+        mock_box_session,
+        make_mock_box_request,
+        search_content_types,
+        search_limit,
+        search_offset,
+        search_query,
+        search_result_type,
+        search_value_based_filters,
+        search_with_shared_links_entries,
+        search_with_shared_links_response,
+        test_search,
+):
+    # pylint:disable=redefined-outer-name
+    mock_box_session.get.return_value, _ = make_mock_box_request(response=search_with_shared_links_response)
+    response = test_search.query_with_shared_links(
+        search_query,
+        limit=search_limit,
+        offset=search_offset,
+        metadata_filters=search_value_based_filters,
+        result_type=search_result_type,
+        content_types=search_content_types,
+    )
+
+    for actual, expected in zip(response, [File(mock_box_session, entry['item']['id'], entry['item']) for entry in search_with_shared_links_entries]):
+        assert actual.item == expected
+
+    mock_box_session.get.assert_called_once_with(
+        test_search.get_url(),
+        params=Matcher(compare_params, {
+            'query': search_query,
+            'include_recent_shared_links': True,
+            'limit': search_limit,
+            'mdfilters': json.dumps(search_value_based_filters.as_list()),
+            'offset': search_offset,
+            'type': search_result_type,
+            'content_types': ','.join(search_content_types) if search_content_types else search_content_types,
+        })
+    )

@@ -50,6 +50,20 @@ client.search().query(None, limit=100, offset=0, metadata_filters=metadata_searc
 [add_value_based_filter]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.MetadataSearchFilter.add_value_based_filter
 [add_filter]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.MetadataSearchFilters.add_filter
 
+### Search with Shared Link Items
+
+To get a list of items matching a search query, including items that a user might have accessed recently through a shared link, call [`search.query_with_shared_links(query, limit=None, offset=0, ancestor_folders=None, file_extensions=None, metadata_filters=None, result_type=None, content_types=None, scope=None, created_at_range=None, updated_at_range=None, size_range=None, owner_users=None, trash_content=None, fields=None, sort=None, direction=None, include_recent_shared_links=False, **kwargs)`][query_with_shared_links]. This method will return an `Iterable` that allows you
+to iterate over the search result objects in the collection.
+
+<!-- sample get_search_with_shared_links -->
+```python
+search_results = client.search().query_with_shared_links(query='TEST QUERY', limit=100, file_extensions=['pdf', 'doc'])
+for search_result in search_results:
+    print('The item ID is {0} and the item name is {1}'.format(search_result.item.id, search_result.item.name))
+```
+
+[query_with_shared_links]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.Search.query_with_shared_links
+
 Metadata Query
 --------------
 To search using SQL-like syntax to return items that match specific metadata, call `search.metadata_query(from_template, ancestor_folder_id, query=None, query_params=None, use_index=None, order_by=None, marker=None, limit=None, fields=None)` 
