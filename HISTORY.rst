@@ -10,6 +10,7 @@ Next Release
 
 - Add metadata query functionality (`#574 <https://github.com/box/box-python-sdk/pull/574>`_)
 - Add folder lock functionality (`#581 <https://github.com/box/box-python-sdk/pull/581>`_)
+- Update `get_groups()` to use documented parameter to filter by name (`#586 <https://github.com/box/box-python-sdk/pull/586>`_)
 
 2.11.0 (2021-01-11)
 ++++++++
