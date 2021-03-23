@@ -584,7 +584,7 @@ def test_get_groups_return_the_correct_group_objects(
         assert group.name == str(expected_id)
         # pylint:disable=protected-access
         assert group._session == mock_box_session
-    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None, 'name': group_name})
+    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None, 'filter_term': group_name})
 
 
 def test_create_group_returns_the_correct_group_object(mock_client, mock_box_session, create_group_response):
