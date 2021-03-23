@@ -10,7 +10,7 @@ enterprise.
 Search for Content
 ------------------
 
-To get a list of items matching a search query, call [`search.query(query, limit=None, offset=0, ancestor_folders=None, file_extensions=None, metadata_filters=None, result_type=None, content_types=None, scope=None, created_at_range=None, updated_at_range=None, size_range=None, owner_users=None, trash_content=None, fields=None, sort=None, direction=None, include_recent_shared_links=False, **kwargs)`][query] will return an `Iterable` that allows you 
+To get a list of items matching a search query, call [`search.query(query, limit=None, offset=0, ancestor_folders=None, file_extensions=None, metadata_filters=None, result_type=None, content_types=None, scope=None, created_at_range=None, updated_at_range=None, size_range=None, owner_users=None, trash_content=None, fields=None, sort=None, direction=None, **kwargs)`][query] will return an `Iterable` that allows you
 to iterate over the [`Item`][item_class] objects in the collection.
 
 <!-- sample get_search -->
@@ -52,7 +52,7 @@ client.search().query(None, limit=100, offset=0, metadata_filters=metadata_searc
 
 ### Search with Shared Link Items
 
-To get a list of items matching a search query, including items that a user might have accessed recently through a shared link, call [`search.query_with_shared_links(query, limit=None, offset=0, ancestor_folders=None, file_extensions=None, metadata_filters=None, result_type=None, content_types=None, scope=None, created_at_range=None, updated_at_range=None, size_range=None, owner_users=None, trash_content=None, fields=None, sort=None, direction=None, include_recent_shared_links=False, **kwargs)`][query_with_shared_links]. This method will return an `Iterable` that allows you
+To get a list of items matching a search query, including items that a user might have accessed recently through a shared link, call [`search.query_with_shared_links(query, limit=None, offset=0, ancestor_folders=None, file_extensions=None, metadata_filters=None, result_type=None, content_types=None, scope=None, created_at_range=None, updated_at_range=None, size_range=None, owner_users=None, trash_content=None, fields=None, sort=None, direction=None, **kwargs)`][query_with_shared_links]. This method will return an `Iterable` that allows you
 to iterate over the search result objects in the collection.
 
 <!-- sample get_search_with_shared_links -->
