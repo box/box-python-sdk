@@ -65,6 +65,7 @@ else
     pip install -U virtualenv
 fi
 
+pip install --upgrade pip
 pip list
 python --version
 python -m venv $PWD/.venv
