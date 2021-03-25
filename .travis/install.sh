@@ -66,8 +66,7 @@ else
 fi
 
 pip list
-pip3 list
 python --version
-python3 -m virtualenv $PWD/.venv
+python -m venv $PWD/.venv
 source $PWD/.venv/bin/activate
 pip install -U tox
