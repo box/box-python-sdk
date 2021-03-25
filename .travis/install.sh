@@ -66,6 +66,7 @@ else
 fi
 
 pip list
+pip3 list
 python --version
 python -m virtualenv $PWD/.venv
 source $PWD/.venv/bin/activate
