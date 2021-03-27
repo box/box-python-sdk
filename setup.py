@@ -94,7 +94,7 @@ def main():
         'mock>=2.0.0, <4.0.0',
         'pycodestyle',
         'pylint',
-        'sqlalchemy',
+        'sqlalchemy<1.4.0',
         'tox',
         'pytest>=2.8.3, <4.0.0',
         'pytest-cov',
