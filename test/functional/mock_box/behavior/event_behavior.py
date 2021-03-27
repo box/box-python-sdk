@@ -77,7 +77,7 @@ class EventBehavior(object):
             'chunk_size': 1,
             'entries': [{
                 'type': 'realtime_server',
-                'url': 'http://localhost:8091/subscribe?channel=cc807c9c4869ffb1c81a&stream_type=all',
+                'url': 'http://localhost:18089/subscribe?channel=cc807c9c4869ffb1c81a&stream_type=all',
                 'ttl': 10,
                 'max_retries': 10,
                 'retry_timeout': 610,
