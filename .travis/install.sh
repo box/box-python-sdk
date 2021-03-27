@@ -65,8 +65,9 @@ else
         pip install -U virtualenv
         pip install --upgrade pip
         python -m venv $PWD/.venv 
-    fi
-    python -m virtualenv $PWD/.venv
+    else
+        python -m virtualenv $PWD/.venv
+    if
 fi
 
 source $PWD/.venv/bin/activate
