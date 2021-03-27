@@ -52,6 +52,7 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
     esac
     pyenv rehash
     python -m pip install -U --user virtualenv
+    python -m virtualenv $PWD/.venv
 else
     # pyenv installation to get specified pypy version (Travis may only have older version(s))
     if [[ "${TOX_ENV}" == "pypy" ]]; then
@@ -64,9 +65,9 @@ else
         
     fi
     pip install -U virtualenv
+    pip install --upgrade pip
+    python -m venv $PWD/.venv
 fi
 
-pip install --upgrade pip
-python -m virtualenv venv $PWD/.venv
 source $PWD/.venv/bin/activate
 pip install -U tox
