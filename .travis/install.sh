@@ -62,11 +62,11 @@ else
         eval "$(pyenv init -)"
         pyenv install "pypy${PYPY_VERSION}"
         pyenv global "pypy${PYPY_VERSION}"
-        
+        pip install -U virtualenv
+        pip install --upgrade pip
+        python -m venv $PWD/.venv 
     fi
-    pip install -U virtualenv
-    pip install --upgrade pip
-    python -m venv $PWD/.venv
+    python -m virtualenv $PWD/.venv
 fi
 
 source $PWD/.venv/bin/activate
