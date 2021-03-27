@@ -67,7 +67,6 @@ else
 fi
 
 pip install --upgrade pip
-pip --version
-python -m venv $PWD/.venv
+python -m virtualenv $PWD/.venv
 source $PWD/.venv/bin/activate
 pip install -U tox
