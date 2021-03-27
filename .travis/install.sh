@@ -67,7 +67,7 @@ else
         python -m venv $PWD/.venv 
     else
         python -m virtualenv $PWD/.venv
-    if
+    fi
 fi
 
 source $PWD/.venv/bin/activate
