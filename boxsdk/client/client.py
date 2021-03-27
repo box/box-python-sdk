@@ -622,7 +622,7 @@ class Client(Cloneable):
         url = self.get_url('groups')
         additional_params = {}
         if name:
-            additional_params['name'] = name
+            additional_params['filter_term'] = name
         return LimitOffsetBasedObjectCollection(
             url=url,
             session=self._session,

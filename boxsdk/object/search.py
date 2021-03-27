@@ -383,3 +383,143 @@ class Search(BaseEndpoint):
             return_full_pages=False,
             use_post=True
         )
+
+    @api_call
+    # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
+    def query_with_shared_links(
+            self,
+            query,
+            limit=None,
+            offset=0,
+            ancestor_folders=None,
+            file_extensions=None,
+            metadata_filters=None,
+            result_type=None,
+            content_types=None,
+            scope=None,
+            created_at_range=None,
+            updated_at_range=None,
+            size_range=None,
+            owner_users=None,
+            trash_content=None,
+            fields=None,
+            sort=None,
+            direction=None,
+            **kwargs
+    ):
+        """
+        Search Box for items matching the given query. May also include items that are only accessible via recently used shared links.
+
+        :param query:
+            The string to search for.
+        :type query:
+            `unicode`
+        :param limit:
+            The maximum number of items to return.
+        :type limit:
+            `int`
+        :param offset:
+            The search result at which to start the response.
+        :type offset:
+            `int`
+        :param ancestor_folders:
+            Folder ids to limit the search to.
+        :type ancestor_folders:
+            `Iterable` of :class:`Folder`
+        :param file_extensions:
+            File extensions to limit the search to.
+        :type file_extensions:
+            `iterable` of `unicode`
+        :param metadata_filters:
+            Filters used for metadata search
+        :type metadata_filters:
+            :class:`MetadataSearchFilters`
+        :param result_type:
+            Which type of result you want. Can be file or folder.
+        :type result_type:
+            `unicode`
+        :param content_types:
+            Which content types to search. Valid types include name, description, file_content, comments, and tags.
+        :type content_types:
+            `Iterable` of `unicode`
+        :param scope:
+            The scope of content to search over
+        :type scope:
+            `unicode` or None
+        :param created_at_range:
+            A tuple of the form (lower_bound, upper_bound) for the creation datetime of items to search.
+        :type created_at_range:
+            (`unicode` or None, `unicode` or None)
+        :param updated_at_range:
+            A tuple of the form (lower_bound, upper_bound) for the update datetime of items to search.
+        :type updated_at_range:
+            (`unicode` or None, `unicode` or None)
+        :param size_range:
+            A tuple of the form (lower_bound, upper_bound) for the size in bytes of items to search.
+        :type size_range:
+            (`int` or None, `int` or None)
+        :param owner_users:
+            Owner users to filter content by; only content belonging to these users will be returned.
+        :type owner_users:
+            `iterable` of :class:`User`
+        :param trash_content:
+            Whether to search trashed or non-trashed content.
+        :type trash_content:
+            `unicode` or None
+        :param fields:
+            Fields to include on the returned items.
+        :type fields:
+            `Iterable` of `unicode`
+        :param sort:
+            What to sort the search results by. Currently `modified_at`
+        :type sort:
+            `unicode` or None
+        :param direction:
+            The direction to display the sorted search results. Can be set to `DESC` for descending or `ASC` for ascending.
+        :type direction:
+            `unicode` or None
+        :return:
+            The collection of items that match the search query.
+        :rtype:
+            `Iterable` of :class:`Item`
+        """
+        url = self.get_url()
+        additional_params = {'query': query, 'include_recent_shared_links': True}
+        if ancestor_folders is not None:
+            additional_params['ancestor_folder_ids'] = ','.join([folder.object_id for folder in ancestor_folders])
+        if file_extensions is not None:
+            additional_params['file_extensions'] = ','.join(file_extensions)
+        if metadata_filters is not None:
+            additional_params['mdfilters'] = json.dumps(metadata_filters.as_list())
+        if content_types is not None:
+            additional_params['content_types'] = ','.join(content_types)
+        if result_type is not None:
+            additional_params['type'] = result_type
+        if scope is not None:
+            additional_params['scope'] = scope
+        if created_at_range is not None:
+            additional_params['created_at_range'] = '{},{}'.format(created_at_range[0] or '', created_at_range[1] or '')
+        if updated_at_range is not None:
+            additional_params['updated_at_range'] = '{},{}'.format(updated_at_range[0] or '', updated_at_range[1] or '')
+        if size_range is not None:
+            additional_params['size_range'] = '{},{}'.format(size_range[0] or '', size_range[1] or '')
+        if owner_users is not None:
+            additional_params['owner_user_ids'] = ','.join([user.object_id for user in owner_users])
+        if trash_content is not None:
+            additional_params['trash_content'] = trash_content
+        if sort is not None:
+            additional_params['sort'] = sort
+        if direction is not None:
+            additional_params['direction'] = direction
+
+        additional_params.update(kwargs)
+
+        return LimitOffsetBasedObjectCollection(
+            self._session,
+            url,
+            limit=limit,
+            offset=offset,
+            fields=fields,
+            additional_params=additional_params,
+            return_full_pages=False,
+        )
