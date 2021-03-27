@@ -61,13 +61,13 @@ else
         eval "$(pyenv init -)"
         pyenv install "pypy${PYPY_VERSION}"
         pyenv global "pypy${PYPY_VERSION}"
+        
     fi
     pip install -U virtualenv
 fi
 
 pip install --upgrade pip
-pip list
-python --version
+pip --version
 python -m venv $PWD/.venv
 source $PWD/.venv/bin/activate
 pip install -U tox
