@@ -31,7 +31,7 @@ matrix:
       dist: xenial
       sudo: true
     - python: pypy
-      env: TOX_ENV=pypy PYPY_VERSION='3.6-7.0.0'
+      env: TOX_ENV=pypy PYPY_VERSION='3.6-7.3.0'
     - python: 3.5
       env: TOX_ENV=coverage
 
