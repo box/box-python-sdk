@@ -84,7 +84,7 @@ Before sending a pull request, rebase against upstream, such as:
 .. code-block:: console
 
     git fetch upstream
-    git rebase upstream/master
+    git rebase upstream/main
 
 This will add your changes on top of what's already in upstream,
 minimizing merge issues.
