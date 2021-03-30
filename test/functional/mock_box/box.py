@@ -48,11 +48,11 @@ class Box(object):
     """
     Fake Box. Sets up 4 webservers - one for auth, one for upload, one for events, and one for the rest of the api.
     """
-    API_PORT = 8086
-    UPLOAD_PORT = 8087
-    OAUTH_API_PORT = 8088
-    EVENT_PORT = 8089
-    OAUTH_AUTHORIZE_PORT = 8090
+    API_PORT = 18086
+    UPLOAD_PORT = 18087
+    OAUTH_API_PORT = 18088
+    EVENT_PORT = 18089
+    OAUTH_AUTHORIZE_PORT = 18090
     RATE_LIMIT_THRESHOLD = 100
     RATE_LIMIT_REQUEST_PER_SECOND = 4
 
