@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: SDK documentation
-    url: https://github.com/box/box-python-sdk/tree/master/docs
+    url: https://github.com/box/box-python-sdk/tree/main/docs
     about: Before creating an issue, I have checked that the SDK documentation doesn't solve my issue.
   - name: API documentation
     url: https://developer.box.com/docs
