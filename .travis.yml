@@ -3,7 +3,7 @@ language: python
 
 branches:
     only:
-        - master
+        - main
         - "1.5"
 
 cache:
