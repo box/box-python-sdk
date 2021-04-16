@@ -164,6 +164,14 @@ boxsdk.object.folder module
    :undoc-members:
    :show-inheritance:
 
+boxsdk.object.folder\_lock module
+---------------------------------
+
+.. automodule:: boxsdk.object.folder_lock
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 boxsdk.object.group module
 --------------------------
 
