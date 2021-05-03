@@ -3,6 +3,13 @@
 Release History
 ---------------
 
+Next Release
+++++++++
+
+**Bug Fixes:**
+
+- Fix bug when thumbnail representations are not found (`#597 <https://github.com/box/box-python-sdk/pull/597>`_)
+
 2.12.0 (2021-04-16)
 ++++++++
 
