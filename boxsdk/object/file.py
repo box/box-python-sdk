@@ -771,7 +771,7 @@ class File(Item):
         Retrieve a thumbnail image for the file.
 
         :param dimensions:
-            The width by height size of this representation in pixels (i.e. '92x92')
+            The width by height size of this representation in pixels (e.g. '92x92')
         :type dimensions:
             `unicode`
         :param extension:
@@ -785,10 +785,12 @@ class File(Item):
         """
         rep_hints = '[{0}?dimensions={1}]'.format(extension, dimensions)
         representation = self.get_representation_info(rep_hints)
-        url = representation[0]['content']['url_template']
-        url = url.replace('{+asset_path}', '')
-        response = self._session.get(url, expect_json_response=False)
-        return response.content
+        if len(representation):
+            url = representation[0]['content']['url_template']
+            url = url.replace('{+asset_path}', '')
+            response = self._session.get(url, expect_json_response=False)
+            return response.content
+        return b''
 
     @api_call
     def copy(self, parent_folder, name=None, file_version=None):
