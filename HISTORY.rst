@@ -3,7 +3,7 @@
 Release History
 ---------------
 
-Next Release
+2.12.1 (2021-06-16)
 ++++++++
 
 **Bug Fixes:**
