@@ -241,7 +241,7 @@ This method returns a `unicode` string containing the shared link URL.
 <!-- sample get_folders_id get_shared_link -->
 ```python
 folder_id = '11111'
-shared_link = client.folder(folder_id).shared_link
+shared_link = client.folder(folder_id).get().shared_link
 url = shared_link['download_url']
 ```
 
