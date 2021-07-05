@@ -64,7 +64,6 @@ else
         pyenv global "pypy${PYPY_VERSION}"
         pip install -U virtualenv
         pip install --upgrade pip
-        python --version
         python -m venv $PWD/.venv 
     else
         python -m virtualenv $PWD/.venv
