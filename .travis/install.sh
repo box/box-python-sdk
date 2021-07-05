@@ -62,9 +62,9 @@ else
         eval "$(pyenv init -)"
         pyenv install "pypy${PYPY_VERSION}"
         pyenv global "pypy${PYPY_VERSION}"
-        pip install virtualenv==20.4.3
+        pip install -U virtualenv
         pip install --upgrade pip
-        python -m venv $PWD/.venv 
+        python -m virtualenv $PWD/.venv 
     else
         python -m virtualenv $PWD/.venv
     fi
