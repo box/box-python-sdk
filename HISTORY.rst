@@ -85,7 +85,7 @@ Release History
 2.4.0 (2019-05-16)
 ++++++++++++++++++
 
-- Added ability to set metadata on a `file <https://github.com/box/box-python-sdk/blob/master/docs/usage/files.md#set-metadata>`_ or a `folder <https://github.com/box/box-python-sdk/blob/master/docs/usage/folders.md#set-metadata>`_
+- Added ability to set metadata on a `file <https://github.com/box/box-python-sdk/blob/main/docs/usage/files.md#set-metadata>`_ or a `folder <https://github.com/box/box-python-sdk/blob/main/docs/usage/folders.md#set-metadata>`_
 
 2.3.2 (2019-03-29)
 ++++++++++++++++++
@@ -100,8 +100,8 @@ Release History
 2.3.0 (2019-03-28)
 ++++++++++++++++++
 
-- Added the ability to set `file description upon upload <https://github.com/box/box-python-sdk/blob/master/docs/usage/files.md#upload-a-file>`_
-- Added support for `basic authenticated proxy and unauthenticated proxy <https://github.com/box/box-python-sdk/blob/master/docs/usage/configuration.md#proxy>`_
+- Added the ability to set `file description upon upload <https://github.com/box/box-python-sdk/blob/main/docs/usage/files.md#upload-a-file>`_
+- Added support for `basic authenticated proxy and unauthenticated proxy <https://github.com/box/box-python-sdk/blob/main/docs/usage/configuration.md#proxy>`_
 
 2.2.2 (2019-03-14)
 ++++++++++++++++++
@@ -116,18 +116,18 @@ Release History
 2.2.0 (2019-02-14)
 ++++++++++++++++++
 
-- Added abilty for user to `retrieve an avatar <https://github.com/box/box-python-sdk/blob/master/docs/usage/user.md#get-the-avatar-for-a-user>`_
+- Added abilty for user to `retrieve an avatar <https://github.com/box/box-python-sdk/blob/main/docs/usage/user.md#get-the-avatar-for-a-user>`_
   for a user.
 - Changed retry strategy to use exponential backoff with randomized jitter.
 
 2.1.0 (2019-02-07)
 ++++++++++++++++++
 
-- Added ability for user to `chunk upload files <https://github.com/box/box-python-sdk/blob/master/docs/usage/files.md#chunked-upload>`_
+- Added ability for user to `chunk upload files <https://github.com/box/box-python-sdk/blob/main/docs/usage/files.md#chunked-upload>`_
   and resume uploads for interrupted uploads.
-- Added ability to `verify webhook message <https://github.com/box/box-python-sdk/blob/master/docs/usage/webhook.md#validate-webhook-message>`_.
-- Added ability for user to add metadata classification to `files <https://github.com/box/box-python-sdk/blob/master/docs/usage/files.md#set-a-classification>`_ 
-  and `folders <https://github.com/box/box-python-sdk/blob/master/docs/usage/folders.md#set-a-classification>`_.
+- Added ability to `verify webhook message <https://github.com/box/box-python-sdk/blob/main/docs/usage/webhook.md#validate-webhook-message>`_.
+- Added ability for user to add metadata classification to `files <https://github.com/box/box-python-sdk/blob/main/docs/usage/files.md#set-a-classification>`_ 
+  and `folders <https://github.com/box/box-python-sdk/blob/main/docs/usage/folders.md#set-a-classification>`_.
 - Bugfix where calling  ``.response_object()`` method on an API object could throw.
 
 2.0.0

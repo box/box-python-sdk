@@ -11,7 +11,7 @@ def serializer_factory(cls):
 
     class BoxObjectSerializer(json.JSONEncoder):
         # pylint:disable=method-hidden
-        _blacklist = ['metadata', 'files', 'folders']
+        _denylist = ['metadata', 'files', 'folders']
         _cls = cls
 
         def default(self, o):
@@ -21,7 +21,7 @@ def serializer_factory(cls):
                 if DbModel not in self._cls.__bases__:
                     self._cls = o.__class__
                 fields = {}
-                for field in (x for x in dir(o) if not x.startswith('_') and x not in self._blacklist):
+                for field in (x for x in dir(o) if not x.startswith('_') and x not in self._denylist):
                     data = o.__getattribute__(field)
                     if isinstance(o, self._cls):
                         fields[field] = data

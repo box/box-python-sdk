@@ -157,14 +157,14 @@ class Translator(ChainMap):
 
         if not isinstance(response_object, dict):
             return response_object
-
+ 
         translated_obj = {}
         object_type = response_object.get('type', None)
         object_class = self.get(object_type) if object_type is not None else None
-        # Parent classes have the ability to "blacklist" fields that they do not want translated
-        blacklisted_fields = object_class.untranslated_fields() if object_class is not None else ()
+        # Parent classes have the ability to "denylist" fields that they do not want translated
+        denylisted_fields = object_class.untranslated_fields() if object_class is not None else ()
         for key in response_object:
-            if key in blacklisted_fields:
+            if key in denylisted_fields:
                 translated_obj[key] = response_object[key]
                 continue
             if isinstance(response_object[key], dict):

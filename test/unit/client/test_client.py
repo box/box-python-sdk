@@ -23,6 +23,7 @@ from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
+from boxsdk.object.collaboration_allowlist import CollaborationAllowlist
 from boxsdk.object.email_alias import EmailAlias
 from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
@@ -566,6 +567,10 @@ def test_collaboration_whitelist_initializer(mock_client):
     collaboration_whitelist = mock_client.collaboration_whitelist()
     assert isinstance(collaboration_whitelist, CollaborationWhitelist)
 
+def test_collaboration_allowlist_initializer(mock_client):
+    collaboration_allowlist = mock_client.collaboration_allowlist()
+    assert isinstance(collaboration_allowlist, CollaborationAllowlist)
+
 
 def test_get_groups_return_the_correct_group_objects(
         mock_client,
@@ -1081,10 +1086,10 @@ def check_downscope_token_request(
         make_mock_box_request,
 ):
     def do_check(scopes, item_class, additional_data, shared_link, expected_data):
-        dummy_downscoped_token = 'dummy_downscoped_token'
-        dummy_expires_in = 1234
+        temp_downscoped_token = 'temp_downscoped_token'
+        temp_expires_in = 1234
         mock_box_response, _ = make_mock_box_request(
-            response={'access_token': dummy_downscoped_token, 'expires_in': dummy_expires_in},
+            response={'access_token': temp_downscoped_token, 'expires_in': temp_expires_in},
         )
         mock_box_session.post.return_value = mock_box_response
 
@@ -1092,8 +1097,8 @@ def check_downscope_token_request(
 
         downscoped_token_response = mock_client.downscope_token(scopes, item, additional_data, shared_link)
 
-        assert downscoped_token_response.access_token == dummy_downscoped_token
-        assert downscoped_token_response.expires_in == dummy_expires_in
+        assert downscoped_token_response.access_token == temp_downscoped_token
+        assert downscoped_token_response.expires_in == temp_expires_in
 
         if item:
             expected_data['resource'] = item.get_url()

@@ -1,4 +1,4 @@
-.. boxsdk documentation master file, created by
+.. boxsdk documentation main file, created by
    sphinx-quickstart on Tue Dec 16 01:10:30 2014.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -59,7 +59,7 @@ grant it access to their Box account. The ``auth`` module contains several class
 
 The simplest class is the ``OAuth2`` class. To use it, instantiate it with your ``client_id`` and ``client_secret``.
 
-Follow the `tutorial on GitHub <https://github.com/box/box-python-sdk/blob/master/README.rst#id2>`_ for
+Follow the `tutorial on GitHub <https://github.com/box/box-python-sdk/blob/main/README.rst#id2>`_ for
 instructions on how to get an authorized client for a user. Using the ``store_tokens`` callback, you may persist
 the user's auth and refresh tokens for the next time they use your app. Once they return to your app, you can
 create an authorized client like so:
