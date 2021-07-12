@@ -785,7 +785,7 @@ class File(Item):
         """
         rep_hints = '[{0}?dimensions={1}]'.format(extension, dimensions)
         representation = self.get_representation_info(rep_hints)
-        if len(representation):
+        if representation:
             url = representation[0]['content']['url_template']
             url = url.replace('{+asset_path}', '')
             response = self._session.get(url, expect_json_response=False)
