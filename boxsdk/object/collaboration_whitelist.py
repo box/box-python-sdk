@@ -18,6 +18,7 @@ class WhitelistDirection(TextEnum):
     OUTBOUNT = 'outbound'
     BOTH = 'both'
 
+
 class CollaborationWhitelist(BaseEndpoint):
     """Represents the whitelist of email domains that users in an enterprise may collaborate with."""
 
