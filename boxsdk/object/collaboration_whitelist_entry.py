@@ -1,7 +1,7 @@
 # coding: utf-8
 from __future__ import unicode_literals, absolute_import
-from boxsdk.util.deprecation_decorator import deprecated
 from .base_object import BaseObject
+
 
 class CollaborationWhitelistEntry(BaseObject):
     """Represents a whitelisted email domain for enterprise collaboration."""

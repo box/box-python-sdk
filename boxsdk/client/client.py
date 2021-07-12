@@ -17,6 +17,7 @@ from ..pagination.marker_based_object_collection import MarkerBasedObjectCollect
 from ..util.shared_link import get_shared_link_header
 from ..util.deprecation_decorator import deprecated
 
+
 class Client(Cloneable):
     unauthorized_session_class = Session
     authorized_session_class = AuthorizedSession

@@ -2,6 +2,7 @@
 from __future__ import unicode_literals, absolute_import
 from .collaboration_whitelist_entry import CollaborationWhitelistEntry
 
+
 class CollaborationAllowlistEntry(CollaborationWhitelistEntry):
     """Represents a allowlisted email domain for enterprise collaboration."""
 
