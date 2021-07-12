@@ -567,6 +567,7 @@ def test_collaboration_whitelist_initializer(mock_client):
     collaboration_whitelist = mock_client.collaboration_whitelist()
     assert isinstance(collaboration_whitelist, CollaborationWhitelist)
 
+
 def test_collaboration_allowlist_initializer(mock_client):
     collaboration_allowlist = mock_client.collaboration_allowlist()
     assert isinstance(collaboration_allowlist, CollaborationAllowlist)
