@@ -157,7 +157,7 @@ class Translator(ChainMap):
 
         if not isinstance(response_object, dict):
             return response_object
- 
+
         translated_obj = {}
         object_type = response_object.get('type', None)
         object_class = self.get(object_type) if object_type is not None else None
