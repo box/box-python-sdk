@@ -706,7 +706,7 @@ This method returns a `unicode` string containing the shared link URL.
 <!-- sample get_files_id get_shared_link -->
 ```python
 file_id = '11111'
-shared_link = client.file(file_id).shared_link
+shared_link = client.file(file_id).get().shared_link
 url = shared_link['download_url']
 ```
 

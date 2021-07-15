@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 
 import json
 
+from mock import ANY
+
 import pytest
 
 from boxsdk.config import API
@@ -375,7 +377,9 @@ def test_metadata_query(
     )
     item1 = items.next()
     item2 = items.next()
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=expected_headers)
+    mock_box_session.post.assert_called_once_with(expected_url, data=ANY, headers=expected_headers)
+    assert dict(json.loads(mock_box_session.post.call_args[1]['data'])) == expected_data
+    assert mock_box_session.post.call_args[1]['headers'] == expected_headers
     assert item1['type'] == 'file'
     assert item1['metadata']['enterprise_67890']['catalogImages']['$parent'] == 'file_50347290'
     assert item2['type'] == 'folder'
