@@ -49,6 +49,21 @@ email_of_invitee = 'testuser@example.com'
 collaboration = client.folder(folder_id='22222').collaborate_with_login(email_of_invitee, CollaborationRole.VIEWER)
 ```
 
+Or, you can invite a group using the group id
+
+<!-- sample post_collaborations group-->
+```python
+from boxsdk.object.collaboration import CollaborationRole
+
+group = client.group(group_id='11111')
+collaboration = client.folder(folder_id='22222').collaborate(group, CollaborationRole.VIEWER)
+
+collaborator = collaboration.accessible_by
+item = collaboration.item
+has_accepted = 'has' if collaboration.status == 'accepted' else 'has not'
+print('{0} {1} accepted the collaboration to folder "{2}"'.format(collaborator.name, has_accepted, item.name))
+```
+
 > __Note:__ The `can_view_path` parameter is currently only available for collaborations on folders.
 
 [collaborate]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.collaborate
