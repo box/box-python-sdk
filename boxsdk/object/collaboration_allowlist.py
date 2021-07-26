@@ -7,26 +7,24 @@ from .base_endpoint import BaseEndpoint
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.api_call_decorator import api_call
 from ..util.text_enum import TextEnum
-from ..util.deprecation_decorator import deprecated
 
 
-class WhitelistDirection(TextEnum):
+class AllowlistDirection(TextEnum):
     """
-    Used to determine the direction of the whitelist.
+    Used to determine the direction of the allowlist.
     """
     INBOUND = 'inbound'
     OUTBOUNT = 'outbound'
     BOTH = 'both'
 
 
-class CollaborationWhitelist(BaseEndpoint):
-    """Represents the whitelist of email domains that users in an enterprise may collaborate with."""
+class CollaborationAllowlist(BaseEndpoint):
+    """Represents the allowlist of email domains that users in an enterprise may collaborate with."""
 
     @api_call
-    @deprecated('Use CollaborationAllowlist.get_entries instead')
     def get_entries(self, limit=None, marker=None, fields=None):
         """
-        Get the entries in the collaboration whitelist using limit-offset paging.
+        Get the entries in the collaboration allowlist using limit-offset paging.
 
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
@@ -41,7 +39,7 @@ class CollaborationWhitelist(BaseEndpoint):
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            An iterator of the entries in the whitelist.
+            An iterator of the entries in the allowlist.
         :rtype:
             :class:`BoxObjectCollection`
         """
@@ -55,13 +53,12 @@ class CollaborationWhitelist(BaseEndpoint):
         )
 
     @api_call
-    @deprecated('Use CollaborationAllowlist.get_entries instead')
     def add_domain(self, domain, direction):
         """
-        Add a new domain to the collaboration whitelist.
+        Add a new domain to the collaboration allowlist.
 
         :param domain:
-            The email domain to add to the whitelist.
+            The email domain to add to the allowlist.
         :type domain:
             `unicode`
         :param direction:
@@ -69,9 +66,9 @@ class CollaborationWhitelist(BaseEndpoint):
         :type direction:
             `unicode`
         :returns:
-            The created whitelist entry for the domain.
+            The created allowlist entry for the domain.
         :rtype:
-            :class:`CollaborationWhitelistEntry`
+            :class:`CollaborationAllowlistEntry`
         """
         url = self.get_url('collaboration_whitelist_entries')
         data = {
@@ -85,10 +82,9 @@ class CollaborationWhitelist(BaseEndpoint):
         )
 
     @api_call
-    @deprecated('Use CollaborationAllowlist.get_exemptions instead')
     def get_exemptions(self, limit=None, marker=None, fields=None):
         """
-        Get the list of exempted users who are not subject to the collaboration whitelist rules.
+        Get the list of exempted users who are not subject to the collaboration allowlist rules.
 
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
@@ -103,7 +99,7 @@ class CollaborationWhitelist(BaseEndpoint):
         :type fields:
             `Iterable` of `unicode`
         :returns:
-            An iterator of the exemptions to the whitelist.
+            An iterator of the exemptions to the allowlist.
         :rtype:
             :class:`BoxObjectCollection`
         """
@@ -117,19 +113,18 @@ class CollaborationWhitelist(BaseEndpoint):
         )
 
     @api_call
-    @deprecated('Use CollaborationAllowlist.add_exemption instead')
     def add_exemption(self, user):
         """
-        Exempt a user from the collaboration whitelist.
+        Exempt a user from the collaboration allowlist.
 
         :param user:
-            The user to exempt from the whitelist.
+            The user to exempt from the allowlist.
         :type user:
             :class:`User`
         :returns:
-            The created whitelist exemption.
+            The created allowlist exemption.
         :rtype:
-            :class:`CollaborationWhitelistExemptTarget`
+            :class:`CollaborationAllowlistExemptTarget`
         """
         url = self.get_url('collaboration_whitelist_exempt_targets')
         data = {

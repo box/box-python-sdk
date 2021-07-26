@@ -10,10 +10,12 @@ from ..util.api_call_decorator import api_call
 from ..object.search import Search
 from ..object.events import Events
 from ..object.collaboration_whitelist import CollaborationWhitelist
+from ..object.collaboration_allowlist import CollaborationAllowlist
 from ..object.trash import Trash
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.shared_link import get_shared_link_header
+from ..util.deprecation_decorator import deprecated
 
 
 class Client(Cloneable):
@@ -227,6 +229,7 @@ class Client(Cloneable):
         """
         return self.translator.get('collaboration')(session=self._session, object_id=collab_id)
 
+    @deprecated('Use collaboration_allowlist instead')
     def collaboration_whitelist(self):
         """
         Initilializes a :class:`CollaborationWhitelist` object.
@@ -238,6 +241,7 @@ class Client(Cloneable):
         """
         return CollaborationWhitelist(self._session)
 
+    @deprecated('Use collaboration_allowlist_entry instead')
     def collaboration_whitelist_entry(self, entry_id):
         """
         Initialize a :class:`CollaborationWhitelistEntry` object, whose box id is entry_id.
@@ -253,6 +257,7 @@ class Client(Cloneable):
         """
         return self.translator.get('collaboration_whitelist_entry')(session=self._session, object_id=entry_id)
 
+    @deprecated('Use collaboration_allowlist_exempt_target instead')
     def collaboration_whitelist_exempt_target(self, exemption_id):
         """
         Initialize a :class:`CollaborationWhitelistExemptTarget` object, whose box id is target_id.
@@ -265,6 +270,50 @@ class Client(Cloneable):
             A :class:`CollaborationWhitelistExemptTarget` object with the given target id.
         :rtype:
             :class:`CollaborationWhitelistExemptTarget`
+        """
+        return self.translator.get('collaboration_whitelist_exempt_target')(
+            session=self._session,
+            object_id=exemption_id
+        )
+
+    def collaboration_allowlist(self):
+        """
+        Initilializes a :class:`CollaborationAllowlist` object.
+
+        :return:
+            A :class:`CollaborationAllowlist` object.
+        :rype:
+            :class:`CollaborationAllowlist`.
+        """
+        return CollaborationAllowlist(self._session)
+
+    def collaboration_allowlist_entry(self, entry_id):
+        """
+        Initialize a :class:`CollaborationAllowlistEntry` object, whose box id is entry_id.
+
+        :param entry_id:
+            The box id of the :class:`CollaborationAllowlistEntry` object.
+        :type entry_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationAllowlistEntry` object with the given entry id.
+        :rtype:
+            :class:`CollaborationAllowlistEntry`
+        """
+        return self.translator.get('collaboration_whitelist_entry')(session=self._session, object_id=entry_id)
+
+    def collaboration_allowlist_exempt_target(self, exemption_id):
+        """
+        Initialize a :class:`CollaborationAllowlistExemptTarget` object, whose box id is target_id.
+
+        :param exemption_id:
+            The box id of the :class:`CollaborationAllowlistExemptTarget` object.
+        :type exemption_id:
+            `unicode`
+        :return:
+            A :class:`CollaborationAllowlistExemptTarget` object with the given target id.
+        :rtype:
+            :class:`CollaborationAllowlistExemptTarget`
         """
         return self.translator.get('collaboration_whitelist_exempt_target')(
             session=self._session,
