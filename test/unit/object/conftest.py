@@ -105,6 +105,21 @@ def test_comment(mock_box_session, mock_object_id):
 
 
 @pytest.fixture()
+def test_collaboration_whitelist(mock_box_session):
+    return CollaborationWhitelist(mock_box_session)
+
+
+@pytest.fixture()
+def test_collaboration_whitelist_entry(mock_box_session, mock_object_id):
+    return CollaborationWhitelistEntry(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_collaboration_whitelist_exemption(mock_box_session, mock_object_id):
+    return CollaborationWhitelistExemptTarget(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
 def test_collaboration_allowlist(mock_box_session):
     return CollaborationAllowlist(mock_box_session)
 
