@@ -4,7 +4,7 @@ Box Python SDK
 .. image:: http://opensource.box.com/badges/active.svg
     :target: http://opensource.box.com/badges
 
-.. image:: https://travis-ci.org/box/box-python-sdk.png?branch=master
+.. image:: https://travis-ci.org/box/box-python-sdk.png?branch=main
     :target: https://travis-ci.org/box/box-python-sdk
 
 .. image:: https://readthedocs.org/projects/box-python-sdk/badge/?version=latest
@@ -17,8 +17,8 @@ Box Python SDK
 .. image:: https://img.shields.io/pypi/dm/boxsdk.svg
     :target: https://pypi.python.org/pypi/boxsdk
 
-.. image:: https://coveralls.io/repos/github/box/box-python-sdk/badge.svg?branch=master
-    :target: https://coveralls.io/github/box/box-python-sdk?branch=master
+.. image:: https://coveralls.io/repos/github/box/box-python-sdk/badge.svg?branch=main
+    :target: https://coveralls.io/github/box/box-python-sdk?branch=main
 
 
 .. contents::
@@ -38,7 +38,7 @@ The current version of the SDK is v2.x — if you're looking for the code or doc
 the 2.x branch; you should consider upgrading from 1.5.x at your earliest convenience.  See the changelog_ for a list
 of breaking changes and added features between the major versions.
 
-.. _changelog: https://github.com/box/box-python-sdk/blob/master/HISTORY.rst#200
+.. _changelog: https://github.com/box/box-python-sdk/blob/main/HISTORY.rst#200
 
 
 Getting Started
@@ -270,7 +270,7 @@ Usage Documentation
 Full documentation of the available functionality with example code is available in the `SDK documentation pages`_, and
 there is also method-level documentation available on ReadTheDocs_.
 
-.. _SDK documentation pages: https://github.com/box/box-python-sdk/blob/master/docs/usage
+.. _SDK documentation pages: https://github.com/box/box-python-sdk/blob/main/docs/usage
 .. _ReadTheDocs: https://box-python-sdk.readthedocs.io/en/stable/index.html
 
 Making API Calls Manually
@@ -383,7 +383,7 @@ and ``Translator`` to see how the SDK performs dynamic lookups to determine retu
 Contributing
 ------------
 
-See `CONTRIBUTING.rst <https://github.com/box/box-python-sdk/blob/master/CONTRIBUTING.rst>`_.
+See `CONTRIBUTING.rst <https://github.com/box/box-python-sdk/blob/main/CONTRIBUTING.rst>`_.
 
 
 Developer Setup

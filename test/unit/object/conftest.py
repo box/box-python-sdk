@@ -30,6 +30,9 @@ from boxsdk.object.terms_of_service_user_status import TermsOfServiceUserStatus
 from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
 from boxsdk.object.collaboration_whitelist_entry import CollaborationWhitelistEntry
 from boxsdk.object.collaboration_whitelist_exempt_target import CollaborationWhitelistExemptTarget
+from boxsdk.object.collaboration_allowlist import CollaborationAllowlist
+from boxsdk.object.collaboration_allowlist_entry import CollaborationAllowlistEntry
+from boxsdk.object.collaboration_allowlist_exempt_target import CollaborationAllowlistExemptTarget
 from boxsdk.object.webhook import Webhook
 from boxsdk.object.task import Task
 from boxsdk.object.task_assignment import TaskAssignment
@@ -114,6 +117,21 @@ def test_collaboration_whitelist_entry(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_collaboration_whitelist_exemption(mock_box_session, mock_object_id):
     return CollaborationWhitelistExemptTarget(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_collaboration_allowlist(mock_box_session):
+    return CollaborationAllowlist(mock_box_session)
+
+
+@pytest.fixture()
+def test_collaboration_allowlist_entry(mock_box_session, mock_object_id):
+    return CollaborationAllowlistEntry(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_collaboration_allowlist_exemption(mock_box_session, mock_object_id):
+    return CollaborationAllowlistExemptTarget(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()

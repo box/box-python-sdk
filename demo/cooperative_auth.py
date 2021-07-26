@@ -20,7 +20,7 @@ def main():
     tokens = manager.Namespace()
     refresh_lock = manager.Lock()
 
-    # Authenticate in master process
+    # Authenticate in main process
     oauth2, tokens.access, tokens.refresh = authenticate(CooperativelyManagedOAuth2)
 
     # Create 2 worker processes and wait on them to finish
@@ -49,7 +49,7 @@ def worker():
     # Create a coop oauth2 instance.
     # Tokens will be retrieved from and stored to the multiprocessing Namespace.
     # A multiprocessing Lock will be used to synchronize token refresh.
-    # The tokens from the master process are used for initial auth.
+    # The tokens from the main process are used for initial auth.
     # Whichever process needs to refresh
     oauth2 = CooperativelyManagedOAuth2(
         retrieve_tokens=_retrive_tokens,

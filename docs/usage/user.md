@@ -69,7 +69,7 @@ This method returns a new [`User`][user_class] object.
 
 <!-- sample post_users -->
 ```python
-new_user = client.create_user('Dummy User', 'user@example.com')
+new_user = client.create_user('Temp User', 'user@example.com')
 ```
 
 [create_user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_user

@@ -52,9 +52,33 @@ boxsdk.object.collaboration module
    :undoc-members:
    :show-inheritance:
 
-boxsdk.object.collaboration\_whitelist module
+boxsdk.object.collaboration\_allowlist module
 ---------------------------------------------
 
+.. automodule:: boxsdk.object.collaboration_allowlist
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+boxsdk.object.collaboration\_allowlist\_entry module
+----------------------------------------------------
+
+.. automodule:: boxsdk.object.collaboration_allowlist_entry
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+boxsdk.object.collaboration\_allowlist\_exempt\_target module
+-------------------------------------------------------------
+
+.. automodule:: boxsdk.object.collaboration_allowlist_exempt_target
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+boxsdk.object.collaboration\_whitelist module
+---------------------------------------------
+.. deprecated:: 2.12.1
 .. automodule:: boxsdk.object.collaboration_whitelist
    :members:
    :undoc-members:
@@ -62,7 +86,7 @@ boxsdk.object.collaboration\_whitelist module
 
 boxsdk.object.collaboration\_whitelist\_entry module
 ----------------------------------------------------
-
+.. deprecated:: 2.12.1
 .. automodule:: boxsdk.object.collaboration_whitelist_entry
    :members:
    :undoc-members:
@@ -70,7 +94,7 @@ boxsdk.object.collaboration\_whitelist\_entry module
 
 boxsdk.object.collaboration\_whitelist\_exempt\_target module
 -------------------------------------------------------------
-
+.. deprecated:: 2.12.1
 .. automodule:: boxsdk.object.collaboration_whitelist_exempt_target
    :members:
    :undoc-members:
