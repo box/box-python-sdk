@@ -20,6 +20,9 @@ Box Python SDK
 .. image:: https://coveralls.io/repos/github/box/box-python-sdk/badge.svg?branch=main
     :target: https://coveralls.io/github/box/box-python-sdk?branch=main
 
+|
+| Getting Started Docs: https://developer.box.com/guides/tooling/sdks/python/
+|
 
 .. contents::
     :depth: 2
