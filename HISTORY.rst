@@ -10,6 +10,8 @@ Next release
 
 - Sensitive language replacement (`#609 <https://github.com/box/box-python-sdk/pull/609>`_)
 
+**Bug Fixes:**
+
 2.12.1 (2021-06-16)
 ++++++++
 
