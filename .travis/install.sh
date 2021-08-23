@@ -65,6 +65,7 @@ else
         pyenv versions
         python --version
         pyenv global "pypy${PYPY_VERSION}"
+        pyenv versions
         python --version
         pip install -U virtualenv
         pip install --upgrade pip
