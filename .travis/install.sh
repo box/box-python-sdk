@@ -74,4 +74,3 @@ fi
 
 source $PWD/.venv/bin/activate
 pip install -U tox
-python --version
