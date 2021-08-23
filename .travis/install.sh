@@ -17,7 +17,6 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
 
     if which -s pyenv; then
         rm -r -f $HOME/.pyenv
-        eval "$(pyenv init -)"
         eval "$(pyenv init --path)"
     fi
 
@@ -60,7 +59,6 @@ else
         git clone https://github.com/yyuu/pyenv.git $PWD/.pyenv
         export PYENV_ROOT="$PWD/.pyenv"
         export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init -)"
         eval "$(pyenv init --path)"
         pyenv install "pypy${PYPY_VERSION}"
         pyenv global "pypy${PYPY_VERSION}"
