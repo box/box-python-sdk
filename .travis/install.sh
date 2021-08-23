@@ -60,8 +60,12 @@ else
         export PYENV_ROOT="$PWD/.pyenv"
         export PATH="$PYENV_ROOT/bin:$PATH"
         eval "$(pyenv init -)"
+        pyenv versions
         pyenv install "pypy${PYPY_VERSION}"
+        pyenv versions
+        python --version
         pyenv global "pypy${PYPY_VERSION}"
+        python --version
         pip install -U virtualenv
         pip install --upgrade pip
         python -m venv $PWD/.venv 
