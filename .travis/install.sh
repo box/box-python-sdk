@@ -60,6 +60,7 @@ else
         export PYENV_ROOT="$PWD/.pyenv"
         export PATH="$PYENV_ROOT/bin:$PATH"
         eval "$(pyenv init -)"
+        eval "$(pyenv init --path)"
         pyenv versions
         pyenv install "pypy${PYPY_VERSION}"
         pyenv versions
