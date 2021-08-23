@@ -18,6 +18,7 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
     if which -s pyenv; then
         rm -r -f $HOME/.pyenv
         eval "$(pyenv init -)"
+        eval "$(pyenv init --path)"
     fi
 
     case "${TOX_ENV}" in
@@ -61,13 +62,8 @@ else
         export PATH="$PYENV_ROOT/bin:$PATH"
         eval "$(pyenv init -)"
         eval "$(pyenv init --path)"
-        pyenv versions
         pyenv install "pypy${PYPY_VERSION}"
-        pyenv versions
-        python --version
         pyenv global "pypy${PYPY_VERSION}"
-        pyenv versions
-        python --version
         pip install -U virtualenv
         pip install --upgrade pip
         python -m venv $PWD/.venv 
@@ -78,3 +74,4 @@ fi
 
 source $PWD/.venv/bin/activate
 pip install -U tox
+python --version
