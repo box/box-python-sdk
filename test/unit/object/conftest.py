@@ -23,6 +23,7 @@ from boxsdk.object.user import User
 from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 from boxsdk.object.search import Search
+from boxsdk.object.sign_request import SignRequest
 from boxsdk.object.storage_policy import StoragePolicy
 from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.object.terms_of_service import TermsOfService
@@ -398,3 +399,7 @@ def test_metadata_template(mock_box_session):
 @pytest.fixture()
 def test_folder_lock(mock_box_session, mock_object_id):
     return FolderLock(mock_box_session, mock_object_id)
+
+@pytest.fixture()
+def test_sign_request(mock_box_session, mock_object_id):
+    return SignRequest(mock_box_session, mock_object_id)

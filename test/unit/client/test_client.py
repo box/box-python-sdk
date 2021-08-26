@@ -50,6 +50,7 @@ from boxsdk.object.legal_hold import LegalHold
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
 from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
 from boxsdk.object.metadata_cascade_policy import MetadataCascadePolicy
+from boxsdk.object.sign_request import SignRequest
 from boxsdk.object.task import Task
 from boxsdk.object.task_assignment import TaskAssignment
 from boxsdk.object.webhook import Webhook
@@ -1542,3 +1543,171 @@ def test_download_zip(mock_client, mock_box_session, mock_content_response):
     assert mock_writeable_stream.read() == mock_content_response.content
     assert status_returned['total_file_count'] == 20
     assert status_returned['name_conflicts'][0][0]['id'] == '100'
+
+@pytest.fixture(scope='module')
+def mock_sign_request_response():
+    # pylint:disable=redefined-outer-name
+    mock_sign_request = {
+                'id': '12345',
+                'type': 'sign-request',
+                'are_reminders_enabled': 'true',
+                'are_text_signatures_enabled': 'true',
+                'auto_expire_at': '2021-04-26T08:12:13.982Z',
+                'days_valid': '2',
+                'email_message': 'Hello! Please sign the document below',
+                'email_subject': 'Sign Request from Acme',
+                'external_id': '123',
+                'is_document_preparation_needed': 'true',
+                'parent_folder': {
+                    'id': '12345',
+                    'type': 'folder',
+                    'etag': '1',
+                    'name': 'Contracts',
+                    'sequence_id': '3'
+                },
+                'prefill_tags': [
+                    {
+                    'document_tag_id': '1234',
+                    'text_value': 'text',
+                    'checkbox_value': 'true',
+                    'date_value': '2021-04-26T08:12:13.982Z'
+                    }
+                ],
+                'prepare_url': 'https://prepareurl.com',
+                'sign_files': {
+                    'files': [
+                    {
+                        'id': '12345',
+                        'etag': '1',
+                        'type': 'file',
+                        'sequence_id': '3',
+                        'name': 'Contract.pdf',
+                        'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37',
+                        'file_version': {
+                            'id': '12345',
+                            'type': 'file_version',
+                            'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
+                        }
+                    }
+                    ],
+                    'is_ready_for_download': 'true'
+                },
+                'signers': [
+                    {
+                    'email': 'example@gmail.com',
+                    'role': 'signer',
+                    'is_in_person': 'true',
+                    'order': '2',
+                    'embed_url_external_user_id': '1234',
+                    'has_viewed_document': 'true',
+                    'signer_decision': {
+                        'type': 'signed',
+                        'finalized_at': '2021-04-26T08:12:13.982Z'
+                    },
+                    'inputs': [
+                        {
+                        'document_tag_id': '1234',
+                        'text_value': 'text',
+                        'checkbox_value': 'true',
+                        'date_value': '2021-04-26T08:12:13.982Z',
+                        'type': 'text',
+                        'page_index': '4'
+                        }
+                    ],
+                    'embed_url': 'https://example.com'
+                    }
+                ],
+                'signing_log': {
+                    'id': '12345',
+                    'type': 'file',
+                    'etag': '1',
+                    'file_version': {
+                        'id': '12345',
+                        'type': 'file_version',
+                        'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
+                    },
+                    'name': 'Contract.pdf',
+                    'sequence_id': '3',
+                    'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37'
+                },
+                'source_files': [
+                    {
+                    'id': '12345',
+                    'etag': '1',
+                    'type': 'file',
+                    'sequence_id': '3',
+                    'name': 'Contract.pdf',
+                    'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37',
+                    'file_version': {
+                        'id': '12345',
+                        'type': 'file_version',
+                        'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
+                    }
+                    }
+                ],
+                'status': 'converting'
+    }
+    return mock_sign_request
+
+def test_get_sign_requests(mock_client, mock_box_session, mock_sign_request_response):
+    expected_url = '{0}/sign_requests'.format(API.BASE_API_URL)
+
+    mock_sign_request = mock_sign_request_response
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 1,
+        'limit': 100,
+        'entries': [mock_sign_request],
+        'next_marker': None,
+        'previous_marker': None,
+    }
+
+    sign_requests = mock_client.get_sign_requests()
+    sign_request = sign_requests.next()
+
+    mock_box_session.get.assert_called_once_with(expected_url, params={})
+    assert isinstance(sign_request, SignRequest)
+    assert sign_request.id == mock_sign_request['id']
+    assert sign_request.status == mock_sign_request['status']
+
+def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_response):
+    expected_url = "{0}/sign_requests".format(API.BASE_API_URL)
+
+    file = {
+        'id': '12345',
+        'type': 'file'
+    }
+    files = [file]
+
+    signer = {
+        'email': 'example@gmail.com'
+    }
+    signers = [signer]
+    parent_folder_id = '12345'
+
+    data = json.dumps({
+        'source_files': [
+          {
+            'id': file['id'],
+            'type': file['type']
+          }
+       ],
+       'signers': [
+          {
+            'email': signer['email']
+          }
+        ],
+       'parent_folder':
+          {
+            'id': parent_folder_id,
+            'type': 'folder'
+          }
+    })
+    mock_box_session.post.return_value.json.return_value = mock_sign_request_response
+
+    new_sign_request = mock_client.create_sign_request(files, signers, parent_folder_id)
+
+    mock_box_session.post.assert_called_once_with(expected_url, data=data)
+    assert isinstance(new_sign_request, SignRequest)
+    assert new_sign_request['source_files'][0]['id'] == file['id']
+    assert new_sign_request['signers'][0]['email'] == signer['email']
+    assert new_sign_request['parent_folder']['id'] == parent_folder_id
