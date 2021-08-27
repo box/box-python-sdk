@@ -12,8 +12,8 @@ from boxsdk.object.sign_request import SignRequest
 def mock_sign_request_response():
     # pylint:disable=redefined-outer-name
     mock_sign_request = {
-                'id': '42',
-                'type': 'sign-request',
+        'id': '42',
+        'type': 'sign-request',
                 'are_reminders_enabled': 'true',
                 'are_text_signatures_enabled': 'true',
                 'auto_expire_at': '2021-04-26T08:12:13.982Z',
@@ -29,17 +29,72 @@ def mock_sign_request_response():
                     'name': 'Contracts',
                     'sequence_id': '3'
                 },
-                'prefill_tags': [
+        'prefill_tags': [
                     {
-                    'document_tag_id': '1234',
-                    'text_value': 'text',
-                    'checkbox_value': 'true',
-                    'date_value': '2021-04-26T08:12:13.982Z'
+                        'document_tag_id': '1234',
+                        'text_value': 'text',
+                        'checkbox_value': 'true',
+                        'date_value': '2021-04-26T08:12:13.982Z'
                     }
                 ],
-                'prepare_url': 'https://prepareurl.com',
-                'sign_files': {
+        'prepare_url': 'https://prepareurl.com',
+        'sign_files': {
                     'files': [
+                        {
+                            'id': '12345',
+                            'etag': '1',
+                            'type': 'file',
+                            'sequence_id': '3',
+                            'name': 'Contract.pdf',
+                            'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37',
+                            'file_version': {
+                                'id': '12345',
+                                'type': 'file_version',
+                                'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
+                            }
+                        }
+                    ],
+                    'is_ready_for_download': 'true'
+                },
+        'signers': [
+                    {
+                        'email': 'example@gmail.com',
+                        'role': 'signer',
+                        'is_in_person': 'true',
+                        'order': '2',
+                        'embed_url_external_user_id': '1234',
+                        'has_viewed_document': 'true',
+                        'signer_decision': {
+                            'type': 'signed',
+                            'finalized_at': '2021-04-26T08:12:13.982Z'
+                        },
+                        'inputs': [
+                            {
+                                'document_tag_id': '1234',
+                                'text_value': 'text',
+                                'checkbox_value': 'true',
+                                'date_value': '2021-04-26T08:12:13.982Z',
+                                'type': 'text',
+                                'page_index': '4'
+                            }
+                        ],
+                        'embed_url': 'https://example.com'
+                    }
+                ],
+        'signing_log': {
+                    'id': '12345',
+                    'type': 'file',
+                    'etag': '1',
+                    'file_version': {
+                        'id': '12345',
+                        'type': 'file_version',
+                        'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
+                    },
+                    'name': 'Contract.pdf',
+                    'sequence_id': '3',
+                    'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37'
+                },
+        'source_files': [
                     {
                         'id': '12345',
                         'etag': '1',
@@ -53,78 +108,28 @@ def mock_sign_request_response():
                             'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
                         }
                     }
-                    ],
-                    'is_ready_for_download': 'true'
-                },
-                'signers': [
-                    {
-                    'email': 'example@gmail.com',
-                    'role': 'signer',
-                    'is_in_person': 'true',
-                    'order': '2',
-                    'embed_url_external_user_id': '1234',
-                    'has_viewed_document': 'true',
-                    'signer_decision': {
-                        'type': 'signed',
-                        'finalized_at': '2021-04-26T08:12:13.982Z'
-                    },
-                    'inputs': [
-                        {
-                        'document_tag_id': '1234',
-                        'text_value': 'text',
-                        'checkbox_value': 'true',
-                        'date_value': '2021-04-26T08:12:13.982Z',
-                        'type': 'text',
-                        'page_index': '4'
-                        }
-                    ],
-                    'embed_url': 'https://example.com'
-                    }
                 ],
-                'signing_log': {
-                    'id': '12345',
-                    'type': 'file',
-                    'etag': '1',
-                    'file_version': {
-                        'id': '12345',
-                        'type': 'file_version',
-                        'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
-                    },
-                    'name': 'Contract.pdf',
-                    'sequence_id': '3',
-                    'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37'
-                },
-                'source_files': [
-                    {
-                    'id': '12345',
-                    'etag': '1',
-                    'type': 'file',
-                    'sequence_id': '3',
-                    'name': 'Contract.pdf',
-                    'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37',
-                    'file_version': {
-                        'id': '12345',
-                        'type': 'file_version',
-                        'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
-                    }
-                    }
-                ],
-                'status': 'cancelled'
+        'status': 'cancelled'
     }
     return mock_sign_request
 
+
 def test_get_sign_request(test_sign_request, mock_box_session, mock_sign_request_response):
-    expected_url = '{0}/sign_requests/{1}'.format(API.BASE_API_URL, test_sign_request.object_id)
+    expected_url = '{0}/sign_requests/{1}'.format(
+        API.BASE_API_URL, test_sign_request.object_id)
     mock_box_session.get.return_value.json.return_value = mock_sign_request_response
 
     sign_request = test_sign_request.get()
 
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params=None)
     assert isinstance(sign_request, SignRequest)
     assert sign_request['id'] == test_sign_request.object_id
 
+
 def test_cancel_sign_request(test_sign_request, mock_box_session, mock_sign_request_response):
-    expected_url = '{0}/sign_requests/{1}/cancel'.format(API.BASE_API_URL, test_sign_request.object_id)
+    expected_url = '{0}/sign_requests/{1}/cancel'.format(
+        API.BASE_API_URL, test_sign_request.object_id)
     mock_box_session.post.return_value.json.return_value = mock_sign_request_response
 
     sign_request = test_sign_request.cancel()
@@ -134,9 +139,12 @@ def test_cancel_sign_request(test_sign_request, mock_box_session, mock_sign_requ
     assert sign_request['id'] == test_sign_request.object_id
     assert sign_request['status'] == mock_sign_request_response['status']
 
+
 def test_resend_sign_request(test_sign_request, mock_box_session):
-    expected_url = '{0}/sign_requests/{1}/resend'.format(API.BASE_API_URL, test_sign_request.object_id)
+    expected_url = '{0}/sign_requests/{1}/resend'.format(
+        API.BASE_API_URL, test_sign_request.object_id)
 
     test_sign_request.resend()
 
-    mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=False, skip_retry_codes=set([202]))
+    mock_box_session.post.assert_called_once_with(
+        expected_url, expect_json_response=False, skip_retry_codes=set([202]))

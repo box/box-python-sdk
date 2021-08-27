@@ -400,6 +400,7 @@ def test_metadata_template(mock_box_session):
 def test_folder_lock(mock_box_session, mock_object_id):
     return FolderLock(mock_box_session, mock_object_id)
 
+
 @pytest.fixture()
 def test_sign_request(mock_box_session, mock_object_id):
     return SignRequest(mock_box_session, mock_object_id)
