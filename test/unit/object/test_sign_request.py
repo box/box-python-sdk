@@ -14,101 +14,101 @@ def mock_sign_request_response():
     mock_sign_request = {
         'id': '42',
         'type': 'sign-request',
-                'are_reminders_enabled': 'true',
-                'are_text_signatures_enabled': 'true',
-                'auto_expire_at': '2021-04-26T08:12:13.982Z',
-                'days_valid': '2',
-                'email_message': 'Hello! Please sign the document below',
-                'email_subject': 'Sign Request from Acme',
-                'external_id': '123',
-                'is_document_preparation_needed': 'true',
-                'parent_folder': {
-                    'id': '12345',
-                    'type': 'folder',
-                    'etag': '1',
-                    'name': 'Contracts',
-                    'sequence_id': '3'
-                },
+        'are_reminders_enabled': 'true',
+        'are_text_signatures_enabled': 'true',
+        'auto_expire_at': '2021-04-26T08:12:13.982Z',
+        'days_valid': '2',
+        'email_message': 'Hello! Please sign the document below',
+        'email_subject': 'Sign Request from Acme',
+        'external_id': '123',
+        'is_document_preparation_needed': 'true',
+        'parent_folder': {
+            'id': '12345',
+            'type': 'folder',
+            'etag': '1',
+            'name': 'Contracts',
+            'sequence_id': '3'
+        },
         'prefill_tags': [
-                    {
-                        'document_tag_id': '1234',
-                        'text_value': 'text',
-                        'checkbox_value': 'true',
-                        'date_value': '2021-04-26T08:12:13.982Z'
-                    }
-                ],
+            {
+                'document_tag_id': '1234',
+                'text_value': 'text',
+                'checkbox_value': 'true',
+                'date_value': '2021-04-26T08:12:13.982Z'
+            }
+        ],
         'prepare_url': 'https://prepareurl.com',
         'sign_files': {
-                    'files': [
-                        {
-                            'id': '12345',
-                            'etag': '1',
-                            'type': 'file',
-                            'sequence_id': '3',
-                            'name': 'Contract.pdf',
-                            'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37',
-                            'file_version': {
-                                'id': '12345',
-                                'type': 'file_version',
-                                'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
-                            }
-                        }
-                    ],
-                    'is_ready_for_download': 'true'
-                },
-        'signers': [
-                    {
-                        'email': 'example@gmail.com',
-                        'role': 'signer',
-                        'is_in_person': 'true',
-                        'order': '2',
-                        'embed_url_external_user_id': '1234',
-                        'has_viewed_document': 'true',
-                        'signer_decision': {
-                            'type': 'signed',
-                            'finalized_at': '2021-04-26T08:12:13.982Z'
-                        },
-                        'inputs': [
-                            {
-                                'document_tag_id': '1234',
-                                'text_value': 'text',
-                                'checkbox_value': 'true',
-                                'date_value': '2021-04-26T08:12:13.982Z',
-                                'type': 'text',
-                                'page_index': '4'
-                            }
-                        ],
-                        'embed_url': 'https://example.com'
-                    }
-                ],
-        'signing_log': {
+            'files': [
+                {
                     'id': '12345',
-                    'type': 'file',
                     'etag': '1',
+                    'type': 'file',
+                    'sequence_id': '3',
+                    'name': 'Contract.pdf',
+                    'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37',
                     'file_version': {
                         'id': '12345',
                         'type': 'file_version',
                         'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
-                    },
-                    'name': 'Contract.pdf',
-                    'sequence_id': '3',
-                    'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37'
+                    }
+                }
+            ],
+            'is_ready_for_download': 'true'
+        },
+        'signers': [
+            {
+                'email': 'example@gmail.com',
+                'role': 'signer',
+                'is_in_person': 'true',
+                'order': '2',
+                'embed_url_external_user_id': '1234',
+                'has_viewed_document': 'true',
+                'signer_decision': {
+                    'type': 'signed',
+                    'finalized_at': '2021-04-26T08:12:13.982Z'
                 },
-        'source_files': [
+                'inputs': [
                     {
-                        'id': '12345',
-                        'etag': '1',
-                        'type': 'file',
-                        'sequence_id': '3',
-                        'name': 'Contract.pdf',
-                        'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37',
-                        'file_version': {
-                            'id': '12345',
-                            'type': 'file_version',
-                            'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
-                        }
+                        'document_tag_id': '1234',
+                        'text_value': 'text',
+                        'checkbox_value': 'true',
+                        'date_value': '2021-04-26T08:12:13.982Z',
+                        'type': 'text',
+                        'page_index': '4'
                     }
                 ],
+                'embed_url': 'https://example.com'
+            }
+        ],
+        'signing_log': {
+            'id': '12345',
+            'type': 'file',
+            'etag': '1',
+            'file_version': {
+                'id': '12345',
+                'type': 'file_version',
+                'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
+            },
+            'name': 'Contract.pdf',
+            'sequence_id': '3',
+            'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37'
+        },
+        'source_files': [
+            {
+                'id': '12345',
+                'etag': '1',
+                'type': 'file',
+                'sequence_id': '3',
+                'name': 'Contract.pdf',
+                'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37',
+                'file_version': {
+                    'id': '12345',
+                    'type': 'file_version',
+                    'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
+                }
+            }
+        ],
         'status': 'cancelled'
     }
     return mock_sign_request

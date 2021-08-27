@@ -18,11 +18,11 @@ method will create a Sign Request. You need to provide at least one file (from w
 
 <!-- sample post_sign_requests -->
 ```python
-file = {
+source_file = {
     'id': '12345',
     'type': 'file'
 }
-files = [file]
+files = [source_file]
 
 signer = {
     'name': 'John Doe',
