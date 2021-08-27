@@ -137,6 +137,6 @@ def test_cancel_sign_request(test_sign_request, mock_box_session, mock_sign_requ
 def test_resend_sign_request(test_sign_request, mock_box_session):
     expected_url = '{0}/sign_requests/{1}/resend'.format(API.BASE_API_URL, test_sign_request.object_id)
 
-    response = test_sign_request.resend()
+    test_sign_request.resend()
 
-    mock_box_session.post.assert_called_once_with(expected_url)
+    mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=False, skip_retry_codes=set([202]))

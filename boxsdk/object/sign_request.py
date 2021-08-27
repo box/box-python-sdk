@@ -44,10 +44,10 @@ class SignRequest(BaseObject):
         There is a 10 minute cooling-off period between each resend request.
 
         :returns:
-            HTTP status code
+            Whether the operation succeeded.
         :rtype:
-            `int`
+            `boolean`
         """
         url = self.get_url('resend')
-        response = self._session.post(url)
-        return response
+        response = self._session.post(url, skip_retry_codes={202}, expect_json_response = False)
+        return response.ok
