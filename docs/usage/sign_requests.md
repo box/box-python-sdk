@@ -4,11 +4,17 @@ Sign Requests
 Sign Requests are used to request e-signatures on documents from signers.  
 A Sign Request can refer to one or more Box Files and can be sent to one or more Box Sign Request Signers.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
 - [Create Sign Request](#create-sign-request)
 - [Get all Sign Requests](#get-all-sign-requests)
 - [Get Sign Request by ID](#get-sign-request-by-id)
 - [Cancel Sign Request](#cancel-sign-request)
 - [Resend Sign Request](#resend-sign-request)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 Create Sign Request
 ------------------------
