@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import json
 
-from mock import Mock
+from mock import Mock, ANY
 import pytest
 from six import text_type, BytesIO, int2byte, PY2
 
@@ -646,7 +646,8 @@ def test_create_legal_hold_policy_returns_the_correct_policy_object(mock_client,
     create_policy_response.json.return_value.update(params)
     mock_box_session.post.return_value = create_policy_response
     new_policy = mock_client.create_legal_hold_policy(test_policy_name, **params)
-    mock_box_session.post.assert_called_once_with(expected_url, data=value)
+    mock_box_session.post.assert_called_once_with(expected_url, data=ANY)
+    assert dict(json.loads(mock_box_session.post.call_args[1]['data'])) == dict(json.loads(value))
     assert isinstance(new_policy, LegalHoldPolicy)
     assert new_policy.policy_name == test_policy_name
     for param in params:
