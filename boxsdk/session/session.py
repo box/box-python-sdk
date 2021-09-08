@@ -391,12 +391,13 @@ class Session(object):
             expect_json_response=expect_json_response,
         )
 
+        skip_retry_codes = kwargs.pop('skip_retry_codes', set())
         network_response = self._send_request(request, **kwargs)
 
         while True:
             retry = self._get_retry_request_callable(network_response, attempt_number, request, **kwargs)
 
-            if retry is None or attempt_number >= API.MAX_RETRY_ATTEMPTS:
+            if retry is None or attempt_number >= API.MAX_RETRY_ATTEMPTS or network_response.status_code in skip_retry_codes:
                 break
 
             attempt_number += 1
