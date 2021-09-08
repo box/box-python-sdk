@@ -55,6 +55,9 @@ class BaseAPIJSONObjectMeta(type):
         item_type = attrs.get('_item_type', None)
         if item_type is not None:
             Translator._default_translator.register(item_type, cls)   # pylint:disable=protected-access
+            # Some types have - in them instead of _ in the API.
+            if "-" in item_type:
+                Translator._default_translator.register(item_type.replace("-", "_"), cls)   # pylint:disable=protected-access
 
 
 @six.add_metaclass(BaseAPIJSONObjectMeta)

@@ -9,6 +9,7 @@ Next release
 **New Features and Enhancements:**
 
 - Sensitive language replacement (`#609 <https://github.com/box/box-python-sdk/pull/609>`_)
+- Add BoxSign support (`#617 <https://github.com/box/box-python-sdk/pull/617>`_)
 
 2.12.1 (2021-06-16)
 ++++++++
