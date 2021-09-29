@@ -80,3 +80,6 @@ target/
 
 # Misc
 tokens.pk
+
+#pyenv
+.python-version
