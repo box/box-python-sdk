@@ -3,7 +3,7 @@
 Release History
 ---------------
 
-Next release
+2.13.0 (2021-09-30)
 ++++++++
 
 **New Features and Enhancements:**
