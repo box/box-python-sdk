@@ -253,6 +253,42 @@ def test_get_admin_events(
         assert event.event_id == json['event_id']
 
 
+@pytest.mark.parametrize("limit", [100, None])
+def test_get_admin_events_streaming(
+        test_events,
+        mock_box_session,
+        events_response,
+        limit,
+):
+    # pylint:disable=redefined-outer-name
+    expected_url = test_events.get_url()
+    mock_box_session.get.return_value = events_response
+    events = test_events.get_admin_events_streaming(
+        limit=limit,
+        stream_position=100,
+        event_types=['ITEM_CREATE', "LOGIN"],
+    )
+    expected_params = dict(
+        stream_type='admin_logs_streaming',
+        stream_position=100,
+        event_type='ITEM_CREATE,LOGIN',
+    )
+    if limit:
+        expected_params = dict(
+            stream_type='admin_logs_streaming',
+            limit=limit,
+            stream_position=100,
+            event_type='ITEM_CREATE,LOGIN',
+        )
+    mock_box_session.get.assert_called_with(
+        expected_url,
+        params=expected_params
+    )
+    for event, json in zip(events['entries'], events_response.json.return_value['entries']):
+        assert isinstance(event, Event)
+        assert event.event_id == json['event_id']
+
+
 def test_get_long_poll_options(
         mock_box_session,
         test_events,
