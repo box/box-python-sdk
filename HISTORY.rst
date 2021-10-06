@@ -3,17 +3,24 @@
 Release History
 ---------------
 
+Next release
+++++++++
+
+**New Features and Enhancements:**
+
+- Add `admin_logs_streaming` support for events stream (`#623 <https://github.com/box/box-python-sdk/pull/623>`_)
+
 2.13.0 (2021-09-30)
 ++++++++
 
 **New Features and Enhancements:**
 
-- Sensitive language replacement ([#609](https://github.com/box/box-python-sdk/pull/609))
-- Add BoxSign support ([#617](https://github.com/box/box-python-sdk/pull/617))
+- Sensitive language replacement (`#609 <https://github.com/box/box-python-sdk/pull/609>`_)
+- Add BoxSign support (`#617 <https://github.com/box/box-python-sdk/pull/617>`_)
 
 **Bug Fixes:**
 
-- Upgrade cryptography to version 3 ([#620](https://github.com/box/box-python-sdk/pull/620))
+- Upgrade cryptography to version 3 (`#620 <https://github.com/box/box-python-sdk/pull/620>`_)
 
 2.12.1 (2021-06-16)
 ++++++++
