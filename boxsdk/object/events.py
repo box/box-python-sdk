@@ -39,7 +39,8 @@ class UserEventsStreamType(EventsStreamType):
 class EnterpriseEventsStreamType(EventsStreamType):
     """An enum of all possible values of the `stream_type` parameter for enterprise events.
 
-    - ADMIN_LOGS: Retrieves up to a year's events for all users in the enterprise.
+    - ADMIN_LOGS: Retrieves up to a year's events for all users in the enterprise. High latency.
+    - ADMIN_LOGS_STREAMING: Retrieves up to a two weeks's events for all users in the enterprise. Low latency.
 
     NOTE: Requires Admin: These stream types will only work with an auth token
     from an enterprise admin account.
@@ -47,6 +48,7 @@ class EnterpriseEventsStreamType(EventsStreamType):
     <https://developer.box.com/en/guides/events/for-enterprise/>
     """
     ADMIN_LOGS = 'admin_logs'
+    ADMIN_LOGS_STREAMING = 'admin_logs_streaming'
 # pylint:enable=too-many-ancestors
 
 
@@ -70,9 +72,6 @@ class Events(BaseEndpoint):
         :param stream_position:
             The location in the stream from which to start getting events. 0 is the beginning of time. 'now' will
             return no events and just current stream position.
-
-            NOTE: Currently, 'now' is only valid for user events stream types. The request will fail if an
-            enterprise events stream type is passed.
         :type stream_position:
             `unicode`
         :param stream_type:
@@ -99,7 +98,7 @@ class Events(BaseEndpoint):
     def get_admin_events(self, limit=None, created_after=None, created_before=None, event_types=None):
         """
         Get Box Admin events from a datetime, to a datetime, or between datetimes with a given event type for a enterprise
-        stream type. Works for Enterprise admin_logs type.
+        stream type. Used for historical querying (up to one year). Works for Enterprise admin_logs type.
 
         :param limit:
             (optional) Maximum number of events to return.
@@ -133,6 +132,45 @@ class Events(BaseEndpoint):
         }
         if limit is not None:
             params['limit'] = limit
+        if event_types is not None:
+            params['event_type'] = ','.join(event_types)
+        box_response = self._session.get(url, params=params)
+        response = box_response.json()
+        return self.translator.translate(self._session, response_object=response)
+
+    @api_call
+    def get_admin_events_streaming(self, limit=None, stream_position=0, event_types=None):
+        """
+        Get Box Admin events with a given event type for a enterprise stream type. Used for live monitoring (up to two weeks).
+        Works for Enterprise admin_logs_streaming type.
+
+        :param limit:
+            (optional) Maximum number of events to return.
+        :type limit:
+            `int` or None
+        :param stream_position:
+            The location in the stream from which to start getting events. 0 is the beginning of time. 'now' will
+            return no events and just current stream position.
+        :type stream_position:
+            `unicode`
+        :param event_types:
+            (optional) Which events to return (ie. LOGIN)
+            Defaults to `None`
+        :type event_types:
+            Array of `unicode`
+        :returns:
+            Dictionary containing the next stream position along with a list of some number of events.
+        :rtype:
+            `dict`
+        """
+        url = self.get_url()
+        params = {
+            'stream_type': 'admin_logs_streaming',
+        }
+        if limit is not None:
+            params['limit'] = limit
+        if stream_position is not None:
+            params['stream_position'] = stream_position
         if event_types is not None:
             params['event_type'] = ','.join(event_types)
         box_response = self._session.get(url, params=params)
