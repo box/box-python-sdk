@@ -18,7 +18,7 @@ jobs:
   say_hello:
     runs-on: macos-latest
     steps:
-    - name: Checkout
+    - name: Checkout main branch
       uses: actions/checkout@v2
       with:
         ref: main
