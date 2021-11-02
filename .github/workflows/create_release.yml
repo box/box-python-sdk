@@ -18,6 +18,15 @@ jobs:
   say_hello:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo "Hello ${{ github.event.inputs.name }}!"
-          echo "- in ${{ github.event.inputs.home }}!"
+    - uses: actions/checkout@v2
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT" 
+    - name: step hello
+      run: |
+        echo hello    
+    # steps:
+    #   - run: |
+    #       echo "Hello ${{ github.event.inputs.name }}!"
+    #       echo "- in ${{ github.event.inputs.home }}!"
