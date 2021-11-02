@@ -17,7 +17,7 @@ matrix:
   include:
     - python: 3.6
       env: TOX_ENV=py36
-      script: echo Hello
+      script: ./release-v0.2.0
 
 # commands to install dependencies
 install:
