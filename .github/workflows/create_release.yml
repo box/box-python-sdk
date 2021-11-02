@@ -19,6 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: step hello
+      run: |
+        echo "Running event ${{ github.event_name }}!"
+        echo "Hello ${{ github.event.inputs.name }}!"
+        echo "- in ${{ github.event.inputs.home }}!"
     - name: Dump GitHub context
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
@@ -29,9 +34,8 @@ jobs:
         python-version: '3.6.x'
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip      
-    - name: step hello
+        python -m pip install --upgrade pip              
+    - name: Step release
       run: |
-        echo "Running event ${{ github.event_name }}!"
-        echo "Hello ${{ github.event.inputs.name }}!"
-        echo "- in ${{ github.event.inputs.home }}!"
+        . release-v0.2.0
+        
