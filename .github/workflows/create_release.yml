@@ -10,6 +10,9 @@ on:
         description: 'location'
         required: false
         default: 'The Octoverse'
+  pull_request:
+    branches:
+      - 'main'
 
 jobs:
   say_hello:
