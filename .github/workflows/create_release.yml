@@ -22,7 +22,8 @@ jobs:
       uses: actions/checkout@v2
       with:
         ref: main
-        fetch-depth: 2
+        fetch-depth: 0
+        submodules: true
     - name: step hello
       run: |
         echo "Running event ${{ github.event_name }}!"
