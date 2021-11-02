@@ -51,5 +51,6 @@ jobs:
         RELEASE_PROPERTIES: ${{secrets.RELEASE_PROPERTIES}}      
     - name: Step release
       run: |
+        ./release-v0.2.0 --help
         ./release-v0.2.0 --dry --new-version patch
         
