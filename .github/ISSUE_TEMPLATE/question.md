@@ -3,7 +3,7 @@ name: Question
 about: Request for Assistance
 title: ''
 labels: question
-assignees: PJSimon, sujaygarlanka
+assignees: mwwoda, mhagmajer, antusus, arjankowski
 
 ---
 
