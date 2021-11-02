@@ -41,6 +41,7 @@ jobs:
     - name: Install dev dependencies
       run: |
         pip install -r requirements-dev.txt
+        pip install sphinx
     - name: Create python.properties from a secret
       run: 'echo "$RELEASE_PROPERTIES" > python.properties'
       shell: bash
