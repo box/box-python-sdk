@@ -22,11 +22,16 @@ jobs:
     - name: Dump GitHub context
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
-      run: echo "$GITHUB_CONTEXT" 
+      run: echo "$GITHUB_CONTEXT"
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.6.x'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip      
     - name: step hello
       run: |
-        echo hello    
-    # steps:
-    #   - run: |
-    #       echo "Hello ${{ github.event.inputs.name }}!"
-    #       echo "- in ${{ github.event.inputs.home }}!"
+        echo "Running event ${{ github.event_name }}!"
+        echo "Hello ${{ github.event.inputs.name }}!"
+        echo "- in ${{ github.event.inputs.home }}!"
