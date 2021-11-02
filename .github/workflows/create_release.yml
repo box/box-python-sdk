@@ -37,5 +37,5 @@ jobs:
         python -m pip install --upgrade pip              
     - name: Step release
       run: |
-        . release-v0.2.0
+        ./release-v0.2.0
         
