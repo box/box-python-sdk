@@ -3,7 +3,7 @@ name: Enhancement
 about: Suggest a new feature or change
 title: ''
 labels: enhancement
-assignees: PJSimon, sujaygarlanka
+assignees: mwwoda, mhagmajer, antusus, arjankowski
 
 ---
 

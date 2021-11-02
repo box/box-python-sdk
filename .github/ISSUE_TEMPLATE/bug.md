@@ -3,7 +3,7 @@ name: Bug
 about: Report a bug found in the SDK
 title: ''
 labels: bug
-assignees: PJSimon, sujaygarlanka
+assignees: mwwoda, mhagmajer, antusus, arjankowski
 
 ---
 
