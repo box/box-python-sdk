@@ -52,5 +52,5 @@ jobs:
     - name: Step release
       run: |
         ./release-v0.2.0 --help
-        ./release-v0.2.0 --dry --new-version patch
+        ./release-v0.2.0 --dry --any-branch --new-version patch 
         
