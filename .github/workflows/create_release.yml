@@ -53,7 +53,7 @@ jobs:
       run: |
         git status
         git branch
-        git log
+        git log --oneline
         ./release-v0.2.0 --help
         ./release-v0.2.0 --dry --any-branch --new-version patch 
         
