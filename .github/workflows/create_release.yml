@@ -21,7 +21,7 @@ jobs:
     - name: Checkout main branch
       uses: actions/checkout@v2
       with:
-        ref: main
+        # ref: main
         fetch-depth: 0
         submodules: true
     - name: step hello
