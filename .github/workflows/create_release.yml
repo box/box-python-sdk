@@ -51,6 +51,7 @@ jobs:
         RELEASE_PROPERTIES: ${{secrets.RELEASE_PROPERTIES}}      
     - name: Step release
       run: |
+        git status
         git branch
         ./release-v0.2.0 --help
         ./release-v0.2.0 --dry --any-branch --new-version patch 
