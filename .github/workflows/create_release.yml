@@ -28,8 +28,8 @@ jobs:
       uses: "lannonbr/repo-permission-check-action@2.0.0"
       with:
         permission: "admin"
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: step hello
       run: |
         echo "Running event ${{ github.event_name }}!"
