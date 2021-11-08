@@ -55,7 +55,7 @@ jobs:
       shell: bash
       env:
         RELEASE_PROPERTIES: ${{secrets.RELEASE_PROPERTIES}}      
-    - name: Step release
+    - name: Release step
       run: |
         git status
         ./release-v0.2.0 --help
