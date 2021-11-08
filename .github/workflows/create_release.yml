@@ -1,4 +1,4 @@
-name: Manually triggered workflow
+name: Manually triggered release
 on:
   workflow_dispatch:
     inputs:
