@@ -1,0 +1,63 @@
+name: Manually triggered workflow
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Person to greet'
+        required: true
+        default: 'Mona the Octocat'
+      home:
+        description: 'location'
+        required: false
+        default: 'The Octoverse'
+  # pull_request:
+  #   branches:
+  #     - 'main'
+
+jobs:
+  say_hello:
+    runs-on: macos-11
+    steps:
+    - name: Checkout main branch
+      uses: actions/checkout@v2
+      with:
+        # ref: main
+        fetch-depth: 0
+        submodules: true
+    - name: "Check if user has admin permission"
+      uses: "lannonbr/repo-permission-check-action@2.0.0"
+      with:
+        permission: "admin"
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: step hello
+      run: |
+        echo "Running event ${{ github.event_name }}!"
+        echo "Hello ${{ github.event.inputs.name }}!"
+        echo "- in ${{ github.event.inputs.home }}!"
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
+    - name: Set up Python TEST
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.6.x'
+    - name: Upgrade pip
+      run: |
+        python -m pip install --upgrade pip              
+    - name: Install dev dependencies
+      run: |
+        pip install -r requirements-dev.txt
+        pip install sphinx
+    - name: Create python.properties from a secret
+      run: 'echo "$RELEASE_PROPERTIES" > python.properties'
+      shell: bash
+      env:
+        RELEASE_PROPERTIES: ${{secrets.RELEASE_PROPERTIES}}      
+    - name: Step release
+      run: |
+        git status
+        ./release-v0.2.0 --help
+        ./release-v0.2.0 --dry --any-branch --new-version patch --confirm
+        
