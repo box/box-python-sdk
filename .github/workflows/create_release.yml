@@ -18,18 +18,18 @@ jobs:
   say_hello:
     runs-on: macos-11
     steps:
-    - name: Checkout main branch
-      uses: actions/checkout@v2
-      with:
-        # ref: main
-        fetch-depth: 0
-        submodules: true
     - name: "Check if user has admin permission"
       uses: "lannonbr/repo-permission-check-action@2.0.0"
       with:
         permission: "admin"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Checkout main branch
+      uses: actions/checkout@v2
+      with:
+        # ref: main
+        fetch-depth: 0
+        submodules: true
     - name: step hello
       run: |
         echo "Running event ${{ github.event_name }}!"
