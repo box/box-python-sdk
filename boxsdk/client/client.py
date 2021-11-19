@@ -1055,16 +1055,16 @@ class Client(Cloneable):
             The name of the retention policy.
         :type policy_name:
             `unicode`
-        :param retention_length:
-            The amount of time in days to apply the retention policy to the selected content.
-            The retention_length should be set to float('inf') for indefinite policies.
-        :type retention_length:
-            `int` or float('inf')
         :param disposition_action:
             For `finite` policy can be set to `permanently delete` or `remove retention`.
             For `indefinite` policy this must be set to `remove_retention`
         :type disposition_action:
             `unicode`
+        :param retention_length:
+            The amount of time in days to apply the retention policy to the selected content.
+            The retention_length should be set to float('inf') for indefinite policies.
+        :type retention_length:
+            `int` or float('inf')
         :param can_owner_extend_retention:
             The owner of a file will be allowed to extend the retention if set to true.
         :type can_owner_extend_retention:
@@ -1200,6 +1200,8 @@ class Client(Cloneable):
             response_object=response,
         )
 
+    @deprecated("Use RetentionPolicyAssignment.get_files_under_retention "
+                "or RetentionPolicyAssignment.get_file_versions_under_retention instead")
     @api_call
     def get_file_version_retentions(
             self,

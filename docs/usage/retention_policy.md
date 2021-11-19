@@ -7,7 +7,6 @@ policies and then later assign them to specific folders or their entire enterpri
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Create Retention Policy](#create-retention-policy)
 - [Get Retention Policy](#get-retention-policy)
 - [Get Retention Policies](#get-retention-policies)
@@ -15,8 +14,10 @@ policies and then later assign them to specific folders or their entire enterpri
 - [Assign Retention Policy](#assign-retention-policy)
 - [Get Retention Policy Assignment](#get-retention-policy-assignment)
 - [Get Retention Policy Assignments](#get-retention-policy-assignments)
-- [Get File Version Retentions](#get-file-version-retentions)
+- [Get File Version Retentions](#get-file-version-retentions) (deprecated,  use [Get Files under Retention for a Retention Policy Assignment](#get-files-under-retention-for-an-assignment) and [Get File Versions under Retention for a Retention Policy Assignment](#get-file-versions-under-retention-for-an-assignment) instead)
 - [Get Information about a File Version Retention](#get-information-about-a-file-version-retention)
+- [Get Files under Retention for a Retention Policy Assignment](#get-files-under-retention-for-a-retention-policy-assignment)
+- [Get File Versions under Retention for a Retention Policy Assignment](#get-file-versions-under-retention-for-a-retention-policy-assignment)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -191,3 +192,42 @@ print('The file version retention ID is {0} and the data time applied at is {1}'
 [file_version_retention]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.file_version_retention
 [file_version_retention_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file_version_retention.FileVersionRetention
 [get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
+
+Get Files under Retention for a Retention Policy Assignment
+---------------------------
+
+To retrieve all files under retention for a Retention Policy Assignment, 
+call [`retention_policy_assignment.get_files_under_retention(limit=None, marker=None)`][get-files-under-retention-for-an-assignment]. 
+This method will return a `MarkerBasedObjectCollection` that allows you to iterate over the [`File`][file_class]
+objects in the collection.
+
+<!-- sample get-files-under-retention-for-an-assignment -->
+```python
+retention_policy_assignment = client.retention_policy_assignment(assignment_id='12345').get()
+files_under_retention = retention_policy_assignment.get_files_under_retention()
+for file in files_under_retention:
+    print('The file with ID {0} and name {1} is under retention for a retention policy assignment with ID {2}'.format(file.object_id, file.name, retention_policy_assignment.object_id))
+```
+
+[get-files-under-retention-for-an-assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#module-boxsdk.object.retention_policy_assignment
+[file_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#module-boxsdk.object.file
+
+
+Get File Versions under Retention for a Retention Policy Assignment
+---------------------------
+
+To retrieve all file versions under retention for a retention policy assignment,
+call [`retention_policy_assignment.get_file_versions_under_retention(limit=None, marker=None)`][get-file-versions-under-retention-for-an-assignment].
+This method will return a `MarkerBasedObjectCollection` that allows you to iterate over the [`FileVersion`][file_version_class]
+objects in the collection.
+
+<!-- sample get-file-versions-under-retention-for-an-assignment -->
+```python
+retention_policy_assignment = client.retention_policy_assignment(assignment_id='12345').get()
+file_versions_under_retention = retention_policy_assignment.get_file_versions_under_retention()
+for file_version in file_versions_under_retention:
+	print('The version {0} of {1} file is under retention for a retention policy assignment with ID {2}'.format(file_version.file_version.object_id, file_version.name, retention_policy_assignment.object_id))
+```
+
+[get-file-versions-under-retention-for-an-assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#module-boxsdk.object.retention_policy_assignment
+[file_version_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#module-boxsdk.object.file_version

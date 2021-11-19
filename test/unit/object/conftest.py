@@ -10,6 +10,7 @@ from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
 from boxsdk.object.device_pinner import DevicePinner
 from boxsdk.object.file import File
+from boxsdk.object.file_version import FileVersion
 from boxsdk.object.file_version_retention import FileVersionRetention
 from boxsdk.object.legal_hold import LegalHold
 from boxsdk.object.folder import Folder
@@ -98,6 +99,11 @@ def test_collaboration(mock_box_session, mock_collaboration_id):
 @pytest.fixture()
 def test_file(mock_box_session, mock_object_id):
     return File(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_file_version(mock_box_session):
+    return FileVersion(mock_box_session, 'file_version_id')
 
 
 @pytest.fixture()
