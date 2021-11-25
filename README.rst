@@ -293,25 +293,36 @@ supported by the SDK. You can still use these endpoints by using the ``make_requ
 
 ``make_request()`` takes two parameters:
 
-- ``method`` -an HTTP verb like ``GET`` or ``POST``
+- ``method`` - an HTTP verb like ``GET`` or ``POST``
 - ``url`` - the URL of the requested API endpoint
 
 The ``Client`` class and Box objects have a ``get_url`` method. Pass it an endpoint
 to get the correct URL for use with that object and endpoint.
 
-For API calls which require a body, ``make_request()`` accepts ``**kwargs`` after ``method`` and ``url``.
+For API calls which require body or query params, you can use ``**kwargs`` to pass extra params:
+
+- ``data`` - takes a jsonified dictionary of body parameters
+- ``params`` - takes a dictionary of query parameters
 
 .. code-block:: python
 
-    # https://developer.box.com/en/reference/put-terms-of-service-user-statuses-id/
-    # Updates a user's ToS status
+    # https://developer.box.com/reference/post-folders/
+    # Creates a new folder
 
     # JSONify the body
-    body = json.dumps({"is_accepted":true})
+    body = json.dumps({
+            'name': 'test-subfolder',
+            'parent': {
+            	'id': '0',
+            }
+    })
 
-    # Pass body as "data" argument
-    client.make_request(method, url, data = body)
-
+    client.make_request(
+        'POST',
+        client.get_url('folders'),
+        params={'fields': 'name,id'},
+        data=body
+    )
 
 Other Client Options
 --------------------
