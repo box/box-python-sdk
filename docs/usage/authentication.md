@@ -259,7 +259,7 @@ oauth = OAuth2(
     refresh_token='REFRESH_TOKEN',
 )
 
-client = Client(auth)
+client = Client(oauth)
 
 user = client.user().get()
 print('User ID is {0}'.format(user.id))
