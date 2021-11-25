@@ -63,7 +63,7 @@ def main():
         'wrapt>=1.10.1',
     ]
     redis_requires = ['redis>=2.10.3']
-    jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=3']
+    jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=3, <3.5.0']
     extra_requires = defaultdict(list)
     extra_requires.update({'jwt': jwt_requires, 'redis': redis_requires, 'all': jwt_requires + redis_requires})
     conditional_dependencies = {
