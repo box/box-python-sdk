@@ -219,6 +219,7 @@ class Item(BaseObject):
             allow_download=None,
             allow_preview=None,
             password=None,
+            vanity_name=None
     ):
         """
         Create a shared link for the item with the given access permissions.
@@ -254,6 +255,11 @@ class Item(BaseObject):
             Please notice that this is a premium feature, which might not be available to your app.
         :type password:
             `unicode` or None
+        :param vanity_name:
+            Defines a custom vanity name to use in the shared link URL, eg. https://app.box.com/v/my-custom-vanity-name.
+            If this parameter is None, the standard shared link URL will be used.
+        :type vanity_name:
+            `unicode` or None
         :return:
             The updated object with s shared link.
             Returns a new object of the same type, without modifying the original object passed as self.
@@ -280,6 +286,9 @@ class Item(BaseObject):
         if password is not None:
             data['shared_link']['password'] = password
 
+        if vanity_name is not None:
+            data['shared_link']['vanity_name'] = vanity_name
+
         return self.update_info(data, etag=etag)
 
     @api_call
@@ -291,6 +300,7 @@ class Item(BaseObject):
             allow_download=None,
             allow_preview=None,
             password=None,
+            vanity_name=None
     ):
         """
         Get a shared link for the item with the given access permissions.
@@ -325,6 +335,11 @@ class Item(BaseObject):
             Please notice that this is a premium feature, which might not be available to your app.
         :type password:
             `unicode` or None
+        :param vanity_name:
+            Defines a custom vanity name to use in the shared link URL, eg. https://app.box.com/v/my-custom-vanity-name.
+            If this parameter is None, the standard shared link URL will be used.
+        :type vanity_name:
+            `unicode` or None
         :returns:
             The URL of the shared link.
         :rtype:
@@ -338,6 +353,7 @@ class Item(BaseObject):
             allow_download=allow_download,
             allow_preview=allow_preview,
             password=password,
+            vanity_name=vanity_name
         )
         return item.shared_link['url']  # pylint:disable=no-member
 
