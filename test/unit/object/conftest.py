@@ -369,6 +369,11 @@ def shared_link_unshared_at(request):
     return request.param
 
 
+@pytest.fixture(params=('my-custom-vanity-name', None))
+def shared_link_vanity_name(request):
+    return request.param
+
+
 @pytest.fixture(params=[
     # Test case for plain message
     (

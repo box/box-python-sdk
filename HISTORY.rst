@@ -9,6 +9,7 @@ Next release
 **New Features and Enhancements:**
 
 - Add `admin_logs_streaming` support for events stream (`#623 <https://github.com/box/box-python-sdk/pull/623>`_)
+- Add `vanity_name` param for creating shared link to a file or folder (`#637 <https://github.com/box/box-python-sdk/pull/637>`_)
 
 2.13.0 (2021-09-30)
 ++++++++
