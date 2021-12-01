@@ -35,11 +35,6 @@ def mock_accelerator_response_for_update(make_mock_box_request, mock_accelerator
     return mock_response
 
 
-@pytest.fixture()
-def test_file_version(mock_box_session):
-    return FileVersion(mock_box_session, 'file_version_id')
-
-
 def test_delete_file(test_file, mock_box_session, etag, if_match_header):
     test_file.delete(etag=etag)
     expected_url = test_file.get_url()
