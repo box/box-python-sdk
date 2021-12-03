@@ -206,7 +206,7 @@ class Item(BaseItem):
         :type vanity_name:
             `unicode` or None
         :param kwargs:
-            Used to fulfill the contract of overrided method
+            Used to fulfill the contract of overriden method
         :return:
             The updated object with shared link.
             Returns a new object of the same type, without modifying the original object passed as self.
@@ -214,6 +214,7 @@ class Item(BaseItem):
             :class:`Item`
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
+        # pylint:disable=arguments-differ
         return super(Item, self).create_shared_link(
             access=access,
             etag=etag,
@@ -274,13 +275,14 @@ class Item(BaseItem):
         :type vanity_name:
             `unicode` or None
         :param kwargs:
-            Used to fulfill the contract of overrided method
+            Used to fulfill the contract of overriden method
         :returns:
             The URL of the shared link.
         :rtype:
             `unicode`
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
+        # pylint:disable=arguments-differ
         return super(Item, self).get_shared_link(
             access=access,
             etag=etag,
@@ -301,13 +303,14 @@ class Item(BaseItem):
         :type etag:
             `unicode` or None
         :param kwargs:
-            Used to fulfill the contract of overrided method
+            Used to fulfill the contract of overriden method
         :returns:
             Whether or not the update was successful.
         :rtype:
             `bool`
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
+        # pylint:disable=arguments-differ
         return super(Item, self).remove_shared_link(etag=etag)
 
     @api_call

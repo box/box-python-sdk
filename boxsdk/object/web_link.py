@@ -46,13 +46,14 @@ class WebLink(BaseItem):
         :type vanity_name:
             `unicode` or None
         :param kwargs:
-            Used to fulfill the contract of overrided method
+            Used to fulfill the contract of overriden method
         :return:
             The updated object with s shared link.
             Returns a new object of the same type, without modifying the original object passed as self.
         :rtype:
             :class:`WebLink`
         """
+        # pylint:disable=arguments-differ
         return super(WebLink, self).create_shared_link(
             access=access,
             unshared_at=unshared_at,
@@ -93,7 +94,7 @@ class WebLink(BaseItem):
         :type vanity_name:
             `unicode` or None
         :param kwargs:
-            Used to fulfill the contract of overrided method
+            Used to fulfill the contract of overriden method
         :param kwargs:
             Passed to the superclass
         :returns:
@@ -101,6 +102,7 @@ class WebLink(BaseItem):
         :rtype:
             `unicode`
         """
+        # pylint:disable=arguments-differ
         return super(WebLink, self).get_shared_link(
             access=access,
             unshared_at=unshared_at,
@@ -114,7 +116,7 @@ class WebLink(BaseItem):
         Baseclass override.
 
         :param kwargs:
-            Used to fulfill the contract of overrided method
+            Used to fulfill the contract of overriden method
         :returns:
             Whether or not the update was successful.
         :rtype:

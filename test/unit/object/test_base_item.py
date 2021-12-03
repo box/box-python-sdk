@@ -13,8 +13,8 @@ def test_base_item_and_response(
         return test_file, mock_file_response
     elif request.param == 'folder':
         return test_folder, mock_folder_response
-    else:
-        return test_web_link, mock_web_link_response
+
+    return test_web_link, mock_web_link_response
 
 
 @pytest.fixture(params=('empty', 'same', 'other'))

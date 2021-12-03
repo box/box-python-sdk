@@ -77,7 +77,7 @@ class BaseItem(BaseObject):
         Create a shared link for the item with the given access permissions.
 
         :param kwargs:
-            Keyword arguments passed from overriden method used to build request properties.
+            Keyword arguments passed from overriding method used to build request properties.
         :return:
             The updated object with shared link.
             Returns a new object of the same type, without modifying the original object passed as self.
@@ -117,7 +117,7 @@ class BaseItem(BaseObject):
         This url leads to a Box.com shared link page, where the item can be previewed, downloaded, etc.
 
         :param kwargs:
-            Keyword arguments passed from overriden method used to create a new shared link.
+            Keyword arguments passed from overriding method used to create a new shared link.
         :returns:
             The URL of the shared link.
         :rtype:
@@ -132,7 +132,7 @@ class BaseItem(BaseObject):
         Delete the shared link for the item.
 
         :param kwargs:
-            Keyword arguments passed from overriden method used to build request properties.
+            Keyword arguments passed from overriding method used to build request properties.
         :returns:
             Whether or not the update was successful.
         :rtype:
