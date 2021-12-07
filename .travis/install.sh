@@ -64,7 +64,16 @@ else
         pyenv global "pypy${PYPY_VERSION}"
         pip install -U virtualenv
         pip install --upgrade pip
-        python -m venv $PWD/.venv 
+        python -m venv $PWD/.venv
+    elif [[ "${TOX_ENV}" == "py27" ]] || [[ "${TOX_ENV}" == "pycodestyle" ]] || [[ "${TOX_ENV}" == "pylint" ]]; then
+        git clone https://github.com/yyuu/pyenv.git $PWD/.pyenv
+        export PYENV_ROOT="$PWD/.pyenv"
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        eval "$(pyenv init --path)"
+        pyenv install 2.7.14
+        pyenv global 2.7.14
+        pip install -U virtualenv
+        python -m virtualenv $PWD/.venv
     else
         python -m virtualenv $PWD/.venv
     fi
