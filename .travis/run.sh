@@ -10,11 +10,10 @@ set -o pipefail
 if [[ "$(uname -s)" == "Darwin" ]]; then
     eval "$(pyenv init -)"
 else
-    if [[ "${TOX_ENV}" == "pypy" ]]; then
+    if [[ "${TOX_ENV}" == "pypy" ]] || [[ "${TOX_ENV}" == "py27" ]] || [[ "${TOX_ENV}" == "pycodestyle" ]] || [[ "${TOX_ENV}" == "pylint" ]]; then
         export PYENV_ROOT="$PWD/.pyenv"
         export PATH="$PYENV_ROOT/bin:$PATH"
         eval "$(pyenv init -)"
-        pyenv global "pypy${PYPY_VERSION}"
     fi
 fi
 source $PWD/.venv/bin/activate
