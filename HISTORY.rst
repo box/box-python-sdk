@@ -14,6 +14,7 @@ Next release
 
 **Bug Fixes:**
 - Limit cryptography to version <3.5.0 (`#636 <https://github.com/box/box-python-sdk/pull/636>`_)
+- Avoid raising 404 when a thumbnail cannot be generated for a file (`#642 <https://github.com/box/box-python-sdk/pull/642>`_)
 
 2.13.0 (2021-09-30)
 ++++++++
