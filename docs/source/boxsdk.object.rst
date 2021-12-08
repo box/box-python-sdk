@@ -28,6 +28,14 @@ boxsdk.object.base\_endpoint module
    :undoc-members:
    :show-inheritance:
 
+boxsdk.object.base\_item module
+-------------------------------
+
+.. automodule:: boxsdk.object.base_item
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 boxsdk.object.base\_object module
 ---------------------------------
 
