@@ -791,9 +791,12 @@ class File(Item):
             `bytes`
         """
         rep_hints = '[{0}?dimensions={1}]'.format(extension, dimensions)
-        representation = self.get_representation_info(rep_hints)
-        if representation:
-            url = representation[0]['content']['url_template']
+        representations = self.get_representation_info(rep_hints)
+        if representations:
+            representation = representations[0]
+            if representation['status'].get('code') in ('error_conversion_failed', 'error_password_protected'):
+                return b''
+            url = representation['content']['url_template']
             url = url.replace('{+asset_path}', '')
             response = self._session.get(url, expect_json_response=False)
             return response.content
