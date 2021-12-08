@@ -201,7 +201,7 @@ class Folder(Item):
             `unicode` or None
         :param sort:
             Item field to sort results on: 'id', 'name', or 'date'.
-        :type sort':
+        :type sort:
             `unicode` or None
         :param direction:
             Sort direction for the items returned.

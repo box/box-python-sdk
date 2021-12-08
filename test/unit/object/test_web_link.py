@@ -5,6 +5,7 @@ import json
 
 from boxsdk.config import API
 from boxsdk.object.web_link import WebLink
+from boxsdk.util.default_arg_value import SDK_VALUE_NOT_SET
 
 
 def test_get(mock_box_session, test_web_link):
@@ -53,3 +54,89 @@ def test_delete(mock_box_session, test_web_link):
     expected_url = '{0}/{1}/{2}'.format(API.BASE_API_URL, 'web_links', web_link_id)
     test_web_link.delete()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=None, params={})
+
+
+def test_get_shared_link(
+        test_web_link,
+        mock_box_session,
+        shared_link_access,
+        shared_link_unshared_at,
+        shared_link_password,
+        shared_link_vanity_name,
+        test_url,
+):
+    # pylint:disable=redefined-outer-name, protected-access
+    expected_url = test_web_link.get_url()
+    mock_box_session.put.return_value.json.return_value = {
+        'type': test_web_link.object_type,
+        'id': test_web_link.object_id,
+        'shared_link': {
+            'url': test_url,
+        },
+    }
+    expected_data = {'shared_link': {}}
+    if shared_link_access is not None:
+        expected_data['shared_link']['access'] = shared_link_access
+    if shared_link_unshared_at is not SDK_VALUE_NOT_SET:
+        expected_data['shared_link']['unshared_at'] = shared_link_unshared_at
+    if shared_link_password is not None:
+        expected_data['shared_link']['password'] = shared_link_password
+    if shared_link_vanity_name is not None:
+        expected_data['shared_link']['vanity_name'] = shared_link_vanity_name
+
+    url = test_web_link.get_shared_link(
+        access=shared_link_access,
+        unshared_at=shared_link_unshared_at,
+        password=shared_link_password,
+        vanity_name=shared_link_vanity_name,
+    )
+    mock_box_session.put.assert_called_once_with(
+        expected_url,
+        data=json.dumps(expected_data),
+        headers=None,
+        params=None,
+    )
+    assert url == test_url
+
+
+def test_clear_unshared_at_for_shared_link(
+        test_web_link,
+        mock_box_session,
+        test_url,
+):
+    expected_url = test_web_link.get_url()
+    mock_box_session.put.return_value.json.return_value = {
+        'type': test_web_link.object_type,
+        'id': test_web_link.object_id,
+        'shared_link': {
+            'url': test_url,
+            'unshared_at': None,
+        },
+    }
+    expected_data = {'shared_link': {'unshared_at': None, }, }
+    shared_link = test_web_link.get_shared_link(unshared_at=None)
+    mock_box_session.put.assert_called_once_with(
+        expected_url,
+        data=json.dumps(expected_data),
+        headers=None,
+        params=None,
+    )
+    assert shared_link is test_url
+
+
+def test_remove_shared_link(test_web_link, mock_box_session):
+    # pylint:disable=redefined-outer-name, protected-access
+    expected_url = test_web_link.get_url()
+    mock_box_session.put.return_value.json.return_value = {
+        'type': test_web_link.object_type,
+        'id': test_web_link.object_id,
+        'shared_link': None,
+    }
+    removed = test_web_link.remove_shared_link()
+    mock_box_session.put.assert_called_once_with(
+        expected_url,
+        data=json.dumps({'shared_link': None}),
+        headers=None,
+        params=None,
+    )
+    assert removed is True

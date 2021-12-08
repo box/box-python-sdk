@@ -4,11 +4,8 @@ from __future__ import unicode_literals, absolute_import
 import json
 
 from boxsdk.util.text_enum import TextEnum
-from .base_object import BaseObject
-from ..exception import (
-    BoxAPIException,
-    BoxValueError
-)
+from .base_item import BaseItem
+from ..exception import BoxAPIException
 from .metadata import Metadata
 from ..util.api_call_decorator import api_call
 from ..util.default_arg_value import SDK_VALUE_NOT_SET
@@ -24,7 +21,7 @@ class ClassificationType(TextEnum):
     NONE = 'None'
 
 
-class Item(BaseObject):
+class Item(BaseItem):
     """Box API endpoint for interacting with files and folders."""
 
     _classification_template_key = 'securityClassification-6VMVochwUWo'
@@ -105,8 +102,17 @@ class Item(BaseObject):
 
     @api_call
     def update_info(self, data, etag=None):
-        """Baseclass override.
-
+        """
+        Baseclass override.
+        :param data:
+            The updated information about this object.
+            Must be JSON serializable.
+            Update the object attributes in data.keys(). The semantics of the
+            values depends on the the type and attributes of the object being
+            updated. For details on particular semantics, refer to the Box
+            developer API documentation <https://developer.box.com/>.
+        :type data:
+            `dict`
         :param etag:
             If specified, instruct the Box API to perform the update only if
             the current version's etag matches.
@@ -125,23 +131,9 @@ class Item(BaseObject):
         return super(Item, self).update_info(data, headers=headers)
 
     @api_call
-    def rename(self, name):
-        """
-        Rename the item to a new name.
-
-        :param name:
-            The new name, you want the item to be renamed to.
-        :type name:
-            `unicode`
-        """
-        data = {
-            'name': name,
-        }
-        return self.update_info(data)
-
-    @api_call
     def get(self, fields=None, etag=None):
-        """Base class override.
+        """
+        Base class override.
 
         :param fields:
             List of fields to request.
@@ -163,54 +155,6 @@ class Item(BaseObject):
         return super(Item, self).get(fields=fields, headers=headers)
 
     @api_call
-    def copy(self, parent_folder, name=None):
-        """Copy the item to the given folder.
-
-        :param parent_folder:
-            The folder to which the item should be copied.
-        :type parent_folder:
-            :class:`Folder`
-        :param name:
-            A new name for the item, in case there is already another item in the new parent folder with the same name.
-        :type name:
-            `unicode` or None
-        """
-        self.validate_item_id(self._object_id)
-        url = self.get_url('copy')
-        data = {
-            'parent': {'id': parent_folder.object_id}
-        }
-        if name is not None:
-            data['name'] = name
-        box_response = self._session.post(url, data=json.dumps(data))
-        response = box_response.json()
-        return self.translator.translate(
-            session=self._session,
-            response_object=response,
-        )
-
-    @api_call
-    def move(self, parent_folder, name=None):
-        """
-        Move the item to the given folder.
-
-        :param parent_folder:
-            The parent `Folder` object, where the item will be moved to.
-        :type parent_folder:
-            :class:`Folder`
-        :param name:
-            A new name for the item, in case there is already another item in the new parent folder with the same name.
-        :type name:
-            `unicode` or None
-        """
-        data = {
-            'parent': {'id': parent_folder.object_id}
-        }
-        if name is not None:
-            data['name'] = name
-        return self.update_info(data)
-
-    @api_call
     def create_shared_link(
             self,
             access=None,
@@ -219,10 +163,11 @@ class Item(BaseObject):
             allow_download=None,
             allow_preview=None,
             password=None,
-            vanity_name=None
+            vanity_name=None,
+            **kwargs
     ):
         """
-        Create a shared link for the item with the given access permissions.
+        Baseclass override.
 
         :param access:
             Determines who can access the shared link. May be open, company, or collaborators. If no access is
@@ -260,36 +205,25 @@ class Item(BaseObject):
             If this parameter is None, the standard shared link URL will be used.
         :type vanity_name:
             `unicode` or None
+        :param kwargs:
+            Used to fulfill the contract of overriden method
         :return:
-            The updated object with s shared link.
+            The updated object with shared link.
             Returns a new object of the same type, without modifying the original object passed as self.
         :rtype:
             :class:`Item`
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
-        data = {
-            'shared_link': {} if not access else {
-                'access': access
-            }
-        }
-
-        if unshared_at is not SDK_VALUE_NOT_SET:
-            data['shared_link']['unshared_at'] = unshared_at
-
-        if allow_download is not None or allow_preview is not None:
-            data['shared_link']['permissions'] = permissions = {}
-            if allow_download is not None:
-                permissions['can_download'] = allow_download
-            if allow_preview is not None:
-                permissions['can_preview'] = allow_preview
-
-        if password is not None:
-            data['shared_link']['password'] = password
-
-        if vanity_name is not None:
-            data['shared_link']['vanity_name'] = vanity_name
-
-        return self.update_info(data, etag=etag)
+        # pylint:disable=arguments-differ
+        return super(Item, self).create_shared_link(
+            access=access,
+            etag=etag,
+            unshared_at=unshared_at,
+            allow_download=allow_download,
+            allow_preview=allow_preview,
+            password=password,
+            vanity_name=vanity_name
+        )
 
     @api_call
     def get_shared_link(
@@ -300,11 +234,11 @@ class Item(BaseObject):
             allow_download=None,
             allow_preview=None,
             password=None,
-            vanity_name=None
+            vanity_name=None,
+            **kwargs
     ):
         """
-        Get a shared link for the item with the given access permissions.
-        This url leads to a Box.com shared link page, where the item can be previewed, downloaded, etc.
+        Baseclass override.
 
         :param access:
             Determines who can access the shared link. May be open, company, or collaborators. If no access is
@@ -340,13 +274,16 @@ class Item(BaseObject):
             If this parameter is None, the standard shared link URL will be used.
         :type vanity_name:
             `unicode` or None
+        :param kwargs:
+            Used to fulfill the contract of overriden method
         :returns:
             The URL of the shared link.
         :rtype:
             `unicode`
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
-        item = self.create_shared_link(
+        # pylint:disable=arguments-differ
+        return super(Item, self).get_shared_link(
             access=access,
             etag=etag,
             unshared_at=unshared_at,
@@ -355,25 +292,26 @@ class Item(BaseObject):
             password=password,
             vanity_name=vanity_name
         )
-        return item.shared_link['url']  # pylint:disable=no-member
 
     @api_call
-    def remove_shared_link(self, etag=None):
-        """Delete the shared link for the item.
+    def remove_shared_link(self, etag=None, **kwargs):
+        """
+        Baseclass override.
 
         :param etag:
             If specified, instruct the Box API to delete the link only if the current version's etag matches.
         :type etag:
             `unicode` or None
+        :param kwargs:
+            Used to fulfill the contract of overriden method
         :returns:
             Whether or not the update was successful.
         :rtype:
             `bool`
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
-        data = {'shared_link': None}
-        item = self.update_info(data, etag=etag)
-        return item.shared_link is None  # pylint:disable=no-member
+        # pylint:disable=arguments-differ
+        return super(Item, self).remove_shared_link(etag=etag)
 
     @api_call
     def delete(self, params=None, etag=None):
@@ -483,48 +421,6 @@ class Item(BaseObject):
         url = self.get_url('watermark')
         box_response = self._session.delete(url, expect_json_response=False)
         return box_response.ok
-
-    @api_call
-    def add_to_collection(self, collection):
-        """
-        Add the item to a collection.  This method is not currently safe from race conditions.
-
-        :param collection:
-            The collection to add the item to.
-        :type collection:
-            :class:`Collection`
-        :return:
-            This item.
-        :rtype:
-            :class:`Item`
-        """
-        collections = self.get(fields=['collections']).collections  # pylint:disable=no-member
-        collections.append({'id': collection.object_id})
-        data = {
-            'collections': collections
-        }
-        return self.update_info(data)
-
-    @api_call
-    def remove_from_collection(self, collection):
-        """
-        Remove the item from a collection.  This method is not currently safe from race conditions.
-
-        :param collection:
-            The collection to remove the item from.
-        :type collection:
-            :class:`Collection`
-        :return:
-            This item.
-        :rtype:
-            :class:`Item`
-        """
-        collections = self.get(fields=['collections']).collections  # pylint:disable=no-member
-        updated_collections = [c for c in collections if c['id'] != collection.object_id]
-        data = {
-            'collections': updated_collections
-        }
-        return self.update_info(data)
 
     @api_call
     def collaborate(self, accessible_by, role, can_view_path=None, notify=None, fields=None):
@@ -760,20 +656,3 @@ class Item(BaseObject):
             `bool`
         """
         return self.metadata('enterprise', self._classification_template_key).delete()
-
-    @staticmethod
-    def validate_item_id(item_id):
-        """
-        Validates an item ID is numeric
-
-        :param item_id:
-        :type item_id:
-            `str` or `int`
-        :raises:
-            BoxException: if item_id is not numeric
-        :returns:
-        :rtype:
-            None
-        """
-        if not isinstance(item_id, int) and not item_id.isdigit():
-            raise BoxValueError("Invalid item ID")
