@@ -901,7 +901,7 @@ def test_get_thumbnail_representation_not_found(
         headers={'X-Rep-Hints': '[{}?dimensions={}]'.format(extension, dimensions)},
         params={'fields': 'representations'},
     )
-    assert b'' == thumb
+    assert thumb == b''
 
 
 def test_get_thumbnail_representation_not_available(
@@ -947,4 +947,4 @@ def test_get_thumbnail_representation_not_available(
         headers={'X-Rep-Hints': '[{}?dimensions={}]'.format(extension, dimensions)},
         params={'fields': 'representations'},
     )
-    assert b'' == thumb
+    assert thumb == b''
