@@ -54,14 +54,13 @@ class BaseAPIJSONObjectMeta(type):
         super(BaseAPIJSONObjectMeta, cls).__init__(name, bases, attrs)
         item_type = attrs.get('_item_type', None)
         if item_type is not None:
-            Translator._default_translator.register(item_type, cls)   # pylint:disable=protected-access
+            Translator._default_translator.register(item_type, cls)   # pylint:disable=protected-access,no-member
             # Some types have - in them instead of _ in the API.
             if "-" in item_type:
-                Translator._default_translator.register(item_type.replace("-", "_"), cls)   # pylint:disable=protected-access
+                Translator._default_translator.register(item_type.replace("-", "_"), cls)   # pylint:disable=protected-access,no-member
 
 
-@six.add_metaclass(BaseAPIJSONObjectMeta)
-class BaseAPIJSONObject(object):
+class BaseAPIJSONObject(metaclass=BaseAPIJSONObjectMeta):
     """Base class containing basic logic shared between true REST objects and other objects (such as an Event)"""
 
     # :attr _item_type:
@@ -84,7 +83,7 @@ class BaseAPIJSONObject(object):
         :type response_object:
             `dict`
         """
-        super(BaseAPIJSONObject, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self._response_object = response_object or {}
         self.__dict__.update(self._response_object)
 

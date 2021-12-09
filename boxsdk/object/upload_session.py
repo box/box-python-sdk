@@ -130,7 +130,7 @@ class UploadSession(BaseObject):
         if parts is not None:
             body['parts'] = parts
         else:
-            body['parts'] = [part for part in self.get_parts()]
+            body['parts'] = list(self.get_parts())
         headers = {
             'Content-Type': 'application/json',
             'Digest': 'SHA={0}'.format(base64.b64encode(content_sha1).decode('utf-8')),

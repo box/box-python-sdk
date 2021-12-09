@@ -19,7 +19,7 @@ class RemoteOAuth2Mixin(OAuth2):
         """
         # pylint:disable=keyword-arg-before-vararg
         self._retrieve_access_token = retrieve_access_token
-        super(RemoteOAuth2Mixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _refresh(self, access_token):
         """
@@ -35,4 +35,3 @@ class RemoteOAuth2(RemoteOAuth2Mixin):
     Allows for storing auth tokens remotely. The retrieve_access_token callback should
     return an access token, presumably acquired from a remote server on which your auth credentials are available.
     """
-    pass

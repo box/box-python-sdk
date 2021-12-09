@@ -8,7 +8,7 @@ from ..util.log import sanitize_dictionary
 
 
 @attr.s(slots=True)
-class BoxRequest(object):
+class BoxRequest:
     """Represents a Box API request.
 
     :param url:                     The URL being requested.

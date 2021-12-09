@@ -26,7 +26,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         :type response_object:
             `dict`
         """
-        super(BaseObject, self).__init__(session=session, response_object=response_object)
+        super().__init__(session=session, response_object=response_object)
         self._object_id = object_id
 
     @property
@@ -42,7 +42,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         Return the given object's URL, appending any optional parts as specified by args.
         """
         # pylint:disable=arguments-differ
-        return super(BaseObject, self).get_url('{0}s'.format(self._item_type), self._object_id, *args)
+        return super().get_url('{0}s'.format(self._item_type), self._object_id, *args)
 
     def get_type_url(self):
         """
@@ -51,7 +51,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         :rtype:
             `unicode`
         """
-        return super(BaseObject, self).get_url('{0}s'.format(self._item_type))
+        return super().get_url('{0}s'.format(self._item_type))
 
     @property
     def object_id(self):

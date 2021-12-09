@@ -212,4 +212,4 @@ class User(BaseObject):
             'notify': notify,
             'force': force,
         }
-        return super(User, self).delete(params=params)
+        return super().delete(params=params)

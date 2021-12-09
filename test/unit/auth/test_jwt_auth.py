@@ -376,7 +376,7 @@ def jwt_subclass_that_just_stores_params():
     class StoreParamJWTAuth(JWTAuth):
         def __init__(self, **kwargs):
             self.kwargs = kwargs
-            super(StoreParamJWTAuth, self).__init__(**kwargs)
+            super().__init__(**kwargs)
 
     return StoreParamJWTAuth
 

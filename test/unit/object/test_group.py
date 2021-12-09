@@ -8,7 +8,6 @@ from operator import sub
 
 from mock import Mock
 import pytest
-from six.moves import map  # pylint:disable=redefined-builtin,import-error
 
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.collaboration import Collaboration

@@ -23,7 +23,7 @@ class TrashContent(TextEnum):
     ONLY = 'trashed_only'
 
 
-class MetadataSearchFilter(object):
+class MetadataSearchFilter:
     """
     Helper class to encapsulate a single search filter. A search filter can only search against one template,
     but can filter on many fields.
@@ -101,7 +101,7 @@ class MetadataSearchFilter(object):
         self._field_filters.update({field_key: range_part})
 
 
-class MetadataSearchFilters(object):
+class MetadataSearchFilters:
     """
     Helper class to encapsulate a list of metadata search filter params (mdfilters API param)
     See https://developers.box.com/metadata-api/#search for more details
@@ -145,7 +145,7 @@ class Search(BaseEndpoint):
             `unicode`
         """
         # pylint:disable=arguments-differ
-        return super(Search, self).get_url('search')
+        return super().get_url('search')
 
     @staticmethod
     def start_metadata_filters():
@@ -359,7 +359,7 @@ class Search(BaseEndpoint):
         :rtype:
             :class:`BoxObjectCollection`
         """
-        url = super(Search, self).get_url('metadata_queries/execute_read')
+        url = super().get_url('metadata_queries/execute_read')
         data = {
             'from': from_template,
             'ancestor_folder_id': ancestor_folder_id

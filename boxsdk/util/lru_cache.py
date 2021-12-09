@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 
 
-class LRUCache(object):
+class LRUCache:
     def __init__(self, capacity=512):
         """
         :param capacity:
@@ -13,7 +13,7 @@ class LRUCache(object):
         :type capacity:
             `int`
         """
-        super(LRUCache, self).__init__()
+        super().__init__()
         self.capacity = capacity
         self.cache = OrderedDict()
 

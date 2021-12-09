@@ -4,7 +4,7 @@ Release History
 ---------------
 
 2.14.0 (2021-12-08)
-++++++++
+++++++++++++++++++++
 
 **New Features and Enhancements:**
 
@@ -14,11 +14,12 @@ Release History
 - Support base item operations for WebLink class (`#639 <https://github.com/box/box-python-sdk/pull/639>`_)
 
 **Bug Fixes:**
+
 - Limit cryptography to version <3.5.0 (`#636 <https://github.com/box/box-python-sdk/pull/636>`_)
 - Avoid raising 404 when a thumbnail cannot be generated for a file (`#642 <https://github.com/box/box-python-sdk/pull/642>`_)
 
 2.13.0 (2021-09-30)
-++++++++
+++++++++++++++++++++
 
 **New Features and Enhancements:**
 
@@ -30,14 +31,14 @@ Release History
 - Upgrade cryptography to version 3 (`#620 <https://github.com/box/box-python-sdk/pull/620>`_)
 
 2.12.1 (2021-06-16)
-++++++++
+++++++++++++++++++++
 
 **Bug Fixes:**
 
 - Fix bug when thumbnail representations are not found (`#597 <https://github.com/box/box-python-sdk/pull/597>`_)
 
 2.12.0 (2021-04-16)
-++++++++
+++++++++++++++++++++
 
 **New Features and Enhancements:**
 
@@ -47,14 +48,14 @@ Release History
 - Update `get_groups()` to use documented parameter to filter by name (`#586 <https://github.com/box/box-python-sdk/pull/586>`_)
 
 2.11.0 (2021-01-11)
-++++++++
+++++++++++++++++++++
 
 **New Features and Enhancements:**
 
 - Deprecate and add method for getting a thumbnail (`#572 <https://github.com/box/box-python-sdk/pull/572>`_)
 
 2.10.0 (2020-10-02)
-++++++++
+++++++++++++++++++++
 
 **New Features and Enhancements:**
 
@@ -68,21 +69,21 @@ Release History
 - Allow ints to be passed in as item IDs (`#530 <https://github.com/box/box-python-sdk/pull/530>`_)
 
 2.9.0 (2020-06-23)
-++++++++
+++++++++++++++++++++
 - Fix exception handling for OAuth
 - Fix path parameter sanitization
 
 2.8.0 (2020-04-24)
-++++++++
+++++++++++++++++++++
 - Added support for token exchange using shared links
 - Added the ability to pass in a SHA1 value for file uploads
 
 2.7.1 (2020-01-21)
-++++++++
+++++++++++++++++++++
 - Fixed bug in `_get_retry_request_callable` introduced in release 2.7.0 which caused chunked uploads to fail
 
 2.7.0 (2020-01-16)
-++++++++
+++++++++++++++++++++
 - Fixed bug in `get_admin_events` function which caused errors when the optional `event_types` parameter was omitted.
 - Add marker based pagination for listing users.
 - Added support for more attribute parameters when uploading new files and new versions of existing files.
@@ -93,7 +94,7 @@ Release History
 
 2.6.1 (2019-10-24)
 ++++++++++++++++++
-- Added api_ call decorator for copy method.
+- Added `api_call` decorator for copy method.
 
 2.6.0 (2019-08-29)
 ++++++++++++++++++

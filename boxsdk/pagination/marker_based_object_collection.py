@@ -41,7 +41,7 @@ class MarkerBasedObjectCollection(BoxObjectCollection):
         :type use_post:
             `bool`
         """
-        super(MarkerBasedObjectCollection, self).__init__(
+        super().__init__(
             session,
             url,
             limit=limit,

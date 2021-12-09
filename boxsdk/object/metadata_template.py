@@ -9,11 +9,11 @@ from ..util.api_call_decorator import api_call
 from ..util.text_enum import TextEnum
 
 
-class MetadataTemplateUpdate(object):
+class MetadataTemplateUpdate:
     """Represents a set of update operations to a metadata template."""
 
     def __init__(self):
-        super(MetadataTemplateUpdate, self).__init__()
+        super().__init__()
         self._ops = []
 
     def json(self):
@@ -199,7 +199,7 @@ class MetadataFieldType(TextEnum):
     FLOAT = 'float'
 
 
-class MetadataField(object):
+class MetadataField:
     """Represents a metadata field when creating or updating a metadata template."""
 
     def __init__(self, field_type, display_name, key=None, options=None):
@@ -221,7 +221,7 @@ class MetadataField(object):
         :type options:
             `Iterable` of `unicode`
         """
-        super(MetadataField, self).__init__()
+        super().__init__()
         self.type = field_type
         self.name = display_name
         self.key = key
@@ -276,7 +276,7 @@ class MetadataTemplate(BaseObject):
         :type response_object:
             `dict` or None
         """
-        super(MetadataTemplate, self).__init__(session, object_id, response_object)
+        super().__init__(session, object_id, response_object)
         if response_object:
             self._scope = response_object.get('scope', None)
             self._template_key = response_object.get('templateKey', None)
@@ -301,7 +301,7 @@ class MetadataTemplate(BaseObject):
         if self._scope and self._template_key:
             return self._session.get_url('metadata_templates', self._scope, self._template_key, 'schema', *args)
 
-        return super(MetadataTemplate, self).get_url(*args)
+        return super().get_url(*args)
 
     @staticmethod
     def start_update():

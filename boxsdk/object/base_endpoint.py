@@ -19,7 +19,7 @@ class BaseEndpoint(Cloneable):
         :type kwargs:
             `dict`
         """
-        super(BaseEndpoint, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self._session = session
 
     @property

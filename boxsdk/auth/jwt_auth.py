@@ -144,7 +144,7 @@ class JWTAuth(OAuth2):
         )
         del rsa_private_key_data
         del rsa_private_key_file_sys_path
-        super(JWTAuth, self).__init__(
+        super().__init__(
             client_id,
             client_secret,
             store_tokens=store_tokens,

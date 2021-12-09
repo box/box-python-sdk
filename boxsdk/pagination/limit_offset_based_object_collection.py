@@ -29,7 +29,7 @@ class LimitOffsetBasedObjectCollection(BoxObjectCollection):
         :type offset:
             `int`
         """
-        super(LimitOffsetBasedObjectCollection, self).__init__(
+        super().__init__(
             session,
             url,
             limit=limit,

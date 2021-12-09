@@ -6,13 +6,10 @@ from functools import partial
 import re
 from threading import Thread
 import uuid
+from urllib import parse
 
 from mock import Mock, patch
 import pytest
-from six.moves import range   # pylint:disable=redefined-builtin
-# pylint:disable=import-error,no-name-in-module,wrong-import-order,relative-import
-from six.moves.urllib import parse as urlparse
-# pylint:enable=import-error,no-name-in-module,wrong-import-order,relative-import
 
 from boxsdk.exception import BoxOAuthException
 from boxsdk.network.default_network import DefaultNetworkResponse
@@ -50,7 +47,7 @@ def test_get_correct_authorization_url(redirect_url):
         API.OAUTH2_AUTHORIZE_URL,
         csrf_token,
         fake_client_id,
-        urlparse.quote_plus((redirect_url or '').encode('utf-8')),
+        parse.quote_plus((redirect_url or '').encode('utf-8')),
     )
     assert re.match('^box_csrf_token_[A-Za-z0-9]{16}$', csrf_token)
 
@@ -204,7 +201,7 @@ def token_method(request):
     """ Fixture that returns a partial method based on the method provided in request.param"""
     if request.param == OAuth2.refresh:
         return partial(OAuth2.refresh, access_token_to_refresh='fake_access_token')
-    elif request.param == OAuth2.authenticate:
+    if request.param == OAuth2.authenticate:
         return partial(OAuth2.authenticate, auth_code='fake_code')
     return None
 

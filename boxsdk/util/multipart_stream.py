@@ -19,4 +19,4 @@ class MultipartStream(MultipartEncoder):
             fields[k] = data[k]
         for k in files:
             fields[k] = files[k]
-        super(MultipartStream, self).__init__(fields)
+        super().__init__(fields)

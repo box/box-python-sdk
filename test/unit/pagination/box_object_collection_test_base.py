@@ -1,16 +1,13 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, absolute_import
-from abc import ABCMeta, abstractmethod
-from six import add_metaclass
-from six.moves import range   # pylint:disable=redefined-builtin
+from abc import ABC, abstractmethod
 import pytest
 
 from boxsdk.util.translator import Translator
 
 
-@add_metaclass(ABCMeta)
-class BoxObjectCollectionTestBase(object):
+class BoxObjectCollectionTestBase(ABC):
     NUM_ENTRIES = 25
 
     @staticmethod

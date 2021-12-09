@@ -534,7 +534,7 @@ def test_remove_classification(test_item_and_response, mock_box_session, make_mo
     mock_box_session.delete.return_value, _ = make_mock_box_request(response_ok='success')
     is_removed = test_item.remove_classification()
     mock_box_session.delete.assert_called_once_with(expected_url)
-    assert is_removed is 'success'
+    assert is_removed == 'success'
 
 
 def test_sanitize_item_id(test_item_and_response):

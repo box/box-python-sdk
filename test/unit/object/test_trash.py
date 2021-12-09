@@ -25,7 +25,7 @@ def test_item_and_response(
 ):
     if request.param == 'file':
         return test_file, mock_file_response
-    elif request.param == 'web_link':
+    if request.param == 'web_link':
         return test_web_link, mock_web_link_response
     return test_folder, mock_folder_response
 

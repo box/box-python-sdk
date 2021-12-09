@@ -86,7 +86,7 @@ def test_default_translator():
 def test_with_extend_default_translator(default_translator, extend_default_translator, new_child):
     item_type = 'foo'
 
-    class Foo(object):
+    class Foo:
         pass
 
     kwargs = {}
@@ -100,7 +100,7 @@ def test_with_extend_default_translator(default_translator, extend_default_trans
 def test_without_extend_default_translator(new_child):
     item_type = 'foo'
 
-    class Foo(object):
+    class Foo:
         pass
 
     mapping = {item_type: Foo}
@@ -113,7 +113,7 @@ def test_without_extend_default_translator(new_child):
 def test_with_new_child(new_child, extend_default_translator):
     item_type = 'foo'
 
-    class Foo(object):
+    class Foo:
         pass
 
     mapping = {item_type: Foo}
@@ -140,7 +140,7 @@ def test_with_new_child(new_child, extend_default_translator):
 def test_without_new_child(extend_default_translator):
     item_type = 'foo'
 
-    class Foo(object):
+    class Foo:
         pass
 
     mapping = {item_type: Foo}

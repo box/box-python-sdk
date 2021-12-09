@@ -54,7 +54,7 @@ class WebLink(BaseItem):
             :class:`WebLink`
         """
         # pylint:disable=arguments-differ
-        return super(WebLink, self).create_shared_link(
+        return super().create_shared_link(
             access=access,
             unshared_at=unshared_at,
             password=password,
@@ -103,7 +103,7 @@ class WebLink(BaseItem):
             `unicode`
         """
         # pylint:disable=arguments-differ
-        return super(WebLink, self).get_shared_link(
+        return super().get_shared_link(
             access=access,
             unshared_at=unshared_at,
             password=password,
@@ -122,4 +122,4 @@ class WebLink(BaseItem):
         :rtype:
             `bool`
         """
-        return super(WebLink, self).remove_shared_link()
+        return super().remove_shared_link()

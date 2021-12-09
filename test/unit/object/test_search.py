@@ -150,7 +150,7 @@ def search_with_shared_links_response():
     }
 
 
-class Matcher(object):
+class Matcher:
     def __init__(self, compare, some_obj):
         self.compare = compare
         self.some_obj = some_obj

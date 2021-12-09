@@ -23,10 +23,10 @@ def test_total_seconds(total_seconds_data):
 
 def test_with_metaclass():
 
-    class Class1(object):
+    class Class1:
         pass
 
-    class Class2(object):
+    class Class2:
         pass
 
     bases = (Class1, Class2)

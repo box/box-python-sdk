@@ -22,7 +22,7 @@ else:
 _no_logger = object()
 
 
-class Logging(object):
+class Logging:
     _has_setup = False
     KEYS_TO_SANITIZE = (
         'Authorization',

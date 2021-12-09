@@ -9,9 +9,9 @@ import string  # pylint:disable=deprecated-module
 import sys
 from threading import Lock
 
-# pylint:disable=import-error,no-name-in-module,relative-import
+# pylint:disable=import-error,no-name-in-module
 from six.moves.urllib.parse import urlencode, urlunsplit
-# pylint:enable=import-error,no-name-in-module,relative-import
+# pylint:enable=import-error,no-name-in-module
 import six
 
 from ..config import API
@@ -38,10 +38,9 @@ class TokenScope(TextEnum):
 
 class TokenResponse(BaseAPIJSONObject):
     """ Represents the response for a token request. """
-    pass
 
 
-class OAuth2(object):
+class OAuth2:
     """
     Responsible for handling OAuth2 for the Box API. Can authenticate and refresh tokens.
 
@@ -344,13 +343,14 @@ class OAuth2(object):
                 access_token=access_token,
             )
         except BoxAPIException as box_api_exception:
-            six.raise_from(self._oauth_exception(box_api_exception.network_response, url), box_api_exception)
+            raise self._oauth_exception(box_api_exception.network_response, url) from box_api_exception
+
         if not network_response.ok:
             raise self._oauth_exception(network_response, url)
         try:
             token_response = TokenResponse(network_response.json())
-        except ValueError:
-            raise self._oauth_exception(network_response, url)
+        except ValueError as value_exception:
+            raise self._oauth_exception(network_response, url) from value_exception
 
         if ('access_token' not in token_response) or (expect_refresh_token and 'refresh_token' not in token_response):
             raise self._oauth_exception(network_response, url)
@@ -426,7 +426,8 @@ class OAuth2(object):
                     access_token=access_token,
                 )
             except BoxAPIException as box_api_exception:
-                six.raise_from(self._oauth_exception(box_api_exception.network_response, url), box_api_exception)
+                raise self._oauth_exception(box_api_exception.network_response, url) from box_api_exception
+
             if not network_response.ok:
                 raise BoxOAuthException(
                     network_response.status_code,

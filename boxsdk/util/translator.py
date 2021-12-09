@@ -1,21 +1,10 @@
 # coding: utf-8
 
 from __future__ import absolute_import, unicode_literals
-
+from collections import ChainMap
 import inspect
 
-from .chain_map import ChainMap
-
-
 __all__ = list(map(str, ['Translator']))
-
-# pylint: disable=invalid-name
-inspect_signature = None
-try:
-    inspect_signature = inspect.signature
-except AttributeError:  # pragma: no cover
-    import funcsigs
-    inspect_signature = funcsigs.signature
 
 
 def _get_object_id(obj):
@@ -105,7 +94,7 @@ class Translator(ChainMap):
             translation_maps.append(self._default_translator)
         if new_child:
             translation_maps.insert(0, {})
-        super(Translator, self).__init__(*translation_maps, **kwargs)
+        super().__init__(*translation_maps, **kwargs)
 
     def register(self, type_name, box_cls):
         """Associate a Box object class to handle Box API item responses with the given type name.
@@ -134,10 +123,11 @@ class Translator(ChainMap):
         :type default:  :class:`BaseAPIJSONObjectMeta`
         :rtype:   :class:`BaseAPIJSONObjectMeta`
         """
+        # pylint:disable=import-outside-toplevel
         from boxsdk.object.base_object import BaseObject
         if default is None:
             default = BaseObject
-        return super(Translator, self).get(key, default)
+        return super().get(key, default)
 
     def translate(self, session, response_object):
         """
@@ -185,7 +175,7 @@ class Translator(ChainMap):
                 'response_object': translated_obj,
                 'object_id': _get_object_id(translated_obj),
             }
-            params = inspect_signature(object_class.__init__).parameters
+            params = inspect.signature(object_class.__init__).parameters
             param_values = {p: param_values[p] for p in params if p in param_values}
             return object_class(**param_values)
 

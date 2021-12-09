@@ -22,7 +22,7 @@ class DefaultNetwork(Network):
     EXCEPTION_FORMAT = '\x1b[31mRequest "%(method)s %(url)s" failed with %(exc_type_name)s exception: %(exc_value)r\x1b[0m'
 
     def __init__(self):
-        super(DefaultNetwork, self).__init__()
+        super().__init__()
         self._session = requests.Session()
         self._logger = getLogger(__name__)
 

@@ -59,9 +59,9 @@ class Collaboration(BaseObject):
         if status:
             data['status'] = status
         if role == CollaborationRole.OWNER:
-            return super(Collaboration, self).update_info(data=data, expect_json_response=False)
+            return super().update_info(data=data, expect_json_response=False)
         else:
-            return super(Collaboration, self).update_info(data=data)
+            return super().update_info(data=data)
 
     @api_call
     def accept(self):

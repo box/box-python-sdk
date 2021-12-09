@@ -30,10 +30,10 @@ def api_call(method):
     return APICallWrapper(method)
 
 
-class APICallWrapper(object):
+class APICallWrapper:
 
     def __init__(self, func_that_makes_an_api_call):
-        super(APICallWrapper, self).__init__()
+        super().__init__()
         self._func_that_makes_an_api_call = func_that_makes_an_api_call
         self.__name__ = func_that_makes_an_api_call.__name__
         update_wrapper(self, func_that_makes_an_api_call)

@@ -12,7 +12,7 @@ class DeveloperTokenAuth(OAuth2):
 
     def __init__(self, get_new_token_callback=None, **kwargs):
         self._get_new_token = get_new_token_callback
-        super(DeveloperTokenAuth, self).__init__(
+        super().__init__(
             client_id=None,
             client_secret=None,
             access_token=self._refresh_developer_token(),

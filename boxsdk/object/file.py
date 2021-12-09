@@ -126,10 +126,10 @@ class File(Item):
         """
         if len(boundaries) == 1:
             return 'bytes={0}-'.format(*boundaries)
-        elif len(boundaries) == 2:
+        if len(boundaries) == 2:
             return 'bytes={0}-{1}'.format(*boundaries)
-        else:
-            raise ValueError('Expected a 1-tuple or 2-tuple for byte range')
+
+        raise ValueError('Expected a 1-tuple or 2-tuple for byte range')
 
     @api_call
     def content(self, file_version=None, byte_range=None):
