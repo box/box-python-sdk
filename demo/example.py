@@ -5,7 +5,7 @@ import os
 from boxsdk import Client
 from boxsdk.exception import BoxAPIException
 from boxsdk.object.collaboration import CollaborationRole
-from auth import authenticate
+from demo.auth import authenticate
 
 
 def run_user_example(client):
@@ -293,6 +293,7 @@ def main():
     oauth, _, _ = authenticate()
     run_examples(oauth)
     os._exit(0)
+
 
 if __name__ == '__main__':
     main()

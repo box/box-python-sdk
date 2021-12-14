@@ -7,7 +7,7 @@ from test.functional.mock_box.util.db_utils import get_user_from_header
 from test.functional.mock_box.util.http_utils import abort
 
 
-class UserBehavior(object):
+class UserBehavior:
     def __init__(self, db_session):
         self._db_session = db_session
 

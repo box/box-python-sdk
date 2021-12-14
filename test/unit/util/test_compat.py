@@ -33,13 +33,13 @@ def test_with_metaclass():
 
     class Meta(type):
         @classmethod
-        def __prepare__(metacls, name, this_bases, **kwds):   # pylint:disable=unused-argument
+        def __prepare__(mcs, name, this_bases, **kwds):   # pylint:disable=unused-argument
             assert this_bases == bases
             return {}
 
-        def __new__(metacls, name, this_bases, namespace, **kwds):
+        def __new__(mcs, name, this_bases, namespace, **kwds):
             assert this_bases == bases
-            return super(Meta, metacls).__new__(metacls, name, this_bases, namespace, **kwds)
+            return super(Meta, mcs).__new__(mcs, name, this_bases, namespace, **kwds)
 
     temporary_class = with_metaclass(Meta, *bases)
     assert isinstance(temporary_class, Meta)
