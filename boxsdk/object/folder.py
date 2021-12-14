@@ -31,7 +31,7 @@ class _CollaborationType(TextEnum):
     GROUP = 'group'
 
 
-class _Collaborator(object):
+class _Collaborator:
     """This helper class represents a collaborator on Box. A Collaborator can be a User, Group, or an email address"""
     def __init__(self, collaborator):
         if isinstance(collaborator, User):
@@ -607,7 +607,7 @@ class Folder(Item):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
         # pylint:disable=arguments-differ
-        return super(Folder, self).delete({'recursive': recursive}, etag)
+        return super().delete({'recursive': recursive}, etag)
 
     @api_call
     def get_metadata_cascade_policies(self, owner_enterprise=None, limit=None, marker=None, fields=None):

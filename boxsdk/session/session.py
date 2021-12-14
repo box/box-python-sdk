@@ -20,7 +20,7 @@ from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
 
 
-class Session(object):
+class Session:
 
     _retry_randomization_factor = 0.5
     _retry_base_interval = 1
@@ -77,7 +77,7 @@ class Session(object):
         self._api_config = api_config or API()
         self._client_config = client_config or Client()
         self._proxy_config = proxy_config or Proxy()
-        super(Session, self).__init__()
+        super().__init__()
         self._network_layer = network_layer or DefaultNetwork()
         self._default_headers = {
             'User-Agent': self._client_config.USER_AGENT_STRING,
@@ -541,11 +541,11 @@ class AuthorizedSession(Session):
         :type session:
             :class:`Session`
         """
-        super(AuthorizedSession, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self._oauth = oauth
 
     def get_constructor_kwargs(self):
-        kwargs = super(AuthorizedSession, self).get_constructor_kwargs()
+        kwargs = super().get_constructor_kwargs()
         kwargs['oauth'] = self._oauth
         return kwargs
 
@@ -591,7 +591,7 @@ class AuthorizedSession(Session):
             self._renew_session(network_response.access_token_used)
             request.auto_session_renewal = False
             return self._send_request
-        return super(AuthorizedSession, self)._get_retry_request_callable(
+        return super()._get_retry_request_callable(
             network_response,
             attempt_number,
             request,
@@ -620,4 +620,4 @@ class AuthorizedSession(Session):
         authorization_header = {'Authorization': 'Bearer {0}'.format(access_token)}
         request.headers.update(authorization_header)
         kwargs['access_token'] = access_token
-        return super(AuthorizedSession, self)._send_request(request, **kwargs)
+        return super()._send_request(request, **kwargs)

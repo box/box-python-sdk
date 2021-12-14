@@ -30,7 +30,7 @@ class Page(Sequence):
         :type response_object:
             `dict`
         """
-        super(Page, self).__init__()
+        super().__init__()
         self._session = session
         self._response_object = response_object
 

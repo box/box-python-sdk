@@ -3,7 +3,7 @@
 from __future__ import unicode_literals, absolute_import
 
 
-class BoxResponse(object):
+class BoxResponse:
     """Represents a response to a Box API request."""
 
     def __init__(self, network_response):

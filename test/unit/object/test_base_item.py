@@ -11,7 +11,7 @@ def test_base_item_and_response(
         test_file, test_folder, test_web_link, mock_file_response, mock_folder_response, mock_web_link_response, request):
     if request.param == 'file':
         return test_file, mock_file_response
-    elif request.param == 'folder':
+    if request.param == 'folder':
         return test_folder, mock_folder_response
 
     return test_web_link, mock_web_link_response
@@ -23,11 +23,11 @@ def test_collections_for_addition(mock_collection_id, request):
     other_collection_id = mock_collection_id + '2'
     if request.param == 'empty':
         return [], [{'id': mock_collection_id}]
-    elif request.param == 'same':
+    if request.param == 'same':
         # Adding a second instance of the same collection is handled correctly by the API,
         # so for simplicity we do not check for an existing copy of the collection and just append
         return [{'id': mock_collection_id}], [{'id': mock_collection_id}, {'id': mock_collection_id}]
-    elif request.param == 'other':
+    if request.param == 'other':
         return [{'id': other_collection_id}], [{'id': other_collection_id}, {'id': mock_collection_id}]
 
     raise NotImplementedError("Forgot to implement {}".format(request.param))
@@ -39,11 +39,11 @@ def test_collections_for_removal(mock_collection_id, request):
     other_collection_id = mock_collection_id + '2'
     if request.param == 'empty':
         return [], []
-    elif request.param == 'only_removed':
+    if request.param == 'only_removed':
         return [{'id': mock_collection_id}], []
-    elif request.param == 'only_other':
+    if request.param == 'only_other':
         return [{'id': other_collection_id}], [{'id': other_collection_id}]
-    elif request.param == 'other_and_removed':
+    if request.param == 'other_and_removed':
         return [{'id': mock_collection_id}, {'id': other_collection_id}], [{'id': other_collection_id}]
 
     raise NotImplementedError("Forgot to implement {}".format(request.param))

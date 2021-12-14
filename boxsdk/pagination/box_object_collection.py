@@ -4,9 +4,8 @@ from __future__ import unicode_literals
 
 import json
 import sys
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
-from six import add_metaclass
 
 from boxsdk.pagination.page import Page
 
@@ -16,8 +15,7 @@ else:
     from collections import Iterator  # pylint:disable=no-name-in-module,import-error
 
 
-@add_metaclass(ABCMeta)
-class BoxObjectCollection(Iterator):
+class BoxObjectCollection(Iterator, ABC):
     """
     An iterator that represents a collection of Box objects (BaseObject).
 
@@ -79,7 +77,7 @@ class BoxObjectCollection(Iterator):
         :type use_post:
             `bool`
         """
-        super(BoxObjectCollection, self).__init__()
+        super().__init__()
         self._session = session
         self._url = url
         self._limit = limit

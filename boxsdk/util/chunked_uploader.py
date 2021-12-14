@@ -5,7 +5,7 @@ import hashlib
 from boxsdk.exception import BoxException
 
 
-class ChunkedUploader(object):
+class ChunkedUploader:
 
     def __init__(self, upload_session, content_stream, file_size):
         """
@@ -136,7 +136,7 @@ class ChunkedUploader(object):
         return InflightPart(offset, chunk, self._upload_session, self._file_size)
 
 
-class InflightPart(object):
+class InflightPart:
 
     def __init__(self, offset, chunk, upload_session, total_size):
         """

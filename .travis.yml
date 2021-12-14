@@ -15,12 +15,10 @@ before_cache:
 
 matrix:
   include:
-    - python: 2.7
+    - python: 3.5
       env: TOX_ENV=pycodestyle
-    - python: 2.7
+    - python: 3.5
       env: TOX_ENV=pylint
-    - python: 2.7
-      env: TOX_ENV=py27
     - python: 3.5
       env: TOX_ENV=py35
     - python: 3.6

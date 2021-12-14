@@ -261,7 +261,7 @@ def test_translator(box_session, translator, default_translator, original_defaul
 
     # Test that adding new registrations works.
 
-    class Foo(object):
+    class Foo:
         pass
 
     item_type = u'ƒøø'

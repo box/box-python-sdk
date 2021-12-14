@@ -8,7 +8,7 @@ from boxsdk.client import Client
 from demo.auth import authenticate
 
 
-class MusicPlayer(object):
+class MusicPlayer:
     def __init__(self, folder_path):
         self._folder_path = folder_path
         self._client = self._get_client()
@@ -31,7 +31,7 @@ class MusicPlayer(object):
             temp_file = tempfile.NamedTemporaryFile()
             temp_file.write(item.content())
             item_with_name = item.get()
-            print item_with_name.name
+            print(item_with_name.name)
             subprocess.check_call(['afplay', temp_file.name])
 
 

@@ -128,7 +128,7 @@ class Item(BaseItem):
         # pylint:disable=arguments-differ
         self.validate_item_id(self._object_id)
         headers = {'If-Match': etag} if etag is not None else None
-        return super(Item, self).update_info(data, headers=headers)
+        return super().update_info(data, headers=headers)
 
     @api_call
     def get(self, fields=None, etag=None):
@@ -152,7 +152,7 @@ class Item(BaseItem):
         # pylint:disable=arguments-differ
         self.validate_item_id(self._object_id)
         headers = {'If-None-Match': etag} if etag is not None else None
-        return super(Item, self).get(fields=fields, headers=headers)
+        return super().get(fields=fields, headers=headers)
 
     @api_call
     def create_shared_link(
@@ -215,7 +215,7 @@ class Item(BaseItem):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
         # pylint:disable=arguments-differ
-        return super(Item, self).create_shared_link(
+        return super().create_shared_link(
             access=access,
             etag=etag,
             unshared_at=unshared_at,
@@ -283,7 +283,7 @@ class Item(BaseItem):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
         # pylint:disable=arguments-differ
-        return super(Item, self).get_shared_link(
+        return super().get_shared_link(
             access=access,
             etag=etag,
             unshared_at=unshared_at,
@@ -311,7 +311,7 @@ class Item(BaseItem):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
         # pylint:disable=arguments-differ
-        return super(Item, self).remove_shared_link(etag=etag)
+        return super().remove_shared_link(etag=etag)
 
     @api_call
     def delete(self, params=None, etag=None):
@@ -334,7 +334,7 @@ class Item(BaseItem):
         # pylint:disable=arguments-differ
         self.validate_item_id(self._object_id)
         headers = {'If-Match': etag} if etag is not None else None
-        return super(Item, self).delete(params, headers)
+        return super().delete(params, headers)
 
     def metadata(self, scope='global', template='properties'):
         """
@@ -642,8 +642,7 @@ class Item(BaseItem):
         except BoxAPIException as err:
             if err.status == 404 and err.code == "instance_not_found":
                 return None
-            else:
-                raise
+            raise
         return classification.get('Box__Security__Classification__Key', None)
 
     def remove_classification(self):

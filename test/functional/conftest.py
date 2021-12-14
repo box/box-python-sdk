@@ -3,12 +3,12 @@
 from __future__ import unicode_literals
 
 import re
+from urllib import parse
 
 from mock import patch
 import pytest
 import requests
 import six
-from six.moves.urllib import parse  # pylint:disable=import-error, no-name-in-module,wrong-import-order,relative-import
 
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.config import API

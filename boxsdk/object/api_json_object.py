@@ -19,7 +19,6 @@ class APIJSONObjectMeta(BaseAPIJSONObjectMeta, ABCMeta):
     Avoid conflicting metaclass definitions for APIJSONObject.
     http://code.activestate.com/recipes/204197-solving-the-metaclass-conflict/
     """
-    pass
 
 
 class APIJSONObject(with_metaclass(APIJSONObjectMeta, BaseAPIJSONObject, Mapping)):

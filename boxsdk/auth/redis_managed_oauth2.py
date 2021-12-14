@@ -30,7 +30,7 @@ class RedisManagedOAuth2Mixin(OAuth2):
         self._unique_id = unique_id
         self._redis_server = redis_server or StrictRedis()
         refresh_lock = Lock(redis=self._redis_server, name='{0}_lock'.format(self._unique_id))
-        super(RedisManagedOAuth2Mixin, self).__init__(*args, refresh_lock=refresh_lock, **kwargs)
+        super().__init__(*args, refresh_lock=refresh_lock, **kwargs)
         if self._access_token is None:
             self._get_and_update_current_tokens()
 
@@ -54,7 +54,7 @@ class RedisManagedOAuth2Mixin(OAuth2):
         Base class override.
         Saves the refreshed tokens in redis.
         """
-        super(RedisManagedOAuth2Mixin, self)._store_tokens(access_token, refresh_token)
+        super()._store_tokens(access_token, refresh_token)
         self._redis_server.hmset(self._unique_id, {'access': access_token, 'refresh': refresh_token})
 
 
@@ -62,4 +62,3 @@ class RedisManagedOAuth2(RedisManagedOAuth2Mixin):
     """
     OAuth2 subclass which uses Redis to manage tokens.
     """
-    pass

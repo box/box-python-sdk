@@ -58,7 +58,7 @@ class Events(BaseEndpoint):
     def get_url(self, *args):
         """Base class override."""
         # pylint:disable=arguments-differ
-        return super(Events, self).get_url('events', *args)
+        return super().get_url('events', *args)
 
     @api_call
     def get_events(self, limit=100, stream_position=0, stream_type=UserEventsStreamType.ALL):
@@ -280,22 +280,21 @@ class Events(BaseEndpoint):
                     long_poll_response = self.long_poll(options, stream_position)
                 except Timeout:
                     break
-                else:
-                    message = long_poll_response.json()['message']
-                    if message == 'new_change':
-                        next_stream_position = stream_position
-                        for event, next_stream_position in self._get_all_events_since(stream_position, stream_type=stream_type):
-                            try:
-                                event_ids.get(event['event_id'])
-                            except KeyError:
-                                yield event
-                                event_ids.set(event['event_id'])
-                        stream_position = next_stream_position
-                        break
-                    elif message == 'reconnect':
-                        continue
-                    else:
-                        break
+
+                message = long_poll_response.json()['message']
+                if message == 'new_change':
+                    next_stream_position = stream_position
+                    for event, next_stream_position in self._get_all_events_since(stream_position, stream_type=stream_type):
+                        try:
+                            event_ids.get(event['event_id'])
+                        except KeyError:
+                            yield event
+                            event_ids.set(event['event_id'])
+                    stream_position = next_stream_position
+                    break
+                if message == 'reconnect':
+                    continue
+                break
 
     @api_call
     def get_long_poll_options(self, stream_type=UserEventsStreamType.ALL):

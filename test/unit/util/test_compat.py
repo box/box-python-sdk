@@ -23,23 +23,23 @@ def test_total_seconds(total_seconds_data):
 
 def test_with_metaclass():
 
-    class Class1(object):
+    class Class1:
         pass
 
-    class Class2(object):
+    class Class2:
         pass
 
     bases = (Class1, Class2)
 
     class Meta(type):
         @classmethod
-        def __prepare__(metacls, name, this_bases, **kwds):   # pylint:disable=unused-argument
+        def __prepare__(mcs, name, this_bases, **kwds):   # pylint:disable=unused-argument
             assert this_bases == bases
             return {}
 
-        def __new__(metacls, name, this_bases, namespace, **kwds):
+        def __new__(mcs, name, this_bases, namespace, **kwds):
             assert this_bases == bases
-            return super(Meta, metacls).__new__(metacls, name, this_bases, namespace, **kwds)
+            return super(Meta, mcs).__new__(mcs, name, this_bases, namespace, **kwds)
 
     temporary_class = with_metaclass(Meta, *bases)
     assert isinstance(temporary_class, Meta)

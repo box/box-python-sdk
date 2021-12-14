@@ -82,7 +82,7 @@ class StoppableWSGIRefServer(ServerAdapter):
     This is important for testing, since we don't want to "serve forever".
     """
     def __init__(self, host='127.0.0.1', port=8080, **options):
-        super(StoppableWSGIRefServer, self).__init__(host, port, **options)
+        super().__init__(host, port, **options)
         self.srv = None
         self._thread = None
 

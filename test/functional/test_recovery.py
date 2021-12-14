@@ -28,7 +28,7 @@ def should_apply(request):
     # Figure out how many times the call should fail. If should_apply is an int, it should fail iff should_apply == 1
     # If it's a sequence, figure out the first time it will succeed. It should fail until then.
     if isinstance(request.param, int):
-        if request.param is 1:
+        if request.param == 1:
             expected_num_requests += 1
     else:
         expected_num_requests += next(

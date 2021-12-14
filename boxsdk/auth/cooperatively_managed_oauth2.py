@@ -18,7 +18,7 @@ class CooperativelyManagedOAuth2Mixin(OAuth2):
         """
         # pylint:disable=keyword-arg-before-vararg
         self._retrieve_tokens = retrieve_tokens
-        super(CooperativelyManagedOAuth2Mixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _get_tokens(self):
         """
@@ -33,4 +33,3 @@ class CooperativelyManagedOAuth2(CooperativelyManagedOAuth2Mixin):
     Allows for sharing auth tokens between multiple clients. The retrieve_tokens callback should
     return the current access/refresh token pair.
     """
-    pass

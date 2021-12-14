@@ -11,7 +11,4 @@ class DeveloperTokenClient(Client):
     Box client subclass which authorizes with a developer token.
     """
     def __init__(self, oauth=None, session=None):
-        super(DeveloperTokenClient, self).__init__(
-            oauth=oauth or DeveloperTokenAuth(),
-            session=session,
-        )
+        super().__init__(oauth=oauth or DeveloperTokenAuth(), session=session)

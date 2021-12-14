@@ -7,7 +7,7 @@ from boxsdk.exception import BoxAPIException
 from ..util.api_call_decorator import api_call
 
 
-class MetadataUpdate(object):
+class MetadataUpdate:
     """
     Helper class for updating Box metadata.
     See https://developer.box.com/en/guides/metadata/instances/update/ for more details.
@@ -120,7 +120,7 @@ class Metadata(BaseEndpoint):
         :type template:
             `unicode`
         """
-        super(Metadata, self).__init__(session)
+        super().__init__(session)
         self._object = box_object
         self._scope = scope
         self._template = template

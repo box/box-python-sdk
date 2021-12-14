@@ -40,7 +40,7 @@ def serializer_factory(cls):
                 if isinstance(o, FileModel):
                     del fields['content']
                 return fields
-            return super(BoxObjectSerializer, self).default(o)
+            return super().default(o)
 
     return BoxObjectSerializer
 

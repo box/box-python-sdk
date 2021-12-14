@@ -29,7 +29,6 @@ class BoxNetworkException(BoxException):
     """
     Exception raised from the network layer.
     """
-    pass
 
 
 @attr.s(repr=True, slots=True, frozen=True)

@@ -14,7 +14,7 @@ from test.functional.mock_box.db_model.folder_model import FolderModel
 from test.functional.mock_box.util import json_utils as json
 
 
-class EventBehavior(object):
+class EventBehavior:
     def __init__(self, db_session):
         self._db_session = db_session
         self._subscribe_event = Event()

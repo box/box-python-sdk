@@ -7,7 +7,7 @@ from sys import version_info as py_version
 from . import version
 
 
-class API(object):
+class API:
     """Configuration object containing the URLs for the Box API."""
     BASE_API_URL = 'https://api.box.com/2.0'
     UPLOAD_URL = 'https://upload.box.com/api/2.0'
@@ -16,7 +16,7 @@ class API(object):
     MAX_RETRY_ATTEMPTS = 5
 
 
-class Client(object):
+class Client:
     """Configuration object containing the user agent string."""
     VERSION = version.__version__
     USER_AGENT_STRING = 'box-python-sdk-{0}'.format(VERSION)
@@ -28,6 +28,6 @@ class Client(object):
     )
 
 
-class Proxy(object):
+class Proxy:
     URL = None
     AUTH = None

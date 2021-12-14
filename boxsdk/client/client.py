@@ -37,7 +37,7 @@ class Client(Cloneable):
         :type session:
             :class:`BoxSession`
         """
-        super(Client, self).__init__()
+        super().__init__()
         self._oauth = oauth
         if session is not None:
             self._session = session

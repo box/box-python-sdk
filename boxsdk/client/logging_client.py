@@ -12,4 +12,4 @@ class LoggingClient(Client):
     """
     def __init__(self, *args, **kwargs):
         setup_logging(None)
-        super(LoggingClient, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)

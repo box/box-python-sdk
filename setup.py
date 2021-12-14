@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 from codecs import open   # pylint:disable=redefined-builtin
-from collections import defaultdict
 from os.path import dirname, join
 import re
 import sys
@@ -17,8 +16,6 @@ CLASSIFIERS = [
     'Intended Audience :: Developers',
     'License :: OSI Approved :: Apache Software License',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 2.7',
-    'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
@@ -48,6 +45,7 @@ class PyTest(TestCommand):
 
     def run_tests(self):
         # Do the import here, once the eggs are loaded.
+        # pylint:disable=import-outside-toplevel
         import pytest
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
@@ -61,33 +59,11 @@ def main():
         'requests-toolbelt>=0.4.0, <1.0.0',
         'six>=1.9.0',
         'wrapt>=1.10.1',
+        'sphinx'
     ]
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=3, <3.5.0']
-    extra_requires = defaultdict(list)
-    extra_requires.update({'jwt': jwt_requires, 'redis': redis_requires, 'all': jwt_requires + redis_requires})
-    conditional_dependencies = {
-        # Newer versions of pip and wheel, which support PEP 426, allow
-        # environment markers for conditional dependencies to use operators
-        # such as `<` and `<=` [1]. However, older versions of pip and wheel
-        # only support PEP 345, which only allows operators `==` and `in` (and
-        # their negations) along with string constants [2]. To get the widest
-        # range of support, we'll only use the `==` operator, which means
-        # explicitly listing all supported Python versions that need the extra
-        # dependencies.
-        #
-        # [1] <https://www.python.org/dev/peps/pep-0426/#environment-markers>
-        # [2] <https://www.python.org/dev/peps/pep-0345/#environment-markers>
-        'chainmap>=1.0.2': ['2.7'],  # <'3.4'
-        'funcsigs>=1.0.0': ['2.7'],  # <'3.4'
-        'enum34>=1.0.4': ['2.7'],   # <'3.4'
-    }
-    for requirement, python_versions in conditional_dependencies.items():
-        for python_version in python_versions:
-            # <https://wheel.readthedocs.org/en/latest/#defining-conditional-dependencies>
-            python_conditional = 'python_version=="{0}"'.format(python_version)
-            key = ':{0}'.format(python_conditional)
-            extra_requires[key].append(requirement)
+    extra_requires = {'jwt': jwt_requires, 'redis': redis_requires, 'all': jwt_requires + redis_requires}
     test_requires = [
         'bottle',
         'jsonpatch',
