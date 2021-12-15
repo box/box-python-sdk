@@ -1,12 +1,9 @@
 # coding: utf-8
 
-from __future__ import absolute_import, unicode_literals
-
 from collections import OrderedDict
 from enum import Enum
 import pytest
 
-from boxsdk.util.compat import with_metaclass
 from boxsdk.util.enum import ExtendableEnumMeta
 
 
@@ -17,7 +14,7 @@ from boxsdk.util.enum import ExtendableEnumMeta
 @pytest.fixture(scope='function')
 def EnumBase():
 
-    class EnumBase(with_metaclass(ExtendableEnumMeta, Enum)):
+    class EnumBase(Enum, metaclass=ExtendableEnumMeta):
         pass
 
     return EnumBase

@@ -1,20 +1,11 @@
 # coding: utf-8
 # pylint: disable=too-many-lines
 
-from __future__ import unicode_literals
 import json
+from io import BytesIO
 
 from mock import Mock, ANY
 import pytest
-from six import text_type, BytesIO, int2byte, PY2
-
-# pylint:disable=redefined-builtin
-# pylint:disable=import-error
-# pylint: disable=too-many-lines
-from six.moves import zip
-# pylint:enable=redefined-builtin
-# pylint:enable=import-error
-# pylint: disable=too-many-lines
 
 
 from boxsdk.auth.oauth2 import OAuth2, TokenScope
@@ -60,7 +51,7 @@ from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCo
 
 @pytest.fixture
 def developer_token_input(monkeypatch):
-    monkeypatch.setattr('boxsdk.auth.developer_token_auth.input', lambda prompt: 'developer_token')
+    monkeypatch.setattr('builtins.input', lambda prompt: 'developer_token')
 
 
 @pytest.fixture(params=[Client, DeveloperTokenClient, DevelopmentClient, LoggingClient])
@@ -125,7 +116,7 @@ def mock_folder_response(mock_object_id, make_mock_box_request):
 def mock_content_response(make_mock_box_request):
     mock_box_response, mock_network_response = make_mock_box_request(content=b'Contents of a text file.')
     mock_network_response.response_as_stream = raw = Mock()
-    raw.stream.return_value = (b if PY2 else int2byte(b) for b in mock_box_response.content)
+    raw.stream.return_value = (bytes((b,)) for b in mock_box_response.content)
     return mock_box_response
 
 
@@ -201,8 +192,8 @@ def groups_response(group_id_1, group_id_2):
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'entries': [
-            {'type': 'group', 'id': group_id_1, 'name': text_type(group_id_1)},
-            {'type': 'group', 'id': group_id_2, 'name': text_type(group_id_2)},
+            {'type': 'group', 'id': group_id_1, 'name': str(group_id_1)},
+            {'type': 'group', 'id': group_id_2, 'name': str(group_id_2)},
         ],
         'limit': 100,
         'offset': 0,

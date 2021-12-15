@@ -1,12 +1,10 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
 import json
+from io import BytesIO
 from os.path import basename
 from mock import mock_open, patch, Mock, MagicMock
 import pytest
-from six import BytesIO
-from six.moves import zip  # pylint:disable=redefined-builtin,import-error
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.network.default_network import DefaultNetworkResponse

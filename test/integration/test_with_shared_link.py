@@ -1,6 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
 from mock import call
 import pytest
 from boxsdk.config import API, Client

@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 from codecs import open   # pylint:disable=redefined-builtin
 from os.path import dirname, join
 import re
@@ -57,7 +55,6 @@ def main():
         'attrs>=17.3.0',
         'requests>=2.4.3',
         'requests-toolbelt>=0.4.0, <1.0.0',
-        'six>=1.9.0',
         'wrapt>=1.10.1',
         'sphinx'
     ]
@@ -66,7 +63,7 @@ def main():
     extra_requires = {'jwt': jwt_requires, 'redis': redis_requires, 'all': jwt_requires + redis_requires}
     test_requires = [
         'bottle',
-        'jsonpatch',
+        'jsonpatch>1.14',
         'mock>=2.0.0, <4.0.0',
         'pycodestyle',
         'pylint',

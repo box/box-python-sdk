@@ -1,18 +1,16 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
 from requests.exceptions import Timeout
 
 from .base_endpoint import BaseEndpoint
 from ..util.api_call_decorator import api_call
-from ..util.compat import with_metaclass
 from ..util.enum import ExtendableEnumMeta
 from ..util.lru_cache import LRUCache
 from ..util.text_enum import TextEnum
 
 
 # pylint:disable=too-many-ancestors
-class EventsStreamType(with_metaclass(ExtendableEnumMeta, TextEnum)):
+class EventsStreamType(TextEnum, metaclass=ExtendableEnumMeta):
     """An enum of all possible values of the `stream_type` parameter for user events.
 
     The value of the `stream_type` parameter determines the type of events

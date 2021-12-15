@@ -1,6 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
 import pytest
 
 from boxsdk.object.api_json_object import APIJSONObject

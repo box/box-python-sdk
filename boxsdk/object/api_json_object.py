@@ -1,17 +1,9 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
-import sys
 from abc import ABCMeta
+from collections.abc import Mapping
 
 from .base_api_json_object import BaseAPIJSONObject, BaseAPIJSONObjectMeta
-from ..util.compat import with_metaclass
-
-if sys.version_info >= (3, 3):
-    from collections.abc import Mapping  # pylint:disable=no-name-in-module,import-error
-else:
-    from collections import Mapping  # pylint:disable=no-name-in-module,import-error
 
 
 class APIJSONObjectMeta(BaseAPIJSONObjectMeta, ABCMeta):
@@ -21,7 +13,7 @@ class APIJSONObjectMeta(BaseAPIJSONObjectMeta, ABCMeta):
     """
 
 
-class APIJSONObject(with_metaclass(APIJSONObjectMeta, BaseAPIJSONObject, Mapping)):
+class APIJSONObject(BaseAPIJSONObject, Mapping, metaclass=APIJSONObjectMeta):
     """Class representing objects that are not part of the REST API."""
 
     def __len__(self):

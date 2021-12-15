@@ -1,10 +1,10 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
 import json
+from io import BytesIO
+
 from mock import mock_open, patch, Mock
 import pytest
-from six import BytesIO
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.object.comment import Comment

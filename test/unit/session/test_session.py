@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import, unicode_literals
-
 from functools import partial
 from io import IOBase
 from numbers import Number

@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 from hashlib import sha1
 
 from bottle import response, request

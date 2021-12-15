@@ -1,9 +1,7 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
 import json
 import os
-from six import text_type
 
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
@@ -38,7 +36,7 @@ class _Collaborator:
             self._setup(user=collaborator)
         elif isinstance(collaborator, Group):
             self._setup(group=collaborator)
-        elif isinstance(collaborator, text_type):
+        elif isinstance(collaborator, str):
             self._setup(email_address=collaborator)
         else:
             raise TypeError('Collaborator must be User, Group, or unicode string')

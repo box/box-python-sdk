@@ -1,6 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
 import sqlalchemy
 from sqlalchemy.orm import relationship
 from test.functional.mock_box.db_model import DbModel

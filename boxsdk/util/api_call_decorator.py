@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
 from functools import update_wrapper, wraps
 
 from ..object.cloneable import Cloneable

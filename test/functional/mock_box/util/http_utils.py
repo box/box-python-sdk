@@ -1,6 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
 from bottle import HTTPError, ServerAdapter
 from functools import partial, wraps
 from threading import Thread

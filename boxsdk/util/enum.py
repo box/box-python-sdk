@@ -1,16 +1,10 @@
 # coding: utf-8
 # pylint:disable=no-value-for-parameter
 
-from __future__ import absolute_import, unicode_literals
-
 from collections import OrderedDict
 from itertools import chain
-import sys
 
 from enum import EnumMeta
-from six import reraise
-from six.moves import map   # pylint:disable=redefined-builtin
-
 
 __all__ = list(map(str, ['ExtendableEnumMeta']))
 
@@ -72,17 +66,13 @@ class ExtendableEnumMeta(EnumMeta):
         """
         try:
             return cls(value)
-        except ValueError:
-            exc_info = sys.exc_info()
+        except ValueError as value_error:
             for subclass in cls.__subclasses__():
                 try:
                     return subclass.lookup(value)
                 except ValueError:
                     pass
-            # This needs to be `reraise()`, and not just `raise`. Otherwise,
-            # the inner exception from the previous line is re-raised, which
-            # isn't desired.
-            reraise(*exc_info)
+            raise value_error
 
     @property
     def __members__(cls):
@@ -106,23 +96,18 @@ class ExtendableEnumMeta(EnumMeta):
     def __getitem__(cls, name):
         try:
             return super(ExtendableEnumMeta, cls).__getitem__(name)
-        except KeyError:
-            exc_info = sys.exc_info()
+        except KeyError as key_error:
             for subclass in cls.__subclasses__():
                 try:
                     return subclass[name]
                 except KeyError:
                     pass
-            # This needs to be `reraise()`, and not just `raise`. Otherwise,
-            # the inner exception from the previous line is re-raised, which
-            # isn't desired.
-            reraise(*exc_info)
+            raise key_error
 
     def __getattr__(cls, name):
         try:
             return super(ExtendableEnumMeta, cls).__getattr__(name)
-        except AttributeError:
-            exc_info = sys.exc_info()
+        except AttributeError as attribute_error:
             try:
                 # If the super() call fails, don't call getattr() on all of the
                 # subclasses. Instead, use __getitem__ to do this. This is
@@ -134,10 +119,8 @@ class ExtendableEnumMeta(EnumMeta):
                 return cls[name]  # pylint:disable=unsubscriptable-object
             except KeyError:
                 pass
-            # This needs to be `reraise()`, and not just `raise`. Otherwise,
-            # the inner exception from the previous line is re-raised, which
-            # isn't desired.
-            reraise(*exc_info)
+
+            raise attribute_error
 
     def __iter__(cls):
         return chain(super(ExtendableEnumMeta, cls).__iter__(), chain.from_iterable(map(iter, cls.__subclasses__())))

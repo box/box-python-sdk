@@ -1,8 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
-
 def is_json_response(network_response):
     """Return whether or not the network response content is json.
 

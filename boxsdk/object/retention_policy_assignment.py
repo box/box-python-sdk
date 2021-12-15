@@ -1,5 +1,4 @@
 # coding: utf-8
-from __future__ import unicode_literals, absolute_import
 
 from .base_object import BaseObject
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection

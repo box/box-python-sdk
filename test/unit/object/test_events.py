@@ -1,18 +1,13 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
 from collections import OrderedDict
 from itertools import chain
 import json
+from urllib.parse import urlunsplit, urlencode
 
 from mock import Mock
 import pytest
 from requests.exceptions import Timeout
-from six.moves import map   # pylint:disable=redefined-builtin
-# pylint:disable=import-error,no-name-in-module,wrong-import-order
-from six.moves.urllib.parse import urlencode, urlunsplit
-# pylint:enable=import-error,no-name-in-module,wrong-import-order
 
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.events import Events, EventsStreamType, UserEventsStreamType

@@ -1,22 +1,9 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 import logging
-try:
-    from logging import NullHandler
-except ImportError:
-    class NullHandler(logging.Handler):
-        def emit(self, record):
-            pass
 import sys
 
-from six import string_types, iteritems
-
-if sys.version_info >= (3, 3):
-    from collections.abc import Mapping  # pylint:disable=no-name-in-module,import-error
-else:
-    from collections import Mapping  # pylint:disable=no-name-in-module,import-error
+from collections.abc import Mapping
 
 
 _no_logger = object()
@@ -48,7 +35,7 @@ class Logging:
     @staticmethod
     def _setup_logging(stream_or_file=_no_logger, debug=False, name=None):
         logger = logging.getLogger(name)
-        if isinstance(stream_or_file, string_types):
+        if isinstance(stream_or_file, str):
             logger.addHandler(logging.FileHandler(stream_or_file, mode='a'))
         elif stream_or_file is not _no_logger:
             logger.addHandler(logging.StreamHandler(stream_or_file or sys.stdout))
@@ -62,8 +49,8 @@ class Logging:
         if not isinstance(dictionary, Mapping):
             return dictionary
         sanitized_dictionary = {}
-        for key, value in iteritems(dictionary):
-            if key in self.KEYS_TO_SANITIZE and isinstance(value, string_types):
+        for key, value in dictionary.items():
+            if key in self.KEYS_TO_SANITIZE and isinstance(value, str):
                 sanitized_dictionary[key] = self.sanitize_value(value)
             elif isinstance(value, Mapping):
                 sanitized_dictionary[key] = self.sanitize_dictionary(value)
@@ -112,7 +99,7 @@ def sanitize_dictionary(dictionary):
     return _logging.sanitize_dictionary(dictionary)
 
 
-logging.getLogger(__name__).addHandler(NullHandler())
+logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
 __all__ = list(map(str, ['setup_logging', 'sanitize_dictionary']))

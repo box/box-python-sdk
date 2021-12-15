@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import, unicode_literals
-
 import json
 import logging
 import sys
@@ -9,7 +7,6 @@ import sys
 from mock import Mock
 import pytest
 import requests
-from six import binary_type
 
 from boxsdk.network.default_network import DefaultNetworkResponse
 
@@ -27,7 +24,7 @@ def _set_content_and_json_from_json(mock_response, json_value):
 
 
 def _set_content_and_json_from_content(mock_response, content):
-    if not isinstance(content, binary_type):
+    if not isinstance(content, bytes):
         raise TypeError("Expected 'content' to be byte string, got {!r}.".format(content.__class__.__name__))
     mock_response.content = content
     mock_response.headers['Content-Length'] = str(len(content))
