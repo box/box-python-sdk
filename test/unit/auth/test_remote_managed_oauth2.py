@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
 from mock import Mock
 
 from boxsdk.auth import remote_managed_oauth2

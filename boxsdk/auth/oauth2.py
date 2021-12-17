@@ -1,18 +1,11 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 from contextlib import contextmanager
 from logging import getLogger
 import random
 import string  # pylint:disable=deprecated-module
-import sys
 from threading import Lock
-
-# pylint:disable=import-error,no-name-in-module
-from six.moves.urllib.parse import urlencode, urlunsplit
-# pylint:enable=import-error,no-name-in-module
-import six
+from urllib.parse import urlunsplit, urlencode
 
 from ..config import API
 from ..exception import BoxOAuthException, BoxAPIException
@@ -489,19 +482,19 @@ class OAuth2:
         # pylint:disable=broad-except
         try:
             yield self
-        except Exception:
-            exc_infos.append(sys.exc_info())
-        except BaseException:
-            exc_infos.append(sys.exc_info())
+        except Exception as exception:
+            exc_infos.append(exception)
+        except BaseException as base_exception:
+            exc_infos.append(base_exception)
             close_kwargs['revoke'] = False
 
         try:
             self.close(**close_kwargs)
-        except Exception:
-            exc_infos.append(sys.exc_info())
+        except Exception as exception:
+            exc_infos.append(exception)
 
         if exc_infos:
-            six.reraise(*exc_infos[0])
+            raise exc_infos[0]
 
     def _check_closed(self):
         if self.closed:

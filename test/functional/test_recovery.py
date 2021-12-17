@@ -1,6 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
 import pytest
 from boxsdk.exception import BoxAPIException
 from test.functional.mock_box.util.chaos_utils import error, html, xml

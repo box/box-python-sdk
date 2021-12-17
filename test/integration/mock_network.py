@@ -1,6 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
 from mock import Mock
 import requests
 from boxsdk.network.default_network import DefaultNetworkResponse

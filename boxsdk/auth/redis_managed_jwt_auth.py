@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
 from .jwt_auth import JWTAuth
 from .redis_managed_oauth2 import RedisManagedOAuth2Mixin
 

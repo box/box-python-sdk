@@ -1,8 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
-
 class Cloneable:
     """
     Cloneable interface to be implemented by endpoint objects that should have ability to be cloned, but with a

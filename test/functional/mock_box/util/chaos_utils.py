@@ -1,33 +1,13 @@
 # coding: utf-8
 
-from __future__ import absolute_import, unicode_literals
-
 from functools import wraps
 import json
+import jsonpatch
 from time import sleep
 
 from bottle import template
-import six
 
 from test.functional.mock_box.util.http_utils import abort
-
-
-try:
-    import jsonpatch
-except ValueError:
-    # jsonpatch==1.14 on Python 3.6 cannot be imported.
-    # It fails with the following stacktrace:
-    #
-    #       .tox/py/lib/python3.6/site-packages/jsonpatch.py:114: in <module>
-    #           json.load = get_loadjson()
-    #       .tox/py/lib/python3.6/site-packages/jsonpatch.py:108: in get_loadjson
-    #           argspec = inspect.getargspec(json.load)
-    #       lib/python3.6/inspect.py:1039: in getargspec
-    #           raise ValueError("Function has keyword-only arguments or annotations"
-    #       E   ValueError: Function has keyword-only arguments or annotations, use getfullargspec() API which can support them
-    #
-    # Until jsonpatch fixes this issue, we cannot use jsonpatch on Python >=3.6.
-    jsonpatch = None
 
 
 def allow_chaos(method):
@@ -83,25 +63,17 @@ def xml(method):
 
 
 def patch(operations):
-    if jsonpatch:
-        json_patch = jsonpatch.JsonPatch(operations)
 
-        def patcher(doc):
-            return json_patch.apply(doc)
+    json_patch = jsonpatch.JsonPatch(operations)
 
-    else:
-
-        def patcher(doc):
-            # If jsonpatch could not be imported, then `@chaos_utils.patch()`
-            # will be disabled, and will silently return values unmodified,
-            # without applying the JSON patch operations.
-            return doc
+    def patcher(doc):
+        return json_patch.apply(doc)
 
     def inner(patched_function):
         def patched_inner(*args, **kwargs):
             return_value = patched_function(*args, **kwargs)
             not_json = False
-            if not isinstance(return_value, six.text_type):
+            if not isinstance(return_value, str):
                 return_value = json.dumps(return_value)
                 not_json = True
             return_value = patcher(return_value)

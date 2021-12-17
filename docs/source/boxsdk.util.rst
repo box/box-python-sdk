@@ -20,14 +20,6 @@ boxsdk.util.chunked\_uploader module
    :undoc-members:
    :show-inheritance:
 
-boxsdk.util.compat module
--------------------------
-
-.. automodule:: boxsdk.util.compat
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 boxsdk.util.default\_arg\_value module
 --------------------------------------
 

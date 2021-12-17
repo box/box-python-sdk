@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 from bottle import request, response
 from sqlalchemy.orm import make_transient
 from sqlalchemy.orm.exc import NoResultFound

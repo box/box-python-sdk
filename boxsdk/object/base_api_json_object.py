@@ -1,8 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
 import copy
-import six
 
 from ..util.translator import Translator
 
@@ -119,8 +117,6 @@ class BaseAPIJSONObject(metaclass=BaseAPIJSONObjectMeta):
         """Base class override. Return a human-readable representation using the Box ID or name of the object."""
         extra_description = ' - {0}'.format(self._description) if self._description else ''
         description = '<Box {0}{1}>'.format(self.__class__.__name__, extra_description)
-        if six.PY2:
-            return description.encode('utf-8')
         return description
 
     @property
@@ -162,7 +158,7 @@ class BaseAPIJSONObject(metaclass=BaseAPIJSONObjectMeta):
         if isinstance(value, BaseAPIJSONObject):
             return cls._untranslate(value._response_object)  # pylint:disable=protected-access
         if isinstance(value, dict):
-            return {k: cls._untranslate(v) for (k, v) in six.iteritems(value)}
+            return {k: cls._untranslate(v) for (k, v) in value.items()}
         if isinstance(value, list):
             return [cls._untranslate(entry) for entry in value]
 

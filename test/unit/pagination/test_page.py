@@ -1,10 +1,7 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
 from mock import Mock, PropertyMock
 import pytest
-from six.moves import range  # pylint:disable=redefined-builtin
 
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder

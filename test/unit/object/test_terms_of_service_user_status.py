@@ -1,6 +1,4 @@
 # coding: utf-8
-from __future__ import unicode_literals
-
 import json
 
 from boxsdk.object.terms_of_service_user_status import TermsOfServiceUserStatus

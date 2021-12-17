@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import, unicode_literals
-
 from datetime import datetime, timedelta
 import json
 import random
@@ -12,13 +10,11 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 import jwt
-from six import binary_type, string_types, raise_from, text_type
 
 from ..config import API
 from ..exception import BoxOAuthException
 from .oauth2 import OAuth2
 from ..object.user import User
-from ..util.compat import NoneType
 
 
 class JWTAuth(OAuth2):
@@ -254,7 +250,7 @@ class JWTAuth(OAuth2):
                 if attempt_number >= API.MAX_RETRY_ATTEMPTS:
                     raise ex
 
-                if (code == 429 or code >= 500):
+                if code == 429 or code >= 500:
                     jwt_time = None
                 elif box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(network_response):
                     jwt_time = box_datetime
@@ -365,8 +361,8 @@ class JWTAuth(OAuth2):
             return None
         if isinstance(user, User):
             return user.object_id
-        if isinstance(user, string_types):
-            return text_type(user)
+        if isinstance(user, str):
+            return str(user)
         raise TypeError("Got unsupported type {0!r} for user.".format(user.__class__.__name__))
 
     def authenticate_instance(self, enterprise=None):
@@ -423,15 +419,15 @@ class JWTAuth(OAuth2):
                 data = key_file.read()
         if hasattr(data, 'read') and callable(data.read):
             data = data.read()
-        if isinstance(data, text_type):
+        if isinstance(data, str):
             try:
                 data = data.encode('ascii')
-            except UnicodeError:
-                raise_from(
-                    TypeError("rsa_private_key_data must contain binary data (bytes/str), not a text/unicode string"),
-                    None,
-                )
-        if isinstance(data, binary_type):
+            except UnicodeError as unicode_error:
+                raise TypeError(
+                    "rsa_private_key_data must contain binary data (bytes/str), not a text/unicode string"
+                ) from unicode_error
+
+        if isinstance(data, bytes):
             passphrase = cls._normalize_rsa_private_key_passphrase(passphrase)
             return serialization.load_pem_private_key(
                 data,
@@ -450,15 +446,15 @@ class JWTAuth(OAuth2):
 
     @staticmethod
     def _normalize_rsa_private_key_passphrase(passphrase):
-        if isinstance(passphrase, text_type):
+        if isinstance(passphrase, str):
             try:
                 return passphrase.encode('ascii')
-            except UnicodeError:
-                raise_from(
-                    TypeError("rsa_private_key_passphrase must contain binary data (bytes/str), not a text/unicode string"),
-                    None,
-                )
-        if not isinstance(passphrase, (binary_type, NoneType)):
+            except UnicodeError as unicode_error:
+                raise TypeError(
+                    "rsa_private_key_passphrase must contain binary data (bytes/str), not a text/unicode string"
+                ) from unicode_error
+
+        if not isinstance(passphrase, (bytes, type(None))):
             raise TypeError(
                 "rsa_private_key_passphrase must contain binary data (bytes/str), got {0!r}"
                 .format(passphrase.__class__.__name__)

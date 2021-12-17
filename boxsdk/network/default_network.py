@@ -1,14 +1,11 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 from logging import getLogger
 from pprint import pformat
 import sys
 import time
 
 import requests
-from six import text_type, PY2
 
 from .network_interface import Network, NetworkResponse
 from ..util.log import sanitize_dictionary
@@ -244,7 +241,7 @@ class DefaultNetworkResponse(NetworkResponse):
         content = self.STREAM_CONTENT_NOT_LOGGED
         if can_safely_log_content:
             if content_length is None:
-                content_length = text_type(len(self.content))
+                content_length = str(len(self.content))
 
             # If possible, get the content as a JSON `dict`, that way
             # `pformat(content)` will return pretty-printed JSON.
@@ -272,11 +269,8 @@ class DefaultNetworkResponse(NetworkResponse):
         )
 
     def __repr__(self):
-        string = '<Box Network Response ({method} {url} {status_code})>'.format(
+        return '<Box Network Response ({method} {url} {status_code})>'.format(
             method=self._request_response.request.method,
             url=self._request_response.request.url,
             status_code=self.status_code,
         )
-        if PY2:
-            string = string.encode('utf-8')
-        return string

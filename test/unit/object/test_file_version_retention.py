@@ -1,5 +1,3 @@
-from __future__ import unicode_literals, absolute_import
-
 from boxsdk.config import API
 from boxsdk.object.file_version_retention import FileVersionRetention
 

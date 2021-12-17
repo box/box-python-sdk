@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
 from boxsdk.object.base_object import BaseObject
 from boxsdk.util.text_enum import TextEnum
 from ..util.api_call_decorator import api_call

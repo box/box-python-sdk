@@ -1,13 +1,9 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 import json
-
-from mock import ANY
-
 import pytest
 
+from mock import ANY
 from boxsdk.config import API
 from boxsdk.object.file import File
 from boxsdk.object.user import User

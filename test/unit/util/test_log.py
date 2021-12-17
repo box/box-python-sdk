@@ -1,13 +1,10 @@
 # coding: utf-8
 
-from __future__ import absolute_import, unicode_literals
-
 import io
 import logging
 
 from mock import mock_open, patch, Mock
 import pytest
-from six import string_types
 
 import boxsdk.util.log
 
@@ -54,7 +51,7 @@ def test_setup_logging(stream_or_file, debug, expected_log_level, name, mock_log
     assert isinstance(mock_logger.addHandler.call_args[0][0], logging.Handler)
     mock_logger.setLevel.assert_called_once_with(expected_log_level)
 
-    if isinstance(stream_or_file, string_types):
+    if isinstance(stream_or_file, str):
         assert mock_file_open.call_count == 1
         assert mock_file_open.call_args[0][:2] == (stream_or_file, 'a')   # Python 3 passes additional args.
 
@@ -75,7 +72,7 @@ def test_setup_logging_is_reentrant(mock_logger):
     assert isinstance(mock_logger.addHandler.call_args[0][0], logging.Handler)
     mock_logger.setLevel.assert_called_once()
 
-    if isinstance(stream_or_file, string_types):
+    if isinstance(stream_or_file, str):
         assert mock_file_open.call_count == 1
 
 

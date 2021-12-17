@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 from functools import partial
 import re
 from threading import Thread

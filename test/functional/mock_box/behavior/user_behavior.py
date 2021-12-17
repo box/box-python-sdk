@@ -1,6 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
 from sqlalchemy.orm.exc import NoResultFound
 from test.functional.mock_box.db_model.user_model import UserModel
 from test.functional.mock_box.util.db_utils import get_user_from_header

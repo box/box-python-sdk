@@ -1,5 +1,3 @@
-from __future__ import unicode_literals, absolute_import
-
 import json
 
 from boxsdk.config import API

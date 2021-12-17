@@ -1,8 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
-
 def get_shared_link_header(shared_link, password=None):
     """
     Gets the HTTP header required to use a shared link to grant access to a shared item.

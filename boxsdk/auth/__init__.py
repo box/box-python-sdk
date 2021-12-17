@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 from .cooperatively_managed_oauth2 import CooperativelyManagedOAuth2
 from .developer_token_auth import DeveloperTokenAuth
 try:

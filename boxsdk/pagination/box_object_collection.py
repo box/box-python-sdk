@@ -1,18 +1,9 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 import json
-import sys
 from abc import ABC, abstractmethod
-
-
+from collections.abc import Iterator
 from boxsdk.pagination.page import Page
-
-if sys.version_info >= (3, 3):
-    from collections.abc import Iterator  # pylint:disable=no-name-in-module,import-error
-else:
-    from collections import Iterator  # pylint:disable=no-name-in-module,import-error
 
 
 class BoxObjectCollection(Iterator, ABC):

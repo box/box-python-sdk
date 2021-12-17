@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import, unicode_literals
-
 from contextlib import contextmanager
 from datetime import datetime, timedelta
 import io
@@ -17,7 +15,6 @@ from mock import Mock, mock_open, patch, sentinel, call
 import pytest
 import pytz
 import requests
-from six import binary_type, string_types, text_type
 
 from boxsdk.auth.jwt_auth import JWTAuth
 from boxsdk.exception import BoxOAuthException
@@ -104,10 +101,10 @@ def test_jwt_auth_init_raises_type_error_if_rsa_private_key_data_has_unexpected_
         JWTAuth(**kwargs)
 
 
-@pytest.mark.parametrize('rsa_private_key_data_type', [io.BytesIO, text_type, binary_type, RSAPrivateKey])
+@pytest.mark.parametrize('rsa_private_key_data_type', [io.BytesIO, str, bytes, RSAPrivateKey])
 def test_jwt_auth_init_accepts_rsa_private_key_data(rsa_private_key_bytes, rsa_passphrase, rsa_private_key_data_type):
-    if rsa_private_key_data_type is text_type:
-        rsa_private_key_data = text_type(rsa_private_key_bytes.decode('ascii'))
+    if rsa_private_key_data_type is str:
+        rsa_private_key_data = str(rsa_private_key_bytes.decode('ascii'))
     elif rsa_private_key_data_type is RSAPrivateKey:
         rsa_private_key_data = serialization.load_pem_private_key(
             rsa_private_key_bytes,
@@ -323,13 +320,13 @@ def jwt_auth_init_and_auth_mocks(jwt_auth_init_mocks, jwt_auth_auth_mocks):
 
 @pytest.mark.parametrize(
     ('user', 'pass_in_init'),
-    list(product([str('fake_user_id'), text_type('fake_user_id'), User(None, 'fake_user_id')], [False, True])),
+    list(product([str('fake_user_id'), User(None, 'fake_user_id')], [False, True])),
 )
 def test_authenticate_user_sends_post_request_with_correct_params(jwt_auth_init_and_auth_mocks, user, pass_in_init):
     # pylint:disable=redefined-outer-name
     if isinstance(user, User):
         user_id = user.object_id
-    elif isinstance(user, string_types):
+    elif isinstance(user, str):
         user_id = user
     else:
         raise NotImplementedError

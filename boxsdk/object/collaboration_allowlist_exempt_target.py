@@ -1,5 +1,4 @@
 # coding: utf-8
-from __future__ import unicode_literals, absolute_import
 from boxsdk.object.collaboration_whitelist_exempt_target import CollaborationWhitelistExemptTarget
 
 
