@@ -93,7 +93,7 @@ class Events(BaseEndpoint):
         return self.translator.translate(self._session, response_object=response)
 
     @api_call
-    def get_admin_events(self, limit=None, created_after=None, created_before=None, event_types=None):
+    def get_admin_events(self, limit=None, stream_position=0, created_after=None, created_before=None, event_types=None):
         """
         Get Box Admin events from a datetime, to a datetime, or between datetimes with a given event type for a enterprise
         stream type. Used for historical querying (up to one year). Works for Enterprise admin_logs type.
@@ -102,6 +102,10 @@ class Events(BaseEndpoint):
             (optional) Maximum number of events to return.
         :type limit:
             `int` or None
+        :param stream_position:
+            The location in the stream from which to start getting events. 0 is the beginning of time.
+        :type stream_position:
+            `unicode`
         :param created_after:
             (optional) Start date in datetime format to pull events from
             Defaults to `None`
@@ -132,6 +136,8 @@ class Events(BaseEndpoint):
             params['limit'] = limit
         if event_types is not None:
             params['event_type'] = ','.join(event_types)
+        if stream_position is not None:
+            params['stream_position'] = stream_position
         box_response = self._session.get(url, params=params)
         response = box_response.json()
         return self.translator.translate(self._session, response_object=response)
