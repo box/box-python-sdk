@@ -26,7 +26,7 @@ class BoxRequest:
     auto_session_renewal = attr.ib(default=True)
     expect_json_response = attr.ib(default=True)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<BoxRequest for {self.method} {self.url} with headers {headers}'.format(
             self=self,
             headers=sanitize_dictionary(self.headers),

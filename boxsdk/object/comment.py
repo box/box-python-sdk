@@ -11,21 +11,19 @@ class Comment(BaseObject):
     _item_type = 'comment'
 
     @staticmethod
-    def construct_params_from_message(message):
+    def construct_params_from_message(message: str) -> dict:
         message_type = 'tagged_message' if '@[' in message else 'message'
         return {
             message_type: message
         }
 
     @api_call
-    def reply(self, message):
+    def reply(self, message: str) -> 'Comment':
         """
         Add a reply to the comment.
 
         :param message:
             The content of the reply comment.
-        :type message:
-            `unicode`
         """
         url = self.get_type_url()
         data = self.construct_params_from_message(message)
@@ -41,14 +39,12 @@ class Comment(BaseObject):
         )
 
     @api_call
-    def edit(self, message):
+    def edit(self, message: str) -> 'Comment':
         """
         Edit the message of the comment.
 
         :param message:
             The content of the reply comment.
-        :type message:
-            `unicode`
         """
         data = self.construct_params_from_message(message)
         return self.update_info(data)

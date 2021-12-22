@@ -31,22 +31,20 @@ class Collaboration(BaseObject):
     _item_type = 'collaboration'
 
     @api_call
-    def update_info(self, role=None, status=None):
+    def update_info(
+            self,
+            role: CollaborationRole = None,
+            status: CollaborationStatus = None
+    ) -> 'BaseObject':
         """Edit an existing collaboration on Box
 
         :param role:
             The new role for this collaboration or None to leave unchanged
-        :type role:
-            :class:`CollaborationRole`
         :param status:
             The new status for this collaboration or None to leave unchanged. A pending collaboration can be set to
             accepted or rejected if permissions allow it.
-        :type status:
-            :class:`CollaborationStatus`
         :returns:
             Whether or not the edit was successful.
-        :rtype:
-            `bool`
         :raises:
             :class:`BoxAPIException` if current user doesn't have permissions to edit the collaboration.
         """
@@ -62,11 +60,11 @@ class Collaboration(BaseObject):
             return super().update_info(data=data)
 
     @api_call
-    def accept(self):
+    def accept(self) -> 'BaseObject':
         """Accepts a pending collaboration"""
-        return self.update_info(status='accepted')
+        return self.update_info(status=CollaborationStatus.ACCEPTED)
 
     @api_call
-    def reject(self):
+    def reject(self) -> 'BaseObject':
         """Rejects a pending collaboration"""
-        return self.update_info(status='rejected')
+        return self.update_info(status=CollaborationStatus.REJECTED)

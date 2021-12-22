@@ -1,6 +1,10 @@
 # coding: utf-8
+from typing import Optional, Iterator, TYPE_CHECKING
 
 from .box_object_collection import BoxObjectCollection
+
+if TYPE_CHECKING:
+    from boxsdk.session.session import Session
 
 
 class LimitOffsetBasedObjectCollection(BoxObjectCollection):
@@ -13,19 +17,32 @@ class LimitOffsetBasedObjectCollection(BoxObjectCollection):
 
     def __init__(
             self,
-            session,
-            url,
-            limit=None,
-            fields=None,
-            additional_params=None,
-            return_full_pages=False,
-            offset=0,
+            session: 'Session',
+            url: str,
+            limit: Optional[int] = None,
+            fields: Iterator[str] = None,
+            additional_params: Optional[dict] = None,
+            return_full_pages: bool = False,
+            offset: int = 0,
     ):
         """
+        :param session:
+            The Box session used to make requests.
+        :param url:
+            The endpoint url to hit.
+        :param limit:
+            The number of entries for each page to return. The default, as well as the upper limit of this value,
+            differs by endpoint. See https://developer.box.com/en/reference. If limit is set to None, then the default
+            limit (returned by Box in the response) is used.
+        :param fields:
+            List of fields to request. If None, will return the default fields for the object.
+        :param additional_params:
+            Additional HTTP params to send in the request.
+        :param return_full_pages:
+            If True, then the returned iterator for this collection will return full pages of Box objects on each
+            call to next(). If False, the iterator will return a single Box object on each next() call.
         :param offset:
             The offset index to start paging from.
-        :type offset:
-            `int`
         """
         super().__init__(
             session,
@@ -37,7 +54,7 @@ class LimitOffsetBasedObjectCollection(BoxObjectCollection):
         )
         self._offset = offset
 
-    def _update_pointer_to_next_page(self, response_object):
+    def _update_pointer_to_next_page(self, response_object: dict) -> None:
         """Baseclass override."""
         total_count = response_object['total_count']
 
@@ -69,14 +86,14 @@ class LimitOffsetBasedObjectCollection(BoxObjectCollection):
         else:
             self._offset = total_count
 
-    def _has_more_pages(self, response_object):
+    def _has_more_pages(self, response_object: dict) -> bool:
         """Baseclass override."""
         return self._offset < response_object['total_count']
 
-    def _next_page_pointer_params(self):
+    def _next_page_pointer_params(self) -> dict:
         """Baseclass override."""
         return {'offset': self._offset}
 
-    def next_pointer(self):
+    def next_pointer(self) -> int:
         """Baseclass override."""
         return self._offset

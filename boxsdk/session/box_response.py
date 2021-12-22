@@ -1,4 +1,8 @@
 # coding: utf-8
+from typing import Any, Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from boxsdk import NetworkResponse
 
 
 class BoxResponse:
@@ -7,60 +11,47 @@ class BoxResponse:
     def __init__(self, network_response):
         self._network_response = network_response
 
-    def json(self):
-        """Return the parsed JSON response.
-
-        :rtype:
-            `dict` or `list` or `str` or `int` or `float`
+    def json(self) -> Union[dict, list, str, int, float]:
+        """
+        Return the parsed JSON response.
         """
         return self._network_response.json()
 
     @property
-    def content(self):
-        """Return the content of the response body.
-
-        :rtype:
-            varies
+    def content(self) -> Any:
+        """
+        Return the content of the response body.
         """
         return self._network_response.content
 
     @property
-    def ok(self):
-        """Return whether or not the request was successful.
-
-        :rtype:
-            `bool`
+    def ok(self) -> bool:
+        """
+        Return whether or not the request was successful.
         """
         # pylint:disable=invalid-name
         return self._network_response.ok
 
     @property
-    def status_code(self):
-        """Return the HTTP status code of the response.
-
-        :rtype:
-            `int`
+    def status_code(self) -> int:
+        """
+        Return the HTTP status code of the response.
         """
         return self._network_response.status_code
 
     @property
-    def headers(self):
+    def headers(self) -> dict:
         """
         Get the response headers.
-
-        :rtype:
-            `dict`
         """
         return self._network_response.headers
 
     @property
-    def network_response(self):
-        """Return the underlying network response.
-
-        :rtype:
-            :class:`NetworkResponse`
+    def network_response(self) -> 'NetworkResponse':
+        """
+        Return the underlying network response.
         """
         return self._network_response
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<Box Response[{status_code}]>'.format(status_code=self.status_code)
