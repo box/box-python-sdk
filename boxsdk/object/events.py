@@ -11,6 +11,7 @@ from ..util.text_enum import TextEnum
 
 if TYPE_CHECKING:
     from boxsdk.object.event import Event
+    from boxsdk.session.box_response import BoxResponse
 
 
 # pylint:disable=too-many-ancestors
@@ -212,7 +213,7 @@ class Events(BaseEndpoint):
                 return
 
     @api_call
-    def long_poll(self, options: dict, stream_position: Union[str, int]) -> dict:
+    def long_poll(self, options: dict, stream_position: Union[str, int]) -> 'BoxResponse':
         """
         Set up a long poll connection at the specified url.
 

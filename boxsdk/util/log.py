@@ -63,7 +63,10 @@ _logging = Logging()
 
 
 def setup_logging(
-        stream_or_file: Union[str, IO] = _no_logger, debug: Optional[bool] = False, name: Optional[str] = None):
+        stream_or_file: Optional[Union[str, IO]] = _no_logger,
+        debug: Optional[bool] = False,
+        name: Optional[str] = None
+) -> None:
     """
     Create a logger for communicating with the user or writing to log files.
     Sets the level to INFO or DEBUG, depending on the debug flag.

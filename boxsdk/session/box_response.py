@@ -1,5 +1,5 @@
 # coding: utf-8
-from typing import Any, Union, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from boxsdk import NetworkResponse
@@ -11,7 +11,7 @@ class BoxResponse:
     def __init__(self, network_response):
         self._network_response = network_response
 
-    def json(self) -> Union[dict, list, str, int, float]:
+    def json(self) -> Any:
         """
         Return the parsed JSON response.
         """

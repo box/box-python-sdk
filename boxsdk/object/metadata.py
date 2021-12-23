@@ -180,7 +180,6 @@ class Metadata(BaseEndpoint):
         :return:
             A dictionary containing the key/value pairs for this metadata object.
         """
-        metadata_value = None
         try:
             metadata_value = self.create(metadata)
         except BoxAPIException as err:

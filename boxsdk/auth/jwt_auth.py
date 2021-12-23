@@ -220,7 +220,10 @@ class JWTAuth(OAuth2):
                 else:
                     raise ex
 
-                time_delay = self._session.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None))  # pylint: disable=maybe-no-member
+                time_delay = self._session.get_retry_after_time(
+                    attempt_number,
+                    network_response.headers.get('Retry-After', None)
+                )
                 time.sleep(time_delay)
                 attempt_number += 1
                 self._logger.debug('Retrying JWT request')

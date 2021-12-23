@@ -16,7 +16,7 @@ from ..util.json import is_json_response
 from ..util.text_enum import TextEnum
 
 if TYPE_CHECKING:
-    from boxsdk import NetworkResponse
+    from boxsdk.session.box_response import BoxResponse
 
 
 class TokenScope(TextEnum):
@@ -49,8 +49,8 @@ class OAuth2:
 
     def __init__(
             self,
-            client_id: str,
-            client_secret: str,
+            client_id: Optional[str],
+            client_secret: Optional[str],
             store_tokens: Callable = None,
             box_device_id: str = '0',
             box_device_name: str = '',
@@ -307,7 +307,7 @@ class OAuth2:
         return token_response
 
     @staticmethod
-    def _oauth_exception(network_response: 'NetworkResponse', url: str) -> BoxOAuthException:
+    def _oauth_exception(network_response: 'BoxResponse', url: str) -> BoxOAuthException:
         """
         Create a BoxOAuthException instance to raise. If the error response is JSON, parse it and include the
         code and message in the exception.

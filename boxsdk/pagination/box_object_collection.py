@@ -34,7 +34,7 @@ class BoxObjectCollection(Iterator, ABC):
             session: 'Session',
             url: str,
             limit: Optional[int] = None,
-            fields: Iter[str] = None,
+            fields: Optional[Iter[str]] = None,
             additional_params: Optional[dict] = None,
             return_full_pages: bool = False,
             use_post: bool = False

@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from boxsdk.pagination.box_object_collection import BoxObjectCollection
     from boxsdk.object.user import User
     from boxsdk.object.collaboration_whitelist_exempt_target import CollaborationWhitelistExemptTarget
+    from boxsdk.object.collaboration_whitelist_entry import CollaborationWhitelistEntry
 
 
 class WhitelistDirection(TextEnum):
