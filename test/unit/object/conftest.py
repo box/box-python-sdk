@@ -27,9 +27,6 @@ from boxsdk.object.storage_policy import StoragePolicy
 from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.object.terms_of_service import TermsOfService
 from boxsdk.object.terms_of_service_user_status import TermsOfServiceUserStatus
-from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
-from boxsdk.object.collaboration_whitelist_entry import CollaborationWhitelistEntry
-from boxsdk.object.collaboration_whitelist_exempt_target import CollaborationWhitelistExemptTarget
 from boxsdk.object.collaboration_allowlist import CollaborationAllowlist
 from boxsdk.object.collaboration_allowlist_entry import CollaborationAllowlistEntry
 from boxsdk.object.collaboration_allowlist_exempt_target import CollaborationAllowlistExemptTarget
@@ -107,21 +104,6 @@ def test_file_version(mock_box_session):
 @pytest.fixture()
 def test_comment(mock_box_session, mock_object_id):
     return Comment(mock_box_session, mock_object_id)
-
-
-@pytest.fixture()
-def test_collaboration_whitelist(mock_box_session):
-    return CollaborationWhitelist(mock_box_session)
-
-
-@pytest.fixture()
-def test_collaboration_whitelist_entry(mock_box_session, mock_object_id):
-    return CollaborationWhitelistEntry(mock_box_session, mock_object_id)
-
-
-@pytest.fixture()
-def test_collaboration_whitelist_exemption(mock_box_session, mock_object_id):
-    return CollaborationWhitelistExemptTarget(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()
