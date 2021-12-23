@@ -100,7 +100,7 @@ for event in events['entries']:
 
 ### Get Admin Events
 
-The SDK also allows you to retrieve enterprise events. Use [`events.get_admin_events_streaming(self, limit=None, stream_position=0, event_types=None)`] for live monitoring (events up to two weeks, low latency) and [`events.get_admin_events(self, limit=None, created_after=None, created_before=None, event_types=None)`] for historical querying (events up to one year, higher latency).  
+The SDK also allows you to retrieve enterprise events. Use [`events.get_admin_events_streaming(self, limit=None, stream_position=0, event_types=None)`] for live monitoring (events up to two weeks, low latency) and [`events.get_admin_events(self, limit=None, stream_position=0, created_after=None, created_before=None, event_types=None)`] for historical querying (events up to one year, higher latency).
 
 Live monitoring example
 
@@ -123,9 +123,11 @@ Addditionally, a list of event types can be passed along to filter down the retu
 ```
 
 When using historical querying you can specify before and after a certain datetime and the types of events to retrieve with the `event_type` by calling
-[`events.get_admin_events(self, limit=None, created_after=None, created_before=None, event_types=None)`][admin_events_details].
+[`events.get_admin_events(self, limit=None, stream_position=0, created_after=None, created_before=None, event_types=None)`][admin_events_details].
 The format for the `created_after` and `created_before` fields are supported by [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) and look
 something like this: 2019-08-12T09:12:36-00:00. For more information on the date format please see [here](https://developer.box.com/en/guides/api-calls/types-and-formats/#date-and-times).
+This method returns a `dict` with the relevant [`Event`][event_class] objects in a `list` under the
+`entries` key and the next stream position value under the `next_stream_position` key.
 
 <!-- sample get_events enterprise -->
 ```python
