@@ -2,9 +2,6 @@
 
 __all__ = list(map(str, [
     'collaboration',
-    'collaboration_whitelist',
-    'collaboration_whitelist_entry',
-    'collaboration_whitelist_exempt_target',
     'collaboration_allowlist',
     'collaboration_allowlist_entry',
     'collaboration_allowlist_exempt_target',

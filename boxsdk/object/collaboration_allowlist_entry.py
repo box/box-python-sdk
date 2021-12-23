@@ -1,8 +1,8 @@
 # coding: utf-8
-from .collaboration_whitelist_entry import CollaborationWhitelistEntry
+from .base_object import BaseObject
 
 
-class CollaborationAllowlistEntry(CollaborationWhitelistEntry):
+class CollaborationAllowlistEntry(BaseObject):
     """Represents a allowlisted email domain for enterprise collaboration."""
 
     _item_type = 'collaboration_whitelist_entry'
