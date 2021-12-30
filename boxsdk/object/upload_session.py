@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 
+from boxsdk.util.api_call_decorator import api_call
 from boxsdk.util.chunked_uploader import ChunkedUploader
 from .base_object import BaseObject
 from ..pagination.limit_offset_based_dict_collection import LimitOffsetBasedDictCollection
@@ -15,6 +16,7 @@ class UploadSession(BaseObject):
     _item_type = 'upload_session'
     _parent_item_type = 'file'
 
+    @api_call
     def get_url(self, *args):
         """
         Base class override. Endpoint is a little different - it's /files/upload_sessions.
@@ -28,6 +30,7 @@ class UploadSession(BaseObject):
             *args
         ).replace(self.session.api_config.BASE_API_URL, self.session.api_config.UPLOAD_URL)
 
+    @api_call
     def get_parts(self, limit=None, offset=None):
         """
         Get a list of parts uploaded so far.
@@ -54,6 +57,7 @@ class UploadSession(BaseObject):
             return_full_pages=False,
         )
 
+    @api_call
     def upload_part_bytes(self, part_bytes, offset, total_size, part_content_sha1=None):
         """
         Upload a part of a file.
@@ -99,6 +103,7 @@ class UploadSession(BaseObject):
         )
         return response.json()['part']
 
+    @api_call
     def commit(self, content_sha1, parts=None, file_attributes=None, etag=None):
         """
         Commit a multiput upload.
@@ -148,6 +153,7 @@ class UploadSession(BaseObject):
             response_object=entry,
         )
 
+    @api_call
     def abort(self):
         """
         Abort an upload session, cancelling the upload and removing any parts that have already been uploaded.
