@@ -99,8 +99,8 @@ class Events(BaseEndpoint):
             self,
             limit: Optional[int] = None,
             stream_position: Union[str, int] = 0,
-            created_after: str = None,
-            created_before: str = None,
+            created_after: Optional[str] = None,
+            created_before: Optional[str] = None,
             event_types: Iterable[str] = None
     ) -> dict:
         """

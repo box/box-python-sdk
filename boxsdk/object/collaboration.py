@@ -1,4 +1,5 @@
 # coding: utf-8
+from typing import Optional
 
 from boxsdk.object.base_object import BaseObject
 from boxsdk.util.text_enum import TextEnum
@@ -33,8 +34,8 @@ class Collaboration(BaseObject):
     @api_call
     def update_info(
             self,
-            role: CollaborationRole = None,
-            status: CollaborationStatus = None
+            role: Optional[CollaborationRole] = None,
+            status: Optional[CollaborationStatus] = None
     ) -> 'BaseObject':
         """Edit an existing collaboration on Box
 
@@ -48,7 +49,7 @@ class Collaboration(BaseObject):
         :raises:
             :class:`BoxAPIException` if current user doesn't have permissions to edit the collaboration.
         """
-        # pylint:disable=arguments-differ,no-else-return
+        # pylint:disable=arguments-differ
         data = {}
         if role:
             data['role'] = role
@@ -56,8 +57,8 @@ class Collaboration(BaseObject):
             data['status'] = status
         if role == CollaborationRole.OWNER:
             return super().update_info(data=data, expect_json_response=False)
-        else:
-            return super().update_info(data=data)
+
+        return super().update_info(data=data)
 
     @api_call
     def accept(self) -> 'BaseObject':

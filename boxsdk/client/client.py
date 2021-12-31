@@ -29,8 +29,6 @@ if TYPE_CHECKING:
     from boxsdk.object.legal_hold_policy import LegalHoldPolicy
     from boxsdk.object.collaboration_allowlist_exempt_target import CollaborationAllowlistExemptTarget
     from boxsdk.object.collaboration_allowlist_entry import CollaborationAllowlistEntry
-    from boxsdk.object.collaboration_whitelist_exempt_target import CollaborationWhitelistExemptTarget
-    from boxsdk.object.collaboration_whitelist_entry import CollaborationWhitelistEntry
     from boxsdk.object.collaboration import Collaboration
     from boxsdk.object.group import Group
     from boxsdk.object.email_alias import EmailAlias

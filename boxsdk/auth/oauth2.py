@@ -51,13 +51,13 @@ class OAuth2:
             self,
             client_id: Optional[str],
             client_secret: Optional[str],
-            store_tokens: Callable = None,
+            store_tokens: Optional[Callable] = None,
             box_device_id: str = '0',
             box_device_name: str = '',
-            access_token: str = None,
+            access_token: Optional[str] = None,
             refresh_token: Optional[str] = None,
-            session: Session = None,
-            refresh_lock: ContextManager = None,
+            session: Optional[Session] = None,
+            refresh_lock: Optional[ContextManager] = None,
     ):
         """
         :param client_id:

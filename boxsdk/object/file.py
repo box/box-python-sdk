@@ -25,7 +25,7 @@ class File(Item):
     _item_type = 'file'
 
     @api_call
-    def preflight_check(self, size: int, name: str = None) -> Optional[str]:
+    def preflight_check(self, size: int, name: Optional[str] = None) -> Optional[str]:
         """
         Make an API call to check if the file can be updated with the new name and size of the file.
         Returns an accelerator URL if one is available.

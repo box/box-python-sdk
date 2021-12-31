@@ -59,7 +59,7 @@ class Group(BaseObject):
     def add_member(
             self,
             user: 'User',
-            role: str = GroupRole.MEMBER,
+            role: GroupRole = GroupRole.MEMBER,
             configurable_permissions: Optional[str] = SDK_VALUE_NOT_SET
     ) -> 'GroupMembership':
         """
