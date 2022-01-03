@@ -1,6 +1,6 @@
 # coding: utf-8
+from typing import Callable, Tuple, Any
 
-from __future__ import unicode_literals
 from .oauth2 import OAuth2
 
 
@@ -9,18 +9,16 @@ class CooperativelyManagedOAuth2Mixin(OAuth2):
     Box SDK OAuth2 mixin.
     Allows for sharing auth tokens between multiple clients.
     """
-    def __init__(self, retrieve_tokens=None, *args, **kwargs):
+    def __init__(self, retrieve_tokens: Callable[[], Tuple[str, str]] = None, *args: Any, **kwargs: Any):
         """
         :param retrieve_tokens:
             Callback to get the current access/refresh token pair.
-        :type retrieve_tokens:
-            `callable` of () => (`unicode`, `unicode`)
         """
         # pylint:disable=keyword-arg-before-vararg
         self._retrieve_tokens = retrieve_tokens
-        super(CooperativelyManagedOAuth2Mixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-    def _get_tokens(self):
+    def _get_tokens(self) -> Tuple[str, str]:
         """
         Base class override. Get the tokens from the user-specified callback.
         """
@@ -33,4 +31,3 @@ class CooperativelyManagedOAuth2(CooperativelyManagedOAuth2Mixin):
     Allows for sharing auth tokens between multiple clients. The retrieve_tokens callback should
     return the current access/refresh token pair.
     """
-    pass

@@ -1,18 +1,14 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
 from collections import OrderedDict
 from itertools import chain
 import json
+from typing import Optional, Union
+from urllib.parse import urlunsplit, urlencode
 
 from mock import Mock
 import pytest
 from requests.exceptions import Timeout
-from six.moves import map   # pylint:disable=redefined-builtin
-# pylint:disable=import-error,no-name-in-module,wrong-import-order
-from six.moves.urllib.parse import urlencode, urlunsplit
-# pylint:enable=import-error,no-name-in-module,wrong-import-order
 
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.events import Events, EventsStreamType, UserEventsStreamType
@@ -66,23 +62,18 @@ def test_events_stream_type_extended_enum_class_has_expected_members():
         ['future_stream_type'],
     )),
 )
-def stream_type_param(request):
+def stream_type_param(request) -> Optional[Union[str, EventsStreamType]]:
     """The value to pass as an Event method's stream_type parameter.
 
     :return:
         The parameter value, or `None` if no value should be passed.
-    :rtype:
-        :enum:`EventsStreamType` or `unicode` or `None`
     """
     return request.param
 
 
 @pytest.fixture()
-def expected_stream_type(stream_type_param):
+def expected_stream_type(stream_type_param) -> str:
     """The stream type we expect to use.
-
-    :rtype:
-        `unicode`
     """
     if stream_type_param is None:
         return UserEventsStreamType.ALL
@@ -90,11 +81,8 @@ def expected_stream_type(stream_type_param):
 
 
 @pytest.fixture()
-def stream_type_kwargs(stream_type_param):
+def stream_type_kwargs(stream_type_param) -> dict:
     """The kwargs for stream_type to pass when invoking a method on `Events`.
-
-    :rtype:
-        `dict`
     """
     if stream_type_param:
         return {'stream_type': stream_type_param}
@@ -102,11 +90,8 @@ def stream_type_kwargs(stream_type_param):
 
 
 @pytest.fixture()
-def expected_stream_type_params(expected_stream_type):
+def expected_stream_type_params(expected_stream_type) -> OrderedDict:
     """The stream_type-related params that we expect to pass to request methods.
-
-    :rtype:
-        :class:`OrderedDict`
     """
     return OrderedDict(stream_type=expected_stream_type)
 
@@ -226,11 +211,13 @@ def test_get_admin_events(
     mock_box_session.get.return_value = events_response
     events = test_events.get_admin_events(
         limit=limit,
+        stream_position=0,
         created_after='2019-07-01T22:02:24-07:00',
         created_before='2019-08-07T22:02:24-07:00',
         event_types=['ITEM_CREATE', "LOGIN"],
     )
     expected_params = dict(
+        stream_position=0,
         created_after='2019-07-01T22:02:24-07:00',
         created_before='2019-08-07T22:02:24-07:00',
         event_type='ITEM_CREATE,LOGIN',
@@ -238,6 +225,7 @@ def test_get_admin_events(
     )
     if limit:
         expected_params = dict(
+            stream_position=0,
             created_after='2019-07-01T22:02:24-07:00',
             created_before='2019-08-07T22:02:24-07:00',
             event_type='ITEM_CREATE,LOGIN',

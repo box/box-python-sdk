@@ -1,14 +1,13 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 from logging import getLogger
 from pprint import pformat
 import sys
 import time
+from typing import Any, Callable, Type
 
 import requests
-from six import text_type, PY2
+from requests import Response
 
 from .network_interface import Network, NetworkResponse
 from ..util.log import sanitize_dictionary
@@ -22,11 +21,11 @@ class DefaultNetwork(Network):
     EXCEPTION_FORMAT = '\x1b[31mRequest "%(method)s %(url)s" failed with %(exc_type_name)s exception: %(exc_value)r\x1b[0m'
 
     def __init__(self):
-        super(DefaultNetwork, self).__init__()
+        super().__init__()
         self._session = requests.Session()
         self._logger = getLogger(__name__)
 
-    def request(self, method, url, access_token, **kwargs):
+    def request(self, method: str, url: str, access_token: str, **kwargs: Any) -> NetworkResponse:
         """Base class override.
 
         Make a network request using a requests.Session. Logs information about an API request and response.
@@ -47,7 +46,7 @@ class DefaultNetwork(Network):
             self._log_exception(method, url, sys.exc_info())
             raise
 
-    def retry_after(self, delay, request_method, *args, **kwargs):
+    def retry_after(self, delay: float, request_method: Callable, *args: Any, **kwargs: Any) -> Any:
         """Base class override.
         Retry after sleeping for delay seconds.
         """
@@ -55,7 +54,7 @@ class DefaultNetwork(Network):
         return request_method(*args, **kwargs)
 
     @property
-    def network_response_constructor(self):
+    def network_response_constructor(self) -> Type['DefaultNetworkResponse']:
         """Baseclass override.
 
         A callable that accepts `request_response` and `access_token_used`
@@ -64,35 +63,25 @@ class DefaultNetwork(Network):
         """
         return DefaultNetworkResponse
 
-    def _log_request(self, method, url, **kwargs):
+    def _log_request(self, method: str, url: str, **kwargs: Any) -> None:
         """
         Logs information about the Box API request.
 
         :param method:
             The HTTP verb that should be used to make the request.
-        :type method:
-            `unicode`
         :param url:
             The URL for the request.
-        :type url:
-            `unicode`
-        :param access_token:
-            The OAuth2 access token used to authorize the request.
-        :type access_token:
-            `unicode`
         """
         self._logger.info(
             self.REQUEST_FORMAT,
             {'method': method, 'url': url, 'request_kwargs': pformat(sanitize_dictionary(kwargs))},
         )
 
-    def _log_exception(self, method, url, exc_info):
+    def _log_exception(self, method: str, url: str, exc_info: Any) -> None:
         """Log information at WARNING level about the exception that was raised when trying to make the request.
 
         :param method:  The HTTP verb that was used to make the request.
-        :type method:   `unicode`
         :param url:   The URL for the request.
-        :type url:  `unicode`
         :param exc_info:  The exception info returned from `sys.exc_info()`.
         """
         exc_type, exc_value, _ = exc_info
@@ -155,7 +144,7 @@ class DefaultNetworkResponse(NetworkResponse):
     ERROR_RESPONSE_FORMAT = '\x1b[31m{0}\x1b[0m'.format(_COMMON_RESPONSE_FORMAT)
     STREAM_CONTENT_NOT_LOGGED = '<File download contents unavailable for logging>'
 
-    def __init__(self, request_response, access_token_used):
+    def __init__(self, request_response: 'Response', access_token_used: str):
         self._logger = getLogger(__name__)
         self._request_response = request_response
         self._access_token_used = access_token_used
@@ -163,7 +152,7 @@ class DefaultNetworkResponse(NetworkResponse):
         if not self.ok:
             self.log(can_safely_log_content=True)
 
-    def json(self):
+    def json(self) -> Any:
         """Base class override."""
         try:
             return self._request_response.json()
@@ -171,7 +160,7 @@ class DefaultNetworkResponse(NetworkResponse):
             self.log(can_safely_log_content=True)
 
     @property
-    def content(self):
+    def content(self) -> Any:
         """Base class override."""
         try:
             return self._request_response.content
@@ -179,23 +168,23 @@ class DefaultNetworkResponse(NetworkResponse):
             self.log(can_safely_log_content=True)
 
     @property
-    def status_code(self):
+    def status_code(self) -> int:
         """Base class override."""
         return self._request_response.status_code
 
     @property
-    def ok(self):
+    def ok(self) -> bool:
         """Base class override."""
         # pylint:disable=invalid-name
         return self._request_response.ok
 
     @property
-    def headers(self):
+    def headers(self) -> dict:
         """Base class override."""
         return self._request_response.headers
 
     @property
-    def response_as_stream(self):
+    def response_as_stream(self) -> Any:
         """Base class override."""
         try:
             return self._request_response.raw
@@ -203,23 +192,21 @@ class DefaultNetworkResponse(NetworkResponse):
             self.log(can_safely_log_content=False)
 
     @property
-    def access_token_used(self):
+    def access_token_used(self) -> str:
         """Base class override."""
         return self._access_token_used
 
     @property
-    def request_response(self):
+    def request_response(self) -> Response:
         """
         The response returned from the Requests library.
-
-        :rtype: `Response`
         """
         try:
             return self._request_response
         finally:
             self.log(can_safely_log_content=False)
 
-    def log(self, can_safely_log_content=False):
+    def log(self, can_safely_log_content: bool = False) -> None:
         """Logs information about the Box API response.
 
         Will only execute once. Subsequent calls will be no-ops. This is
@@ -235,7 +222,6 @@ class DefaultNetworkResponse(NetworkResponse):
             method to access `content` unless the caller is also accessing it.
 
             Defaults to `False`.
-        :type can_safely_log_content:   `bool`
         """
         if self._did_log:
             return
@@ -244,7 +230,7 @@ class DefaultNetworkResponse(NetworkResponse):
         content = self.STREAM_CONTENT_NOT_LOGGED
         if can_safely_log_content:
             if content_length is None:
-                content_length = text_type(len(self.content))
+                content_length = str(len(self.content))
 
             # If possible, get the content as a JSON `dict`, that way
             # `pformat(content)` will return pretty-printed JSON.
@@ -271,12 +257,9 @@ class DefaultNetworkResponse(NetworkResponse):
             },
         )
 
-    def __repr__(self):
-        string = '<Box Network Response ({method} {url} {status_code})>'.format(
+    def __repr__(self) -> str:
+        return '<Box Network Response ({method} {url} {status_code})>'.format(
             method=self._request_response.request.method,
             url=self._request_response.request.url,
             status_code=self.status_code,
         )
-        if PY2:
-            string = string.encode('utf-8')
-        return string

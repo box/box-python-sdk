@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import print_function, unicode_literals
-
 import bottle
 import os
 from threading import Thread, Event
@@ -18,7 +16,7 @@ CLIENT_SECRET = ''  # Insert Box client secret here
 def authenticate(oauth_class=OAuth2):
     class StoppableWSGIServer(bottle.ServerAdapter):
         def __init__(self, *args, **kwargs):
-            super(StoppableWSGIServer, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             self._server = None
 
         def run(self, app):

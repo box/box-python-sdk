@@ -1,14 +1,11 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 import re
+from urllib import parse
 
 from mock import patch
 import pytest
 import requests
-import six
-from six.moves.urllib import parse  # pylint:disable=import-error, no-name-in-module,wrong-import-order,relative-import
 
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.config import API
@@ -62,7 +59,7 @@ def box_oauth(client_id, client_secret, user_login, unauthorized_session):
     # and if necessary decode it from a utf-8 encoded byte string to
     # a unicode string.
     auth_code = parsed_query_string_dict['code'][0]
-    if isinstance(auth_code, six.binary_type):
+    if isinstance(auth_code, bytes):
         auth_code = auth_code.decode('utf-8')
 
     oauth2.authenticate(auth_code)

@@ -1,11 +1,14 @@
 # coding: utf-8
-from __future__ import unicode_literals
-
 import json
+from typing import TYPE_CHECKING, Optional
 
 from boxsdk.util.text_enum import TextEnum
 from boxsdk.exception import BoxAPIException
 from .base_object import BaseObject
+
+if TYPE_CHECKING:
+    from boxsdk.object.user import User
+    from boxsdk.object.terms_of_service_user_status import TermsOfServiceUserStatus
 
 
 class TermsOfServiceType(TextEnum):
@@ -25,19 +28,15 @@ class TermsOfService(BaseObject):
 
     _item_type = 'terms_of_service'
 
-    def get_user_status(self, user=None):
+    def get_user_status(self, user: Optional['User'] = None) -> 'TermsOfServiceUserStatus':
         """
         Get the terms of service user status.
 
         :param user:
             This is the user to get the status of the terms of service for. This defaults to current
             user.
-        :type user:
-            :class:`User` or None
         :returns:
             A :class:`TermsOfServiceUserStatus` object
-        :rtype:
-            :class:`TermsOfServiceUserStatus`
         """
         url = self._session.get_url('terms_of_service_user_statuses')
         additional_params = {
@@ -53,52 +52,38 @@ class TermsOfService(BaseObject):
             response_object=response,
         )
 
-    def accept(self, user=None):
+    def accept(self, user: Optional['User'] = None) -> 'TermsOfServiceUserStatus':
         """
         Accept a terms of service.
 
         :param user:
             The :class:`User` to assign the terms of service to.
-        :type user:
-            :class:`User` or None
         :returns:
             A newly created :class:`TermsOfServiceUserStatus` object
-        :rtype:
-            :class:`TermsOfServiceUserStatus`
         """
         return self.set_user_status(is_accepted=True, user=user)
 
-    def reject(self, user=None):
+    def reject(self, user: Optional['User'] = None) -> 'TermsOfServiceUserStatus':
         """
         Reject a terms of service.
 
         :param user:
             The :class:`User` to assign the terms of service to.
-        :type user:
-            :class:`User` or None
         :returns:
             A newly created :class:`TermsOfServiceUserStatus` object
-        :rtype:
-            :class:`TermsOfServiceUserStatus`
         """
         return self.set_user_status(is_accepted=False, user=user)
 
-    def set_user_status(self, is_accepted, user=None):
+    def set_user_status(self, is_accepted: bool, user: Optional['User'] = None) -> 'TermsOfServiceUserStatus':
         """
         Create a terms of service user status.
 
         :param is_accepted:
             Indicates whether a use has accepted or rejected a terms of service.
-        :type is_accepted:
-            `bool`
         :param user:
             The :class:`User` to assign the terms of service to.
-        :type user:
-            :class:`User` or None
         :returns:
             A newly created :class:`TermsOfServiceUserStatus` object
-        :rtype:
-            :class:`TermsOfServiceUserStatus`
         """
         url = self._session.get_url('terms_of_service_user_statuses')
         body = {

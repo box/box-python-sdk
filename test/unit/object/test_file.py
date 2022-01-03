@@ -1,10 +1,10 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
 import json
+from io import BytesIO
+
 from mock import mock_open, patch, Mock
 import pytest
-from six import BytesIO
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.object.comment import Comment
@@ -885,6 +885,52 @@ def test_get_thumbnail_representation_not_found(
         'id': test_file.object_id,
         'representations': {
             'entries': [],
+        },
+        'type': 'file'
+    }
+
+    mock_box_session.get.side_effect = [mock_representations_response, mock_content_response]
+
+    thumb = test_file.get_thumbnail_representation(
+        dimensions=dimensions,
+        extension=extension,
+    )
+
+    mock_box_session.get.assert_any_call(
+        representation_url,
+        headers={'X-Rep-Hints': '[{}?dimensions={}]'.format(extension, dimensions)},
+        params={'fields': 'representations'},
+    )
+    assert thumb == b''
+
+
+def test_get_thumbnail_representation_not_available(
+        test_file,
+        mock_box_session,
+        mock_content_response,
+):
+    representation_url = '{0}/files/{1}'.format(API.BASE_API_URL, test_file.object_id)
+    dimensions = '100x100'
+    extension = 'jpg'
+
+    mock_representations_response = Mock()
+    mock_representations_response.json.return_value = {
+        'etag': '1',
+        'id': test_file.object_id,
+        'representations': {
+            'entries': [
+                {
+                    'content': {
+                        'url_template': 'content_url {+asset_path}'
+                    },
+                    'info': {
+                        'url': 'https://api.box.com/2.0/internal_files/123/versions/345/representations/jpg'
+                    },
+                    'properties': {},
+                    'representation': 'pdf',
+                    'status': {'state': 'error', 'code': 'error_password_protected'}
+                }
+            ]
         },
         'type': 'file'
     }

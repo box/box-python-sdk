@@ -21,22 +21,6 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
     fi
 
     case "${TOX_ENV}" in
-        py26)
-            curl -O https://bootstrap.pypa.io/get-pip.py
-            python get-pip.py --user
-            ;;
-        py27)
-            curl -O https://bootstrap.pypa.io/get-pip.py
-            python get-pip.py --user
-            ;;
-        py33)
-            pyenv install 3.3.6
-            pyenv global 3.3.6
-            ;;
-        py34)
-            pyenv install 3.4.2
-            pyenv global 3.4.2
-            ;;
         py35)
             pyenv install 3.5.0
             pyenv global 3.5.0
@@ -45,10 +29,15 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
             pyenv install 3.6.0
             pyenv global 3.6.0
             ;;
+        py37)
+            pyenv install 3.7.0
+            pyenv global 3.7.0
+            ;;
         pypy)
             pyenv install "pypy${PYPY_VERSION}"
             pyenv global "pypy${PYPY_VERSION}"
             ;;
+
     esac
     pyenv rehash
     python -m pip install -U --user virtualenv
@@ -64,7 +53,7 @@ else
         pyenv global "pypy${PYPY_VERSION}"
         pip install -U virtualenv
         pip install --upgrade pip
-        python -m venv $PWD/.venv 
+        python -m venv $PWD/.venv
     else
         python -m virtualenv $PWD/.venv
     fi

@@ -1,14 +1,18 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
 import json
-
+from typing import Optional, List, Any, Iterable, TYPE_CHECKING, Tuple, Union
 from .base_endpoint import BaseEndpoint
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.api_call_decorator import api_call
 from ..util.text_enum import TextEnum
+
+if TYPE_CHECKING:
+    from boxsdk.object.folder import Folder
+    from boxsdk.object.user import User
+    from boxsdk.object.item import Item
+    from boxsdk.pagination.box_object_collection import BoxObjectCollection
 
 
 class SearchScope(TextEnum):
@@ -23,35 +27,29 @@ class TrashContent(TextEnum):
     ONLY = 'trashed_only'
 
 
-class MetadataSearchFilter(object):
+class MetadataSearchFilter:
     """
     Helper class to encapsulate a single search filter. A search filter can only search against one template,
     but can filter on many fields.
     See :class:`MetadataSearchFilters`.
     """
-    def __init__(self, template_key, scope):
+    def __init__(self, template_key: str, scope: str):
         """
         :param template_key:
             The key of the template to search on
-        :type template_key:
-            `unicode`
         :param scope:
             The scope of the template to search on
-        :type scope:
-            `unicode`
         """
         self._template_key = template_key
         self._scope = scope
         self._field_filters = {}
 
-    def as_dict(self):
+    def as_dict(self) -> dict:
         """
         Returns a `dict` representation of this object
 
         :return:
             The `dict` representation
-        :rtype:
-            `dict`
         """
         return {
             'templateKey': self._template_key,
@@ -59,37 +57,32 @@ class MetadataSearchFilter(object):
             'filters': self._field_filters
         }
 
-    def add_value_based_filter(self, field_key, value):
+    def add_value_based_filter(self, field_key: str, value: str) -> None:
         """
         Add a value-based filter (used for token-based search on string fields, and exact match search on all other fields)
 
         :param field_key:
             The field key to filter on
-        :type field_filter:
-            `unicode`
         :param value:
             The value to use to filter
-        :type value:
-            `unicode`
         """
         self._field_filters.update({field_key: value})
 
-    def add_range_filter(self, field_key, gt_value=None, lt_value=None):
+    def add_range_filter(
+            self,
+            field_key: str,
+            gt_value: Union[str, int, float] = None,
+            lt_value: Union[str, int, float] = None
+    ) -> None:
         """
         Add a range filter (used for ranged searches on numbers and dates)
 
         :param field_key:
             The field key to filter on
-        :type field_filter:
-            `unicode`
         :param gt_value:
             The lower bound of the range filter (inclusive)
-        :type gt_value:
-            `unicode` or `int` or `float` or `long` or None
         :param lt_value:
             The upper bound of the range filter (inclusive)
-        :type lt_value:
-            `unicode` or `int` or `float` or `long` or None
         """
         range_part = {}
         if gt_value:
@@ -101,7 +94,7 @@ class MetadataSearchFilter(object):
         self._field_filters.update({field_key: range_part})
 
 
-class MetadataSearchFilters(object):
+class MetadataSearchFilters:
     """
     Helper class to encapsulate a list of metadata search filter params (mdfilters API param)
     See https://developers.box.com/metadata-api/#search for more details
@@ -109,25 +102,21 @@ class MetadataSearchFilters(object):
     def __init__(self):
         self._filters = []
 
-    def as_list(self):
+    def as_list(self) -> List[dict]:
         """
         Get a list of filters from this object to use as a parameter in the Search API
 
         :return:
             The list of filters
-        :rtype:
-            `list` of `dict`
         """
         return [metadata_filter.as_dict() for metadata_filter in self._filters]
 
-    def add_filter(self, metadata_filter):
+    def add_filter(self, metadata_filter: MetadataSearchFilter) -> None:
         """
         Add a filter to this object. Note that the API only supports one filter.
 
         :param metadata_filter:
             The filter to add
-        :type metadata_filter:
-            :class:`MetadataSearchFilter`
         """
         self._filters.append(metadata_filter)
 
@@ -135,40 +124,37 @@ class MetadataSearchFilters(object):
 class Search(BaseEndpoint):
     """Search Box for files and folders."""
 
-    def get_url(self, *args):
+    def get_url(self, *args: Any) -> str:
         """
         Gets the search endpoint URL.
 
         :return:
             The search endpoint URL.
-        :rtype:
-            `unicode`
         """
         # pylint:disable=arguments-differ
-        return super(Search, self).get_url('search')
+        return super().get_url('search')
 
     @staticmethod
-    def start_metadata_filters():
+    def start_metadata_filters() -> MetadataSearchFilters:
         """
         Get a :class:`MetadataSearchFilters` that represents a set of metadata filters.
 
         :return:
             The new :class:`MetadataSearchFilters`
-        :rtype:
-            :class:`MetadataSearchFilters`
         """
         return MetadataSearchFilters()
 
     @staticmethod
-    def make_single_metadata_filter(template_key, scope):
+    def make_single_metadata_filter(template_key: str, scope: str) -> MetadataSearchFilter:
         """
         Make a single :class:`MetadataSearchFilter` that represents a filter on a template. It must be
         added to a :class:`MetadataSearchFilters`.
-
+        :param template_key:
+            The key of the template to filter on
+        :param scope:
+            The scope of the template to filter on
         :return:
             The new :class:`MetadataSearchFilter`
-        :rtype:
-            :class:`MetadataSearchFilter`
         """
         return MetadataSearchFilter(template_key, scope)
 
@@ -176,100 +162,64 @@ class Search(BaseEndpoint):
     # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
     def query(
             self,
-            query,
-            limit=None,
-            offset=0,
-            ancestor_folders=None,
-            file_extensions=None,
-            metadata_filters=None,
-            result_type=None,
-            content_types=None,
-            scope=None,
-            created_at_range=None,
-            updated_at_range=None,
-            size_range=None,
-            owner_users=None,
-            trash_content=None,
-            fields=None,
-            sort=None,
-            direction=None,
-            **kwargs
-    ):
+            query: str,
+            limit: int = None,
+            offset: int = 0,
+            ancestor_folders: Iterable['Folder'] = None,
+            file_extensions: Iterable[str] = None,
+            metadata_filters: MetadataSearchFilters = None,
+            result_type: str = None,
+            content_types: Iterable[str] = None,
+            scope: Optional[str] = None,
+            created_at_range: Tuple[Optional[str], Optional[str]] = None,
+            updated_at_range: Tuple[Optional[str], Optional[str]] = None,
+            size_range: Tuple[Optional[int], Optional[int]] = None,
+            owner_users: Iterable['User'] = None,
+            trash_content: Optional[str] = None,
+            fields: Iterable[str] = None,
+            sort: Optional[str] = None,
+            direction: Optional[str] = None,
+            **kwargs: Any
+    ) -> Iterable['Item']:
         """
         Search Box for items matching the given query.
 
         :param query:
             The string to search for.
-        :type query:
-            `unicode`
         :param limit:
             The maximum number of items to return.
-        :type limit:
-            `int`
         :param offset:
             The search result at which to start the response.
-        :type offset:
-            `int`
         :param ancestor_folders:
             Folder ids to limit the search to.
-        :type ancestor_folders:
-            `Iterable` of :class:`Folder`
         :param file_extensions:
             File extensions to limit the search to.
-        :type file_extensions:
-            `iterable` of `unicode`
         :param metadata_filters:
             Filters used for metadata search
-        :type metadata_filters:
-            :class:`MetadataSearchFilters`
         :param result_type:
             Which type of result you want. Can be file or folder.
-        :type result_type:
-            `unicode`
         :param content_types:
             Which content types to search. Valid types include name, description, file_content, comments, and tags.
-        :type content_types:
-            `Iterable` of `unicode`
         :param scope:
             The scope of content to search over
-        :type scope:
-            `unicode` or None
         :param created_at_range:
             A tuple of the form (lower_bound, upper_bound) for the creation datetime of items to search.
-        :type created_at_range:
-            (`unicode` or None, `unicode` or None)
         :param updated_at_range:
             A tuple of the form (lower_bound, upper_bound) for the update datetime of items to search.
-        :type updated_at_range:
-            (`unicode` or None, `unicode` or None)
         :param size_range:
             A tuple of the form (lower_bound, upper_bound) for the size in bytes of items to search.
-        :type size_range:
-            (`int` or None, `int` or None)
         :param owner_users:
             Owner users to filter content by; only content belonging to these users will be returned.
-        :type owner_users:
-            `iterable` of :class:`User`
         :param trash_content:
             Whether to search trashed or non-trashed content.
-        :type trash_content:
-            `unicode` or None
         :param fields:
             Fields to include on the returned items.
-        :type fields:
-            `Iterable` of `unicode`
         :param sort:
             What to sort the search results by. Currently `modified_at`
-        :type sort:
-            `unicode` or None
         :param direction:
             The direction to display the sorted search results. Can be set to `DESC` for descending or `ASC` for ascending.
-        :type direction:
-            `unicode` or None
         :return:
             The collection of items that match the search query.
-        :rtype:
-            `Iterable` of :class:`Item`
         """
         url = self.get_url()
         additional_params = {'query': query}
@@ -313,53 +263,43 @@ class Search(BaseEndpoint):
         )
 
     @api_call
-    def metadata_query(self, from_template, ancestor_folder_id, query=None, query_params=None, use_index=None, order_by=None,
-                       marker=None, limit=None, fields=None):
+    def metadata_query(
+            self,
+            from_template: str,
+            ancestor_folder_id: str,
+            query: Optional[str] = None,
+            query_params: Optional[dict] = None,
+            use_index: Optional[str] = None,
+            order_by: List[dict] = None,
+            marker: Optional[str] = None,
+            limit: int = None,
+            fields: Iterable[Optional[str]] = None
+    ) -> 'BoxObjectCollection':
         # pylint: disable=arguments-differ
         """Query Box items by their metadata.
 
         :param from_template:
             The template used in the query. Must be in the form scope.templateKey.
-        :type from_template:
-            `unicode`
         :param ancestor_folder_id:
             The folder_id to which to restrain the query
-        :type ancestor_folder_id:
-            `unicode`
         :param query:
             The logical expression of the query
-        :type query:
-            `unicode` or None
         :param query_params:
             Required if query present. The arguments for the query.
-        :type query_params:
-            `dict` or None
         :param use_index:
             The name of the index to use
-        :type use_index:
-            `unicode` or None
         :param order_by:
             The field_key(s) to order on and the corresponding direction(s)
-        :type order_by:
-            `list` of `dict`
         :param marker:
             The marker to use for requesting the next page
-        :type marker:
-            `unicode` or None
         :param limit:
             Max results to return for a single request (0-100 inclusive)
-        :type limit:
-            `int`
         :param fields:
             List of fields to request
-        :type fields:
-            `Iterable` of `unicode` or None
         :returns:
             An iterator of the item search results
-        :rtype:
-            :class:`BoxObjectCollection`
         """
-        url = super(Search, self).get_url('metadata_queries/execute_read')
+        url = super().get_url('metadata_queries/execute_read')
         data = {
             'from': from_template,
             'ancestor_folder_id': ancestor_folder_id
@@ -388,100 +328,64 @@ class Search(BaseEndpoint):
     # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
     def query_with_shared_links(
             self,
-            query,
-            limit=None,
-            offset=0,
-            ancestor_folders=None,
-            file_extensions=None,
-            metadata_filters=None,
-            result_type=None,
-            content_types=None,
-            scope=None,
-            created_at_range=None,
-            updated_at_range=None,
-            size_range=None,
-            owner_users=None,
-            trash_content=None,
-            fields=None,
-            sort=None,
-            direction=None,
-            **kwargs
-    ):
+            query: str,
+            limit: int = None,
+            offset: int = 0,
+            ancestor_folders: Iterable['Folder'] = None,
+            file_extensions: Iterable[str] = None,
+            metadata_filters: MetadataSearchFilters = None,
+            result_type: str = None,
+            content_types: Iterable[str] = None,
+            scope: Optional[str] = None,
+            created_at_range: Tuple[Optional[str], Optional[str]] = None,
+            updated_at_range: Tuple[Optional[str], Optional[str]] = None,
+            size_range: Tuple[Optional[int], Optional[int]] = None,
+            owner_users: Iterable['User'] = None,
+            trash_content: Optional[str] = None,
+            fields: Iterable[str] = None,
+            sort: Optional[str] = None,
+            direction: Optional[str] = None,
+            **kwargs: Any
+    ) -> Iterable['Item']:
         """
         Search Box for items matching the given query. May also include items that are only accessible via recently used shared links.
 
         :param query:
             The string to search for.
-        :type query:
-            `unicode`
         :param limit:
             The maximum number of items to return.
-        :type limit:
-            `int`
         :param offset:
             The search result at which to start the response.
-        :type offset:
-            `int`
         :param ancestor_folders:
             Folder ids to limit the search to.
-        :type ancestor_folders:
-            `Iterable` of :class:`Folder`
         :param file_extensions:
             File extensions to limit the search to.
-        :type file_extensions:
-            `iterable` of `unicode`
         :param metadata_filters:
             Filters used for metadata search
-        :type metadata_filters:
-            :class:`MetadataSearchFilters`
         :param result_type:
             Which type of result you want. Can be file or folder.
-        :type result_type:
-            `unicode`
         :param content_types:
             Which content types to search. Valid types include name, description, file_content, comments, and tags.
-        :type content_types:
-            `Iterable` of `unicode`
         :param scope:
             The scope of content to search over
-        :type scope:
-            `unicode` or None
         :param created_at_range:
             A tuple of the form (lower_bound, upper_bound) for the creation datetime of items to search.
-        :type created_at_range:
-            (`unicode` or None, `unicode` or None)
         :param updated_at_range:
             A tuple of the form (lower_bound, upper_bound) for the update datetime of items to search.
-        :type updated_at_range:
-            (`unicode` or None, `unicode` or None)
         :param size_range:
             A tuple of the form (lower_bound, upper_bound) for the size in bytes of items to search.
-        :type size_range:
-            (`int` or None, `int` or None)
         :param owner_users:
             Owner users to filter content by; only content belonging to these users will be returned.
-        :type owner_users:
-            `iterable` of :class:`User`
         :param trash_content:
             Whether to search trashed or non-trashed content.
-        :type trash_content:
-            `unicode` or None
         :param fields:
             Fields to include on the returned items.
-        :type fields:
-            `Iterable` of `unicode`
         :param sort:
             What to sort the search results by. Currently `modified_at`
-        :type sort:
-            `unicode` or None
         :param direction:
             The direction to display the sorted search results. Can be set to `DESC` for descending or `ASC` for ascending.
-        :type direction:
-            `unicode` or None
         :return:
             The collection of items that match the search query.
-        :rtype:
-            `Iterable` of :class:`Item`
         """
         url = self.get_url()
         additional_params = {'query': query, 'include_recent_shared_links': True}

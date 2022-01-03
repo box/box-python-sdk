@@ -1,13 +1,19 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
+
 import json
+from typing import Optional, Iterable, TYPE_CHECKING
 
 from boxsdk.util.text_enum import TextEnum
 from .base_object import BaseObject
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..util.api_call_decorator import api_call
 from ..util.default_arg_value import SDK_VALUE_NOT_SET
+
+if TYPE_CHECKING:
+    from boxsdk.object.group_membership import GroupMembership
+    from boxsdk.object.user import User
+    from boxsdk.pagination.box_object_collection import BoxObjectCollection
 
 
 class GroupRole(TextEnum):
@@ -22,22 +28,23 @@ class Group(BaseObject):
     _item_type = 'group'
 
     @api_call
-    def get_memberships(self, limit=None, offset=None, fields=None):
+    def get_memberships(
+            self,
+            limit: Optional[int] = None,
+            offset: Optional[int] = None,
+            fields: Optional[Iterable[str]] = None
+    ) -> Iterable['GroupMembership']:
         """
         Get the membership records for the group, which indicate which users are included in the group.
 
-        :param offset:
-            The index at which to begin.
-        :type offset:
-            `int` or None
         :param limit:
             The maximum number of items to return in a page.
-        :type limit:
-            `int` or None
+        :param offset:
+            The index at which to begin.
+        :param fields:
+            List of fields to request. If None, will return the default fields for the object.
         :returns:
             The collection of membership objects for the group.
-        :rtype:
-            `Iterable` of :class:`GroupMembership`
         """
         return LimitOffsetBasedObjectCollection(
             self._session,
@@ -49,27 +56,24 @@ class Group(BaseObject):
         )
 
     @api_call
-    def add_member(self, user, role=GroupRole.MEMBER, configurable_permissions=SDK_VALUE_NOT_SET):
+    def add_member(
+            self,
+            user: 'User',
+            role: GroupRole = GroupRole.MEMBER,
+            configurable_permissions: Optional[str] = SDK_VALUE_NOT_SET
+    ) -> 'GroupMembership':
         """
         Add the given user to this group under the given role
 
         :param user:
             The User to add to the group.
-        :type user:
-            :class:`User`
         :param role:
             The role for the user.
-        :type role:
-            `unicode`
         :param configurable_permissions:
             This is a group level permission that is configured for Group members with
             admin role only.
-        :type configurable_permissons:
-            `unicode` or None
         :returns:
             The new GroupMembership instance.
-        :rtype:
-            :class:`GroupMembership`
         """
         url = self._session.get_url('group_memberships')
         body_attributes = {
@@ -84,26 +88,23 @@ class Group(BaseObject):
         return self.translator.translate(self._session, response)
 
     @api_call
-    def get_collaborations(self, limit=None, offset=None, fields=None):
+    def get_collaborations(
+            self,
+            limit: Optional[int] = None,
+            offset: Optional[int] = None,
+            fields: Iterable[str] = None
+    ) -> 'BoxObjectCollection':
         """
         Get the entries in the collaboration for the group using limit-offset paging.
 
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
-        :type limit:
-            `int` or None
         :param offset:
             The offset of the item at which to begin the response.
-        :type offset:
-            `int` or None
         :param fields:
             List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
         :returns:
             An iterator of the entries in the collaboration for the group.
-        :rtype:
-            :class:`BoxObjectCollection`
         """
         additional_params = {}
         if fields is not None:

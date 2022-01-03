@@ -1,16 +1,19 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-from abc import ABCMeta, abstractmethod
-from six import add_metaclass
-from six.moves import range   # pylint:disable=redefined-builtin
+from abc import ABC, abstractmethod
+from typing import Any, Union, List, TYPE_CHECKING
+
 import pytest
 
 from boxsdk.util.translator import Translator
 
+if TYPE_CHECKING:
+    from boxsdk.object.base_object import BaseObject
+    from boxsdk.pagination.box_object_collection import BoxObjectCollection
+    from boxsdk.session.session import Session
 
-@add_metaclass(ABCMeta)
-class BoxObjectCollectionTestBase(object):
+
+class BoxObjectCollectionTestBase(ABC):
     NUM_ENTRIES = 25
 
     @staticmethod
@@ -42,26 +45,26 @@ class BoxObjectCollectionTestBase(object):
         raise NotImplementedError
 
     @abstractmethod
-    def _object_collection_instance(self, session, limit, return_full_pages=False, starting_pointer=None):
-        """
-        :type session: :class:`BoxSession`
-        :type limit: `int`
-        :type return_full_pages: `bool`
-        :type starting_pointer: varies
-        :rtype: :class:`BoxObjectCollection`
-        """
+    def _object_collection_instance(
+            self,
+            session: 'Session',
+            limit: int,
+            return_full_pages: bool = False,
+            starting_pointer: Any = None
+    ) -> 'BoxObjectCollection':
         raise NotImplementedError
 
     @staticmethod
-    def _assert_items_dict_and_objects_same(expected_items_dict, returned_item_objects):
+    def _assert_items_dict_and_objects_same(
+            expected_items_dict: Union[list, dict],
+            returned_item_objects: List['BaseObject']
+    ) -> None:
         """
         A fixture very specific to this test class. Asserts that the list of items in dictionary form are the
         same (at least in name, and in quantity) as a list of BaseObjects.
 
         :param expected_items_dict: List of expected items, represented as a dictionary.
-        :type expected_items_dict: `list` of `dict`
         :param returned_item_objects: List of item instances (BaseObject) returned by SUT.
-        :type returned_item_objects: `list` of class:`BaseObject`
         """
         expected_num = len(expected_items_dict)
         actual_num = len(returned_item_objects)

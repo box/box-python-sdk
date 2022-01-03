@@ -1,9 +1,8 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
 import json
 import os
-from six import text_type
+from typing import TYPE_CHECKING, Any, Tuple, Optional, Iterable, IO, Union
 
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
@@ -12,6 +11,18 @@ from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBa
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from boxsdk.util.api_call_decorator import api_call
 from boxsdk.util.text_enum import TextEnum
+
+if TYPE_CHECKING:
+    from boxsdk.object.upload_session import UploadSession
+    from boxsdk.util.chunked_uploader import ChunkedUploader
+    from boxsdk.object.file import File
+    from boxsdk.object.collaboration import CollaborationRole, Collaboration
+    from boxsdk.object.web_link import WebLink
+    from boxsdk.object.enterprise import Enterprise
+    from boxsdk.pagination.box_object_collection import BoxObjectCollection
+    from boxsdk.object.metadata_template import MetadataTemplate
+    from boxsdk.object.metadata_cascade_policy import MetadataCascadePolicy
+    from boxsdk.object.folder_lock import FolderLock
 
 
 class FolderSyncState(TextEnum):
@@ -31,32 +42,26 @@ class _CollaborationType(TextEnum):
     GROUP = 'group'
 
 
-class _Collaborator(object):
+class _Collaborator:
     """This helper class represents a collaborator on Box. A Collaborator can be a User, Group, or an email address"""
-    def __init__(self, collaborator):
+    def __init__(self, collaborator: Any):
         if isinstance(collaborator, User):
             self._setup(user=collaborator)
         elif isinstance(collaborator, Group):
             self._setup(group=collaborator)
-        elif isinstance(collaborator, text_type):
+        elif isinstance(collaborator, str):
             self._setup(email_address=collaborator)
         else:
             raise TypeError('Collaborator must be User, Group, or unicode string')
 
-    def _setup(self, user=None, group=None, email_address=None):
+    def _setup(self, user: User = None, group: Group = None, email_address: str = None) -> None:
         """
         :param user:
             The Box user if applicable
-        :type user:
-            :class:`User`
         :param group:
             The Box group if applicable
-        :type group:
-            :class:`Group`
         :param email_address:
             The email address of the user if not a user of Box
-        :type email_address:
-            `unicode`
         """
         self._type = _CollaborationType.GROUP if group else _CollaborationType.USER
         id_object = user or group
@@ -68,21 +73,16 @@ class _Collaborator(object):
             self._identifier = email_address
 
     @property
-    def access(self):
+    def access(self) -> Tuple[str, str]:
         """Return a tuple for how to access collaborator
 
         The first element is the key for access, the second is the value
-        :rtype:
-            `tuple` of `unicode`, `unicode`
         """
         return self._key, self._identifier
 
     @property
-    def type(self):
-        """Return the type of collaborator (user or group)
-        :rtype:
-            `unicode`
-        """
+    def type(self) -> str:
+        """Return the type of collaborator (user or group)"""
         return self._type
 
 
@@ -92,23 +92,17 @@ class Folder(Item):
     _item_type = 'folder'
 
     @api_call
-    def preflight_check(self, size, name):
+    def preflight_check(self, size: int, name: str) -> Optional[str]:
         """
         Make an API call to check if a new file with given name and size can be uploaded to this folder.
         Returns an accelerator URL if one is available.
 
         :param size:
             The size of the file in bytes. Specify 0 for unknown file-sizes.
-        :type size:
-            `int`
         :param name:
             The name of the file to be uploaded.
-        :type name:
-            `unicode`
         :return:
             The Accelerator upload url or None if cannot get the Accelerator upload url.
-        :rtype:
-            `unicode` or None
         :raises:
             :class:`BoxAPIException` when preflight check fails.
         """
@@ -118,22 +112,16 @@ class Folder(Item):
             parent_id=self._object_id,
         )
 
-    def create_upload_session(self, file_size, file_name):
+    def create_upload_session(self, file_size: int, file_name: str) -> 'UploadSession':
         """
         Creates a new chunked upload session for upload a new file.
 
         :param file_size:
             The size of the file in bytes that will be uploaded.
-        :type file_size:
-            `int`
         :param file_name:
             The name of the file that will be uploaded.
-        :type file_name:
-            `unicode`
         :returns:
             A :class:`UploadSession` object.
-        :rtype:
-            :class:`UploadSession`
         """
         url = '{0}/files/upload_sessions'.format(self.session.api_config.UPLOAD_URL)
         body_params = {
@@ -148,18 +136,14 @@ class Folder(Item):
         )
 
     @api_call
-    def get_chunked_uploader(self, file_path):
+    def get_chunked_uploader(self, file_path: str) -> 'ChunkedUploader':
         """
         Instantiate the chunked upload instance and create upload session with path to file.
 
         :param file_path:
             The local path to the file you wish to upload.
-        :type file_path:
-            `unicode`
         :returns:
             A :class:`ChunkedUploader` object.
-        :rtype:
-            :class:`ChunkedUploader`
         """
         total_size = os.stat(file_path).st_size
         content_stream = open(file_path, 'rb')
@@ -167,54 +151,45 @@ class Folder(Item):
         upload_session = self.create_upload_session(total_size, file_name)
         return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
 
-    def _get_accelerator_upload_url_fow_new_uploads(self):
+    def _get_accelerator_upload_url_fow_new_uploads(self) -> Optional[str]:
         """
         Get Accelerator upload url for uploading new files.
 
         :return:
             The Accelerator upload url or None if cannot get one
-        :rtype:
-            `unicode` or None
         """
         return self._get_accelerator_upload_url()
 
     @api_call
-    def get_items(self, limit=None, offset=0, marker=None, use_marker=False, sort=None, direction=None, fields=None):
+    def get_items(
+            self,
+            limit: Optional[int] = None,
+            offset: int = 0,
+            marker: Optional[str] = None,
+            use_marker: bool = False,
+            sort: Optional[str] = None,
+            direction: Optional[str] = None,
+            fields: Iterable[str] = None
+    ) -> Iterable[Item]:
         """
         Get the items in a folder.
 
         :param limit:
             The maximum number of items to return per page. If not specified, then will use the server-side default.
-        :type limit:
-            `int` or None
         :param offset:
             The index at which to start returning items when using offset-based pagin.
-        :type offset:
-            `int`
-        :param use_marker:
-            Whether to use marker-based paging instead of offset-based paging, defaults to False.
-        :type use_marker:
-            `bool`
         :param marker:
             The paging marker to start returning items from when using marker-based paging.
-        :type marker:
-            `unicode` or None
+        :param use_marker:
+            Whether to use marker-based paging instead of offset-based paging, defaults to False.
         :param sort:
             Item field to sort results on: 'id', 'name', or 'date'.
-        :type sort':
-            `unicode` or None
         :param direction:
             Sort direction for the items returned.
-        :type direction:
-            `unicode` or None
         :param fields:
             List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
         :returns:
             The collection of items in the folder.
-        :rtype:
-            `Iterable` of :class:`Item`
         """
         url = self.get_url('items')
         additional_params = {}
@@ -250,43 +225,33 @@ class Folder(Item):
     @api_call
     def upload_stream(
             self,
-            file_stream,
-            file_name,
-            file_description=None,
-            preflight_check=False,
-            preflight_expected_size=0,
-            upload_using_accelerator=False,
-            content_created_at=None,
-            content_modified_at=None,
-            additional_attributes=None,
-            sha1=None,
-            etag=None,
-    ):
+            file_stream: IO[bytes],
+            file_name: str,
+            file_description: Optional[str] = None,
+            preflight_check: bool = False,
+            preflight_expected_size: int = 0,
+            upload_using_accelerator: bool = False,
+            content_created_at: Optional[str] = None,
+            content_modified_at: Optional[str] = None,
+            additional_attributes: Optional[dict] = None,
+            sha1: Optional[str] = None,
+            etag: Optional[str] = None,
+    ) -> 'File':
         """
         Upload a file to the folder.
         The contents are taken from the given file stream, and it will have the given name.
 
         :param file_stream:
             The file-like object containing the bytes
-        :type file_stream:
-            `file`
         :param file_name:
             The name to give the file on Box.
-        :type file_name:
-            `unicode`
         :param file_description:
             The description to give the file on Box.
-        :type file_description:
-            `unicode` or None
         :param preflight_check:
             If specified, preflight check will be performed before actually uploading the file.
-        :type preflight_check:
-            `bool`
         :param preflight_expected_size:
             The size of the file to be uploaded in bytes, which is used for preflight check. The default value is '0',
             which means the file size is unknown.
-        :type preflight_expected_size:
-            `int`
         :param upload_using_accelerator:
             If specified, the upload will try to use Box Accelerator to speed up the uploads for big files.
             It will make an extra API call before the actual upload to get the Accelerator upload url, and then make
@@ -294,32 +259,18 @@ class Folder(Item):
             if cannot get the Accelerator upload url.
 
             Please notice that this is a premium feature, which might not be available to your app.
-        :type upload_using_accelerator:
-            `bool`
         :param content_created_at:
             The RFC-3339 datetime when the file was created.
-        :type content_created_at:
-            `unicode` or None
         :param content_modified_at:
             The RFC-3339 datetime when the file content was last modified.
-        :type content_modified_at:
-            `unicode` or None
         :param additional_attributes:
             A dictionary containing attributes to add to the file that are not covered by other parameters.
-        :type additional_attributes:
-            `dict` or None
         :param sha1:
             A sha1 checksum for the file.
-        :type sha1:
-            `unicode` or None
         :param etag:
             If specified, instruct the Box API to update the item only if the current version's etag matches.
-        :type etag:
-            `unicode` or None
         :returns:
             The newly uploaded file.
-        :rtype:
-            :class:`File`
         """
         accelerator_upload_url = None
         if preflight_check:
@@ -365,18 +316,18 @@ class Folder(Item):
     @api_call
     def upload(
             self,
-            file_path=None,
-            file_name=None,
-            file_description=None,
-            preflight_check=False,
-            preflight_expected_size=0,
-            upload_using_accelerator=False,
-            content_created_at=None,
-            content_modified_at=None,
-            additional_attributes=None,
-            sha1=None,
-            etag=None,
-    ):
+            file_path: str = None,
+            file_name: str = None,
+            file_description: Optional[str] = None,
+            preflight_check: bool = False,
+            preflight_expected_size: int = 0,
+            upload_using_accelerator: bool = False,
+            content_created_at: Optional[str] = None,
+            content_modified_at: Optional[str] = None,
+            additional_attributes: Optional[dict] = None,
+            sha1: Optional[str] = None,
+            etag: Optional[str] = None,
+    ) -> 'File':
         """
         Upload a file to the folder.
         The contents are taken from the given file path, and it will have the given name.
@@ -384,25 +335,15 @@ class Folder(Item):
 
         :param file_path:
             The file path of the file to upload to Box.
-        :type file_path:
-            `unicode`
         :param file_name:
             The name to give the file on Box. If None, then use the leaf name of file_path
-        :type file_name:
-            `unicode`
         :param file_description:
             The description to give the file on Box. If None, then no description will be set.
-        :type file_description:
-            `unicode` or None
         :param preflight_check:
             If specified, preflight check will be performed before actually uploading the file.
-        :type preflight_check:
-            `bool`
         :param preflight_expected_size:
             The size of the file to be uploaded in bytes, which is used for preflight check. The default value is '0',
             which means the file size is unknown.
-        :type preflight_expected_size:
-            `int`
         :param upload_using_accelerator:
             If specified, the upload will try to use Box Accelerator to speed up the uploads for big files.
             It will make an extra API call before the actual upload to get the Accelerator upload url, and then make
@@ -410,32 +351,18 @@ class Folder(Item):
             if cannot get the Accelerator upload url.
 
             Please notice that this is a premium feature, which might not be available to your app.
-        :type upload_using_accelerator:
-            `bool`
         :param content_created_at:
             The RFC-3339 datetime when the file was created.
-        :type content_created_at:
-            `unicode` or None
         :param content_modified_at:
             The RFC-3339 datetime when the file content was last modified.
-        :type content_modified_at:
-            `unicode` or None
         :param additional_attributes:
             A dictionary containing attributes to add to the file that are not covered by other parameters.
-        :type additional_attributes:
-            `dict` or None
         :param sha1:
             A sha1 checksum for the new content.
-        :type sha1:
-            `unicode` or None
         :param etag:
             If specified, instruct the Box API to update the item only if the current version's etag matches.
-        :type etag:
-            `unicode` or None
         :returns:
             The newly uploaded file.
-        :rtype:
-            :class:`File`
         """
         if file_name is None:
             file_name = os.path.basename(file_path)
@@ -455,14 +382,12 @@ class Folder(Item):
             )
 
     @api_call
-    def create_subfolder(self, name):
+    def create_subfolder(self, name: str) -> 'Folder':
         """
         Create a subfolder with the given name in the folder.
 
         :param name:
             The name of the new folder
-        :type name:
-            `unicode`
         """
         url = self.get_type_url()
         data = {
@@ -479,7 +404,7 @@ class Folder(Item):
         )
 
     @api_call
-    def update_sync_state(self, sync_state):
+    def update_sync_state(self, sync_state: FolderSyncState) -> 'Folder':
         """Update the ``sync_state`` attribute of this folder.
 
         Change whether this folder will be synced by sync clients.
@@ -487,12 +412,8 @@ class Folder(Item):
         :param sync_state:
             The desired sync state of this folder.
             Must be a member of the `FolderSyncState` enum.
-        :type sync_state:
-            :class:`FolderSyncState`
         :return:
             A new :class:`Folder` instance with updated information reflecting the new sync state.
-        :rtype:
-            :class:`Folder`
         """
         data = {
             'sync_state': sync_state,
@@ -500,30 +421,26 @@ class Folder(Item):
         return self.update_info(data=data)
 
     @api_call
-    def add_collaborator(self, collaborator, role, notify=False, can_view_path=False):
+    def add_collaborator(
+            self,
+            collaborator: Union[User, Group, str],
+            role: 'CollaborationRole',
+            notify: bool = False,
+            can_view_path: bool = False
+    ) -> 'Collaboration':
         """Add a collaborator to the folder
 
         :param collaborator:
             collaborator to add. May be a User, Group, or email address (unicode string)
-        :type collaborator:
-            :class:`User` or :class:`Group` or `unicode`
         :param role:
             The collaboration role
-        :type role:
-            :class:`CollaboratorRole`
         :param notify:
             Whether to send a notification email to the collaborator
-        :type notify:
-            `bool`
         :param can_view_path:
             Whether view path collaboration feature is enabled or not. Note - only
             folder owners can create collaborations with can_view_path.
-        :type can_view_path:
-            `bool`
         :return:
             The new collaboration
-        :rtype:
-            :class:`Collaboration`
         """
         collaborator_helper = _Collaborator(collaborator)
         url = self._session.get_url('collaborations')
@@ -550,26 +467,23 @@ class Folder(Item):
         )
 
     @api_call
-    def create_web_link(self, target_url, name=None, description=None):
+    def create_web_link(
+            self,
+            target_url: str,
+            name: Optional[str] = None,
+            description: Optional[str] = None
+    ) -> 'WebLink':
         """
         Create a WebLink with a given url.
 
         :param target_url:
             The url the web link points to.
-        :type target_url:
-            `unicode`
         :param name:
             The name of the web link. Optional, the API will give it a default if not specified.
-        :type name:
-            `unicode` or None
         :param description:
             Description of the web link
-        :type name:
-            `unicode` or None
         :return:
             A :class:`WebLink` object.
-        :rtype:
-            :class:`WebLink`
         """
         url = self._session.get_url('web_links')
         web_link_attributes = {
@@ -589,52 +503,42 @@ class Folder(Item):
         )
 
     @api_call
-    def delete(self, recursive=True, etag=None):
+    def delete(self, recursive: bool = True, etag: Optional[str] = None) -> bool:
         """Base class override. Delete the folder.
 
         :param recursive:
             Whether or not the folder should be deleted if it isn't empty.
-        :type recursive:
-            `bool`
         :param etag:
             If specified, instruct the Box API to delete the folder only if the current version's etag matches.
-        :type etag:
-            `unicode` or None
         :returns:
             Whether or not the update was successful.
-        :rtype:
-            `bool`
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
         # pylint:disable=arguments-differ
-        return super(Folder, self).delete({'recursive': recursive}, etag)
+        return super().delete({'recursive': recursive}, etag)
 
     @api_call
-    def get_metadata_cascade_policies(self, owner_enterprise=None, limit=None, marker=None, fields=None):
+    def get_metadata_cascade_policies(
+            self,
+            owner_enterprise: 'Enterprise' = None,
+            limit: Optional[int] = None,
+            marker: Optional[str] = None,
+            fields: Iterable[str] = None
+    ) -> 'BoxObjectCollection':
         """
         Get the metadata cascade policies current applied to the folder.
 
         :param owner_enterprise:
             Which enterprise's metadata templates to get cascade policies for.  This defauls to the current
             enterprise.
-        :type owner_enterprise:
-            :class:`Enterprise`
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
-        :type limit:
-            `int` or None
         :param marker:
             The paging marker to start paging from.
-        :type marker:
-            `unicode` or None
         :param fields:
             List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
         :returns:
             An iterator of the cascade policies attached on the folder.
-        :rtype:
-            :class:`BoxObjectCollection`
         """
         additional_params = {
             'folder_id': self.object_id,
@@ -653,19 +557,15 @@ class Folder(Item):
         )
 
     @api_call
-    def cascade_metadata(self, metadata_template):
+    def cascade_metadata(self, metadata_template: 'MetadataTemplate') -> 'MetadataCascadePolicy':
         """
         Create a metadata cascade policy to apply the metadata instance values on the folder for the given metadata
         template to all files within the folder.
 
         :param metadata_template:
             The metadata template to cascade values for
-        :type metadata_template:
-            :class:`MetadataTemplate`
         :returns:
             The created metadata cascade policy
-        :rtype:
-            :class:`MetadataCascadePolicy`
         """
         url = self._session.get_url('metadata_cascade_policies')
 
@@ -679,14 +579,12 @@ class Folder(Item):
         return self.translator.translate(self._session, response)
 
     @api_call
-    def create_lock(self):
+    def create_lock(self) -> 'FolderLock':
         """
         Creates a folder lock on a folder, preventing it from being moved and/or deleted.
 
         :returns:
             The created folder lock
-        :rtype:
-            :class:`FolderLock`
         """
         url = self._session.get_url('folder_locks')
 
@@ -705,14 +603,12 @@ class Folder(Item):
         return self.translator.translate(self._session, response)
 
     @api_call
-    def get_locks(self):
+    def get_locks(self) -> 'BoxObjectCollection':
         """
         Lists all folder locks for a given folder.
 
         :returns:
             The collection of locks for a folder.
-        :rtype:
-            :class:`BoxObjectCollection`
         """
         url = self._session.get_url('folder_locks')
 

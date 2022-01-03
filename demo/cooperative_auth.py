@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
 from logging import getLogger
 from multiprocessing import Manager, Process
 from os import getpid

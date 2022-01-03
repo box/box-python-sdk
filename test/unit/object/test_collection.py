@@ -1,8 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
-
 def test_get(mock_collection, mock_box_session):
     expected_url = mock_collection.get_url()
     collection_name = 'Favorites'

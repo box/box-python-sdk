@@ -1,13 +1,9 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 import json
-
-from mock import ANY
-
 import pytest
 
+from mock import ANY
 from boxsdk.config import API
 from boxsdk.object.file import File
 from boxsdk.object.user import User
@@ -150,7 +146,7 @@ def search_with_shared_links_response():
     }
 
 
-class Matcher(object):
+class Matcher:
     def __init__(self, compare, some_obj):
         self.compare = compare
         self.some_obj = some_obj

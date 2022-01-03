@@ -1,31 +1,23 @@
 # coding: utf-8
 
-from __future__ import absolute_import, unicode_literals
-
+from collections import ChainMap
 import inspect
-
-from .chain_map import ChainMap
-
 
 __all__ = list(map(str, ['Translator']))
 
-# pylint: disable=invalid-name
-inspect_signature = None
-try:
-    inspect_signature = inspect.signature
-except AttributeError:  # pragma: no cover
-    import funcsigs
-    inspect_signature = funcsigs.signature
+from typing import Any, TYPE_CHECKING, Dict
+
+if TYPE_CHECKING:
+    from boxsdk.object.base_api_json_object import BaseAPIJSONObjectMeta
+    from boxsdk.session.session import Session
 
 
-def _get_object_id(obj):
+def _get_object_id(obj: dict) -> Any:
     """
     Gets the ID for an API object.
 
     :param obj:
         The API object
-    :type obj:
-        `dict`
     :return:
     """
     return obj.get('id', None)
@@ -72,15 +64,13 @@ class Translator(ChainMap):
     # :type _default_translator:   :class:`Translator`
     _default_translator = {}   # Will be set to a `Translator` instance below, after the class is defined.
 
-    def __init__(self, *translation_maps, **kwargs):
+    def __init__(self, *translation_maps: Dict[str, 'BaseAPIJSONObjectMeta'], **kwargs: Any):
         """Baseclass override.
 
         :param translation_maps:
             (variadic) The same as the `maps` variadic parameter to
             :class:`ChainMap`, except restricted to maps from type names to Box
             object classes.
-        :type translation_maps:
-            `tuple` of (:class:`Mapping` of `unicode` to :class:`BaseAPIJSONObjectMeta`)
         :param extend_default_translator:
             (optional, keyword-only) If `True` (the default),
             `_default_translator` is appended to the end of `translation_maps`.
@@ -105,52 +95,41 @@ class Translator(ChainMap):
             translation_maps.append(self._default_translator)
         if new_child:
             translation_maps.insert(0, {})
-        super(Translator, self).__init__(*translation_maps, **kwargs)
+        super().__init__(*translation_maps, **kwargs)
 
-    def register(self, type_name, box_cls):
+    def register(self, type_name: str, box_cls: 'BaseAPIJSONObjectMeta') -> Any:
         """Associate a Box object class to handle Box API item responses with the given type name.
 
         :param type_name:
             The type name to be registered.
-        :type type_name:
-            `unicode`
         :param box_cls:
             The Box object class, which will be associated with the type name provided.
-        :type box_cls:
-            :class:`BaseAPIJSONObjectMeta`
         """
         self[type_name] = box_cls
 
-    def get(self, key, default=None):
+    def get(self, key: str, default: 'BaseAPIJSONObjectMeta' = None) -> 'BaseAPIJSONObjectMeta':
         """Get the box object class associated with the given type name.
 
         :param key:
             The type name to be translated.
-        :type key:
-            `unicode`
         :param default:
             (optional) The default Box object class to return.
             Defaults to `BaseObject`.
-        :type default:  :class:`BaseAPIJSONObjectMeta`
-        :rtype:   :class:`BaseAPIJSONObjectMeta`
         """
+        # pylint:disable=import-outside-toplevel
         from boxsdk.object.base_object import BaseObject
         if default is None:
             default = BaseObject
-        return super(Translator, self).get(key, default)
+        return super().get(key, default)
 
-    def translate(self, session, response_object):
+    def translate(self, session: 'Session', response_object: dict) -> Any:
         """
         Translate a given API response object into SDK classes, rescursively translating any subobjects.
 
         :param session:
             The SDK session to use for any objects that require a session (i.e. classes that make API calls)
-        :type session:
-            class:`Session`
         :param response_object:
             The JSON response object from the API, which will be translated
-        :type response_object:
-            `dict`
         :return:
             The translated object
         """
@@ -185,7 +164,7 @@ class Translator(ChainMap):
                 'response_object': translated_obj,
                 'object_id': _get_object_id(translated_obj),
             }
-            params = inspect_signature(object_class.__init__).parameters
+            params = inspect.signature(object_class.__init__).parameters
             param_values = {p: param_values[p] for p in params if p in param_values}
             return object_class(**param_values)
 

@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import, unicode_literals
-
 from mock import NonCallableMock
 import pytest
 
@@ -67,7 +65,7 @@ def test_api_call_decorated_function_must_be_a_method():
 
 def test_api_call_decorated_method_must_be_a_cloneable_method():
 
-    class NonCloneable(object):
+    class NonCloneable:
         @api_call
         def func(self):
             pass

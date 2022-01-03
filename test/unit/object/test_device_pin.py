@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 import pytest
 
 from mock import Mock
@@ -19,7 +17,7 @@ def delete_device_pin_response():
 
 
 def test_get(test_device_pin, mock_box_session):
-    created_at = '2016-05-18T17:38:03-07:00',
+    created_at = '2016-05-18T17:38:03-07:00'
     expected_url = '{0}/device_pinners/{1}'.format(API.BASE_API_URL, test_device_pin.object_id)
     mock_box_session.get.return_value.json.return_value = {
         'type': 'device_pinner',

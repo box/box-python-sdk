@@ -1,8 +1,10 @@
 # coding: utf-8
-
-from __future__ import unicode_literals
+from typing import Optional, Iterator, TYPE_CHECKING
 
 from .box_object_collection import BoxObjectCollection
+
+if TYPE_CHECKING:
+    from boxsdk.session.session import Session
 
 
 class MarkerBasedObjectCollection(BoxObjectCollection):
@@ -15,33 +17,43 @@ class MarkerBasedObjectCollection(BoxObjectCollection):
 
     def __init__(
             self,
-            session,
-            url,
-            limit=None,
-            fields=None,
-            additional_params=None,
-            return_full_pages=False,
-            marker=None,
-            supports_limit_offset_paging=False,
-            use_post=False
+            session: 'Session',
+            url: str,
+            limit: Optional[int] = None,
+            fields: Iterator[str] = None,
+            additional_params: Optional[dict] = None,
+            return_full_pages: bool = False,
+            marker: Optional[str] = None,
+            supports_limit_offset_paging: bool = False,
+            use_post: bool = False
     ):
         """
+        :param session:
+            The Box session used to make requests.
+        :param url:
+            The endpoint url to hit.
+        :param limit:
+            The number of entries for each page to return. The default, as well as the upper limit of this value,
+            differs by endpoint. See https://developer.box.com/en/reference. If limit is set to None, then the default
+            limit (returned by Box in the response) is used.
+        :param fields:
+            List of fields to request. If None, will return the default fields for the object.
+        :param additional_params:
+            Additional HTTP params to send in the request.
+        :param return_full_pages:
+            If True, then the returned iterator for this collection will return full pages of Box objects on each
+            call to next(). If False, the iterator will return a single Box object on each next() call.
         :param marker:
             The offset index to start paging from.
-        :type marker:
-            `str` or None
         :param supports_limit_offset_paging:
             Does this particular endpoint also support limit-offset paging? This information is needed, as
             the endpoints that support both require an special extra request parameter.
-        :type supports_limit_offset_paging:
-            `bool`
         :param use_post:
             If True, then the returned iterator will make POST requests with all the data in the body on each
-            call to next(). If False, the iterator will make GET requets with all the data as query params on each call to next().
-        :type use_post:
-            `bool`
+            call to next().
+            If False, the iterator will make GET requets with all the data as query params on each call to next().
         """
-        super(MarkerBasedObjectCollection, self).__init__(
+        super().__init__(
             session,
             url,
             limit=limit,
@@ -53,16 +65,16 @@ class MarkerBasedObjectCollection(BoxObjectCollection):
         self._marker = marker
         self._supports_limit_offset_paging = supports_limit_offset_paging
 
-    def _update_pointer_to_next_page(self, response_object):
+    def _update_pointer_to_next_page(self, response_object: dict) -> None:
         """Baseclass override."""
         self._marker = self._get_next_marker_from_response_object(response_object)
 
-    def _has_more_pages(self, response_object):
+    def _has_more_pages(self, response_object) -> bool:
         """Baseclass override."""
         return bool(self._get_next_marker_from_response_object(response_object))
 
     @staticmethod
-    def _get_next_marker_from_response_object(response_object):
+    def _get_next_marker_from_response_object(response_object) -> Optional[str]:
         """Get the marker that should be used to retrieve the next page.
 
         When we've just retrieved the last page, the API is inconsistent about
@@ -72,13 +84,10 @@ class MarkerBasedObjectCollection(BoxObjectCollection):
 
         Otherwise, this method returns the string value of the "next_marker"
         field.
-
-        :rtype:
-            `unicode` or `None`
         """
         return response_object.get('next_marker') or None
 
-    def _next_page_pointer_params(self):
+    def _next_page_pointer_params(self) -> dict:
         """Baseclass override."""
         pointer_params = {}
         # For transitioning endpoints that support both marker and limit-offset paging, we must specify an
@@ -89,6 +98,6 @@ class MarkerBasedObjectCollection(BoxObjectCollection):
             pointer_params['marker'] = self._marker
         return pointer_params
 
-    def next_pointer(self):
+    def next_pointer(self) -> Optional[str]:
         """Baseclass override."""
         return self._marker

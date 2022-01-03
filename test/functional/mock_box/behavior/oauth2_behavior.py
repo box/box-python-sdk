@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 from datetime import datetime, timedelta
 import json
 from uuid import uuid4
@@ -16,7 +14,7 @@ from test.functional.mock_box.util.db_utils import get_token_record_by_token
 from test.functional.mock_box.util.http_utils import abort
 
 
-class OAuth2Behavior(object):
+class OAuth2Behavior:
     ACCESS_TOKEN_DURATION_SECONDS = 3600
     REFRESH_TOKEN_DURATION_DAYS = 60
     AUTH_CODE_DURATION_SECONDS = 30

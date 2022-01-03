@@ -1,5 +1,5 @@
 # coding: utf-8
-from __future__ import unicode_literals
+from typing import Any
 
 from .base_object import BaseObject
 
@@ -9,10 +9,10 @@ class TermsOfServiceUserStatus(BaseObject):
 
     _item_type = 'terms_of_service_user_status'
 
-    def get_url(self, *args):
+    def get_url(self, *args: Any) -> str:
         return self._session.get_url('terms_of_service_user_statuses', self._object_id, *args)
 
-    def accept(self):
+    def accept(self) -> 'TermsOfServiceUserStatus':
         """
         Accept a term of service.
         """
@@ -21,7 +21,7 @@ class TermsOfServiceUserStatus(BaseObject):
         }
         return self.update_info(data=body)
 
-    def reject(self):
+    def reject(self) -> 'TermsOfServiceUserStatus':
         """
         Reject a term of service.
         """

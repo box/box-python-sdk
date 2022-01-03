@@ -1,14 +1,12 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
 import attr
 
 from ..util.log import sanitize_dictionary
 
 
 @attr.s(slots=True)
-class BoxRequest(object):
+class BoxRequest:
     """Represents a Box API request.
 
     :param url:                     The URL being requested.
@@ -28,7 +26,7 @@ class BoxRequest(object):
     auto_session_renewal = attr.ib(default=True)
     expect_json_response = attr.ib(default=True)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<BoxRequest for {self.method} {self.url} with headers {headers}'.format(
             self=self,
             headers=sanitize_dictionary(self.headers),

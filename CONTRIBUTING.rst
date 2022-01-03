@@ -9,11 +9,16 @@ Contributor License Agreement
 Before a contribution can be merged into this project, please fill out
 the Contributor License Agreement (CLA) located at::
 
-    http://box.github.io/cla
+    http://opensource.box.com/cla
 
 To learn more about CLAs and why they are important to open source
 projects, please see the `Wikipedia
 entry <http://en.wikipedia.org/wiki/Contributor_License_Agreement>`_.
+
+Code of Conduct
+------------------
+
+This project adheres to the `Box Open Code of Conduct <http://opensource.box.com/code-of-conduct/>`_. By participating, you are expected to uphold this code.
 
 How to contribute
 -----------------
@@ -63,18 +68,59 @@ Create a branch with a descriptive name, such as ``add-search``.
 Step 5: Push your feature branch to your fork
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As you develop code, continue to push code to your remote feature
-branch. Please make sure to include the issue number you're addressing
-in your commit message, such as:
+We use `semantic-versioning <https://semver.org/>`_ and the `conventional commit message format <https://www.conventionalcommits.org/en/v1.0.0/>`_. 
+Keep a separate feature branch for each issue you want to address. As you develop code, continue to push code to your remote feature branch. Example:
 
 .. code-block:: console
 
-    git commit -am "Adding search (fixes #123)"
+    tag: short description
+    longer description here if necessary.
 
-This helps us out by allowing us to track which issue your commit
-relates to.
+The message summary should be a one-sentence description of the change, and it must be 72 characters in length or shorter. For a list of tags, please `click here <https://github.com/commitizen/conventional-commit-types/blob/master/index.json>`_. Note that you must include the `!` for breaking changes (e.g. `feat!: removed old apis`).
 
-Keep a separate feature branch for each issue you want to address.
+Shown below are examples of the release type that will be done based on a commit message.
+
+Commit Types
+~~~~~~~~~~~~
+
+"Semantic versioning" means that changes to the version number of the package (e.g. ``3.42.11`` to ``3.43.0``) are done according to rules that indicate how the change will affect consumers. Read more on the `semver page <https://semver.org/>`_.
+
+The version number is broken into 3 positions ``Major.Minor.Patch``. In semantic release terms, changes to the numbers follow ``Breaking.Feature.Fix``. The ``release`` script parses commit messages and decides what type of release to make based on the types of commits detected since the last release.
+
+The rules for commit types are:
+
+- Anything that changes or removes an API, option, or output format is a breaking change denoted by ``!``.
+- Anything that adds new functionality in a backwards-compatible way is a feature (``feat``). Consumers have to upgrade to the new version to use the feature, but nothing will break if they do so.
+- Bugfixes (``fix``) for existing behavior are a patch. Consumers don't have to do anything but upgrade.
+- Other prefixes, such as ``docs`` or ``chore``, don't trigger releases and don't appear in the changelog. These tags signal that there are **no external changes to _any_ APIs** (including non-breaking ones).
+
+In most cases, commits will be a ``feat`` or ``fix``. Make sure to include the ``!`` in the title if there are non-backwards-compatible changes in the commit.
+
+.. list-table::
+   :widths: 50 25 25
+   :header-rows: 1
+
+   * - Commit message
+     - Release type
+     - New version
+   * - ``feat!: remove old files endpoints``
+     - Major ("breaking") 
+     - ``X+1.0.0``
+   * - ``feat: add new file upload endpoint``
+     - Minor ("feature")
+     - ``X.Y+1.0``
+   * - ``fix: file streaming during download``
+     - Patch ("fix")
+     - ``X.Y.Z+1``
+   * - ``docs: document files api``
+     - No release
+     - ``X.Y.Z``
+   * - ``chore: remove commented code from file upload``
+     - No release
+     - ``X.Y.Z``
+   * - ``refactor: rename a variable (invisible change)``
+     - No release
+     - ``X.Y.Z``
 
 Step 6: Rebase
 ~~~~~~~~~~~~~~
@@ -104,6 +150,4 @@ Keep in mind that we like to see one issue addressed per pull request,
 as this helps keep our git history clean and we can more easily track
 down issues.
 
-Finally, please add a note in HISTORY.rst under the Upcoming section detailing what's new in your change.
-These will become the release notes for the next release.
 In addition, feel free to add yourself to AUTHORS.rst if you aren't already listed.

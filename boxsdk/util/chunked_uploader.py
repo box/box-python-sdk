@@ -1,32 +1,26 @@
-from __future__ import unicode_literals, absolute_import
-
 import hashlib
-
+from typing import TYPE_CHECKING, IO
 from boxsdk.exception import BoxException
 
+if TYPE_CHECKING:
+    from boxsdk.object.upload_session import UploadSession
+    from boxsdk.object.file import File
 
-class ChunkedUploader(object):
 
-    def __init__(self, upload_session, content_stream, file_size):
+class ChunkedUploader:
+
+    def __init__(self, upload_session: 'UploadSession', content_stream: IO, file_size: int):
         """
         The initializer for the :class:`ChunkedUploader`
 
         :param upload_session:
             The upload session for doing the chunked uploader.
-        :type upload_session:
-            :class:`UploadSession`
         :param content_stream:
             The file-like object to upload.
-        :type content_stream:
-            :class:`File`
         :param file_size:
             The total size of the file for the chunked upload.
-        :type file_size:
-            `int`
         :returns:
             An intialized`ChunkedUploader` object.
-        :rtype:
-            :class:`ChunkedUploader`
         """
         self._upload_session = upload_session
         self._content_stream = content_stream
@@ -37,14 +31,12 @@ class ChunkedUploader(object):
         self._inflight_part = None
         self._is_aborted = False
 
-    def start(self):
+    def start(self) -> 'File':
         """
         Starts the process of chunk uploading a file.
 
         :returns:
             An uploaded :class:`File`
-        :rtype:
-            :class:`File`
         """
         if self._is_aborted:
             raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
@@ -52,14 +44,12 @@ class ChunkedUploader(object):
         content_sha1 = self._sha1.digest()
         return self._upload_session.commit(content_sha1=content_sha1, parts=self._part_array)
 
-    def resume(self):
+    def resume(self) -> 'File':
         """
         Resumes the process of chunk uploading a file from where upload failed.
 
         :returns:
             An uploaded :class:`File`
-        :rtype:
-            :class:`File`
         """
         if self._is_aborted:
             raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
@@ -78,14 +68,12 @@ class ChunkedUploader(object):
         content_sha1 = self._sha1.digest()
         return self._upload_session.commit(content_sha1=content_sha1, parts=self._part_array)
 
-    def abort(self):
+    def abort(self) -> bool:
         """
         Abort an upload session, cancelling the upload and removing any parts that have already been uploaded.
 
         :returns:
             A boolean indication success of the upload abort.
-        :rtype:
-            `bool`
         """
         self._content_stream = None
         self._part_array = []
@@ -93,7 +81,7 @@ class ChunkedUploader(object):
         self._is_aborted = True
         return self._upload_session.abort()
 
-    def _upload(self):
+    def _upload(self) -> None:
         """
         Utility function for looping through all parts of of the upload session and uploading them.
         """
@@ -110,14 +98,12 @@ class ChunkedUploader(object):
             self._part_array.append(uploaded_part)
             self._part_definitions[next_part.offset] = uploaded_part
 
-    def _get_next_part(self):
+    def _get_next_part(self) -> 'InflightPart':
         """
         Retrieves the next :class:`InflightPart` that needs to be uploaded
 
         :returns:
             The :class:`InflightPart` object to be uploaded next.
-        :rtype:
-            :class:`InflightPart`
         """
         copied_length = 0
         chunk = b''
@@ -136,28 +122,20 @@ class ChunkedUploader(object):
         return InflightPart(offset, chunk, self._upload_session, self._file_size)
 
 
-class InflightPart(object):
+class InflightPart:
 
-    def __init__(self, offset, chunk, upload_session, total_size):
+    def __init__(self, offset: int, chunk: bytes, upload_session: 'UploadSession', total_size: int):
         """
         The initializer for the :class:`InflightPart` object.
 
         :param offset:
             The offset for the :class:`InflightPart` that represents the position of the part to be uploaded
-        :type offset:
-            `int`
         :param chunk:
             The chunk in bytes to be uploaded.
-        :type chunk:
-            `bytes`
         :param upload_session:
             The :class:`UploadSession` for the :class:`InflightPart`.
-        :type upload_session:
-            :class:`UploadSession`
         :param total_size:
             The total size of the file to be chunked uploaded.
-        :type total_size:
-            `int`
         """
         self._offset = offset
         self._chunk = chunk
@@ -165,27 +143,25 @@ class InflightPart(object):
         self._total_size = total_size
 
     @property
-    def offset(self):
+    def offset(self) -> int:
         """
         Getter for the offset of the :class:`InflightPart`
         """
         return self._offset
 
     @property
-    def chunk(self):
+    def chunk(self) -> bytes:
         """
         Getter for the chunk of the :class:`InflightPart`
         """
         return self._chunk
 
-    def upload(self):
+    def upload(self) -> dict:
         """
         Upload method for the :class:`InflightPart`
 
         :returns:
             The uploaded part record.
-        :rtype:
-            `dict`
         """
         return self._upload_session.upload_part_bytes(
             part_bytes=self.chunk,

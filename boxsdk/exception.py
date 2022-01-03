@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 import attr
 
 from .network.network_interface import NetworkResponse
@@ -29,7 +27,6 @@ class BoxNetworkException(BoxException):
     """
     Exception raised from the network layer.
     """
-    pass
 
 
 @attr.s(repr=True, slots=True, frozen=True)

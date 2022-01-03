@@ -12,26 +12,10 @@ boxsdk.util.api\_call\_decorator module
    :undoc-members:
    :show-inheritance:
 
-boxsdk.util.chain\_map module
------------------------------
-
-.. automodule:: boxsdk.util.chain_map
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 boxsdk.util.chunked\_uploader module
 ------------------------------------
 
 .. automodule:: boxsdk.util.chunked_uploader
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-boxsdk.util.compat module
--------------------------
-
-.. automodule:: boxsdk.util.compat
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,10 +1,8 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
 import os
 from mock import Mock
 import pytest
-from six import int2byte, PY2
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
@@ -29,9 +27,6 @@ from boxsdk.object.storage_policy import StoragePolicy
 from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.object.terms_of_service import TermsOfService
 from boxsdk.object.terms_of_service_user_status import TermsOfServiceUserStatus
-from boxsdk.object.collaboration_whitelist import CollaborationWhitelist
-from boxsdk.object.collaboration_whitelist_entry import CollaborationWhitelistEntry
-from boxsdk.object.collaboration_whitelist_exempt_target import CollaborationWhitelistExemptTarget
 from boxsdk.object.collaboration_allowlist import CollaborationAllowlist
 from boxsdk.object.collaboration_allowlist_entry import CollaborationAllowlistEntry
 from boxsdk.object.collaboration_allowlist_exempt_target import CollaborationAllowlistExemptTarget
@@ -68,7 +63,7 @@ def mock_file_path():
 def mock_content_response(make_mock_box_request):
     mock_box_response, mock_network_response = make_mock_box_request(content=b'Contents of a text file.')
     mock_network_response.response_as_stream = raw = Mock()
-    raw.stream.return_value = (b if PY2 else int2byte(b) for b in mock_box_response.content)
+    raw.stream.return_value = (bytes((b,)) for b in mock_box_response.content)
     return mock_box_response
 
 
@@ -109,21 +104,6 @@ def test_file_version(mock_box_session):
 @pytest.fixture()
 def test_comment(mock_box_session, mock_object_id):
     return Comment(mock_box_session, mock_object_id)
-
-
-@pytest.fixture()
-def test_collaboration_whitelist(mock_box_session):
-    return CollaborationWhitelist(mock_box_session)
-
-
-@pytest.fixture()
-def test_collaboration_whitelist_entry(mock_box_session, mock_object_id):
-    return CollaborationWhitelistEntry(mock_box_session, mock_object_id)
-
-
-@pytest.fixture()
-def test_collaboration_whitelist_exemption(mock_box_session, mock_object_id):
-    return CollaborationWhitelistExemptTarget(mock_box_session, mock_object_id)
 
 
 @pytest.fixture()

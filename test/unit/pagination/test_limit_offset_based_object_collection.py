@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
 import json
 
 from mock import Mock, PropertyMock
@@ -92,7 +90,7 @@ class TestLimitOffsetBasedObjectCollection(BoxObjectCollectionTestBase):
         assert object_collection.next_pointer() == page_size
 
         # Iterate to the last page, which doesn't return a full page.
-        [_ for _ in object_collection]  # pylint:disable=pointless-statement
+        list(object_collection)
         assert object_collection.next_pointer() == self.NUM_ENTRIES
 
     def test_object_collection_raises_stop_iteration_when_starting_offset_is_too_far(self, mock_session, entries):

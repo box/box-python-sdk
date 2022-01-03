@@ -1,9 +1,9 @@
 # coding: utf-8
-from __future__ import unicode_literals
 
 import base64
 import hashlib
 import hmac
+from typing import Optional
 
 from .base_object import BaseObject
 
@@ -14,30 +14,25 @@ class Webhook(BaseObject):
     _item_type = 'webhook'
 
     @staticmethod
-    def validate_message(body, headers, primary_signature_key, secondary_signature_key=None):
+    def validate_message(
+            body: bytes,
+            headers: dict,
+            primary_signature_key: str,
+            secondary_signature_key: str = None
+    ) -> bool:
         """
         Validates a `Webhook` message.
 
         :param body:
             The encoded webhook body.
-        :type body:
-            `bytes`
         :param headers:
             The headers for the `Webhook` notification.
-        :type headers:
-            `dict`
         :param primary_signature_key:
             The `Webhook` primary signature key for this application.
-        :type primary_signature_key:
-            `unicode`
         :param secondary_signature_key:
             The `Webhook` secondary signature key for this application.
-        :type secondary_signature_key:
-            `unicode`
         :return:
-            A `bool` indicating whether a webhook message was validated or not.
-        :rtype:
-            `bool`
+            A `bool` indicating whether a webhook message was validated or not
         """
 
         primary_signature = _compute_signature(body, headers, primary_signature_key)
@@ -53,26 +48,18 @@ class Webhook(BaseObject):
         return False
 
 
-def _compute_signature(body, headers, signature_key):
+def _compute_signature(body: bytes, headers: dict, signature_key: str) -> Optional[str]:
     """
     Computes the Hmac for the webhook notification given one signature key.
 
     :param body:
         The encoded webhook body.
-    :type body:
-        `bytes`
     :param headers:
         The headers for the `Webhook` notification.
-    :type headers:
-        `dict`
     :param signature_key:
         The `Webhook` signature key for this application.
-    :type signature_key:
-        `unicode`
     :return:
         An Hmac signature.
-    :rtype:
-        `unicode`
     """
     if signature_key is None:
         return None

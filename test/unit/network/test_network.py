@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import, unicode_literals
-
 from functools import partial
 import json
 from logging import Logger
@@ -11,7 +9,6 @@ from pprint import pformat
 from mock import DEFAULT, Mock, patch, ANY
 import pytest
 from requests import Response
-from six import text_type
 
 from boxsdk.network import default_network
 from boxsdk.network.default_network import DefaultNetworkResponse, DefaultNetwork
@@ -235,7 +232,7 @@ def test_network_logs_successful_responses(
         construct_network_response, generic_successful_request_response, assert_logger_called_once_with,
         get_content_from_response, http_verb, test_url, content_length_header,
 ):
-    expected_content_length = text_type(len(generic_successful_request_response.content))
+    expected_content_length = str(len(generic_successful_request_response.content))
     if content_length_header:
         generic_successful_request_response.headers['Content-Length'] = expected_content_length
     else:
@@ -264,7 +261,7 @@ def test_network_logs_successful_responses_with_stream_placeholder(
         do_not_get_content_from_response, logger, content_length_header,
 ):
     if content_length_header:
-        expected_content_length = text_type(len(generic_successful_request_response.content))
+        expected_content_length = str(len(generic_successful_request_response.content))
         generic_successful_request_response.headers['Content-Length'] = expected_content_length
     else:
         generic_successful_request_response.headers.pop('Content-Length', None)
@@ -302,7 +299,7 @@ def test_network_logs_non_successful_responses(
             'method': http_verb,
             'url': test_url,
             'status_code': server_error_request_response.status_code,
-            'content_length': text_type(len(server_error_request_response.content)),
+            'content_length': str(len(server_error_request_response.content)),
             'headers': pformat(server_error_request_response.headers),
             'content': pformat(server_error_request_response.json()),
         }

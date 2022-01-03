@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import, unicode_literals
-
 import json
 import logging
 import sys
@@ -9,7 +7,6 @@ import sys
 from mock import Mock
 import pytest
 import requests
-from six import binary_type
 
 from boxsdk.network.default_network import DefaultNetworkResponse
 
@@ -27,7 +24,7 @@ def _set_content_and_json_from_json(mock_response, json_value):
 
 
 def _set_content_and_json_from_content(mock_response, content):
-    if not isinstance(content, binary_type):
+    if not isinstance(content, bytes):
         raise TypeError("Expected 'content' to be byte string, got {!r}.".format(content.__class__.__name__))
     mock_response.content = content
     mock_response.headers['Content-Length'] = str(len(content))
@@ -39,8 +36,8 @@ def _set_content_and_json_from_content(mock_response, content):
 
 @pytest.fixture()
 def generic_successful_request_response():
-    mock_request_response = Mock(requests.Response(), headers=dict([('header{0}'.format(i), 'value{0}'.format(i)) for i in range(4)]))
-    _set_content_and_json_from_json(mock_request_response, json_value=dict([('key{0}'.format(i), 'value{0}'.format(i)) for i in range(8)]))
+    mock_request_response = Mock(requests.Response(), headers={'header{0}'.format(i): 'value{0}'.format(i) for i in range(4)})
+    _set_content_and_json_from_json(mock_request_response, json_value={'key{0}'.format(i): 'value{0}'.format(i) for i in range(8)})
     mock_request_response.status_code = 200
     mock_request_response.ok = True
     mock_request_response.request = Mock()
@@ -135,15 +132,15 @@ def retry_after_response_429():
 def retry_after_response(retry_after_response_202, retry_after_response_429, request):
     if request.param == 202:
         return retry_after_response_202
-    elif request.param == 429:
+    if request.param == 429:
         return retry_after_response_429
-    else:
-        raise ValueError
+
+    raise ValueError
 
 
 def _server_error_request_response(status_code):
-    mock_request_response = Mock(requests.Response(), headers=dict([('header{0}'.format(i), 'value{0}'.format(i)) for i in range(4)]))
-    _set_content_and_json_from_json(mock_request_response, json_value=dict([('key{0}'.format(i), 'value{0}'.format(i)) for i in range(8)]))
+    mock_request_response = Mock(requests.Response(), headers={'header{0}'.format(i): 'value{0}'.format(i) for i in range(4)})
+    _set_content_and_json_from_json(mock_request_response, json_value={'key{0}'.format(i): 'value{0}'.format(i) for i in range(8)})
     mock_request_response.status_code = status_code
     mock_request_response.ok = False
     return mock_request_response
@@ -163,10 +160,9 @@ def server_error_request_response_503():
 def server_error_request_response(server_error_request_response_502, server_error_request_response_503, request):
     if request.param == 502:
         return server_error_request_response_502
-    elif request.param == 503:
+    if request.param == 503:
         return server_error_request_response_503
-    else:
-        raise ValueError
+    raise ValueError
 
 
 @pytest.fixture

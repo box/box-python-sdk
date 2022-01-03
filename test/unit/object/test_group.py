@@ -1,14 +1,11 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 from itertools import chain, islice, repeat, count
 import json
 from operator import sub
 
 from mock import Mock
 import pytest
-from six.moves import map  # pylint:disable=redefined-builtin,import-error
 
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.collaboration import Collaboration

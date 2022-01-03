@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
-
 from collections import OrderedDict
 
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -19,4 +17,4 @@ class MultipartStream(MultipartEncoder):
             fields[k] = data[k]
         for k in files:
             fields[k] = files[k]
-        super(MultipartStream, self).__init__(fields)
+        super().__init__(fields)

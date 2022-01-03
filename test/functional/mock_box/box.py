@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import division, unicode_literals
-
 from datetime import datetime
 from os.path import dirname, join
 
@@ -44,7 +42,7 @@ from test.functional.mock_box.util.http_utils import (
 TEMPLATE_PATH.insert(0, join(dirname(__file__), 'views'))
 
 
-class Box(object):
+class Box:
     """
     Fake Box. Sets up 4 webservers - one for auth, one for upload, one for events, and one for the rest of the api.
     """

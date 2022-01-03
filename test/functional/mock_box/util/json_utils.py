@@ -1,6 +1,5 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
 import codecs
 import json
 from test.functional.mock_box.db_model.file_model import FileModel
@@ -40,7 +39,7 @@ def serializer_factory(cls):
                 if isinstance(o, FileModel):
                     del fields['content']
                 return fields
-            return super(BoxObjectSerializer, self).default(o)
+            return super().default(o)
 
     return BoxObjectSerializer
 

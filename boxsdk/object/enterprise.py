@@ -1,10 +1,12 @@
 # coding: utf-8
-from __future__ import unicode_literals, absolute_import
-
 import json
+from typing import TYPE_CHECKING
 
 from .base_object import BaseObject
 from ..util.api_call_decorator import api_call
+
+if TYPE_CHECKING:
+    from boxsdk.object.invite import Invite
 
 
 class Enterprise(BaseObject):
@@ -13,18 +15,14 @@ class Enterprise(BaseObject):
     _item_type = 'enterprise'
 
     @api_call
-    def invite_user(self, user_email):
+    def invite_user(self, user_email: str) -> 'Invite':
         """
         Invites an existing user to an Enterprise. The user must already have a Box account.
 
         :param user_email:
             The login email address of the user that will receive the invitation.
-        :type user_email:
-            `unicode`
         :returns:
             The invitation record for the user
-        :rtype:
-            :class:`Invite`
         """
         url = self._session.get_url('invites')
         body = {

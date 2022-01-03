@@ -1,8 +1,6 @@
 # coding: utf-8
 # pylint: disable-msg=too-many-locals
 
-from __future__ import unicode_literals, absolute_import
-
 import io
 import json
 import pytest
