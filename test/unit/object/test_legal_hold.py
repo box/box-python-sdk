@@ -6,7 +6,7 @@ from boxsdk.config import API
 
 def test_get(test_legal_hold, mock_box_session):
     file_version_id = '1234'
-    expected_url = '{0}/file_version_legal_holds/{1}'.format(API.BASE_API_URL, test_legal_hold.object_id)
+    expected_url = f'{API.BASE_API_URL}/file_version_legal_holds/{test_legal_hold.object_id}'
     mock_box_session.get.return_value.json.return_value = {
         'type': 'legal_hold',
         'id': test_legal_hold.object_id,

@@ -5,7 +5,7 @@ from boxsdk.config import API
 
 def test_get(mock_box_session, test_collaboration_allowlist_entry):
     entry_id = test_collaboration_allowlist_entry.object_id
-    expected_url = '{0}/collaboration_whitelist_entries/{1}'.format(API.BASE_API_URL, entry_id)
+    expected_url = f'{API.BASE_API_URL}/collaboration_whitelist_entries/{entry_id}'
     mock_entry = {
         'type': 'collaboration_whitelist_entry',
         'id': '98765',
@@ -22,6 +22,6 @@ def test_get(mock_box_session, test_collaboration_allowlist_entry):
 
 def test_delete(mock_box_session, test_collaboration_allowlist_entry):
     entry_id = test_collaboration_allowlist_entry.object_id
-    expected_url = '{0}/collaboration_whitelist_entries/{1}'.format(API.BASE_API_URL, entry_id)
+    expected_url = f'{API.BASE_API_URL}/collaboration_whitelist_entries/{entry_id}'
     test_collaboration_allowlist_entry.delete()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=None, params={})

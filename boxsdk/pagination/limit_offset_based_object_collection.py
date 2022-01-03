@@ -76,7 +76,7 @@ class LimitOffsetBasedObjectCollection(BoxObjectCollection):
             # a runtime error.
             if self._limit <= 0 < old_limit:
                 self._offset = total_count  # Disable additional paging.
-                raise RuntimeError('API returned limit={0}, cannot continue paging'.format(self._limit))
+                raise RuntimeError(f'API returned limit={self._limit}, cannot continue paging')
 
         # de-none-ify the _offset value so that the arthimatic below works
         self._offset = self._offset or 0

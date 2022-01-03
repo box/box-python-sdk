@@ -9,7 +9,7 @@ from boxsdk.object.terms_of_service_user_status import TermsOfServiceUserStatus
 
 def test_get(test_terms_of_service, mock_box_session):
     created_at = '2016-05-18T17:38:03-07:00'
-    expected_url = '{0}/terms_of_services/{1}'.format(API.BASE_API_URL, test_terms_of_service.object_id)
+    expected_url = f'{API.BASE_API_URL}/terms_of_services/{test_terms_of_service.object_id}'
     mock_box_session.get.return_value.json.return_value = {
         'type': 'terms_of_service',
         'id': test_terms_of_service.object_id,
@@ -25,7 +25,7 @@ def test_get(test_terms_of_service, mock_box_session):
 
 def test_update(test_terms_of_service, mock_box_session):
     new_text = 'This is new text'
-    expected_url = '{0}/terms_of_services/{1}'.format(API.BASE_API_URL, test_terms_of_service.object_id)
+    expected_url = f'{API.BASE_API_URL}/terms_of_services/{test_terms_of_service.object_id}'
     mock_box_session.put.return_value.json.return_value = {
         'type': 'terms_of_service',
         'id': test_terms_of_service.object_id,
@@ -44,7 +44,7 @@ def test_update(test_terms_of_service, mock_box_session):
 
 def test_accept_terms_of_service(test_terms_of_service, test_terms_of_service_user_status, mock_user, mock_box_session):
     # pylint:disable=redefined-outer-name
-    expected_url = "{0}/terms_of_service_user_statuses".format(API.BASE_API_URL)
+    expected_url = f"{API.BASE_API_URL}/terms_of_service_user_statuses"
     created_at = '2016-05-18T17:38:03-07:00'
     value = json.dumps({
         'tos': {
@@ -72,7 +72,7 @@ def test_accept_terms_of_service(test_terms_of_service, test_terms_of_service_us
 
 def test_reject_terms_of_service(test_terms_of_service, test_terms_of_service_user_status, mock_user, mock_box_session):
     # pylint:disable=redefined-outer-name
-    expected_url = "{0}/terms_of_service_user_statuses".format(API.BASE_API_URL)
+    expected_url = f"{API.BASE_API_URL}/terms_of_service_user_statuses"
     created_at = '2016-05-18T17:38:03-07:00'
     value = json.dumps({
         'tos': {
@@ -99,7 +99,7 @@ def test_reject_terms_of_service(test_terms_of_service, test_terms_of_service_us
 
 
 def test_get_user_status(test_terms_of_service, mock_user, test_terms_of_service_user_status, mock_box_session):
-    expected_url = "{0}/terms_of_service_user_statuses".format(API.BASE_API_URL)
+    expected_url = f"{API.BASE_API_URL}/terms_of_service_user_statuses"
     created_at = '2016-05-18T17:38:03-07:00'
     expected_params = {
         'tos_id': test_terms_of_service.object_id,
@@ -123,8 +123,8 @@ def test_get_user_status(test_terms_of_service, mock_user, test_terms_of_service
 
 
 def test_set_user_status(test_terms_of_service, mock_user, mock_box_session):
-    expected_post_url = "{0}/terms_of_service_user_statuses".format(API.BASE_API_URL)
-    expected_put_url = "{0}/terms_of_service_user_statuses/{1}".format(API.BASE_API_URL, test_terms_of_service.object_id)
+    expected_post_url = f"{API.BASE_API_URL}/terms_of_service_user_statuses"
+    expected_put_url = f"{API.BASE_API_URL}/terms_of_service_user_statuses/{test_terms_of_service.object_id}"
     post_value = json.dumps({
         'tos': {
             'type': test_terms_of_service.object_type,

@@ -9,7 +9,7 @@ from boxsdk.util.default_arg_value import SDK_VALUE_NOT_SET
 def test_get(mock_box_session, test_web_link):
     # pylint:disable=redefined-outer-name, protected-access
     web_link_id = test_web_link.object_id
-    expected_url = '{0}/{1}/{2}'.format(API.BASE_API_URL, 'web_links', web_link_id)
+    expected_url = f'{API.BASE_API_URL}/web_links/{web_link_id}'
     mock_web_link = {
         'type': 'web_link',
         'url': 'https://test/com',
@@ -28,7 +28,7 @@ def test_get(mock_box_session, test_web_link):
 def test_update(mock_box_session, test_web_link):
     # pylint:disable=redefined-outer-name, protected-access
     web_link_id = test_web_link.object_id
-    expected_url = '{0}/{1}/{2}'.format(API.BASE_API_URL, 'web_links', web_link_id)
+    expected_url = f'{API.BASE_API_URL}/web_links/{web_link_id}'
     mock_web_link = {
         'type': 'web_link',
         'url': 'https://newtest.com',
@@ -49,7 +49,7 @@ def test_update(mock_box_session, test_web_link):
 
 def test_delete(mock_box_session, test_web_link):
     web_link_id = test_web_link.object_id
-    expected_url = '{0}/{1}/{2}'.format(API.BASE_API_URL, 'web_links', web_link_id)
+    expected_url = f'{API.BASE_API_URL}/web_links/{web_link_id}'
     test_web_link.delete()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=None, params={})
 

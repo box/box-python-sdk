@@ -23,7 +23,7 @@ class RedisManagedOAuth2Mixin(OAuth2):
         # pylint:disable=keyword-arg-before-vararg
         self._unique_id = unique_id
         self._redis_server = redis_server or StrictRedis()
-        refresh_lock = Lock(redis=self._redis_server, name='{0}_lock'.format(self._unique_id))
+        refresh_lock = Lock(redis=self._redis_server, name=f'{self._unique_id}_lock')
         super().__init__(*args, refresh_lock=refresh_lock, **kwargs)
         if self._access_token is None:
             self._get_and_update_current_tokens()

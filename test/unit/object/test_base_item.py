@@ -28,7 +28,7 @@ def test_collections_for_addition(mock_collection_id, request):
     if request.param == 'other':
         return [{'id': other_collection_id}], [{'id': other_collection_id}, {'id': mock_collection_id}]
 
-    raise NotImplementedError("Forgot to implement {}".format(request.param))
+    raise NotImplementedError(f"Forgot to implement {request.param}")
 
 
 @pytest.fixture(params=('empty', 'only_removed', 'only_other', 'other_and_removed'))
@@ -44,7 +44,7 @@ def test_collections_for_removal(mock_collection_id, request):
     if request.param == 'other_and_removed':
         return [{'id': mock_collection_id}, {'id': other_collection_id}], [{'id': other_collection_id}]
 
-    raise NotImplementedError("Forgot to implement {}".format(request.param))
+    raise NotImplementedError(f"Forgot to implement {request.param}")
 
 
 @pytest.mark.parametrize('params, expected_data', [

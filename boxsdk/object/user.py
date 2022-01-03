@@ -175,7 +175,7 @@ class User(BaseObject):
 
     @api_call
     def delete(self, notify: bool = True, force: bool = False) -> bool:
-        # pylint: disable=arguments-differ
+        # pylint: disable=arguments-differ,arguments-renamed
         """
         Delete a user's account.  This user will no longer be able to access Box.
 

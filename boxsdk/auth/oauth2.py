@@ -5,7 +5,7 @@ from logging import getLogger
 import random
 import string  # pylint:disable=deprecated-module
 from threading import Lock
-from typing import Optional, Callable, ContextManager, Tuple, TYPE_CHECKING, Any
+from typing import Optional, Callable, ContextManager, Tuple, TYPE_CHECKING, Any, Union
 from urllib.parse import urlunsplit, urlencode
 
 from ..config import API
@@ -17,6 +17,7 @@ from ..util.text_enum import TextEnum
 
 if TYPE_CHECKING:
     from boxsdk.session.box_response import BoxResponse
+    from boxsdk import NetworkResponse
 
 
 class TokenScope(TextEnum):
@@ -281,7 +282,7 @@ class OAuth2:
             The response for the token request.
         """
         self._check_closed()
-        url = '{base_auth_url}/token'.format(base_auth_url=self._api_config.OAUTH2_API_URL)
+        url = f'{self._api_config.OAUTH2_API_URL}/token'
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         try:
             network_response = self._session.request(
@@ -307,7 +308,7 @@ class OAuth2:
         return token_response
 
     @staticmethod
-    def _oauth_exception(network_response: 'BoxResponse', url: str) -> BoxOAuthException:
+    def _oauth_exception(network_response: Union['NetworkResponse', 'BoxResponse'], url: str) -> BoxOAuthException:
         """
         Create a BoxOAuthException instance to raise. If the error response is JSON, parse it and include the
         code and message in the exception.
@@ -361,7 +362,7 @@ class OAuth2:
             token_to_revoke = access_token or refresh_token
             if token_to_revoke is None:
                 return
-            url = '{base_auth_url}/revoke'.format(base_auth_url=self._api_config.OAUTH2_API_URL)
+            url = f'{self._api_config.OAUTH2_API_URL}/revoke'
             try:
                 network_response = self._session.request(
                     'POST',

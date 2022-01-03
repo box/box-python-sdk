@@ -5,7 +5,7 @@ from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 
 
 def test_get_assignment(test_retention_policy_assignment, mock_box_session):
-    expected_url = '{0}/retention_policy_assignments/{1}'.format(API.BASE_API_URL, test_retention_policy_assignment.object_id)
+    expected_url = f'{API.BASE_API_URL}/retention_policy_assignments/{test_retention_policy_assignment.object_id}'
     mock_box_session.get.return_value.json.return_value = {
         'type': test_retention_policy_assignment.object_type,
         'id': test_retention_policy_assignment.object_id,
@@ -21,8 +21,7 @@ def test_get_files_under_retention(test_retention_policy_assignment, test_file, 
     # given:
     test_marker = 'test_marker'
     test_limit = 50
-    target_url = "{0}/retention_policy_assignments/{1}/files_under_retention".format(
-        API.BASE_API_URL, test_retention_policy_assignment.object_id)
+    target_url = f"{API.BASE_API_URL}/retention_policy_assignments/{test_retention_policy_assignment.object_id}/files_under_retention"
 
     mock_box_session.get.return_value.json.return_value = {
         'limit': test_limit,
@@ -51,8 +50,7 @@ def test_get_file_versions_under_retention(test_retention_policy_assignment, tes
     # given:
     test_marker = 'test_marker'
     test_limit = 50
-    target_url = "{0}/retention_policy_assignments/{1}/file_versions_under_retention".format(
-        API.BASE_API_URL, test_retention_policy_assignment.object_id)
+    target_url = f"{API.BASE_API_URL}/retention_policy_assignments/{test_retention_policy_assignment.object_id}/file_versions_under_retention"
 
     mock_box_session.get.return_value.json.return_value = {
         'limit': test_limit,

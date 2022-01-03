@@ -11,6 +11,6 @@ def get_shared_link_header(shared_link: str, password: str = None) -> dict:
     :return:
         The item referred to by the shared link.
     """
-    shared_link_password = '&shared_link_password={0}'.format(password) if password is not None else ''
-    box_api_header = 'shared_link={0}{1}'.format(shared_link, shared_link_password)
+    shared_link_password = f'&shared_link_password={password}' if password is not None else ''
+    box_api_header = f'shared_link={shared_link}{shared_link_password}'
     return {'BoxApi': box_api_header}

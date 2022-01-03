@@ -82,10 +82,10 @@ class File(Item):
             A :class:`ChunkedUploader` object.
         """
         total_size = os.stat(file_path).st_size
-        content_stream = open(file_path, 'rb')
-        file_name = os.path.basename(file_path) if rename_file else None
-        upload_session = self.create_upload_session(total_size, file_name)
-        return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
+        with open(file_path, 'rb') as content_stream:
+            file_name = os.path.basename(file_path) if rename_file else None
+            upload_session = self.create_upload_session(total_size, file_name)
+            return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
 
     def _get_accelerator_upload_url_for_update(self) -> Optional[str]:
         """
@@ -97,7 +97,7 @@ class File(Item):
         return self._get_accelerator_upload_url(file_id=self._object_id)
 
     @staticmethod
-    def _construct_range_header(boundaries: Union[int, Tuple[int, int]]) -> str:
+    def _construct_range_header(boundaries: Union[Tuple[int], Tuple[int, int]]) -> str:
         """
         Construct the correct value for the Range header, given a closed or open-ended range.
 
@@ -108,9 +108,9 @@ class File(Item):
         :raises ValueError:
         """
         if len(boundaries) == 1:
-            return 'bytes={0}-'.format(*boundaries)
+            return f'bytes={boundaries[0]}-'
         if len(boundaries) == 2:
-            return 'bytes={0}-{1}'.format(*boundaries)
+            return f'bytes={boundaries[0]}-{boundaries[1]}'
 
         raise ValueError('Expected a 1-tuple or 2-tuple for byte range')
 
@@ -668,7 +668,7 @@ class File(Item):
         :returns:
             The file contents of the thumbnail image
         """
-        rep_hints = '[{0}?dimensions={1}]'.format(extension, dimensions)
+        rep_hints = f'[{extension}?dimensions={dimensions}]'
         representations = self.get_representation_info(rep_hints)
         if representations:
             representation = representations[0]

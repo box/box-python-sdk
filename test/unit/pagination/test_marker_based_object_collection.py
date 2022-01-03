@@ -44,7 +44,7 @@ class TestMarkerBasedObjectCollection(BoxObjectCollectionTestBase):
 
             # A next_marker is only returned if there are more pages left.
             if (offset + limit) < len(entries):
-                mock_json['next_marker'] = 'marker_{0}'.format(offset + limit)
+                mock_json['next_marker'] = f'marker_{offset + limit}'
             elif next_marker_value_for_last_page is not self.NO_NEXT_MARKER:
                 mock_json['next_marker'] = next_marker_value_for_last_page
 

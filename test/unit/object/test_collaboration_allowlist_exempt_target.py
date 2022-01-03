@@ -5,7 +5,7 @@ from boxsdk.config import API
 
 def test_get(mock_box_session, test_collaboration_allowlist_exemption):
     exemption_id = test_collaboration_allowlist_exemption.object_id
-    expected_url = '{0}/collaboration_whitelist_exempt_targets/{1}'.format(API.BASE_API_URL, exemption_id)
+    expected_url = f'{API.BASE_API_URL}/collaboration_whitelist_exempt_targets/{exemption_id}'
     mock_exemption = {
         'type': 'collaboration_whitelist_entry',
         'id': '98765',

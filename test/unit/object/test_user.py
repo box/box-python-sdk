@@ -13,7 +13,7 @@ from boxsdk.network.default_network import DefaultNetworkResponse
 
 def test_user_url(mock_user):
     # pylint:disable=redefined-outer-name, protected-access
-    assert mock_user.get_url() == '{0}/{1}/{2}'.format(API.BASE_API_URL, 'users', mock_user.object_id)
+    assert mock_user.get_url() == f'{API.BASE_API_URL}/users/{mock_user.object_id}'
 
 
 def test_get_storage_policy_assignments(test_storage_policy_assignment, mock_user, mock_box_session):
@@ -129,7 +129,7 @@ def test_get_email_aliases(mock_user, mock_box_session):
 def test_add_email_alias_returns_the_correct_email_alias_object(mock_user, mock_box_session):
     # pylint:disable=redefined-outer-name
     test_email_alias = 'test@example.com'
-    expected_url = '{0}/users/{1}/email_aliases'.format(API.BASE_API_URL, mock_user.object_id)
+    expected_url = f'{API.BASE_API_URL}/users/{mock_user.object_id}/email_aliases'
     expected_body = json.dumps({
         'email': test_email_alias,
     })
@@ -146,7 +146,7 @@ def test_add_email_alias_returns_the_correct_email_alias_object(mock_user, mock_
 
 
 def test_remove_email_alias(mock_user, mock_box_session, test_email_alias):
-    expected_url = '{0}/users/{1}/email_aliases/{2}'.format(API.BASE_API_URL, mock_user.object_id, test_email_alias.object_id)
+    expected_url = f'{API.BASE_API_URL}/users/{mock_user.object_id}/email_aliases/{test_email_alias.object_id}'
     mock_box_session.delete.return_value.ok = True
 
     result = mock_user.remove_email_alias(test_email_alias)
@@ -164,7 +164,7 @@ def test_remove_email_alias(mock_user, mock_box_session, test_email_alias):
 ])
 def test_transfer_content(mock_user, mock_box_session, notify, fields, expected_params):
     # pylint:disable=redefined-outer-name
-    expected_url = "{0}/users/{1}/folders/0".format(API.BASE_API_URL, mock_user.object_id)
+    expected_url = f"{API.BASE_API_URL}/users/{mock_user.object_id}/folders/0"
     expected_body = json.dumps({
         'owned_by': {
             'id': mock_user.object_id
@@ -190,7 +190,7 @@ def test_get_group_memberships(
         memberships_response,
 ):
     # pylint:disable=redefined-outer-name
-    expected_url = '{0}/users/{1}/memberships'.format(API.BASE_API_URL, mock_user.object_id)
+    expected_url = f'{API.BASE_API_URL}/users/{mock_user.object_id}/memberships'
     mock_box_session.get.return_value = memberships_response
     memberships = mock_user.get_group_memberships()
     for membership, expected_id in zip(memberships, [101, 202]):

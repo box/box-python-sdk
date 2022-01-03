@@ -32,8 +32,8 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         Base class override.  Return a description for the object.
         """
         if 'name' in self._response_object:
-            return '{0} ({1})'.format(self._object_id, self.name)  # pylint:disable=no-member
-        return '{0}'.format(self._object_id)
+            return f'{self._object_id} ({self.name})'  # pylint:disable=no-member
+        return self._object_id
 
     def get_url(self, *args: Any) -> str:
         """
@@ -41,13 +41,13 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         Return the given object's URL, appending any optional parts as specified by args.
         """
         # pylint:disable=arguments-differ
-        return super().get_url('{0}s'.format(self._item_type), self._object_id, *args)
+        return super().get_url(f'{self._item_type}s', self._object_id, *args)
 
     def get_type_url(self) -> str:
         """
         Return the URL for type of the given resource.
         """
-        return super().get_url('{0}s'.format(self._item_type))
+        return super().get_url(f'{self._item_type}s')
 
     @property
     def object_id(self) -> str:

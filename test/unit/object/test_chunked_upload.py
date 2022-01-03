@@ -40,8 +40,8 @@ def mock_upload_session():
 
 
 def test_start(test_upload_session, mock_box_session):
-    expected_put_url = '{0}/files/upload_sessions/{1}'.format(API.UPLOAD_URL, test_upload_session.object_id)
-    expected_post_url = '{0}/files/upload_sessions/{1}/commit'.format(API.UPLOAD_URL, test_upload_session.object_id)
+    expected_put_url = f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}'
+    expected_post_url = f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}/commit'
     file_size = 7
     first_sha1 = '2iNhTgJGmg18e9G9q1ycR0sZBNw='
     second_sha1 = 'A0d4GYoEXB7YC+JxzdApt2h09vw='
@@ -82,22 +82,22 @@ def test_start(test_upload_session, mock_box_session):
 
     expected_headers_first_upload = {
         'Content-Type': 'application/octet-stream',
-        'Digest': 'SHA={}'.format(first_sha1),
+        'Digest': f'SHA={first_sha1}',
         'Content-Range': 'bytes 0-1/7',
     }
     expected_headers_second_upload = {
         'Content-Type': 'application/octet-stream',
-        'Digest': 'SHA={}'.format(second_sha1),
+        'Digest': f'SHA={second_sha1}',
         'Content-Range': 'bytes 2-3/7',
     }
     expected_headers_third_upload = {
         'Content-Type': 'application/octet-stream',
-        'Digest': 'SHA={}'.format(third_sha1),
+        'Digest': f'SHA={third_sha1}',
         'Content-Range': 'bytes 4-5/7',
     }
     expected_headers_fourth_upload = {
         'Content-Type': 'application/octet-stream',
-        'Digest': 'SHA={}'.format(fourth_sha1),
+        'Digest': f'SHA={fourth_sha1}',
         'Content-Range': 'bytes 6-6/7',
     }
 
