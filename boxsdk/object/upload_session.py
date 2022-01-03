@@ -51,7 +51,6 @@ class UploadSession(BaseObject):
             return_full_pages=False,
         )
 
-
     @api_call
     def upload_part_bytes(
             self,
