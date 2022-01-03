@@ -54,7 +54,7 @@ class OAuth2:
             store_tokens: Optional[Callable] = None,
             box_device_id: str = '0',
             box_device_name: str = '',
-            access_token: Optional[str] = None,
+            access_token: str = None,
             refresh_token: Optional[str] = None,
             session: Optional[Session] = None,
             refresh_lock: Optional[ContextManager] = None,
