@@ -1,25 +1,27 @@
 import json
 
+from typing import TYPE_CHECKING, Any, Union
+
 from .base_object import BaseObject
 from ..exception import BoxValueError
 from ..util.api_call_decorator import api_call
 from ..util.default_arg_value import SDK_VALUE_NOT_SET
 
+if TYPE_CHECKING:
+    from boxsdk.object.folder import Folder
+    from boxsdk.object.collection import Collection
+
 
 class BaseItem(BaseObject):
 
     @api_call
-    def copy(self, parent_folder, name=None):
+    def copy(self, parent_folder: 'Folder', name: str = None) -> 'BaseItem':
         """Copy the item to the given folder.
 
         :param parent_folder:
             The folder to which the item should be copied.
-        :type parent_folder:
-            :class:`Folder`
         :param name:
             A new name for the item, in case there is already another item in the new parent folder with the same name.
-        :type name:
-            `unicode` or None
         """
         self.validate_item_id(self._object_id)
         url = self.get_url('copy')
@@ -36,18 +38,14 @@ class BaseItem(BaseObject):
         )
 
     @api_call
-    def move(self, parent_folder, name=None):
+    def move(self, parent_folder: 'Folder', name: str = None) -> 'BaseItem':
         """
         Move the item to the given folder.
 
         :param parent_folder:
             The parent `Folder` object, where the item will be moved to.
-        :type parent_folder:
-            :class:`Folder`
         :param name:
             A new name for the item, in case there is already another item in the new parent folder with the same name.
-        :type name:
-            `unicode` or None
         """
         data = {
             'parent': {'id': parent_folder.object_id}
@@ -57,14 +55,12 @@ class BaseItem(BaseObject):
         return self.update_info(data)
 
     @api_call
-    def rename(self, name):
+    def rename(self, name: str) -> 'BaseItem':
         """
         Rename the item to a new name.
 
         :param name:
             The new name, you want the item to be renamed to.
-        :type name:
-            `unicode`
         """
         data = {
             'name': name,
@@ -72,7 +68,7 @@ class BaseItem(BaseObject):
         return self.update_info(data)
 
     @api_call
-    def create_shared_link(self, **kwargs):
+    def create_shared_link(self, **kwargs: Any) -> Any:
         """
         Create a shared link for the item with the given access permissions.
 
@@ -81,8 +77,6 @@ class BaseItem(BaseObject):
         :return:
             The updated object with shared link.
             Returns a new object of the same type, without modifying the original object passed as self.
-        :rtype:
-            :class:`BaseItem`
         """
         shared_link = {}
 
@@ -111,7 +105,7 @@ class BaseItem(BaseObject):
         return self.update_info(data, **update_info_kwargs)
 
     @api_call
-    def get_shared_link(self, **kwargs):
+    def get_shared_link(self, **kwargs: Any) -> str:
         """
         Get a shared link for the item with the given access permissions.
         This url leads to a Box.com shared link page, where the item can be previewed, downloaded, etc.
@@ -120,14 +114,12 @@ class BaseItem(BaseObject):
             Keyword arguments passed from overriding method used to create a new shared link.
         :returns:
             The URL of the shared link.
-        :rtype:
-            `unicode`
         """
         item = self.create_shared_link(**kwargs)
         return item.shared_link['url']  # pylint:disable=no-member
 
     @api_call
-    def remove_shared_link(self, **kwargs):
+    def remove_shared_link(self, **kwargs: Any) -> bool:
         """
         Delete the shared link for the item.
 
@@ -135,8 +127,6 @@ class BaseItem(BaseObject):
             Keyword arguments passed from overriding method used to build request properties.
         :returns:
             Whether or not the update was successful.
-        :rtype:
-            `bool`
         """
         data = {'shared_link': None}
         update_info_kwargs = {'etag': kwargs.get('etag')} if kwargs.get('etag') is not None else {}
@@ -145,18 +135,14 @@ class BaseItem(BaseObject):
         return item.shared_link is None  # pylint:disable=no-member
 
     @api_call
-    def add_to_collection(self, collection):
+    def add_to_collection(self, collection: 'Collection') -> 'BaseItem':
         """
-        Add the item to a collection.  This method is not currently safe from race conditions.
+        Add the item to a collection. This method is not currently safe from race conditions.
 
         :param collection:
             The collection to add the item to.
-        :type collection:
-            :class:`Collection`
         :return:
             This item.
-        :rtype:
-            :class:`Item`
         """
         collections = self.get(fields=['collections']).collections  # pylint:disable=no-member
         collections.append({'id': collection.object_id})
@@ -166,18 +152,14 @@ class BaseItem(BaseObject):
         return self.update_info(data)
 
     @api_call
-    def remove_from_collection(self, collection):
+    def remove_from_collection(self, collection: 'Collection') -> 'BaseItem':
         """
         Remove the item from a collection.  This method is not currently safe from race conditions.
 
         :param collection:
             The collection to remove the item from.
-        :type collection:
-            :class:`Collection`
         :return:
             This item.
-        :rtype:
-            :class:`Item`
         """
         collections = self.get(fields=['collections']).collections  # pylint:disable=no-member
         updated_collections = [c for c in collections if c['id'] != collection.object_id]
@@ -187,18 +169,14 @@ class BaseItem(BaseObject):
         return self.update_info(data)
 
     @staticmethod
-    def validate_item_id(item_id):
+    def validate_item_id(item_id: Union[str, int]) -> None:
         """
         Validates an item ID is numeric
 
-        :param item_id:
-        :type item_id:
-            `str` or `int`
+        :param item_id
         :raises:
             BoxException: if item_id is not numeric
         :returns:
-        :rtype:
-            None
         """
         if not isinstance(item_id, int) and not item_id.isdigit():
             raise BoxValueError("Invalid item ID")

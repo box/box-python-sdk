@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import copy
+from typing import Any, Iterator, Iterable
 
 from ..util.translator import Translator
 
@@ -74,84 +75,71 @@ class BaseAPIJSONObject(metaclass=BaseAPIJSONObjectMeta):
     _item_type = None
     _untranslated_fields = ()
 
-    def __init__(self, response_object=None, **kwargs):
+    def __init__(self, response_object: dict = None, **kwargs: Any):
         """
         :param response_object:
             A JSON object representing the object returned from a Box API request.
-        :type response_object:
-            `dict`
         """
         super().__init__(**kwargs)
         self._response_object = response_object or {}
         self.__dict__.update(self._response_object)
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: str) -> Any:
         """
         Try to get the attribute from the API response object.
 
         :param item:
             The attribute to retrieve from the API response object.
-        :type item:
-            `unicode`
         """
         return self._response_object[item]
 
-    def __contains__(self, item):
+    def __contains__(self, item: str) -> bool:
         """
         Does the response object contains this item attribute?
 
         :param item:
             The attribute to check for in the API response object.
-        :type item:
-            `unicode`
+
         """
         return item in self._response_object
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         """
         Get all of the keys of the API response object.
         """
         return iter(self._response_object)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Base class override. Return a human-readable representation using the Box ID or name of the object."""
         extra_description = ' - {0}'.format(self._description) if self._description else ''
         description = '<Box {0}{1}>'.format(self.__class__.__name__, extra_description)
         return description
 
     @property
-    def _description(self):
+    def _description(self) -> str:
         """Return a description of the object if one exists."""
         return ""
 
     @property
-    def object_type(self):
+    def object_type(self) -> str:
         """Return the Box type for the object.
-
-        :rtype:
-            `unicode`
         """
         return self._item_type
 
     @classmethod
-    def untranslated_fields(cls):
+    def untranslated_fields(cls) -> tuple:
         """
         The fields that should not be translated on this object.
-
-        :rtype:
-            `tuple`
         """
         return cls._untranslated_fields
 
     @classmethod
-    def _untranslate(cls, value):
+    def _untranslate(cls, value: Any) -> Iterable:
         """
         Untranslates a given object into a dictionary.
 
         :param value:
             The object to untranslate.
-        :rtype value:
-            `dict`
         :return:
             A dictionary containing the untranslated object.
         """
@@ -165,11 +153,8 @@ class BaseAPIJSONObject(metaclass=BaseAPIJSONObjectMeta):
         return copy.copy(value)
 
     @property
-    def response_object(self):
+    def response_object(self) -> Iterable:
         """
         Return the JSON object representing the object returned from a Box API request.
-
-        :rtype:
-            `dict`
         """
         return self._untranslate(self)
