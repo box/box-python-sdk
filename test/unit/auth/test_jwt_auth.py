@@ -187,7 +187,7 @@ def jwt_auth_init_mocks(
         if assert_authed:
             mock_box_session.request.assert_called_once_with(
                 'POST',
-                '{0}/token'.format(API.OAUTH2_API_URL),
+                f'{API.OAUTH2_API_URL}/token',
                 data=data,
                 headers={'content-type': 'application/x-www-form-urlencoded'},
                 access_token=None,

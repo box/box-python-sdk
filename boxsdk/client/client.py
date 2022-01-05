@@ -1195,7 +1195,7 @@ class Client(Cloneable):
         :return:
             The response for the downscope token request.
         """
-        url = '{base_auth_url}/token'.format(base_auth_url=self._session.api_config.OAUTH2_API_URL)
+        url = f'{self._session.api_config.OAUTH2_API_URL}/token'
         access_token = self.auth.access_token or self.auth.refresh(None)
         data = {
             'subject_token': access_token,

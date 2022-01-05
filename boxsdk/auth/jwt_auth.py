@@ -317,7 +317,7 @@ class JWTAuth(OAuth2):
             return user.object_id
         if isinstance(user, str):
             return str(user)
-        raise TypeError("Got unsupported type {0!r} for user.".format(user.__class__.__name__))
+        raise TypeError(f"Got unsupported type {user.__class__.__name__!r} for user.")
 
     def authenticate_instance(self, enterprise: Optional[str] = None) -> str:
         """
@@ -340,8 +340,8 @@ class JWTAuth(OAuth2):
             raise ValueError("authenticate_instance: Requires the enterprise ID, but it was not provided.")
         if all(enterprises) and (enterprise != self._enterprise_id):
             raise ValueError(
-                "authenticate_instance: Given enterprise ID {given_enterprise!r}, but {auth} already has ID {existing_enterprise!r}"
-                .format(auth=self, given_enterprise=enterprise, existing_enterprise=self._enterprise_id)
+                f"authenticate_instance: Given enterprise ID {enterprise!r}, "
+                f"but {self} already has ID {self._enterprise_id!r}"
             )
         if not self._enterprise_id:
             self._enterprise_id = enterprise
@@ -396,8 +396,7 @@ class JWTAuth(OAuth2):
             'rsa_private_key_data must be binary data (bytes/str), '
             'a file-like object with a read() method, '
             'or an instance of RSAPrivateKey, '
-            'but got {0!r}'
-            .format(data.__class__.__name__)
+            f'but got {data.__class__.__name__!r}'
         )
 
     @staticmethod
@@ -412,8 +411,8 @@ class JWTAuth(OAuth2):
 
         if not isinstance(passphrase, (bytes, type(None))):
             raise TypeError(
-                "rsa_private_key_passphrase must contain binary data (bytes/str), got {0!r}"
-                .format(passphrase.__class__.__name__)
+                f"rsa_private_key_passphrase must contain binary data (bytes/str), "
+                f"got {passphrase.__class__.__name__!r}"
             )
         return passphrase
 
@@ -448,6 +447,6 @@ class JWTAuth(OAuth2):
         :param settings_file_sys_path:    Path to the JSON file containing the configuration.
         :return:                        Auth instance configured as specified by the JSON file.
         """
-        with open(settings_file_sys_path) as config_file:
+        with open(settings_file_sys_path, encoding='utf-8') as config_file:
             config_dictionary = json.load(config_file)
             return cls.from_settings_dictionary(config_dictionary, **kwargs)

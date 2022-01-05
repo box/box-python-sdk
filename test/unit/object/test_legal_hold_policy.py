@@ -60,7 +60,7 @@ def legal_hold_response(legal_hold_id_1, legal_hold_id_2):
 def test_assign(test_legal_hold_policy, mock_box_session, test_file):
     assignment_id = '12345'
     assigned_at = '2016-05-18T17:38:03-07:00'
-    expected_url = '{0}/legal_hold_policy_assignments'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/legal_hold_policy_assignments'
     expected_body = {
         'policy_id': test_legal_hold_policy.object_id,
         'assign_to': {
@@ -82,7 +82,7 @@ def test_assign(test_legal_hold_policy, mock_box_session, test_file):
 
 def test_get(test_legal_hold_policy, mock_box_session):
     created_at = '2016-05-18T17:38:03-07:00'
-    expected_url = '{0}/legal_hold_policies/{1}'.format(API.BASE_API_URL, test_legal_hold_policy.object_id)
+    expected_url = f'{API.BASE_API_URL}/legal_hold_policies/{test_legal_hold_policy.object_id}'
     mock_box_session.get.return_value.json.return_value = {
         'type': 'legal_hold_policy',
         'id': test_legal_hold_policy.object_id,
@@ -133,7 +133,7 @@ def test_get_assignments(
         params,
 ):
     # pylint:disable=redefined-outer-name
-    expected_url = '{0}/legal_hold_policy_assignments'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/legal_hold_policy_assignments'
     expected_params = {'policy_id': test_legal_hold_policy.object_id}
     expected_params.update(params)
     mock_box_session.get.return_value = policies_response

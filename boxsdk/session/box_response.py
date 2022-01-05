@@ -54,4 +54,4 @@ class BoxResponse:
         return self._network_response
 
     def __repr__(self) -> str:
-        return '<Box Response[{status_code}]>'.format(status_code=self.status_code)
+        return f'<Box Response[{self.status_code}]>'

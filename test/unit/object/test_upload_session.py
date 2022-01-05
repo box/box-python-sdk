@@ -23,7 +23,7 @@ def test_upload_session(mock_box_session):
 
 
 def test_get_parts(test_upload_session, mock_box_session):
-    expected_url = '{0}/files/upload_sessions/{1}/parts'.format(API.UPLOAD_URL, test_upload_session.object_id)
+    expected_url = f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}/parts'
     mock_entry = {
         'part_id': '8F0966B1',
         'offset': 0,
@@ -46,7 +46,7 @@ def test_get_parts(test_upload_session, mock_box_session):
 
 
 def test_abort(test_upload_session, mock_box_session):
-    expected_url = '{0}/files/upload_sessions/{1}'.format(API.UPLOAD_URL, test_upload_session.object_id)
+    expected_url = f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}'
     mock_box_session.delete.return_value.ok = True
     result = test_upload_session.abort()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=None, params={})
@@ -54,14 +54,14 @@ def test_abort(test_upload_session, mock_box_session):
 
 
 def test_upload_part_bytes(test_upload_session, mock_box_session):
-    expected_url = '{0}/files/upload_sessions/{1}'.format(API.UPLOAD_URL, test_upload_session.object_id)
+    expected_url = f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}'
     part_bytes = b'abcdefgh'
     offset = 32
     total_size = 80
     expected_sha1 = 'QlrxKgdDUCsyLpOgFbz4aOMk1Wo='
     expected_headers = {
         'Content-Type': 'application/octet-stream',
-        'Digest': 'SHA={}'.format(expected_sha1),
+        'Digest': f'SHA={expected_sha1}',
         'Content-Range': 'bytes 32-39/80',
     }
     mock_box_session.put.return_value.json.return_value = {
@@ -82,7 +82,7 @@ def test_upload_part_bytes(test_upload_session, mock_box_session):
 
 
 def test_commit(test_upload_session, mock_box_session):
-    expected_url = '{0}/files/upload_sessions/{1}/commit'.format(API.UPLOAD_URL, test_upload_session.object_id)
+    expected_url = f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}/commit'
     sha1 = hashlib.sha1()
     sha1.update(b'fake_file_data')
     file_id = '12345'
@@ -109,7 +109,7 @@ def test_commit(test_upload_session, mock_box_session):
     }
     expected_headers = {
         'Content-Type': 'application/json',
-        'Digest': 'SHA={}'.format(base64.b64encode(sha1.digest()).decode('utf-8')),
+        'Digest': f'SHA={base64.b64encode(sha1.digest()).decode("utf-8")}',
         'If-Match': '7',
     }
     mock_box_session.post.return_value.json.return_value = {
@@ -130,8 +130,8 @@ def test_commit(test_upload_session, mock_box_session):
 
 
 def test_commit_with_missing_params(test_upload_session, mock_box_session):
-    expected_get_url = '{0}/files/upload_sessions/{1}/parts'.format(API.UPLOAD_URL, test_upload_session.object_id)
-    expected_url = '{0}/files/upload_sessions/{1}/commit'.format(API.UPLOAD_URL, test_upload_session.object_id)
+    expected_get_url = f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}/parts'
+    expected_url = f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}/commit'
     sha1 = hashlib.sha1()
     sha1.update(b'fake_file_data')
     file_id = '12345'
@@ -149,7 +149,7 @@ def test_commit_with_missing_params(test_upload_session, mock_box_session):
     }
     expected_headers = {
         'Content-Type': 'application/json',
-        'Digest': 'SHA={}'.format(base64.b64encode(sha1.digest()).decode('utf-8')),
+        'Digest': f'SHA={base64.b64encode(sha1.digest()).decode("utf-8")}',
     }
     mock_entry = {
         'part_id': '8F0966B1',

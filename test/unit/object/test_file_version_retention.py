@@ -3,7 +3,7 @@ from boxsdk.object.file_version_retention import FileVersionRetention
 
 
 def test_get(test_file_version_retention, mock_box_session):
-    expected_url = '{0}/file_version_retentions/{1}'.format(API.BASE_API_URL, test_file_version_retention.object_id)
+    expected_url = f'{API.BASE_API_URL}/file_version_retentions/{test_file_version_retention.object_id}'
     mock_box_session.get.return_value.json.return_value = {
         'type': 'file_version_retention',
         'id': test_file_version_retention.object_id,

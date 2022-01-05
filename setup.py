@@ -83,7 +83,7 @@ def main():
         name='boxsdk',
         version=version,
         description='Official Box Python SDK',
-        long_description=open(join(base_dir, 'README.rst'), encoding='utf-8').read(),
+        long_description=open(join(base_dir, 'README.rst'), encoding='utf-8').read(),  # pylint:disable=consider-using-with
         author='Box',
         author_email='oss@box.com',
         url='http://opensource.box.com',

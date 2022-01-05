@@ -123,7 +123,7 @@ class Folder(Item):
         :returns:
             A :class:`UploadSession` object.
         """
-        url = '{0}/files/upload_sessions'.format(self.session.api_config.UPLOAD_URL)
+        url = f'{self.session.api_config.UPLOAD_URL}/files/upload_sessions'
         body_params = {
             'folder_id': self.object_id,
             'file_size': file_size,
@@ -146,10 +146,10 @@ class Folder(Item):
             A :class:`ChunkedUploader` object.
         """
         total_size = os.stat(file_path).st_size
-        content_stream = open(file_path, 'rb')
-        file_name = os.path.basename(file_path)
-        upload_session = self.create_upload_session(total_size, file_name)
-        return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
+        with open(file_path, 'rb') as content_stream:
+            file_name = os.path.basename(file_path)
+            upload_session = self.create_upload_session(total_size, file_name)
+            return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
 
     def _get_accelerator_upload_url_fow_new_uploads(self) -> Optional[str]:
         """
@@ -279,7 +279,7 @@ class Folder(Item):
         elif upload_using_accelerator:
             accelerator_upload_url = self._get_accelerator_upload_url_fow_new_uploads()
 
-        url = '{0}/files/content'.format(self._session.api_config.UPLOAD_URL)
+        url = f'{self._session.api_config.UPLOAD_URL}/files/content'
         if upload_using_accelerator and accelerator_upload_url:
             url = accelerator_upload_url
 
@@ -514,7 +514,7 @@ class Folder(Item):
             Whether or not the update was successful.
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
-        # pylint:disable=arguments-differ
+        # pylint:disable=arguments-differ,arguments-renamed
         return super().delete({'recursive': recursive}, etag)
 
     @api_call

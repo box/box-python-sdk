@@ -140,8 +140,8 @@ class DefaultNetworkResponse(NetworkResponse):
     """
 
     _COMMON_RESPONSE_FORMAT = '"%(method)s %(url)s" %(status_code)s %(content_length)s\n%(headers)s\n%(content)s\n'
-    SUCCESSFUL_RESPONSE_FORMAT = '\x1b[32m{0}\x1b[0m'.format(_COMMON_RESPONSE_FORMAT)
-    ERROR_RESPONSE_FORMAT = '\x1b[31m{0}\x1b[0m'.format(_COMMON_RESPONSE_FORMAT)
+    SUCCESSFUL_RESPONSE_FORMAT = f'\x1b[32m{_COMMON_RESPONSE_FORMAT}\x1b[0m'
+    ERROR_RESPONSE_FORMAT = f'\x1b[31m{_COMMON_RESPONSE_FORMAT}\x1b[0m'
     STREAM_CONTENT_NOT_LOGGED = '<File download contents unavailable for logging>'
 
     def __init__(self, request_response: 'Response', access_token_used: str):
@@ -258,8 +258,5 @@ class DefaultNetworkResponse(NetworkResponse):
         )
 
     def __repr__(self) -> str:
-        return '<Box Network Response ({method} {url} {status_code})>'.format(
-            method=self._request_response.request.method,
-            url=self._request_response.request.url,
-            status_code=self.status_code,
-        )
+        return f'<Box Network Response ({self._request_response.request.method} {self._request_response.request.url} ' \
+               f'{self.status_code})>'

@@ -332,7 +332,7 @@ def test_metadata_query(
         metadata_query_response
 ):
     # pylint:disable=redefined-outer-name
-    expected_url = '{0}/metadata_queries/execute_read'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/metadata_queries/execute_read'
     from_template = 'enterprise_12345.someTemplate'
     ancestor_folder_id = '5555'
     query = 'amount >= :arg'

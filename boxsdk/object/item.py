@@ -44,8 +44,8 @@ class Item(BaseItem):
         """
         if file_id:
             self.validate_item_id(file_id)
-        endpoint = '{0}/content'.format(file_id) if file_id else 'content'
-        url = '{0}/files/{1}'.format(self._session.api_config.BASE_API_URL, endpoint)
+        endpoint = f'{file_id}/content' if file_id else 'content'
+        url = f'{self._session.api_config.BASE_API_URL}/files/{endpoint}'
         try:
             response_json = self._session.options(
                 url=url,
@@ -83,8 +83,8 @@ class Item(BaseItem):
         """
         if file_id:
             self.validate_item_id(file_id)
-        endpoint = '{0}/content'.format(file_id) if file_id else 'content'
-        url = '{0}/files/{1}'.format(self._session.api_config.BASE_API_URL, endpoint)
+        endpoint = f'{file_id}/content' if file_id else 'content'
+        url = f'{self._session.api_config.BASE_API_URL}/files/{endpoint}'
         data = {'size': size}
         if name:
             data['name'] = name
@@ -135,7 +135,7 @@ class Item(BaseItem):
             Information about the file or folder.
         :raises: :class:`BoxAPIException` if the specified etag matches the latest version of the item.
         """
-        # pylint:disable=arguments-differ
+        # pylint:disable=arguments-differ,arguments-renamed
         self.validate_item_id(self._object_id)
         headers = {'If-None-Match': etag} if etag is not None else None
         return super().get(fields=fields, headers=headers)
@@ -275,7 +275,7 @@ class Item(BaseItem):
             Whether or not the delete was successful.
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
         """
-        # pylint:disable=arguments-differ
+        # pylint:disable=arguments-differ,arguments-renamed
         self.validate_item_id(self._object_id)
         headers = {'If-Match': etag} if etag is not None else None
         return super().delete(params, headers)

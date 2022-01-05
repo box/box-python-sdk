@@ -1,9 +1,10 @@
 # coding: utf-8
-
-import pytest
-from boxsdk.exception import BoxAPIException
 from test.functional.mock_box.util.chaos_utils import error, html, xml
 from test.functional.mock_box.util.http_utils import RETRY_AFTER_HEADER
+
+import pytest
+
+from boxsdk.exception import BoxAPIException
 
 
 @pytest.fixture(params=[500, 501])

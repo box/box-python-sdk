@@ -30,7 +30,7 @@ class BoxObjectCollectionTestBase(ABC):
                 "id": str(1000 + i),
                 "sequence_id": str(i),
                 "etag": str(10 + i),
-                "name": "file_{0}.txt".format(i),
+                "name": f"file_{i}.txt",
             })
         return all_entries
 
@@ -68,10 +68,10 @@ class BoxObjectCollectionTestBase(ABC):
         """
         expected_num = len(expected_items_dict)
         actual_num = len(returned_item_objects)
-        assert actual_num == expected_num, 'Expected {0} items, got {1}'.format(expected_num, actual_num)
+        assert actual_num == expected_num, f'Expected {expected_num} items, got {actual_num}'
         returned_item_names = [item.name for item in returned_item_objects]
         for expected_item_dict in expected_items_dict:
-            assert expected_item_dict['name'] in returned_item_names, 'Missing item: {0}'.format(expected_item_dict['name'])
+            assert expected_item_dict['name'] in returned_item_names, f'Missing item: {expected_item_dict["name"]}'
 
     @pytest.mark.parametrize('return_full_pages', (True, False))
     @pytest.mark.parametrize('limit', (1, 3, 5, NUM_ENTRIES, 1000))

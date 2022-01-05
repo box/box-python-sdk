@@ -113,8 +113,7 @@ def mock_sign_request_response():
 
 
 def test_get_sign_request(test_sign_request, mock_box_session, mock_sign_request_response):
-    expected_url = '{0}/sign_requests/{1}'.format(
-        API.BASE_API_URL, test_sign_request.object_id)
+    expected_url = f'{API.BASE_API_URL}/sign_requests/{test_sign_request.object_id}'
     mock_box_session.get.return_value.json.return_value = mock_sign_request_response
 
     sign_request = test_sign_request.get()
@@ -126,8 +125,7 @@ def test_get_sign_request(test_sign_request, mock_box_session, mock_sign_request
 
 
 def test_cancel_sign_request(test_sign_request, mock_box_session, mock_sign_request_response):
-    expected_url = '{0}/sign_requests/{1}/cancel'.format(
-        API.BASE_API_URL, test_sign_request.object_id)
+    expected_url = f'{API.BASE_API_URL}/sign_requests/{test_sign_request.object_id}/cancel'
     mock_box_session.post.return_value.json.return_value = mock_sign_request_response
 
     sign_request = test_sign_request.cancel()
@@ -139,8 +137,7 @@ def test_cancel_sign_request(test_sign_request, mock_box_session, mock_sign_requ
 
 
 def test_resend_sign_request(test_sign_request, mock_box_session):
-    expected_url = '{0}/sign_requests/{1}/resend'.format(
-        API.BASE_API_URL, test_sign_request.object_id)
+    expected_url = f'{API.BASE_API_URL}/sign_requests/{test_sign_request.object_id}/resend'
 
     test_sign_request.resend()
 

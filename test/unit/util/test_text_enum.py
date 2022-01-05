@@ -4,12 +4,12 @@ from boxsdk.util.text_enum import TextEnum
 
 
 class MockTextEnum(TextEnum):
-    member = 'member'
+    MEMBER = 'member'
 
 
 def test_text_enum_repr_is_value():
-    assert MockTextEnum.member.__repr__() == MockTextEnum.member.value  # pylint:disable=no-member
+    assert MockTextEnum.MEMBER.__repr__() == MockTextEnum.MEMBER.value  # pylint:disable=no-member
 
 
 def test_text_enum_str_is_value():
-    assert str(MockTextEnum.member) == str('member')
+    assert str(MockTextEnum.MEMBER) == str('member')

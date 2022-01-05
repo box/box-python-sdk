@@ -175,8 +175,8 @@ class Session:
             Additional parts of the endpoint URL.
         """
         # pylint:disable=no-self-use
-        url = ['{0}/{1}'.format(self._api_config.BASE_API_URL, endpoint)]
-        url.extend(['/{0}'.format(x) for x in args])
+        url = [f'{self._api_config.BASE_API_URL}/{endpoint}']
+        url.extend([f'/{x}' for x in args])
         return ''.join(url)
 
     def get_constructor_kwargs(self) -> dict:
@@ -398,9 +398,8 @@ class Session:
         if self._proxy_config.AUTH and {'user', 'password'} <= set(self._proxy_config.AUTH):
             host = self._proxy_config.URL
             address = host.split('//')[1]
-            proxy_string = 'http://{0}:{1}@{2}'.format(self._proxy_config.AUTH.get('user', None),
-                                                       self._proxy_config.AUTH.get('password', None),
-                                                       address)
+            proxy_string = f'http://{self._proxy_config.AUTH.get("user", None)}:' \
+                           f'{self._proxy_config.AUTH.get("password", None)}@{address}'
         elif self._proxy_config.AUTH is None:
             proxy_string = self._proxy_config.URL
         else:
@@ -525,7 +524,7 @@ class AuthorizedSession(Session):
         if request.auto_session_renewal and access_token is None:
             access_token = self._renew_session(None)
             request.auto_session_renewal = False
-        authorization_header = {'Authorization': 'Bearer {0}'.format(access_token)}
+        authorization_header = {'Authorization': f'Bearer {access_token}'}
         request.headers.update(authorization_header)
         kwargs['access_token'] = access_token
         return super()._send_request(request, **kwargs)

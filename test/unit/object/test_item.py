@@ -164,7 +164,7 @@ def test_get_watermark(test_item_and_response, mock_box_session):
     test_item, _ = test_item_and_response
     created_at = '2016-10-31T15:33:33-07:00'
     modified_at = '2016-10-31T15:33:33-07:00'
-    expected_url = '{0}/{1}s/{2}/watermark'.format(API.BASE_API_URL, test_item.object_type, test_item.object_id)
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type}s/{test_item.object_id}/watermark'
     mock_box_session.get.return_value.json.return_value = {
         'watermark': {
             'created_at': created_at,
@@ -182,7 +182,7 @@ def test_apply_watermark(test_item_and_response, mock_box_session):
     test_item, _ = test_item_and_response
     created_at = '2016-10-31T15:33:33-07:00'
     modified_at = '2016-10-31T15:33:33-07:00'
-    expected_url = '{0}/{1}s/{2}/watermark'.format(API.BASE_API_URL, test_item.object_type, test_item.object_id)
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type}s/{test_item.object_id}/watermark'
     mock_box_session.put.return_value.json.return_value = {
         'watermark': {
             'created_at': created_at,
@@ -198,7 +198,7 @@ def test_apply_watermark(test_item_and_response, mock_box_session):
 
 def test_delete_watermark(test_item_and_response, mock_box_session):
     test_item, _ = test_item_and_response
-    expected_url = '{0}/{1}s/{2}/watermark'.format(API.BASE_API_URL, test_item.object_type, test_item.object_id)
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type}s/{test_item.object_id}/watermark'
     mock_box_session.delete.return_value.ok = True
     is_watermark_deleted = test_item.delete_watermark()
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)
@@ -208,7 +208,7 @@ def test_delete_watermark(test_item_and_response, mock_box_session):
 def test_collaborate_with_group(test_item_and_response, test_group, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
-    expected_url = '{0}/collaborations'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/collaborations'
     expected_data = {
         'item': {
             'type': test_item.object_type,
@@ -248,7 +248,7 @@ def test_collaborate_with_group(test_item_and_response, test_group, mock_box_ses
 def test_collaborate_with_user(test_item_and_response, mock_user, mock_box_session, can_view_path, fields, notify, data, params):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
-    expected_url = '{0}/collaborations'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/collaborations'
     expected_data = {
         'item': {
             'type': test_item.object_type,
@@ -290,7 +290,7 @@ def test_collaborate_with_user(test_item_and_response, mock_user, mock_box_sessi
 def test_collaborate_with_login(test_item_and_response, mock_box_session, can_view_path, fields, notify, data, params):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
-    expected_url = '{0}/collaborations'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/collaborations'
     expected_data = {
         'item': {
             'type': test_item.object_type,
@@ -323,7 +323,7 @@ def test_collaborate_with_login(test_item_and_response, mock_box_session, can_vi
 def test_collaborations(test_item_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
-    expected_url = '{0}/{1}s/{2}/collaborations'.format(API.BASE_API_URL, test_item.object_type, test_item.object_id)
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type}s/{test_item.object_id}/collaborations'
     mock_collaboration = {
         'type': 'collaboration',
         'id': '12345',
@@ -348,7 +348,7 @@ def test_collaborations(test_item_and_response, mock_box_session):
 
 def test_get_all_metadata(test_item_and_response, mock_box_session):
     test_item, _ = test_item_and_response
-    expected_url = '{0}/{1}s/{2}/metadata'.format(API.BASE_API_URL, test_item.object_type, test_item.object_id)
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type}s/{test_item.object_id}/metadata'
     mock_metadata = {
         'currentDocumentStage': 'prioritization',
         'needsApprovalFrom': 'planning team',
@@ -378,11 +378,8 @@ def test_get_all_metadata(test_item_and_response, mock_box_session):
 def test_add_classification(test_item_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name
     test_item, _ = test_item_and_response
-    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
-        API.BASE_API_URL,
-        test_item.object_type,
-        test_item.object_id,
-    )
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type}s/{test_item.object_id}' \
+                   f'/metadata/enterprise/securityClassification-6VMVochwUWo'
     metadata_response = {
         'Box__Security__Classification__Key': 'Public',
     }
@@ -401,11 +398,8 @@ def test_add_classification(test_item_and_response, mock_box_session):
 def test_update_classification(test_item_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name
     test_item, _ = test_item_and_response
-    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
-        API.BASE_API_URL,
-        test_item.object_type,
-        test_item.object_id,
-    )
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type}s/{test_item.object_id}' \
+                   f'/metadata/enterprise/securityClassification-6VMVochwUWo'
     metadata_response = {
         'Box__Security__Classification__Key': 'Internal',
     }
@@ -429,11 +423,8 @@ def test_set_classification_succeeds(test_item_and_response, mock_box_session):
     metadata_response = {
         'Box__Security__Classification__Key': 'Public',
     }
-    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
-        API.BASE_API_URL,
-        test_item.object_type,
-        test_item.object_id,
-    )
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type}s/{test_item.object_id}' \
+                   f'/metadata/enterprise/securityClassification-6VMVochwUWo'
     post_data = {
         'Box__Security__Classification__Key': 'Public',
     }
@@ -459,11 +450,8 @@ def test_set_classification_succeeds(test_item_and_response, mock_box_session):
 def test_set_classification_fails(test_item_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name
     test_item, _ = test_item_and_response
-    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
-        API.BASE_API_URL,
-        test_item.object_type,
-        test_item.object_id,
-    )
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type}s/{test_item.object_id}' \
+                   f'/metadata/enterprise/securityClassification-6VMVochwUWo'
     post_data = {
         'Box__Security__Classification__Key': 'Public',
     }
@@ -479,11 +467,8 @@ def test_set_classification_fails(test_item_and_response, mock_box_session):
 def test_get_classification_succeeds(test_item_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name
     test_item, _ = test_item_and_response
-    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
-        API.BASE_API_URL,
-        test_item.object_type,
-        test_item.object_id,
-    )
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type}s/{test_item.object_id}' \
+                   f'/metadata/enterprise/securityClassification-6VMVochwUWo'
     metadata_response = {
         'Box__Security__Classification__Key': 'Public'
     }
@@ -496,11 +481,8 @@ def test_get_classification_succeeds(test_item_and_response, mock_box_session):
 def test_get_classification_not_found(test_item_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name
     test_item, _ = test_item_and_response
-    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
-        API.BASE_API_URL,
-        test_item.object_type,
-        test_item.object_id,
-    )
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type}s/{test_item.object_id}' \
+                   f'/metadata/enterprise/securityClassification-6VMVochwUWo'
     mock_box_session.get.side_effect = [BoxAPIException(status=404, code="instance_not_found")]
     metadata = test_item.get_classification()
     assert metadata is None
@@ -510,11 +492,8 @@ def test_get_classification_not_found(test_item_and_response, mock_box_session):
 def test_get_classification_raises_exception(test_item_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name
     test_item, _ = test_item_and_response
-    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
-        API.BASE_API_URL,
-        test_item.object_type,
-        test_item.object_id,
-    )
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type}s/{test_item.object_id}' \
+                   f'/metadata/enterprise/securityClassification-6VMVochwUWo'
     mock_box_session.get.side_effect = [BoxAPIException(status=500)]
     with pytest.raises(BoxAPIException):
         test_item.get_classification()
@@ -524,11 +503,8 @@ def test_get_classification_raises_exception(test_item_and_response, mock_box_se
 def test_remove_classification(test_item_and_response, mock_box_session, make_mock_box_request):
     # pylint:disable=redefined-outer-name
     test_item, _ = test_item_and_response
-    expected_url = '{0}/{1}s/{2}/metadata/enterprise/securityClassification-6VMVochwUWo'.format(
-        API.BASE_API_URL,
-        test_item.object_type,
-        test_item.object_id,
-    )
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type}s/{test_item.object_id}' \
+                   f'/metadata/enterprise/securityClassification-6VMVochwUWo'
     mock_box_session.delete.return_value, _ = make_mock_box_request(response_ok='success')
     is_removed = test_item.remove_classification()
     mock_box_session.delete.assert_called_once_with(expected_url)
