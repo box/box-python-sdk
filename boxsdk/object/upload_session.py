@@ -19,7 +19,6 @@ class UploadSession(BaseObject):
     _item_type = 'upload_session'
     _parent_item_type = 'file'
 
-    @api_call
     def get_url(self, *args: Any) -> str:
         """
         Base class override. Endpoint is a little different - it's /files/upload_sessions.
