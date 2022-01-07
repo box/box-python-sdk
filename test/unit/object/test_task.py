@@ -49,7 +49,7 @@ def test_update(test_task, mock_box_session):
     expected_body = {
         'message': new_message,
     }
-    updated_task = test_task.update_info({'message': new_message})
+    updated_task = test_task.update_info(data={'message': new_message})
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body), headers=None, params=None)
     assert isinstance(updated_task, Task)
     assert updated_task.message == new_message

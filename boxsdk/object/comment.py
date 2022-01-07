@@ -47,4 +47,4 @@ class Comment(BaseObject):
             The content of the reply comment.
         """
         data = self.construct_params_from_message(message)
-        return self.update_info(data)
+        return self.update_info(data=data)

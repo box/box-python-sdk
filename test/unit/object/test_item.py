@@ -24,7 +24,7 @@ def test_update_info(test_item_and_response, mock_box_session, etag, if_match_he
     expected_url = test_item.get_url()
     mock_box_session.put.return_value = mock_item_response
     data = {'foo': 'bar', 'baz': {'foo': 'bar'}, 'num': 4}
-    update_response = test_item.update_info(data, etag=etag)
+    update_response = test_item.update_info(data=data, etag=etag)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=if_match_header, params=None)
     assert isinstance(update_response, test_item.__class__)
     assert update_response.object_id == test_item.object_id
@@ -38,7 +38,7 @@ def test_update_info_with_default_request_kwargs(test_item_and_response, mock_bo
     mock_box_session_2.put.return_value = mock_item_response
     data = {'foo': 'bar', 'baz': {'foo': 'bar'}, 'num': 4}
     extra_network_parameters = {'timeout': 1}
-    update_response = test_item.update_info(data, extra_network_parameters=extra_network_parameters)
+    update_response = test_item.update_info(data=data, extra_network_parameters=extra_network_parameters)
     mock_box_session.with_default_network_request_kwargs.assert_called_once_with({'timeout': 1})
     mock_box_session_2.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
     assert isinstance(update_response, test_item.__class__)
@@ -154,7 +154,7 @@ def test_get(test_item_and_response, mock_box_session, fields, mock_object_id, e
     expected_url = test_item.get_url()
     mock_box_session.get.return_value = mock_item_response
     expected_params = {'fields': ','.join(fields)} if fields else None
-    info = test_item.get(fields, etag=etag)
+    info = test_item.get(fields=fields, etag=etag)
     mock_box_session.get.assert_called_once_with(expected_url, params=expected_params, headers=if_none_match_header)
     assert isinstance(info, test_item.__class__)
     assert info.id == mock_object_id

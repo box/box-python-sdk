@@ -103,7 +103,6 @@ class Metadata(BaseEndpoint):
 
     def get_url(self, *args: Any) -> str:
         """ Base class override. """
-        # pylint:disable=arguments-differ
         return self._object.get_url('metadata', self._scope, self._template)
 
     @staticmethod

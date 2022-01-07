@@ -44,7 +44,7 @@ class StoragePolicy(BaseObject):
                 'id': self.object_id,
             },
         }
-        return assignment.update_info(update_object)
+        return assignment.update_info(data=update_object)
 
     def create_assignment(self, user: 'User') -> 'StoragePolicyAssignment':
         """

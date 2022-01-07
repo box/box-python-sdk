@@ -144,9 +144,9 @@ def test_update_info(test_metadata_template, mock_box_session):
         'templateKey': 'vContract',
     }
 
-    updated_template = test_metadata_template.update_info(updates)
+    updated_template = test_metadata_template.update_info(updates=updates)
 
-    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body))
+    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body), headers=None, params=None)
     assert isinstance(updated_template, MetadataTemplate)
     assert updated_template.hidden is False
     assert updated_template.object_id is None

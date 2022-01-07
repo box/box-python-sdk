@@ -45,7 +45,7 @@ def test_update_info(test_object_and_response, mock_box_session, params, headers
     expected_url = test_object.get_url()
     mock_box_session.put.return_value = mock_object_response
     data = {'foo': 'bar', 'baz': {'foo': 'bar'}, 'num': 4}
-    update_response = BaseObject.update_info(test_object, data, params=params, headers=headers)
+    update_response = BaseObject.update_info(test_object, data=data, params=params, headers=headers)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), params=params, headers=headers)
     assert isinstance(update_response, test_object.__class__)
     assert update_response.object_id == test_object.object_id
@@ -78,7 +78,7 @@ def test_getattr_and_getitem(test_object_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
     test_object, mock_object_response = test_object_and_response
     mock_box_session.put.return_value = mock_object_response
-    update_response = BaseObject.update_info(test_object, {})
+    update_response = BaseObject.update_info(test_object, data={})
     assert isinstance(update_response, test_object.__class__)
     assert update_response.object_id == update_response.id == update_response['id']  # pylint:disable=no-member
 

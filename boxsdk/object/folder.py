@@ -503,7 +503,13 @@ class Folder(Item):
         )
 
     @api_call
-    def delete(self, recursive: bool = True, etag: Optional[str] = None) -> bool:
+    def delete(
+            self,
+            *,
+            recursive: bool = True,
+            etag: Optional[str] = None,
+            **kwargs
+    ) -> bool:
         """Base class override. Delete the folder.
 
         :param recursive:
@@ -515,7 +521,7 @@ class Folder(Item):
         :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the folder.
         """
         # pylint:disable=arguments-differ,arguments-renamed
-        return super().delete({'recursive': recursive}, etag)
+        return super().delete(params={'recursive': recursive}, etag=etag, **kwargs)
 
     @api_call
     def get_metadata_cascade_policies(

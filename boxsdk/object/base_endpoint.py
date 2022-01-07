@@ -34,17 +34,14 @@ class BaseEndpoint(Cloneable):
         """
         return self._session.translator
 
-    def get_url(self, endpoint: str, *args: Any) -> str:
+    def get_url(self, *args: Any) -> str:
         """
         Return the URL used to access the endpoint.
 
-        :param endpoint:
-            The name of the endpoint.
         :param args:
-            Additional parts of the endpoint URL.
+            Parts of the endpoint URL.
         """
-        # pylint:disable=no-self-use
-        return self._session.get_url(endpoint, *args)
+        return self._session.get_url(*args)
 
     def clone(self, session: 'Session' = None) -> 'BaseEndpoint':
         """

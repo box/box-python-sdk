@@ -60,7 +60,7 @@ def test_update(test_webhook, mock_box_session):
         'address': 'https://testnotification.com',
         'triggers': ['FILE.DOWNLOADED'],
     }
-    webhook = test_webhook.update_info(data)
+    webhook = test_webhook.update_info(data=data)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
     assert isinstance(webhook, Webhook)
     assert webhook.type == test_webhook.object_type

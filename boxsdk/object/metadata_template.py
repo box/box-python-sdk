@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import json
 from typing import TYPE_CHECKING, List, Optional, Iterable, Any
 from .base_object import BaseObject
 from ..util.api_call_decorator import api_call
@@ -269,7 +268,7 @@ class MetadataTemplate(BaseObject):
         return MetadataTemplateUpdate()
 
     @api_call
-    def update_info(self, updates: MetadataTemplateUpdate) -> 'MetadataTemplate':
+    def update_info(self, *, updates: MetadataTemplateUpdate, **kwargs) -> 'MetadataTemplate':
         # pylint: disable=arguments-differ
         """
         Update a metadata template with a set of update operations.
@@ -279,9 +278,5 @@ class MetadataTemplate(BaseObject):
         :returns:
             The updated metadata template object
         """
-        url = self.get_url()
-        response = self._session.put(url, data=json.dumps(updates.json())).json()
-        return self.translator.translate(
-            session=self._session,
-            response_object=response,
-        )
+        # pylint: disable=arguments-differ
+        return super().update_info(data=updates.json(), **kwargs)
