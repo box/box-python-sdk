@@ -5,6 +5,7 @@ import json
 import os
 from typing import Any, Optional, TYPE_CHECKING, Iterable, IO
 
+from boxsdk.util.api_call_decorator import api_call
 from boxsdk.util.chunked_uploader import ChunkedUploader
 from .base_object import BaseObject
 from ..pagination.limit_offset_based_dict_collection import LimitOffsetBasedDictCollection
@@ -28,6 +29,7 @@ class UploadSession(BaseObject):
             *args
         ).replace(self.session.api_config.BASE_API_URL, self.session.api_config.UPLOAD_URL)
 
+    @api_call
     def get_parts(self, limit: Optional[int] = None, offset: Optional[int] = None) -> 'BoxObjectCollection':
         """
         Get a list of parts uploaded so far.
@@ -48,6 +50,7 @@ class UploadSession(BaseObject):
             return_full_pages=False,
         )
 
+    @api_call
     def upload_part_bytes(
             self,
             part_bytes: bytes,
@@ -89,6 +92,7 @@ class UploadSession(BaseObject):
         )
         return response.json()['part']
 
+    @api_call
     def commit(
             self,
             content_sha1: bytes,
@@ -134,6 +138,7 @@ class UploadSession(BaseObject):
             response_object=entry,
         )
 
+    @api_call
     def abort(self) -> bool:
         """
         Abort an upload session, cancelling the upload and removing any parts that have already been uploaded.
