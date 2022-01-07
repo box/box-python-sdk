@@ -24,7 +24,7 @@ class UploadSession(BaseObject):
         Base class override. Endpoint is a little different - it's /files/upload_sessions.
         """
         return self._session.get_url(
-            '{0}s/{1}s'.format(self._parent_item_type, self._item_type),
+            f'{self._parent_item_type}s/{self._item_type}s',
             self._object_id,
             *args
         ).replace(self.session.api_config.BASE_API_URL, self.session.api_config.UPLOAD_URL)
@@ -82,8 +82,8 @@ class UploadSession(BaseObject):
         range_end = min(offset + self.part_size - 1, total_size - 1)  # pylint:disable=no-member
         headers = {
             'Content-Type': 'application/octet-stream',
-            'Digest': 'SHA={0}'.format(base64.b64encode(part_content_sha1).decode('utf-8')),
-            'Content-Range': 'bytes {0}-{1}/{2}'.format(offset, range_end, total_size),
+            'Digest': f'SHA={base64.b64encode(part_content_sha1).decode("utf-8")}',
+            'Content-Range': f'bytes {offset}-{range_end}/{total_size}',
         }
         response = self._session.put(
             self.get_url(),
@@ -123,7 +123,7 @@ class UploadSession(BaseObject):
             body['parts'] = list(self.get_parts())
         headers = {
             'Content-Type': 'application/json',
-            'Digest': 'SHA={0}'.format(base64.b64encode(content_sha1).decode('utf-8')),
+            'Digest': f'SHA={base64.b64encode(content_sha1).decode("utf-8")}',
         }
         if etag is not None:
             headers['If-Match'] = etag
@@ -171,8 +171,8 @@ class UploadSession(BaseObject):
             A :class:`ChunkedUploader` object.
         """
         total_size = os.stat(file_path).st_size
-        content_stream = open(file_path, 'rb')
-        return self.get_chunked_uploader_for_stream(
-            content_stream=content_stream,
-            file_size=total_size,
-        )
+        with open(file_path, 'rb') as content_stream:
+            return self.get_chunked_uploader_for_stream(
+                content_stream=content_stream,
+                file_size=total_size,
+            )

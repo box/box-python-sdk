@@ -1,19 +1,18 @@
 # coding: utf-8
+from urllib import parse
+from test.functional.mock_box.box import Box
+from test.util.streamable_mock_open import streamable_mock_open
 
 import re
-from urllib import parse
-
-from mock import patch
 import pytest
 import requests
 
+from mock import patch
 from boxsdk.auth.oauth2 import OAuth2
-from boxsdk.config import API
 from boxsdk.client import LoggingClient
+from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetwork
 from boxsdk.session.session import Session, AuthorizedSession
-from test.functional.mock_box.box import Box
-from test.util.streamable_mock_open import streamable_mock_open
 
 
 @pytest.fixture(scope='session')
@@ -77,10 +76,10 @@ def mock_box_server(request):
 def mock_box(mock_box_server, monkeypatch, client_id, client_secret, user_name, user_login):
     # pylint:disable=redefined-outer-name
     mock_box_server.reset_filesystem([(user_name, user_login)], [(client_id, client_secret, 0)])
-    monkeypatch.setattr(API, 'BASE_API_URL', 'http://localhost:{0}'.format(Box.API_PORT))
-    monkeypatch.setattr(API, 'UPLOAD_URL', 'http://localhost:{0}'.format(Box.UPLOAD_PORT))
-    monkeypatch.setattr(API, 'OAUTH2_API_URL', 'http://localhost:{0}'.format(Box.OAUTH_API_PORT))
-    monkeypatch.setattr(API, 'OAUTH2_AUTHORIZE_URL', 'http://localhost:{0}'.format(Box.OAUTH_AUTHORIZE_PORT))
+    monkeypatch.setattr(API, 'BASE_API_URL', f'http://localhost:{Box.API_PORT}')
+    monkeypatch.setattr(API, 'UPLOAD_URL', f'http://localhost:{Box.UPLOAD_PORT}')
+    monkeypatch.setattr(API, 'OAUTH2_API_URL', f'http://localhost:{Box.OAUTH_API_PORT}')
+    monkeypatch.setattr(API, 'OAUTH2_AUTHORIZE_URL', f'http://localhost:{Box.OAUTH_AUTHORIZE_PORT}')
     return mock_box_server
 
 

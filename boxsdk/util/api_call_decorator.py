@@ -44,14 +44,13 @@ class APICallWrapper:
 
         if isinstance(owner, type) and not issubclass(owner, Cloneable):
             raise TypeError(
-                "descriptor {name!r} must be owned by a 'Cloneable' subclass, not {owner.__name__}"
-                .format(name=self.__name__, owner=owner)
+                f"descriptor {self.__name__!r} must be owned by a 'Cloneable' subclass, not {owner.__name__}"
             )
         expected_type = owner or Cloneable
         if not isinstance(_instance, expected_type):
             raise TypeError(
-                "descriptor {name!r} for {expected_type.__name__!r} objects doesn't apply to {instance.__class__.__name__!r} object"
-                .format(name=self.__name__, expected_type=expected_type, instance=_instance)
+                f"descriptor {self.__name__!r} for {expected_type.__name__!r} objects "
+                f"doesn't apply to {_instance.__class__.__name__!r} object"
             )
 
         @wraps(self._func_that_makes_an_api_call)

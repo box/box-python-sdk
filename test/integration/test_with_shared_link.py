@@ -21,7 +21,7 @@ def box_api_headers(shared_link, shared_link_password, access_token):
     # pylint:disable=redefined-outer-name
     box_api_header = get_shared_link_header(shared_link, shared_link_password)['BoxApi']
     return {
-        'Authorization': 'Bearer {0}'.format(access_token),
+        'Authorization': f'Bearer {access_token}',
         'BoxApi': box_api_header,
         'User-Agent': Client.USER_AGENT_STRING,
         'X-Box-UA': Client.BOX_UA_STRING,
@@ -44,7 +44,7 @@ def test_client_with_shared_link_causes_box_api_header_to_be_added(
     assert mock_box_network.session.request.mock_calls == [
         call(
             'GET',
-            '{0}/folders/0'.format(API.BASE_API_URL),
+            f'{API.BASE_API_URL}/folders/0',
             headers=box_api_headers,
             params=None,
         ),
@@ -67,7 +67,7 @@ def test_folder_object_with_shared_link_causes_box_api_header_to_be_added(
     assert mock_box_network.session.request.mock_calls == [
         call(
             'GET',
-            '{0}/folders/0'.format(API.BASE_API_URL),
+            f'{API.BASE_API_URL}/folders/0',
             headers=box_api_headers,
             params=None,
         ),
@@ -90,7 +90,7 @@ def test_group_membership_object_with_shared_link_causes_box_api_header_to_be_ad
     assert mock_box_network.session.request.mock_calls == [
         call(
             'GET',
-            '{0}/group_memberships/0'.format(API.BASE_API_URL),
+            f'{API.BASE_API_URL}/group_memberships/0',
             headers=box_api_headers,
             params=None,
         ),
@@ -110,7 +110,7 @@ def test_events_endpoint_with_shared_link_causes_box_api_header_to_be_added(
         generic_successful_response,
     ]
     stream_position = 1348790499819
-    options = {'url': '{0}/events'.format(API.BASE_API_URL), 'retry_timeout': 60}
+    options = {'url': f'{API.BASE_API_URL}/events', 'retry_timeout': 60}
     box_client.events().with_shared_link(shared_link, shared_link_password).long_poll(options, stream_position)
     assert mock_box_network.session.request.mock_calls == [
         call(
@@ -139,7 +139,7 @@ def test_metadata_endpoint_with_shared_link_causes_box_api_header_to_be_added(
     assert mock_box_network.session.request.mock_calls == [
         call(
             'GET',
-            '{0}/files/0/metadata/global/properties'.format(API.BASE_API_URL),
+            f'{API.BASE_API_URL}/files/0/metadata/global/properties',
             headers=box_api_headers,
         ),
     ]

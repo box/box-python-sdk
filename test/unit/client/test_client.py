@@ -469,7 +469,7 @@ def test_users_return_the_correct_user_objects(
         expected_params['user_type'] = users_type
     assert users.next().object_id == user_id_1
     assert users.next().object_id == user_id_2
-    mock_box_session.get.assert_called_once_with('{0}/users'.format(API.BASE_API_URL), params=expected_params)
+    mock_box_session.get.assert_called_once_with(f'{API.BASE_API_URL}/users', params=expected_params)
 
 
 def test_users_return_the_correct_user_objects_marker(
@@ -501,14 +501,14 @@ def test_users_return_the_correct_user_objects_marker(
         expected_params['user_type'] = users_type
     assert users.next().object_id == user_id_1
     assert users.next().object_id == user_id_2
-    mock_box_session.get.assert_called_once_with('{0}/users'.format(API.BASE_API_URL), params=expected_params)
+    mock_box_session.get.assert_called_once_with(f'{API.BASE_API_URL}/users', params=expected_params)
 
 
 def test_users_returns_correct_with_default_values(
         mock_client,
         mock_box_session,
 ):
-    expected_url = '{0}/users'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/users'
     mock_box_session.get.return_value.json.return_value = {
         'limit': 100,
         'offset': 0,
@@ -568,7 +568,7 @@ def test_get_groups_return_the_correct_group_objects(
 ):
     # pylint:disable=redefined-outer-name
     group_name = 'Employees'
-    expected_url = '{0}/groups'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/groups'
     mock_box_session.get.return_value = groups_response
     groups = mock_client.get_groups(group_name)
     for group, expected_id in zip(groups, [group_id_1, group_id_2]):
@@ -581,7 +581,7 @@ def test_get_groups_return_the_correct_group_objects(
 
 def test_create_group_returns_the_correct_group_object(mock_client, mock_box_session, create_group_response):
     # pylint:disable=redefined-outer-name
-    expected_url = "{0}/groups".format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/groups'
     test_group_name = 'test_group_name'
     value = json.dumps({
         'name': test_group_name,
@@ -623,7 +623,7 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
 def test_create_legal_hold_policy_returns_the_correct_policy_object(mock_client, mock_box_session, create_policy_response, params):
     # pylint:disable=redefined-outer-name
     test_policy_name = 'Test Policy'
-    expected_url = "{0}/legal_hold_policies".format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/legal_hold_policies'
     expected_body = {
         'policy_name': test_policy_name
     }
@@ -649,7 +649,7 @@ def test_get_legal_hold_policies_return_the_correct_policy_objects(
 ):
     # pylint:disable=redefined-outer-name
     policy_name = 'Arbitration'
-    expected_url = '{0}/legal_hold_policies'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/legal_hold_policies'
     mock_box_session.get.return_value = legal_hold_policies_response
     policies = mock_client.get_legal_hold_policies(policy_name)
     for policy, expected_id in zip(policies, [legal_hold_policy_id_1, legal_hold_policy_id_2]):
@@ -686,7 +686,7 @@ def test_get_recent_items_sends_get_with_correct_params(mock_client, mock_box_se
     mock_box_session.get.return_value = recent_items_response
     object_collection = mock_client.get_recent_items(limit=limit, marker=marker, fields=fields)
     object_collection.next()
-    mock_box_session.get.assert_called_once_with('{0}/recent_items'.format(API.BASE_API_URL), params=expected_params)
+    mock_box_session.get.assert_called_once_with(f'{API.BASE_API_URL}/recent_items', params=expected_params)
 
 
 @pytest.mark.parametrize('password', (None, 'p4ssw0rd'))
@@ -698,11 +698,9 @@ def test_get_shared_item_returns_the_correct_item(mock_client, mock_box_session,
     assert item.type == shared_item_response.json()['type']
     mock_box_session.request.assert_called_once_with(
         'GET',
-        '{0}/shared_items'.format(API.BASE_API_URL),
+        f'{API.BASE_API_URL}/shared_items',
         headers={
-            'BoxApi': 'shared_link={0}{1}'.format(
-                shared_link, '&shared_link_password={0}'.format(password) if password is not None else ''
-            ),
+            'BoxApi': f'shared_link={shared_link}{f"&shared_link_password={password}" if password is not None else ""}'
         },
     )
 
@@ -729,7 +727,7 @@ def test_create_app_user_returns_the_correct_user_object(mock_client, mock_box_s
 
     assert len(mock_box_session.post.call_args_list) == 1
 
-    assert mock_box_session.post.call_args[0] == ("{0}/users".format(API.BASE_API_URL),)
+    assert mock_box_session.post.call_args[0] == (f'{API.BASE_API_URL}/users',)
     assert mock_box_session.post.call_args[1] == {'data': value}
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
@@ -746,7 +744,7 @@ def test_create_enterprise_user_returns_the_correct_user_object(mock_client, moc
 
     assert len(mock_box_session.post.call_args_list) == 1
 
-    assert mock_box_session.post.call_args[0] == ("{0}/users".format(API.BASE_API_URL),)
+    assert mock_box_session.post.call_args[0] == (f"{API.BASE_API_URL}/users",)
     assert mock_box_session.post.call_args[1] == {'data': value}
     assert isinstance(new_user, User)
     assert new_user.object_id == 1234
@@ -775,7 +773,7 @@ def test_get_storage_policies(mock_client, mock_box_session):
 
 def test_create_terms_of_service(mock_client, mock_box_session):
     # pylint:disable=redefined-outer-name
-    expected_url = "{0}/terms_of_services".format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/terms_of_services'
     test_text = 'This is a test text'
     test_tos_type = 'external'
     test_status = 'enabled'
@@ -802,7 +800,7 @@ def test_create_terms_of_service(mock_client, mock_box_session):
 
 
 def test_get_all_terms_of_services(mock_client, mock_box_session):
-    expected_url = "{0}/terms_of_services".format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/terms_of_services'
     tos_body = {
         'type': 'terms_of_service',
         'id': '12345',
@@ -832,7 +830,7 @@ def test_create_webhook_returns_the_correct_policy_object(
 ):
     # pylint:disable=redefined-outer-name
     test_item, _ = test_item_and_response
-    expected_url = "{0}/webhooks".format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/webhooks'
     expected_body = {
         'target': {
             'type': test_item.object_type,
@@ -858,7 +856,7 @@ def test_create_webhook_returns_the_correct_policy_object(
 
 
 def test_get_webhooks(mock_client, mock_box_session):
-    expected_url = "{0}/webhooks".format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/webhooks'
     webhook_body = {
         'type': 'webhook',
         'id': '12345',
@@ -885,7 +883,7 @@ def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
     policy_name = 'Test Retention Policy'
     policy_type = 'finite'
     disposition_action = 'remove_retention'
-    expected_url = "{0}/retention_policies".format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/retention_policies'
     expected_data = {
         'policy_name': policy_name,
         'disposition_action': disposition_action,
@@ -947,7 +945,7 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
     policy_name = 'Test Retention Policy'
     policy_type = 'indefinite'
     disposition_action = 'remove_retention'
-    expected_url = "{0}/retention_policies".format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/retention_policies'.format()
     expected_data = {
         'policy_name': policy_name,
         'disposition_action': disposition_action,
@@ -983,7 +981,7 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
 
 
 def test_get_retention_policies(mock_client, mock_box_session, mock_user):
-    expected_url = "{0}/retention_policies".format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/retention_policies'
     mock_policy = {
         'type': 'retention_policy',
         'id': '12345',
@@ -1008,7 +1006,7 @@ def test_get_retention_policies(mock_client, mock_box_session, mock_user):
 
 
 def test_get_file_version_retentions(mock_client, mock_box_session, mock_file, mock_retention_policy):
-    expected_url = "{0}/file_version_retentions".format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/file_version_retentions'
     mock_retention = {
         'type': 'file_version_retention',
         'id': '12345',
@@ -1041,7 +1039,7 @@ def test_get_file_version_retentions(mock_client, mock_box_session, mock_file, m
 
 def test_get_pending_collaborations(mock_client, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
-    expected_url = '{0}/collaborations'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/collaborations'
     mock_collaboration = {
         'type': 'collaboration',
         'id': '12345',
@@ -1090,10 +1088,7 @@ def check_downscope_token_request(
 
         if item:
             expected_data['resource'] = item.get_url()
-        mock_box_session.post.assert_called_once_with(
-            '{0}/token'.format(API.OAUTH2_API_URL),
-            data=expected_data,
-        )
+        mock_box_session.post.assert_called_once_with(f'{API.OAUTH2_API_URL}/token', data=expected_data)
 
     return do_check
 
@@ -1174,7 +1169,7 @@ def test_downscope_token_sends_downscope_request_when_no_initial_token(
 def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_response, device_pin_id_1, device_pin_id_2):
     # pylint:disable=redefined-outer-name
     enterprise_id = '11111'
-    expected_url = '{0}/enterprises/{1}/device_pinners'.format(API.BASE_API_URL, enterprise_id)
+    expected_url = f'{API.BASE_API_URL}/enterprises/{enterprise_id}/device_pinners'
     mock_box_session.get.return_value = device_pins_response
     enterprise = mock_client.enterprise(enterprise_id)
     pins = mock_client.device_pinners(enterprise, direction='ASC')
@@ -1209,7 +1204,7 @@ def test_metadata_template_by_id(mock_client, mock_box_session):
 
 
 def test_get_metadata_templates(mock_client, mock_box_session):
-    expected_url = '{0}/metadata_templates/enterprise'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/metadata_templates/enterprise'
     mock_box_session.get.return_value.json.return_value = {
         'total_count': 1,
         'entries': [
@@ -1247,7 +1242,7 @@ def test_get_metadata_templates(mock_client, mock_box_session):
 
 
 def test_create_metadata_template(mock_client, mock_box_session):
-    expected_url = '{0}/metadata_templates/schema'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/metadata_templates/schema'
     name = 'Vendor Contract'
     key = 'vContract'
     field1 = MetadataField(MetadataFieldType.DATE, 'Birthday', 'bday')
@@ -1297,7 +1292,7 @@ def test_create_metadata_template(mock_client, mock_box_session):
 
 
 def test_get_current_enterprise(mock_client, mock_box_session):
-    expected_url = '{0}/users/me'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/users/me'
     expected_params = {
         'fields': 'enterprise'
     }
@@ -1380,7 +1375,7 @@ def test_collection(mock_client):
 
 def test_collections(mock_client, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
-    expected_url = '{0}/collections'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/collections'
     mock_collection = {
         'type': 'collection',
         'id': '12345',
@@ -1469,7 +1464,7 @@ def test_device_pinner(mock_client):
 
 
 def test_download_zip(mock_client, mock_box_session, mock_content_response):
-    expected_create_url = '{0}/zip_downloads'.format(API.BASE_API_URL)
+    expected_create_url = f'{API.BASE_API_URL}/zip_downloads'
     name = 'test'
     file_item = mock_client.file('466239504569')
     folder_item = mock_client.folder('466239504580')
@@ -1638,7 +1633,7 @@ def mock_sign_request_response():
 
 
 def test_get_sign_requests(mock_client, mock_box_session, mock_sign_request_response):
-    expected_url = '{0}/sign_requests'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/sign_requests'
 
     mock_sign_request = mock_sign_request_response
     mock_box_session.get.return_value.json.return_value = {
@@ -1659,7 +1654,7 @@ def test_get_sign_requests(mock_client, mock_box_session, mock_sign_request_resp
 
 
 def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_response):
-    expected_url = "{0}/sign_requests".format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/sign_requests'
 
     source_file = {
         'id': '12345',

@@ -43,7 +43,7 @@ class Logging:
 
     @staticmethod
     def sanitize_value(value):
-        return '---{}'.format(value[-4:])
+        return f'---{value[-4:]}'
 
     def sanitize_dictionary(self, dictionary):
         if not isinstance(dictionary, Mapping):

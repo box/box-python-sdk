@@ -236,11 +236,11 @@ class Search(BaseEndpoint):
         if scope is not None:
             additional_params['scope'] = scope
         if created_at_range is not None:
-            additional_params['created_at_range'] = '{},{}'.format(created_at_range[0] or '', created_at_range[1] or '')
+            additional_params['created_at_range'] = f'{created_at_range[0] or ""},{created_at_range[1] or ""}'
         if updated_at_range is not None:
-            additional_params['updated_at_range'] = '{},{}'.format(updated_at_range[0] or '', updated_at_range[1] or '')
+            additional_params['updated_at_range'] = f'{updated_at_range[0] or ""},{updated_at_range[1] or ""}'
         if size_range is not None:
-            additional_params['size_range'] = '{},{}'.format(size_range[0] or '', size_range[1] or '')
+            additional_params['size_range'] = f'{size_range[0] or ""},{size_range[1] or ""}'
         if owner_users is not None:
             additional_params['owner_user_ids'] = ','.join([user.object_id for user in owner_users])
         if trash_content is not None:
@@ -402,11 +402,11 @@ class Search(BaseEndpoint):
         if scope is not None:
             additional_params['scope'] = scope
         if created_at_range is not None:
-            additional_params['created_at_range'] = '{},{}'.format(created_at_range[0] or '', created_at_range[1] or '')
+            additional_params['created_at_range'] = f'{created_at_range[0] or ""},{created_at_range[1] or ""}'
         if updated_at_range is not None:
-            additional_params['updated_at_range'] = '{},{}'.format(updated_at_range[0] or '', updated_at_range[1] or '')
+            additional_params['updated_at_range'] = f'{updated_at_range[0] or ""},{updated_at_range[1] or ""}'
         if size_range is not None:
-            additional_params['size_range'] = '{},{}'.format(size_range[0] or '', size_range[1] or '')
+            additional_params['size_range'] = f'{size_range[0] or ""},{size_range[1] or ""}'
         if owner_users is not None:
             additional_params['owner_user_ids'] = ','.join([user.object_id for user in owner_users])
         if trash_content is not None:

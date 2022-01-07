@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import copy
-from typing import Any, Iterator, Iterable
+from typing import Any, Iterator, Iterable, Optional
 
 from ..util.translator import Translator
 
@@ -67,12 +67,11 @@ class BaseAPIJSONObject(metaclass=BaseAPIJSONObjectMeta):
     #     For API object/resource classes this should equal the expected value
     #     of the 'type' field in API JSON responses. Otherwise, this should be
     #     `None`.
-    # :type _item_type:   `unicode` or `None`
     #
     # NOTE: When defining a leaf class with an _item_type in this SDK, it's
     # also important to add the module name to __all__ in object/__init__.py,
     # so that it will be imported and registered with the default translator.
-    _item_type = None
+    _item_type: Optional[str] = None
     _untranslated_fields = ()
 
     def __init__(self, response_object: dict = None, **kwargs: Any):
@@ -111,8 +110,8 @@ class BaseAPIJSONObject(metaclass=BaseAPIJSONObjectMeta):
 
     def __repr__(self) -> str:
         """Base class override. Return a human-readable representation using the Box ID or name of the object."""
-        extra_description = ' - {0}'.format(self._description) if self._description else ''
-        description = '<Box {0}{1}>'.format(self.__class__.__name__, extra_description)
+        extra_description = f' - {self._description}' if self._description else ''
+        description = f'<Box {self.__class__.__name__}{extra_description}>'
         return description
 
     @property

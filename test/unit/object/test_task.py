@@ -17,7 +17,7 @@ def delete_task_response():
 
 
 def test_get(test_task, mock_box_session):
-    expected_url = '{0}/tasks/{1}'.format(API.BASE_API_URL, test_task.object_id)
+    expected_url = f'{API.BASE_API_URL}/tasks/{test_task.object_id}'
     due_at = '2014-04-03T11:09:43-07:00'
     action = 'review'
     message = 'Test Message'
@@ -40,7 +40,7 @@ def test_get(test_task, mock_box_session):
 
 def test_update(test_task, mock_box_session):
     new_message = 'New Message'
-    expected_url = '{0}/tasks/{1}'.format(API.BASE_API_URL, test_task.object_id)
+    expected_url = f'{API.BASE_API_URL}/tasks/{test_task.object_id}'
     mock_box_session.put.return_value.json.return_value = {
         'type': test_task.object_type,
         'id': test_task.object_id,
@@ -66,14 +66,14 @@ def test_delete_policy_return_the_correct_response(
     mock_box_session.delete.return_value = delete_task_response
     response = test_task.delete()
     # pylint:disable=protected-access
-    expected_url = '{0}/tasks/{1}'.format(API.BASE_API_URL, test_task.object_id)
+    expected_url = f'{API.BASE_API_URL}/tasks/{test_task.object_id}'
     # pylint:enable = protected-access
     mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
     assert response is True
 
 
 def test_assign(test_task, mock_user, mock_box_session):
-    expected_url = '{0}/task_assignments'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/task_assignments'
     expected_body = {
         'task': {
             'type': test_task.object_type,
@@ -102,7 +102,7 @@ def test_assign(test_task, mock_user, mock_box_session):
 
 
 def test_assign_with_login(test_task, mock_box_session):
-    expected_url = '{0}/task_assignments'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/task_assignments'
     expected_body = {
         'task': {
             'type': test_task.object_type,
@@ -131,7 +131,7 @@ def test_assign_with_login(test_task, mock_box_session):
 
 
 def test_get_assignments(test_task, mock_box_session):
-    expected_url = '{0}/tasks/{1}/assignments'.format(API.BASE_API_URL, test_task.object_id)
+    expected_url = f'{API.BASE_API_URL}/tasks/{test_task.object_id}/assignments'
     mock_assignment = {
         'type': 'task_assignment',
         'id': '12345',

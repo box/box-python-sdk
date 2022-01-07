@@ -16,7 +16,7 @@ def test_create_file_then_update_info(uploaded_file):
 
 
 def _test_create_then_update_info(item):
-    updated_name = 'updated_{0}'.format(item.name)
+    updated_name = f'updated_{item.name}'
     updated_item = item.update_info({'name': updated_name})
     assert updated_item.name == updated_name
     assert item.get().name == updated_name
@@ -33,7 +33,7 @@ def test_create_file_then_rename(uploaded_file):
 
 
 def _test_create_then_rename(item):
-    updated_name = 'updated_{0}'.format(item.name)
+    updated_name = f'updated_{item.name}'
     updated_item = item.rename(updated_name)
     assert updated_item.name == updated_name
     assert item.get().name == updated_name
