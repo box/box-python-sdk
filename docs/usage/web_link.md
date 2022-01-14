@@ -111,7 +111,7 @@ print('Web link "{0}" has been copied into folder "{1}"'.format(web_link_copy.na
 Rename a Web Link
 -----------
 
-A web link can be renamed by calling [`web_link.rebane(name)`][rename]. This method returns the updated
+A web link can be renamed by calling [`web_link.rename(name)`][rename]. This method returns the updated
 [`WebLink`][web_link_class] object with a new name.
 
 ```python

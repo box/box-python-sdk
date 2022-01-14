@@ -485,7 +485,7 @@ print('File "{0}" has been copied into folder "{1}"'.format(file_copy.name, file
 Rename a File
 -----------
 
-A file can be renamed by calling [`file.rebane(name)`][rename]. This method returns the updated
+A file can be renamed by calling [`file.rename(name)`][rename]. This method returns the updated
 [`File`][file_class] object with a new name. Remeber to provide also extention of the file along with the new name. 
 
 ```python
