@@ -14,6 +14,7 @@ class WebLink(BaseItem):
     @api_call
     def create_shared_link(
             self,
+            *,
             access: Optional[str] = None,
             unshared_at: Optional[str] = SDK_VALUE_NOT_SET,
             password: Optional[str] = None,
@@ -54,6 +55,7 @@ class WebLink(BaseItem):
     @api_call
     def get_shared_link(
             self,
+            *,
             access: Optional[str] = None,
             unshared_at: Optional[str] = SDK_VALUE_NOT_SET,
             password: Optional[str] = None,
