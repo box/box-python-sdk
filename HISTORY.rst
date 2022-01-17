@@ -12,7 +12,7 @@ Release History
 - Add missing parameter stream_position to get_admin_events method (`#648 <https://github.com/box/box-python-sdk/pull/648>`_)
 - Drop support for python 3.5 (`#654 <https://github.com/box/box-python-sdk/pull/654>`_)
 - Remove deprecated code using insensitive language (`#651 <https://github.com/box/box-python-sdk/pull/651>`_)
-- Change some methods signatures to accept keyword-only arguments (`#656 <https://github.com/box/box-python-sdk/pull/656>`_)
+- Enforcing usage of keyword-only arguments in some functions (`#656 <https://github.com/box/box-python-sdk/pull/656>`_)
 
 **New Features and Enhancements:**
 
