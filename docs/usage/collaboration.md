@@ -37,7 +37,7 @@ collaboration = client.folder(folder_id='22222').collaborate(user, Collaboration
 collaborator = collaboration.accessible_by
 item = collaboration.item
 has_accepted = 'has' if collaboration.status == 'accepted' else 'has not'
-print('{0} {1} accepted the collaboration to folder "{2}"'.format(collaborator.name, has_accepted, item.name))
+print(f'{collaborator.name} {has_accepted} accepted the collaboration to folder "{item.name}"')
 ```
 
 Alternatively, you can also invite a user with their email address.
@@ -61,7 +61,7 @@ collaboration = client.folder(folder_id='22222').collaborate(group, Collaboratio
 collaborator = collaboration.accessible_by
 item = collaboration.item
 has_accepted = 'has' if collaboration.status == 'accepted' else 'has not'
-print('{0} {1} accepted the collaboration to folder "{2}"'.format(collaborator.name, has_accepted, item.name))
+print(f'{collaborator.name} {has_accepted} accepted the collaboration to folder "{item.name}"')
 ```
 
 > __Note:__ The `can_view_path` parameter is currently only available for collaborations on folders.
@@ -128,7 +128,7 @@ To retrieve all collaborations on a specified [`Folder`][folder_class] or [`File
 collaborations = client.folder(folder_id='22222').get_collaborations()
 for collab in collaborations:
     target = collab.accessible_by
-    print('{0} {1} is collaborated on the folder'.format(target.type.capitalize(), target.name))
+    print(f'{target.type.capitalize()} {target.name} is collaborated on the folder')
 ```
 
 <!-- sample get_files_id_collaborations -->
@@ -136,7 +136,7 @@ for collab in collaborations:
 collaborations = client.file(file_id='11111').get_collaborations()
 for collab in collaborations
     target = collab.accessible_by
-    print('{0} {1} is collaborated on the file'.format(target.type.capitalize(), target.name))
+    print(f'{target.type.capitalize()} {target.name} is collaborated on the file')
 ```
 
 [folder_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder
@@ -155,7 +155,7 @@ can use to iterate over all pending [`Collaboration`][collaboration_class] objec
 ```python
 pending_collaborations = client.get_pending_collaborations()
 for pending_collaboration in pending_collaborations:
-    print('Collaboration {0} is pending'.format(pending_collaboration.id))
+    print(f'Collaboration {pending_collaboration.id} is pending')
 ```
 
 [get_pending_collaborations]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.get_pending_collaborations

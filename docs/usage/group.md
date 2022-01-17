@@ -32,7 +32,7 @@ enterprise.
 ```python
 groups = client.get_groups()
 for group in groups:
-    print('Group "{0}" has ID "{1}"'.format(group.name, group.id))
+    print(f'Group "{group.name}" has ID "{group.id}"')
 ```
 
 Alternatively, you can set a filter on the name of the groups by passing the `name` parameter:
@@ -41,7 +41,7 @@ Alternatively, you can set a filter on the name of the groups by passing the `na
 group_name = 'Example Group'
 groups = client.get_groups(group_name)
 for group in groups:
-    print('Group {0} has a name matching {1}'.format(group.id, group_name))
+    print(f'Group {group.id} has a name matching {group_name}')
 ```
 
 [get_groups]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.get_groups
@@ -60,7 +60,7 @@ You can read more about the optional parameters in the
 <!-- sample post_groups -->
 ```python
 created_group = client.create_group('Example Group')
-print('Created group with ID {0}'.format(created_group.id))
+print(f'Created group with ID {created_group.id}')
 ```
 
 [create_group]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_group
@@ -76,7 +76,7 @@ object unmodified.
 <!-- sample get_groups_id -->
 ```python
 group = client.group(group_id='11111').get()
-print('Got group {0}'.format(group.name))
+print(f'Got group {group.name}')
 ```
 
 You can optionally specify a list of `fields` to retrieve from the API, in order to filter out fields you don't need or
@@ -84,7 +84,7 @@ add fields that are not returned from the API by default:
 
 ```python
 group = client.group(group_id='11111').get(['name', 'description', 'provenance'])
-print('The "{0}" group ({1}) came from {2}'.format(group.name, group.description, group.provenance))
+print(f'The "{group.name}" group ({group.description}) came from {group.provenance}')
 ```
 
 [group]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.group
@@ -101,7 +101,7 @@ method returns a new [`Group`][group_class] object with the updates applied, lea
 ```python
 group_update = {'name': 'New Group Name'}
 updated_group = client.group(group_id='11111').update_info(group_update)
-print('Changed the name of group {0} to "{1}"'.format(updated_group.id, updated_group.name))
+print(f'Changed the name of group {updated_group.id} to "{updated_group.name}"')
 ```
 
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
@@ -132,7 +132,7 @@ collection.
 ```python
 collaborations = client.group(group_id='11111').get_collaborations()
 for collaboration in collaborations:
-    print('The group is collaborated on {0} {1}'.format(collaboration.item.type, collaboration.item.id))
+    print(f'The group is collaborated on {collaboration.item.type} {collaboration.item.id}')
 ```
 
 [get_collaborations]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.group.Group.get_collaborations
@@ -153,7 +153,7 @@ permissions they have in the group by passing a `dict` of [group permissions][pe
 ```python
 user = client.user('1111')
 membership = client.group(group_id='11111').add_member(user)
-print('Added {0} to the {1} group!'.format(membership.user.name, membership.group.name))
+print(f'Added {membership.user.name} to the {membership.group.name} group!')
 ```
 
 [add_member]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.group.Group.add_member
@@ -173,7 +173,7 @@ populated by data from the API, leaving the original object unmodified.
 ```python
 membership_id = '11111'
 membership = client.group_membership(membership_id).get()
-print('User "{0}" is a member of the {1} group'.format(membership.user.name, membership.group.name))
+print(f'User "{membership.user.name}" is a member of the {membership.group.name} group')
 ```
 
 [group_membership]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.group_membership
@@ -191,7 +191,7 @@ applied, leaving the original object unmodified.
 membership_id = '1234'
 membership_update = {'role': 'admin'}
 updated_membership = client.group_membership(membership_id).update_info(membership_update)
-print('Updated {0}\'s group role to {1}'.format(updated_membership.user.name, updated_membership.role))
+print(f'Updated {updated_membership.user.name}\'s group role to {updated_membership.role}')
 ```
 
 Remove User from Group
@@ -219,7 +219,7 @@ collection.
 ```python
 group_memberships = client.group(group_id='11111').get_memberships()
 for membership in group_memberships:
-    print('{0} is a {1} of the {2} group'.format(membership.user.name, membership.role, membership.group.name))
+    print(f'{membership.user.name} is a {membership.role} of the {membership.group.name} group')
 ```
 
 [get_memberships]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.group.Group.get_memberships
@@ -236,7 +236,7 @@ collection.
 ```python
 user_memberships = client.user(user_id='33333').get_group_memberships()
 for membership in user_memberships:
-    print('User is in the {0} group'format(membership.group.name))
+    print(f'User is in the {membership.group.name} group')
 ```
 
 [get_group_memberships]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.user.User.get_group_memberships

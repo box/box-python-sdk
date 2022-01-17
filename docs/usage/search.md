@@ -17,7 +17,7 @@ to iterate over the [`Item`][item_class] objects in the collection.
 ```python
 items = client.search().query(query='TEST QUERY', limit=100, file_extensions=['pdf', 'doc'])
 for item in items:
-    print('The item ID is {0} and the item name is {1}'.format(item.id, item.name))
+    print(f'The item ID is {item.id} and the item name is {item.name}')
 ```
 
 [query]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.Search.query
@@ -59,7 +59,7 @@ to iterate over the search result objects in the collection.
 ```python
 search_results = client.search().query_with_shared_links(query='TEST QUERY', limit=100, file_extensions=['pdf', 'doc'])
 for search_result in search_results:
-    print('The item ID is {0} and the item name is {1}'.format(search_result.item.id, search_result.item.name))
+    print(f'The item ID is {search_result.item.id} and the item name is {search_result.item.name}')
 ```
 
 [query_with_shared_links]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.search.Search.query_with_shared_links
@@ -97,5 +97,5 @@ items = client.search().metadata_query(
         fields
     )
 for item in items:
-    print('The item ID is {0} and the item name is {1}'.format(item.id, item.name))
+    print(f'The item ID is {item.id} and the item name is {item.name}')
 ```

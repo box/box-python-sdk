@@ -28,7 +28,7 @@ To get a webhook object, first call [`client.webhook(webhook_id)`][webhook] to c
 <!-- sample get_webhooks_id -->
 ```python
 webhook = client.webhook(webhook_id='12345').get()
-print('Webhooks ID is {0} and the address is {1}'.format(webhook.id, webhook.address))
+print(f'Webhooks ID is {webhook.id} and the address is {webhook.address}')
 ```
 
 [webhook]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.webhook
@@ -46,7 +46,7 @@ the collection.
 ```python
 webhooks = client.get_webhooks()
 for webhook in webhooks:
-    print('The webhook ID is {0} and the address is {1}'.format(webhook.id, webhook.address))
+    print(f'The webhook ID is {webhook.id} and the address is {webhook.address}')
 ```
 
 [get_webhooks]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.get_webhooks
@@ -63,14 +63,14 @@ you create a new webhook object with the specified target url, name, and descrip
 ```python
 file = client.file(file_id='12345')
 webhook = client.create_webhook(file, ['FILE.PREVIEWED'], 'https://example.com')
-print('Webhook ID is {0} and the address is {1}'.format(webhook.id, webhook.address))
+print(f'Webhook ID is {webhook.id} and the address is {webhook.address}')
 ```
 
 <!-- sample post_webhooks for_folder -->
 ```python
 folder = client.folder(folder_id='12345')
 webhook = client.create_webhook(folder, ['FILE.UPLOADED', 'FILE.PREVIEWED'], 'https://example.com')
-print('Webhook ID is {0} and the address is {1}'.format(webhook.id, webhook.address))
+print(f'Webhook ID is {webhook.id} and the address is {webhook.address}')
 ```
 
 [create]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_webhook
@@ -105,7 +105,7 @@ update_object = {
     'address': 'https://newexample.com',
 }
 webhook = client.webhook(webhook_id='12345').update_info(update_object)
-print('Updated the webhook info for triggers: {0} and address: {1}'.format(webhook.triggers, webhook.address))
+print(f'Updated the webhook info for triggers: {webhook.triggers} and address: {webhook.address}')
 ```
 
 [webhook]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_webhook
@@ -132,7 +132,7 @@ headers = {
     'box-signature-version': '1',
 }
 is_validated = Webhook.validate_message(body, headers, primary_key, secondary_key)
-print('The webhook message is validated to: {0}'.format(is_validated))
+print(f'The webhook message is validated to: {is_validated}')
 ```
 
 [validated_webhook]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.webhook.Webhook.validate_message

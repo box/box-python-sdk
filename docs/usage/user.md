@@ -42,7 +42,7 @@ user_id = '33333'
 user = client.user(user_id).get(['id', 'name', 'login', 'is_sync_enabled'])
 
 if user.is_sync_enabled:
-    print('User {0} has sync enabled'.format(user.id))
+    print(f'User {user.id} has sync enabled')
 ```
 
 [object_get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
@@ -162,7 +162,7 @@ user_id = '33333'
 user = client.user(user_id)
 email_aliases = user.get_email_aliases()
 for alias in email_aliases:
-    print('User {0} has email alias {1}'.format(user.id, alias.email))
+    print(f'User {user.id} has email alias {alias.email}')
 ```
 
 [get_email_aliases]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.user.User.get_email_aliases
@@ -217,7 +217,7 @@ the collection of [`User`][user_class] objects.
 ```python
 users = client.users(user_type='all')
 for user in users:
-    print('{0} (User ID: {1})'.format(user.name, user.id))
+    print(f'{user.name} (User ID: {user.id})')
 ```
 
 [get_users]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.users
@@ -240,7 +240,7 @@ user = client.user(source_user_id)
 destination_user = client.user(destination_user_id)
 
 folder = user.transfer_content(destination_user)
-print('Created new folder "{0}" in the account of user {1}'.format(folder.name, destination_user.id))
+print(f'Created new folder "{folder.name}" in the account of user {destination_user.id}')
 ```
 
 [transfer_content]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.user.User.transfer_content

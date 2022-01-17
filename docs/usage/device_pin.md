@@ -26,7 +26,7 @@ If an `enterprise` is not specified, this defaults to the current enterprise.  T
 ```python
 device_pins = client.device_pinners()
 for pin in device_pins:
-    print('Pinned {0} device for {1}'.format(pin.product_name, pin.owned_by.name))
+    print(f'Pinned {pin.product_name} device for {pin.owned_by.name}')
 ```
 
 [device_pinners]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.device_pinners
@@ -42,7 +42,7 @@ To get information about a specific device pin, call [`device_pinner.get(fields=
 ```python
 device_pin_id = '1111'
 device_pin = client.device_pinner(device_pin_id).get()
-print('{0} device for {1} is pinned'.format(pin.product_name, pin.owned_by.name))
+print(f'{pin.product_name} device for {pin.owned_by.name} is pinned')
 ```
 
 [get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get

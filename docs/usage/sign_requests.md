@@ -40,7 +40,7 @@ signers = [signer]
 
 parent_folder_id = '123456789'
 new_sign_request = client.create_sign_request(files, signers, parent_folder_id)
-print('(Sign Request ID: {0})'.format(new_sign_request.id))
+print(f'(Sign Request ID: {new_sign_request.id})')
 ```
 
 If you set ```isDocumentPreparationNeeded``` flag to true, you need to visit ```prepareUrl``` before the Sign Request will be sent. 
@@ -60,7 +60,7 @@ from boxsdk.object.sign_request import SignRequest
 
 sign_requests = client.get_sign_requests()
 for sign_request in sign_requests:
-    print('(Sign Request ID: {0})'.format(sign_request.id))
+    print(f'(Sign Request ID: {sign_request.id})')
 ```
 
 [get-all-sign-requests]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.get_sign_requests
@@ -77,7 +77,7 @@ The `fields` parameter is used to specify what additional properties should be r
 from boxsdk.object.sign_request import SignRequest
 
 sign_request = client.sign_request(sign_request_id='12345').get()
-print('Sign Request ID is {0}'.format(sign_request.id))
+print(f'Sign Request ID is {sign_request.id}')
 ```
 
 [get-sign-request-by-id]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.sign_request
@@ -93,7 +93,7 @@ from boxsdk.object.sign_request import SignRequest
 
 sign_request = client.sign_request(sign_request_id='12345')
 cancelled_sign_request = sign_request.cancel()
-print('Cancelled Sign Request status is {0}'.format(cancelled_sign_request.status))
+print(f'Cancelled Sign Request status is {cancelled_sign_request.status}')
 ```
 
 [cancel-sign-request]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.retention_policy.SignRequest.cancel

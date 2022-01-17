@@ -32,7 +32,7 @@ method will return a newly created [`TermsOfService`][terms_of_service_class] ob
 ```python
 from boxsdk.object.terms_of_service import TermsOfServiceType, TermsOfServiceStatus
 terms_of_service = client.create_terms_of_service(TermsOfServiceStatus.ENABLED,TermsOfServiceType.MANAGED, 'Example Text')
-print('Terms of Service status is {0} and the message is {1}'.format(terms_of_service.status, terms_of_service.text))
+print(f'Terms of Service status is {terms_of_service.status} and the message is {terms_of_service.text}')
 ```
 
 [create]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_terms_of_service
@@ -49,7 +49,7 @@ object, leaving the original object unmodified.
 ```python
 update_object = {'text': 'New Text'}
 updated_tos = client.terms_of_service(tos_id='12345').update_info(update_object)
-print('The updated message for your custom terms of service is {0} with ID {1}'.format(updated_tos.text, updated_tos.id))
+print(f'The updated message for your custom terms of service is {updated_tos.text} with ID {updated_tos.id}')
 ```
 
 [terms_of_service]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.terms_of_service
@@ -66,7 +66,7 @@ will return the [`TermsOfService`][terms_of_service_class] object populated with
 <!-- sample get_terms_of_services_id -->
 ```python
 terms_of_service = client.terms_of_service(tos_id='12345').get()
-print('Terms of Service ID is {0} and the message is {1}'.format(terms_of_service.id, terms_of_service.text))
+print(f'Terms of Service ID is {terms_of_service.id} and the message is {terms_of_service.text}')
 ```
 
 [terms_of_service]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.terms_of_service
@@ -85,7 +85,7 @@ collection.
 ```python
 terms_of_services = client.get_terms_of_services()
 for terms_of_service in terms_of_services:
-    print('Terms of Service ID is {0} and the message is {1}'.format(terms_of_service.id, terms_of_service.text))
+    print(f'Terms of Service ID is {terms_of_service.id} and the message is {terms_of_service.text}')
 ```
 
 [get_terms_of_services]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.terms_of_service
@@ -104,7 +104,7 @@ assigned then [`terms_of_service.set_user_status(is_accepted, user)`][set_user_s
 ```python
 user = client.user(user_id='22222')
 user_status = client.terms_of_service(tos_id='12345').set_user_status(is_accepted=True, user=user)
-print('User status ID is {0} and the accepted status is {1}'.format(user_status.id, user_status.is_accepted)
+print(f'User status ID is {user_status.id} and the accepted status is {user_status.is_accepted}')
 ```
 
 It is important to note that regardless of whether the user has taken action on this terms of service. This will create 
@@ -118,7 +118,7 @@ with a `dict` of properties to update on the terms of service user status. This 
 <!-- sample put_terms_of_service_user_statuses_id -->
 ```python
 user_status = client.terms_of_service_user_status(tos_user_status_id='12345').update_info({'is_accepted': True})
-print('Terms of Service User Status ID is {0} and the accepted status is {1}'.format(user_status.id, user_status.is_accepted))
+print(f'Terms of Service User Status ID is {user_status.id} and the accepted status is {user_status.is_accepted}')
 ```
 
 It is important to note that this will accept or decline a custom terms of service for a user. For a user that has taken 
@@ -146,7 +146,7 @@ to construct the appropriate [`TermsOfServiceUserStatus`][terms_of_service_user_
 ```python
 user = client.user(user_id='11111')
 user_status = client.terms_of_service(tos_id='12345').get_user_status(user)
-print('User status ID is {0} and the accepted status is {1}'.format(user_status.id, user_status.is_accepted)
+print(f'User status ID is {user_status.id} and the accepted status is {user_status.is_accepted}')
 ```
 
 [user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.user

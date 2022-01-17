@@ -50,10 +50,7 @@ ones not returned by default.
 <!-- sample get_folders_id -->
 ```python
 folder = client.folder(folder_id='22222').get()
-print('Folder "{0}" has {1} items in it'.format(
-    folder.name,
-    folder.item_collection.['total_count'],
-))
+print(f'Folder "{folder.name}" has {folder.item_collection["total_count"]} items in it')
 ```
 
 [folder]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.folder
@@ -84,7 +81,7 @@ the collection.
 ```python
 items = client.folder(folder_id='22222').get_items()
 for item in items:
-    print('{0} {1} is named "{2}"'.format(item.type.capitalize(), item.id, item.name))
+    print(f'{item.type.capitalize()} {item.id} is named "{item.name}"')
 ```
 
 [get_items]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.get_items
@@ -118,7 +115,7 @@ subfolder.
 <!-- sample post_folders -->
 ```python
 subfolder = client.folder('0').create_subfolder('My Stuff')
-print('Created subfolder with ID {0}'.format(subfolder.id))
+print(f'Created subfolder with ID {subfolder.id}')
 ```
 
 [create_subfolder]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.create_subfolder
@@ -139,7 +136,7 @@ folder_to_copy = client.folder(folder_id)
 destination_folder = client.folder(destination_folder_id)
 
 folder_copy = folder_to_copy.copy(destination_folder)
-print('Folder "{0}" has been copied into folder "{1}"'.format(folder_copy.name, folder_copy.parent.name))
+print(f'Folder "{folder_copy.name}" has been copied into folder "{folder_copy.parent.name}"')
 ```
 
 [copy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_item.BaseItem.copy
@@ -160,7 +157,7 @@ folder_to_move = client.folder(folder_id)
 destination_folder = client.folder(destination_folder_id)
 
 moved_folder = folder_to_move.move(destination_folder)
-print('Folder "{0}" has been moved into folder "{1}"'.format(moved_folder.name, moved_folder.parent.name))
+print(f'Folder "{moved_folder.name}" has been moved into folder "{moved_folder.parent.name}"')
 ```
 
 [move]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_item.BaseItem.move
@@ -175,7 +172,7 @@ A folder can be renamed by calling [`folder.rebane(name)`][rename]. This method 
 folder = client.folder(folder_id='11111')
 
 renamed_folder = folder.rename("new-name")
-print('Folder was renamed to "{0}"'.format(renamed_folder.name))
+print(f'Folder was renamed to "{renamed_folder.name}"')
 ```
 
 [rename]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_item.BaseItem.rename
@@ -223,7 +220,7 @@ This method returns a `unicode` string containing the shared link URL.
 folder_id = '11111'
 
 url = client.folder(folder_id).get_shared_link(access='open', allow_download=False)
-print('The folder shared link URL is: {0}'.format(url))
+print(f'The folder shared link URL is: {url}')
 ```
 
 [get_shared_link]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_shared_link
@@ -243,7 +240,7 @@ This method returns a `unicode` string containing the shared link URL.
 folder_id = '11111'
 
 url = client.folder(folder_id).get_shared_link(access='open', allow_download=True)
-print('The folder shared link URL is: {0}'.format(url))
+print(f'The folder shared link URL is: {url}')
 ```
 
 [update_shared_link]:
@@ -294,7 +291,7 @@ metadata = {
     'foo': 'bar',
 }
 applied_metadata = client.folder(folder_id='11111').metadata(scope='enterprise', template='testtemplate').set(metadata)
-print('Set metadata in instance ID {0}'.format(applied_metadata['$id']))
+print(f'Set metadata in instance ID {applied_metadata["$id"]}')
 ```
 
 Metadata can be added to a folder either as free-form key/value pairs or from an existing template.  To add metadata to
@@ -315,7 +312,7 @@ metadata = {
 }
 
 applied_metadata = client.folder(folder_id='22222').metadata().create(metadata)
-print('Applied metadata in instance ID {0}'.format(applied_metadata['$id']))
+print(f'Applied metadata in instance ID {applied_metadata["$id"]}')
 ```
 
 Updating metadata values is performed via a series of discrete operations, which are applied atomically against the
@@ -341,7 +338,7 @@ updates.update('/baz', 'murp', old_value='quux')  # Ensure the old value was "qu
 
 updated_metadata = folder_metadata.update(updates)
 print('Updated metadata on folder!')
-print('foo is now {0} and baz is now {1}'.format(updated_metadata['foo'], updated_metadata['baz']))
+print(f'foo is now {updated_metadata["foo"]} and baz is now {updated_metadata["baz"]}')
 ```
 
 [set_metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.set
@@ -362,7 +359,7 @@ to the folder.  This method returns a `dict` containing the applied metadata ins
 <!-- sample get_folders_id_metadata_id_id -->
 ```python
 metadata = client.folder(folder_id='22222').metadata(scope='enterprise', template='myMetadata').get()
-print('Got metadata instance {0}'.format(metadata['$id']))
+print(f'Got metadata instance {metadata["$id"]}')
 ```
 
 [metadata_get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.get
@@ -394,7 +391,7 @@ metadata instance attached to the folder.
 folder_metadata = client.folder(folder_id='22222').get_all_metadata()
 for instance in folder_metadata:
     if 'foo' in instance:
-        print('Metadata instance {0} has value "{1}" for foo'.format(instance['id'], instance['foo']))
+        print(f'Metadata instance {instance["id"]} has value "{instance["foo"]}" for foo')
 ```
 
 [get_all_metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_all_metadata
@@ -419,11 +416,7 @@ items = client.folder(folder_id='22222').get_items(fields=fields)
 for item in items:
     if item.metadata:
         metadata = item.metadata['enterprise']['vendorContract']
-        print('{0} {1} is a vendor contract with vendor name {2}'.format(
-            item.type.capitalize(),
-            item.id,
-            metadata['vendorName'],
-        ))
+        print(f'{item.type.capitalize()} {item.id} is a vendor contract with vendor name {metadata["vendorName"]}')
 ```
 
 Set a Classification
@@ -439,7 +432,7 @@ this call will update the existing classification with the new [`ClassificationT
 from boxsdk.object.item import ClassificationType
 
 classification = client.folder(folder_id='11111').set_classification(ClassificationType.PUBLIC)
-print('Classification Type is: {0}'.format(classification))
+print(f'Classification Type is: {classification}')
 ```
 
 The set method will always work no matter the state your [`Folder`][folder_class] is in. For cases already where a
@@ -451,7 +444,7 @@ Alternatively, if you already know you have a classification and you are simple 
 
 ```python
 classification = client.folder(folder_id='11111').update_classification(ClassificationType.NONE)
-print('Classification Type is: {0}'.format(classification))
+print(f'Classification Type is: {classification}')
 ```
 
 [set_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.set_classification
@@ -466,7 +459,7 @@ This method returns the classification type on the [`Folder`][folder_class] obje
 
 ```python
 classification = client.folder(folder_id='11111').get_classification()
-print('Classification Type is: {0}'.format(classification))
+print(f'Classification Type is: {classification}')
 ```
 
 [get_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_classification
@@ -491,7 +484,7 @@ with the ID of the folder. This prevents the folder from being moved and/or dele
 
 ```python
 lock = client.folders(folder_id).create_lock()
-print('Created a lock with ID {0}'.format(lock.folder.id))
+print(f'Created a lock with ID {lock.folder.id}')
 ```
 
 [create_folder_lock]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.create_lock
@@ -507,7 +500,7 @@ with the ID of the folder. Currently only one lock can exist per folder. Folder 
 ```python
 locks = client.folders(folder_id).get_locks()
 lock = locks.next()
-print('A lock on a folder with ID {0}'.format(lock.folder.id))
+print(f'A lock on a folder with ID {lock.folder.id}')
 ```
 
 [get_folder_locks]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.get_locks

@@ -28,13 +28,13 @@ data from the API.
 <!-- sample get_files_id_watermark -->
 ```python
 watermark = client.file(file_id='12345').get_watermark()
-print('Watermark created at {0} and modified at {1}'.format(watermark.created_at, watermark.modified_at))
+print(f'Watermark created at {watermark.created_at} and modified at {watermark.modified_at}')
 ```
 
 <!-- sample get_folders_id_watermark -->
 ```python
 watermark = client.folder(folder_id='11111').get_watermark()
-print('Watermark created at {0} and modified at {1}'.format(watermark.created_at, watermark.modified_at))
+print(f'Watermark created at {watermark.created_at} and modified at {watermark.modified_at}')
 ```
 
 [get_file_watermark]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_watermark()
@@ -51,13 +51,13 @@ data from the API.
 <!-- sample put_files_id_watermark -->
 ```python
 watermark = client.file(file_id='12345').apply_watermark()
-print('Watermark created at {0} and modified at {1}'.format(watermark.created_at, watermark.modified_at))
+print(f'Watermark created at {watermark.created_at} and modified at {watermark.modified_at}')
 ```
 
 <!-- sample put_folders_id_watermark -->
 ```python
 watermark = client.folder(folder_id='11111').apply_watermark()
-print('Watermark created at {0} and modified at {1}'.format(watermark.created_at, watermark.modified_at))
+print(f'Watermark created at {watermark.created_at} and modified at {watermark.modified_at}')
 ```
 
 [apply-file-watermark]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.file.File.apply_watermark()
