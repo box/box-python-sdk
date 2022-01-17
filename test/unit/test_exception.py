@@ -8,10 +8,10 @@ from boxsdk.network.default_network import DefaultNetworkResponse
 
 
 def test_box_api_exception():
-    status = 'status'
-    code = 400
+    status = 400
+    code = 'code'
     message = 'message'
-    request_id = 12345
+    request_id = '12345'
     headers = {'header': 'value'}
     url = 'https://example.com'
     method = 'GET'
@@ -34,19 +34,19 @@ def test_box_api_exception():
     assert box_exception.url == url
     assert box_exception.method == method
     assert box_exception.context_info == context_info
-    assert str(box_exception) == '''Message: {0}
-Status: {1}
-Code: {2}
-Request ID: {3}
-Headers: {4}
-URL: {5}
-Method: {6}
-Context Info: {7}'''.format(message, status, code, request_id, headers, url, method, context_info)
+    assert str(box_exception) == f'''Message: {message}
+Status: {status}
+Code: {code}
+Request ID: {request_id}
+Headers: {headers}
+URL: {url}
+Method: {method}
+Context Info: {context_info}'''
 
 
 @pytest.mark.parametrize('has_network_response', [True, False])
 def test_box_oauth_exception(has_network_response):
-    status = 'status'
+    status = 400
     message = 'message'
     url = 'https://example.com'
     method = 'GET'
@@ -59,10 +59,10 @@ def test_box_oauth_exception(has_network_response):
         method=method,
         network_response=network_response,
     )
-    assert str(box_exception) == '''
-Message: {0}
-Status: {1}
-URL: {2}
-Method: {3}
-Headers: {4}'''.format(message, status, url, method, headers if has_network_response else 'N/A')
+    assert str(box_exception) == f'''
+Message: {message}
+Status: {status}
+URL: {url}
+Method: {method}
+Headers: {headers if has_network_response else 'N/A'}'''
     assert box_exception.network_response is network_response

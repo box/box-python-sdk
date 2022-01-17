@@ -112,7 +112,7 @@ print(f'Web link "{web_link_copy.name}" has been copied into folder "{web_link_c
 Rename a Web Link
 -----------
 
-A web link can be renamed by calling [`web_link.rebane(name)`][rename]. This method returns the updated
+A web link can be renamed by calling [`web_link.rename(name)`][rename]. This method returns the updated
 [`WebLink`][web_link_class] object with a new name.
 
 ```python

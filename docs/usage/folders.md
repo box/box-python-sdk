@@ -165,7 +165,7 @@ print(f'Folder "{moved_folder.name}" has been moved into folder "{moved_folder.p
 Rename a File
 -----------
 
-A folder can be renamed by calling [`folder.rebane(name)`][rename]. This method returns the updated
+A folder can be renamed by calling [`folder.rename(name)`][rename]. This method returns the updated
 [`Folder`][folder_class] object with a new name.
 
 ```python

@@ -3,6 +3,7 @@
 from collections import OrderedDict
 from itertools import chain
 import json
+from typing import Optional, Union
 from urllib.parse import urlunsplit, urlencode
 
 from mock import Mock
@@ -61,23 +62,18 @@ def test_events_stream_type_extended_enum_class_has_expected_members():
         ['future_stream_type'],
     )),
 )
-def stream_type_param(request):
+def stream_type_param(request) -> Optional[Union[str, EventsStreamType]]:
     """The value to pass as an Event method's stream_type parameter.
 
     :return:
         The parameter value, or `None` if no value should be passed.
-    :rtype:
-        :enum:`EventsStreamType` or `unicode` or `None`
     """
     return request.param
 
 
 @pytest.fixture()
-def expected_stream_type(stream_type_param):
+def expected_stream_type(stream_type_param) -> str:
     """The stream type we expect to use.
-
-    :rtype:
-        `unicode`
     """
     if stream_type_param is None:
         return UserEventsStreamType.ALL
@@ -85,11 +81,8 @@ def expected_stream_type(stream_type_param):
 
 
 @pytest.fixture()
-def stream_type_kwargs(stream_type_param):
+def stream_type_kwargs(stream_type_param) -> dict:
     """The kwargs for stream_type to pass when invoking a method on `Events`.
-
-    :rtype:
-        `dict`
     """
     if stream_type_param:
         return {'stream_type': stream_type_param}
@@ -97,11 +90,8 @@ def stream_type_kwargs(stream_type_param):
 
 
 @pytest.fixture()
-def expected_stream_type_params(expected_stream_type):
+def expected_stream_type_params(expected_stream_type) -> OrderedDict:
     """The stream_type-related params that we expect to pass to request methods.
-
-    :rtype:
-        :class:`OrderedDict`
     """
     return OrderedDict(stream_type=expected_stream_type)
 

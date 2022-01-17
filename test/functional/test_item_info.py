@@ -16,8 +16,8 @@ def test_create_file_then_update_info(uploaded_file):
 
 
 def _test_create_then_update_info(item):
-    updated_name = 'updated_{0}'.format(item.name)
-    updated_item = item.update_info({'name': updated_name})
+    updated_name = f'updated_{item.name}'
+    updated_item = item.update_info(data={'name': updated_name})
     assert updated_item.name == updated_name
     assert item.get().name == updated_name
 
@@ -33,7 +33,7 @@ def test_create_file_then_rename(uploaded_file):
 
 
 def _test_create_then_rename(item):
-    updated_name = 'updated_{0}'.format(item.name)
+    updated_name = f'updated_{item.name}'
     updated_item = item.rename(updated_name)
     assert updated_item.name == updated_name
     assert item.get().name == updated_name
@@ -79,7 +79,7 @@ def test_create_file_then_copy(box_client, uploaded_file):
 def _test_create_then_copy(box_client, item):
     # pylint:disable=redefined-outer-name
     copy_target = box_client.folder('0').create_subfolder('copy target')
-    copied_item = item.copy(copy_target)
+    copied_item = item.copy(parent_folder=copy_target)
     item = item.get()
     copied_item = copied_item.get()
     assert item.id != copied_item.id

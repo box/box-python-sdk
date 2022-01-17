@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import json
+from typing import Any
 
 from .base_object import BaseObject
 from ..util.text_enum import TextEnum
@@ -17,17 +18,15 @@ class MetadataCascadePolicy(BaseObject):
 
     _item_type = 'metadata_cascade_policy'
 
-    def get_url(self, *args):
+    def get_url(self, *args: Any) -> str:
         """
         Base class override to account for the correct pluralization.
 
-        :rtype:
-            `unicode`
         """
         return self._session.get_url('metadata_cascade_policies', self.object_id, *args)
 
     @api_call
-    def force_apply(self, conflict_resolution):
+    def force_apply(self, conflict_resolution: CascadePolicyConflictResolution) -> bool:
         """
         Applies the metadata values on the folder to all files within the folder.  The conflict resolution
         parameter determines how conflicts when the same metadata template is already applied to a file will be
@@ -35,12 +34,8 @@ class MetadataCascadePolicy(BaseObject):
 
         :param conflict_resolution:
             How conflicting metadata values should be reolved
-        :type conflict_resolution:
-            :class:`CascadePolicyConflictResolution`
         :returns:
             Whether the force application succeeded.
-        :rtype:
-            `bool`
         """
         url = self.get_url('apply')
         body = {

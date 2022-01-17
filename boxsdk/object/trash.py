@@ -1,31 +1,31 @@
 # coding: utf-8
 import json
+from typing import Iterable, TYPE_CHECKING, Optional
 
 from .base_endpoint import BaseEndpoint
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..util.api_call_decorator import api_call
+
+if TYPE_CHECKING:
+    from boxsdk.object.item import Item
+    from boxsdk.object.folder import Folder
+    from boxsdk.pagination.box_object_collection import BoxObjectCollection
 
 
 class Trash(BaseEndpoint):
     """Box API endpoint for performing trash related actions in Box."""
 
     @api_call
-    def get_item(self, item, fields=None):
+    def get_item(self, item: 'Item', fields: Iterable[str] = None) -> 'Item':
         """
         Get item from trash.
 
         :param item:
             The :class:`Item` object to get info on.
-        :type item:
-            :class:`Item`
         :param fields:
             List of fields to request
-        :type fields:
-            `Iterable` of `unicode`
         :returns:
             Information for a trashed :class:`Item` object.
-        :rtype:
-            :class:`Item`
         """
         url = item.get_url('trash')
         params = {}
@@ -39,30 +39,26 @@ class Trash(BaseEndpoint):
         )
 
     @api_call
-    def restore_item(self, item, name=None, parent_folder=None, fields=None):
+    def restore_item(
+            self,
+            item: 'Item',
+            name: Optional[str] = None,
+            parent_folder: Optional['Folder'] = None,
+            fields: Iterable[str] = None
+    ) -> 'Item':
         """
         Restores an item from the trash. Could be files, folders, or weblinks.
 
         :param item:
             The :class:`Item` object to restore from trash.
-        :type item:
-            :class:`Item`.
         :param name:
             The new name for this item. Only used if the item can't be restored due to name conflict.
-        :type name:
-            `unicode` or None
         :param parent_folder:
             The new parent folder. Only used if the previous parent folder no longer exists.
-        :type parent_folder:
-            :class:`Item` or None
         :param fields:
             List of fields to request
-        :type fields:
-            `Iterable` of `unicode`
         :returns:
             A restored :class:`Item`.
-        :rtype:
-            :class:`Item`.
         """
         url = item.get_url()
         body = {}
@@ -81,44 +77,32 @@ class Trash(BaseEndpoint):
         )
 
     @api_call
-    def permanently_delete_item(self, item):
+    def permanently_delete_item(self, item: 'Item') -> bool:
         """
         Permanently delete an item that is in the trash. The item will no longer exist in Box.
 
         :param item:
             The :class:`Item` to delete from trash.
-        :type item:
-            :class:`Item`
         :returns:
             Whether or not the delete was successful.
-        :rtype:
-            `bool`
         """
         url = item.get_url('trash')
         box_response = self._session.delete(url, expect_json_response=False)
         return box_response.ok
 
     @api_call
-    def get_items(self, limit=None, offset=None, fields=None):
+    def get_items(self, limit: Optional[int] = None, offset: Optional[int] = None, fields: Iterable[str] = None) -> 'BoxObjectCollection':
         """
         Using limit-offset paging, get the files, folders and web links that are in the user's trash.
 
         :param limit:
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
-        :type limit:
-            `int` or None
         :param offset:
             The offset of the item at which to begin the response.
-        :type offset:
-            `int` or None
         :param fields:
             List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
         :returns:
             An iterator of the entries in the trash
-        :rtype:
-            :class:`BoxObjectCollection`
         """
         return LimitOffsetBasedObjectCollection(
             session=self._session,

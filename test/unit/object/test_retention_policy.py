@@ -6,7 +6,7 @@ from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 
 
 def test_get(test_retention_policy, mock_box_session):
-    expected_url = '{0}/retention_policies/{1}'.format(API.BASE_API_URL, test_retention_policy.object_id)
+    expected_url = f'{API.BASE_API_URL}/retention_policies/{test_retention_policy.object_id}'
     mock_box_session.get.return_value.json.return_value = {
         'type': test_retention_policy.object_type,
         'id': test_retention_policy.object_id,
@@ -25,7 +25,7 @@ def test_get(test_retention_policy, mock_box_session):
 
 def test_update(test_retention_policy, mock_box_session):
     new_policy_name = 'New Name'
-    expected_url = '{0}/retention_policies/{1}'.format(API.BASE_API_URL, test_retention_policy.object_id)
+    expected_url = f'{API.BASE_API_URL}/retention_policies/{test_retention_policy.object_id}'
     mock_box_session.put.return_value.json.return_value = {
         'type': test_retention_policy.object_type,
         'id': test_retention_policy.object_id,
@@ -36,7 +36,7 @@ def test_update(test_retention_policy, mock_box_session):
     data = {
         'policy_name': new_policy_name,
     }
-    retention_policy = test_retention_policy.update_info(data)
+    retention_policy = test_retention_policy.update_info(data=data)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
     assert isinstance(retention_policy, RetentionPolicy)
     assert retention_policy['type'] == test_retention_policy.object_type

@@ -5,6 +5,8 @@ import math
 
 from functools import partial
 from logging import getLogger
+from numbers import Number
+from typing import TYPE_CHECKING, Optional, Any, Type, Callable
 
 from boxsdk.exception import BoxException
 from .box_request import BoxRequest as _BoxRequest
@@ -16,6 +18,11 @@ from ..util.json import is_json_response
 from ..util.multipart_stream import MultipartStream
 from ..util.shared_link import get_shared_link_header
 from ..util.translator import Translator
+
+if TYPE_CHECKING:
+    from boxsdk.network.network_interface import Network
+    from boxsdk.object.user import User
+    from boxsdk import NetworkResponse, OAuth2
 
 
 class Session:
@@ -29,46 +36,33 @@ class Session:
     """
     def __init__(
             self,
-            network_layer=None,
-            default_headers=None,
-            translator=None,
-            default_network_request_kwargs=None,
-            api_config=None,
-            client_config=None,
-            proxy_config=None,
+            network_layer: 'Network' = None,
+            default_headers: Optional['dict'] = None,
+            translator: Translator = None,
+            default_network_request_kwargs: Optional['dict'] = None,
+            api_config: API = None,
+            client_config: Client = None,
+            proxy_config: Optional[Proxy] = None,
     ):
         """
         :param network_layer:
             Network implementation used by the session to make requests.
-        :type network_layer:
-            :class:`Network`
         :param default_headers:
             A dictionary containing default values to be used as headers when this session makes an API request.
-        :type default_headers:
-            `dict` or None
         :param translator:
             (optional) The translator to use for translating Box API JSON
             responses into :class:`BaseAPIJSONObject` smart objects.
             Defaults to a new :class:`Translator` that inherits the
             registrations of the default translator.
-        :type translator:   :class:`Translator`
         :param default_network_request_kwargs:
             A dictionary containing default values to be passed to the network layer
             when this session makes an API request.
-        :type default_network_request_kwargs:
-            `dict` or None
         :param api_config:
             Object containing URLs for the Box API.
-        :type api_config:
-            :class:`API`
         :param client_config:
             Object containing client information, including user agent string.
-        :type client_config:
-            :class:`Client`
         :param proxy_config:
             Object containing proxy information.
-        :type proxy_config:
-            :class:`Proxy` or None
         """
         if translator is None:
             translator = Translator(extend_default_translator=True, new_child=True)
@@ -89,136 +83,103 @@ class Session:
             self._default_network_request_kwargs.update(default_network_request_kwargs)
         self._logger = getLogger(__name__)
 
-    def get(self, url, **kwargs):
+    def get(self, url: str, **kwargs: Any) -> '_BoxResponse':
         """Make a GET request to the Box API.
 
         :param url:
             The URL for the request.
-        :type url:
-            `unicode`
         """
         return self.request('GET', url, **kwargs)
 
-    def post(self, url, **kwargs):
+    def post(self, url: str, **kwargs: Any) -> '_BoxResponse':
         """Make a POST request to the Box API.
 
         :param url:
             The URL for the request.
-        :type url:
-            `unicode`
         """
         return self.request('POST', url, **kwargs)
 
-    def put(self, url, **kwargs):
+    def put(self, url: str, **kwargs: Any) -> '_BoxResponse':
         """Make a PUT request to the Box API.
 
         :param url:
             The URL for the request.
-        :type url:
-            `unicode`
         """
         return self.request('PUT', url, **kwargs)
 
-    def delete(self, url, **kwargs):
+    def delete(self, url: str, **kwargs: Any) -> '_BoxResponse':
         """Make a DELETE request to the Box API.
 
         :param url:
             The URL for the request.
-        :type url:
-            `unicode`
         """
         if 'expect_json_response' not in kwargs:
             kwargs['expect_json_response'] = False
         return self.request('DELETE', url, **kwargs)
 
-    def options(self, url, **kwargs):
+    def options(self, url: str, **kwargs: Any) -> '_BoxResponse':
         """Make an OPTIONS request to the Box API.
 
         :param url:
             The URL for the request.
-        :type url:
-            `unicode`
         """
         return self.request('OPTIONS', url, **kwargs)
 
-    def request(self, method, url, **kwargs):
+    def request(self, method: str, url: str, **kwargs: Any) -> '_BoxResponse':
         """Make a request to the Box API.
 
         :param method:
             The HTTP verb for the request.
-        :type method:
-            `unicode`
         :param url:
             The URL for the request.
-        :type url:
-            `unicode`
         """
         response = self._prepare_and_send_request(method, url, **kwargs)
         return self.box_response_constructor(response)
 
     @property
-    def box_request_constructor(self):
+    def box_request_constructor(self) -> Type[_BoxRequest]:
         """Get the constructor for the container class representing an API request"""
         return _BoxRequest
 
     @property
-    def box_response_constructor(self):
+    def box_response_constructor(self) -> Type[_BoxResponse]:
         """Get the constructor for the container class representing an API response"""
         return _BoxResponse
 
     @property
-    def translator(self):
-        """The translator used for translating Box API JSON responses into `BaseAPIJSONObject` smart objects.
-
-        :rtype:   :class:`Translator`
+    def translator(self) -> Translator:
+        """
+        The translator used for translating Box API JSON responses into `BaseAPIJSONObject` smart objects.
         """
         return self._translator
 
     @property
-    def api_config(self):
-        """
-
-        :rtype:     :class:`API`
-        """
+    def api_config(self) -> API:
         return self._api_config
 
     @property
-    def client_config(self):
-        """
-
-        :rtype:     :class:`Client`
-        """
+    def client_config(self) -> Client:
         return self._client_config
 
     @property
-    def proxy_config(self):
-        """
-
-        :rtype:     :class:`Proxy`
-        """
+    def proxy_config(self) -> Proxy:
         return self._proxy_config
 
-    def get_url(self, endpoint, *args):
+    def get_url(self, endpoint: str, *args: Any) -> str:
         """
         Return the URL for the given Box API endpoint.
 
         :param endpoint:
             The name of the endpoint.
-        :type endpoint:
-            `url`
         :param args:
             Additional parts of the endpoint URL.
-        :type args:
-            `Iterable`
-        :rtype:
-            `unicode`
         """
         # pylint:disable=no-self-use
-        url = ['{0}/{1}'.format(self._api_config.BASE_API_URL, endpoint)]
-        url.extend(['/{0}'.format(x) for x in args])
+        url = [f'{self._api_config.BASE_API_URL}/{endpoint}']
+        url.extend([f'/{x}' for x in args])
         return ''.join(url)
 
-    def get_constructor_kwargs(self):
+    def get_constructor_kwargs(self) -> dict:
         return dict(
             network_layer=self._network_layer,
             translator=self._translator,
@@ -229,37 +190,31 @@ class Session:
             default_headers=self._default_headers.copy(),
         )
 
-    def as_user(self, user):
+    def as_user(self, user: 'User') -> 'Session':
         """
         Returns a new session object with default headers set up to make requests as the specified user.
 
         :param user:
             The user to impersonate when making API requests.
-        :type user:
-            :class:`User`
         """
         kwargs = self.get_constructor_kwargs()
         kwargs['default_headers']['As-User'] = user.object_id
         return self.__class__(**kwargs)
 
-    def with_shared_link(self, shared_link, shared_link_password=None):
+    def with_shared_link(self, shared_link: str, shared_link_password: str = None) -> 'Session':
         """
         Returns a new session object with default headers set up to make requests using the shared link for auth.
 
         :param shared_link:
             The shared link.
-        :type shared_link:
-            `unicode`
         :param shared_link_password:
             The password for the shared link.
-        :type shared_link_password:
-            `unicode`
         """
         kwargs = self.get_constructor_kwargs()
         kwargs['default_headers'].update(get_shared_link_header(shared_link, shared_link_password))
         return self.__class__(**kwargs)
 
-    def with_default_network_request_kwargs(self, extra_network_parameters):
+    def with_default_network_request_kwargs(self, extra_network_parameters: dict) -> 'Session':
         kwargs = self.get_constructor_kwargs()
         kwargs['default_network_request_kwargs'].update(extra_network_parameters)
         return self.__class__(**kwargs)
@@ -267,7 +222,7 @@ class Session:
     # We updated our retry strategy to use exponential backoff instead of the header returned from the API response.
     # This is something we can remove in latter major bumps.
     # pylint: disable=unused-argument
-    def get_retry_after_time(self, attempt_number, retry_after_header):
+    def get_retry_after_time(self, attempt_number: int, retry_after_header: Optional[str]) -> Number:
         """
         Get the amount of time to wait before retrying the API request, using the attempt number that failed to
         calculate the retry time for the next retry attempt.
@@ -278,11 +233,8 @@ class Session:
         For 5xx Server Error, retry later, after a delay; use exponential backoff to determine the delay.
 
         :param attempt_number:          How many attempts at this request have already been tried.
-        :type attempt_number:           `int`
         :param retry_after_header:      Value of the 'Retry-After` response header.
-        :type retry_after_header:       `unicode` or None
         :return:                        Number of seconds to wait before retrying.
-        :rtype:                         `Number`
         """
         if retry_after_header is not None:
             try:
@@ -296,18 +248,14 @@ class Session:
         return exponential * self._retry_base_interval * randomization
 
     @staticmethod
-    def _raise_on_unsuccessful_request(network_response, request):
+    def _raise_on_unsuccessful_request(network_response: 'NetworkResponse', request: '_BoxRequest') -> None:
         """
         Raise an exception if the request was unsuccessful.
 
         :param network_response:
             The network response which is being tested for success.
-        :type network_response:
-            :class:`NetworkResponse`
         :param request:
             The API request that could be unsuccessful.
-        :type request:
-            :class:`BoxRequest`
         """
         if not network_response.ok:
             response_json = {}
@@ -338,40 +286,26 @@ class Session:
 
     def _prepare_and_send_request(
             self,
-            method,
-            url,
-            headers=None,
-            auto_session_renewal=True,
-            expect_json_response=True,
-            **kwargs
-    ):
+            method: str,
+            url: str,
+            headers: dict = None,
+            auto_session_renewal: bool = True,
+            expect_json_response: bool = True,
+            **kwargs: Any
+    ) -> 'NetworkResponse':
         """
         Prepare a request to be sent to the Box API.
 
         :param method:
             The HTTP verb to use to make the request.
-        :type method:
-            `unicode`
         :param url:
             The request URL.
-        :type url:
-            `unicode`
         :param headers:
             Headers to include with the request.
-        :type headers:
-            `dict`
         :param auto_session_renewal:
             Whether or not to automatically renew the session if the request fails due to an expired access token.
-        :type auto_session_renewal:
-            `bool`
         :param expect_json_response:
             Whether or not the response content should be json.
-        :type expect_json_response:
-            `bool`
-        :param attempt_number:
-            How many attempts at this request have already been tried. Used for exponential backoff calculations.
-        :type attempt_number:
-            `int`
         """
         files = kwargs.get('files')
         kwargs['file_stream_positions'] = None
@@ -406,7 +340,13 @@ class Session:
 
         return network_response
 
-    def _get_retry_request_callable(self, network_response, attempt_number, request, **kwargs):
+    def _get_retry_request_callable(
+            self,
+            network_response: 'NetworkResponse',
+            attempt_number: int,
+            request: '_BoxRequest',
+            **kwargs: Any
+    ) -> Optional[Callable]:
         """
         Get a callable that retries a request for certain types of failure.
 
@@ -418,20 +358,12 @@ class Session:
 
         :param network_response:
             The response from the Box API.
-        :type network_response:
-            :class:`NetworkResponse`
         :param attempt_number:
             How many attempts at this request have already been tried. Used for exponential backoff calculations.
-        :type attempt_number:
-            `int`
         :param request:
             The API request that could require retrying.
-        :type request:
-            :class:`BoxRequest`
         :return:
             Callable that, when called, will retry the request. Takes the same parameters as :meth:`_send_request`.
-        :rtype:
-            `callable`
         """
         # pylint:disable=unused-argument
         data = kwargs.get('data', {})
@@ -450,49 +382,40 @@ class Session:
             )
         return None
 
-    def _get_request_headers(self):
+    def _get_request_headers(self) -> dict:
         return self._default_headers.copy()
 
-    def _prepare_proxy(self):
+    def _prepare_proxy(self) -> Optional[dict]:
         """
         Prepares basic authenticated and unauthenticated proxies for requests.
 
         :return:
             A prepared proxy dict to send along with the request. None if incorrect parameters were passed.
-        :rtype:
-            `dict` or None
         """
         proxy = {}
-        proxy_string = ''
         if self._proxy_config.URL is None:
             return None
         if self._proxy_config.AUTH and {'user', 'password'} <= set(self._proxy_config.AUTH):
             host = self._proxy_config.URL
             address = host.split('//')[1]
-            proxy_string = 'http://{0}:{1}@{2}'.format(self._proxy_config.AUTH.get('user', None),
-                                                       self._proxy_config.AUTH.get('password', None),
-                                                       address)
+            proxy_string = f'http://{self._proxy_config.AUTH.get("user", None)}:' \
+                           f'{self._proxy_config.AUTH.get("password", None)}@{address}'
         elif self._proxy_config.AUTH is None:
             proxy_string = self._proxy_config.URL
         else:
-            raise BoxException("The proxy auth dict you provided does not match pattern {'user': 'example_user', 'password': 'example_password'}")
+            raise BoxException("The proxy auth dict you provided does not match pattern "
+                               "{'user': 'example_user', 'password': 'example_password'}")
         proxy['http'] = proxy_string
         proxy['https'] = proxy['http']
 
         return proxy
 
-    def _send_request(self, request, **kwargs):
+    def _send_request(self, request: '_BoxRequest', **kwargs: Any) -> 'NetworkResponse':
         """
         Make a request to the Box API.
 
         :param request:
             The API request to send.
-        :type request:
-            :class:`BoxRequest`
-        :param expect_json_response:
-            Whether or not the response content should be json.
-        :type expect_json_response:
-            `bool`
         """
         # Reset stream positions to what they were when the request was made so the same data is sent even if this
         # is a retried attempt.
@@ -528,38 +451,38 @@ class AuthorizedSession(Session):
     Box API authorized session. Provides auth, automatic retry of failed requests, and session renewal.
     """
 
-    def __init__(self, oauth, **kwargs):
+    def __init__(self, oauth: 'OAuth2', **kwargs: Any):
         """
         :param oauth:
             OAuth2 object used by the session to authorize requests.
-        :type oauth:
-            :class:`OAuth2`
         :param session:
             The Box API session to wrap for authorization.
-        :type session:
-            :class:`Session`
         """
         super().__init__(**kwargs)
         self._oauth = oauth
 
-    def get_constructor_kwargs(self):
+    def get_constructor_kwargs(self) -> dict:
         kwargs = super().get_constructor_kwargs()
         kwargs['oauth'] = self._oauth
         return kwargs
 
-    def _renew_session(self, access_token_used):
+    def _renew_session(self, access_token_used: Optional[str]) -> str:
         """
         Renews the session by refreshing the access token.
 
         :param access_token_used:
             The access token that's currently being used by the session, that needs to be refreshed.
-        :type access_token_used:
-            `unicode` or None
         """
         new_access_token, _ = self._oauth.refresh(access_token_used)
         return new_access_token
 
-    def _get_retry_request_callable(self, network_response, attempt_number, request, **kwargs):
+    def _get_retry_request_callable(
+            self,
+            network_response: 'NetworkResponse',
+            attempt_number: int,
+            request: '_BoxRequest',
+            **kwargs: Any
+    ) -> Callable:
         """
         Get a callable that retries a request for certain types of failure.
 
@@ -569,20 +492,12 @@ class AuthorizedSession(Session):
 
         :param network_response:
             The response from the Box API.
-        :type network_response:
-            :class:`NetworkResponse`
         :param attempt_number:
             How many attempts at this request have already been tried. Used for exponential backoff calculations.
-        :type attempt_number:
-            `int`
         :param request:
             The API request that could require retrying.
-        :type request:
-            :class:`BoxRequest`
         :return:
             Callable that, when called, will retry the request. Takes the same parameters as :meth:`_send_request`.
-        :rtype:
-            `callable`
         """
         code = network_response.status_code
         if code == 401 and request.auto_session_renewal:
@@ -596,18 +511,12 @@ class AuthorizedSession(Session):
             **kwargs
         )
 
-    def _send_request(self, request, **kwargs):
+    def _send_request(self, request: '_BoxRequest', **kwargs: Any) -> 'NetworkResponse':
         """
         Make a request to the Box API.
 
         :param request:
             The API request to send.
-        :type request:
-            :class:`BoxRequest`
-        :param expect_json_response:
-            Whether or not the response content should be json.
-        :type expect_json_response:
-            `bool`
         """
         # Since there can be session renewal happening in the middle of preparing the request, it's important to be
         # consistent with the access_token being used in the request.
@@ -615,7 +524,7 @@ class AuthorizedSession(Session):
         if request.auto_session_renewal and access_token is None:
             access_token = self._renew_session(None)
             request.auto_session_renewal = False
-        authorization_header = {'Authorization': 'Bearer {0}'.format(access_token)}
+        authorization_header = {'Authorization': f'Bearer {access_token}'}
         request.headers.update(authorization_header)
         kwargs['access_token'] = access_token
         return super()._send_request(request, **kwargs)

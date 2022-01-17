@@ -68,24 +68,24 @@ def test_move_folder_causes_move_event(box_events, move_target, created_subfolde
 
 def test_rename_file_causes_rename_event(box_events, uploaded_file, assert_event):
     # pylint:disable=redefined-outer-name
-    updated_name = 'updated_{0}'.format(uploaded_file.name)
+    updated_name = f'updated_{uploaded_file.name}'
     assert_event(lambda: uploaded_file.rename(updated_name), 'ITEM_RENAME', box_events.get_latest_stream_position())
 
 
 def test_rename_folder_causes_rename_event(box_events, created_subfolder, assert_event):
     # pylint:disable=redefined-outer-name
-    updated_name = 'updated_{0}'.format(created_subfolder.name)
+    updated_name = f'updated_{created_subfolder.name}'
     assert_event(lambda: created_subfolder.rename(updated_name), 'ITEM_RENAME', box_events.get_latest_stream_position())
 
 
 def test_copy_file_causes_copy_event(box_events, copy_target, uploaded_file, assert_event):
     # pylint:disable=redefined-outer-name
-    assert_event(lambda: uploaded_file.copy(copy_target), 'ITEM_COPY', box_events.get_latest_stream_position())
+    assert_event(lambda: uploaded_file.copy(parent_folder=copy_target), 'ITEM_COPY', box_events.get_latest_stream_position())
 
 
 def test_copy_folder_causes_copy_event(box_events, copy_target, created_subfolder, assert_event):
     # pylint:disable=redefined-outer-name
-    assert_event(lambda: created_subfolder.copy(copy_target), 'ITEM_COPY', box_events.get_latest_stream_position())
+    assert_event(lambda: created_subfolder.copy(parent_folder=copy_target), 'ITEM_COPY', box_events.get_latest_stream_position())
 
 
 @pytest.mark.xfail(reason='trash event has no source')
@@ -169,8 +169,8 @@ def test_generate_events_with_long_polling(long_poll_generator, created_subfolde
 
     del long_poll_generator.events[:]
 
-    uploaded_file.rename('updated_{0}'.format(uploaded_file.name))
-    created_subfolder.rename('updated_{0}'.format(created_subfolder.name))
+    uploaded_file.rename(f'updated_{uploaded_file.name}')
+    created_subfolder.rename(f'updated_{created_subfolder.name}')
 
     long_poll_generator.event_ready.wait()
     long_poll_generator.event_ready.clear()
@@ -187,5 +187,5 @@ def test_generate_events_with_long_polling(long_poll_generator, created_subfolde
     assert file_event['event_type'] == 'ITEM_RENAME'
     assert folder_event['source']['id'] == created_subfolder.id
     assert file_event['source']['id'] == uploaded_file.id
-    assert folder_event['source']['name'] == 'updated_{0}'.format(created_subfolder.name)
-    assert file_event['source']['name'] == 'updated_{0}'.format(uploaded_file.name)
+    assert folder_event['source']['name'] == f'updated_{created_subfolder.name}'
+    assert file_event['source']['name'] == f'updated_{uploaded_file.name}'

@@ -20,19 +20,19 @@ def test_automatic_refresh(
     assert mock_box_network.session.request.mock_calls == [
         call(
             'GET',
-            '{0}/folders/0'.format(API.BASE_API_URL),
+            f'{API.BASE_API_URL}/folders/0',
             headers=ANY,
             params=None,
         ),
         call(
             'POST',
-            '{0}/token'.format(API.OAUTH2_API_URL),
+            f'{API.OAUTH2_API_URL}/token',
             data=ANY,
             headers={'content-type': 'application/x-www-form-urlencoded', 'User-Agent': ANY, 'X-Box-UA': ANY},
         ),
         call(
             'GET',
-            '{0}/folders/0'.format(API.BASE_API_URL),
+            f'{API.BASE_API_URL}/folders/0',
             headers=ANY,
             params=None,
         ),

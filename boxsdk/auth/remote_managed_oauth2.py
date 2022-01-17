@@ -1,4 +1,5 @@
 # coding: utf-8
+from typing import Callable, Any, Tuple
 
 from .oauth2 import OAuth2
 
@@ -9,18 +10,16 @@ class RemoteOAuth2Mixin(OAuth2):
     Allows for storing auth tokens remotely.
 
     """
-    def __init__(self, retrieve_access_token=None, *args, **kwargs):
+    def __init__(self, retrieve_access_token: Callable[[str], str] = None, *args: Any, **kwargs: Any):
         """
         :param retrieve_access_token:
             Callback to exchange an existing access token for a new one.
-        :type retrieve_access_token:
-            `callable` of `unicode` => `unicode`
         """
         # pylint:disable=keyword-arg-before-vararg
         self._retrieve_access_token = retrieve_access_token
         super().__init__(*args, **kwargs)
 
-    def _refresh(self, access_token):
+    def _refresh(self, access_token: str) -> Tuple[str, None]:
         """
         Base class override. Ask the remote host for a new token.
         """

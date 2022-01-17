@@ -7,7 +7,7 @@ from boxsdk.config import API
 
 def test_get(test_terms_of_service_user_status, mock_box_session):
     created_at = '2016-05-18T17:38:03-07:00'
-    expected_url = '{0}/terms_of_service_user_statuses/{1}'.format(API.BASE_API_URL, test_terms_of_service_user_status.object_id)
+    expected_url = f'{API.BASE_API_URL}/terms_of_service_user_statuses/{test_terms_of_service_user_status.object_id}'
     mock_box_session.get.return_value.json.return_value = {
         'type': 'terms_of_service_user_status',
         'id': test_terms_of_service_user_status.object_id,
@@ -22,7 +22,7 @@ def test_get(test_terms_of_service_user_status, mock_box_session):
 
 
 def test_accept(test_terms_of_service_user_status, mock_box_session):
-    expected_url = '{0}/terms_of_service_user_statuses/{1}'.format(API.BASE_API_URL, test_terms_of_service_user_status.object_id)
+    expected_url = f'{API.BASE_API_URL}/terms_of_service_user_statuses/{test_terms_of_service_user_status.object_id}'
     mock_box_session.put.return_value.json.return_value = {
         'type': test_terms_of_service_user_status.object_type,
         'id': test_terms_of_service_user_status.object_id,
@@ -38,7 +38,7 @@ def test_accept(test_terms_of_service_user_status, mock_box_session):
 
 
 def test_reject(test_terms_of_service_user_status, mock_box_session):
-    expected_url = '{0}/terms_of_service_user_statuses/{1}'.format(API.BASE_API_URL, test_terms_of_service_user_status.object_id)
+    expected_url = f'{API.BASE_API_URL}/terms_of_service_user_statuses/{test_terms_of_service_user_status.object_id}'
     mock_box_session.put.return_value.json.return_value = {
         'type': 'terms_of_service_user_status',
         'id': test_terms_of_service_user_status.object_id,

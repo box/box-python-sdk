@@ -1,37 +1,42 @@
 # coding: utf-8
 import json
-
+from typing import Any, Union, TYPE_CHECKING, Iterable, Optional
 from .base_object import BaseObject
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.api_call_decorator import api_call
+
+if TYPE_CHECKING:
+    from boxsdk.object.metadata_template import MetadataTemplate
+    from boxsdk.object.enterprise import Enterprise
+    from boxsdk.object.folder import Folder
+    from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
+    from boxsdk.pagination.box_object_collection import BoxObjectCollection
 
 
 class RetentionPolicy(BaseObject):
     """Represents a Box retention policy."""
     _item_type = 'retention_policy'
 
-    def get_url(self, *args):
+    def get_url(self, *args: Any) -> str:
         """
         Returns the url for this retention policy.
         """
         return self._session.get_url('retention_policies', self._object_id, *args)
 
     @api_call
-    def assign(self, assignee, fields=None):
+    def assign(
+            self,
+            assignee: Union['Folder', 'Enterprise', 'MetadataTemplate'],
+            fields: Iterable[str] = None
+    ) -> 'RetentionPolicyAssignment':
         """Assign a retention policy to a Box item
 
         :param assignee:
             The item to assign the retention policy on.
-        :type assignee:
-            :class:`Folder`, :class:`Enterprise`, or :class:`MetadataTemplate`
         :param fields:
             List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
         :returns:
             A :class:`RetentionPolicyAssignment` object.
-        :rtype:
-            :class:`RetentionPolicyAssignment`
         """
         url = self._session.get_url('retention_policy_assignments')
         body = {
@@ -51,29 +56,25 @@ class RetentionPolicy(BaseObject):
         )
 
     @api_call
-    def assignments(self, assignment_type=None, limit=None, marker=None, fields=None):
+    def assignments(
+            self,
+            assignment_type: Optional[str] = None,
+            limit: Optional[int] = None,
+            marker: Optional[str] = None,
+            fields: Iterable[str] = None
+    ) -> 'BoxObjectCollection':
         """Get the assignments for the retention policy.
 
         :param assignment_type:
             The type of retention policy assignment to retrieve. Can be set to 'folder', 'enterprise', or 'metadata_template'.
-        :type assignment_type:
-            `unicode` or None.
         :param limit:
             The maximum number of items to return.
-        :type limit:
-            `int` or None
         :param marker:
             The position marker at which to begin the response.
-        :type marker:
-            `unicode` or None
         :param fields:
             List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
         :returns:
             An iterable of assignments in the retention policy.
-        :rtype:
-            :class:`BoxObjectCollection`
         """
         additional_params = {}
         if assignment_type is not None:

@@ -14,7 +14,7 @@ from boxsdk.network.default_network import DefaultNetworkResponse
 @pytest.fixture(autouse=True, scope='session')
 def logger():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-    return logging.getLogger(__name__.split('.')[0])
+    return logging.getLogger(__name__.split('.', maxsplit=1)[0])
 
 
 def _set_content_and_json_from_json(mock_response, json_value):
@@ -25,7 +25,7 @@ def _set_content_and_json_from_json(mock_response, json_value):
 
 def _set_content_and_json_from_content(mock_response, content):
     if not isinstance(content, bytes):
-        raise TypeError("Expected 'content' to be byte string, got {!r}.".format(content.__class__.__name__))
+        raise TypeError(f"Expected 'content' to be byte string, got {content.__class__.__name__!r}.")
     mock_response.content = content
     mock_response.headers['Content-Length'] = str(len(content))
     try:
@@ -36,8 +36,8 @@ def _set_content_and_json_from_content(mock_response, content):
 
 @pytest.fixture()
 def generic_successful_request_response():
-    mock_request_response = Mock(requests.Response(), headers={'header{0}'.format(i): 'value{0}'.format(i) for i in range(4)})
-    _set_content_and_json_from_json(mock_request_response, json_value={'key{0}'.format(i): 'value{0}'.format(i) for i in range(8)})
+    mock_request_response = Mock(requests.Response(), headers={f'header{i}': f'value{i}' for i in range(4)})
+    _set_content_and_json_from_json(mock_request_response, json_value={f'key{i}': f'value{i}' for i in range(8)})
     mock_request_response.status_code = 200
     mock_request_response.ok = True
     mock_request_response.request = Mock()
@@ -139,8 +139,8 @@ def retry_after_response(retry_after_response_202, retry_after_response_429, req
 
 
 def _server_error_request_response(status_code):
-    mock_request_response = Mock(requests.Response(), headers={'header{0}'.format(i): 'value{0}'.format(i) for i in range(4)})
-    _set_content_and_json_from_json(mock_request_response, json_value={'key{0}'.format(i): 'value{0}'.format(i) for i in range(8)})
+    mock_request_response = Mock(requests.Response(), headers={f'header{i}': f'value{i}' for i in range(4)})
+    _set_content_and_json_from_json(mock_request_response, json_value={f'key{i}': f'value{i}' for i in range(8)})
     mock_request_response.status_code = status_code
     mock_request_response.ok = False
     return mock_request_response

@@ -1,9 +1,8 @@
 # coding: utf-8
+from test.util.streamable_mock_open import streamable_mock_open
 
 from io import BytesIO
-
 from mock import patch
-from test.util.streamable_mock_open import streamable_mock_open
 
 
 def test_upload_then_update(box_client, test_file_path, test_file_content, update_file_content, file_name):

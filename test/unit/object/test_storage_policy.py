@@ -7,7 +7,7 @@ from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 
 
 def test_get(test_storage_policy, mock_box_session):
-    expected_url = '{0}/storage_policies/{1}'.format(API.BASE_API_URL, test_storage_policy.object_id)
+    expected_url = f'{API.BASE_API_URL}/storage_policies/{test_storage_policy.object_id}'
     mock_box_session.get.return_value.json.return_value = {
         'type': test_storage_policy.object_type,
         'id': test_storage_policy.object_id,
@@ -18,7 +18,7 @@ def test_get(test_storage_policy, mock_box_session):
 
 
 def test_assign_with_same_assignment(test_storage_policy, test_storage_policy_assignment, mock_user, mock_box_session):
-    expected_url = '{0}/storage_policy_assignments'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/storage_policy_assignments'
     additional_params = {
         'resolved_for_type': mock_user.object_type,
         'resolved_for_id': mock_user.object_id,
@@ -47,7 +47,7 @@ def test_assign_with_same_assignment(test_storage_policy, test_storage_policy_as
 
 
 def test_assign_with_assigned_enterprise(test_storage_policy, test_storage_policy_assignment, mock_user, mock_box_session):
-    expected_url = '{0}/storage_policy_assignments'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/storage_policy_assignments'
     additional_params = {
         'resolved_for_type': mock_user.object_type,
         'resolved_for_id': mock_user.object_id,
@@ -99,8 +99,8 @@ def test_assign_with_assigned_enterprise(test_storage_policy, test_storage_polic
 
 
 def test_assign_with_update(test_storage_policy, test_storage_policy_assignment, mock_user, mock_box_session):
-    expected_url = '{0}/storage_policy_assignments'.format(API.BASE_API_URL)
-    expected_put_url = '{0}/storage_policy_assignments/{1}'.format(API.BASE_API_URL, '11111')
+    expected_url = f'{API.BASE_API_URL}/storage_policy_assignments'
+    expected_put_url = f'{API.BASE_API_URL}/storage_policy_assignments/11111'
     additional_params = {
         'resolved_for_type': mock_user.object_type,
         'resolved_for_id': mock_user.object_id,
@@ -148,7 +148,7 @@ def test_assign_with_update(test_storage_policy, test_storage_policy_assignment,
 
 
 def test_create_assignment(test_storage_policy, mock_user, mock_box_session):
-    expected_url = '{0}/storage_policy_assignments'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/storage_policy_assignments'
     expected_data = {
         'storage_policy': {
             'type': 'storage_policy',

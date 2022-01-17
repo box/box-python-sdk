@@ -74,7 +74,7 @@ def mock_items_response(mock_items):
 
 
 def test_get_chunked_uploader(mock_box_session, mock_content_response, mock_file_path, test_folder):
-    expected_url = '{0}/files/upload_sessions'.format(API.UPLOAD_URL)
+    expected_url = f'{API.UPLOAD_URL}/files/upload_sessions'
     mock_file_stream = BytesIO(mock_content_response.content)
     file_size = 197520
     file_name = 'file'
@@ -203,7 +203,7 @@ def test_get_items(test_folder, mock_box_session, mock_items_response, limit, of
     for actual, expected in zip(items, expected_items):
         assert actual == expected
     mock_box_session.get.assert_called_once_with(expected_url, params=expected_params)
-    assert all([i.id == e.object_id for i, e in zip(items, expected_items)])
+    assert all(i.id == e.object_id for (i, e) in zip(items, expected_items))
 
 
 @pytest.mark.parametrize('is_stream', (True, False))
@@ -228,7 +228,7 @@ def test_upload(
     content_created_at = '1970-01-01T00:00:00+00:00'
     content_modified_at = '1970-01-01T11:11:11+11:11'
     additional_attributes = {'attr': 123}
-    expected_url = '{0}/files/content'.format(API.UPLOAD_URL)
+    expected_url = f'{API.UPLOAD_URL}/files/content'
     if upload_using_accelerator:
         if upload_using_accelerator_fails:
             mock_box_session.options.side_effect = BoxAPIException(400)
@@ -320,7 +320,7 @@ def test_upload_combines_preflight_and_accelerator_calls_if_both_are_requested(
 
 
 def test_create_upload_session(test_folder, mock_box_session):
-    expected_url = '{0}/files/upload_sessions'.format(API.UPLOAD_URL)
+    expected_url = f'{API.UPLOAD_URL}/files/upload_sessions'
     file_size = 197520
     file_name = 'test_file.pdf'
     upload_session_id = 'F971964745A5CD0C001BBE4E58196BFD'
@@ -447,7 +447,7 @@ def test_preflight(
     accelerator_url = test_folder.preflight_check(size=new_file_size, name=new_file_name)
 
     mock_box_session.options.assert_called_once_with(
-        url='{0}/files/content'.format(API.BASE_API_URL),
+        url=f'{API.BASE_API_URL}/files/content',
         expect_json_response=True,
         data=json.dumps(
             {
@@ -461,7 +461,7 @@ def test_preflight(
 
 
 def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_box_session):
-    expected_url = "{0}/web_links".format(API.BASE_API_URL)
+    expected_url = f"{API.BASE_API_URL}/web_links"
     expected_name = 'Test WebLink'
     description = 'Test Description'
     test_web_link_url = 'https://test.com'
@@ -493,7 +493,7 @@ def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_b
 
 
 def test_get_metadata_cascade_policies(test_folder, mock_box_session):
-    expected_url = '{0}/metadata_cascade_policies'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/metadata_cascade_policies'
     params = {'folder_id': test_folder.object_id}
     mock_box_session.get.return_value.json.return_value = {
         'entries': [
@@ -525,7 +525,7 @@ def test_get_metadata_cascade_policies(test_folder, mock_box_session):
 
 
 def test_cascade_metadata(test_folder, mock_box_session, test_metadata_template):
-    expected_url = '{0}/metadata_cascade_policies'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/metadata_cascade_policies'
     expected_body = {
         'folder_id': test_folder.object_id,
         'scope': test_metadata_template.scope,
@@ -562,7 +562,7 @@ def test_cascade_metadata(test_folder, mock_box_session, test_metadata_template)
 
 
 def test_get_folder_locks(test_folder, mock_box_session):
-    expected_url = '{0}/folder_locks'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/folder_locks'
     params = {'folder_id': test_folder.object_id}
     mock_box_session.get.return_value.json.return_value = {
         "entries": [
@@ -604,7 +604,7 @@ def test_get_folder_locks(test_folder, mock_box_session):
 
 
 def test_create_folder_lock(test_folder, mock_box_session):
-    expected_url = '{0}/folder_locks'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/folder_locks'
     expected_body = {
         "folder": {
             "type": "folder",
@@ -648,7 +648,7 @@ def test_create_folder_lock(test_folder, mock_box_session):
 
 
 def test_delete_folder_lock(test_folder_lock, mock_box_session):
-    expected_url = '{0}/folder_locks/{1}'.format(API.BASE_API_URL, test_folder_lock.object_id)
+    expected_url = f'{API.BASE_API_URL}/folder_locks/{test_folder_lock.object_id}'
     test_folder_lock.delete()
     mock_box_session.delete.assert_called_once_with(
         expected_url,

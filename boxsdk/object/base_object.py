@@ -1,83 +1,71 @@
 # coding: utf-8
 
 import json
+from typing import TYPE_CHECKING, Any, Iterable, Optional, Union, List
 
 from .base_endpoint import BaseEndpoint
 from .base_api_json_object import BaseAPIJSONObject
 from ..util.api_call_decorator import api_call
 
+if TYPE_CHECKING:
+    from boxsdk.session.session import Session
+
 
 class BaseObject(BaseEndpoint, BaseAPIJSONObject):
     """A Box API endpoint for interacting with a Box object."""
 
-    def __init__(self, session, object_id, response_object=None):
+    def __init__(self, session: 'Session', object_id: str, response_object: dict = None):
         """
         :param session:
             The Box session used to make requests.
-        :type session:
-            :class:`BoxSession`
         :param object_id:
             The Box ID for the object.
-        :type object_id:
-            `unicode`
         :param response_object:
             A JSON object representing the object returned from a Box API request.
-        :type response_object:
-            `dict`
         """
         super().__init__(session=session, response_object=response_object)
         self._object_id = object_id
 
     @property
-    def _description(self):
-        """Base class override.  Return a description for the object."""
+    def _description(self) -> str:
+        """
+        Base class override.  Return a description for the object.
+        """
         if 'name' in self._response_object:
-            return '{0} ({1})'.format(self._object_id, self.name)  # pylint:disable=no-member
-        return '{0}'.format(self._object_id)
+            return f'{self._object_id} ({self.name})'  # pylint:disable=no-member
+        return self._object_id
 
-    def get_url(self, *args):
+    def get_url(self, *args: Any) -> str:
         """
         Base class override.
         Return the given object's URL, appending any optional parts as specified by args.
         """
-        # pylint:disable=arguments-differ
-        return super().get_url('{0}s'.format(self._item_type), self._object_id, *args)
+        return super().get_url(f'{self._item_type}s', self._object_id, *args)
 
-    def get_type_url(self):
+    def get_type_url(self) -> str:
         """
         Return the URL for type of the given resource.
-
-        :rtype:
-            `unicode`
         """
-        return super().get_url('{0}s'.format(self._item_type))
+        return super().get_url(f'{self._item_type}s')
 
     @property
-    def object_id(self):
-        """Return the Box ID for the object.
-
-        :rtype:
-            `unicode`
+    def object_id(self) -> str:
+        """
+        Return the Box ID for the object.
         """
         return self._object_id
 
     @api_call
-    def get(self, fields=None, headers=None):
+    def get(self, *, fields: Iterable[str] = None, headers: dict = None, **_kwargs) -> Any:
         """
         Get information about the object, specified by fields. If fields is None, return the default fields.
 
         :param fields:
             List of fields to request.
-        :type fields:
-            `Iterable` of `unicode`
         :param headers:
             Additional headers to send with the request.
-        :type headers:
-            `dict`
         :return:
             An object of the same type that has the requested information.
-        :rtype:
-            :class:`BaseObject`
         """
         url = self.get_url()
         params = {'fields': ','.join(fields)} if fields else None
@@ -88,7 +76,14 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         )
 
     @api_call
-    def update_info(self, data, params=None, headers=None, **kwargs):
+    def update_info(
+            self,
+            *,
+            data: Union[dict, List[dict]],
+            params: Optional[dict] = None,
+            headers: Optional[dict] = None,
+            **kwargs: Any
+    ) -> Any:
         """Update information about this object.
 
         Send a PUT to the object's base endpoint to modify the provided
@@ -101,16 +96,10 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
             values depends on the the type and attributes of the object being
             updated. For details on particular semantics, refer to the Box
             developer API documentation <https://developer.box.com/>.
-        :type data:
-            `dict`
         :param params:
             (optional) Query string parameters for the request.
-        :type params:
-            `dict` or None
         :param headers:
             (optional) Extra HTTP headers for the request.
-        :type headers:
-            `dict` or None
         :param kwargs:
             Optional arguments that ``put`` takes.
         :return:
@@ -119,46 +108,36 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
             original object passed as self.
             Construct the new object with all the default attributes that are
             returned from the endpoint.
-        :rtype:
-            :class:`BaseObject`
         """
-        # pylint:disable=no-else-return
         url = self.get_url()
         box_response = self._session.put(url, data=json.dumps(data), params=params, headers=headers, **kwargs)
         if 'expect_json_response' in kwargs and not kwargs['expect_json_response']:
             return box_response.ok
-        else:
-            return self.translator.translate(
-                session=self._session,
-                response_object=box_response.json(),
-            )
+
+        return self.translator.translate(
+            session=self._session,
+            response_object=box_response.json(),
+        )
 
     @api_call
-    def delete(self, params=None, headers=None):
+    def delete(self, *, params: Optional[dict] = None, headers: Optional[dict] = None, **_kwargs) -> bool:
         """ Delete the object.
 
         :param params:
             Additional parameters to send with the request. Can be None
-        :type params:
-            `dict` or None
         :param headers:
             Any customer headers to send with the request. Can be None
-        :type headers:
-            `dict` or None
         :returns:
             Whether or not the delete was successful.
-        :rtype:
-            `bool`
         :raises:
             :class:`BoxAPIException` in case of unexpected errors.
         """
         url = self.get_url()
-        # ??? There's a question about why params forces a default to {}, while headers doesn't. Looking for
-        # confirmation that the below is correct.
+
         box_response = self._session.delete(url, expect_json_response=False, params=params or {}, headers=headers)
         return box_response.ok
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         """Equality as determined by object id and type"""
         if isinstance(other, BaseObject):
             # Two objects are considered the same if they have the same address in the API
@@ -166,14 +145,14 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
 
         return NotImplemented
 
-    def __ne__(self, other):
+    def __ne__(self, other: Any) -> bool:
         """Equality as determined by object id and type"""
         return not self == other
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self._object_id, self._item_type))
 
-    def clone(self, session=None):
+    def clone(self, session: 'Session' = None) -> 'BaseObject':
         """Base class override."""
         return self.__class__(
             session or self._session,
