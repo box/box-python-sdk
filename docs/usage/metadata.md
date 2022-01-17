@@ -101,8 +101,8 @@ Update Metadata Template
 
 To make changes to a metadata template, first call [`template.start_update()`][start_update] to create a
 [`MetadataTemplateUpdate`][template_update_class] to track updates.  Call the methods on this object to add the
-necessary update operations, and then call [`template.update_info(updates)`][update_info] with the updates object to
-apply the changes to the metadata template.  This method returns an updated
+necessary update operations, and then call [`template.update_info(*, updates, **kwargs)`][update_info] with the updates
+object to apply the changes to the metadata template.  This method returns an updated
 [`MetadataTemplate`][metadata_template_class] object with the changes applied, leaving the original object unmodified.
 
 <!-- sample put_metadata_templates_id_id_schema -->
@@ -112,7 +112,7 @@ updates = template.start_update()
 updates.add_enum_option('state', 'WI')
 updates.edit_template({'hidden': False})
 updates.edit_template({'copyInstanceOnItemCopy': False})
-updated_template = template.update_info(updates)
+updated_template = template.update_info(updates=updates)
 ```
 
 [start_update]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata_template.MetadataTemplate.start_update

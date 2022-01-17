@@ -33,7 +33,7 @@ Get Information About a Legal Hold Policy
 -----------------------------------------
 
 To retrieve information about a legal hold policy, first call [`client.legal_hold_policy(policy_id)`][legal_hold_policy]
-to initialize the [`LegalHoldPolicy`][policy_class] and then call [`legal_hold_policy.get(fields=None)`][get] to
+to initialize the [`LegalHoldPolicy`][policy_class] and then call [`legal_hold_policy.get(*, fields=None, headers=None, **kwargs)`][get] to
 retrieve data from the API.  This method returns a new [`LegalHoldPolicy`][policy_class] object with fields populated by
 data form the API, leaving the original object unmodified.
 
@@ -85,14 +85,14 @@ print(f'Created legal hold policy with ID {new_policy.id}')
 Update Legal Hold Policy
 ------------------------
 
-To update an existing legal hold policy, call [`legal_hold_policy.update_info(data)`][update_info] with a `dict` of
-properties to update on the policy.  This method returns a new [`LegalHoldPolicy`][policy_class] object with the updates
-applied, leaving the original object unmodified.
+To update an existing legal hold policy, call [`legal_hold_policy.update_info(data=policy_update)`][update_info] with
+a `dict` of properties to update on the policy. This method returns a new [`LegalHoldPolicy`][policy_class] object
+with the updates applied, leaving the original object unmodified.
 
 <!-- sample put_legal_hold_policies_id -->
 ```python
 policy_update = {'description': 'New Description', 'release_notes': 'Example Notes'}
-updated_policy = client.legal_hold_policy(policy_id='12345').update_info(policy_update)
+updated_policy = client.legal_hold_policy(policy_id='12345').update_info(data=policy_update)
 ```
 
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
@@ -166,7 +166,7 @@ Get Information About a Legal Hold Assignment
 
 To retrieve information about a legal hold policy assignment, first call
 [`client.legal_hold_policy_assignment(policy_assignment_id)`][legal_hold_policy_assignment] to initialize the
-[`LegalHoldPolicyAssignment`][assignment_class] and then call [`legal_hold_policy_assignment.get(fields=None)`][get] to
+[`LegalHoldPolicyAssignment`][assignment_class] and then call [`legal_hold_policy_assignment.get(*, fields=None, headers=None, **kwargs)`][get] to
 retrieve data about the assignment from the API.  This method returns a new
 [`LegalHoldPolicyAssignment`][assignment_class] with fields populated by data from the API, leaving the original object
 unmodified.
@@ -216,7 +216,7 @@ for legal_hold in legal_holds:
 Get Information about a File Version Legal Hold
 -----------------------------------------------
 
-To retrieve information about a file version legal hold, call [`legal_hold.get(fields=None)`][get].  This method
+To retrieve information about a file version legal hold, call [`legal_hold.get(*, fields=None, headers=None, **kwargs)`][get].  This method
 returns a new [`LegalHold`][hold_class] with fields populated by data from the API, leaving the original object
 unmodified.
 

@@ -41,14 +41,14 @@ print(f'Terms of Service status is {terms_of_service.status} and the message is 
 Edit a Terms of Service
 -----------------------
 
-To update a terms of service object, first call [`terms_of_service.update_info(data)`][update_info] with a `dict` of 
-properties to update on the terms of service. This method returns a newly updated [`TermsOfService`][terms_of_service] 
+To update a terms of service object, first call [`terms_of_service.update_info(data=update_object)`][update_info] with
+a `dict` of properties to update on the terms of service. This method returns a newly updated [`TermsOfService`][terms_of_service] 
 object, leaving the original object unmodified.
 
 <!-- sample put_terms_of_services_id -->
 ```python
 update_object = {'text': 'New Text'}
-updated_tos = client.terms_of_service(tos_id='12345').update_info(update_object)
+updated_tos = client.terms_of_service(tos_id='12345').update_info(data=update_object)
 print(f'The updated message for your custom terms of service is {updated_tos.text} with ID {updated_tos.id}')
 ```
 
@@ -60,7 +60,7 @@ Get Terms of Service
 --------------------
 
 To get a terms of service object, call [`client.terms_of_service(service_id)`][terms_of_service] to construct the 
-appropriate [`TermsOfService`][terms_of_service_class], and then calling [`terms_of_service.get(fields=None)`][get] 
+appropriate [`TermsOfService`][terms_of_service_class], and then calling [`terms_of_service.get(*, fields=None, headers=None, **kwargs)`][get] 
 will return the [`TermsOfService`][terms_of_service_class] object populated with data from the API.
 
 <!-- sample get_terms_of_services_id -->
@@ -111,13 +111,13 @@ It is important to note that regardless of whether the user has taken action on 
 and update the user status on the terms of service.
 
 Note that this example will make multiple API calls, if you know that your user has already accepted or decline a 
-Terms of Service and you wish to change their status, call [`terms_of_service_user_status.update_info(data)`][update_info] 
+Terms of Service and you wish to change their status, call [`terms_of_service_user_status.update_info(data=data_to_update)`][update_info] 
 with a `dict` of properties to update on the terms of service user status. This method returns a newly updated 
 [`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object, leaving the original object unmodified.
 
 <!-- sample put_terms_of_service_user_statuses_id -->
 ```python
-user_status = client.terms_of_service_user_status(tos_user_status_id='12345').update_info({'is_accepted': True})
+user_status = client.terms_of_service_user_status(tos_user_status_id='12345').update_info(data={'is_accepted': True})
 print(f'Terms of Service User Status ID is {user_status.id} and the accepted status is {user_status.is_accepted}')
 ```
 
@@ -139,7 +139,7 @@ To get a terms of service user status object, first call
 to construct the appropriate [`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object. Then calling 
 [`client.user(user_id)`][user] to construct the user you wish to retrieve a 
 [`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object for. Finally, calling 
-[`terms_of_service_user_status.get(fields=None)`][get] will return the 
+[`terms_of_service_user_status.get(*, fields=None, headers=None, **kwargs)`][get] will return the 
 [`TermsOfServiceUserStatus`][terms_of_service_user_status_class] object populated with data from the API.
 
 <!-- sample get_terms_of_service_user_statuses_id -->

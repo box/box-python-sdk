@@ -35,8 +35,8 @@ for pin in device_pins:
 Get Device Pin Information
 --------------------------
 
-To get information about a specific device pin, call [`device_pinner.get(fields=None)`][get].  This method returns a new
-[`DevicePinner`][device_pin_class] object with fields populated by data from the API.
+To get information about a specific device pin, call [`device_pinner.get(*, fields=None, headers=None, **kwargs)`][get].
+This method returns a new [`DevicePinner`][device_pin_class] object with fields populated by data from the API.
 
 <!-- sample get_device_pinners_id -->
 ```python

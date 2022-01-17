@@ -40,7 +40,7 @@ Get Information About a Folder
 ------------------------------
 
 To retrieve information about a folder, first call [`client.folder(folder_id)`][folder] to initialize the
-[`Folder`][folder_class] object.  Then, call [`folder.get(fields=None, etag=None)`][get] to retrieve data about the
+[`Folder`][folder_class] object.  Then, call [`folder.get(*, fields=None, etag=None, **kwargs)`][get] to retrieve data about the
 folder.  This method returns a new [`Folder][folder_class] object with fields populated by data from the API, leaving
 the original object unmodified.
 
@@ -90,13 +90,13 @@ for item in items:
 Update a Folder
 ---------------
 
-To update a folder's information, call [`folder.update_info(data, etag=None)`][update_info] with a `dict` of properties
-to update on the folder.  This method returns a new updated [`Folder`][folder_class] object, leaving the original
-object unmodified.
+To update a folder's information, call [`folder.update_info(*, data, etag=None, **kwargs)`][update_info] with a `dict`
+of properties to update on the folder.  This method returns a new updated [`Folder`][folder_class] object, leaving
+the original object unmodified.
 
 <!-- sample put_folders_id -->
 ```python
-updated_folder = client.folder(folder_id='22222').update_info({
+updated_folder = client.folder(folder_id='22222').update_info(data={
     'name': '[ARCHIVED] Planning documents',
     'description': 'Old planning documents',
 })

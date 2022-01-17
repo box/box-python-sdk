@@ -53,7 +53,7 @@ Get Retention Policy
 --------------------
 
 To get a retention policy object, first call [`client.retention_policy(retention_id)`][retention_policy] to construct the 
-appropriate [`RetentionPolicy`][retention_policy_class] object, and then calling [`retention_policy.get(fields=None)`][get] 
+appropriate [`RetentionPolicy`][retention_policy_class] object, and then calling [`retention_policy.get(*, fields=None, headers=None, **kwargs)`][get] 
 will return the [`RetentionPolicy`][retention_policy_class] object populated with data from the API.
 
 <!-- sample get_retention_policies_id -->
@@ -84,14 +84,14 @@ for policy in retention_policies:
 Update Retention Policy
 -----------------------
 
-To update a retention policy object, calling [`retention_policy.update_info(data)`][update_info] with a `dict` of 
-properties to update on the retention policy. This method returns a newly updates 
+To update a retention policy object, calling [`retention_policy.update_info(data=policy_update)`][update_info] with
+a `dict` of properties to update on the retention policy. This method returns a newly updates 
 [`RetentionPolicy`][retention_policy_class] object, leaving the original object unmodified.
 
 <!-- sample put_retention_policies_id -->
 ```python
 policy_update = {'policy_name': 'New Policy Name',}
-updated_retention_policy = client.retention_policy(retention_id='12345').update_info(policy_update)
+updated_retention_policy = client.retention_policy(retention_id='12345').update_info(data=policy_update)
 print(f'Retention Policy ID is {updated_retention_policy.id} and the new policy name is {updated_retention_policy.policy_name}')
 ```
 
@@ -118,7 +118,7 @@ Get Retention Policy Assignment
 
 To get a retention policy object, first call [`client.retention_policy_assignment(assignment_id)`][retention_policy_assignment] 
 to construct the appropriate [`Retention Policy Assignment`][retention_policy_assignment_class] object, and then calling 
-[`retention_policy_assignment.get(fields=None)`][get] will return the 
+[`retention_policy_assignment.get(*, fields=None, headers=None, **kwargs)`][get] will return the 
 [`Retention Policy Assignment`][retention_policy_assignment_class] object populated with data from the API.
 
 <!-- sample get_retention_policy_assignments_id -->
@@ -180,7 +180,7 @@ Get Information about a File Version Retention
 
 To get a file version retention object, first call [`client.file_version_retention(retention_id)`][file_version_retention] 
 to construct the appropriate [`File Version Retention`][file_version_retention_class] object, and then calling 
-[`file_version_retention.get(fields=None)`][get] will return the [`FileVersionRetention`][file_version_retention] 
+[`file_version_retention.get(*, fields=None, headers=None, **kwargs)`][get] will return the [`FileVersionRetention`][file_version_retention] 
 object populated with data from the API.
 
 <!-- sample get_file_version_retentions_id -->

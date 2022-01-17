@@ -74,7 +74,7 @@ print(f'{collaborator.name} {has_accepted} accepted the collaboration to folder 
 Edit a Collaboration
 --------------------
 
-A collaboration can be edited by calling [`collaboration.update_info(role, status=None)`][update_info].  This method
+A collaboration can be edited by calling [`collaboration.update_info(*, role=None, status=None, **kwargs)`][update_info].  This method
 returns an updated [`Collaboration`][collaboration_class] object, leaving the original unmodified.
 
 <!-- sample put_collaborations_id -->
@@ -82,7 +82,7 @@ returns an updated [`Collaboration`][collaboration_class] object, leaving the or
 from boxsdk.object.collaboration import CollaborationRole, CollaborationStatus
 
 collaboration = client.collaboration(collab_id='12345')
-updated_collaboration = collaboration.update_info(CollaborationRole.EDITOR)
+updated_collaboration = collaboration.update_info(role=CollaborationRole.EDITOR)
 ```
 
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.collaboration.Collaboration.update_info

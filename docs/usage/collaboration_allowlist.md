@@ -44,7 +44,7 @@ for entry in allowlist_entries:
 Get Information for Collaboration Allowlist Entry
 -------------------------------------------------
 
-To get information about a collaboration allowlist entry, use [`collaboration_allowlist_entry.get(fields=None)`][get].
+To get information about a collaboration allowlist entry, use [`collaboration_allowlist_entry.get(*, fields=None, headers=None, **kwargs)`][get].
 This method returns a [`CollaborationAllowlistEntry`][entry_class] object with fields populated by data form the API.
 
 <!-- sample get_collaboration_allowlist_entries_id -->
@@ -109,8 +109,8 @@ for exemption in exemptions:
 Get Exempt User Information
 ---------------------------
 
-To get information about an exempted user, call [`collaboration_allowlist_exempt_target.get(fields=None)`][get].  This
-method will return a [`CollaborationAllowlistExemptTarget][exemption_class] with fields populated by data from the API.
+To get information about an exempted user, call [`collaboration_allowlist_exempt_target.get(*, fields=None, headers=None, **kwargs)`][get].
+This method will return a [`CollaborationAllowlistExemptTarget][exemption_class] with fields populated by data from the API.
 
 <!-- sample get_collaboration_allowlist_exempt_targets_id -->
 ```python

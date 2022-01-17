@@ -69,9 +69,9 @@ Get Information about a Group
 -----------------------------
 
 To retrieve information about a group, first call [`client.group(group_id)`][group] to initialize a
-[`Group`][group_class] object.  Then, call [`group.get(fields=None)`][get] to retrieve the data about that group.  This
-method returns a new [`Group`][group_class] object with fields populated by data form the API, leaving the original
-object unmodified.
+[`Group`][group_class] object.  Then, call [`group.get(*, fields=None, headers=None, **kwargs)`][get] to retrieve the
+data about that group. This method returns a new [`Group`][group_class] object with fields populated by data form the API,
+leaving the original object unmodified.
 
 <!-- sample get_groups_id -->
 ```python
@@ -94,13 +94,14 @@ print(f'The "{group.name}" group ({group.description}) came from {group.provenan
 Update a Group
 --------------
 
-To update a group, call [`group.update_info(data)`][update_info] with a `dict` of the group properties to update.  This
-method returns a new [`Group`][group_class] object with the updates applied, leaving the original object unmodified.
+To update a group, call [`group.update_info(data=group_update)`][update_info] with a `dict` of the group properties
+to update.  This method returns a new [`Group`][group_class] object with the updates applied, leaving the original
+object unmodified.
 
 <!-- sample put_groups_id -->
 ```python
 group_update = {'name': 'New Group Name'}
-updated_group = client.group(group_id='11111').update_info(group_update)
+updated_group = client.group(group_id='11111').update_info(data=group_update)
 print(f'Changed the name of group {updated_group.id} to "{updated_group.name}"')
 ```
 
@@ -165,9 +166,9 @@ Get Information about a Group Membership
 
 To retrieve information about a group membership, first call
 [`client.group_membership(group_membership_id)`][group_membership] to initialize the
-[`GroupMembership`][membership_class] object.  Then, call [`group_membership.get(fields=None)`][get] to retrieve data
-about the group membership from the API.  This returns a new [`GroupMembership`][membership_class] object with fields
-populated by data from the API, leaving the original object unmodified.
+[`GroupMembership`][membership_class] object.  Then, call [`group_membership.get(*, fields=None, headers=None, **kwargs)`][get]
+to retrieve data about the group membership from the API.  This returns a new [`GroupMembership`][membership_class]
+object with fields populated by data from the API, leaving the original object unmodified.
 
 <!-- sample get_group_memberships_id -->
 ```python
@@ -182,15 +183,15 @@ print(f'User "{membership.user.name}" is a member of the {membership.group.name}
 Update Group Membership
 -----------------------
 
-To update a group membership, call [`membership.update_info(data)`][update_info] with a `dict` of properties to update
-on the membership object.  This method returns a new [`GroupMembership`][membership_class] object with the changes
-applied, leaving the original object unmodified.
+To update a group membership, call [`membership.update_info(data=membership_update)`][update_info] with a `dict` of
+properties to update on the membership object.  This method returns a new [`GroupMembership`][membership_class] object
+with the changes applied, leaving the original object unmodified.
 
 <!-- sample put_group_memberships_id -->
 ```python
 membership_id = '1234'
 membership_update = {'role': 'admin'}
-updated_membership = client.group_membership(membership_id).update_info(membership_update)
+updated_membership = client.group_membership(membership_id).update_info(data=membership_update)
 print(f'Updated {updated_membership.user.name}\'s group role to {updated_membership.role}')
 ```
 

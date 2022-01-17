@@ -22,8 +22,8 @@ Get Information about Webhook
 -----------------------------
 
 To get a webhook object, first call [`client.webhook(webhook_id)`][webhook] to construct the appropriate 
-[`Webhook`][webhook_class] object, and then calling [`webhook.get(fields=None)`][get] will return the 
-[`Webhook`][webhook_class] object populated with data from the API.
+[`Webhook`][webhook_class] object, and then calling [`webhook.get(*, fields=None, headers=None, **kwargs)`][get]
+will return the [`Webhook`][webhook_class] object populated with data from the API.
 
 <!-- sample get_webhooks_id -->
 ```python
@@ -95,7 +95,7 @@ Update Webhook
 --------------
 
 To update a webhook object, first call [`client.webhook(webhook_id)`][webhook] to construct the appropriate [`Webhook`][webhook_class] 
-object, and then calling [`webhook.update_info(data)`][update_info] with a `dict` of properties to update on the 
+object, and then calling [`webhook.update_info(data=update_object)`][update_info] with a `dict` of properties to update on the 
 webhook. This method returns a new updated [`Webhook`][webhook_class] object, leaving the original object unmodified.
 
 <!-- sample put_webhooks_id -->
@@ -104,7 +104,7 @@ update_object = {
     'triggers': ['FILE.COPIED'],
     'address': 'https://newexample.com',
 }
-webhook = client.webhook(webhook_id='12345').update_info(update_object)
+webhook = client.webhook(webhook_id='12345').update_info(data=update_object)
 print(f'Updated the webhook info for triggers: {webhook.triggers} and address: {webhook.address}')
 ```
 

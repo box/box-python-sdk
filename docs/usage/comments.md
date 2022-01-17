@@ -20,9 +20,9 @@ Get Information About a Comment
 -------------------------------
 
 To get a specific comment object, first call `[client.comment(comment_id)`][comment] to construct the appropriate
-[`Comment`][comment_class] object, and then call [`comment.get(fields=None)`][get] to retrieve the data about the
-comment.  The latter method returns a new [`Comment`][comment_class] object with fields populated by data from the API,
-leaving the original unmodified.
+[`Comment`][comment_class] object, and then call [`comment.get(*, fields=None, headers=None, **kwargs)`][get] to
+retrieve the data about the comment. The latter method returns a new [`Comment`][comment_class] object with fields
+populated by data from the API, leaving the original unmodified.
 
 <!-- sample get_comment_id -->
 ```python

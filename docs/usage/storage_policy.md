@@ -22,7 +22,7 @@ Get Storage Policy
 ------------------
 
 To get a storage policy object, first call [`client.storage_policy(policy_id)`][storage_policy] to construct the 
-appropriate [`Storage Policy`][storage_policy_class] object, and then calling [`storage_policy.get(fields=None)`][get] 
+appropriate [`Storage Policy`][storage_policy_class] object, and then calling [`storage_policy.get(*, fields=None, headers=None, **kwargs)`][get] 
 will return the [`StoragePolicy`][storage_policy_class] object populated with data from the API.
 
 <!-- sample get_storage_policies_id -->
@@ -74,15 +74,15 @@ assignment = client.storage_policy(policy_id='12345').create_assignment(user)
 print(f'Storage Policy Assignment ID is {assignment.id} and the assignee ID is {assignment.assigned_to.id}')
 ```
 
-If the user already has an assignment, you can call [storage_policy_assignment.update_info(data)][update_info] with a 
-`dict` of properties to update on the storage policy assignment. This method returns a newly update 
+If the user already has an assignment, you can call [storage_policy_assignment.update_info(data=updated_storage_policy)][update_info]
+with a `dict` of properties to update on the storage policy assignment. This method returns a newly update 
 [`StoragePolicyAssignment`][storage_policy_assignment] object with data populated from the API, leaving the original 
 object unmodified.
 
 <!-- sample put_storage_policy_assignments_id -->
 ```python
 updated_storage_policy = {'storage_policy': {'type': 'storage_policy', 'id': '12345'}}
-updated_assignment = client.storage_policy_assignment(assignment_id='ZW50ZXJwcmldfgeV82MDMwMDQ=').update_info(updated_storage_policy)
+updated_assignment = client.storage_policy_assignment(assignment_id='ZW50ZXJwcmldfgeV82MDMwMDQ=').update_info(data=updated_storage_policy)
 print(f'Update storage policy ID is {updated_assignment.storage_policy.id}')
 ```
 
@@ -96,7 +96,7 @@ Get Assignment Information about a Storage Policy Assignment
 
 To get a storage policy assignment object, first call [`client.storage_policy_assignment(assignment_id)`][storage_policy_assignment] 
 to construct the appropriate [`Storage Policy Assignment`][storage_policy_assignment_class] object, and then calling 
-[`storage_policy_assignment.get(fields=None)`][get] will return the [`StoragePolicyAssignment`][storage_policy_assignment_class] 
+[`storage_policy_assignment.get(*, fields=None, headers=None, **kwargs)`][get] will return the [`StoragePolicyAssignment`][storage_policy_assignment_class] 
 object populated with data from the API.
 
 <!-- sample get_storage_policy_assignments_id -->

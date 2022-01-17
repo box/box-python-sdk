@@ -26,8 +26,8 @@ Users represent an individual's account on Box.
 Get User Information
 --------------------
 
-To get information about a user, call the [`user.get(fields=None)`][object_get] method.  This method returns a new
-[`User`][user_class] object with fields populated by data from the API.
+To get information about a user, call the [`user.get(*, fields=None, headers=None, **kwargs)`][object_get] method.
+This method returns a new [`User`][user_class] object with fields populated by data from the API.
 
 <!-- sample get_users_id -->
 ```python
@@ -52,7 +52,7 @@ Get the Current User's Information
 ----------------------------------
 
 To get the current user, call [`client.user(user_id='me')`][user_init] to create the [`User`][user_class] object and
-then call [`user.get(fields=None)`][object_get] to retrieve the user information from the API.
+then call [`user.get(*, fields=None, headers=None, **kwargs)`][object_get] to retrieve the user information from the API.
 
 <!-- sample get_users_me -->
 ```python
@@ -104,14 +104,14 @@ new_app_user = client.create_user('App User 123', login=None)
 Update User
 -----------
 
-To update a user object, call the [`user.update_info(data)`][update_info] method with a `dict` of fields to update
+To update a user object, call the [`user.update_info(data=data_to_update)`][update_info] method with a `dict` of fields to update
 on the user.
 
 <!-- sample put_users_id -->
 ```python
 user_id = '33333'
 user = client.user(user_id)
-updated_user = user.update_info({'name': 'Smart User'})
+updated_user = user.update_info(data={'name': 'Smart User'})
 ```
 
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info

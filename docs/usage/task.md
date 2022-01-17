@@ -25,7 +25,7 @@ Get a Task's Information
 ------------------------
 
 To get a task object, first call [`client.task(task_id)`][task] to construct the appropriate [`Task`][task_class] 
-object, and then calling [`task.get(fields=None)`][get] will return the [`Task`][task_class] object populated with data 
+object, and then calling [`task.get(*, fields=None, headers=None, **kwargs)`][get] will return the [`Task`][task_class] object populated with data 
 from the API, leaving the original object unmodified.
 
 <!-- sample get_tasks_id -->
@@ -73,14 +73,14 @@ print(f'Task message is {task.message} and it is due at {task.due_at}')
 Update Task Info
 ----------------
 
-To update a task object, first call [`task.update_info(data)`][update_info] with a `dict` of properties to update on the 
-task. This method returns a newly updated [`Task`][task_class] object, leaving the original object unmodified.
+To update a task object, first call [`task.update_info(data=task_update)`][update_info] with a `dict` of properties to
+update on the task. This method returns a newly updated [`Task`][task_class] object, leaving the original object unmodified.
 
 <!-- sample put_tasks_id -->
 ```python
-task_update = {'message': 'New Message', 'due_at': '2014-04-03T11:09:43-10:00',}
-updated_task = client.task(task_id='12345').update_info(task_update)
-print('New task message is {1} and the new due time is {1}'.format{updated_task.message, updated_Task.due_at})
+task_update = {'message': 'New Message', 'due_at': '2014-04-03T11:09:43-10:00'}
+updated_task = client.task(task_id='12345').update_info(data=task_update)
+print(f'New task message is {updated_task.message} and the new due time is {updated_task.due_at}')
 ```
 
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
@@ -157,7 +157,7 @@ Get Information about Task Assignment
 -------------------------------------
 
 To get a task assignment object, first call [`client.task_assignment(assignment_id)`][assignment] to construct the 
-appropriate [`TaskAssignment`][assignment_class] object, and then calling ['task_assignment.get(fields=None)'][get] 
+appropriate [`TaskAssignment`][assignment_class] object, and then calling ['task_assignment.get(*, fields=None, headers=None, **kwargs)'][get] 
 will return the [`TaskAssignment`][task_assignment] object populated with data from the API.
 
 <!-- sample get_task_assignments_id -->
@@ -173,7 +173,7 @@ print(f'Assignment ID is {assignment.id} and assignment type is {assignment.type
 Update Task Assignment
 ----------------------
 
-To update a task assignment object, call [`assignment.update_info(data)`][update_info] 
+To update a task assignment object, call [`assignment.update_info(data=updated_task)`][update_info] 
 with a `dict` of properties to update on a task assignment. This method returns a newly update 
 [`TaskAssignment`][assignment_class] object, leaving the original object unmodified.
 
@@ -181,14 +181,14 @@ with a `dict` of properties to update on a task assignment. This method returns 
 ```python
 from boxsdk.object.task_assignment import ResolutionState
 updated_task = {'resolution_state': ResolutionState.APPROVED}
-updated_assignment = client.task_assignment(assignment_id='12345').update_info(updated_task)
+updated_assignment = client.task_assignment(assignment_id='12345').update_info(data=updated_task)
 print(f'Assignment ID is {updated_assignment.id} and resolution state is {updated_assignment.resolution_state}')
 ```
 
 <!-- sample put_task_assignments_id message -->
 ```python
 updated_task = {'message': 'new message'}
-updated_assignment = client.task_assignment(assignment_id='12345').update_info(updated_task)
+updated_assignment = client.task_assignment(assignment_id='12345').update_info(data=updated_task)
 print(f'Assignment ID is {updated_assignment.id} and message is {updated_task.message}')
 ```
 
