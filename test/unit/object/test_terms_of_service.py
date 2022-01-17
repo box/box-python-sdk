@@ -34,7 +34,7 @@ def test_update(test_terms_of_service, mock_box_session):
     data = {
         'text': new_text,
     }
-    updated_terms_of_service = test_terms_of_service.update_info(data)
+    updated_terms_of_service = test_terms_of_service.update_info(data=data)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
     assert isinstance(updated_terms_of_service, TermsOfService)
     assert updated_terms_of_service.text == new_text

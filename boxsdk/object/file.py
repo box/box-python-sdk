@@ -344,7 +344,7 @@ class File(Item):
         }
         if expire_time is not None:
             data['lock']['expires_at'] = expire_time
-        return self.update_info(data)
+        return self.update_info(data=data)
 
     @api_call
     def unlock(self) -> 'File':
@@ -355,7 +355,7 @@ class File(Item):
             A new :class:`File` instance reflecting that the file has been unlocked.
         """
         data = {'lock': None}
-        return self.update_info(data)
+        return self.update_info(data=data)
 
     @api_call
     def get_shared_link_download_url(
@@ -681,7 +681,14 @@ class File(Item):
         return b''
 
     @api_call
-    def copy(self, parent_folder: 'Folder', name: Optional[str] = None, file_version: 'FileVersion' = None) -> 'File':
+    def copy(
+            self,
+            *,
+            parent_folder: 'Folder',
+            name: Optional[str] = None,
+            file_version: 'FileVersion' = None,
+            **_kwargs
+    ) -> 'File':
         # pylint: disable=arguments-differ
         """Copy the item to the given folder.
 
@@ -694,6 +701,7 @@ class File(Item):
         :returns:
             The copy of the file
         """
+        # pylint: disable=arguments-differ
         url = self.get_url('copy')
         data = {
             'parent': {'id': parent_folder.object_id}

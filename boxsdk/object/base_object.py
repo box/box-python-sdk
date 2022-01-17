@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import json
-from typing import TYPE_CHECKING, Any, Iterable, Optional
+from typing import TYPE_CHECKING, Any, Iterable, Optional, Union, List
 
 from .base_endpoint import BaseEndpoint
 from .base_api_json_object import BaseAPIJSONObject
@@ -40,7 +40,6 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         Base class override.
         Return the given object's URL, appending any optional parts as specified by args.
         """
-        # pylint:disable=arguments-differ
         return super().get_url(f'{self._item_type}s', self._object_id, *args)
 
     def get_type_url(self) -> str:
@@ -57,7 +56,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         return self._object_id
 
     @api_call
-    def get(self, fields: Iterable[str] = None, headers: dict = None) -> Any:
+    def get(self, *, fields: Iterable[str] = None, headers: dict = None, **_kwargs) -> Any:
         """
         Get information about the object, specified by fields. If fields is None, return the default fields.
 
@@ -79,7 +78,8 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
     @api_call
     def update_info(
             self,
-            data: dict,
+            *,
+            data: Union[dict, List[dict]],
             params: Optional[dict] = None,
             headers: Optional[dict] = None,
             **kwargs: Any
@@ -109,19 +109,18 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
             Construct the new object with all the default attributes that are
             returned from the endpoint.
         """
-        # pylint:disable=no-else-return
         url = self.get_url()
         box_response = self._session.put(url, data=json.dumps(data), params=params, headers=headers, **kwargs)
         if 'expect_json_response' in kwargs and not kwargs['expect_json_response']:
             return box_response.ok
-        else:
-            return self.translator.translate(
-                session=self._session,
-                response_object=box_response.json(),
-            )
+
+        return self.translator.translate(
+            session=self._session,
+            response_object=box_response.json(),
+        )
 
     @api_call
-    def delete(self, params: Optional[dict] = None, headers: Optional[dict] = None) -> bool:
+    def delete(self, *, params: Optional[dict] = None, headers: Optional[dict] = None, **_kwargs) -> bool:
         """ Delete the object.
 
         :param params:
@@ -134,8 +133,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
             :class:`BoxAPIException` in case of unexpected errors.
         """
         url = self.get_url()
-        # ??? There's a question about why params forces a default to {}, while headers doesn't. Looking for
-        # confirmation that the below is correct.
+
         box_response = self._session.delete(url, expect_json_response=False, params=params or {}, headers=headers)
         return box_response.ok
 

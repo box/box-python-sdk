@@ -174,7 +174,7 @@ class User(BaseObject):
         return response.content
 
     @api_call
-    def delete(self, notify: bool = True, force: bool = False) -> bool:
+    def delete(self, *, notify: bool = True, force: bool = False, **kwargs) -> bool:
         # pylint: disable=arguments-differ,arguments-renamed
         """
         Delete a user's account.  This user will no longer be able to access Box.
@@ -190,4 +190,4 @@ class User(BaseObject):
             'notify': notify,
             'force': force,
         }
-        return super().delete(params=params)
+        return super().delete(params=params, **kwargs)

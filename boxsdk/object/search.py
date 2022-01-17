@@ -131,8 +131,7 @@ class Search(BaseEndpoint):
         :return:
             The search endpoint URL.
         """
-        # pylint:disable=arguments-differ
-        return super().get_url('search')
+        return super().get_url('search', *args)
 
     @staticmethod
     def start_metadata_filters() -> MetadataSearchFilters:
@@ -275,7 +274,6 @@ class Search(BaseEndpoint):
             limit: int = None,
             fields: Iterable[Optional[str]] = None
     ) -> 'BoxObjectCollection':
-        # pylint: disable=arguments-differ
         """Query Box items by their metadata.
 
         :param from_template:

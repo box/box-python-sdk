@@ -63,7 +63,7 @@ def test_update(test_task_assignment, mock_box_session):
         'message': new_message,
         'resolution_state': resolution_state,
     }
-    updated_task_assignment = test_task_assignment.update_info({'message': new_message, 'resolution_state': resolution_state})
+    updated_task_assignment = test_task_assignment.update_info(data={'message': new_message, 'resolution_state': resolution_state})
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body), headers=None, params=None)
     assert isinstance(updated_task_assignment, TaskAssignment)
     assert updated_task_assignment.message == new_message

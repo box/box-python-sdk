@@ -34,7 +34,7 @@ def test_update(test_storage_policy_assignment, mock_box_session):
         'type': 'storage_policy_assignment',
         'id': new_policy_id,
     }
-    storage_policy_assignment = test_storage_policy_assignment.update_info({
+    storage_policy_assignment = test_storage_policy_assignment.update_info(data={
         'storage_policy': {
             'type': 'storage_policy',
             'id': new_policy_id,

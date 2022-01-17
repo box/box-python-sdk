@@ -39,7 +39,7 @@ def test_update(mock_box_session, test_web_link):
         'url': 'https://newtest.com',
     }
     mock_box_session.put.return_value.json.return_value = mock_web_link
-    web_link = test_web_link.update_info(data)
+    web_link = test_web_link.update_info(data=data)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
     assert web_link.id == mock_web_link['id']
     assert web_link.type == mock_web_link['type']

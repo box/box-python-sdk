@@ -79,7 +79,7 @@ def test_update(mock_user, mock_box_session):
         'name': 'New User',
     }
     mock_box_session.put.return_value.json.return_value = user
-    new_user = mock_user.update_info(data)
+    new_user = mock_user.update_info(data=data)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
     assert new_user.id == user['id']
     assert new_user.type == user['type']

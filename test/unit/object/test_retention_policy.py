@@ -36,7 +36,7 @@ def test_update(test_retention_policy, mock_box_session):
     data = {
         'policy_name': new_policy_name,
     }
-    retention_policy = test_retention_policy.update_info(data)
+    retention_policy = test_retention_policy.update_info(data=data)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
     assert isinstance(retention_policy, RetentionPolicy)
     assert retention_policy['type'] == test_retention_policy.object_type

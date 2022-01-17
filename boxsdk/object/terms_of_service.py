@@ -109,5 +109,5 @@ class TermsOfService(BaseObject):
         except BoxAPIException as err:
             if err.status == 409:
                 user_status = self.get_user_status(user)
-                translated_response = user_status.update_info({'is_accepted': is_accepted})
+                translated_response = user_status.update_info(data={'is_accepted': is_accepted})
         return translated_response

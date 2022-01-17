@@ -99,7 +99,7 @@ class Item(BaseItem):
         return response_json.get('upload_url', None)
 
     @api_call
-    def update_info(self, data: dict, etag: Optional[str] = None) -> 'Item':
+    def update_info(self, *, data: dict, etag: Optional[str] = None, **kwargs: Any) -> 'Item':
         """
         Baseclass override.
         :param data:
@@ -120,10 +120,10 @@ class Item(BaseItem):
         # pylint:disable=arguments-differ
         self.validate_item_id(self._object_id)
         headers = {'If-Match': etag} if etag is not None else None
-        return super().update_info(data, headers=headers)
+        return super().update_info(data=data, headers=headers, **kwargs)
 
     @api_call
-    def get(self, fields: Iterable[str] = None, etag: Optional[str] = None) -> 'Item':
+    def get(self, *, fields: Iterable[str] = None, etag: Optional[str] = None, **kwargs) -> 'Item':
         """
         Base class override.
 
@@ -138,11 +138,12 @@ class Item(BaseItem):
         # pylint:disable=arguments-differ,arguments-renamed
         self.validate_item_id(self._object_id)
         headers = {'If-None-Match': etag} if etag is not None else None
-        return super().get(fields=fields, headers=headers)
+        return super().get(fields=fields, headers=headers, **kwargs)
 
     @api_call
     def create_shared_link(
             self,
+            *,
             access: Optional[str] = None,
             etag: Optional[str] = None,
             unshared_at: Optional[str] = SDK_VALUE_NOT_SET,
@@ -198,6 +199,7 @@ class Item(BaseItem):
     @api_call
     def get_shared_link(
             self,
+            *,
             access: Optional[str] = None,
             etag: Optional[str] = None,
             unshared_at: Optional[str] = SDK_VALUE_NOT_SET,
@@ -248,7 +250,7 @@ class Item(BaseItem):
         )
 
     @api_call
-    def remove_shared_link(self, etag: Optional[str] = None, **kwargs: Any) -> bool:
+    def remove_shared_link(self, *, etag: Optional[str] = None, **kwargs: Any) -> bool:
         """
         Baseclass override.
 
@@ -264,7 +266,7 @@ class Item(BaseItem):
         return super().remove_shared_link(etag=etag)
 
     @api_call
-    def delete(self, params: dict = None, etag: Optional[str] = None) -> bool:
+    def delete(self, *, params: dict = None, etag: Optional[str] = None, **kwargs) -> bool:
         """Delete the item.
 
         :param params:
@@ -278,7 +280,7 @@ class Item(BaseItem):
         # pylint:disable=arguments-differ,arguments-renamed
         self.validate_item_id(self._object_id)
         headers = {'If-Match': etag} if etag is not None else None
-        return super().delete(params, headers)
+        return super().delete(params=params, headers=headers, **kwargs)
 
     def metadata(self, scope: str = 'global', template: str = 'properties') -> Metadata:
         """

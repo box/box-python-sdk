@@ -60,7 +60,7 @@ def test_copy_base_item(test_base_item_and_response, mock_box_session, test_fold
     }
     expected_body.update(expected_data)
     mock_box_session.post.return_value = mock_item_response
-    copy_response = test_item.copy(test_folder, **params)
+    copy_response = test_item.copy(parent_folder=test_folder, **params)
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
     assert isinstance(copy_response, test_item.__class__)
 

@@ -1,5 +1,5 @@
 # coding: utf-8
-from typing import Optional
+from typing import Optional, Any
 
 from boxsdk.object.base_object import BaseObject
 from boxsdk.util.text_enum import TextEnum
@@ -34,8 +34,10 @@ class Collaboration(BaseObject):
     @api_call
     def update_info(
             self,
+            *,
             role: Optional[CollaborationRole] = None,
-            status: Optional[CollaborationStatus] = None
+            status: Optional[CollaborationStatus] = None,
+            **kwargs: Any
     ) -> 'BaseObject':
         """Edit an existing collaboration on Box
 
@@ -56,9 +58,9 @@ class Collaboration(BaseObject):
         if status:
             data['status'] = status
         if role == CollaborationRole.OWNER:
-            return super().update_info(data=data, expect_json_response=False)
+            return super().update_info(data=data, expect_json_response=False, **kwargs)
 
-        return super().update_info(data=data)
+        return super().update_info(data=data, **kwargs)
 
     @api_call
     def accept(self) -> 'BaseObject':

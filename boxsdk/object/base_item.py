@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class BaseItem(BaseObject):
 
     @api_call
-    def copy(self, parent_folder: 'Folder', name: str = None) -> 'BaseItem':
+    def copy(self, *, parent_folder: 'Folder', name: str = None, **_kwargs) -> 'BaseItem':
         """Copy the item to the given folder.
 
         :param parent_folder:
@@ -52,7 +52,7 @@ class BaseItem(BaseObject):
         }
         if name is not None:
             data['name'] = name
-        return self.update_info(data)
+        return self.update_info(data=data)
 
     @api_call
     def rename(self, name: str) -> 'BaseItem':
@@ -65,7 +65,7 @@ class BaseItem(BaseObject):
         data = {
             'name': name,
         }
-        return self.update_info(data)
+        return self.update_info(data=data)
 
     @api_call
     def create_shared_link(self, **kwargs: Any) -> Any:
@@ -102,7 +102,7 @@ class BaseItem(BaseObject):
         data = {'shared_link': shared_link}
         update_info_kwargs = {'etag': kwargs.get('etag')} if kwargs.get('etag') is not None else {}
 
-        return self.update_info(data, **update_info_kwargs)
+        return self.update_info(data=data, **update_info_kwargs)
 
     @api_call
     def get_shared_link(self, **kwargs: Any) -> str:
@@ -131,7 +131,7 @@ class BaseItem(BaseObject):
         data = {'shared_link': None}
         update_info_kwargs = {'etag': kwargs.get('etag')} if kwargs.get('etag') is not None else {}
 
-        item = self.update_info(data, **update_info_kwargs)
+        item = self.update_info(data=data, **update_info_kwargs)
         return item.shared_link is None  # pylint:disable=no-member
 
     @api_call
@@ -149,7 +149,7 @@ class BaseItem(BaseObject):
         data = {
             'collections': collections
         }
-        return self.update_info(data)
+        return self.update_info(data=data)
 
     @api_call
     def remove_from_collection(self, collection: 'Collection') -> 'BaseItem':
@@ -166,7 +166,7 @@ class BaseItem(BaseObject):
         data = {
             'collections': updated_collections
         }
-        return self.update_info(data)
+        return self.update_info(data=data)
 
     @staticmethod
     def validate_item_id(item_id: Union[str, int]) -> None:
