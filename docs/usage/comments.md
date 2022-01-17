@@ -20,14 +20,14 @@ Get Information About a Comment
 -------------------------------
 
 To get a specific comment object, first call `[client.comment(comment_id)`][comment] to construct the appropriate
-[`Comment`][comment_class] object, and then call [`comment.get(fields=None)`][get] to retrieve the data about the
-comment.  The latter method returns a new [`Comment`][comment_class] object with fields populated by data from the API,
-leaving the original unmodified.
+[`Comment`][comment_class] object, and then call [`comment.get(*, fields=None, headers=None, **kwargs)`][get] to
+retrieve the data about the comment. The latter method returns a new [`Comment`][comment_class] object with fields
+populated by data from the API, leaving the original unmodified.
 
 <!-- sample get_comment_id -->
 ```python
 comment = client.comment(comment_id='55555').get()
-print('The comment says "{0}"'.format(comment.message))
+print(f'The comment says "{comment.message}"')
 ```
 
 [comment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.comment
@@ -45,7 +45,7 @@ This method returns a `BoxObjectCollection` that you can use to iterate over all
 ```python
 comments = client.file(file_id='11111').get_comments()
 for comment in comments:
-    print('Comment was left by {0} at {1}'.format(comment.created_by.name, comment.created_at))
+    print(f'Comment was left by {comment.created_by.name} at {comment.created_at}')
 ```
 
 [get_comments]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_comments

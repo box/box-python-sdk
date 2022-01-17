@@ -35,7 +35,7 @@ objects in the collection.
 allowlist_entries = client.collaboration_allowlist().get_entries()
 for entry in allowlist_entries:
     direction = entry.direction if entry.direction != 'both' else 'bidirectional'
-    print('Domain {0} is allowlisted for {1} collaboration'.format(entry.domain, direction))
+    print(f'Domain {entry.domain} is allowlisted for {direction} collaboration')
 ```
 
 [get_entries]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.collaboration_allowlist.CollaborationAllowlist.get_entries
@@ -44,7 +44,7 @@ for entry in allowlist_entries:
 Get Information for Collaboration Allowlist Entry
 -------------------------------------------------
 
-To get information about a collaboration allowlist entry, use [`collaboration_allowlist_entry.get(fields=None)`][get].
+To get information about a collaboration allowlist entry, use [`collaboration_allowlist_entry.get(*, fields=None, headers=None, **kwargs)`][get].
 This method returns a [`CollaborationAllowlistEntry`][entry_class] object with fields populated by data form the API.
 
 <!-- sample get_collaboration_allowlist_entries_id -->
@@ -100,7 +100,7 @@ a `BoxObjectCollection` that allows you to iterate over each
 ```python
 exemptions = client.collaboration_allowlist().get_exemptions()
 for exemption in exemptions:
-    print('{0} (ID: {1}) is exempt from the collaboration allowlist'.format(exemption.user.name, exemption.user.id))
+    print(f'{exemption.user.name} (ID: {exemption.user.id}) is exempt from the collaboration allowlist')
 ```
 
 [get_exemptions]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.collaboration_allowlist.CollaborationAllowlist.get_exemptions
@@ -109,8 +109,8 @@ for exemption in exemptions:
 Get Exempt User Information
 ---------------------------
 
-To get information about an exempted user, call [`collaboration_allowlist_exempt_target.get(fields=None)`][get].  This
-method will return a [`CollaborationAllowlistExemptTarget][exemption_class] with fields populated by data from the API.
+To get information about an exempted user, call [`collaboration_allowlist_exempt_target.get(*, fields=None, headers=None, **kwargs)`][get].
+This method will return a [`CollaborationAllowlistExemptTarget][exemption_class] with fields populated by data from the API.
 
 <!-- sample get_collaboration_allowlist_exempt_targets_id -->
 ```python

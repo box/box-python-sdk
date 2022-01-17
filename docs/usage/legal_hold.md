@@ -33,14 +33,14 @@ Get Information About a Legal Hold Policy
 -----------------------------------------
 
 To retrieve information about a legal hold policy, first call [`client.legal_hold_policy(policy_id)`][legal_hold_policy]
-to initialize the [`LegalHoldPolicy`][policy_class] and then call [`legal_hold_policy.get(fields=None)`][get] to
+to initialize the [`LegalHoldPolicy`][policy_class] and then call [`legal_hold_policy.get(*, fields=None, headers=None, **kwargs)`][get] to
 retrieve data from the API.  This method returns a new [`LegalHoldPolicy`][policy_class] object with fields populated by
 data form the API, leaving the original object unmodified.
 
 <!-- sample get_legal_hold_policies_id -->
 ```python
 legal_hold_policy = client.legal_hold_policy(policy_id='12345').get()
-print('The "{0}" policy is {1}'.format(legal_hold_policy.policy_name, legal_hold_policy.status))
+print(f'The "{legal_hold_policy.policy_name}" policy is {legal_hold_policy.status}')
 ```
 
 [legal_hold_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.legal_hold_policy
@@ -60,7 +60,7 @@ prefix match by name.  This method returns a `BoxObjectCollection` that allows y
 ```python
 policies = client.get_legal_hold_policies()
 for policy in policies:
-    print('Legal Hold Policy "{0}" has ID {1}'.format(policy.name, policy.id))
+    print(f'Legal Hold Policy "{policy.name}" has ID {policy.id}')
 ```
 
 [get_legal_hold_policies]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.get_legal_hold_policies
@@ -77,7 +77,7 @@ representing the created policy.
 <!-- sample post_legal_hold_policies -->
 ```python
 new_policy = client.create_legal_hold_policy('New Policy', is_ongoing=True)
-print('Created legal hold policy with ID {0}'.format(new_policy.id))
+print(f'Created legal hold policy with ID {new_policy.id}')
 ```
 
 [create_legal_hold_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_legal_hold_policy
@@ -85,14 +85,14 @@ print('Created legal hold policy with ID {0}'.format(new_policy.id))
 Update Legal Hold Policy
 ------------------------
 
-To update an existing legal hold policy, call [`legal_hold_policy.update_info(data)`][update_info] with a `dict` of
-properties to update on the policy.  This method returns a new [`LegalHoldPolicy`][policy_class] object with the updates
-applied, leaving the original object unmodified.
+To update an existing legal hold policy, call [`legal_hold_policy.update_info(data=policy_update)`][update_info] with
+a `dict` of properties to update on the policy. This method returns a new [`LegalHoldPolicy`][policy_class] object
+with the updates applied, leaving the original object unmodified.
 
 <!-- sample put_legal_hold_policies_id -->
 ```python
 policy_update = {'description': 'New Description', 'release_notes': 'Example Notes'}
-updated_policy = client.legal_hold_policy(policy_id='12345').update_info(policy_update)
+updated_policy = client.legal_hold_policy(policy_id='12345').update_info(data=policy_update)
 ```
 
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
@@ -125,11 +125,7 @@ This will cause the associated items to be held and unable to be deleted.
 ```python
 folder_to_assign = client.folder(folder_id='22222')
 assignment = client.legal_hold_policy(policy_id'12345').assign(folder_to_assign)
-print('Applied policy "{0}" to {1} {2}'.format(
-    assignment.legal_hold_policy.policy_name,
-    assignment.assigned_to.type,
-    assignment.assigned_to.id,
-))
+print(f'Applied policy "{assignment.legal_hold_policy.policy_name}" to {assignment.assigned_to.type} {assignment.assigned_to.id}')
 ```
 
 [assign]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.legal_hold_policy.LegalHoldPolicy.assign
@@ -150,7 +146,7 @@ This method returns a `BoxObjectCollection` that allows you to iterate over the
 ```python
 assignments = client.legal_hold_policy(policy_id='12345').get_assignments()
 for assignment in assignments:
-    print('Found policy assignment with ID {0}'.format(assignment.id))
+    print(f'Found policy assignment with ID {assignment.id}')
 ```
 
 To filter by the assignee `type` and/or `id` you can use pass in the `assign_to_type` and `assign_to_id` filter.
@@ -159,7 +155,7 @@ To filter by the assignee `type` and/or `id` you can use pass in the `assign_to_
 folder_id = '1111'
 assignments = client.legal_hold_policy('1234').get_assignments('folder', folder_id)
 for assignment in assignments:
-    print('Found policy assignment with ID {0}'.format(assignment.id))
+    print(f'Found policy assignment with ID {assignment.id}')
 ```
 
 [get_assignments]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.legal_hold_policy.LegalHoldPolicy.get_assignments
@@ -170,7 +166,7 @@ Get Information About a Legal Hold Assignment
 
 To retrieve information about a legal hold policy assignment, first call
 [`client.legal_hold_policy_assignment(policy_assignment_id)`][legal_hold_policy_assignment] to initialize the
-[`LegalHoldPolicyAssignment`][assignment_class] and then call [`legal_hold_policy_assignment.get(fields=None)`][get] to
+[`LegalHoldPolicyAssignment`][assignment_class] and then call [`legal_hold_policy_assignment.get(*, fields=None, headers=None, **kwargs)`][get] to
 retrieve data about the assignment from the API.  This method returns a new
 [`LegalHoldPolicyAssignment`][assignment_class] with fields populated by data from the API, leaving the original object
 unmodified.
@@ -179,11 +175,7 @@ unmodified.
 ```python
 assignment_id = '98765'
 assignment = client.legal_hold_policy_assignment(assignment_id).get()
-print('Policy {0} is assigned to {1} {2}'.format(
-    assignment.legal_hold_policy.id,
-    assignment.assigned_to.type,
-    assignment.assigned_to.id,
-))
+print(f'Policy {assignment.legal_hold_policy.id} is assigned to {assignment.assigned_to.type} {assignment.assigned_to.id}')
 ```
 
 [legal_hold_policy_assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.legal_hold_policy_assignment
@@ -215,7 +207,7 @@ collection.
 ```python
 legal_holds = client.legal_hold_policy(policy_id='12345').get_file_version_legal_holds()
 for legal_hold in legal_holds:
-    print('Got file version legal hold with ID {0}'.format(legal_hold.id))
+    print(f'Got file version legal hold with ID {legal_hold.id}')
 ```
 
 [get_file_version_legal_holds]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.legal_hold_policy.LegalHoldPolicy.get_file_version_legal_holds
@@ -224,7 +216,7 @@ for legal_hold in legal_holds:
 Get Information about a File Version Legal Hold
 -----------------------------------------------
 
-To retrieve information about a file version legal hold, call [`legal_hold.get(fields=None)`][get].  This method
+To retrieve information about a file version legal hold, call [`legal_hold.get(*, fields=None, headers=None, **kwargs)`][get].  This method
 returns a new [`LegalHold`][hold_class] with fields populated by data from the API, leaving the original object
 unmodified.
 
@@ -232,9 +224,5 @@ unmodified.
 ```python
 file_version_legal_hold_id = '55555'
 legal_hold = client.legal_hold(file_version_legal_hold_id).get()
-print('Version {0} of file {1} is held by {2} assignment(s)'.format(
-    legal_hold.file_version.id,
-    legal_hold.file.id,
-    len(legal_hold.legal_hold_policy_assignments),
-))
+print(f'Version {legal_hold.file_version.id} of file {legal_hold.file.id} is held by {len(legal_hold.legal_hold_policy_assignments)} assignment(s)')
 ```

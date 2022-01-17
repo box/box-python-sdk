@@ -36,7 +36,7 @@ pass a `stream_position` of `0`.  The generator yields [`Event`][event_class] ob
 ```python
 events = client.events().generate_events_with_long_polling()
 for event in events:
-    print('Got {0} event'.format(event.event_type))
+    print(f'Got {event.event_type} event')
 ```
 
 [generator]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.events.Events.generate_events_with_long_polling
@@ -50,7 +50,7 @@ This method returns the current stream position value as an `int`.
 
 ```python
 stream_position = client.events().get_latest_stream_position()
-print('The current stream position is {0}'.format(stream_position))
+print(f'The current stream position is {stream_position}')
 ```
 
 [get_stream_position]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.events.Events.get_latest_stream_position
@@ -69,7 +69,7 @@ stream_position = 0
 events = client.events().get_events(stream_position=stream_position)
 stream_position = events['next_stream_position']
 for event in events['entries']:
-    print('Got {0} event that occurred at {1}'.format(event.event_type, event.created_at))
+    print(f'Got {event.event_type} event that occurred at {event.created_at}')
 ```
 
 [get_events]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.events.Events.get_events
@@ -95,12 +95,12 @@ stream_position = 0
 events = client.events().get_events(stream_type=EnterpriseEventsStreamType.ADMIN_LOGS, stream_position=stream_position)
 stream_position = events['next_stream_position']
 for event in events['entries']:
-    print('Got {0} event that occurred at {1}'.format(event.event_type, event.created_at))
+    print(f'Got {event.event_type} event that occurred at {event.created_at}')
 ```
 
 ### Get Admin Events
 
-The SDK also allows you to retrieve enterprise events. Use [`events.get_admin_events_streaming(self, limit=None, stream_position=0, event_types=None)`] for live monitoring (events up to two weeks, low latency) and [`events.get_admin_events(self, limit=None, created_after=None, created_before=None, event_types=None)`] for historical querying (events up to one year, higher latency).  
+The SDK also allows you to retrieve enterprise events. Use [`events.get_admin_events_streaming(self, limit=None, stream_position=0, event_types=None)`] for live monitoring (events up to two weeks, low latency) and [`events.get_admin_events(self, limit=None, stream_position=0, created_after=None, created_before=None, event_types=None)`] for historical querying (events up to one year, higher latency).
 
 Live monitoring example
 
@@ -109,7 +109,7 @@ Live monitoring example
  events = client.events()
     .get_admin_events_streaming()
  for event in events['entries']:
-    print('Got {0} event that occurred at {1}'.format(event.event_type, event.created_at)) 
+    print(f'Got {event.event_type} event that occurred at {event.created_at}') 
 ```
 
 Addditionally, a list of event types can be passed along to filter down the returned events.
@@ -119,20 +119,22 @@ Addditionally, a list of event types can be passed along to filter down the retu
  events = client.events()
     .get_admin_events_streaming(event_types=['ITEM_CREATE'])
  for event in events['entries']:
-    print('Got {0} event that occurred at {1}'.format(event.event_type, event.created_at)) 
+    print(f'Got {event.event_type} event that occurred at {event.created_at}') 
 ```
 
 When using historical querying you can specify before and after a certain datetime and the types of events to retrieve with the `event_type` by calling
-[`events.get_admin_events(self, limit=None, created_after=None, created_before=None, event_types=None)`][admin_events_details].
+[`events.get_admin_events(self, limit=None, stream_position=0, created_after=None, created_before=None, event_types=None)`][admin_events_details].
 The format for the `created_after` and `created_before` fields are supported by [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) and look
 something like this: 2019-08-12T09:12:36-00:00. For more information on the date format please see [here](https://developer.box.com/en/guides/api-calls/types-and-formats/#date-and-times).
+This method returns a `dict` with the relevant [`Event`][event_class] objects in a `list` under the
+`entries` key and the next stream position value under the `next_stream_position` key.
 
 <!-- sample get_events enterprise -->
 ```python
  events = client.events()
     .get_admin_events(created_after='2019-07-01T22:02:24-07:00')
  for event in events['entries']:
-    print('Got {0} event that occurred at {1}'.format(event.event_type, event.created_at)) 
+    print(f'Got {event.event_type} event that occurred at {event.created_at}') 
 ```
 
 Addditionally, a list of event types can be passed along to filter down the returned events.
@@ -142,7 +144,7 @@ Addditionally, a list of event types can be passed along to filter down the retu
  events = client.events()
     .get_admin_events(created_after='2019-07-01T22:02:24-07:00', event_types=['ITEM_CREATE'])
  for event in events['entries']:
-    print('Got {0} event that occurred at {1}'.format(event.event_type, event.created_at)) 
+    print(f'Got {event.event_type} event that occurred at {event.created_at}') 
 ```
 
 [admin_events_details]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.events.Events.get_admin_events

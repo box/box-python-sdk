@@ -55,7 +55,7 @@ fields = [
     MetadataField(MetadataFieldType.ENUM, 'State', options=['CA', 'TX', 'NY'])
 ]
 template = client.create_metadata_template('Employee Record', fields, hidden=True)
-print('Metadata template ID {0}/{1} created!'.format(template.scope, template.templateKey))
+print(f'Metadata template ID {template.scope}/{template.templateKey} created!')
 ```
 
 [create_template]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.create_metadata_template
@@ -76,7 +76,7 @@ data from the API, leaving the original object unmodified.
 <!-- sample get_metadata_templates_id_id_schema -->
 ```python
 template = client.metadata_template('enterprise', 'employeeRecord').get()
-print('The {0} template has {1} fields'.format(template.displayName, len(template.fields)))
+print(f'The {template.displayName} template has {len(template.fields)} fields')
 ```
 
 [metadata_template]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.metadata_template
@@ -91,7 +91,7 @@ data from the API.
 <!-- sample get_metadata_templates_id -->
 ```python
 template = client.metadata_template_by_id(template_id='abcdef-fba434-ace44').get()
-print('The {0} template has {1} fields'.format(template.displayName, len(template.fields)))
+print(f'The {template.displayName} template has {len(template.fields)} fields')
 ```
 
 [get_by_id]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.get_metadata_template_by_id
@@ -101,8 +101,8 @@ Update Metadata Template
 
 To make changes to a metadata template, first call [`template.start_update()`][start_update] to create a
 [`MetadataTemplateUpdate`][template_update_class] to track updates.  Call the methods on this object to add the
-necessary update operations, and then call [`template.update_info(updates)`][update_info] with the updates object to
-apply the changes to the metadata template.  This method returns an updated
+necessary update operations, and then call [`template.update_info(*, updates, **kwargs)`][update_info] with the updates
+object to apply the changes to the metadata template.  This method returns an updated
 [`MetadataTemplate`][metadata_template_class] object with the changes applied, leaving the original object unmodified.
 
 <!-- sample put_metadata_templates_id_id_schema -->
@@ -112,7 +112,7 @@ updates = template.start_update()
 updates.add_enum_option('state', 'WI')
 updates.edit_template({'hidden': False})
 updates.edit_template({'copyInstanceOnItemCopy': False})
-updated_template = template.update_info(updates)
+updated_template = template.update_info(updates=updates)
 ```
 
 [start_update]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata_template.MetadataTemplate.start_update
@@ -132,7 +132,7 @@ allows you to iterate over all the [`MetadataTemplate`][metadata_template_class]
 ```python
 templates = client.get_metadata_templates()
 for template in templates:
-    print('Metadata template {0} is in enterprise scope'.format(template.templateKey))
+    print(f'Metadata template {template.templateKey} is in enterprise scope')
 ```
 
 To return the metadata templates available to all enterprises pass in the
@@ -142,7 +142,7 @@ To return the metadata templates available to all enterprises pass in the
 ```python
 templates = client.get_metadata_templates(scope='global)
 for template in templates:
-    print('Metadata template {0} is in global scope'.format(template.templateKey))
+    print(f'Metadata template {template.templateKey} is in global scope')
 ```
 
 [get_metadata_templates]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.get_metadata_templates

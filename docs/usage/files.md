@@ -57,8 +57,8 @@ file's contents, upload new versions, and perform other common file operations
 Get a File's Information
 ------------------------
 
-Calling [`file.get(fields=None)`][get_info] on a [`File`][file_class] retrieves information about the file from the API.
-This method returns a new [`File`][file_class] object populated with the information retrieved. 
+Calling [`file.get(*, fields=None, etag=None, **kwargs)`][get_info] on a [`File`][file_class] retrieves information
+about the file from the API. This method returns a new [`File`][file_class] object populated with the information retrieved. 
 
 You can specify an `Iterable` of fields to retrieve from the API in the `fields` parameter.
 
@@ -66,7 +66,7 @@ You can specify an `Iterable` of fields to retrieve from the API in the `fields`
 ```python
 file_id = '11111'
 file_info = client.file(file_id).get()
-print('File "{0}" has a size of {1} bytes'.format(file_info.name, file_info.size))
+print(f'File "{file_info.name}" has a size of {file_info.size} bytes')
 ```
 
 [get_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.get
@@ -75,14 +75,14 @@ print('File "{0}" has a size of {1} bytes'.format(file_info.name, file_info.size
 Update a File's Information
 ---------------------------
 
-To update fields on the [`File`][file_class] object, call [`file.update_info(data)`][update_info] with a `dict` of
-fields to update.  This method returns the updated [`File`][file_class] object, leaving the original it was called on
-unmodified.
+To update fields on the [`File`][file_class] object, call [`file.update_info(data=data_to_update)`][update_info] with
+a `dict` of fields to update.  This method returns the updated [`File`][file_class] object, leaving the original it
+was called on unmodified.
 
 <!-- sample put_files_id -->
 ```python
 file_id = '11111'
-updated_file = client.file(file_id).update_info({'description': 'My file'})
+updated_file = client.file(file_id).update_info(data={'description': 'My file'})
 ```
 
 Download a File
@@ -145,7 +145,7 @@ containing the file's download URL.  You can optionally pass a [`FileVersion`][f
 ```python
 file_id = '11111'
 download_url = client.file(file_id).get_download_url()
-print('The file\'s download URL is: {0}'.format(download_url))
+print(f'The file\'s download URL is: {download_url}')
 ```
 
 [get_download_url]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_download_url
@@ -166,7 +166,7 @@ This method returns a [`File`][file_class] object representing the newly-uploade
 ```python
 folder_id = '22222'
 new_file = client.folder(folder_id).upload('/home/me/document.pdf')
-print('File "{0}" uploaded to Box with file ID {1}'.format(new_file.name, new_file.id))
+print(f'File "{new_file.name}" uploaded to Box with file ID {new_file.id}')
 ```
 
 To upload a file from a readable stream, call
@@ -180,7 +180,7 @@ stream = open('/path/to/file.pdf', 'rb')
 
 folder_id = '22222'
 new_file = client.folder(folder_id).upload_stream(stream, file_name)
-print('File "{0}" uploaded to Box with file ID {1}'.format(new_file.name, new_file.id))
+print(f'File "{new_file.name}" uploaded to Box with file ID {new_file.id}')
 ```
 
 [folder_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder
@@ -212,7 +212,7 @@ object that was uploaded.
 ```python
 chunked_uploader = client.file('12345').get_chunked_uploader('/path/to/file')
 uploaded_file = chunked_uploader.start()
-print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, uploaded_file.id))
+print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 ```
 
 Alternatively, you can create an upload session and calling [`upload_session.get_chunked_uploader(file_path)`][get_chunked_uploader] 
@@ -221,7 +221,7 @@ or [`upload_session.get_chunked_uploader_for_stream(content_stream, file_size)`]
 ```python
 chunked_uploader = client.upload_session('56781').get_chunked_uploader('/path/to/file')
 uploaded_file = chunked_uploader.start()
-print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, uploaded_file.id))
+print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 ```
 
 ```python
@@ -230,7 +230,7 @@ content_stream = open(test_file_path, 'rb')
 total_size = os.stat(test_file_path).st_size
 chunked_uploader = client.upload_session('56781').get_chunked_uploader_for_stream(content_stream, total_size)
 uploaded_file = chunked_uploader.start()
-print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, uploaded_file.id))
+print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 ```
 
 [start]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader.start
@@ -252,7 +252,7 @@ try:
     uploaded_file = chunked_uploader.start()
 except:
     uploaded_file = chunked_uploader.resume()
-print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, uploaded_file.id))
+print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 ```
 
 Alternatively, you can also create a [`UploadSession`][upload_session_class] object by calling
@@ -263,7 +263,7 @@ resuming an existing upload session.
 ```python
 chunked_uploader = client.upload_session('12345').get_chunked_uploader('/path/to/file')
 uploaded_file = chunked_uploader.resume()
-print('File "{0}" uploaded to Box with file ID {1}'.format(uploaded_file.name, uploaded_file.id))
+print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 ```
 
 [resume]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader.resume
@@ -325,7 +325,7 @@ for part_num in range(upload_session.total_parts):
     updated_sha1 = sha1.update(chunk)
 content_sha1 = sha1.digest()
 uploaded_file = upload_session.commit(content_sha1=content_sha1, parts=part_array)
-print('File ID: {0} and File Name: {1}'.format(uploaded_file.id, uploaded_file.name))
+print(f'File ID: {uploaded_file.id} and File Name: {uploaded_file.name}')
 ```
 
 The individual endpoint methods are detailed below:
@@ -341,7 +341,7 @@ uploaded.  You can optionally specify a new `file_name` to rename the file on up
 ```python
 file_size = 26000000
 upload_session = client.file('11111').create_upload_session(file_size)
-print('Created upload session {0} with chunk size of {1} bytes'.format(upload_session.id, upload_session.part_size))
+print(f'Created upload session {upload_session.id} with chunk size of {upload_session.part_size} bytes')
 ```
 
 [create_version_upload_session]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.create_upload_session
@@ -359,7 +359,7 @@ session.
 file_size = 26000000
 file_name = 'test_file.pdf'
 upload_session = client.folder('22222').create_upload_session(file_size, file_name)
-print('Created upload session {0} with chunk size of {1} bytes'.format(upload_session.id, upload_session.part_size))
+print(f'Created upload session {upload_session.id} with chunk size of {upload_session.part_size} bytes')
 ```
 
 [create_upload_session]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.create_upload_session
@@ -382,7 +382,7 @@ offset = upload_session.part_size * 3
 total_size = 26000000
 part_bytes = b'abcdefgh'
 part = upload_session.upload_part_bytes(part_bytes, offset, total_size)
-print('Successfully uploaded part ID {0}'.format(part['part_id']))
+print(f'Successfully uploaded part ID {part["part_id"]}')
 ```
 
 [upload_part_bytes]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.upload_part_bytes
@@ -408,7 +408,7 @@ file_atributes = {
 
 upload_session = client.upload_session('11493C07ED3EABB6E59874D3A1EF3581')
 uploaded_file = upload_session.commit(sha1.digest(), file_atributes=file_atributes)
-print('Successfully uploaded file {0} with description {1}'.format(uploaded_file.id, uploaded_file.description))
+print(f'Successfully uploaded file {uploaded_file.id} with description {uploaded_file.description}')
 ```
 
 [commit]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.commit
@@ -435,7 +435,7 @@ This method returns a `BoxObjectCollection` that allows you to iterate over the 
 ```python
 parts = client.upload_session('11493C07ED3EABB6E59874D3A1EF3581').get_parts()
 for part in parts:
-    print('Part {0} at offset {1} has already been uploaded'.format(part['part_id'], part['offset']))
+    print(f'Part {part["part_id"]} at offset {part["offset"]} has already been uploaded')
 ```
 
 [get_parts]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.get_parts
@@ -456,7 +456,7 @@ file_to_move = client.file(file_id)
 destination_folder = client.folder(destination_folder_id)
 
 moved_file = file_to_move.move(destination_folder)
-print('File "{0}" has been moved into folder "{1}"'.format(moved_file.name, moved_file.parent.name))
+print(f'File "{moved_file.name}" has been moved into folder "{moved_file.parent.name}"')
 ```
 
 [move]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_item.BaseItem.move
@@ -464,9 +464,9 @@ print('File "{0}" has been moved into folder "{1}"'.format(moved_file.name, move
 Copy a File
 -----------
 
-A file can be copied to a new folder by calling [`file.copy(parent_folder, name=None)`][copy] with the destination
-folder and an optional new name for the file in case there is a name conflict in the destination folder.  This method
-returns a [`File`][file_class] object representing the copy of the file in the destination folder.
+A file can be copied to a new folder by calling [`file.copy(*, parent_folder, name=None, file_version=None, **_kwargs)`][copy]
+with the destination folder and an optional new name for the file in case there is a name conflict in the destination
+folder.  This method returns a [`File`][file_class] object representing the copy of the file in the destination folder.
 
 <!-- sample post_files_id_copy -->
 ```python
@@ -476,8 +476,8 @@ destination_folder_id = '44444'
 file_to_copy = client.file(file_id)
 destination_folder = client.folder(destination_folder_id)
 
-file_copy = file_to_copy.copy(destination_folder)
-print('File "{0}" has been copied into folder "{1}"'.format(file_copy.name, file_copy.parent.name))
+file_copy = file_to_copy.copy(parent_folder=destination_folder)
+print(f'File "{file_copy.name}" has been copied into folder "{file_copy.parent.name}"')
 ```
 
 [copy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_item.BaseItem.copy
@@ -492,7 +492,7 @@ A file can be renamed by calling [`file.rename(name)`][rename]. This method retu
 file = client.file(file_id='11111')
 
 renamed_file = file.rename("new-name.pdf")
-print('File was renamed to "{0}"'.format(renamed_file.name))
+print(f'File was renamed to "{renamed_file.name}"')
 ```
 
 [rename]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_item.BaseItem.rename
@@ -525,7 +525,7 @@ file_id = '11111'
 
 file_versions = client.file(file_id).get_previous_versions()
 for version in file_versions:
-    print('File version {0} was created at {1}'.format(version.id, version.created_at))
+    print(f'File version {version.id} was created at {version.created_at}')
 ```
 
 [get_previous_versions]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_previous_versions
@@ -547,7 +547,7 @@ file_id = '11111'
 file_path = '/path/to/file.pdf'
 
 updated_file = client.file(file_id).update_contents(file_path)
-print('File "{0}" has been updated'.format(updated_file.name))
+print(f'File "{updated_file.name}" has been updated')
 ```
 
 To upload a file version from a readable stream, call
@@ -560,7 +560,7 @@ file_id = '11111'
 stream = open('/path/to/file.pdf', 'rb')
 
 updated_file = client.file(file_id).update_contents_with_stream(stream)
-print('File "{0}" has been updated'.format(updated_file.name))
+print(f'File "{updated_file.name}" has been updated')
 ```
 
 [update_contents]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.update_contents
@@ -582,7 +582,7 @@ file_version_id = '12345'
 version_to_promote = client.file_version(file_version_id)
 
 new_version = client.file(file_id).promote_version(version_to_promote)
-print('Version {0} promoted; new version {1} created'.format(file_version_id, new_version.id))
+print(f'Version {file_version_id} promoted; new version {new_version.id} created')
 ```
 
 [promote_version]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.promote_version
@@ -622,7 +622,7 @@ This method returns the updated [`File`][file_class] object.
 file_id = '11111'
 
 updated_file = client.file(file_id).lock(expiration_time='2020-01-01T00:00:00-08:00')
-print('File "{0}" has been locked!'.format(updated_file.name))
+print(f'File "{updated_file.name}" has been locked!')
 ```
 
 [lock]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.lock
@@ -638,7 +638,7 @@ A locked file can be unlocked by calling [`file.unlock()`][unlock].  This method
 file_id = '11111'
 
 updated_file = client.file(file_id).unlock()
-print('File "{0}" has been unlocked!'.format(updated_file.name))
+print(f'File "{updated_file.name}" has been unlocked!')
 ```
 
 [unlock]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.unlock
@@ -647,8 +647,7 @@ Create a Shared Link Download URL
 --------------------
 
 A shared link for a file can be generated by calling
-[`file.get_shared_link(access=None, etag=None, unshared_at=None, allow_download=None, allow_preview=None,
-password=None, vanity_name=None)`][get_shared_link_download_url].
+[`file.get_shared_link_download_url(access=None, etag=None, unshared_at=None, allow_preview=None, password=None, vanity_name=None)`][get_shared_link_download_url].
 This method returns a `unicode` string containing the shared link URL.
 
 <!-- sample put_files_id add_shared_link -->
@@ -656,7 +655,7 @@ This method returns a `unicode` string containing the shared link URL.
 file_id = '11111'
 
 url = client.file(file_id).get_shared_link_download_url(access='collaborators', vanity_name="my-unique-vanity-name")
-print('The file shared link download URL is: {0}'.format(url))
+print(f'The file shared link download URL is: {url}')
 ```
 
 [get_shared_link_download_url]:
@@ -678,7 +677,7 @@ Create a Shared Link
 --------------------
 
 A shared link for a file can be generated by calling
-[`file.get_shared_link(access=None, etag=None, unshared_at=None, allow_download=None, allow_preview=None,
+[`file.get_shared_link(*, access=None, etag=None, unshared_at=None, allow_download=None, allow_preview=None,
 password=None, vanity_name=None, **kwargs)`][get_shared_link].
 This method returns a `unicode` string containing the shared link URL.
 
@@ -687,7 +686,7 @@ This method returns a `unicode` string containing the shared link URL.
 file_id = '11111'
 
 url = client.file(file_id).get_shared_link(access='open', allow_download=False)
-print('The file shared link URL is: {0}'.format(url))
+print(f'The file shared link URL is: {url}')
 ```
 
 [get_shared_link]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_shared_link
@@ -696,7 +695,7 @@ Update a Shared Link
 --------------------
 
 A shared link for a file can be updated by calling
-[`file.get_shared_link(access=None, etag=None, unshared_at=None, allow_download=None, allow_preview=None,
+[`file.get_shared_link(*, access=None, etag=None, unshared_at=None, allow_download=None, allow_preview=None,
 password=None, vanity_name=None, **kwargs)`][update_shared_link]
 with an updated list of properties.
 
@@ -707,7 +706,7 @@ This method returns a `unicode` string containing the shared link URL.
 file_id = '11111'
 
 url = client.file(file_id).get_shared_link(access='open', allow_download=True)
-print('The file shared link URL is: {0}'.format(url))
+print(f'The file shared link URL is: {url}')
 ```
 
 [update_shared_link]:
@@ -731,7 +730,7 @@ url = shared_link['url']
 Remove a Shared Link
 --------------------
 
-A shared link for a file can be removed by calling [`file.remove_shared_link(etag=None, **kwargs)`][remove_shared_link].
+A shared link for a file can be removed by calling [`file.remove_shared_link(*, etag=None, **kwargs)`][remove_shared_link].
 
 <!-- sample put_files_id remove_shared_link -->
 ```python
@@ -753,7 +752,7 @@ string containing a URL suitable for embedding in an `<iframe>` to embed the a f
 file_id = '11111'
 
 embed_url = client.file(file_id).get_embed_url()
-print('<iframe src="{0}"></iframe>'.format(embed_url))
+print(f'<iframe src="{embed_url}"></iframe>')
 ```
 
 [get_embed_url]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_embed_url
@@ -777,9 +776,9 @@ rep_hints = '[pdf][extracted_text]'
 
 representations = client.file(file_id).get_representation_info(rep_hints)
 for rep in representations:
-    print('{0} representation has status {1}'.format(rep['representation'], rep['status']['state']))
-    print('Info URL for this representation is: {0}'.format(rep['info']['url']))
-    print('Content URL template is: {0}'.format(rep['content']['url_template']))
+    print(f'{rep["representation"]} representation has status {rep["status"]["state"]}')
+    print(f'Info URL for this representation is: {rep["info"]["url"]}')
+    print(f'Content URL template is: {rep["content"]["url_template"]}')
 ```
 
 [get_representation_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_representation_info
@@ -830,7 +829,7 @@ metadata = {
     'foo': 'bar',
 }
 applied_metadata = client.file(file_id='11111').metadata(scope='enterprise', template='testtemplate').set(metadata)
-print('Set metadata in instance ID {0}'.format(applied_metadata['$id']))
+print(f'Set metadata in instance ID {applied_metadata["$id"]}')
 ```
 
 Metadata can be added to a file either as free-form key/value pairs or from an existing template.  To add metadata to
@@ -851,7 +850,7 @@ metadata = {
 }
 
 applied_metadata = client.file(file_id='11111').metadata().create(metadata)
-print('Applied metadata in instance ID {0}'.format(applied_metadata['$id']))
+print(f'Applied metadata in instance ID {applied_metadata["$id"]}')
 ```
 
 Updating metadata values is performed via a series of discrete operations, which are applied atomically against the
@@ -877,7 +876,7 @@ updates.update('/baz', 'murp', old_value='quux')  # Ensure the old value was "qu
 
 updated_metadata = file_metadata.update(updates)
 print('Updated metadata on file!')
-print('foo is now {0} and baz is now {1}'.format(updated_metadata['foo'], updated_metadata['baz']))
+print(f'foo is now {updated_metadata["foo"]} and baz is now {updated_metadata["baz"]}')
 ```
 
 [set_metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.set
@@ -898,7 +897,7 @@ the file.  This method returns a `dict` containing the applied metadata instance
 <!-- sample get_files_id_metadata_id_id -->
 ```python
 metadata = client.file(file_id='11111').metadata(scope='enterprise', template='myMetadata').get()
-print('Got metadata instance {0}'.format(metadata['$id']))
+print(f'Got metadata instance {metadata["$id"]}')
 ```
 
 [metadata_get]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata.Metadata.get
@@ -931,7 +930,7 @@ file.
 file_metadata = client.file(file_id='11111').get_all_metadata()
 for instance in file_metadata:
     if 'foo' in instance:
-        print('Metadata instance {0} has value "{1}" for foo'.format(instance['id'], instance['foo']))
+        print(f'Metadata instance {instance["id"]} has value "{instance["foo"]}" for foo')
 ```
 
 [get_all_metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_all_metadata
@@ -949,7 +948,7 @@ this call will update the existing classification with the new [`ClassificationT
 from boxsdk.object.item import ClassificationType
 
 classification = client.file(file_id='11111').set_classification(ClassificationType.PUBLIC)
-print('Classification Type is: {0}'.format(classification))
+print(f'Classification Type is: {classification}')
 ```
 
 The set method will always work no matter the state your [`File`][file_class] is in. For cases already where a
@@ -961,7 +960,7 @@ Alternatively, if you already know you have a classification and you are simple 
 
 ```python
 classification = client.file(file_id='11111').update_classification(ClassificationType.NONE)
-print('Classification Type is: {0}'.format(classification))
+print(f'Classification Type is: {classification}')
 ```
 
 [set_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.set_classification
@@ -976,7 +975,7 @@ This method returns the classification type on the [`File`][file_class] object.
 
 ```python
 classification = client.file(file_id='11111').get_classification()
-print('Classification Type is: {0}'.format(classification))
+print(f'Classification Type is: {classification}')
 ```
 
 [get_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.get_classification

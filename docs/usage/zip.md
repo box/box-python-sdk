@@ -23,7 +23,7 @@ folder = mock_client.folder('466239504580')
 items = [file, folder]
 output_file = open('test.zip', 'wb')
 status = client.download_zip(name, items, output_file)
-print('The status of the zip download is {0}'.format(status['state']))
+print(f'The status of the zip download is {status["state"]}')
 ```
 
 [download_zip]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.download_zip

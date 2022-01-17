@@ -27,7 +27,7 @@ collection.
 ```python
 trashed_items = client.trash().get_items()
 for trashed_item in trashed_items:
-    print('The item ID is {0} and the item name is {1}'.format(trashed_item.id, trashed_item.name))
+    print(f'The item ID is {trashed_item.id} and the item name is {trashed_item.name}')
 ```
 
 [get_trashed_item]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.trash.Trash.get_trashed_items
@@ -43,21 +43,21 @@ This method will return the ['Item'][item] object populated with data from the A
 ```python
 file_to_retrieve = client.file(file_id='11111')
 file_from_trash = client.trash().get_item(file_to_retrieve)
-print('File ID is {0} and name is {1}'.format(file_from_trash.id, file_from_trash.name))
+print(f'File ID is {file_from_trash.id} and name is {file_from_trash.name}')
 ```
 
 <!-- sample get_folders_id_trash -->
 ```python
 folder = client.folder(folder_id='22222')
 folder_from_trash = client.trash().get_item(folder)
-print('Folder ID is {0} and name is {1}'.format(folder_from_trash.id, folder_from_trash.name))
+print(f'Folder ID is {folder_from_trash.id} and name is {folder_from_trash.name}')
 ```
 
 <!-- sample get_web_links_id_trash -->
 ```python
 web_link = client.web_link(web_link_i='33333')
 web_link_from_trash = client.trash().get_item(web_link)
-print('Web link ID is {0} and name is {1}'.format(web_link_from_trash.id, web_link_from_trash.name))
+print(f'Web link ID is {web_link_from_trash.id} and name is {web_link_from_trash.name}')
 ```
 
 [item]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item
@@ -74,20 +74,20 @@ will return a [`Item`][item_class] object populated with data from the API, leav
 ```python
 file_to_restore = client.file(file_id='11111')
 restored_file = client.trash().restore_item(file_to_restore)
-print('File ID is {0} and name is {1}'.format(restored_file.id, restored_file.name))
+print(f'File ID is {restored_file.id} and name is {restored_file.name}')
 ```
 <!-- sample post_folders_id -->
 ```python
 folder_to_restore = client.folder(folder_id='22222')
 restored_folder = client.trash().restore_item(folder_to_restore)
-print('Folder ID is {0} and name is {1}'.format(restored_folder.id, restored_folder.name))
+print(f'Folder ID is {restored_folder.id} and name is {restored_folder.name}')
 ```
 
 <!-- sample post_web_links_id -->
 ```python
 web_link_to_restore = client.web_link(web_link_id='33333')
 restored_web_link = client.trash().restore_item(web_link_to_restore)
-print('Web link ID is {0} and name is {1}'.format(restored_web_link.id, restored_web_link.name))
+print(f'Web link ID is {restored_web_link.id} and name is {restored_web_link.name}')
 ```
 
 In order to avoid conflicts, you can set a new name and new parent folder for the item you wish to restore.
@@ -97,7 +97,7 @@ file_to_restore = client.file(file_id='11111')
 new_name = 'New File Name'
 new_parent_folder = client.folder(folder_id='22222')
 restored_file = client.trash().restore_item(file_to_restore, new_name, new_parent_folder)
-print('New name for file is {0} and new parent folder is {1}'.format(restored_file.name, restored_file.parent.name))
+print(f'New name for file is {restored_file.name} and new parent folder is {restored_file.parent.name}')
 ```
 
 [item_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item

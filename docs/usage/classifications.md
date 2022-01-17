@@ -66,15 +66,15 @@ Add another classification
 
 To add another classification, call the
 [`template.start_update()`][start_update] API to start making changes to the 
-template, and then call the [`template.update_info(updates)`][update_info]
+template, and then call the [`template.update_info(updates=new_updates)`][update_info]
 with the changes to apply to the template.
 
 <!-- sample put_metadata_templates_enterprise_securityClassification-6VMVochwUWo_schema add -->
 ```python
 template = client.metadata_template('enterprise', 'securityClassification-6VMVochwUWo')
-updates = template.start_update()
-updates.add_enum_option('Box__Security__Classification__Key', 'Sensitive')
-updated_template = template.update_info(updates)
+new_updates = template.start_update()
+new_updates.add_enum_option('Box__Security__Classification__Key', 'Sensitive')
+updated_template = template.update_info(updates=new_updates)
 ```
 
 [start_update]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.metadata_template.MetadataTemplate.start_update
@@ -85,15 +85,15 @@ Update a classification
 
 To update a classification, call the
 [`template.start_update()`][start_update] API to start making changes to the 
-template, and then call the [`template.update_info(updates)`][update_info]
+template, and then call the [`template.update_info(updates=new_updates)`][update_info]
 with the classification to change on the template.
 
 <!-- sample put_metadata_templates_enterprise_securityClassification-6VMVochwUWo_schema update -->
 ```python
 template = client.metadata_template('enterprise', 'securityClassification-6VMVochwUWo')
-updates = template.start_update()
-updates.edit_enum_option('Box__Security__Classification__Key', 'Sensitive', 'Very Sensitive')
-updated_template = template.update_info(updates)
+new_updates = template.start_update()
+new_updates.edit_enum_option('Box__Security__Classification__Key', 'Sensitive', 'Very Sensitive')
+updated_template = template.update_info(updates=new_updates)
 ```
 
 Delete a classification
@@ -101,15 +101,15 @@ Delete a classification
 
 To delete a classification, call the
 [`template.start_update()`][start_update] API to start making changes to the 
-template, and then call the [`template.update_info(updates)`][update_info]
+template, and then call the [`template.update_info(updates=new_updates)`][update_info]
 with the classification to remove from the template.
 
 <!-- sample put_metadata_templates_enterprise_securityClassification-6VMVochwUWo_schema delete -->
 ```python
 template = client.metadata_template('enterprise', 'securityClassification-6VMVochwUWo')
-updates = template.start_update()
-updates.remove_enum_option('Box__Security__Classification__Key', 'Sensitive')
-updated_template = template.update_info(updates)
+new_updates = template.start_update()
+new_updates.remove_enum_option('Box__Security__Classification__Key', 'Sensitive')
+updated_template = template.update_info(updates=new_updates)
 ```
 
 Delete all classifications

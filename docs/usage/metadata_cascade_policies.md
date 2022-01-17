@@ -34,11 +34,7 @@ folder = client.folder(folder_id='22222')
 metadata_template = client.metadata_template('enterprise', 'securityClassiciation')
 
 cascade_policy = folder.cascade_metadata(metadata_template)
-print('Folder {0} has a metadata cascade policy for {1} template "{2}"'.format(
-    cascade_policy.parent.id,
-    cascade_policy.scope,
-    cascade_policy.templateKey,
-))
+print(f'Folder {cascade_policy.parent.id} has a metadata cascade policy for {cascade_policy.scope} template "{cascade_policy.templateKey}"')
 ```
 
 [cascade_metadata]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.cascade_metadata
@@ -57,7 +53,7 @@ data from the API, leaving the original object unmodified.
 <!-- sample get_metadata_cascade_policies_id -->
 ```python
 cascade_policy = client.metadata_cascade_policy('84113349-794d-445c-b93c-d8481b223434').get()
-print('Cascade policy applies to a template owned by enterprise {0}'.format(cascade_policy.owner_enterprise.id))
+print(f'Cascade policy applies to a template owned by enterprise {cascade_policy.owner_enterprise.id}')
 ```
 
 [initializer]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.metadata_cascade_policy
@@ -77,7 +73,7 @@ enterprise.  This method returns a [`BoxObjectCollection`][box_object_collection
 ```python
 cascade_policies = client.folder(folder_id='22222').get_metadata_cascade_policies()
 for policy in cascade_policies:
-    print('Metadata template {1} is cascaded'.format(policy.templateKey))
+    print(f'Metadata template {policy.templateKey} is cascaded')
 ```
 
 [get_metadata_cascade_policies]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.get_metadata_cascade_policies
