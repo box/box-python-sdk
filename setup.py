@@ -55,8 +55,7 @@ def main():
         'attrs>=17.3.0',
         'requests>=2.4.3',
         'requests-toolbelt>=0.4.0, <1.0.0',
-        'wrapt>=1.10.1',
-        'sphinx'
+        'wrapt>=1.10.1'
     ]
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=3, <3.5.0']
@@ -67,6 +66,7 @@ def main():
         'mock>=2.0.0, <4.0.0',
         'pycodestyle',
         'pylint',
+        'sphinx',
         'sqlalchemy<1.4.0',
         'tox',
         'pytest>=2.8.3, <4.0.0',
