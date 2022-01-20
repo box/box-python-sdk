@@ -22,13 +22,13 @@ Get Storage Policy
 ------------------
 
 To get a storage policy object, first call [`client.storage_policy(policy_id)`][storage_policy] to construct the 
-appropriate [`Storage Policy`][storage_policy_class] object, and then calling [`storage_policy.get(fields=None)`][get] 
+appropriate [`Storage Policy`][storage_policy_class] object, and then calling [`storage_policy.get(*, fields=None, headers=None, **kwargs)`][get] 
 will return the [`StoragePolicy`][storage_policy_class] object populated with data from the API.
 
 <!-- sample get_storage_policies_id -->
 ```python
 storage_policy = client.storage_policy(policy_id='12345').get()
-print('Storage Policy ID is {0} and name is {1}'.format(storage_policy.id, storage_policy.name))
+print(f'Storage Policy ID is {storage_policy.id} and name is {storage_policy.name}')
 ```
 
 [storage_policy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.storage_policy
@@ -46,7 +46,7 @@ objects in the collection.
 ```python
 storage_policies = client.get_storage_policies(limit=100)
 for storage_policy in storage_policies:
-    print('The storage policy id is {0} and name is {1}'.format(storage_policy.id, storage_policy.name)))
+    print(f'The storage policy id is {storage_policy.id} and name is {storage_policy.name}')
 ```
 
 [get_storage_policies]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.get_storage_policies
@@ -61,7 +61,7 @@ To assign a storage policy to a user, call [`storage_policy.assign(user)`][assig
 ```python
 user = client.user(user_id='12345')
 assignment = client.storage_policy(policy_id='56781').assign(user)
-print('Assignment ID is {0} and the assignee id is {1}'.format(assignment.id,assignment.assigned_to.id))
+print(f'Assignment ID is {assignment.id} and the assignee id is {assignment.assigned_to.id}')
 ```
 
 If you know the user does not have a storage policy assigned you can directly create a storage policy assignment by calling
@@ -71,19 +71,19 @@ object with data populated from the API.
 ```python
 user = client.user('56781')
 assignment = client.storage_policy(policy_id='12345').create_assignment(user)
-print('Storage Policy Assignment ID is {0} and the assignee ID is {1}'.format(assignment.id, assignment.assigned_to.id))
+print(f'Storage Policy Assignment ID is {assignment.id} and the assignee ID is {assignment.assigned_to.id}')
 ```
 
-If the user already has an assignment, you can call [storage_policy_assignment.update_info(data)][update_info] with a 
-`dict` of properties to update on the storage policy assignment. This method returns a newly update 
+If the user already has an assignment, you can call [storage_policy_assignment.update_info(data=updated_storage_policy)][update_info]
+with a `dict` of properties to update on the storage policy assignment. This method returns a newly update 
 [`StoragePolicyAssignment`][storage_policy_assignment] object with data populated from the API, leaving the original 
 object unmodified.
 
 <!-- sample put_storage_policy_assignments_id -->
 ```python
 updated_storage_policy = {'storage_policy': {'type': 'storage_policy', 'id': '12345'}}
-updated_assignment = client.storage_policy_assignment(assignment_id='ZW50ZXJwcmldfgeV82MDMwMDQ=').update_info(updated_storage_policy)
-print('Update storage policy ID is {0}'.format(updated_assignment.storage_policy.id))
+updated_assignment = client.storage_policy_assignment(assignment_id='ZW50ZXJwcmldfgeV82MDMwMDQ=').update_info(data=updated_storage_policy)
+print(f'Update storage policy ID is {updated_assignment.storage_policy.id}')
 ```
 
 [user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.user
@@ -96,13 +96,13 @@ Get Assignment Information about a Storage Policy Assignment
 
 To get a storage policy assignment object, first call [`client.storage_policy_assignment(assignment_id)`][storage_policy_assignment] 
 to construct the appropriate [`Storage Policy Assignment`][storage_policy_assignment_class] object, and then calling 
-[`storage_policy_assignment.get(fields=None)`][get] will return the [`StoragePolicyAssignment`][storage_policy_assignment_class] 
+[`storage_policy_assignment.get(*, fields=None, headers=None, **kwargs)`][get] will return the [`StoragePolicyAssignment`][storage_policy_assignment_class] 
 object populated with data from the API.
 
 <!-- sample get_storage_policy_assignments_id -->
 ```python
 assignment = client.storage_policy_assignment(assignment_id='12345').get()
-print('Assignment ID is {0} and the storage policy ID is {1}'.format(assignment.id, assignment.storage_policy.id))
+print(f'Assignment ID is {assignment.id} and the storage policy ID is {assignment.storage_policy.id}')
 ```
 
 [storage_policy_assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.storage_policy_assignment
@@ -118,7 +118,7 @@ return the [`StoragePolicyAssignment`][storage_policy_assignment_class] object p
 <!-- sample get_storage_policy_assignments -->
 ```python
 assignment = client.user(user_id='12345').get_storage_policy_assignment()
-print('Assignment ID is {0} and the storage policy ID is {1}'.format(assignment.id, assignment.storage_policy.id))
+print(f'Assignment ID is {assignment.id} and the storage policy ID is {assignment.storage_policy.id}')
 ```
 
 [user_assignment]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.user.User.get_storage_policy_assignment

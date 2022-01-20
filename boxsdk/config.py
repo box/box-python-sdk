@@ -17,13 +17,9 @@ class API:
 class Client:
     """Configuration object containing the user agent string."""
     VERSION = version.__version__
-    USER_AGENT_STRING = 'box-python-sdk-{0}'.format(VERSION)
-    BOX_UA_STRING = 'agent=box-python-sdk/{0}; env=python/{1}.{2}.{3}'.format(
-        VERSION,
-        py_version.major,
-        py_version.minor,
-        py_version.micro,
-    )
+    USER_AGENT_STRING = f'box-python-sdk-{VERSION}'
+    BOX_UA_STRING = f'agent=box-python-sdk/{VERSION}; ' \
+                    f'env=python/{py_version.major}.{py_version.minor}.{py_version.micro}'
 
 
 class Proxy:

@@ -47,7 +47,7 @@ def test_delete_file(test_file, mock_box_session, etag, if_match_header):
 
 
 def test_create_upload_session(test_file, mock_box_session):
-    expected_url = '{0}/files/{1}/upload_sessions'.format(API.UPLOAD_URL, test_file.object_id)
+    expected_url = f'{API.UPLOAD_URL}/files/{test_file.object_id}/upload_sessions'
     file_size = 197520
     part_size = 12345
     total_parts = 16
@@ -79,7 +79,7 @@ def test_create_upload_session(test_file, mock_box_session):
 
 
 def test_get_chunked_uploader(mock_box_session, mock_content_response, mock_file_path, test_file):
-    expected_url = '{0}/files/{1}/upload_sessions'.format(API.UPLOAD_URL, test_file.object_id)
+    expected_url = f'{API.UPLOAD_URL}/files/{test_file.object_id}/upload_sessions'
     mock_file_stream = BytesIO(mock_content_response.content)
     file_size = 197520
     part_size = 12345
@@ -114,7 +114,7 @@ def test_get_chunked_uploader(mock_box_session, mock_content_response, mock_file
 
 def test_create_task(test_file, test_task, mock_box_session):
     # pylint:disable=redefined-outer-name
-    expected_url = "{0}/tasks".format(API.BASE_API_URL)
+    expected_url = f"{API.BASE_API_URL}/tasks"
     due_at = '2014-04-03T11:09:43-07:00'
     action = 'review'
     message = 'Test Message'
@@ -147,7 +147,7 @@ def test_create_task(test_file, test_task, mock_box_session):
 
 def test_create_task_with_review(test_file, test_task, mock_box_session):
     # pylint:disable=redefined-outer-name
-    expected_url = "{0}/tasks".format(API.BASE_API_URL)
+    expected_url = f"{API.BASE_API_URL}/tasks"
     due_at = '2020-09-18T12:09:43-00:00'
     action = 'complete'
     message = 'Test Message'
@@ -211,7 +211,7 @@ def test_get_tasks(test_file, mock_box_session):
 
 
 def test_get_download_url(test_file, mock_box_session):
-    expected_url = '{0}/files/{1}/content'.format(API.BASE_API_URL, test_file.object_id)
+    expected_url = f'{API.BASE_API_URL}/files/{test_file.object_id}/content'
     download_url = 'https://dl.boxcloud.com/sdjhfgksdjfgshdbg'
     mock_box_session.get.return_value.headers = {
         'location': download_url
@@ -227,7 +227,7 @@ def test_get_download_url(test_file, mock_box_session):
 
 
 def test_get_download_url_file_version(test_file, test_file_version, mock_box_session):
-    expected_url = '{0}/files/{1}/content'.format(API.BASE_API_URL, test_file.object_id)
+    expected_url = f'{API.BASE_API_URL}/files/{test_file.object_id}/content'
     download_url = 'https://dl.boxcloud.com/sdjhfgksdjfgshdbg'
     mock_box_session.get.return_value.headers = {
         'location': download_url
@@ -248,7 +248,7 @@ def test_get_download_url_file_version(test_file, test_file_version, mock_box_se
     ({'byte_range': (100,)}, None, {'Range': 'bytes=100-'}),
 ])
 def test_download_to(test_file, mock_box_session, mock_content_response, params, expected_query, expected_headers):
-    expected_url = '{0}/files/{1}/content'.format(API.BASE_API_URL, test_file.object_id)
+    expected_url = f'{API.BASE_API_URL}/files/{test_file.object_id}/content'
     mock_box_session.get.return_value = mock_content_response
     mock_writeable_stream = BytesIO()
     test_file.download_to(mock_writeable_stream, **params)
@@ -264,7 +264,7 @@ def test_download_to(test_file, mock_box_session, mock_content_response, params,
 
 
 def test_download_to_file_version(test_file, test_file_version, mock_box_session, mock_content_response):
-    expected_url = '{0}/files/{1}/content'.format(API.BASE_API_URL, test_file.object_id)
+    expected_url = f'{API.BASE_API_URL}/files/{test_file.object_id}/content'
     mock_box_session.get.return_value = mock_content_response
     mock_writeable_stream = BytesIO()
     test_file.download_to(mock_writeable_stream, file_version=test_file_version)
@@ -558,10 +558,7 @@ def test_preflight_check(
     accelerator_url = test_file.preflight_check(**kwargs)
 
     mock_box_session.options.assert_called_once_with(
-        url='{0}/files/{1}/content'.format(
-            API.BASE_API_URL,
-            mock_object_id,
-        ),
+        url=f'{API.BASE_API_URL}/files/{mock_object_id}/content',
         expect_json_response=True,
         data=expected_data,
     )
@@ -674,7 +671,7 @@ def test_add_comment(test_file, mock_box_session, comment_params):
 
 
 def test_get_previous_versions(test_file, mock_box_session):
-    expected_url = '{0}/files/{1}/versions'.format(API.BASE_API_URL, test_file.object_id)
+    expected_url = f'{API.BASE_API_URL}/files/{test_file.object_id}/versions'
     mock_version1 = {
         'type': 'file_version',
         'id': '11111',
@@ -703,7 +700,7 @@ def test_get_previous_versions(test_file, mock_box_session):
 
 
 def test_promote_version(test_file, test_file_version, mock_box_session):
-    expected_url = '{0}/files/{1}/versions/current'.format(API.BASE_API_URL, test_file.object_id)
+    expected_url = f'{API.BASE_API_URL}/files/{test_file.object_id}/versions/current'
     sha1 = '12039d6dd9a7e6eefc78846802e'
     expected_body = {
         'type': 'file_version',
@@ -726,7 +723,7 @@ def test_promote_version(test_file, test_file_version, mock_box_session):
     ({'etag': 'foobar'}, {'If-Match': 'foobar'}),
 ])
 def test_delete_version(test_file, test_file_version, mock_box_session, params, expected_headers):
-    expected_url = '{0}/files/{1}/versions/{2}'.format(API.BASE_API_URL, test_file.object_id, test_file_version.object_id)
+    expected_url = f'{API.BASE_API_URL}/files/{test_file.object_id}/versions/{test_file_version.object_id}'
     mock_box_session.delete.return_value.ok = True
     is_success = test_file.delete_version(test_file_version, **params)
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=expected_headers)
@@ -734,7 +731,7 @@ def test_delete_version(test_file, test_file_version, mock_box_session, params, 
 
 
 def test_get_embed_url(test_file, mock_box_session):
-    expected_url = '{0}/files/{1}'.format(API.BASE_API_URL, test_file.object_id)
+    expected_url = f'{API.BASE_API_URL}/files/{test_file.object_id}'
     expected_params = {
         'fields': 'expiring_embed_link'
     }
@@ -757,7 +754,7 @@ def test_get_embed_url(test_file, mock_box_session):
     ('[pdf]', {'X-Rep-Hints': '[pdf]'}),
 ])
 def test_get_representation_info(test_file, mock_box_session, rep_hints, expected_headers):
-    expected_url = '{0}/files/{1}'.format(API.BASE_API_URL, test_file.object_id)
+    expected_url = f'{API.BASE_API_URL}/files/{test_file.object_id}'
     expected_params = {'fields': 'representations'}
 
     info_url = 'https://api.box.com/2.0/representations/pdf'
@@ -804,7 +801,7 @@ def test_get_thumbnail(
         max_height,
         expected_params,
 ):
-    expected_url = '{0}/files/{1}/thumbnail.{2}'.format(API.BASE_API_URL, test_file.object_id, extension)
+    expected_url = f'{API.BASE_API_URL}/files/{test_file.object_id}/thumbnail.{extension}'
     mock_box_session.get.return_value = mock_content_response
 
     thumb = test_file.get_thumbnail(
@@ -830,7 +827,7 @@ def test_get_thumbnail_representation(
         dimensions,
         extension,
 ):
-    representation_url = '{0}/files/{1}'.format(API.BASE_API_URL, test_file.object_id)
+    representation_url = f'{API.BASE_API_URL}/files/{test_file.object_id}'
     content_url = 'https://dl.boxcloud.com/api/2.0/internal_files/123/versions/345/representations/jpg/content/'
 
     mock_representations_response = Mock()
@@ -864,7 +861,7 @@ def test_get_thumbnail_representation(
         extension=extension,
     )
 
-    mock_box_session.get.assert_any_call(representation_url, headers={'X-Rep-Hints': '[{}?dimensions=92x92]'.format(extension)},
+    mock_box_session.get.assert_any_call(representation_url, headers={'X-Rep-Hints': f'[{extension}?dimensions=92x92]'},
                                          params={'fields': 'representations'})
     mock_box_session.get.assert_any_call(content_url, expect_json_response=False)
     assert thumb == mock_content_response.content
@@ -875,7 +872,7 @@ def test_get_thumbnail_representation_not_found(
         mock_box_session,
         mock_content_response,
 ):
-    representation_url = '{0}/files/{1}'.format(API.BASE_API_URL, test_file.object_id)
+    representation_url = f'{API.BASE_API_URL}/files/{test_file.object_id}'
     dimensions = '100x100'
     extension = 'jpg'
 
@@ -898,7 +895,7 @@ def test_get_thumbnail_representation_not_found(
 
     mock_box_session.get.assert_any_call(
         representation_url,
-        headers={'X-Rep-Hints': '[{}?dimensions={}]'.format(extension, dimensions)},
+        headers={'X-Rep-Hints': f'[{extension}?dimensions={dimensions}]'},
         params={'fields': 'representations'},
     )
     assert thumb == b''
@@ -909,7 +906,7 @@ def test_get_thumbnail_representation_not_available(
         mock_box_session,
         mock_content_response,
 ):
-    representation_url = '{0}/files/{1}'.format(API.BASE_API_URL, test_file.object_id)
+    representation_url = f'{API.BASE_API_URL}/files/{test_file.object_id}'
     dimensions = '100x100'
     extension = 'jpg'
 
@@ -944,7 +941,7 @@ def test_get_thumbnail_representation_not_available(
 
     mock_box_session.get.assert_any_call(
         representation_url,
-        headers={'X-Rep-Hints': '[{}?dimensions={}]'.format(extension, dimensions)},
+        headers={'X-Rep-Hints': f'[{extension}?dimensions={dimensions}]'},
         params={'fields': 'representations'},
     )
     assert thumb == b''

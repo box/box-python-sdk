@@ -8,6 +8,8 @@ from enum import EnumMeta
 
 __all__ = list(map(str, ['ExtendableEnumMeta']))
 
+from typing import Any
+
 
 class ExtendableEnumMeta(EnumMeta):
     """A metaclass for enum hierarchies.
@@ -42,7 +44,7 @@ class ExtendableEnumMeta(EnumMeta):
     __members__ property is also extended.
     """
 
-    def lookup(cls, value):
+    def lookup(cls, value: Any) -> Any:
         """Custom value lookup, which does recursive lookups on subclasses.
 
         If this is a leaf enum class with defined members, this acts the same
@@ -59,8 +61,6 @@ class ExtendableEnumMeta(EnumMeta):
 
         :param value:
             The value to look up. Can be a value, or an enum instance.
-        :type value:
-            `varies`
         :raises:
             :class:`ValueError` if the value isn't found anywhere.
         """

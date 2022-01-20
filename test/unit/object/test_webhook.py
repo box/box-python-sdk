@@ -24,13 +24,13 @@ def test_delete_webhook_return_the_correct_response(
     # pylint:disable=redefined-outer-name
     mock_box_session.delete.return_value = delete_webhook_response
     response = test_webhook.delete()
-    expected_url = '{0}/webhooks/{1}'.format(API.BASE_API_URL, test_webhook.object_id)
+    expected_url = f'{API.BASE_API_URL}/webhooks/{test_webhook.object_id}'
     mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
     assert response is True
 
 
 def test_get(test_webhook, mock_box_session):
-    expected_url = '{0}/webhooks/{1}'.format(API.BASE_API_URL, test_webhook.object_id)
+    expected_url = f'{API.BASE_API_URL}/webhooks/{test_webhook.object_id}'
     mock_box_session.get.return_value.json.return_value = {
         'type': test_webhook.object_type,
         'id': test_webhook.object_id,
@@ -49,7 +49,7 @@ def test_get(test_webhook, mock_box_session):
 
 
 def test_update(test_webhook, mock_box_session):
-    expected_url = '{0}/webhooks/{1}'.format(API.BASE_API_URL, test_webhook.object_id)
+    expected_url = f'{API.BASE_API_URL}/webhooks/{test_webhook.object_id}'
     mock_box_session.put.return_value.json.return_value = {
         'type': test_webhook.object_type,
         'id': test_webhook.object_id,
@@ -60,7 +60,7 @@ def test_update(test_webhook, mock_box_session):
         'address': 'https://testnotification.com',
         'triggers': ['FILE.DOWNLOADED'],
     }
-    webhook = test_webhook.update_info(data)
+    webhook = test_webhook.update_info(data=data)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
     assert isinstance(webhook, Webhook)
     assert webhook.type == test_webhook.object_type

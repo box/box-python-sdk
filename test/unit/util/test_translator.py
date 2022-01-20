@@ -59,12 +59,12 @@ def metadata_template_response(request):
     response = {
         'type': 'metadata_template',
     }
-    if request.param == 'scope' or request.param == 'both':
+    if request.param in ('scope', 'both'):
         response.update({
             'scope': 'enterprise',
             'templateKey': 'vContract',
         })
-    if request.param == 'id' or request.param == 'both':
+    if request.param in ('id', 'both'):
         response['id'] = '2f2e84e9-afdb-4e9d-b293-d6d1d932fc85'
 
     return response
@@ -122,7 +122,7 @@ def test_with_new_child(new_child, extend_default_translator):
 
     translator = Translator(mapping, extend_default_translator=extend_default_translator, **kwargs)
     assert item_type in translator
-    assert translator.maps[0] == {}
+    assert not translator.maps[0]
     with pytest.raises(KeyError):
         del translator[item_type]
 

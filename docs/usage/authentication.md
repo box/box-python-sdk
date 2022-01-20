@@ -83,7 +83,7 @@ auth = OAuth2(
 )
 client = Client(auth)
 me = client.user().get()
-print('My user ID is {0}'.format(me.id))
+print(f'My user ID is {me.id}')
 ```
 
 [dev_console]: https://app.box.com/developers/console
@@ -118,7 +118,7 @@ from boxsdk import JWTAuth, Client
 auth = JWTAuth.from_settings_file('/path/to/settings.json')
 client = Client(auth)
 service_account = client.user().get()
-print('Service Account user ID is {0}'.format(service_account.id))
+print(f'Service Account user ID is {service_account.id}')
 ```
 
 Otherwise, you'll need to provide the necessary configuration fields directly
@@ -262,7 +262,7 @@ oauth = OAuth2(
 client = Client(oauth)
 
 user = client.user().get()
-print('User ID is {0}'.format(user.id))
+print(f'User ID is {user.id}')
 ```
 
 ### Box View Authentication with App Tokens
@@ -330,7 +330,7 @@ This method returns a [`TokenResponse`][token_response] object with the downscop
 ```python
 target_file = client.file(file_id='FILE_ID_HERE')
 token_info = client.downscope_token(['item_preview'], target_file)
-print('Got downscoped access token: {0}'.format(token_info.access_token))
+print(f'Got downscoped access token: {token_info.access_token}')
 ```
 
 [downscope_token]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.downscope_token

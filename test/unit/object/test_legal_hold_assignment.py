@@ -9,7 +9,7 @@ from boxsdk.network.default_network import DefaultNetworkResponse
 
 
 def test_get(test_legal_hold_policy_assignment, mock_box_session):
-    expected_url = '{0}/legal_hold_policy_assignments/{1}'.format(API.BASE_API_URL, test_legal_hold_policy_assignment.object_id)
+    expected_url = f'{API.BASE_API_URL}/legal_hold_policy_assignments/{test_legal_hold_policy_assignment.object_id}'
     mock_box_session.get.return_value.json.return_value = {
         'type': 'legal_hold_policy_assignment',
         'id': test_legal_hold_policy_assignment.object_id,

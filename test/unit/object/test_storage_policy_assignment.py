@@ -17,7 +17,7 @@ def delete_assignment_response():
 
 
 def test_get(test_storage_policy_assignment, mock_box_session):
-    expected_url = '{0}/storage_policy_assignments/{1}'.format(API.BASE_API_URL, test_storage_policy_assignment.object_id)
+    expected_url = f'{API.BASE_API_URL}/storage_policy_assignments/{test_storage_policy_assignment.object_id}'
     mock_box_session.get.return_value.json.return_value = {
         'type': 'storage_policy_assignment',
         'id': test_storage_policy_assignment.object_id,
@@ -29,12 +29,12 @@ def test_get(test_storage_policy_assignment, mock_box_session):
 
 def test_update(test_storage_policy_assignment, mock_box_session):
     new_policy_id = '1234'
-    expected_url = '{0}/storage_policy_assignments/{1}'.format(API.BASE_API_URL, test_storage_policy_assignment.object_id)
+    expected_url = f'{API.BASE_API_URL}/storage_policy_assignments/{test_storage_policy_assignment.object_id}'
     mock_box_session.put.return_value.json.return_value = {
         'type': 'storage_policy_assignment',
         'id': new_policy_id,
     }
-    storage_policy_assignment = test_storage_policy_assignment.update_info({
+    storage_policy_assignment = test_storage_policy_assignment.update_info(data={
         'storage_policy': {
             'type': 'storage_policy',
             'id': new_policy_id,

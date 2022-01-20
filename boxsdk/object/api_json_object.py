@@ -16,5 +16,5 @@ class APIJSONObjectMeta(BaseAPIJSONObjectMeta, ABCMeta):
 class APIJSONObject(BaseAPIJSONObject, Mapping, metaclass=APIJSONObjectMeta):
     """Class representing objects that are not part of the REST API."""
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._response_object)

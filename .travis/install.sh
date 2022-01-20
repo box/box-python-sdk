@@ -21,10 +21,6 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
     fi
 
     case "${TOX_ENV}" in
-        py35)
-            pyenv install 3.5.0
-            pyenv global 3.5.0
-            ;;
         py36)
             pyenv install 3.6.0
             pyenv global 3.6.0

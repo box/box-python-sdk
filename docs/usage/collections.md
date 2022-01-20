@@ -24,7 +24,7 @@ This method returns a `BoxObjectCollection` that you can use to iterate over all
 ```python
 collections = client.collections()
 for collection in collections:
-    print('Collection "{0}" has ID {1}'.format(collection.name, collection.id))
+    print(f'Collection "{collection.name}" has ID {collection.id}')
 ```
 
 [collections]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.collections
@@ -42,7 +42,7 @@ the collection. [`BaseItem`][base_item_class] is a super class for files, folder
 ```python
 items = client.collection(collection_id='12345').get_items()
 for item in items:
-    print('{0} "{1}" is in the collection'.format(item.type.capitalize(), item.name))
+    print(f'{item.type.capitalize()} "{item.name}" is in the collection')
 ```
 
 [get_items]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.collection.Collection.get_items
@@ -59,7 +59,7 @@ object.
 ```python
 collection = client.collection(collection_id='12345')
 updated_file = client.file(file_id='11111').add_to_collection(collection)
-print('File "{0}" added to collection!'.format(updated_file.name))
+print(f'File "{updated_file.name}" added to collection!')
 ```
 
 [add_to_collection]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_item.BaseItem.add_to_collection
@@ -75,7 +75,7 @@ to remove the item from.  This method returns the updated [`BaseItem`][base_item
 ```python
 collection = client.collection(collection_id='12345')
 updated_file = client.file(file_id='11111').remove_from_collection(collection)
-print('File "{0}" removed from collection!'.format(updated_file.name))
+print(f'File "{updated_file.name}" removed from collection!')
 ```
 
 [remove_from_collection]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_item.BaseItem.remove_from_collection

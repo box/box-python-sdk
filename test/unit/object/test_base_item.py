@@ -28,7 +28,7 @@ def test_collections_for_addition(mock_collection_id, request):
     if request.param == 'other':
         return [{'id': other_collection_id}], [{'id': other_collection_id}, {'id': mock_collection_id}]
 
-    raise NotImplementedError("Forgot to implement {}".format(request.param))
+    raise NotImplementedError(f"Forgot to implement {request.param}")
 
 
 @pytest.fixture(params=('empty', 'only_removed', 'only_other', 'other_and_removed'))
@@ -44,7 +44,7 @@ def test_collections_for_removal(mock_collection_id, request):
     if request.param == 'other_and_removed':
         return [{'id': mock_collection_id}, {'id': other_collection_id}], [{'id': other_collection_id}]
 
-    raise NotImplementedError("Forgot to implement {}".format(request.param))
+    raise NotImplementedError(f"Forgot to implement {request.param}")
 
 
 @pytest.mark.parametrize('params, expected_data', [
@@ -60,7 +60,7 @@ def test_copy_base_item(test_base_item_and_response, mock_box_session, test_fold
     }
     expected_body.update(expected_data)
     mock_box_session.post.return_value = mock_item_response
-    copy_response = test_item.copy(test_folder, **params)
+    copy_response = test_item.copy(parent_folder=test_folder, **params)
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
     assert isinstance(copy_response, test_item.__class__)
 

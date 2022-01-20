@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from abc import ABC, abstractmethod
+from typing import Any, Callable, Union
 
 
 class Network(ABC):
@@ -9,45 +10,33 @@ class Network(ABC):
     """
 
     @abstractmethod
-    def request(self, method, url, access_token, **kwargs):
+    def request(self, method: str, url: str, access_token: str, **kwargs: Any) -> 'NetworkResponse':
         """
         Make a network request to the given url with the given method.
 
         :param method:
             The HTTP verb that should be used to make the request.
-        :type method:
-            `unicode`
         :param url:
             The URL for the request.
-        :type url:
-            `unicode`
         :param access_token:
             The OAuth2 access token used to authorize the request.
-        :type access_token:
-            `unicode`
-        :rtype:   :class:`NetworkResponse`
         """
         raise NotImplementedError  # pragma: no cover
 
     @abstractmethod
-    def retry_after(self, delay, request_method, *args, **kwargs):
+    def retry_after(self, delay: float, request_method: Callable, *args: Any, **kwargs: Any) -> 'NetworkResponse':
         """
         Make a network request after a given delay.
 
         :param delay:
             How long until the request should be executed.
-        :type delay:
-            `float`
         :param request_method:
             A callable that will execute the request.
-        :type request_method:
-            `callable`
-        :rtype:   :class:`NetworkResponse`
         """
         raise NotImplementedError  # pragma: no cover
 
     @property
-    def network_response_constructor(self):
+    def network_response_constructor(self) -> Union[type, Callable]:
         """The constructor to use for creating NetworkResponse instances.
 
         This is not implemented by default, and is not a required part of the
@@ -62,7 +51,6 @@ class Network(ABC):
         :return:
             A callable that returns an instance of :class:`NetworkResponse`.
             Most commonly, this will be a subclass of :class:`NetworkResponse`.
-        :rtype:   `type` or `callable`
         """
         return NetworkResponse
 
@@ -71,71 +59,57 @@ class NetworkResponse(ABC):
     """Abstract base class specifying the interface for a network response."""
 
     @abstractmethod
-    def json(self):
-        """Return the parsed JSON response.
-
-        :rtype:
-            `dict` or `list` or `str` or `int` or `float`
+    def json(self) -> Union[dict, list, str, int, float]:
+        """
+        Return the parsed JSON response.
         """
         raise NotImplementedError  # pragma: no cover
 
     @property
     @abstractmethod
-    def content(self):
-        """Return the content of the response body.
-
-        :rtype:
-            varies
+    def content(self) -> Any:
+        """
+        Return the content of the response body.
         """
         raise NotImplementedError  # pragma: no cover
 
     @property
     @abstractmethod
-    def status_code(self):
-        """Return the HTTP status code of the response.
-
-        :rtype:
-            `int`
+    def status_code(self) -> int:
+        """
+        Return the HTTP status code of the response.
         """
         raise NotImplementedError  # pragma: no cover
 
     @property
     @abstractmethod
-    def ok(self):
-        """Return whether or not the request was successful.
-
-        :rtype:
-            `bool`
+    def ok(self) -> bool:
+        """
+        Return whether or not the request was successful.
         """
         # pylint:disable=invalid-name
         raise NotImplementedError  # pragma: no cover
 
     @property
     @abstractmethod
-    def headers(self):
-        """Return the response headers.
-
-        :rtype:
-            `dict`
+    def headers(self) -> dict:
+        """
+        Return the response headers.
         """
         raise NotImplementedError  # pragma: no cover
 
     @property
     @abstractmethod
-    def response_as_stream(self):
-        """Return a stream containing the raw network response.
-
-        :rtype:
-            `stream`
+    def response_as_stream(self) -> Any:
+        """
+        Return a stream containing the raw network response.
         """
         raise NotImplementedError  # pragma: no cover
 
     @property
     @abstractmethod
-    def access_token_used(self):
-        """Return the access token used to make the request.
-
-        :rtype:
-            `unicode`
+    def access_token_used(self) -> str:
+        """
+        Return the access token used to make the request.
         """
         raise NotImplementedError  # pragma: no cover

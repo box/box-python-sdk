@@ -74,7 +74,7 @@ def test_authenticate_send_post_request_with_correct_params(mock_box_session, su
 
     mock_box_session.request.assert_called_once_with(
         'POST',
-        '{0}/token'.format(API.OAUTH2_API_URL),
+        f'{API.OAUTH2_API_URL}/token',
         data=data,
         headers={'content-type': 'application/x-www-form-urlencoded'},
         access_token=None,
@@ -125,7 +125,7 @@ def test_refresh_send_post_request_with_correct_params_and_handles_multiple_requ
     # and it was made with the correct params.
     mock_box_session.request.assert_called_once_with(
         'POST',
-        '{0}/token'.format(API.OAUTH2_API_URL),
+        f'{API.OAUTH2_API_URL}/token',
         data=data,
         headers={'content-type': 'application/x-www-form-urlencoded'},
         access_token=fake_access_token,
@@ -344,7 +344,7 @@ def test_revoke_sends_revoke_request(
     oauth.revoke()
     mock_box_session.request.assert_called_once_with(
         'POST',
-        '{0}/revoke'.format(API.OAUTH2_API_URL),
+        f'{API.OAUTH2_API_URL}/revoke',
         data={
             'client_id': client_id,
             'client_secret': client_secret,

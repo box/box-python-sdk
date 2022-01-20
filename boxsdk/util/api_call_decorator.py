@@ -1,11 +1,12 @@
 # coding: utf-8
 
 from functools import update_wrapper, wraps
+from typing import Callable, Any
 
 from ..object.cloneable import Cloneable
 
 
-def api_call(method):
+def api_call(method: Callable) -> 'APICallWrapper':
     """
     Designates the decorated method as one that makes a Box API call.
     The decorated method can then accept a new keyword argument `extra_network_parameters`,
@@ -18,28 +19,24 @@ def api_call(method):
 
     :param method:
         The method to decorate.
-    :type method:
-        `callable`
     :return:
         A wrapped method that can pass extra request data to the network layer.
-    :rtype:
-        :class:`APICallWrapper`
     """
     return APICallWrapper(method)
 
 
 class APICallWrapper:
 
-    def __init__(self, func_that_makes_an_api_call):
+    def __init__(self, func_that_makes_an_api_call: Callable):
         super().__init__()
         self._func_that_makes_an_api_call = func_that_makes_an_api_call
         self.__name__ = func_that_makes_an_api_call.__name__
         update_wrapper(self, func_that_makes_an_api_call)
 
-    def __call__(self, cloneable_instance, *args, **kwargs):
+    def __call__(self, cloneable_instance: 'Cloneable', *args: Any, **kwargs: Any) -> Any:
         return self.__get__(cloneable_instance, type(cloneable_instance))(*args, **kwargs)
 
-    def __get__(self, _instance, owner):
+    def __get__(self, _instance: Any, owner: Any) -> Any:
         # `APICallWrapper` is imitating a function. For native functions,
         # ```func.__get__(None, cls)``` always returns `func`.
         if _instance is None:
@@ -47,14 +44,13 @@ class APICallWrapper:
 
         if isinstance(owner, type) and not issubclass(owner, Cloneable):
             raise TypeError(
-                "descriptor {name!r} must be owned by a 'Cloneable' subclass, not {owner.__name__}"
-                .format(name=self.__name__, owner=owner)
+                f"descriptor {self.__name__!r} must be owned by a 'Cloneable' subclass, not {owner.__name__}"
             )
         expected_type = owner or Cloneable
         if not isinstance(_instance, expected_type):
             raise TypeError(
-                "descriptor {name!r} for {expected_type.__name__!r} objects doesn't apply to {instance.__class__.__name__!r} object"
-                .format(name=self.__name__, expected_type=expected_type, instance=_instance)
+                f"descriptor {self.__name__!r} for {expected_type.__name__!r} objects "
+                f"doesn't apply to {_instance.__class__.__name__!r} object"
             )
 
         @wraps(self._func_that_makes_an_api_call)

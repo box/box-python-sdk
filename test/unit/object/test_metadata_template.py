@@ -5,11 +5,7 @@ from boxsdk.object.metadata_template import MetadataTemplate, MetadataField, Met
 
 
 def test_get(test_metadata_template, mock_box_session):
-    expected_url = '{0}/metadata_templates/{1}/{2}/schema'.format(
-        API.BASE_API_URL,
-        test_metadata_template.scope,
-        test_metadata_template.template_key,
-    )
+    expected_url = f'{API.BASE_API_URL}/metadata_templates/{test_metadata_template.scope}/{test_metadata_template.template_key}/schema'
     mock_box_session.get.return_value.json.return_value = {
         'type': 'metadata_template',
         'scope': 'enterprise',
@@ -49,11 +45,7 @@ def test_get(test_metadata_template, mock_box_session):
 
 
 def test_delete(test_metadata_template, mock_box_session):
-    expected_url = '{0}/metadata_templates/{1}/{2}/schema'.format(
-        API.BASE_API_URL,
-        test_metadata_template.scope,
-        test_metadata_template.template_key,
-    )
+    expected_url = f'{API.BASE_API_URL}/metadata_templates/{test_metadata_template.scope}/{test_metadata_template.template_key}/schema'
     mock_box_session.delete.return_value.ok = True
 
     result = test_metadata_template.delete()
@@ -63,12 +55,7 @@ def test_delete(test_metadata_template, mock_box_session):
 
 
 def test_update_info(test_metadata_template, mock_box_session):
-    expected_url = '{0}/metadata_templates/{1}/{2}/schema'.format(
-        API.BASE_API_URL,
-        test_metadata_template.scope,
-        test_metadata_template.template_key,
-    )
-
+    expected_url = f'{API.BASE_API_URL}/metadata_templates/{test_metadata_template.scope}/{test_metadata_template.template_key}/schema'
     updates = test_metadata_template.start_update()
     updates.add_enum_option('state', 'WI')
     updates.add_field(MetadataField(MetadataFieldType.STRING, 'Name'))
@@ -157,9 +144,9 @@ def test_update_info(test_metadata_template, mock_box_session):
         'templateKey': 'vContract',
     }
 
-    updated_template = test_metadata_template.update_info(updates)
+    updated_template = test_metadata_template.update_info(updates=updates)
 
-    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body))
+    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body), headers=None, params=None)
     assert isinstance(updated_template, MetadataTemplate)
     assert updated_template.hidden is False
     assert updated_template.object_id is None

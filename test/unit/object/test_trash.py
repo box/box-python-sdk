@@ -31,7 +31,7 @@ def test_item_and_response(
 def test_get_from_trash(test_item_and_response, test_trash, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
-    expected_url = '{0}/{1}/{2}/trash'.format(API.BASE_API_URL, test_item.object_type + 's', test_item.object_id)
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type + "s"}/{test_item.object_id}/trash'
     mock_box_session.get.return_value.json.return_value = {
         'type': test_item.object_type,
         'id': test_item.object_id,
@@ -57,7 +57,7 @@ def test_restore_from_trash(test_item_and_response, test_trash, test_folder, moc
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
     new_name = 'New Name'
-    expected_url = '{0}/{1}/{2}'.format(API.BASE_API_URL, test_item.object_type + 's', test_item.object_id)
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type + "s"}/{test_item.object_id}'
     value = json.dumps({
         'name': new_name,
         'parent': {
@@ -88,7 +88,7 @@ def test_restore_from_trash(test_item_and_response, test_trash, test_folder, moc
 def test_permanently_delete(test_item_and_response, test_trash, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
-    expected_url = '{0}/{1}/{2}/trash'.format(API.BASE_API_URL, test_item.object_type + 's', test_item.object_id)
+    expected_url = f'{API.BASE_API_URL}/{test_item.object_type + "s"}/{test_item.object_id}/trash'
     mock_box_session.delete.return_value.ok = True
     info = test_trash.permanently_delete_item(test_item)
     mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)
@@ -98,7 +98,7 @@ def test_permanently_delete(test_item_and_response, test_trash, mock_box_session
 def test_get_trashed_items(test_item_and_response, test_trash, mock_box_session):
     test_item, _ = test_item_and_response
     item_name = 'Test Trashed Item'
-    expected_url = '{0}/folders/trash/items'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/folders/trash/items'
     mock_trash = {
         'type': test_item.object_type,
         'id': test_item.object_id,

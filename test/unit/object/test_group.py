@@ -42,7 +42,7 @@ def test_delete_group_return_the_correct_response(
 
 @pytest.mark.parametrize('role', ['member', 'admin'])
 def test_add_member(test_group, mock_box_session, mock_add_member_response, mock_user, role):
-    expected_url = '{0}/group_memberships'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/group_memberships'
     mock_box_session.post.return_value = mock_add_member_response
     new_group_membership = test_group.add_member(mock_user, role, configurable_permissions={'can_run_reports': True})
     data = json.dumps({
@@ -56,7 +56,7 @@ def test_add_member(test_group, mock_box_session, mock_add_member_response, mock
 
 
 def test_add_member_default_permission(test_group, mock_box_session, mock_add_member_response, mock_user):
-    expected_url = '{0}/group_memberships'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/group_memberships'
     mock_box_session.post.return_value = mock_add_member_response
     new_group_membership = test_group.add_member(mock_user, 'member')
     data = json.dumps({
@@ -69,7 +69,7 @@ def test_add_member_default_permission(test_group, mock_box_session, mock_add_me
 
 
 def test_add_member_none_permission(test_group, mock_box_session, mock_add_member_response, mock_user):
-    expected_url = '{0}/group_memberships'.format(API.BASE_API_URL)
+    expected_url = f'{API.BASE_API_URL}/group_memberships'
     mock_box_session.post.return_value = mock_add_member_response
     new_group_membership = test_group.add_member(mock_user, 'member', configurable_permissions=None)
     data = json.dumps({
@@ -87,10 +87,10 @@ def mock_membership_dict_stream():
     def gen_data(some_id):
         return {
             'type': 'group_membership',
-            'id': "membership_id_{0}".format(some_id),
+            'id': f"membership_id_{some_id}",
             'role': 'member',
-            'user': {'type': 'user', 'id': "user_id_{0}".format(some_id)},
-            'group': {'type': 'group', 'id': "group_id_{0}".format(some_id)},
+            'user': {'type': 'user', 'id': f"user_id_{some_id}"},
+            'group': {'type': 'group', 'id': f"group_id_{some_id}"},
         }
 
     return map(gen_data, count())
@@ -192,7 +192,7 @@ def test_get_memberships_with_hidden_results(test_group, mock_box_session, mock_
 
 
 def test_get_group_collaborations(test_group, mock_box_session):
-    expected_url = '{0}/groups/{1}/collaborations'.format(API.BASE_API_URL, test_group.object_id)
+    expected_url = f'{API.BASE_API_URL}/groups/{test_group.object_id}/collaborations'
     mock_collaboration = {
         'type': 'collaboration',
         'id': '12345',

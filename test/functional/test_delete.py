@@ -1,10 +1,11 @@
 # coding: utf-8
-
+from test.util.streamable_mock_open import streamable_mock_open
 from mock import patch
+
 import pytest
+
 from boxsdk.client import Client
 from boxsdk.exception import BoxAPIException
-from test.util.streamable_mock_open import streamable_mock_open
 
 
 def test_upload_then_delete(box_client, test_file_path, test_file_content, file_name):

@@ -15,7 +15,7 @@ def test_cascade_policy(mock_box_session):
 
 
 def test_get(test_cascade_policy, mock_box_session):
-    expected_url = '{0}/metadata_cascade_policies/{1}'.format(API.BASE_API_URL, test_cascade_policy.object_id)
+    expected_url = f'{API.BASE_API_URL}/metadata_cascade_policies/{test_cascade_policy.object_id}'
     mock_box_session.get.return_value.json.return_value = {
         'id': '84113349-794d-445c-b93c-d8481b223434',
         'type': 'metadata_cascade_policy',
@@ -46,7 +46,7 @@ def test_get(test_cascade_policy, mock_box_session):
 
 
 def test_delete(test_cascade_policy, mock_box_session):
-    expected_url = '{0}/metadata_cascade_policies/{1}'.format(API.BASE_API_URL, test_cascade_policy.object_id)
+    expected_url = f'{API.BASE_API_URL}/metadata_cascade_policies/{test_cascade_policy.object_id}'
     mock_box_session.delete.return_value.ok = True
 
     result = test_cascade_policy.delete()
@@ -56,7 +56,7 @@ def test_delete(test_cascade_policy, mock_box_session):
 
 
 def test_force_apply(test_cascade_policy, mock_box_session):
-    expected_url = '{0}/metadata_cascade_policies/{1}/apply'.format(API.BASE_API_URL, test_cascade_policy.object_id)
+    expected_url = f'{API.BASE_API_URL}/metadata_cascade_policies/{test_cascade_policy.object_id}/apply'
     expected_body = {
         'conflict_resolution': 'overwrite',
     }

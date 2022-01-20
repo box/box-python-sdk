@@ -4,7 +4,7 @@ import logging
 import sys
 
 from collections.abc import Mapping
-
+from typing import Union, IO, Optional
 
 _no_logger = object()
 
@@ -43,7 +43,7 @@ class Logging:
 
     @staticmethod
     def sanitize_value(value):
-        return '---{}'.format(value[-4:])
+        return f'---{value[-4:]}'
 
     def sanitize_dictionary(self, dictionary):
         if not isinstance(dictionary, Mapping):
@@ -62,7 +62,11 @@ class Logging:
 _logging = Logging()
 
 
-def setup_logging(stream_or_file=_no_logger, debug=False, name=None):
+def setup_logging(
+        stream_or_file: Optional[Union[str, IO]] = _no_logger,
+        debug: Optional[bool] = False,
+        name: Optional[str] = None
+) -> None:
     """
     Create a logger for communicating with the user or writing to log files.
     Sets the level to INFO or DEBUG, depending on the debug flag.
@@ -72,29 +76,21 @@ def setup_logging(stream_or_file=_no_logger, debug=False, name=None):
 
     :param stream_or_file:
         The destination of the log messages. If None, stdout will be used.
-    :type stream_or_file:
-        `unicode` or `file` or None
     :param debug:
         Whether or not the logger will be at the DEBUG level (if False, the logger will be at the INFO level).
-    :type debug:
-        `bool` or None
     :param name:
         The logging channel. If None, a root logger will be created.
-    :type name:
-        `unicode` or None
     """
     _logging.setup_logging(stream_or_file, debug, name)
 
 
-def sanitize_dictionary(dictionary):
+def sanitize_dictionary(dictionary: Mapping) -> dict:
     """
     Get a copy of a dictionary that has sensitive information redacted. Should be called on objects that will be
     logged or printed.
 
     :param dictionary:      Dictionary that may contain sensitive information.
-    :type dictionary:       :class:`Mapping`
     :return:                Copy of the dictionary with sensitive information redacted.
-    :rtype:                 `dict`
     """
     return _logging.sanitize_dictionary(dictionary)
 

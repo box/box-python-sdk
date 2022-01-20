@@ -2,8 +2,12 @@
 
 
 import json
-
+from typing import Any, TYPE_CHECKING
 from .base_object import BaseObject
+
+if TYPE_CHECKING:
+    from boxsdk.object.user import User
+    from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 
 
 class StoragePolicy(BaseObject):
@@ -11,25 +15,21 @@ class StoragePolicy(BaseObject):
 
     _item_type = 'storage_policy'
 
-    def get_url(self, *args):
+    def get_url(self, *args: Any) -> str:
         """
         Get url for storage policies.
         """
         return self._session.get_url('storage_policies', self._object_id, *args)
 
-    def assign(self, user):
+    def assign(self, user: 'User') -> 'StoragePolicyAssignment':
         """
         Checks to see if a user is already assigned a storage policy or if the storage policy assigned
         to user belongs to the enterprise. If neither, then update the user storage policy to the new one.
 
         :param user:
             The class:`User` to assign the storage policy to
-        :type user:
-            :class:`User`
         :returns:
             Information about the :class:`StoragePolicyAssignment` object.
-        :rtype:
-            :class:`StoragePolicyAssignment`
         """
         assignment = user.get_storage_policy_assignment()
         if assignment.id == self.object_id:
@@ -44,20 +44,16 @@ class StoragePolicy(BaseObject):
                 'id': self.object_id,
             },
         }
-        return assignment.update_info(update_object)
+        return assignment.update_info(data=update_object)
 
-    def create_assignment(self, user):
+    def create_assignment(self, user: 'User') -> 'StoragePolicyAssignment':
         """
         Assign a storage policy to a :class:`User`.
 
         :param user:
             The :class:'User` to assign the storage policy to.
-        :type:
-            :class:`User`
         :returns:
             Information about the :class:`StoragePolicyAssignment` object
-        :rtype:
-            :class:`StoragePolicyAssignment`
         """
         url = self._session.get_url('storage_policy_assignments')
         body = {

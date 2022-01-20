@@ -33,7 +33,7 @@ object populated with data from the API, leaving the original object unmodified.
 <!-- sample post_web_links -->
 ```python
 web_link = client.folder(folder_id='12345').create_web_link('https://example.com', 'Example Link', 'This is the description')
-print('Web Link url is {0} and its description is {1}'.format(web_link.url, web_link.description))
+print(f'Web Link url is {web_link.url} and its description is {web_link.description}')
 ```
 
 [create]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.create_web_link
@@ -43,13 +43,13 @@ Get Web Link
 ------------
 
 To get a web link object, first call [`client.web_link(web_link_id)`][web_link] to construct the appropriate 
-[`WebLink`][web_link_class] object, and then calling [`web_link.get(fields=None)`][get] will return the 
-[`WebLink`][web_link_class] object populated with data from the API, leaving the original object unmodified.
+[`WebLink`][web_link_class] object, and then calling [`web_link.get(*, fields=None, headers=None, **kwargs)`][get]
+will return the [`WebLink`][web_link_class] object populated with data from the API, leaving the original object unmodified.
 
 <!-- sample get_web_links_id -->
 ```python
 web_link = client.web_link(web_link_id='12345').get()
-print('Web Link ID is {0} and its type is {1}'.format(web_link.id, web_link.type))
+print(f'Web Link ID is {web_link.id} and its type is {web_link.type}')
 ```
 
 [web_link]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.web_link
@@ -59,12 +59,12 @@ print('Web Link ID is {0} and its type is {1}'.format(web_link.id, web_link.type
 Update Web Link
 ---------------
 
-To update a web link object, call [`web_link.update_info(data)`][update_info] with a `dict` of 
+To update a web link object, call [`web_link.update_info(data=data_to_update)`][update_info] with a `dict` of 
 properties to update on the web link. This method returns a newly updated ['WebLink'][web_link_class] object, leaving 
 the original object unmodified.
 
 ```python
-updated_web_link = client.web_link(web_link_id='12345').update_info({'url': 'https://newurl.com'})
+updated_web_link = client.web_link(web_link_id='12345').update_info(data={'url': 'https://newurl.com'})
 ```
 
 [update_info]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.update_info
@@ -86,7 +86,7 @@ web_link_to_move = client.web_link(web_link_id)
 destination_folder = client.folder(destination_folder_id)
 
 moved_web_link = web_link_to_move.move(destination_folder)
-print('Web link "{0}" has been moved into folder "{1}"'.format(moved_web_link.name, moved_web_link.parent.name))
+print(f'Web link "{moved_web_link.name}" has been moved into folder "{moved_web_link.parent.name}"')
 ```
 
 [move]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_item.BaseItem.move
@@ -94,16 +94,17 @@ print('Web link "{0}" has been moved into folder "{1}"'.format(moved_web_link.na
 Copy a Web Link
 -----------
 
-A web link can be copied to a new folder by calling [`web_link.copy(parent_folder, name=None)`][copy] with the destination
-folder and an optional new name for the web link in case there is a name conflict in the destination folder. This method
-returns a [`WebLink`][web_link_class] object representing the copy of the web link in the destination folder.
+A web link can be copied to a new folder by calling [`web_link.copy(*, parent_folder, name=None, **_kwargs)`][copy] 
+with the destination folder and an optional new name for the web link in case there is a name conflict in the
+destination folder. This method returns a [`WebLink`][web_link_class] object representing the copy of the web link 
+in the destination folder.
 
 <!-- sample post_web_links_id_copy -->
 ```python
 web_link = client.web_link(web_link_id='12345')
 
-web_link_copy = web_link_to_copy.copy(destination_folder)
-print('Web link "{0}" has been copied into folder "{1}"'.format(web_link_copy.name, web_link_copy.parent.name))
+web_link_copy = web_link_to_copy.copy(parent_folder=destination_folder)
+print(f'Web link "{web_link_copy.name}" has been copied into folder "{web_link_copy.parent.name}"')
 ```
 
 [copy]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_item.BaseItem.copy
@@ -111,14 +112,14 @@ print('Web link "{0}" has been copied into folder "{1}"'.format(web_link_copy.na
 Rename a Web Link
 -----------
 
-A web link can be renamed by calling [`web_link.rebane(name)`][rename]. This method returns the updated
+A web link can be renamed by calling [`web_link.rename(name)`][rename]. This method returns the updated
 [`WebLink`][web_link_class] object with a new name.
 
 ```python
 web_link = client.web_link(web_link_id='12345')
 
 renamed_web_link = web_link.rename("new-name")
-print('Web link was renamed to "{0}"'.format(renamed_web_link.name))
+print(f'Web link was renamed to "{renamed_web_link.name}"')
 ```
 
 [rename]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_item.BaseItem.rename
@@ -142,13 +143,13 @@ Create a Shared Link
 --------------------
 
 A shared link for a web link can be generated by calling
-[`web_link.get_shared_link(access=None, unshared_at=SDK_VALUE_NOT_SET, password=None,
+[`web_link.get_shared_link(*, access=None, unshared_at=SDK_VALUE_NOT_SET, password=None,
 vanity_name=None, **kwargs)`][get_shared_link]. This method returns a `unicode` string containing the shared link URL.
 
 <!-- sample put_web_links_id add_shared_link -->
 ```python
 url = client.web_link('12345').get_shared_link(access='open')
-print('The web link shared link URL is: {0}'.format(url))
+print(f'The web link shared link URL is: {url}')
 ```
 
 [get_shared_link]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.web_link.WebLink.get_shared_link
@@ -157,7 +158,7 @@ Update a Shared Link
 --------------------
 
 A shared link for a web link can be updated by calling
-[`web_link.get_shared_link(access=None, unshared_at=SDK_VALUE_NOT_SET, password=None,
+[`web_link.get_shared_link(*, access=None, unshared_at=SDK_VALUE_NOT_SET, password=None,
 vanity_name=None, **kwargs)`][update_shared_link] with an updated list of properties.
 
 This method returns a `unicode` string containing the shared link URL.
@@ -165,7 +166,7 @@ This method returns a `unicode` string containing the shared link URL.
 <!-- sample put_web_links_id update_shared_link -->
 ```python
 url = client.web_link('12345').get_shared_link(access='open', password='letmein')
-print('The web link shared link URL is: {0}'.format(url))
+print(f'The web link shared link URL is: {url}')
 ```
 
 [update_shared_link]:

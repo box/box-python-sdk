@@ -45,7 +45,7 @@ def test_update_info(test_object_and_response, mock_box_session, params, headers
     expected_url = test_object.get_url()
     mock_box_session.put.return_value = mock_object_response
     data = {'foo': 'bar', 'baz': {'foo': 'bar'}, 'num': 4}
-    update_response = BaseObject.update_info(test_object, data, params=params, headers=headers)
+    update_response = BaseObject.update_info(test_object, data=data, params=params, headers=headers)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), params=params, headers=headers)
     assert isinstance(update_response, test_object.__class__)
     assert update_response.object_id == test_object.object_id
@@ -63,7 +63,7 @@ def test_delete_handles_params_and_headers_correctly(mock_box_session, make_mock
 
     mock_box_response, _ = make_mock_box_request(response_ok=success)
     mock_box_session.delete.return_value = mock_box_response
-    expected_url = '{0}/{1}s/{2}'.format(API.BASE_API_URL, None, fake_id)
+    expected_url = f'{API.BASE_API_URL}/{None}s/{fake_id}'
     update_response = base_object.delete(params=params, headers=headers)
     mock_box_session.delete.assert_called_once_with(
         expected_url,
@@ -78,7 +78,7 @@ def test_getattr_and_getitem(test_object_and_response, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
     test_object, mock_object_response = test_object_and_response
     mock_box_session.put.return_value = mock_object_response
-    update_response = BaseObject.update_info(test_object, {})
+    update_response = BaseObject.update_info(test_object, data={})
     assert isinstance(update_response, test_object.__class__)
     assert update_response.object_id == update_response.id == update_response['id']  # pylint:disable=no-member
 
@@ -87,15 +87,15 @@ def test_get_url(test_object_and_response):
     # pylint:disable=redefined-outer-name, protected-access
     test_object, _ = test_object_and_response
     url = test_object.get_url()
-    assert '{0}'.format(test_object.object_id) in url
-    assert '{0}'.format(test_object._item_type) in url
+    assert test_object.object_id in url
+    assert test_object._item_type in url
 
 
 def test_get_type_url(test_object_and_response):
     # pylint:disable=redefined-outer-name, protected-access
     test_object, _ = test_object_and_response
     url = test_object.get_type_url()
-    assert url.endswith('{0}s'.format(test_object._item_type))
+    assert url.endswith(f'{test_object._item_type}s')
 
 
 def test_eq(objects_for_comparison):

@@ -1,9 +1,16 @@
 # coding: utf-8
 
 from abc import ABC, abstractmethod
+from typing import Any, Union, List, TYPE_CHECKING
+
 import pytest
 
 from boxsdk.util.translator import Translator
+
+if TYPE_CHECKING:
+    from boxsdk.object.base_object import BaseObject
+    from boxsdk.pagination.box_object_collection import BoxObjectCollection
+    from boxsdk.session.session import Session
 
 
 class BoxObjectCollectionTestBase(ABC):
@@ -23,7 +30,7 @@ class BoxObjectCollectionTestBase(ABC):
                 "id": str(1000 + i),
                 "sequence_id": str(i),
                 "etag": str(10 + i),
-                "name": "file_{0}.txt".format(i),
+                "name": f"file_{i}.txt",
             })
         return all_entries
 
@@ -38,33 +45,33 @@ class BoxObjectCollectionTestBase(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _object_collection_instance(self, session, limit, return_full_pages=False, starting_pointer=None):
-        """
-        :type session: :class:`BoxSession`
-        :type limit: `int`
-        :type return_full_pages: `bool`
-        :type starting_pointer: varies
-        :rtype: :class:`BoxObjectCollection`
-        """
+    def _object_collection_instance(
+            self,
+            session: 'Session',
+            limit: int,
+            return_full_pages: bool = False,
+            starting_pointer: Any = None
+    ) -> 'BoxObjectCollection':
         raise NotImplementedError
 
     @staticmethod
-    def _assert_items_dict_and_objects_same(expected_items_dict, returned_item_objects):
+    def _assert_items_dict_and_objects_same(
+            expected_items_dict: Union[list, dict],
+            returned_item_objects: List['BaseObject']
+    ) -> None:
         """
         A fixture very specific to this test class. Asserts that the list of items in dictionary form are the
         same (at least in name, and in quantity) as a list of BaseObjects.
 
         :param expected_items_dict: List of expected items, represented as a dictionary.
-        :type expected_items_dict: `list` of `dict`
         :param returned_item_objects: List of item instances (BaseObject) returned by SUT.
-        :type returned_item_objects: `list` of class:`BaseObject`
         """
         expected_num = len(expected_items_dict)
         actual_num = len(returned_item_objects)
-        assert actual_num == expected_num, 'Expected {0} items, got {1}'.format(expected_num, actual_num)
+        assert actual_num == expected_num, f'Expected {expected_num} items, got {actual_num}'
         returned_item_names = [item.name for item in returned_item_objects]
         for expected_item_dict in expected_items_dict:
-            assert expected_item_dict['name'] in returned_item_names, 'Missing item: {0}'.format(expected_item_dict['name'])
+            assert expected_item_dict['name'] in returned_item_names, f'Missing item: {expected_item_dict["name"]}'
 
     @pytest.mark.parametrize('return_full_pages', (True, False))
     @pytest.mark.parametrize('limit', (1, 3, 5, NUM_ENTRIES, 1000))

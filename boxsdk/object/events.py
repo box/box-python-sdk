@@ -1,4 +1,5 @@
 # coding: utf-8
+from typing import Any, Optional, Iterable, Generator, Union, TYPE_CHECKING
 
 from requests.exceptions import Timeout
 
@@ -7,6 +8,10 @@ from ..util.api_call_decorator import api_call
 from ..util.enum import ExtendableEnumMeta
 from ..util.lru_cache import LRUCache
 from ..util.text_enum import TextEnum
+
+if TYPE_CHECKING:
+    from boxsdk.object.event import Event
+    from boxsdk.session.box_response import BoxResponse
 
 
 # pylint:disable=too-many-ancestors
@@ -53,34 +58,30 @@ class EnterpriseEventsStreamType(EventsStreamType):
 class Events(BaseEndpoint):
     """Box API endpoint for subscribing to changes in a Box account."""
 
-    def get_url(self, *args):
+    def get_url(self, *args: Any) -> str:
         """Base class override."""
-        # pylint:disable=arguments-differ
         return super().get_url('events', *args)
 
     @api_call
-    def get_events(self, limit=100, stream_position=0, stream_type=UserEventsStreamType.ALL):
+    def get_events(
+            self,
+            limit: int = 100,
+            stream_position: Union[str, int] = 0,
+            stream_type: EventsStreamType = UserEventsStreamType.ALL
+    ) -> dict:
         """
         Get Box events from a given stream position for a given stream type.
 
         :param limit:
             Maximum number of events to return.
-        :type limit:
-            `int`
         :param stream_position:
             The location in the stream from which to start getting events. 0 is the beginning of time. 'now' will
             return no events and just current stream position.
-        :type stream_position:
-            `unicode`
         :param stream_type:
             (optional) Which type of events to return.
             Defaults to `UserEventsStreamType.ALL`.
-        :type stream_type:
-            :enum:`EventsStreamType`
         :returns:
             Dictionary containing the next stream position along with a list of some number of events.
-        :rtype:
-            `dict`
         """
         url = self.get_url()
         params = {
@@ -93,38 +94,30 @@ class Events(BaseEndpoint):
         return self.translator.translate(self._session, response_object=response)
 
     @api_call
-    def get_admin_events(self, limit=None, stream_position=0, created_after=None, created_before=None, event_types=None):
+    def get_admin_events(
+            self,
+            limit: Optional[int] = None,
+            stream_position: Union[str, int] = 0,
+            created_after: Optional[str] = None,
+            created_before: Optional[str] = None,
+            event_types: Iterable[str] = None
+    ) -> dict:
         """
         Get Box Admin events from a datetime, to a datetime, or between datetimes with a given event type for a enterprise
         stream type. Used for historical querying (up to one year). Works for Enterprise admin_logs type.
 
         :param limit:
             (optional) Maximum number of events to return.
-        :type limit:
-            `int` or None
         :param stream_position:
             The location in the stream from which to start getting events. 0 is the beginning of time.
-        :type stream_position:
-            `unicode`
         :param created_after:
             (optional) Start date in datetime format to pull events from
-            Defaults to `None`
-        :type created_after:
-            `unicode`
         :param created_before:
             (optional) End date in datetime format to pull events to
-            Defaults to `None`
-        :type created_before:
-            `unicode`
         :param event_types:
             (optional) Which events to return (ie. LOGIN)
-            Defaults to `None`
-        :type event_types:
-            Array of `unicode`
         :returns:
             Dictionary containing the next stream position along with a list of some number of events.
-        :rtype:
-            `dict`
         """
         url = self.get_url()
         params = {
@@ -143,29 +136,25 @@ class Events(BaseEndpoint):
         return self.translator.translate(self._session, response_object=response)
 
     @api_call
-    def get_admin_events_streaming(self, limit=None, stream_position=0, event_types=None):
+    def get_admin_events_streaming(
+            self,
+            limit: Optional[int] = None,
+            stream_position: Union[str, int] = 0,
+            event_types: Iterable[str] = None
+    ) -> dict:
         """
         Get Box Admin events with a given event type for a enterprise stream type. Used for live monitoring (up to two weeks).
         Works for Enterprise admin_logs_streaming type.
 
         :param limit:
             (optional) Maximum number of events to return.
-        :type limit:
-            `int` or None
         :param stream_position:
             The location in the stream from which to start getting events. 0 is the beginning of time. 'now' will
             return no events and just current stream position.
-        :type stream_position:
-            `unicode`
         :param event_types:
             (optional) Which events to return (ie. LOGIN)
-            Defaults to `None`
-        :type event_types:
-            Array of `unicode`
         :returns:
             Dictionary containing the next stream position along with a list of some number of events.
-        :rtype:
-            `dict`
         """
         url = self.get_url()
         params = {
@@ -182,34 +171,33 @@ class Events(BaseEndpoint):
         return self.translator.translate(self._session, response_object=response)
 
     @api_call
-    def get_latest_stream_position(self, stream_type=UserEventsStreamType.ALL):
+    def get_latest_stream_position(self, stream_type: UserEventsStreamType = UserEventsStreamType.ALL) -> int:
         """
         Get the latest stream position. The return value can be used with :meth:`get_events` or
         :meth:`generate_events_with_long_polling`.
 
         :param stream_type:
             (optional) Which events stream to query.
-            Defaults to `UserEventsStreamType.ALL`.
 
             NOTE: Currently, the Box API requires this to be one of the user
             events stream types. The request will fail if an enterprise events
             stream type is passed.
-        :type stream_type:
-            :enum:`UserEventsStreamType`
         :returns:
             The latest stream position.
-        :rtype:
-            `int`
         """
         return self.get_events(limit=0, stream_position='now', stream_type=stream_type)['next_stream_position']
 
-    def _get_all_events_since(self, stream_position, stream_type=UserEventsStreamType.ALL):
+    def _get_all_events_since(
+            self,
+            stream_position: Union[str, int],
+            stream_type: EventsStreamType = UserEventsStreamType.ALL
+    ) -> Generator[tuple, None, None]:
         """
+        :param stream_position:
+            The location in the stream from which to start getting events. 0 is the beginning of time. 'now' will
+            return no events and just current stream position.
         :param stream_type:
             (optional) Which type of events to return.
-            Defaults to `UserEventsStreamType.ALL`.
-        :type stream_type:
-            :enum:`EventsStreamType`
         """
         next_stream_position = stream_position
         while True:
@@ -224,24 +212,18 @@ class Events(BaseEndpoint):
                 return
 
     @api_call
-    def long_poll(self, options, stream_position):
+    def long_poll(self, options: dict, stream_position: Union[str, int]) -> 'BoxResponse':
         """
         Set up a long poll connection at the specified url.
 
         :param options:
             The long poll options which include a long pull url, retry timeout, etc.
-        :type options:
-            `dict`
         :param stream_position:
             The location in the stream from which to start getting events. 0 is the beginning of time.
             'now' will return no events and just current stream position.
-        :type stream_position:
-            `unicode`
         :returns:
             {"message": "new_change"}, which means there're new changes on Box or {"version": 1, "message": "reconnect"}
             if nothing happens on Box during the long poll.
-        :rtype:
-            `dict`
         """
         url = options['url']
         long_poll_response = self._session.get(
@@ -252,28 +234,25 @@ class Events(BaseEndpoint):
         return long_poll_response
 
     @api_call
-    def generate_events_with_long_polling(self, stream_position=None, stream_type=UserEventsStreamType.ALL):
+    def generate_events_with_long_polling(
+            self,
+            stream_position: Union[str, int] = None,
+            stream_type: UserEventsStreamType = UserEventsStreamType.ALL
+    ) -> Generator['Event', None, None]:
         """
         Subscribe to events from the given stream position.
 
         :param stream_position:
             The location in the stream from which to start getting events. 0 is the beginning of time. 'now' will
             return no events and just current stream position.
-        :type stream_position:
-            `unicode`
         :param stream_type:
             (optional) Which type of events to return.
-            Defaults to `UserEventsStreamType.ALL`.
 
             NOTE: Currently, the Box API requires this to be one of the user
             events stream types. The request will fail if an enterprise events
             stream type is passed.
-        :type stream_type:
-            :enum:`UserEventsStreamType`
         :returns:
             Events corresponding to changes on Box in realtime, as they come in.
-        :rtype:
-            `generator` of :class:`Event`
         """
         event_ids = LRUCache()
         stream_position = stream_position if stream_position is not None else self.get_latest_stream_position(stream_type=stream_type)
@@ -301,15 +280,12 @@ class Events(BaseEndpoint):
                 break
 
     @api_call
-    def get_long_poll_options(self, stream_type=UserEventsStreamType.ALL):
+    def get_long_poll_options(self, stream_type: EventsStreamType = UserEventsStreamType.ALL) -> dict:
         """
         Get the url and retry timeout for setting up a long polling connection.
 
         :param stream_type:
             (optional) Which type of events to return.
-            Defaults to `UserEventsStreamType.ALL`.
-        :type stream_type:
-            :enum:`EventsStreamType`
         :returns:
             A `dict` including a long poll url, retry timeout, etc.
             E.g.
@@ -320,8 +296,6 @@ class Events(BaseEndpoint):
                     "max_retries": "10",
                     "retry_timeout": 610,
                 }
-        :rtype:
-            `dict`
         """
         url = self.get_url()
         params = {'stream_type': stream_type}
