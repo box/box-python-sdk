@@ -37,6 +37,8 @@ Installing
     pip install boxsdk
 
 The current version of the SDK is v3.x — With this release support for Python 3.5 and earlier (including 2.x) has been dropped.
+if you're looking for the code or documentation for v1.5.x, please see the
+`1.5 branch <https://github.com/box/box-python-sdk/tree/1.5>`_
 
 .. _changelog: https://github.com/box/box-python-sdk/blob/main/HISTORY.rst#200
 
