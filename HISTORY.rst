@@ -3,6 +3,13 @@
 Release History
 ---------------
 
+3.0.1 (2022-01-26)
+++++++++++++++++++++
+
+**Bug Fixes:**
+
+- Move sphinx to test requirements (`#662 <https://github.com/box/box-python-sdk/pull/662>`_)
+
 3.0.0 (2022-01-17)
 ++++++++++++++++++++
 
