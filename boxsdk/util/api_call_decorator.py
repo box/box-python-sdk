@@ -6,7 +6,7 @@ from typing import Callable, Any
 from ..object.cloneable import Cloneable
 
 
-def api_call(method: Callable) -> 'APICallWrapper':
+def api_call(method: Callable) -> Any:
     """
     Designates the decorated method as one that makes a Box API call.
     The decorated method can then accept a new keyword argument `extra_network_parameters`,

@@ -68,6 +68,10 @@ Metadata Query
 --------------
 To search using SQL-like syntax to return items that match specific metadata, call `search.metadata_query(from_template, ancestor_folder_id, query=None, query_params=None, use_index=None, order_by=None, marker=None, limit=None, fields=None)` 
 
+**Note:** paramter `use_index` is deprecated and if provided, will be ignored. The current way to create an index is to contact the MDQ team directly via email. MDQ will now use static query analysis to use the index that is most efficient for the call.
+
+
+
 By default, this method returns only the most basic info about the items for which the query matches. To get additional fields for each item, including any of the metadata, use the fields parameter.
 
 ```python
@@ -75,7 +79,6 @@ from_template = 'enterprise_12345.someTemplate'
 ancestor_folder_id = '5555'
 query = 'amount >= :arg'
 query_params = {'arg': 100}
-use_index = 'amountAsc'
 order_by = [
     {
         'field_key': 'amount',
@@ -86,15 +89,14 @@ fields = ['type', 'id', 'name', 'metadata.enterprise_67890.catalogImages.$parent
 limit = 2
 marker = 'AAAAAmVYB1FWec8GH6yWu2nwmanfMh07IyYInaa7DZDYjgO1H4KoLW29vPlLY173OKs'
 items = client.search().metadata_query(
-        from_template,
-        ancestor_folder_id,
-        query,
-        query_params,
-        use_index,
-        order_by,
-        marker,
-        limit,
-        fields
+    from_template=from_template,
+    ancestor_folder_id=ancestor_folder_id,
+    query=query,
+    query_params=query_params,
+    order_by=order_by,
+    marker=marker,
+    limit=limit,
+    fields=fields
     )
 for item in items:
     print(f'The item ID is {item.id} and the item name is {item.name}')
