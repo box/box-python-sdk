@@ -6,6 +6,7 @@ from .base_endpoint import BaseEndpoint
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.api_call_decorator import api_call
+from ..util.deprecation_decorator import deprecated_param
 from ..util.text_enum import TextEnum
 
 if TYPE_CHECKING:
@@ -261,6 +262,7 @@ class Search(BaseEndpoint):
             return_full_pages=False,
         )
 
+    @deprecated_param(name="use_index", position=5, message="Parameter will be ignored. See docs for details.")
     @api_call
     def metadata_query(
             self,
@@ -274,6 +276,7 @@ class Search(BaseEndpoint):
             limit: int = None,
             fields: Iterable[Optional[str]] = None
     ) -> 'BoxObjectCollection':
+        # pylint:disable=unused-argument
         """Query Box items by their metadata.
 
         :param from_template:
@@ -284,8 +287,7 @@ class Search(BaseEndpoint):
             The logical expression of the query
         :param query_params:
             Required if query present. The arguments for the query.
-        :param use_index:
-            The name of the index to use
+        :param use_index is deprecated
         :param order_by:
             The field_key(s) to order on and the corresponding direction(s)
         :param marker:
@@ -306,8 +308,6 @@ class Search(BaseEndpoint):
             data['query'] = query
         if query_params is not None:
             data['query_params'] = query_params
-        if use_index is not None:
-            data['use_index'] = use_index
         if order_by is not None:
             data['order_by'] = order_by
 

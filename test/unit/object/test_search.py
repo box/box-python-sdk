@@ -337,7 +337,6 @@ def test_metadata_query(
     ancestor_folder_id = '5555'
     query = 'amount >= :arg'
     query_params = {'arg': 100}
-    use_index = 'amountAsc'
     order_by = [
         {
             'field_key': 'amount',
@@ -353,7 +352,6 @@ def test_metadata_query(
         'ancestor_folder_id': ancestor_folder_id,
         'query': query,
         'query_params': query_params,
-        'use_index': use_index,
         'order_by': order_by,
         'marker': marker,
         'fields': fields
@@ -361,15 +359,14 @@ def test_metadata_query(
     expected_headers = {b'Content-Type': b'application/json'}
     mock_box_session.post.return_value, _ = make_mock_box_request(response=metadata_query_response)
     items = test_search.metadata_query(
-        from_template,
-        ancestor_folder_id,
-        query,
-        query_params,
-        use_index,
-        order_by,
-        marker,
-        limit,
-        fields
+        from_template=from_template,
+        ancestor_folder_id=ancestor_folder_id,
+        query=query,
+        query_params=query_params,
+        order_by=order_by,
+        marker=marker,
+        limit=limit,
+        fields=fields
     )
     item1 = items.next()
     item2 = items.next()
