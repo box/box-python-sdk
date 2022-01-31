@@ -4,9 +4,6 @@ Box Python SDK
 .. image:: http://opensource.box.com/badges/active.svg
     :target: http://opensource.box.com/badges
 
-.. image:: https://travis-ci.org/box/box-python-sdk.png?branch=main
-    :target: https://travis-ci.org/box/box-python-sdk
-
 .. image:: https://readthedocs.org/projects/box-python-sdk/badge/?version=latest
     :target: http://box-python-sdk.readthedocs.org/en/latest
     :alt: Documentation Status
