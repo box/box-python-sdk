@@ -25,4 +25,6 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install tox tox-gh-actions
       - name: Test with tox
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: tox
