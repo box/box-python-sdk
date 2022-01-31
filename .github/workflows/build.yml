@@ -25,6 +25,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install tox tox-gh-actions
       - name: Test with tox
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
         run: tox
+      - name: Publish to coveralls
+        uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ github.token }}
