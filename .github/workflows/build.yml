@@ -1,4 +1,4 @@
-name: build
+name: Build
 on:
   pull_request:
     branches:
@@ -28,6 +28,7 @@ jobs:
       - name: Test with tox
         run: tox
   coverage:
+    name: Coverage report
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
