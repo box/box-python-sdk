@@ -35,4 +35,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          py.test --cov boxsdk --cov-report term-missing test/unit test/integration
           coveralls --service=github
