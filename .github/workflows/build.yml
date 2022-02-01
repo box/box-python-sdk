@@ -27,7 +27,7 @@ jobs:
       - name: Test with tox
         run: tox
       - name: Publish to coveralls
-        uses: coverallsapp/github-action@v1.1.2
-        with:
-          github-token: ${{ github.token }}
-          path-to-lcov: ${{ github.workspace }}/coverage/lcov.info
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          coveralls --service=github
