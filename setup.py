@@ -74,6 +74,7 @@ def main():
         'pytest-xdist<1.28.0',
         'coveralls',
         'coverage',
+        'tox-gh-actions',
         'pytz',
     ]
     extra_requires['test'] = test_requires
