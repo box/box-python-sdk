@@ -73,7 +73,7 @@ def main():
         'pytest-cov',
         'pytest-xdist<1.28.0',
         'python-coveralls',
-        'coverage<5.0',  # 2020-01-14: backwards-compatibility issue with coverage 5.0 impacting python-coveralls
+        'coverage',  # 2020-01-14: backwards-compatibility issue with coverage 5.0 impacting python-coveralls
         'pytz',
     ]
     extra_requires['test'] = test_requires
