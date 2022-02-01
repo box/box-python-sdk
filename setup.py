@@ -72,7 +72,6 @@ def main():
         'pytest>=2.8.3, <4.0.0',
         'pytest-cov',
         'pytest-xdist<1.28.0',
-        'coveralls',
         'coverage',  # 2020-01-14: backwards-compatibility issue with coverage 5.0 impacting python-coveralls
         'pytz',
     ]
