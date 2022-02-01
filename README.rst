@@ -9,7 +9,7 @@ Box Python SDK
     :alt: Documentation Status
 
 .. image:: https://github.com/box/box-python-sdk/workflows/build/badge.svg
-    :target: https://pypi.python.org/pypi/boxsdk/actions
+    :target: https://github.com/box/box-python-sdk/actions
 
 .. image:: https://img.shields.io/pypi/v/boxsdk.svg
     :target: https://pypi.python.org/pypi/boxsdk
