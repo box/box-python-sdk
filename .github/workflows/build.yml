@@ -28,11 +28,12 @@ jobs:
       - name: Test with tox
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: tox
 
-      - name: Publish to coveralls
-        if: ${{ matrix.python-version == '3.6' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          coveralls --service=github
+#      - name: Publish to coveralls
+#        if: ${{ matrix.python-version == '3.6' }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          coveralls --service=github
