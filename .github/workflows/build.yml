@@ -27,7 +27,7 @@ jobs:
           python -m pip install coveralls
       - name: Test with tox
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: tox
 #      - name: Publish to coveralls
 #        env:
