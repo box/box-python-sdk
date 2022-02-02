@@ -85,7 +85,7 @@ destination_folder_id = '44444'
 web_link_to_move = client.web_link(web_link_id)
 destination_folder = client.folder(destination_folder_id)
 
-moved_web_link = web_link_to_move.move(destination_folder)
+moved_web_link = web_link_to_move.move(parent_folder=destination_folder)
 print(f'Web link "{moved_web_link.name}" has been moved into folder "{moved_web_link.parent.name}"')
 ```
 

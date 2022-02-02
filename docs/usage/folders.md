@@ -135,7 +135,7 @@ destination_folder_id = '44444'
 folder_to_copy = client.folder(folder_id)
 destination_folder = client.folder(destination_folder_id)
 
-folder_copy = folder_to_copy.copy(destination_folder)
+folder_copy = folder_to_copy.copy(parent_folder=destination_folder)
 print(f'Folder "{folder_copy.name}" has been copied into folder "{folder_copy.parent.name}"')
 ```
 
@@ -156,7 +156,7 @@ destination_folder_id = '44444'
 folder_to_move = client.folder(folder_id)
 destination_folder = client.folder(destination_folder_id)
 
-moved_folder = folder_to_move.move(destination_folder)
+moved_folder = folder_to_move.move(parent_folder=destination_folder)
 print(f'Folder "{moved_folder.name}" has been moved into folder "{moved_folder.parent.name}"')
 ```
 

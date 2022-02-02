@@ -455,7 +455,7 @@ destination_folder_id = '44444'
 file_to_move = client.file(file_id)
 destination_folder = client.folder(destination_folder_id)
 
-moved_file = file_to_move.move(destination_folder)
+moved_file = file_to_move.move(parent_folder=destination_folder)
 print(f'File "{moved_file.name}" has been moved into folder "{moved_file.parent.name}"')
 ```
 
