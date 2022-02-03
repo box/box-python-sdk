@@ -71,6 +71,7 @@ class File(Item):
 
     @api_call
     def get_chunked_uploader(self, file_path: str, rename_file: bool = False) -> 'ChunkedUploader':
+        # pylint: disable=consider-using-with
         """
         Instantiate the chunked upload instance and create upload session with path to file.
 
@@ -82,10 +83,10 @@ class File(Item):
             A :class:`ChunkedUploader` object.
         """
         total_size = os.stat(file_path).st_size
-        with open(file_path, 'rb') as content_stream:
-            file_name = os.path.basename(file_path) if rename_file else None
-            upload_session = self.create_upload_session(total_size, file_name)
-            return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
+        content_stream = open(file_path, 'rb')
+        file_name = os.path.basename(file_path) if rename_file else None
+        upload_session = self.create_upload_session(total_size, file_name)
+        return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
 
     def _get_accelerator_upload_url_for_update(self) -> Optional[str]:
         """
