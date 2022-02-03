@@ -162,6 +162,7 @@ class UploadSession(BaseObject):
         return ChunkedUploader(self, content_stream, file_size)
 
     def get_chunked_uploader(self, file_path: str) -> ChunkedUploader:
+        # pylint: disable=consider-using-with
         """
         Instantiate the chunked upload instance and create upload session with path to file.
 
@@ -171,8 +172,8 @@ class UploadSession(BaseObject):
             A :class:`ChunkedUploader` object.
         """
         total_size = os.stat(file_path).st_size
-        with open(file_path, 'rb') as content_stream:
-            return self.get_chunked_uploader_for_stream(
-                content_stream=content_stream,
-                file_size=total_size,
-            )
+        content_stream = open(file_path, 'rb')
+        return self.get_chunked_uploader_for_stream(
+            content_stream=content_stream,
+            file_size=total_size,
+        )
