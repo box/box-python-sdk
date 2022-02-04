@@ -3,6 +3,19 @@
 Release History
 ---------------
 
+3.1.0 (2022-02-04)
+++++++++++++++++++++
+
+**New Features and Enhancements:**
+
+- Remove six library and __future__ imports (`#646 <https://github.com/box/box-python-sdk/pull/646>`_)
+- Add type hints to method parameters (`#650 <https://github.com/box/box-python-sdk/pull/650>`_)
+
+**Bug Fixes:**
+
+- Add missing api_call decorators on multiput calls (`#653 <https://github.com/box/box-python-sdk/pull/653>`_)
+- Added `py.typed` file for mypy to recognise type hints (`#657 <https://github.com/box/box-python-sdk/pull/657>`_)
+
 3.0.1 (2022-01-26)
 ++++++++++++++++++++
 
