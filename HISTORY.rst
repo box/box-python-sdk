@@ -3,6 +3,27 @@
 Release History
 ---------------
 
+3.1.0 (2022-02-07)
+++++++++++++++++++++
+
+**Breaking Changes**
+
+- Drop support for python 2.7 (`#645 <https://github.com/box/box-python-sdk/pull/645>`_)
+- Add missing parameter stream_position to get_admin_events method (`#648 <https://github.com/box/box-python-sdk/pull/648>`_)
+- Drop support for python 3.5 (`#654 <https://github.com/box/box-python-sdk/pull/654>`_)
+- Remove deprecated code using insensitive language (`#651 <https://github.com/box/box-python-sdk/pull/651>`_)
+- Enforcing usage of keyword-only arguments in some functions (`#656 <https://github.com/box/box-python-sdk/pull/656>`_)
+
+**New Features and Enhancements:**
+
+- Remove six library and __future__ imports (`#646 <https://github.com/box/box-python-sdk/pull/646>`_)
+- Add type hints to method parameters (`#650 <https://github.com/box/box-python-sdk/pull/650>`_)
+
+**Bug Fixes:**
+
+- Add missing api_call decorators on multiput calls (`#653 <https://github.com/box/box-python-sdk/pull/653>`_)
+- Added `py.typed` file for mypy to recognise type hints (`#657 <https://github.com/box/box-python-sdk/pull/657>`_)
+
 3.0.1 (2022-01-26)
 ++++++++++++++++++++
 
