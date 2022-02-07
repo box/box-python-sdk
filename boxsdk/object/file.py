@@ -45,6 +45,7 @@ class File(Item):
             file_id=self._object_id,
         )
 
+    @api_call
     def create_upload_session(self, file_size: int, file_name: Optional[str] = None) -> 'UploadSession':
         """
         Create a new chunked upload session for uploading a new version of the file.

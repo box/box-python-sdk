@@ -112,6 +112,7 @@ class Folder(Item):
             parent_id=self._object_id,
         )
 
+    @api_call
     def create_upload_session(self, file_size: int, file_name: str) -> 'UploadSession':
         """
         Creates a new chunked upload session for upload a new file.
