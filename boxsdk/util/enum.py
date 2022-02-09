@@ -82,8 +82,11 @@ class ExtendableEnumMeta(EnumMeta):
         return members
 
     def __contains__(cls, member):
-        if super(ExtendableEnumMeta, cls).__contains__(member):
-            return True
+        try:
+            if super(ExtendableEnumMeta, cls).__contains__(member):
+                return True
+        except TypeError:
+            return False
 
         def in_(subclass):
             return member in subclass
