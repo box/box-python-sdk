@@ -1,6 +1,4 @@
-Box Python SDK
-===============
----
+# Box Python SDK
 
 [![image](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
 [![Documentation Status](https://readthedocs.org/projects/box-python-sdk/badge/?version=latest)](http://box-python-sdk.readthedocs.org/en/latest)

@@ -1,20 +1,19 @@
-Release History
-===============
+# Release History
 
-# 3.0.1 (2022-01-26)
+## [3.0.1] (2022-01-26)
 
-**Bug Fixes:**
+### Bug Fixes:
 
 -   Move sphinx to test requirements
     ([#662](https://github.com/box/box-python-sdk/pull/662))
 
-# 3.0.0 (2022-01-17)
+## [3.0.0] (2022-01-17)
 
-**Breaking Changes:**
+### ⚠ Breaking Changes:
 
 -   Drop support for python 2.7
     ([#645](https://github.com/box/box-python-sdk/pull/645))
--   Add missing parameter stream_position to get_admin_events method
+-   Add missing parameter `stream_position` to `get_admin_events` method
     ([#648](https://github.com/box/box-python-sdk/pull/648))
 -   Drop support for python 3.5
     ([#654](https://github.com/box/box-python-sdk/pull/654))
@@ -23,27 +22,27 @@ Release History
 -   Enforcing usage of keyword-only arguments in some functions
     ([#656](https://github.com/box/box-python-sdk/pull/656))
 
-**New Features and Enhancements:**
+### New Features and Enhancements:
 
--   Remove six library and \_\_future\_\_ imports
+-   Remove `six` library and `__future__` imports
     ([#646](https://github.com/box/box-python-sdk/pull/646))
 -   Add type hints to method parameters
     ([#650](https://github.com/box/box-python-sdk/pull/650))
 
-**Bug Fixes:**
+### Bug Fixes:
 
--   Add missing api_call decorators on multiput calls
+-   Add missing `api_call` decorators on `multiput` calls
     ([#653](https://github.com/box/box-python-sdk/pull/653))
--   Added [py.typed]{.title-ref} file for mypy to recognise type hints
+-   Added `py.typed` file for `mypy` to recognise type hints
     ([#657](https://github.com/box/box-python-sdk/pull/657))
 
-# 2.14.0 (2021-12-08)
+## [2.14.0] (2021-12-08)
 
-**New Features and Enhancements:**
+### New Features and Enhancements:
 
--   Add [admin_logs_streaming]{.title-ref} support for events stream
+-   Add `admin_logs_streaming` support for events stream
     ([#623](https://github.com/box/box-python-sdk/pull/623))
--   Add [vanity_name]{.title-ref} parameter for creating shared link to
+-   Add `vanity_name` parameter for creating shared link to
     a file or folder
     ([#637](https://github.com/box/box-python-sdk/pull/637))
 -   Add getting files and file versions under retention for a retention
@@ -52,95 +51,95 @@ Release History
 -   Support base item operations for WebLink class
     ([#639](https://github.com/box/box-python-sdk/pull/639))
 
-**Bug Fixes:**
+### Bug Fixes:
 
 -   Limit cryptography to version \<3.5.0
     ([#636](https://github.com/box/box-python-sdk/pull/636))
 -   Avoid raising 404 when a thumbnail cannot be generated for a file
     ([#642](https://github.com/box/box-python-sdk/pull/642))
 
-# 2.13.0 (2021-09-30)
+## [2.13.0] (2021-09-30)
 
-**New Features and Enhancements:**
+### New Features and Enhancements:
 
 -   Sensitive language replacement
     ([#609](https://github.com/box/box-python-sdk/pull/609))
 -   Add BoxSign support
     ([#617](https://github.com/box/box-python-sdk/pull/617))
 
-**Bug Fixes:**
+### Bug Fixes:
 
 -   Upgrade cryptography to version 3
     ([#620](https://github.com/box/box-python-sdk/pull/620))
 
-# 2.12.1 (2021-06-16)
+## [2.12.1] (2021-06-16)
 
-**Bug Fixes:**
+### Bug Fixes:
 
 -   Fix bug when thumbnail representations are not found
     ([#597](https://github.com/box/box-python-sdk/pull/597))
 
-# 2.12.0 (2021-04-16)
+## [2.12.0] (2021-04-16)
 
-**New Features and Enhancements:**
+### New Features and Enhancements:
 
 -   Add metadata query functionality
     ([#574](https://github.com/box/box-python-sdk/pull/574))
 -   Add folder lock functionality
     ([#581](https://github.com/box/box-python-sdk/pull/581))
 -   Add search query support for the
-    [include_recent_shared_links]{.title-ref} field
+    `include_recent_shared_links` field
     ([#582](https://github.com/box/box-python-sdk/pull/582))
--   Update [get_groups()]{.title-ref} to use documented parameter to
+-   Update `get_groups()` to use documented parameter to
     filter by name
     ([#586](https://github.com/box/box-python-sdk/pull/586))
 
-# 2.11.0 (2021-01-11)
+## [2.11.0] (2021-01-11)
 
-**New Features and Enhancements:**
+### New Features and Enhancements:
 
 -   Deprecate and add method for getting a thumbnail
     ([#572](https://github.com/box/box-python-sdk/pull/572))
 
-# 2.10.0 (2020-10-02)
+## [2.10.0] (2020-10-02)
 
-**New Features and Enhancements:**
+### New Features and Enhancements:
 
--   Add support for [copyInstanceOnItemCopy]{.title-ref} field for
+-   Add support for `copyInstanceOnItemCopy` field for
     metadata templates
     ([#546](https://github.com/box/box-python-sdk/pull/546))
--   Allow creating tasks with the [action]{.title-ref} and
-    [completion_rule]{.title-ref} parameters
+-   Allow creating tasks with the `action` and
+    `completion_rule` parameters
     ([#544](https://github.com/box/box-python-sdk/pull/544))
 -   Add zip functionality
     ([#539](https://github.com/box/box-python-sdk/pull/539))
 
-**Bug Fixes:**
+### Bug Fixes:
 
 -   Fix bug with updating a collaboration role to owner
     ([#536](https://github.com/box/box-python-sdk/pull/536))
 -   Allow ints to be passed in as item IDs
     ([#530](https://github.com/box/box-python-sdk/pull/530))
 
-# 2.9.0 (2020-06-23)
+## [2.9.0] (2020-06-23)
 
 -   Fix exception handling for OAuth
 -   Fix path parameter sanitization
 
-# 2.8.0 (2020-04-24)
+## [2.8.0] (2020-04-24)
 
 -   Added support for token exchange using shared links
 -   Added the ability to pass in a SHA1 value for file uploads
 
-# 2.7.1 (2020-01-21)
+## [2.7.1] (2020-01-21)
 
--   Fixed bug in [\_get_retry_request_callable]{.title-ref} introduced
+-   Fixed bug in `_get_retry_request_callable` introduced
     in release 2.7.0 which caused chunked uploads to fail
 
-# 2.7.0 (2020-01-16)
+## [2.7.0] (2020-01-16)
 
--   Fixed bug in [get_admin_events]{.title-ref} function which caused
-    errors when the optional [event_types]{.title-ref} parameter was
+-   Fixed bug in `get_admin_events` function which caused
+    errors when the optional `event_types` parameter was
     omitted.
 -   Add marker based pagination for listing users.
 -   Added support for more attribute parameters when uploading new files
@@ -150,59 +149,59 @@ Release History
 -   Fixed JWT retry logic so a new JTI claim is generated on each retry.
 -   Fixed bug where JWT authentication requests returned incorrect error
     codes.
--   Fixed retry logic so when a [Retry-After]{.title-ref} header is
+-   Fixed retry logic so when a `Retry-After` header is
     passed back from the API, the SDK waits for the amount of time
     specified in the header before retrying.
 
-# 2.6.1 (2019-10-24)
+## [2.6.1] (2019-10-24)
 
--   Added [api_call]{.title-ref} decorator for copy method.
+-   Added `api_call` decorator for copy method.
 
-# 2.6.0 (2019-08-29)
+## [2.6.0] (2019-08-29)
 
 -   Added a new get events function with created_before, created_after,
     and event_type parameters
 
-# 2.5.0 (2019-06-20)
+## [2.5.0] (2019-06-20)
 
--   Allowed passing [None]{.title-ref} to clear configurable_permission
+-   Allowed passing `None` to clear configurable_permission
     field in the add_member() method.
 
-# 2.4.1 (2019-05-16)
+## [2.4.1] (2019-05-16)
 
 -   Patch release for issues with v2.4.0.
 
-# 2.4.0 (2019-05-16)
+## [2.4.0] (2019-05-16)
 
 -   Added ability to set metadata on a
     [file](https://github.com/box/box-python-sdk/blob/main/docs/usage/files.md#set-metadata)
     or a
     [folder](https://github.com/box/box-python-sdk/blob/main/docs/usage/folders.md#set-metadata)
 
-# 2.3.2 (2019-03-29)
+## [2.3.2] (2019-03-29)
 
 -   Fixing an issue in v2.3.1 where package could not be installed.
 
-# 2.3.1 (2019-03-29)
+## [2.3.1] (2019-03-29)
 
 -   Fixing an issue in v2.3.0 where package could not be installed.
 
-# 2.3.0 (2019-03-28)
+## [2.3.0] (2019-03-28)
 
 -   Added the ability to set [file description upon
     upload](https://github.com/box/box-python-sdk/blob/main/docs/usage/files.md#upload-a-file)
 -   Added support for [basic authenticated proxy and unauthenticated
     proxy](https://github.com/box/box-python-sdk/blob/main/docs/usage/configuration.md#proxy)
 
-# 2.2.2 (2019-03-14)
+## [2.2.2] (2019-03-14)
 
 -   Updated requests-toolbelt dependency restriction.
 
-# 2.2.1 (2019-02-15)
+## [2.2.1] (2019-02-15)
 
 -   Fixing an issue in v2.2.0 where package could not be installed.
 
-# 2.2.0 (2019-02-14)
+## [2.2.0] (2019-02-14)
 
 -   Added abilty for user to [retrieve an
     avatar](https://github.com/box/box-python-sdk/blob/main/docs/usage/user.md#get-the-avatar-for-a-user)
@@ -210,7 +209,7 @@ Release History
 -   Changed retry strategy to use exponential backoff with randomized
     jitter.
 
-# 2.1.0 (2019-02-07)
+## [2.1.0] (2019-02-07)
 
 -   Added ability for user to [chunk upload
     files](https://github.com/box/box-python-sdk/blob/main/docs/usage/files.md#chunked-upload)
@@ -224,9 +223,9 @@ Release History
 -   Bugfix where calling `.response_object()` method on an API object
     could throw.
 
-# 2.0.0
+## [2.0.0]
 
-**Breaking Changes**
+### ⚠ Breaking Changes
 
 -   Python 2.6 is no longer supported.
 
@@ -246,8 +245,7 @@ Release History
 
 -   The `unshared_at` parameter for `item.create_shared_link(...)` and
     `file.get_shared_link_download_url(...)` now takes an
-    [RFC3339-formatted
-    \<https://tools.ietf.org/html/rfc3339#section-5.8\>]{.title-ref}
+    https://tools.ietf.org/html/rfc3339#section-5.8
     `unicode` string instead of a `datetime.date`. Users migrating from
     v1.x can pass the value of `date.isoformat()` instead of the `date`
     object itself.
@@ -289,7 +287,7 @@ Release History
 
 -   Comparing two objects (e.g. a `File` and a `Folder`) that have the
     same Box ID but different types with `==` will now correctly return
-    [False]{.title-ref}.
+    `False`.
 
 -   The following methods now return iterators over the entire
     collection of returned objects, rather than a single page:
@@ -321,7 +319,7 @@ Release History
         custom constructor; it now uses the default `BaseObject`
         constructor.
 
-**Features**
+### Features
 
 -   All publicly documented API endpoints and parameters should now be
     supported by the SDK
@@ -337,7 +335,7 @@ Release History
     -   Nested objects are now translated by `translator.translate()`
 -   When the `auto_session_renewal` is `True` when calling any of the
     request methods on `BoxSession`, if there is no access token,
-    `BoxSession` will renew the token \_[before]() making the request.
+    `BoxSession` will renew the token before making the request.
     This saves an API call.
 -   Auth objects can now be closed, which prevents them from being used
     to request new tokens. This will also revoke any existing tokens
@@ -410,7 +408,7 @@ Release History
 -   Added `network_response` property to `BoxOAuthException`.
 -   API Configuration can now be done per `BoxSession` instance.
 
-**Other**
+### Other
 
 -   Added extra information to `BoxAPIException`.
 -   Added `collaboration()` method to `Client`.
@@ -445,22 +443,22 @@ Release History
 -   CPython 3.6 support.
 -   Increased required minimum version of six to 1.9.0.
 
-# 1.5.3 (2016-05-26)
+## [1.5.3] (2016-05-26)
 
 -   Bugfix so that `JWTAuth` opens the PEM private key file in `'rb'`
     mode.
 
-# 1.5.2 (2016-05-19)
+## [1.5.2] (2016-05-19)
 
 -   Bugfix so that `OAuth2` always has the correct tokens after a call
     to `refresh()`.
 
-# 1.5.1 (2016-03-23)
+## [1.5.1] (2016-03-23)
 
 -   Added a `revoke()` method to the `OAuth2` class. Calling it will
     revoke the current access/refresh token pair.
 
-# 1.5.0 (2016-03-17)
+## [1.5.0] (2016-03-17)
 
 -   Added a new class, `LoggingClient`. It\'s a `Client` that uses the
     `LoggingNetwork` class so that requests to the Box API and its
@@ -479,7 +477,7 @@ Release History
     When created with a Box API response, these objects will now include
     the API response fields as attributes.
 
-# 1.4.2 (2016-02-23)
+## [1.4.2] (2016-02-23)
 
 -   Make sure that `__all__` is only defined once, as a list of `str`.
     Some programs (e.g. PyInstaller) naively parse \_\_init\_\_.py
@@ -502,44 +500,44 @@ Release History
 
 -   Update documentation.
 
-# 1.4.1 (2016-02-11)
+## [1.4.1] (2016-02-11)
 
 -   Files now support getting a direct download url.
 
-# 1.4.0 (2016-01-05)
+## [1.4.0] (2016-01-05)
 
 -   Added key id parameter to JWT Auth.
 
-# 1.3.3 (2016-01-04)
+## [1.3.3] (2016-01-04)
 
-**Bugfixes**
+### Bugfixes
 
 -   Fixed import error for installations that don\'t have redis
     installed.
 -   Fixed use of `raw_input` in the developer token auth for py3
     compatibility.
 
-# 1.3.3 (2015-12-22)
+## [1.3.3] (2015-12-22)
 
 -   Added a new class, `DeveloperTokenClient` that makes it easy to get
     started using the SDK with a Box developer token. It uses another
     new class, `DeveloperTokenAuth` for auth.
 
-**Bugfixes**
+### Bugfixes
 
 -   Added limit, offset, and filter_term parameters to `client.users()`
     to match up with the Box API.
 
-# 1.3.2 (2015-11-16)
+## [1.3.2] (2015-11-16)
 
 -   Fix `boxsdk.util.log.setup_logging()` on Python 3.
 
-# 1.3.1 (2015-11-06)
+## [1.3.1] (2015-11-06)
 
 -   Add requests-toolbelt to setup.py (it was accidentally missing from
     1.3.0).
 
-# 1.3.0 (2015-11-05)
+## [1.3.0] (2015-11-05)
 
 -   CPython 3.5 support.
 -   Support for cryptography\>=1.0 on PyPy 2.6.
@@ -549,18 +547,18 @@ Release History
     Redis and storing them on a remote server.
 -   Stream uploads of files from disk.
 
-# 1.2.2 (2015-07-22)
+## [1.2.2] (2015-07-22)
 
 -   The SDK now supports setting a password when creating a shared link.
 
-# 1.2.1 (2015-07-22)
+## [1.2.1] (2015-07-22)
 
-**Bugfixes**
+### Bugfixes
 
 -   Fixed an ImportError for installs that didn\'t install the \[jwt\]
     extras.
 
-# 1.2.0 (2015-07-13)
+## [1.2.0] (2015-07-13)
 
 -   Added support for Box Developer Edition. This includes JWT auth
     (auth as enterprise or as app user), and `create_user`
@@ -574,11 +572,11 @@ Release History
     the optionally provided shared link password) so methods called on
     the returned items will be properly authorized.
 
-# 1.1.7 (2015-05-28)
+## [1.1.7] (2015-05-28)
 
 -   Add context_info from failed requests to BoxAPIException instances.
 
-**Bugfixes**
+### Bugfixes
 
 -   `Item.remove_shared_link()` was trying to return an incorrect
     (according to its own documentation) value, and was also attempting
@@ -587,52 +585,52 @@ Release History
     method to raise TypeError. The method now handles the response
     correctly, and correctly returns type `bool`.
 
-# 1.1.6 (2015-04-17)
+## [1.1.6] (2015-04-17)
 
 -   Added support for the Box accelerator API for premium accounts.
 
-# 1.1.5 (2015-04-03)
+## [1.1.5] (2015-04-03)
 
 -   Added support for preflight check during file uploads and updates.
 
-# 1.1.4 (2015-04-01)
+## [1.1.4] (2015-04-01)
 
 -   Added support to the search endpoint for metadata filters.
 -   Added support to the search endpoint for filtering based on result
     type and content types.
 
-# 1.1.3 (2015-03-26)
+## [1.1.3] (2015-03-26)
 
 -   Added support for the /shared_items endpoint.
     `client.get_shared_item` can be used to get information about a
     shared link. See <https://developers.box.com/docs/#shared-items>
 
-# 1.1.2 (2015-03-20)
+## [1.1.2] (2015-03-20)
 
-**Bugfixes**
+### Bugfixes
 
 -   Certain endpoints (e.g. search, get folder items) no longer raise an
     exception when the response contains items that are neither files
     nor folders.
 
-# 1.1.1 (2015-03-11)
+## [1.1.1] (2015-03-11)
 
 -   A minor change to namespacing. The `OAuth2` class can now be
     imported directly from `boxsdk`. Demo code has been updated to
     reflect the change.
 
-# 1.1.0 (2015-03-02)
+## [1.1.0] (2015-03-02)
 
-**Features**
+### Features
 
 -   The SDK now supports Box metadata. See the [metadata
     docs](https://developers.box.com/metadata-api/) for more
     information.
 -   The object paging API has been improved. SDK extensions that need
-    fine-grained control over when the next \"page\" of API results will
+    fine-grained control over when the next "page" of API results will
     be fetched can now do that.
 
-**Example Code**
+### Example Code
 
 -   The example code has been improved to be more robust and to work
     with all Python versions supported by the SDK (CPython 2.6-2.7,
@@ -641,7 +639,7 @@ Release History
     feature.
 -   The README has improved code examples.
 
-**Bugfixes**
+### Bugfixes
 
 -   Oauth2 redirect URIs containing non-ASCII characters are now
     supported.
