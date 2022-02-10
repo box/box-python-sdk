@@ -1,8 +1,9 @@
 # coding: utf-8
 
+from unittest.mock import Mock
+
 import pytest
 
-from mock import Mock
 from boxsdk.config import API
 from boxsdk.object.device_pinner import DevicePinner
 from boxsdk.network.default_network import DefaultNetworkResponse

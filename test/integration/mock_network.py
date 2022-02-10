@@ -1,6 +1,7 @@
 # coding: utf-8
 
-from mock import Mock
+from unittest.mock import Mock
+
 import requests
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.network.network_interface import Network

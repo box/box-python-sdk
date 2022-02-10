@@ -5,8 +5,8 @@ import hashlib
 import io
 import json
 import pytest
+from unittest.mock import patch
 
-from mock import patch
 from boxsdk.config import API
 from boxsdk.util.chunked_uploader import ChunkedUploader
 from boxsdk.object.file import File

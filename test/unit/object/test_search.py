@@ -2,8 +2,8 @@
 
 import json
 import pytest
+from unittest.mock import ANY
 
-from mock import ANY
 from boxsdk.config import API
 from boxsdk.object.file import File
 from boxsdk.object.user import User

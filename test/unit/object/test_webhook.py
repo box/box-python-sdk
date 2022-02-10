@@ -1,8 +1,8 @@
 # coding: utf-8
 import json
 import pytest
+from unittest.mock import Mock
 
-from mock import Mock
 from boxsdk.config import API
 from boxsdk.network.default_network import DefaultNetworkResponse
 from boxsdk.object.webhook import Webhook

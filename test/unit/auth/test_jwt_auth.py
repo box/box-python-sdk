@@ -7,11 +7,11 @@ from itertools import cycle, product
 import json
 import random
 import string
+from unittest.mock import Mock, mock_open, patch, sentinel, call
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, generate_private_key as generate_rsa_private_key
 from cryptography.hazmat.primitives import serialization
-from mock import Mock, mock_open, patch, sentinel, call
 import pytest
 import pytz
 import requests

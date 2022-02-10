@@ -2,8 +2,8 @@
 
 import io
 import logging
+from unittest.mock import mock_open, patch, Mock
 
-from mock import mock_open, patch, Mock
 import pytest
 
 import boxsdk.util.log

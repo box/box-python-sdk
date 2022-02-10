@@ -1,8 +1,7 @@
 # coding: utf-8
 
+from unittest.mock import Mock, patch
 import uuid
-
-from mock import Mock, patch
 
 from boxsdk.auth import redis_managed_oauth2
 

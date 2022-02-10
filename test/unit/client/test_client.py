@@ -3,8 +3,8 @@
 
 import json
 from io import BytesIO
+from unittest.mock import Mock, ANY
 
-from mock import Mock, ANY
 import pytest
 
 

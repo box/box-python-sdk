@@ -1,8 +1,8 @@
 # coding: utf-8
 import json
 import pytest
+from unittest.mock import Mock
 
-from mock import Mock
 from boxsdk.object.legal_hold_policy import LegalHoldPolicy
 from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
 from boxsdk.config import API

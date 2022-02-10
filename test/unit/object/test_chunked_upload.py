@@ -4,8 +4,8 @@
 import io
 import json
 import pytest
+from unittest.mock import MagicMock, Mock, call
 
-from mock import MagicMock, Mock, call
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.exception import BoxException

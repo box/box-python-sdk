@@ -3,8 +3,8 @@
 from functools import partial
 from io import IOBase
 from numbers import Number
+from unittest.mock import MagicMock, Mock, PropertyMock, call, patch, ANY
 
-from mock import MagicMock, Mock, PropertyMock, call, patch, ANY
 import pytest
 
 from boxsdk.auth.oauth2 import OAuth2

@@ -1,8 +1,8 @@
 # coding: utf-8
 import json
 import pytest
+from unittest.mock import Mock
 
-from mock import Mock
 from boxsdk.config import API
 from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.network.default_network import DefaultNetworkResponse

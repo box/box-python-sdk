@@ -2,8 +2,8 @@
 
 import json
 import pytest
+from unittest.mock import Mock
 
-from mock import Mock
 from boxsdk.config import API
 from boxsdk.object.email_alias import EmailAlias
 from boxsdk.object.folder import Folder

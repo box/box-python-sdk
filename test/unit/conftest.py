@@ -2,8 +2,8 @@
 
 import copy
 import json
+from unittest.mock import Mock, MagicMock
 
-from mock import Mock, MagicMock
 import pytest
 
 from boxsdk.config import API, Client, Proxy
