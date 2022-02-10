@@ -179,6 +179,46 @@ def test_commit_with_missing_params(test_upload_session, mock_box_session):
     assert created_file.type == file_type
 
 
+def test_commit_returns_None_when_202_is_returned(test_upload_session, mock_box_session):
+    expected_url = f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}/commit'
+    sha1 = hashlib.sha1()
+    sha1.update(b'fake_file_data')
+    file_id = '12345'
+    file_type = 'file'
+    file_etag = '7'
+    file_attributes = {'description': 'This is a test description.'}
+    parts = [
+        {
+            'part_id': 'ABCDEF123',
+            'offset': 0,
+            'size': 8,
+            'sha1': 'fake_sha1',
+        },
+        {
+            'part_id': 'ABCDEF456',
+            'offset': 8,
+            'size': 8,
+            'sha1': 'fake_sha1',
+        },
+    ]
+    expected_data = {
+        'attributes': file_attributes,
+        'parts': parts,
+    }
+    expected_headers = {
+        'Content-Type': 'application/json',
+        'Digest': f'SHA={base64.b64encode(sha1.digest()).decode("utf-8")}',
+        'If-Match': '7',
+    }
+    mock_box_session.post.return_value.status_code = 202
+    mock_box_session.post.return_value.json.return_value = b''
+
+    created_file = test_upload_session.commit(content_sha1=sha1.digest(), parts=parts, file_attributes=file_attributes, etag=file_etag)
+
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), headers=expected_headers)
+    assert created_file is None
+
+
 def test_get_chunked_uploader_for_stream(test_upload_session):
     file_size = 197520
     part_bytes = b'abcdefgh'

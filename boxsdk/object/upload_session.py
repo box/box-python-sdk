@@ -99,7 +99,7 @@ class UploadSession(BaseObject):
             parts: Iterable[Optional[dict]] = None,
             file_attributes: dict = None,
             etag: Optional[str] = None
-    ) -> 'File':
+    ) -> 'File' or None:
         """
         Commit a multiput upload.
 
@@ -131,8 +131,10 @@ class UploadSession(BaseObject):
             self.get_url('commit'),
             headers=headers,
             data=json.dumps(body),
-        ).json()
-        entry = response['entries'][0]
+        )
+        if response.status_code == 202:
+            return None
+        entry = response.json()['entries'][0]
         return self.translator.translate(
             session=self._session,
             response_object=entry,
