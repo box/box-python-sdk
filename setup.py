@@ -86,7 +86,7 @@ def main():
         name='boxsdk',
         version=version,
         description='Official Box Python SDK',
-        long_description=open(join(base_dir, 'README.rst'), encoding='utf-8').read(),  # pylint:disable=consider-using-with
+        long_description=open(join(base_dir, 'README.md'), encoding='utf-8').read(),  # pylint:disable=consider-using-with
         author='Box',
         author_email='oss@box.com',
         url='https://github.com/box/box-python-sdk',
