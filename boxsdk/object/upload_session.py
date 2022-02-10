@@ -99,7 +99,7 @@ class UploadSession(BaseObject):
             parts: Iterable[Optional[dict]] = None,
             file_attributes: dict = None,
             etag: Optional[str] = None
-    ) -> 'File' or None:
+    ) -> Optional['File']:
         """
         Commit a multiput upload.
 
