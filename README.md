@@ -399,7 +399,7 @@ to see how the SDK performs dynamic lookups to determine return types.
 # Contributing
 
 See
-[CONTRIBUTING.rst](https://github.com/box/box-python-sdk/blob/main/CONTRIBUTING.rst).
+[CONTRIBUTING.md](https://github.com/box/box-python-sdk/blob/main/CONTRIBUTING.md).
 
 ## Developer Setup
 
