@@ -288,3 +288,64 @@ def test_abort_with_resume(mock_upload_session):
         pass
     mock_upload_session.abort.assert_called_once_with()
     assert is_aborted is True
+
+
+def test_resume_after_commit_failed(test_file, mock_upload_session):
+    # given
+    file_size = 7
+    part_bytes = b'abcdefg'
+    stream = io.BytesIO(part_bytes)
+    first_part = {
+        'part_id': 'CFEB4BA9',
+        'offset': 0,
+        'size': 2,
+        'sha1': '2iNhTgJGmg18e9G9q1ycR0sZBNw=',
+    }
+    second_part = {
+        'part_id': '4DBB872D',
+        'offset': 2,
+        'size': 2,
+        'sha1': 'A0d4GYoEXB7YC+JxzdApt2h09vw=',
+    }
+    third_part = {
+        'part_id': '6F2D3486',
+        'offset': 4,
+        'size': 2,
+        'sha1': '+CIFFHGVe3u+u4qwiP6b1tFPQmE=',
+    }
+    fourth_part = {
+        'part_id': '4DBC872D',
+        'offset': 6,
+        'size': 1,
+        'sha1': 'VP0XESCfscB4EJI3QTLGbnniJBs=',
+    }
+    parts = [first_part, second_part, third_part, fourth_part]
+    mock_iterator = MagicMock(LimitOffsetBasedDictCollection)
+    mock_iterator.__iter__.return_value = [first_part, second_part, third_part, fourth_part]
+    mock_upload_session.get_parts.return_value = mock_iterator
+    mock_upload_session.commit.side_effect = [None, test_file]
+    chunked_uploader = ChunkedUploader(mock_upload_session, stream, file_size)
+    mock_upload_session.upload_part_bytes.side_effect = [
+        first_part,
+        second_part,
+        third_part,
+        fourth_part
+    ]
+
+    # when
+    uploaded_file = chunked_uploader.start()
+
+    # then
+    assert uploaded_file is None
+
+    # when
+    uploaded_file = chunked_uploader.resume()
+
+    # then
+    assert 2 == mock_upload_session.commit.call_count
+    expected_call = call(
+        content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@',
+        parts=parts
+    )
+    mock_upload_session.commit.assert_has_calls([expected_call, expected_call])
+    assert uploaded_file is test_file
