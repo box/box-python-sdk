@@ -59,7 +59,7 @@ grant it access to their Box account. The ``auth`` module contains several class
 
 The simplest class is the ``OAuth2`` class. To use it, instantiate it with your ``client_id`` and ``client_secret``.
 
-Follow the `tutorial on GitHub <https://github.com/box/box-python-sdk/blob/main/README.rst#id2>`_ for
+Follow the `tutorial on GitHub <https://github.com/box/box-python-sdk/blob/main/README.md#id2>`_ for
 instructions on how to get an authorized client for a user. Using the ``store_tokens`` callback, you may persist
 the user's auth and refresh tokens for the next time they use your app. Once they return to your app, you can
 create an authorized client like so:
