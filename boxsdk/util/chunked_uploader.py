@@ -1,5 +1,5 @@
 import hashlib
-from typing import TYPE_CHECKING, IO
+from typing import TYPE_CHECKING, IO, Optional
 from boxsdk.exception import BoxException
 
 if TYPE_CHECKING:
@@ -31,12 +31,13 @@ class ChunkedUploader:
         self._inflight_part = None
         self._is_aborted = False
 
-    def start(self) -> 'File':
+    def start(self) -> Optional['File']:
         """
-        Starts the process of chunk uploading a file.
+        Starts the process of chunk uploading a file. Should return file. If commit was not processed will return None.
+        You can call ChunkedUploader.resume to retry committing upload.
 
         :returns:
-            An uploaded :class:`File`
+            An uploaded :class:`File` or None if session was not processed
         """
         if self._is_aborted:
             raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
@@ -44,12 +45,14 @@ class ChunkedUploader:
         content_sha1 = self._sha1.digest()
         return self._upload_session.commit(content_sha1=content_sha1, parts=self._part_array)
 
-    def resume(self) -> 'File':
+    def resume(self) -> Optional['File']:
         """
         Resumes the process of chunk uploading a file from where upload failed.
+        Should return file. If commit was not processed will return None.
+        You can call ChunkedUploader.resume to retry committing upload.
 
         :returns:
-            An uploaded :class:`File`
+            An uploaded :class:`File` or None if session was not processed
         """
         if self._is_aborted:
             raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
