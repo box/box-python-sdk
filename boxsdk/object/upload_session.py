@@ -112,7 +112,7 @@ class UploadSession(BaseObject):
         :param etag:
             If specified, instruct the Box API to delete the folder only if the current version's etag matches.
         :returns:
-            The newly-uploaded file object.
+            The newly-uploaded file object or None if commit failed
         """
         body = {}
         if file_attributes is not None:
