@@ -33,11 +33,11 @@ class ChunkedUploader:
 
     def start(self) -> Optional['File']:
         """
-        Starts the process of chunk uploading a file. Should return file. If commit fails may return None.
+        Starts the process of chunk uploading a file. Should return file. If commit was not processed will return None.
         You can call ChunkedUploader.resume to retry committing upload.
 
         :returns:
-            An uploaded :class:`File` or None if session was not commited
+            An uploaded :class:`File` or None if session was not processed
         """
         if self._is_aborted:
             raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
@@ -48,11 +48,11 @@ class ChunkedUploader:
     def resume(self) -> Optional['File']:
         """
         Resumes the process of chunk uploading a file from where upload failed.
-        Should return file. If commit fails may return None.
+        Should return file. If commit was not processed will return None.
         You can call ChunkedUploader.resume to retry committing upload.
 
         :returns:
-            An uploaded :class:`File` or None if session was not commited
+            An uploaded :class:`File` or None if session was not processed
         """
         if self._is_aborted:
             raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
