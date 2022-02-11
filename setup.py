@@ -87,7 +87,10 @@ def main():
         long_description=open(join(base_dir, 'README.rst'), encoding='utf-8').read(),  # pylint:disable=consider-using-with
         author='Box',
         author_email='oss@box.com',
-        url='http://opensource.box.com',
+        url='https://github.com/box/box-python-sdk',
+        project_urls={
+            'Changelog': 'https://github.com/box/box-python-sdk/blob/main/HISTORY.rst',
+        },
         packages=find_packages(exclude=['demo', 'docs', 'test', 'test*', '*test', '*test*']),
         install_requires=install_requires,
         extras_require=extra_requires,
