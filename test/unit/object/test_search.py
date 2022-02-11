@@ -67,11 +67,10 @@ def search_entries():
 
 
 @pytest.fixture
-def search_response():
-    entries = search_entries()
+def search_response(search_entries):
     return {
-        'entries': entries,
-        'total_count': len(entries),
+        'entries': search_entries,
+        'total_count': len(search_entries),
         'limit': 20,
         'offset': 0
     }
@@ -136,8 +135,8 @@ def search_with_shared_links_entries():
 
 
 @pytest.fixture
-def search_with_shared_links_response():
-    entries = search_with_shared_links_entries()
+def search_with_shared_links_response(search_with_shared_links_entries):
+    entries = search_with_shared_links_entries
     return {
         'entries': entries,
         'total_count': len(entries),
