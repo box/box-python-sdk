@@ -179,12 +179,10 @@ def test_commit_with_missing_params(test_upload_session, mock_box_session):
     assert created_file.type == file_type
 
 
-def test_commit_returns_None_when_202_is_returned(test_upload_session, mock_box_session):
+def test_commit_returns_none_when_202_is_returned(test_upload_session, mock_box_session):
     expected_url = f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}/commit'
     sha1 = hashlib.sha1()
     sha1.update(b'fake_file_data')
-    file_id = '12345'
-    file_type = 'file'
     file_etag = '7'
     file_attributes = {'description': 'This is a test description.'}
     parts = [
