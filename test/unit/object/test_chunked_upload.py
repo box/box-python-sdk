@@ -342,7 +342,6 @@ def test_resume_after_commit_failed(test_file, mock_upload_session):
     uploaded_file = chunked_uploader.resume()
 
     # then
-    assert 2 == mock_upload_session.commit.call_count
     expected_call = call(
         content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@',
         parts=parts
