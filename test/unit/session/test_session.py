@@ -3,8 +3,8 @@
 from functools import partial
 from io import IOBase
 from numbers import Number
+from unittest.mock import MagicMock, Mock, PropertyMock, call, patch, ANY
 
-from mock import MagicMock, Mock, PropertyMock, call, patch, ANY
 import pytest
 
 from boxsdk.auth.oauth2 import OAuth2
@@ -262,7 +262,7 @@ def test_translator(box_session, translator, default_translator, original_defaul
     class Foo:
         pass
 
-    item_type = u'ƒøø'
+    item_type = 'ƒøø'
     box_session.translator.register(item_type, Foo)
     assert box_session.translator.get(item_type) is Foo
 

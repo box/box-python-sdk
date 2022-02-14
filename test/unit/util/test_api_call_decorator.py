@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from mock import NonCallableMock
+from unittest.mock import NonCallableMock
 import pytest
 
 from boxsdk.object.cloneable import Cloneable

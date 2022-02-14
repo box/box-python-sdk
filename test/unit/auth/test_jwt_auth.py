@@ -7,14 +7,13 @@ from itertools import cycle, product
 import json
 import random
 import string
+from unittest.mock import Mock, mock_open, patch, sentinel, call
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, generate_private_key as generate_rsa_private_key
 from cryptography.hazmat.primitives import serialization
-from mock import Mock, mock_open, patch, sentinel, call
 import pytest
 import pytz
-import requests
 
 from boxsdk.auth.jwt_auth import JWTAuth
 from boxsdk.exception import BoxOAuthException
@@ -85,7 +84,7 @@ def test_jwt_auth_init_raises_type_error_unless_exactly_one_of_rsa_private_key_f
         JWTAuth(**kwargs)
 
 
-@pytest.mark.parametrize('key_data', [object(), u'ƒøø'])
+@pytest.mark.parametrize('key_data', [object(), 'ƒøø'])
 @pytest.mark.parametrize('rsa_passphrase', [None])
 def test_jwt_auth_init_raises_type_error_if_rsa_private_key_data_has_unexpected_type(key_data, rsa_private_key_bytes):
     kwargs = dict(
@@ -258,7 +257,7 @@ def test_authenticate_instance_saves_enterprise_id_for_future_calls(jwt_auth_ini
             auth.authenticate_instance('fake_enterprise_id_2')
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def jwt_encode():
     with patch('jwt.encode') as patched_jwt_encode:
         yield patched_jwt_encode
@@ -478,7 +477,7 @@ def box_datetime():
 @pytest.fixture
 def unsuccessful_jwt_response(box_datetime, status_code, error_description, include_date_header, error_code):
     headers = {'Date': box_datetime.strftime('%a, %d %b %Y %H:%M:%S %Z')} if include_date_header else {}
-    unsuccessful_response = Mock(requests.Response(), headers=headers)
+    unsuccessful_response = Mock(headers=headers)
     unsuccessful_response.json.return_value = {'error_description': error_description, 'error': error_code}
     unsuccessful_response.status_code = status_code
     unsuccessful_response.ok = False

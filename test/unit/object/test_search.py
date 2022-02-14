@@ -1,9 +1,8 @@
 # coding: utf-8
-
+from unittest.mock import ANY
 import json
 import pytest
 
-from mock import ANY
 from boxsdk.config import API
 from boxsdk.object.file import File
 from boxsdk.object.user import User

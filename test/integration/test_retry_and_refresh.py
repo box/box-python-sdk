@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from mock import ANY, call
+from unittest.mock import ANY, call
 from boxsdk.config import API
 
 

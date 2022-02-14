@@ -1,11 +1,10 @@
 # coding: utf-8
 # pylint: disable-msg=too-many-locals
-
+from unittest.mock import MagicMock, Mock, call
 import io
 import json
 import pytest
 
-from mock import MagicMock, Mock, call
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.exception import BoxException

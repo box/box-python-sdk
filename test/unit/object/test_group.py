@@ -3,8 +3,8 @@
 from itertools import chain, islice, repeat, count
 import json
 from operator import sub
+from unittest.mock import Mock
 
-from mock import Mock
 import pytest
 
 from boxsdk.network.default_network import DefaultNetworkResponse

@@ -3,10 +3,10 @@
 from functools import partial
 import re
 from threading import Thread
+from unittest.mock import Mock, patch
 import uuid
 from urllib import parse
 
-from mock import Mock, patch
 import pytest
 
 from boxsdk.exception import BoxOAuthException

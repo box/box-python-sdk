@@ -40,7 +40,7 @@ def test_iter(base_api_json_object):
 
 
 def test_meta_registers_new_item_type_in_default_translator(default_translator, original_default_translator):
-    item_type = u'ƒøø'
+    item_type = 'ƒøø'
 
     class Foo(BaseAPIJSONObject):
         _item_type = item_type

@@ -3,7 +3,7 @@
 import json
 from io import BytesIO
 from os.path import basename
-from mock import mock_open, patch, Mock, MagicMock
+from unittest.mock import mock_open, patch, Mock, MagicMock
 import pytest
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException

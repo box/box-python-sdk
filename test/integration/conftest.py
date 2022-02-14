@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from mock import Mock
+from unittest.mock import Mock
 import pytest
 
 from boxsdk import Client
