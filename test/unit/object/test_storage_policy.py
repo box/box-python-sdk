@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import json
 from boxsdk.config import API
 from boxsdk.object.storage_policy import StoragePolicy

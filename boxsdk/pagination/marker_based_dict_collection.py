@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from .dict_page import DictPage
 from .marker_based_object_collection import MarkerBasedObjectCollection
 

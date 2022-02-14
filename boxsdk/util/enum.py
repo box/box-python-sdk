@@ -1,4 +1,3 @@
-# coding: utf-8
 # pylint:disable=no-value-for-parameter
 
 from collections import OrderedDict
@@ -76,14 +75,14 @@ class ExtendableEnumMeta(EnumMeta):
 
     @property
     def __members__(cls):
-        members = OrderedDict(super(ExtendableEnumMeta, cls).__members__)
+        members = OrderedDict(super().__members__)
         for subclass in cls.__subclasses__():
             members.update(subclass.__members__)
         return members
 
     def __contains__(cls, member):
         try:
-            if super(ExtendableEnumMeta, cls).__contains__(member):
+            if super().__contains__(member):
                 return True
         except TypeError:
             return False
@@ -94,11 +93,11 @@ class ExtendableEnumMeta(EnumMeta):
         return any(map(in_, cls.__subclasses__()))
 
     def __dir__(cls):
-        return list(set(super(ExtendableEnumMeta, cls).__dir__()).union(*map(dir, cls.__subclasses__())))
+        return list(set(super().__dir__()).union(*map(dir, cls.__subclasses__())))
 
     def __getitem__(cls, name):
         try:
-            return super(ExtendableEnumMeta, cls).__getitem__(name)
+            return super().__getitem__(name)
         except KeyError as key_error:
             for subclass in cls.__subclasses__():
                 try:
@@ -109,7 +108,7 @@ class ExtendableEnumMeta(EnumMeta):
 
     def __getattr__(cls, name):
         try:
-            return super(ExtendableEnumMeta, cls).__getattr__(name)
+            return super().__getattr__(name)
         except AttributeError as attribute_error:
             try:
                 # If the super() call fails, don't call getattr() on all of the
@@ -126,10 +125,10 @@ class ExtendableEnumMeta(EnumMeta):
             raise attribute_error
 
     def __iter__(cls):
-        return chain(super(ExtendableEnumMeta, cls).__iter__(), chain.from_iterable(map(iter, cls.__subclasses__())))
+        return chain(super().__iter__(), chain.from_iterable(map(iter, cls.__subclasses__())))
 
     def __len__(cls):
-        return super(ExtendableEnumMeta, cls).__len__() + sum(map(len, cls.__subclasses__()))
+        return super().__len__() + sum(map(len, cls.__subclasses__()))
 
     def __reversed__(cls):
         return reversed(list(cls))

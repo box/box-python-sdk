@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import pytest
 from boxsdk.util.shared_link import get_shared_link_header
 

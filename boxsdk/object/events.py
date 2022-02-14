@@ -1,4 +1,3 @@
-# coding: utf-8
 from typing import Any, Optional, Iterable, Generator, Union, TYPE_CHECKING
 
 from requests.exceptions import Timeout

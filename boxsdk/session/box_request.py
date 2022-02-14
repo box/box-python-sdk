@@ -1,4 +1,3 @@
-# coding: utf-8
 from typing import Optional
 
 import attr
@@ -23,7 +22,4 @@ class BoxRequest:
     expect_json_response: Optional[bool] = attr.ib(default=True)
 
     def __repr__(self) -> str:
-        return '<BoxRequest for {self.method} {self.url} with headers {headers}'.format(
-            self=self,
-            headers=sanitize_dictionary(self.headers),
-        )
+        return f'<BoxRequest for {self.method} {self.url} with headers {sanitize_dictionary(self.headers)}'

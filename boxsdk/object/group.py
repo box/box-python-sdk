@@ -1,6 +1,3 @@
-# coding: utf-8
-
-
 import json
 from typing import Optional, Iterable, TYPE_CHECKING
 

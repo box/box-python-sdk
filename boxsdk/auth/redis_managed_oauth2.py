@@ -1,4 +1,3 @@
-# coding: utf-8
 from typing import Any, Tuple, Optional
 from uuid import uuid4
 

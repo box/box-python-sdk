@@ -86,7 +86,7 @@ GET https://api.box.com/2.0/users/me {'headers': {'Authorization': '---wXyZ',
 'timezone': 'America/Los_Angeles',
 'type': 'user'}
 
->>> print('The current user ID is {0}'.format(user.id))
+>>> print(f'The current user ID is {user.id}')
 The current user ID is 123456789
 ```
 
@@ -104,7 +104,7 @@ auth = OAuth2(
 client = Client(auth)
 
 user = client.user().get()
-print('The current user ID is {0}'.format(user.id))
+print(f'The current user ID is {user.id}')
 ```
 
 # Authorization

@@ -1,7 +1,4 @@
-# coding: utf-8
-
 from unittest.mock import Mock, PropertyMock
-
 import pytest
 
 from boxsdk.object.file import File

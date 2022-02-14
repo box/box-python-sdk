@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from .developer_token_client import DeveloperTokenClient
 from .logging_client import LoggingClient
 

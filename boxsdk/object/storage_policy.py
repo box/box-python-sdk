@@ -1,6 +1,3 @@
-# coding:utf-8
-
-
 import json
 from typing import Any, TYPE_CHECKING
 from .base_object import BaseObject

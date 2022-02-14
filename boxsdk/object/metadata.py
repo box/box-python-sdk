@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import json
 from typing import TYPE_CHECKING, List, Any
 from boxsdk.object.base_endpoint import BaseEndpoint

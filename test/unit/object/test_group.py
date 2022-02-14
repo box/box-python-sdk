@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from itertools import chain, islice, repeat, count
 import json
 from operator import sub

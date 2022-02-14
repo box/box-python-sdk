@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import random
 import math
 
@@ -310,7 +308,7 @@ class Session:
         files = kwargs.get('files')
         kwargs['file_stream_positions'] = None
         if files:
-            kwargs['file_stream_positions'] = dict((name, file_tuple[1].tell()) for name, file_tuple in files.items())
+            kwargs['file_stream_positions'] = {name: file_tuple[1].tell() for name, file_tuple in files.items()}
         attempt_number = 0
         request_headers = self._get_request_headers()
         request_headers.update(headers or {})

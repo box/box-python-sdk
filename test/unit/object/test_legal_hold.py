@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from boxsdk.object.legal_hold import LegalHold
 from boxsdk.config import API
 

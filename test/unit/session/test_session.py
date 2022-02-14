@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from functools import partial
 from io import IOBase
 from numbers import Number
@@ -268,7 +266,7 @@ def test_translator(box_session, translator, default_translator, original_defaul
 
     # Test that adding new registrations does not affect global state.
     assert default_translator == original_default_translator
-    assert (set(box_session.translator) - set(default_translator)) == set([item_type])
+    assert (set(box_session.translator) - set(default_translator)) == {item_type}
 
 
 def test_session_uses_global_config(box_session, mock_network_layer, generic_successful_response, monkeypatch):

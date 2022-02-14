@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from typing import TYPE_CHECKING, List, Optional, Iterable, Any
 from .base_object import BaseObject
 from ..util.api_call_decorator import api_call

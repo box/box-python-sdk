@@ -1,4 +1,3 @@
-# coding: utf-8
 from unittest.mock import patch
 import base64
 import hashlib

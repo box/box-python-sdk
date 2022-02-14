@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import bottle
 import os
 from threading import Thread, Event

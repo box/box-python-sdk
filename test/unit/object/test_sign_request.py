@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import pytest
 
 from boxsdk.config import API
@@ -142,4 +140,4 @@ def test_resend_sign_request(test_sign_request, mock_box_session):
     test_sign_request.resend()
 
     mock_box_session.post.assert_called_once_with(
-        expected_url, expect_json_response=False, skip_retry_codes=set([202]))
+        expected_url, expect_json_response=False, skip_retry_codes={202})

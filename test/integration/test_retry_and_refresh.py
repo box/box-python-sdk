@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from unittest.mock import ANY, call
 from boxsdk.config import API
 

@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from logging import getLogger
 from pprint import pformat
 import sys

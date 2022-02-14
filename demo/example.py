@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import os
 from boxsdk import Client
 from boxsdk.exception import BoxAPIException
@@ -10,12 +8,12 @@ from demo.auth import authenticate
 def run_user_example(client):
     # 'me' is a handy value to get info on the current authenticated user.
     me = client.user(user_id='me').get(fields=['login'])
-    print('The email of the user is: {0}'.format(me['login']))
+    print(f'The email of the user is: {me["login"]}')
 
 
 def run_folder_examples(client):
     root_folder = client.folder(folder_id='0').get()
-    print('The root folder is owned by: {0}'.format(root_folder.owned_by['login']))
+    print(f'The root folder is owned by: {root_folder.owned_by["login"]}')
 
     items = root_folder.get_items(limit=100, offset=0)
     print('This is the first 100 items in the root folder:')
@@ -27,42 +25,42 @@ def run_collab_examples(client):
     root_folder = client.folder(folder_id='0')
     collab_folder = root_folder.create_subfolder('collab folder')
     try:
-        print('Folder {0} created'.format(collab_folder.get()['name']))
+        print(f'Folder {collab_folder.get()["name"]} created')
         collaboration = collab_folder.add_collaborator('someone@example.com', CollaborationRole.VIEWER)
         print('Created a collaboration')
         try:
             modified_collaboration = collaboration.update_info(role=CollaborationRole.EDITOR)
-            print('Modified a collaboration: {0}'.format(modified_collaboration.role))
+            print(f'Modified a collaboration: {modified_collaboration.role}')
         finally:
             collaboration.delete()
             print('Deleted a collaboration')
     finally:
         # Clean up
-        print('Delete folder collab folder succeeded: {0}'.format(collab_folder.delete()))
+        print(f'Delete folder collab folder succeeded: {collab_folder.delete()}')
 
 
 def rename_folder(client):
     root_folder = client.folder(folder_id='0')
     foo = root_folder.create_subfolder('foo')
     try:
-        print('Folder {0} created'.format(foo.get()['name']))
+        print(f'Folder {foo.get()["name"]} created')
 
         bar = foo.rename('bar')
-        print('Renamed to {0}'.format(bar.get()['name']))
+        print(f'Renamed to {bar.get()["name"]}')
     finally:
-        print('Delete folder bar succeeded: {0}'.format(foo.delete()))
+        print(f'Delete folder bar succeeded: {foo.delete()}')
 
 
 def get_folder_shared_link(client):
     root_folder = client.folder(folder_id='0')
     collab_folder = root_folder.create_subfolder('shared link folder')
     try:
-        print('Folder {0} created'.format(collab_folder.get().name))
+        print(f'Folder {collab_folder.get().name} created')
 
         shared_link = collab_folder.get_shared_link()
         print('Got shared link:' + shared_link)
     finally:
-        print('Delete folder collab folder succeeded: {0}'.format(collab_folder.delete()))
+        print(f'Delete folder collab folder succeeded: {collab_folder.delete()}')
 
 
 def upload_file(client):
@@ -70,9 +68,9 @@ def upload_file(client):
     file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file.txt')
     a_file = root_folder.upload(file_path, file_name='i-am-a-file.txt')
     try:
-        print('{0} uploaded: '.format(a_file.get()['name']))
+        print(f'{a_file.get()["name"]} uploaded: ')
     finally:
-        print('Delete i-am-a-file.txt succeeded: {0}'.format(a_file.delete()))
+        print(f'Delete i-am-a-file.txt succeeded: {a_file.delete()}')
 
 
 def upload_accelerator(client):
@@ -80,12 +78,12 @@ def upload_accelerator(client):
     file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file.txt')
     a_file = root_folder.upload(file_path, file_name='i-am-a-file.txt', upload_using_accelerator=True)
     try:
-        print('{0} uploaded via Accelerator: '.format(a_file.get()['name']))
+        print(f'{a_file.get()["name"]} uploaded via Accelerator: ')
         file_v2_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file_v2.txt')
         a_file = a_file.update_contents(file_v2_path, upload_using_accelerator=True)
-        print('{0} updated via Accelerator: '.format(a_file.get()['name']))
+        print(f'{a_file.get()["name"]} updated via Accelerator: ')
     finally:
-        print('Delete i-am-a-file.txt succeeded: {0}'.format(a_file.delete()))
+        print(f'Delete i-am-a-file.txt succeeded: {a_file.delete()}')
 
 
 def rename_file(client):
@@ -93,9 +91,9 @@ def rename_file(client):
     file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file.txt')
     foo = root_folder.upload(file_path, file_name='foo.txt')
     try:
-        print('{0} uploaded '.format(foo.get()['name']))
+        print(f'{foo.get()["name"]} uploaded ')
         bar = foo.rename('bar.txt')
-        print('Rename succeeded: {0}'.format(bool(bar)))
+        print(f'Rename succeeded: {bool(bar)}')
     finally:
         foo.delete()
 
@@ -105,10 +103,10 @@ def update_file(client):
     file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file.txt')
     file_v1 = root_folder.upload(file_path, file_name='file_v1.txt')
     try:
-        # print 'File content after upload: {}'.format(file_v1.content())
+        # print f'File content after upload: {file_v1.content()}'
         file_v2_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file_v2.txt')
         file_v2 = file_v1.update_contents(file_v2_path)
-        # print 'File content after update: {}'.format(file_v2.content())
+        # print f'File content after update: {file_v2.content()}'
     finally:
         file_v1.delete()
 
@@ -247,14 +245,14 @@ def run_metadata_example(client):
     root_folder = client.folder(folder_id='0')
     file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file.txt')
     foo = root_folder.upload(file_path, file_name='foo.txt')
-    print('{0} uploaded '.format(foo.get()['name']))
+    print(f'{foo.get()["name"]} uploaded ')
     try:
         metadata = foo.metadata()
         metadata.create({'foo': 'bar'})
-        print('Created metadata: {0}'.format(metadata.get()))
+        print(f'Created metadata: {metadata.get()}')
         update = metadata.start_update()
         update.update('/foo', 'baz', 'bar')
-        print('Updated metadata: {0}'.format(metadata.update(update)))
+        print(f'Updated metadata: {metadata.update(update)}')
     finally:
         foo.delete()
 

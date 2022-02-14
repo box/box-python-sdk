@@ -1,4 +1,3 @@
-# coding: utf-8
 from test.util.streamable_mock_open import streamable_mock_open
 from unittest.mock import patch
 
