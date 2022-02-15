@@ -1,6 +1,6 @@
 # coding: utf-8
 from test.util.streamable_mock_open import streamable_mock_open
-from mock import patch
+from unittest.mock import patch
 
 import pytest
 

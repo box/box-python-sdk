@@ -2,12 +2,12 @@
 from urllib import parse
 from test.functional.mock_box.box import Box
 from test.util.streamable_mock_open import streamable_mock_open
+from unittest.mock import patch
 
 import re
 import pytest
 import requests
 
-from mock import patch
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.client import LoggingClient
 from boxsdk.config import API

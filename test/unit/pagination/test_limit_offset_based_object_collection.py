@@ -1,8 +1,8 @@
 # coding: utf-8
 
 import json
+from unittest.mock import Mock, PropertyMock
 
-from mock import Mock, PropertyMock
 import pytest
 
 from boxsdk.network.default_network import DefaultNetworkResponse

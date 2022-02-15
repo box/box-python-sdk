@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import os
-from mock import Mock
+from unittest.mock import Mock
 import pytest
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.collection import Collection

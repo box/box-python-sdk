@@ -1,7 +1,7 @@
+from unittest.mock import Mock
 import json
 import pytest
 
-from mock import Mock
 from boxsdk.config import API
 from boxsdk.object.task_assignment import TaskAssignment, ResolutionState
 from boxsdk.network.default_network import DefaultNetworkResponse

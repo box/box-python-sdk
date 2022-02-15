@@ -5,8 +5,8 @@ import json
 from logging import Logger
 from operator import attrgetter
 from pprint import pformat
+from unittest.mock import DEFAULT, Mock, patch, ANY
 
-from mock import DEFAULT, Mock, patch, ANY
 import pytest
 from requests import Response
 

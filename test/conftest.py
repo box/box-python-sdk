@@ -3,10 +3,9 @@
 import json
 import logging
 import sys
+from unittest.mock import Mock
 
-from mock import Mock
 import pytest
-import requests
 
 from boxsdk.network.default_network import DefaultNetworkResponse
 
@@ -36,7 +35,7 @@ def _set_content_and_json_from_content(mock_response, content):
 
 @pytest.fixture()
 def generic_successful_request_response():
-    mock_request_response = Mock(requests.Response(), headers={f'header{i}': f'value{i}' for i in range(4)})
+    mock_request_response = Mock(headers={f'header{i}': f'value{i}' for i in range(4)})
     _set_content_and_json_from_json(mock_request_response, json_value={f'key{i}': f'value{i}' for i in range(8)})
     mock_request_response.status_code = 200
     mock_request_response.ok = True
@@ -75,7 +74,7 @@ def successful_token_json_response(access_token, refresh_token):
 @pytest.fixture()
 def successful_token_request_response(successful_token_json_response):
     # pylint:disable=redefined-outer-name
-    successful_token_mock = Mock(requests.Response(), headers={})
+    successful_token_mock = Mock(headers={})
     _set_content_and_json_from_json(successful_token_mock, json_value=successful_token_json_response)
     successful_token_mock.ok = True
     successful_token_mock.status_code = 200
@@ -139,7 +138,7 @@ def retry_after_response(retry_after_response_202, retry_after_response_429, req
 
 
 def _server_error_request_response(status_code):
-    mock_request_response = Mock(requests.Response(), headers={f'header{i}': f'value{i}' for i in range(4)})
+    mock_request_response = Mock(headers={f'header{i}': f'value{i}' for i in range(4)})
     _set_content_and_json_from_json(mock_request_response, json_value={f'key{i}': f'value{i}' for i in range(8)})
     mock_request_response.status_code = status_code
     mock_request_response.ok = False

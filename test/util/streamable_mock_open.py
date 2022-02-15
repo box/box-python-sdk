@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from mock import mock_open
+from unittest.mock import mock_open
 
 
 def streamable_mock_open(mock=None, read_data=b''):

@@ -1,12 +1,11 @@
 # coding: utf-8
-
+from unittest.mock import patch
 import base64
 import hashlib
 import io
 import json
 import pytest
 
-from mock import patch
 from boxsdk.config import API
 from boxsdk.util.chunked_uploader import ChunkedUploader
 from boxsdk.object.file import File

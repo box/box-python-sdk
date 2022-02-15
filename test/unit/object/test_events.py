@@ -4,9 +4,9 @@ from collections import OrderedDict
 from itertools import chain
 import json
 from typing import Optional, Union
+from unittest.mock import Mock
 from urllib.parse import urlunsplit, urlencode
 
-from mock import Mock
 import pytest
 from requests.exceptions import Timeout
 

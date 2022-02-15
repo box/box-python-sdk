@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from mock import call
+from unittest.mock import call
 import pytest
 from boxsdk.config import API, Client
 from boxsdk.util.shared_link import get_shared_link_header

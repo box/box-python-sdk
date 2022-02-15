@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from mock import patch
+from unittest.mock import patch
 
 
 def test_too_many_requests_causes_retry(box_client, mock_box, monkeypatch):

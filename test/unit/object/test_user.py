@@ -1,9 +1,8 @@
 # coding: utf-8
-
+from unittest.mock import Mock
 import json
 import pytest
 
-from mock import Mock
 from boxsdk.config import API
 from boxsdk.object.email_alias import EmailAlias
 from boxsdk.object.folder import Folder

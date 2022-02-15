@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from mock import call
+from unittest.mock import call
 import pytest
 from boxsdk.config import API, Client
 from boxsdk.object.user import User
