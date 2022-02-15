@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from unittest.mock import Mock
 import requests
 from boxsdk.network.default_network import DefaultNetworkResponse

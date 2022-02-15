@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from hashlib import sha1
 
 from bottle import response, request
@@ -82,7 +80,7 @@ class FileBehavior(ItemBehavior):
         params = json.load(request.body)
         for key, value in params.items():
             if not hasattr(FileModel, key):
-                abort(400, 'File has no attribute {0}.'.format(key))
+                abort(400, f'File has no attribute {key}.')
             if key == 'parent':
                 # Move
                 parent_id = value['id']

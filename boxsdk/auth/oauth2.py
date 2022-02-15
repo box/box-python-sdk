@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from contextlib import contextmanager
 from logging import getLogger
 import random

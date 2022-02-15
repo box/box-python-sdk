@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from .cooperatively_managed_oauth2 import CooperativelyManagedOAuth2
 from .developer_token_auth import DeveloperTokenAuth
 try:

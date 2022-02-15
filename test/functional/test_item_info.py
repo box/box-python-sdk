@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import pytest
 from boxsdk.client import Client
 from boxsdk.exception import BoxAPIException

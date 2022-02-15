@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import sqlalchemy
 import uuid
 from test.functional.mock_box.db_model import DbModel

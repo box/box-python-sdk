@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import json
 from typing import Optional, List, Any, Iterable, TYPE_CHECKING, Tuple, Union
 from .base_endpoint import BaseEndpoint

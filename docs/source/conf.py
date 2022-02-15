@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # boxsdk documentation build configuration file, created by
 # sphinx-quickstart on Tue Dec 16 01:10:30 2014.
@@ -38,15 +37,12 @@ templates_path = ['_templates']
 # The suffix of source filenames.
 source_suffix = '.rst'
 
-# The encoding of source files.
-#source_encoding = 'utf-8-sig'
-
 # The main toctree document.
 main_doc = 'index'
 
 # General information about the project.
-project = u'boxsdk'
-copyright = u'2014, Box'
+project = 'boxsdk'
+copyright = '2014, Box'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -225,8 +221,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'boxsdk.tex', u'boxsdk Documentation',
-   u'Author', 'manual'),
+  ('index', 'boxsdk.tex', 'boxsdk Documentation',
+   'Author', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -255,8 +251,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'boxsdk', u'boxsdk Documentation',
-     [u'Author'], 1)
+    ('index', 'boxsdk', 'boxsdk Documentation',
+     ['Author'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -269,8 +265,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'boxsdk', u'boxsdk Documentation',
-   u'Author', 'boxsdk', 'One line description of project.',
+  ('index', 'boxsdk', 'boxsdk Documentation',
+   'Author', 'boxsdk', 'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -290,10 +286,10 @@ texinfo_documents = [
 # -- Options for Epub output ----------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'boxsdk'
-epub_author = u'Author'
-epub_publisher = u'Author'
-epub_copyright = u'2014, Author'
+epub_title = 'boxsdk'
+epub_author = 'Author'
+epub_publisher = 'Author'
+epub_copyright = '2014, Author'
 
 # The basename for the epub file. It defaults to the project name.
 #epub_basename = u'boxsdk'

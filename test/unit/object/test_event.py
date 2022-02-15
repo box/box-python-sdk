@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from boxsdk.object.event import Event
 
 

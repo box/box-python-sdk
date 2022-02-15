@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from logging import getLogger
 from multiprocessing import Manager, Process
 from os import getpid
@@ -41,7 +39,7 @@ def _store_tokens(access_token, refresh_token):
 
 def worker():
     # Set up a logging network, but use the LoggingProxy so we can see which PID is generating messages
-    logger = getLogger('boxsdk.network.{0}'.format(getpid()))
+    logger = getLogger(f'boxsdk.network.{getpid()}')
     setup_logging(name=logger.name)
 
     # Create a coop oauth2 instance.

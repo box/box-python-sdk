@@ -1,4 +1,3 @@
-# coding: utf-8
 from typing import Optional, Any
 
 from ..util.api_call_decorator import api_call

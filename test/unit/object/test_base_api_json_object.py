@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import pytest
 
 from boxsdk.object.base_api_json_object import BaseAPIJSONObject
@@ -46,7 +44,7 @@ def test_meta_registers_new_item_type_in_default_translator(default_translator, 
         _item_type = item_type
 
     assert default_translator.get(item_type) is Foo
-    assert (set(default_translator) - set(original_default_translator)) == set([item_type])
+    assert (set(default_translator) - set(original_default_translator)) == {item_type}
 
 
 @pytest.mark.parametrize('subclass', [BaseAPIJSONObject, BaseObject, Folder])

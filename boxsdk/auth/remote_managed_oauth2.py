@@ -1,4 +1,3 @@
-# coding: utf-8
 from typing import Callable, Any, Tuple
 
 from .oauth2 import OAuth2

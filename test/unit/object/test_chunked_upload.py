@@ -1,4 +1,3 @@
-# coding: utf-8
 # pylint: disable-msg=too-many-locals
 from unittest.mock import MagicMock, Mock, call
 import io

@@ -1,4 +1,3 @@
-# coding: utf-8
 import pytest
 from boxsdk.util.lru_cache import LRUCache
 

@@ -1,4 +1,3 @@
-# coding: utf-8
 import json
 
 from boxsdk.object.terms_of_service_user_status import TermsOfServiceUserStatus

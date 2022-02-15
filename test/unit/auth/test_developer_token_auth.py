@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from unittest.mock import Mock, patch
 from boxsdk.auth import developer_token_auth
 

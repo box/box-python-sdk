@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from bottle import request
 from test.functional.mock_box.util.db_utils import get_folder_by_id
 from test.functional.mock_box.util.http_utils import abort

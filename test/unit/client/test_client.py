@@ -1,4 +1,3 @@
-# coding: utf-8
 # pylint: disable=too-many-lines
 
 import json
@@ -945,7 +944,7 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
     policy_name = 'Test Retention Policy'
     policy_type = 'indefinite'
     disposition_action = 'remove_retention'
-    expected_url = f'{API.BASE_API_URL}/retention_policies'.format()
+    expected_url = f'{API.BASE_API_URL}/retention_policies'
     expected_data = {
         'policy_name': policy_name,
         'disposition_action': disposition_action,

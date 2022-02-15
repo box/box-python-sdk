@@ -1,4 +1,3 @@
-# coding: utf-8
 from test.functional.mock_box.util.chaos_utils import error, html, xml
 from test.functional.mock_box.util.http_utils import RETRY_AFTER_HEADER
 

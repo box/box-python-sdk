@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from datetime import datetime, timedelta
 import json
 from uuid import uuid4
@@ -33,7 +31,7 @@ class OAuth2Behavior:
         try:
             return self._db_session.query(ApplicationModel).filter_by(client_id=client_id).one()
         except NoResultFound:
-            abort(400, 'Invalid client id: {0}'.format(client_id))
+            abort(400, f'Invalid client id: {client_id}')
 
     def _get_user_by_login(self, user_login):
         try:
@@ -96,7 +94,7 @@ class OAuth2Behavior:
             'redirect_uri': redirect_uri,
             'state': state,
         }
-        return {'user_login': user_login, 'action': '{0}://{1}{2}'.format(*request.urlparts[:3])}
+        return {'user_login': user_login, 'action': '{}://{}{}'.format(*request.urlparts[:3])}
 
     def oauth2_finish_loop(self):
         user_login = request.forms.get('login')
@@ -108,7 +106,7 @@ class OAuth2Behavior:
         code = self._auth_request['code']
         state = self._auth_request['state']
         self._db_session.commit()
-        redirect('{0}?{1}'.format(redirect_uri, '&'.join(('code={0}'.format(code), 'state={0}'.format(state)))))
+        redirect(f'{redirect_uri}?code={code}&state={state}')
 
     def oauth2_token(self):
         """
@@ -119,27 +117,27 @@ class OAuth2Behavior:
         client_id, client_secret = request.forms.get('client_id'), request.forms.get('client_secret')
         app = self._get_application_by_id(client_id)
         if client_secret != app.client_secret:
-            abort(400, 'Invalid client secret: {0}'.format(client_secret))
+            abort(400, f'Invalid client secret: {client_secret}')
 
         if grant_type == 'authorization_code':
             code = request.forms.get('code')
             if self._auth_request is None:
-                abort(400, 'Invalid code: {0}'.format(code))
+                abort(400, f'Invalid code: {code}')
             access_token, refresh_token = self._auth_request['access_token'], self._auth_request['refresh_token']
         elif grant_type == 'refresh_token':
             refresh_token = request.forms.get('refresh_token')
             refresh_token_record = get_token_record_by_token(self._db_session, refresh_token)
             if refresh_token_record.token_type == 'refresh':
                 if datetime.utcnow() > refresh_token_record.expires_at:
-                    abort(400, 'Token expired: {0}'.format(refresh_token))
+                    abort(400, f'Token expired: {refresh_token}')
                 access_token, _, refresh_token, _ = self._create_tokens(
                     client_id,
                     owned_by_id=refresh_token_record.owned_by_id,
                 )
             else:
-                abort(400, 'Invalid token: {0}'.format(refresh_token))
+                abort(400, f'Invalid token: {refresh_token}')
         else:
-            abort(400, 'Invalid grant type: {0}'.format(grant_type))
+            abort(400, f'Invalid grant type: {grant_type}')
 
         return json.dumps({
             'access_token': access_token,

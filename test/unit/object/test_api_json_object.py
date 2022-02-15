@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import pytest
 
 from boxsdk.object.api_json_object import APIJSONObject

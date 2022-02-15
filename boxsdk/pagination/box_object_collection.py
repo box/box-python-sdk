@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import json
 from abc import ABC, abstractmethod
 from collections.abc import Iterator
@@ -103,8 +101,7 @@ class BoxObjectCollection(Iterator, ABC):
                 # have Box objects to yield.
                 if not page:
                     continue
-                for entry in page:
-                    yield entry
+                yield from page
 
     def _load_next_page(self) -> dict:
         """

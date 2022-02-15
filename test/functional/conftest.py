@@ -1,4 +1,3 @@
-# coding: utf-8
 from urllib import parse
 from test.functional.mock_box.box import Box
 from test.util.streamable_mock_open import streamable_mock_open

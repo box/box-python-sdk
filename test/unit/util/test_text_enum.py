@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from boxsdk.util.text_enum import TextEnum
 
 

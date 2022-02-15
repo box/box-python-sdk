@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from collections import OrderedDict
 
 from requests_toolbelt.multipart.encoder import MultipartEncoder

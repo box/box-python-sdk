@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import copy
 from typing import Any, Iterator, Iterable, Optional
 
@@ -50,7 +48,7 @@ class BaseAPIJSONObjectMeta(type):
     """
 
     def __init__(cls, name, bases, attrs):
-        super(BaseAPIJSONObjectMeta, cls).__init__(name, bases, attrs)
+        super().__init__(name, bases, attrs)
         item_type = attrs.get('_item_type', None)
         if item_type is not None:
             Translator._default_translator.register(item_type, cls)   # pylint:disable=protected-access,no-member

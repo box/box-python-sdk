@@ -1,4 +1,3 @@
-# coding: utf-8
 from typing import Optional
 
 import attr
@@ -66,15 +65,15 @@ class BoxAPIException(BoxException):
 
     def __str__(self):
         return '\n'.join((
-            'Message: {self.message}',
-            'Status: {self.status}',
-            'Code: {self.code}',
-            'Request ID: {self.request_id}',
-            'Headers: {headers}',
-            'URL: {self.url}',
-            'Method: {self.method}',
-            'Context Info: {self.context_info}',
-        )).format(self=self, headers=sanitize_dictionary(self.headers))
+            f'Message: {self.message}',
+            f'Status: {self.status}',
+            f'Code: {self.code}',
+            f'Request ID: {self.request_id}',
+            f'Headers: {sanitize_dictionary(self.headers)}',
+            f'URL: {self.url}',
+            f'Method: {self.method}',
+            f'Context Info: {self.context_info}',
+        ))
 
 
 @attr.s(repr=True, slots=True, frozen=True)

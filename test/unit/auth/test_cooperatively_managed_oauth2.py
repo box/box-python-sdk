@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from unittest.mock import Mock
 
 from boxsdk.auth import cooperatively_managed_oauth2

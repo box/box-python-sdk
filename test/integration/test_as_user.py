@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from unittest.mock import call
 import pytest
 from boxsdk.config import API, Client

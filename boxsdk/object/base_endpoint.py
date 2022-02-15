@@ -1,4 +1,3 @@
-# coding: utf-8
 from typing import TYPE_CHECKING, Any
 from .cloneable import Cloneable
 

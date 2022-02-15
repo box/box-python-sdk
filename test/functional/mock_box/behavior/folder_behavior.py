@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from bottle import request, response
 from sqlalchemy.orm import make_transient
 from sqlalchemy.orm.exc import NoResultFound
@@ -27,7 +25,7 @@ class FolderBehavior(ItemBehavior):
         params = json.load(request.body)
         for key, value in params.items():
             if not hasattr(FolderModel, key):
-                abort(400, 'Folder has no attribute {0}.'.format(key))
+                abort(400, f'Folder has no attribute {key}.')
             if key == 'parent':
                 # Move
                 parent_id = value['id']

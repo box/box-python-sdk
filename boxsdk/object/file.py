@@ -1,4 +1,3 @@
-# coding: utf-8
 import json
 import os
 from typing import TYPE_CHECKING, Optional, Tuple, Union, IO, Iterable, List

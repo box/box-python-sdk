@@ -1,4 +1,3 @@
-# coding: utf-8
 import json
 from typing import Any, Union, TYPE_CHECKING, Iterable, Optional
 from .base_object import BaseObject

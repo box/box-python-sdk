@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import io
 import logging
 from unittest.mock import mock_open, patch, Mock

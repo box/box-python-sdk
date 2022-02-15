@@ -1,4 +1,3 @@
-# coding: utf-8
 from typing import Optional, Iterator, TYPE_CHECKING
 
 from .box_object_collection import BoxObjectCollection

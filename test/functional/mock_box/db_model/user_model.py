@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import sqlalchemy
 import uuid
 from sqlalchemy.orm import relationship

@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from codecs import open   # pylint:disable=redefined-builtin
 from os.path import dirname, join
 import re
@@ -79,8 +77,8 @@ def main():
         'pytz',
     ]
     extra_requires['test'] = test_requires
-    with open('boxsdk/version.py', 'r', encoding='utf-8') as config_py:
-        version = re.search(r'^\s+__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE).group(1)
+    with open('boxsdk/version.py', encoding='utf-8') as config_py:
+        version = re.search(r'^\s*__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE).group(1)
     setup(
         name='boxsdk',
         version=version,

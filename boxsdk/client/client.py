@@ -1,4 +1,3 @@
-# coding: utf-8
 # pylint: disable=too-many-lines
 import json
 from typing import TYPE_CHECKING, Optional, Iterable, Union, Any, IO

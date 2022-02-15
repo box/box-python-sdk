@@ -1,5 +1,3 @@
-# coding: utf-8
-
 def get_shared_link_header(shared_link: str, password: str = None) -> dict:
     """
     Gets the HTTP header required to use a shared link to grant access to a shared item.

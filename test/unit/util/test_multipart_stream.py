@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import pytest
 
 from boxsdk.util.multipart_stream import MultipartStream
@@ -25,4 +23,4 @@ def test_multipart_stream_orders_data_before_files(multipart_stream_data, multip
     file_indices = [encoded_stream.find(value) for value in multipart_stream_files.values()]
     assert -1 not in data_indices
     assert -1 not in file_indices
-    assert all((all((data_index < f for f in file_indices)) for data_index in data_indices))
+    assert all(all(data_index < f for f in file_indices) for data_index in data_indices)

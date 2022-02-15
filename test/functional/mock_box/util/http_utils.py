@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from bottle import HTTPError, ServerAdapter
 from functools import partial, wraps
 from threading import Thread

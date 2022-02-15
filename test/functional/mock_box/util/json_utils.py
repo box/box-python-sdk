@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import codecs
 import json
 from test.functional.mock_box.db_model.file_model import FileModel
