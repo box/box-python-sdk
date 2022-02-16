@@ -89,7 +89,7 @@ def main():
         author_email='oss@box.com',
         url='https://github.com/box/box-python-sdk',
         project_urls={
-            'Changelog': 'https://github.com/box/box-python-sdk/blob/main/HISTORY.rst',
+            'Changelog': 'https://github.com/box/box-python-sdk/blob/main/CHANGELOG.md',
         },
         packages=find_packages(exclude=['demo', 'docs', 'test', 'test*', '*test', '*test*']),
         install_requires=install_requires,
