@@ -1,5 +1,22 @@
 # Release History
 
+## [3.1.0](https://github.com/box/box-python-sdk/compare/v3.0.1...v3.1.0) (2022-02-16)
+
+### New Features and Enhancements:
+
+* Add support for Python 3.10 ([#692](https://github.com/box/box-python-sdk/issues/692)) ([d4aed82](https://github.com/box/box-python-sdk/commit/d4aed82831af97305bace9a4588d27b23856c306))
+* Add support for Python 3.8, Python 3.9, `pypy-3.7` and `pypy-3.8`. ([#689](https://github.com/box/box-python-sdk/issues/689)) ([0aa94cc](https://github.com/box/box-python-sdk/commit/0aa94cc8a5c4db0fc204b27a60690b73c98a89cb))
+* Deprecate `use_index` parameter from `MDQ` of files/folders ([#666](https://github.com/box/box-python-sdk/issues/666)) ([2595720](https://github.com/box/box-python-sdk/commit/25957204b82c878e15dc3d118505a741171e9772))
+* Replace external package `mock` with Python standard library `unittest.mock` ([#697](https://github.com/box/box-python-sdk/issues/697)) ([6fd6366](https://github.com/box/box-python-sdk/commit/6fd63667aa7da4c794b4fb880d5c2949efe0073f))
+* Upgrade cryptography library to the most recent version. ([#668](https://github.com/box/box-python-sdk/issues/668)) ([9c94d08](https://github.com/box/box-python-sdk/commit/9c94d0878515dc75c1f267e2fb1f189a852772b6)), closes [#667](https://github.com/box/box-python-sdk/issues/667)
+
+### Bug Fixes:
+
+* `UploadSession.commit` returns `None` when retry limit was reached ([#696](https://github.com/box/box-python-sdk/issues/696)) ([9456fe0](https://github.com/box/box-python-sdk/commit/9456fe0124f4ac4e9c8a7bcc49039f07f310c477))
+* Add missing `api_call` decorator for `create_upload_session` ([#686](https://github.com/box/box-python-sdk/issues/686)) ([3510d3a](https://github.com/box/box-python-sdk/commit/3510d3ac085767205854014ecef80fd078d71773))
+* Fix chunked upload ([#673](https://github.com/box/box-python-sdk/issues/673)) ([2605fd7](https://github.com/box/box-python-sdk/commit/2605fd782396ad6e42bd11c10f846e771634b7a0)), closes [#671](https://github.com/box/box-python-sdk/issues/671)
+
+
 ## [3.0.1] (2022-01-26)
 
 ### Bug Fixes:
