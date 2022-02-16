@@ -1,0 +1,18 @@
+name: spell-check-lint
+on:
+  pull_request:
+    types: [opened, synchronize, edited]
+    branches:
+      - main
+jobs:
+  spellcheck-request-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout spellchecker
+        uses: actions/checkout@v2
+        with:
+          ref: refs/heads/main
+          repository: box/box-sdk-spellchecker
+          token: ${{ secrets.DISPATCH_ACCESS_TOKEN }}
+      - name: Execute spellchecker
+        uses: ./
