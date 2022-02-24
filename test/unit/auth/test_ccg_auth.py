@@ -2,8 +2,7 @@ import json
 from datetime import datetime, timedelta
 from unittest import mock
 from unittest.mock import Mock, MagicMock, call
-# pylint:disable=unused-import
-from test.unit.object.conftest import mock_user
+from test.unit.object.conftest import mock_user  # pylint:disable=unused-import
 
 import pytz
 import pytest
