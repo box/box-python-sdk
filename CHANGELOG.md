@@ -1,4 +1,13 @@
-# Release History
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [3.2.0](https://github.com/box/box-python-sdk/compare/v3.1.0...v3.2.0) (2022-02-25)
+
+
+### New Features and Enhancements:
+
+* Add support for Client Credentials Grant authentication method ([#705](https://github.com/box/box-python-sdk/issues/705)) ([d33d16d](https://github.com/box/box-python-sdk/commit/d33d16db656cb5578f057a7e24f5396d635b5361))
 
 ## [3.1.0](https://github.com/box/box-python-sdk/compare/v3.0.1...v3.1.0) (2022-02-16)
 
