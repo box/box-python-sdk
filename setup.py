@@ -71,6 +71,7 @@ def main():
         'pytest',
         'pytest-cov',
         'pytest-xdist',
+        'pytest-lazy-fixture',
         'coveralls',
         'coverage',
         'tox-gh-actions',

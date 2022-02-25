@@ -499,7 +499,7 @@ def test_auth_retry_for_invalid_exp_claim(
     enterprise_id = 'fake_enterprise_id'
     with jwt_auth_init_mocks(assert_authed=False) as params:
         auth = params[0]
-        with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
+        with patch.object(auth, '_fetch_access_token') as mock_send_jwt:
             mock_send_jwt.side_effect = [BoxOAuthException(400, network_response=unsuccessful_jwt_response), 'jwt_token']
             if not expect_auth_retry:
                 with pytest.raises(BoxOAuthException):
@@ -528,7 +528,7 @@ def test_auth_retry_for_rate_limit_error(
     enterprise_id = 'fake_enterprise_id'
     with jwt_auth_init_mocks(assert_authed=False) as params:
         auth = params[0]
-        with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
+        with patch.object(auth, '_fetch_access_token') as mock_send_jwt:
             side_effect = []
             expected_calls = []
             # Retries multiple times, but less than max retries. Then succeeds when it gets a token.
@@ -559,7 +559,7 @@ def test_auth_max_retries_for_rate_limit_error(
     enterprise_id = 'fake_enterprise_id'
     with jwt_auth_init_mocks(assert_authed=False) as params:
         auth = params[0]
-        with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
+        with patch.object(auth, '_fetch_access_token') as mock_send_jwt:
             side_effect = []
             expected_calls = []
             # Retries max number of times, then throws the error
@@ -590,7 +590,7 @@ def test_auth_retry_for_internal_server_error(
     enterprise_id = 'fake_enterprise_id'
     with jwt_auth_init_mocks(assert_authed=False) as params:
         auth = params[0]
-        with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
+        with patch.object(auth, '_fetch_access_token') as mock_send_jwt:
             side_effect = []
             expected_calls = []
             # Retries multiple times, but less than max retries. Then succeeds when it gets a token.
@@ -621,7 +621,7 @@ def test_auth_max_retries_for_internal_server_error(
     enterprise_id = 'fake_enterprise_id'
     with jwt_auth_init_mocks(assert_authed=False) as params:
         auth = params[0]
-        with patch.object(auth, '_construct_and_send_jwt_auth') as mock_send_jwt:
+        with patch.object(auth, '_fetch_access_token') as mock_send_jwt:
             side_effect = []
             expected_calls = []
             # Retries max number of times, then throws the error
