@@ -128,15 +128,15 @@ class JWTAuth(ServerAuth):
         self._jwt_algorithm = jwt_algorithm
         self._jwt_key_id = jwt_key_id
 
-    def _fetch_access_token(self, sub: str, sub_type: str, now_time: Optional[datetime] = None) -> str:
+    def _fetch_access_token(self, subject_id: str, subject_type: str, now_time: Optional[datetime] = None) -> str:
         """
         Construct the claims used for JWT auth and send a request to get a JWT.
         Pass an enterprise ID to get an enterprise token (which can be used to provision/deprovision users),
         or a user ID to get a user token.
 
-        :param sub:
+        :param subject_id:
             The enterprise ID or user ID to auth.
-        :param sub_type:
+        :param subject_type:
             Either 'enterprise' or 'user'
         :param now_time:
             Optional. The current UTC time is needed in order to construct the expiration time of the JWT claim.
@@ -155,8 +155,8 @@ class JWTAuth(ServerAuth):
         assertion = jwt.encode(
             {
                 'iss': self._client_id,
-                'sub': sub,
-                'box_sub_type': sub_type,
+                'sub': subject_id,
+                'box_sub_type': subject_type,
                 'aud': 'https://api.box.com/oauth2/token',
                 'jti': jti,
                 'exp': int((now_plus_30 - datetime(1970, 1, 1)).total_seconds()),

@@ -4,6 +4,14 @@ boxsdk.auth package
 Submodules
 ----------
 
+boxsdk.auth.ccg\_auth module
+----------------------------
+
+.. automodule:: boxsdk.auth.ccg_auth
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 boxsdk.auth.cooperatively\_managed\_oauth2 module
 -------------------------------------------------
 
@@ -56,6 +64,14 @@ boxsdk.auth.remote\_managed\_oauth2 module
 ------------------------------------------
 
 .. automodule:: boxsdk.auth.remote_managed_oauth2
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+boxsdk.auth.server\_auth module
+-------------------------------
+
+.. automodule:: boxsdk.auth.server_auth
    :members:
    :undoc-members:
    :show-inheritance:

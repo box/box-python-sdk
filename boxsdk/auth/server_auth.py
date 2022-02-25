@@ -145,7 +145,7 @@ class ServerAuth(ABC, OAuth2):
                 self._logger.debug('Retrying authentication request')
 
     @abstractmethod
-    def _fetch_access_token(self, sub: str, sub_type: str, now_time: Optional[datetime] = None) -> str:
+    def _fetch_access_token(self, subject_id: str, subject_type: str, now_time: Optional[datetime] = None) -> str:
         pass
 
     @staticmethod
