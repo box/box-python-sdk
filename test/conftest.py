@@ -261,5 +261,10 @@ def mock_user_id():
 
 
 @pytest.fixture(scope='module')
+def mock_enterprise_id():
+    return 'fake-enterprise-100'
+
+
+@pytest.fixture(scope='module')
 def mock_group_id():
     return 'fake-group-99'

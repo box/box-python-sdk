@@ -158,14 +158,13 @@ def group_id_2():
 
 
 @pytest.fixture()
-def mock_user(mock_box_session):
-    user = User(mock_box_session, '12345')
+def mock_user(mock_box_session, mock_user_id):
+    user = User(mock_box_session, mock_user_id)
     return user
 
 
 @pytest.fixture()
 def mock_user_list(mock_box_session):
-    user_list = []
     first_user = User(mock_box_session, '33333')
     second_user = User(mock_box_session, '44444')
     user_list = [first_user, second_user]
@@ -979,7 +978,7 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
     assert isinstance(policy, RetentionPolicy)
 
 
-def test_get_retention_policies(mock_client, mock_box_session, mock_user):
+def test_get_retention_policies(mock_client, mock_box_session, mock_user, mock_user_id):
     expected_url = f'{API.BASE_API_URL}/retention_policies'
     mock_policy = {
         'type': 'retention_policy',
@@ -996,7 +995,7 @@ def test_get_retention_policies(mock_client, mock_box_session, mock_user):
     params = {
         'policy_name': 'Test Name',
         'policy_type': 'finite',
-        'created_by_user_id': '12345',
+        'created_by_user_id': mock_user_id,
     }
     mock_box_session.get.assert_called_once_with(expected_url, params=params)
     assert isinstance(policy, RetentionPolicy)

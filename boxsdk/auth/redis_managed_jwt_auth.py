@@ -12,4 +12,4 @@ class RedisManagedJWTAuth(RedisManagedOAuth2Mixin, JWTAuth):
         """
         Base class override. Returns the access token in a tuple to match the OAuth2 interface.
         """
-        return super()._auth_with_jwt(sub, sub_type), None
+        return super()._authenticate(subject_id=sub, subject_type=sub_type), None
