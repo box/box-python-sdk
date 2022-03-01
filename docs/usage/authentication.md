@@ -10,13 +10,16 @@ overview of how the Box API handles authentication.
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Ways to Authenticate](#ways-to-authenticate)
   - [Developer Token](#developer-token)
   - [Server Auth with JWT](#server-auth-with-jwt)
+  - [Client Credentials Grant](#client-credentials-grant)
+    - [Obtaining Service Account token](#obtaining-service-account-token)
+    - [Obtaining User token](#obtaining-user-token)
   - [Traditional 3-Legged OAuth2](#traditional-3-legged-oauth2)
     - [Redirect to Authorization URL](#redirect-to-authorization-url)
     - [Authenticate (Get Token Pair)](#authenticate-get-token-pair)
+    - [Initialize a Client Given Access and Refresh Token](#initialize-a-client-given-access-and-refresh-token)
   - [Box View Authentication with App Tokens](#box-view-authentication-with-app-tokens)
 - [As-User](#as-user)
 - [Token Exchange](#token-exchange)
