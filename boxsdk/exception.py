@@ -112,4 +112,4 @@ class BoxOAuthException(BoxException):
                f'\nHeaders: {headers}'
 
 
-__all__ = list(map(str, ['BoxException', 'BoxAPIException', 'BoxOAuthException', 'BoxNetworkException']))
+__all__ = ['BoxException', 'BoxAPIException', 'BoxOAuthException', 'BoxNetworkException']

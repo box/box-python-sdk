@@ -5,7 +5,7 @@ from itertools import chain
 
 from enum import EnumMeta
 
-__all__ = list(map(str, ['ExtendableEnumMeta']))
+__all__ = ['ExtendableEnumMeta']
 
 from typing import Any
 

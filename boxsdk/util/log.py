@@ -96,4 +96,4 @@ def sanitize_dictionary(dictionary: Mapping) -> dict:
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
-__all__ = list(map(str, ['setup_logging', 'sanitize_dictionary']))
+__all__ = ['setup_logging', 'sanitize_dictionary']

@@ -1,4 +1,4 @@
-__all__ = list(map(str, [
+__all__ = [
     'collaboration',
     'collaboration_allowlist',
     'collaboration_allowlist_entry',
@@ -13,8 +13,10 @@ __all__ = list(map(str, [
     'file_version',
     'file_version_retention',
     'folder',
+    'folder_lock',
     'group',
     'group_membership',
+    'invite',
     'legal_hold',
     'legal_hold_policy',
     'legal_hold_policy_assignment',
@@ -24,6 +26,7 @@ __all__ = list(map(str, [
     'retention_policy',
     'retention_policy_assignment',
     'search',
+    'sign_request',
     'storage_policy',
     'storage_policy_assignment',
     'terms_of_service',
@@ -35,5 +38,5 @@ __all__ = list(map(str, [
     'upload_session',
     'webhook',
     'watermark',
-    'web_link',
-]))
+    'web_link'
+]

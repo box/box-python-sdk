@@ -24,8 +24,6 @@ method will create a Sign Request. You need to provide at least one file (from w
 
 <!-- sample post_sign_requests -->
 ```python
-from boxsdk.object.sign_request import SignRequest
-
 source_file = {
     'id': '12345',
     'type': 'file'
@@ -56,8 +54,6 @@ will return an iterable that will page through all the Sign Requests. This metho
 
 <!-- sample get_sign_requests -->
 ```python
-from boxsdk.object.sign_request import SignRequest
-
 sign_requests = client.get_sign_requests()
 for sign_request in sign_requests:
     print(f'(Sign Request ID: {sign_request.id})')
@@ -74,8 +70,6 @@ The `fields` parameter is used to specify what additional properties should be r
 
 <!-- sample get_sign_requests_id -->
 ```python
-from boxsdk.object.sign_request import SignRequest
-
 sign_request = client.sign_request(sign_request_id='12345').get()
 print(f'Sign Request ID is {sign_request.id}')
 ```
@@ -89,8 +83,6 @@ Calling [`sign_requests.cancel()`][cancel-sign-request] will cancel a created Si
 
 <!-- sample post_sign_requests_id_cancel -->
 ```python
-from boxsdk.object.sign_request import SignRequest
-
 sign_request = client.sign_request(sign_request_id='12345')
 cancelled_sign_request = sign_request.cancel()
 print(f'Cancelled Sign Request status is {cancelled_sign_request.status}')
@@ -106,8 +98,6 @@ There is an 10-minute cooling-off period between re-sending reminder emails.
 
 <!-- sample post_sign_requests_id_resend -->
 ```python
-from boxsdk.object.sign_request import SignRequest
-
 sign_request = client.sign_request(sign_request_id='12345')
 sign_request.resend()
 ```
