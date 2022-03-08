@@ -1,9 +1,11 @@
+import datetime
 import json
 import logging
 import sys
 from unittest.mock import Mock
 
 import pytest
+import pytz
 
 from boxsdk.network.default_network import DefaultNetworkResponse
 
@@ -268,3 +270,18 @@ def mock_enterprise_id():
 @pytest.fixture(scope='module')
 def mock_group_id():
     return 'fake-group-99'
+
+
+@pytest.fixture(scope='module')
+def mock_datetime_rfc3339_str():
+    return '2035-03-04T10:14:24+14:00'
+
+
+@pytest.fixture(scope='module')
+def mock_timezone_aware_datetime_obj():
+    return datetime.datetime(2035, 3, 4, 10, 14, 24, microsecond=500, tzinfo=pytz.timezone('US/Alaska'))
+
+
+@pytest.fixture(scope='module')
+def mock_timezone_naive_datetime_obj():
+    return datetime.datetime(2035, 3, 4, 10, 14, 24, microsecond=500)

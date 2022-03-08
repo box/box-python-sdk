@@ -1,7 +1,9 @@
 import json
 import os
+from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Tuple, Union, IO, Iterable, List
 
+from boxsdk.util.datetime_formatter import normalize_date_to_rfc3339_format
 from .item import Item
 from ..util.api_call_decorator import api_call
 from ..util.deprecation_decorator import deprecated
@@ -717,3 +719,14 @@ class File(Item):
             session=self._session,
             response_object=response,
         )
+
+    @api_call
+    def set_disposition_at(self, date_time: Union[datetime, str]) -> 'File':
+        """
+        Modifies the retention expiration timestamp for the given file. This date can't be shortened once set on a file.
+        :param date_time: datetime str in rfc3339 format, eg. '2012-12-12T10:53:43-08:00' or
+        datetime.datetime object (local timezone will be used if timezone naive object provided)
+        :return: updated 'File' object
+        """
+        data = {'disposition_at': normalize_date_to_rfc3339_format(date_time)}
+        return self.update_info(data=data)
