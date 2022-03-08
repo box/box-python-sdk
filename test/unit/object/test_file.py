@@ -972,8 +972,6 @@ def test_set_diposition_at(
 @pytest.mark.parametrize(
     'disposition_at',
     (
-        '20130623T0545-05000',
-        '2035-03-04T10:14:24',
         None,
         Mock()
     )
