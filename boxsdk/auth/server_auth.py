@@ -4,7 +4,8 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Optional, Tuple, TYPE_CHECKING, Union, Any
 
-from boxsdk import OAuth2, BoxOAuthException
+from boxsdk.auth.oauth2 import OAuth2
+from boxsdk.exception import BoxOAuthException
 from boxsdk.config import API
 from boxsdk.object.user import User
 

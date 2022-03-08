@@ -29,7 +29,7 @@ class JWTAuth(ServerAuth):
             enterprise_id: Optional[str],
             jwt_key_id: str,
             rsa_private_key_file_sys_path: Optional[str] = None,
-            rsa_private_key_passphrase: Optional[bytes] = None,
+            rsa_private_key_passphrase: Optional[Union[str, bytes]] = None,
             user: Optional[Union[str, 'User']] = None,
             store_tokens: Callable = None,
             box_device_id: str = '0',
