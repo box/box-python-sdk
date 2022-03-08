@@ -25,6 +25,7 @@ def test_normalize_date_to_rfc3339_format_when_valid_datetime_format_provided(
     )
     assert formatted_str == valid_datetime_format
 
+
 def test_normalize_date_to_rfc3339_format_when_valid_timezone_aware_datetime_object_provided(
     mock_timezone_aware_datetime_obj, mock_datetime_rfc3339_str
 ):
