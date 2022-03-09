@@ -196,14 +196,9 @@ without aborting the entire upload, and failed parts can then be retried.
 
 ### Automatic Uploader
 
-The SDK provides a method of automatically handling a chunked upload; simply call [`chunked_upload.start()`][start] 
-with the path to the file you wish to upload from the  [`Folder`][folder_class] with 
-[`folder.get_chunked_uploader(file_path, rename_file=False)`][get_chunked_uploader_for_file] method to retrieve a 
-[`ChunkedUploader`][chunked_uploader_class] object for a new file upload 
-You can also return a [`ChunkedUploader`][chunked_uploader_class] object by creating a [`UploadSession`][upload_session_class] object first 
-and calling the method, [`upload_session.get_chunked_upload(file_path)`][get_chunked_uploader] or 
-[`upload_session.get_chunked_uploader_for_stream(content_stream, file_size)`][get_chunked_uploader_for_stream].
-Calling the method [`chunked_upload.start()`][start] will kick off the chunked upload process and return the [File][file_class] 
+#### Upload new file
+
+The SDK provides a method of automatically handling a chunked upload. First get a folder you want to upload the file to. Then call [`folder.get_chunked_uploader(file_path, rename_file=False)`][get_chunked_uploader_for_file] to retrieve a [`ChunkedUploader`][chunked_uploader_class] object. Calling the method [`chunked_upload.start()`][start] will kick off the chunked upload process and return the [File][file_class] 
 object that was uploaded.
 
 <!-- samples x_chunked_uploads automatic -->
@@ -214,21 +209,9 @@ uploaded_file = chunked_uploader.start()
 print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 ```
 
-To upload a new file version for a large file, you will need to create [`ChunkedUploader`][chunked_uploader_class] 
-from the [`File`][file_class] with [`file.get_chunked_uploader(file_path)`] method to retrieve a 
-[`ChunkedUploader`][chunked_uploader_class] object for a new file version upload.
-
-<!-- samples x_chunked_uploads automatic_new_version -->
-```python
-# uploads new large file version 
-chunked_uploader = client.file('existing_big_file_id').get_chunked_uploader('/path/to/file')
-uploaded_file = chunked_uploader.start()
-print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
-# the uploaded_file.id will be the same as 'existing_big_file_id'
-```
-
-Alternatively, you can create an upload session and calling [`upload_session.get_chunked_uploader(file_path)`][get_chunked_uploader] 
-or [`upload_session.get_chunked_uploader_for_stream(content_stream, file_size)`][get_chunked_uploader_for_stream].
+You can also return a [`ChunkedUploader`][chunked_uploader_class] object by creating a [`UploadSession`][upload_session_class] object first 
+and calling the method [`upload_session.get_chunked_upload(file_path)`][get_chunked_uploader] or 
+[`upload_session.get_chunked_uploader_for_stream(content_stream, file_size)`][get_chunked_uploader_for_stream].
 
 ```python
 chunked_uploader = client.upload_session('56781').get_chunked_uploader('/path/to/file')
@@ -243,6 +226,19 @@ total_size = os.stat(test_file_path).st_size
 chunked_uploader = client.upload_session('56781').get_chunked_uploader_for_stream(content_stream, total_size)
 uploaded_file = chunked_uploader.start()
 print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
+```
+
+#### Upload new file version
+
+To upload a new file version for a large file, first get a file you want to replace. Then call [`file.get_chunked_uploader(file_path)`][get_chunked_uploader_for_version] to retrieve a [`ChunkedUploader`][chunked_uploader_class] object. Calling the method [`chunked_upload.start()`][start] will kick off the chunked upload process and return the updated [File][file_class].
+
+<!-- samples x_chunked_uploads automatic_new_version -->
+```python
+# uploads new large file version 
+chunked_uploader = client.file('existing_big_file_id').get_chunked_uploader('/path/to/file')
+uploaded_file = chunked_uploader.start()
+print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
+# the uploaded_file.id will be the same as 'existing_big_file_id'
 ```
 
 [start]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader.start
