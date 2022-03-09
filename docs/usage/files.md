@@ -51,6 +51,7 @@ file's contents, upload new versions, and perform other common file operations
 - [Set a Classification](#set-a-classification)
 - [Retrieve a Classification](#retrieve-a-classification)
 - [Remove a Classification](#remove-a-classification)
+- [Set retention policy expiration date](#set-retention-policy-expiration-date)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
