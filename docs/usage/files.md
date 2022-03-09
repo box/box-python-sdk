@@ -992,7 +992,7 @@ client.file(file_id='11111').remove_classification()
 [remove_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.remove_classification
 
 Set retention policy expiration date 
------------------------
+-------------------------------------
 
 To set new retention policy expiration date for the file, call [`set_disposition_at(date_time)`][set_disposition_at].
 This method will only work for files under retention with `pernamently_delete` disposition action set. Remember that
