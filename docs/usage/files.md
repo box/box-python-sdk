@@ -989,6 +989,7 @@ To remove a classification from a [`File`][file_class], call [`file.remove_class
 client.file(file_id='11111').remove_classification()
 ```
 
+[remove_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.remove_classification
 
 Set retention policy expiration date 
 -----------------------
