@@ -998,7 +998,7 @@ Set retention policy expiration date
 To set new retention policy expiration date for the file, call [`set_disposition_at(date_time)`][set_disposition_at].
 This method will only work for files under retention with `pernamently_delete` disposition action set. Remember that
 disposition date can't be shortened once set on a file.
-As the `date_time` parameter you can use either datetime rfc3339 formatted string, e.g. '2035-03-04T10:14:24+14:00' or
+As the `date_time` parameter you can use either datetime string, e.g. '2035-03-04T10:14:24+14:00' or
 `datetime.datetime` object. 
 
 ```python
