@@ -948,7 +948,13 @@ def test_get_thumbnail_representation_not_available(
 
 
 @pytest.mark.parametrize(
-    'disposition_at', (lazy_fixture('mock_datetime_rfc3339_str'), lazy_fixture('mock_timezone_aware_datetime_obj'))
+    'disposition_at',
+    (
+        lazy_fixture('mock_datetime_rfc3339_str'),
+        "2035-03-04T10:14:24.000+14:00",
+        "2035/03/04 10:14:24.000+14:00",
+        lazy_fixture('mock_timezone_aware_datetime_obj'),
+    )
 )
 def test_set_diposition_at(
         test_file,

@@ -55,7 +55,8 @@ def main():
         'attrs>=17.3.0',
         'requests>=2.4.3',
         'requests-toolbelt>=0.4.0, <1.0.0',
-        'wrapt>=1.10.1'
+        'wrapt>=1.10.1',
+        'python-dateutil',  # To be removed after dropping Python 3.6
     ]
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=3']

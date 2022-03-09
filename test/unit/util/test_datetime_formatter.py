@@ -13,11 +13,10 @@ from boxsdk.util import datetime_formatter
     (
         "2035-03-04T10:14:24+14:00",
         "2035-03-04T10:14:24-04:00",
-        "2035-03-04T10:14:24Z",
         lazy_fixture("mock_datetime_rfc3339_str"),
     ),
 )
-def test_normalize_date_to_rfc3339_format_when_valid_datetime_format_provided(
+def test_leave_datetime_string_unchanged_when_rfc3339_formatted_str_provided(
     valid_datetime_format,
 ):
     formatted_str = datetime_formatter.normalize_date_to_rfc3339_format(
@@ -26,21 +25,43 @@ def test_normalize_date_to_rfc3339_format_when_valid_datetime_format_provided(
     assert formatted_str == valid_datetime_format
 
 
-def test_normalize_date_to_rfc3339_format_when_valid_timezone_aware_datetime_object_provided(
-    mock_timezone_aware_datetime_obj, mock_datetime_rfc3339_str
+@pytest.mark.parametrize(
+    "other_datetime_format",
+    (
+        "2035-03-04T10:14:24.000+14:00",
+        "2035-03-04 10:14:24.000+14:00",
+        "2035/03/04 10:14:24.000+14:00",
+        "2035/03/04T10:14:24+14:00",
+        "2035/3/4T10:14:24+14:00",
+        lazy_fixture('mock_timezone_aware_datetime_obj'),
+    ),
+)
+def test_normalize_date_to_rfc3339_format_timezone_aware_datetime(
+    other_datetime_format,
+    mock_datetime_rfc3339_str,
 ):
     formatted_str = datetime_formatter.normalize_date_to_rfc3339_format(
-        mock_timezone_aware_datetime_obj
+        other_datetime_format
     )
     assert formatted_str == mock_datetime_rfc3339_str
 
 
-def test_normalize_date_to_rfc3339_format_when_valid_timezone_naive_datetime_object_provided(
+@pytest.mark.parametrize(
+    "timezone_naive_datetime",
+    (
+        "2035-03-04T10:14:24.000",
+        "2035-03-04T10:14:24",
+        lazy_fixture('mock_timezone_naive_datetime_obj')
+    ),
+)
+def test_add_timezone_info_when_timezone_naive_datetime_provided(
+    timezone_naive_datetime,
     mock_timezone_naive_datetime_obj,
 ):
     formatted_str = datetime_formatter.normalize_date_to_rfc3339_format(
-        mock_timezone_naive_datetime_obj
+        timezone_naive_datetime
     )
+
     local_timezone = datetime.datetime.now().tzinfo
     expected_datetime = mock_timezone_naive_datetime_obj.astimezone(
         tz=local_timezone
