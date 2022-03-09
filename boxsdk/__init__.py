@@ -1,4 +1,4 @@
-from .auth import JWTAuth, OAuth2
+from .auth import JWTAuth, OAuth2, CCGAuth
 from .client import *  # pylint:disable=wildcard-import,redefined-builtin
 from .exception import *  # pylint:disable=wildcard-import
 from .object import *  # pylint:disable=wildcard-import,redefined-builtin
