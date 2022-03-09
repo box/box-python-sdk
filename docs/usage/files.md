@@ -989,4 +989,28 @@ To remove a classification from a [`File`][file_class], call [`file.remove_class
 client.file(file_id='11111').remove_classification()
 ```
 
-[remove_classification]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.item.Item.remove_classification
+
+Set retention policy expiration date 
+-----------------------
+
+To set new retention policy expiration date for the file, call [`set_disposition_at(date_time)`][set_disposition_at].
+This method will only work for files under retention with `pernamently_delete` disposition action set. Remember that
+disposition date can't be shortened once set on a file.
+As the `date_time` parameter you can use either datetime rfc3339 formatted string, e.g. '2035-03-04T10:14:24+14:00' or
+`datetime.datetime` object. 
+
+```python
+import datetime, pytz
+
+new_disposition_date = datetime.datetime(year=2029, month=3, day=4, hour=10, minute=14, second=24, tzinfo=pytz.timezone('US/Alaska'))
+client.file(file_id='11111').set_disposition_at(date_time=new_disposition_date)
+```
+
+If `datetime.datetime` object doesn't have timezone specified, the local timezone will be used.
+To get the current disposition date you can use the snippet below.
+
+```python
+disposition_date = client.file(file_id='11111').get(fields=('disposition_at',)).disposition_at
+```
+
+[set_disposition_at]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.set_disposition_at
