@@ -3,6 +3,8 @@ from io import BytesIO
 from unittest.mock import mock_open, patch, Mock
 
 import pytest
+from pytest_lazyfixture import lazy_fixture
+
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.object.comment import Comment
@@ -943,3 +945,46 @@ def test_get_thumbnail_representation_not_available(
         params={'fields': 'representations'},
     )
     assert thumb == b''
+
+
+@pytest.mark.parametrize(
+    'disposition_at',
+    (
+        lazy_fixture('mock_datetime_rfc3339_str'),
+        "2035-03-04T10:14:24.000+14:00",
+        "2035/03/04 10:14:24.000+14:00",
+        lazy_fixture('mock_timezone_aware_datetime_obj'),
+    )
+)
+def test_set_diposition_at(
+        test_file,
+        mock_box_session,
+        disposition_at,
+        mock_datetime_rfc3339_str,
+):
+    expected_url = test_file.get_url()
+    expected_data = {'disposition_at': mock_datetime_rfc3339_str}
+
+    test_file.set_disposition_at(disposition_at)
+
+    mock_box_session.put.assert_called_once_with(
+        expected_url,
+        data=json.dumps(expected_data),
+        headers=None,
+        params=None,
+    )
+
+
+@pytest.mark.parametrize(
+    'disposition_at',
+    (
+        None,
+        Mock()
+    )
+)
+def test_raise_exception_when_set_diposition_at_datetime_is_invalid(
+        test_file,
+        disposition_at,
+):
+    with pytest.raises(Exception):
+        test_file.set_disposition_at(disposition_at)
