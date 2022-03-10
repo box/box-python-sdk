@@ -20,6 +20,14 @@ boxsdk.util.chunked\_uploader module
    :undoc-members:
    :show-inheritance:
 
+boxsdk.util.datetime\_formatter module
+--------------------------------------
+
+.. automodule:: boxsdk.util.datetime_formatter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 boxsdk.util.default\_arg\_value module
 --------------------------------------
 
