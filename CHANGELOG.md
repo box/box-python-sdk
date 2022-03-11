@@ -1,4 +1,19 @@
-# Release History
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [3.2.0](https://github.com/box/box-python-sdk/compare/v3.1.0...v3.2.0) (2022-03-11)
+
+
+### New Features and Enhancements:
+
+* Add setting `disposition_at` field for files under retention ([#710](https://github.com/box/box-python-sdk/issues/710)) ([91b1373](https://github.com/box/box-python-sdk/commit/91b13730a0beef2cf2a8a8c71087b11557fa5982))
+* Add support for Client Credentials Grant authentication method ([#705](https://github.com/box/box-python-sdk/issues/705)) ([d33d16d](https://github.com/box/box-python-sdk/commit/d33d16db656cb5578f057a7e24f5396d635b5361))
+
+### Bug Fixes:
+
+* Add missing `box_sign` object to `__all__` list ([#708](https://github.com/box/box-python-sdk/issues/708)) ([5d80481](https://github.com/box/box-python-sdk/commit/5d8048116640fa672d6a1d700a6c1111faf87bb9))
+* Fix `jwt` import errors ([#711](https://github.com/box/box-python-sdk/issues/711)) ([ee7bb6f](https://github.com/box/box-python-sdk/commit/ee7bb6f1dc5aa65dbf6ffeb18ee130f765f7b49b))
 
 ## [3.1.0](https://github.com/box/box-python-sdk/compare/v3.0.1...v3.1.0) (2022-02-16)
 
