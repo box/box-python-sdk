@@ -10,13 +10,16 @@ overview of how the Box API handles authentication.
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Ways to Authenticate](#ways-to-authenticate)
   - [Developer Token](#developer-token)
   - [Server Auth with JWT](#server-auth-with-jwt)
+  - [Client Credentials Grant](#client-credentials-grant)
+    - [Obtaining Service Account token](#obtaining-service-account-token)
+    - [Obtaining User token](#obtaining-user-token)
   - [Traditional 3-Legged OAuth2](#traditional-3-legged-oauth2)
     - [Redirect to Authorization URL](#redirect-to-authorization-url)
     - [Authenticate (Get Token Pair)](#authenticate-get-token-pair)
+    - [Initialize a Client Given Access and Refresh Token](#initialize-a-client-given-access-and-refresh-token)
   - [Box View Authentication with App Tokens](#box-view-authentication-with-app-tokens)
 - [As-User](#as-user)
 - [Token Exchange](#token-exchange)
@@ -174,6 +177,63 @@ app_user_client = Client(app_user_auth)
 
 [jwt_auth_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.auth.html#boxsdk.auth.jwt_auth.JWTAuth
 [user_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.user.User
+
+
+### Client Credentials Grant
+
+Allows you to obtain an access token by having client credentials and secret with enterprise or user ID,
+which allows you to work using service or user account.
+
+You can use `CCGAuth` to initialize a client object the same way as for other authentication types:
+
+```python
+auth = CCGAuth(
+  client_id="YOUR_CLIENT_ID",
+  client_secret="YOUR_CLIENT_SECRET",
+  user="YOUR_USER_ID"
+)
+
+client = Client(auth)
+print(f'Id of the authenticated user is: {client.user().get().id}')
+```
+
+Obtained token is valid for specified ammount of time, it will be refreshed automatically by default.
+
+#### Obtaining Service Account token
+
+The [Service Account](https://developer.box.com/guides/getting-started/user-types/service-account//) 
+is separate from the Box accounts of the application developer and the
+enterprise admin of any enterprise that has authorized the app — files stored in that account
+are not accessible in any other account by default, and vice versa.
+To obtain service account you will have to provide enterprise ID with client id and secret:
+
+<!-- sample x_auth with_client_credentials -->
+```python
+auth = CCGAuth(
+  client_id="YOUR_CLIENT_ID",
+  client_secret="YOUR_CLIENT_SECRET",
+  enterprise_id="YOUR_ENETRPRISE_ID"
+)
+```
+
+Remember that you can still make calls on behalf of managed users, which are part of your etnerprise, by using
+[As-User](#as-user) bahaviour.
+
+#### Obtaining User token
+
+To obtain user account you will have to provide user ID with client id and secret
+
+```python
+auth = CCGAuth(
+  client_id="YOUR_CLIENT_ID",
+  client_secret="YOUR_CLIENT_SECRET",
+  user="YOUR_USER_ID"
+)
+```
+In order to enable obtaining user token you have to go to your application configuration that can be found
+[here](https://app.box.com/developers/console). In`Configuration` tab, in section `Advanced Features`
+select `Generate user access tokens`. Do not forget to re-authorize application if it was already authorized.
+
 
 ### Traditional 3-Legged OAuth2
 
