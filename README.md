@@ -38,7 +38,7 @@ Getting Started Docs: <https://developer.box.com/guides/tooling/sdks/python/>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Versions
-We use a modified version of [Semantic Versioning](https://semver.org/) for all changes.See [version strategy](VERSIONS.md) for details which is effective from 30 July 2022. 
+We use a modified version of [Semantic Versioning](https://semver.org/) for all changes. See [version strategy](VERSIONS.md) for details which is effective from 30 July 2022. 
 
 ## Supported Version
 
