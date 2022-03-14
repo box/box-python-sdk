@@ -4,7 +4,7 @@ We use a [Semantic Versioning](https://semver.org/) for all changes. It is stron
 
 Semantic Versions take the form of `MAJOR.MINOR.PATCH`.
 
-When bugs are fixed in the library in a backwards-compatible way, the PATCH level will be incremented by one. When new features are added to the library in a backwards-compatible way, the PATCH level will be incremented by one. PATCH changes should not break your code and are generally safe for upgrade.
+When bugs are fixed in the library in a backwards-compatible way, the PATCH level will be incremented by one. PATCH changes should not break your code and are generally safe for upgrade.
 
 When a new large feature set comes online or a small breaking change is introduced, the MINOR version will be incremented by one and the PATCH version resets to zero. MINOR changes may require some amount of manual code change for upgrade. These backwards-incompatible changes will mostly be limited to a small number of function signature changes.
 
