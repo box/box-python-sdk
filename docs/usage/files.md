@@ -15,6 +15,8 @@ file's contents, upload new versions, and perform other common file operations
 - [Upload a File](#upload-a-file)
 - [Chunked Upload](#chunked-upload)
   - [Automatic Uploader](#automatic-uploader)
+    - [Upload new file](#upload-new-file)
+    - [Upload new file version](#upload-new-file-version)
     - [Resume Upload](#resume-upload)
     - [Abort Chunked Upload](#abort-chunked-upload)
   - [Manual Process](#manual-process)

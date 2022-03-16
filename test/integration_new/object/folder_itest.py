@@ -43,45 +43,42 @@ def test_preflight_check(parent_folder):
     assert accelerator_url is not None
 
 
-def test_manual_chunked_upload(parent_folder, large_file_name):
-    file_path = util.get_file_path(large_file_name)
-    total_size = os.stat(file_path).st_size
+def test_manual_chunked_upload(parent_folder, large_file_name, large_file_path):
+    total_size = os.stat(large_file_path).st_size
     sha1 = hashlib.sha1()
-    content_stream = open(file_path, 'rb')
+    with open(large_file_path, 'rb') as content_stream:
+        upload_session = parent_folder.create_upload_session(file_size=total_size, file_name=large_file_name)
+        part_array = []
+        for part_num in range(upload_session.total_parts):
 
-    upload_session = parent_folder.create_upload_session(file_size=total_size, file_name=large_file_name)
-    part_array = []
-    for part_num in range(upload_session.total_parts):
+            copied_length = 0
+            chunk = b''
+            while copied_length < upload_session.part_size:
+                bytes_read = content_stream.read(upload_session.part_size - copied_length)
+                if bytes_read is None:
+                    continue
+                if len(bytes_read) == 0:
+                    break
+                chunk += bytes_read
+                copied_length += len(bytes_read)
 
-        copied_length = 0
-        chunk = b''
-        while copied_length < upload_session.part_size:
-            bytes_read = content_stream.read(upload_session.part_size - copied_length)
-            if bytes_read is None:
-                continue
-            if len(bytes_read) == 0:
-                break
-            chunk += bytes_read
-            copied_length += len(bytes_read)
+            uploaded_part = upload_session.upload_part_bytes(chunk, part_num*upload_session.part_size, total_size)
+            part_array.append(uploaded_part)
+            sha1.update(chunk)
+        content_sha1 = sha1.digest()
+        uploaded_file = upload_session.commit(content_sha1=content_sha1, parts=part_array)
 
-        uploaded_part = upload_session.upload_part_bytes(chunk, part_num*upload_session.part_size, total_size)
-        part_array.append(uploaded_part)
-        sha1.update(chunk)
-    content_sha1 = sha1.digest()
-    uploaded_file = upload_session.commit(content_sha1=content_sha1, parts=part_array)
+        assert uploaded_file.id is not None
+        assert uploaded_file.name == large_file_name
+        assert uploaded_file.parent == parent_folder
+        assert uploaded_file.size == total_size
 
-    assert uploaded_file.id is not None
-    assert uploaded_file.name == large_file_name
-    assert uploaded_file.parent == parent_folder
-    assert uploaded_file.size == total_size
-
-    util.permanently_delete(uploaded_file)
+        util.permanently_delete(uploaded_file)
 
 
-def test_auto_chunked_upload(parent_folder, large_file_name):
-    file_path = util.get_file_path(large_file_name)
-    total_size = os.stat(file_path).st_size
-    chunked_uploader = parent_folder.get_chunked_uploader(file_path)
+def test_auto_chunked_upload(parent_folder, large_file_name, large_file_path):
+    total_size = os.stat(large_file_path).st_size
+    chunked_uploader = parent_folder.get_chunked_uploader(large_file_path)
 
     uploaded_file = chunked_uploader.start()
 
@@ -93,18 +90,17 @@ def test_auto_chunked_upload(parent_folder, large_file_name):
     util.permanently_delete(uploaded_file)
 
 
-def test_get_items(parent_folder, small_file_name):
+def test_get_items(parent_folder, small_file_path):
     with BoxTestFolder(parent_folder=parent_folder) as subfolder,\
-            BoxTestFile(parent_folder=parent_folder, file_path=util.get_file_path(small_file_name)) as file,\
+            BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as file,\
             BoxTestWebLink(parent_folder=parent_folder, url='https://box.com') as web_link:
 
         assert set(parent_folder.get_items()) == {subfolder, file, web_link}
 
 
-def test_upload_stream_to_folder(parent_folder, small_file_name):
-    file_path = util.get_file_path(small_file_name)
-    stream_to_be_uploaded = open(file_path, 'rb')
-    uploaded_file = parent_folder.upload_stream(file_stream=stream_to_be_uploaded, file_name=small_file_name)
+def test_upload_stream_to_folder(parent_folder, small_file_name, small_file_path):
+    with open(small_file_path, 'rb') as stream_to_be_uploaded:
+        uploaded_file = parent_folder.upload_stream(file_stream=stream_to_be_uploaded, file_name=small_file_name)
 
     assert uploaded_file.id is not None
     assert uploaded_file.parent == parent_folder
@@ -112,9 +108,8 @@ def test_upload_stream_to_folder(parent_folder, small_file_name):
     util.permanently_delete(uploaded_file)
 
 
-def test_upload_small_file_to_folder(parent_folder, small_file_name):
-    file_path = util.get_file_path(small_file_name)
-    uploaded_file = parent_folder.upload(file_path=file_path, file_name=small_file_name)
+def test_upload_small_file_to_folder(parent_folder, small_file_name, small_file_path):
+    uploaded_file = parent_folder.upload(file_path=small_file_path, file_name=small_file_name)
 
     assert uploaded_file.id is not None
     assert uploaded_file.parent == parent_folder
