@@ -2,11 +2,12 @@ import json
 from typing import Iterable, TYPE_CHECKING, Optional
 
 from .base_endpoint import BaseEndpoint
+
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..util.api_call_decorator import api_call
 
 if TYPE_CHECKING:
-    from boxsdk.object.item import Item
+    from boxsdk.object.base_item import BaseItem
     from boxsdk.object.folder import Folder
     from boxsdk.pagination.box_object_collection import BoxObjectCollection
 
@@ -15,16 +16,16 @@ class Trash(BaseEndpoint):
     """Box API endpoint for performing trash related actions in Box."""
 
     @api_call
-    def get_item(self, item: 'Item', fields: Iterable[str] = None) -> 'Item':
+    def get_item(self, item: 'BaseItem', fields: Iterable[str] = None) -> 'BaseItem':
         """
         Get item from trash.
 
         :param item:
-            The :class:`Item` object to get info on.
+            The :class:`BaseItem` object to get info on.
         :param fields:
             List of fields to request
         :returns:
-            Information for a trashed :class:`Item` object.
+            Information for a trashed :class:`BaseItem` object.
         """
         url = item.get_url('trash')
         params = {}
@@ -40,16 +41,16 @@ class Trash(BaseEndpoint):
     @api_call
     def restore_item(
             self,
-            item: 'Item',
+            item: 'BaseItem',
             name: Optional[str] = None,
             parent_folder: Optional['Folder'] = None,
             fields: Iterable[str] = None
-    ) -> 'Item':
+    ) -> 'BaseItem':
         """
         Restores an item from the trash. Could be files, folders, or weblinks.
 
         :param item:
-            The :class:`Item` object to restore from trash.
+            The :class:`BaseItem` object to restore from trash.
         :param name:
             The new name for this item. Only used if the item can't be restored due to name conflict.
         :param parent_folder:
@@ -57,7 +58,7 @@ class Trash(BaseEndpoint):
         :param fields:
             List of fields to request
         :returns:
-            A restored :class:`Item`.
+            A restored :class:`BaseItem`.
         """
         url = item.get_url()
         body = {}
@@ -76,12 +77,12 @@ class Trash(BaseEndpoint):
         )
 
     @api_call
-    def permanently_delete_item(self, item: 'Item') -> bool:
+    def permanently_delete_item(self, item: 'BaseItem') -> bool:
         """
         Permanently delete an item that is in the trash. The item will no longer exist in Box.
 
         :param item:
-            The :class:`Item` to delete from trash.
+            The :class:`BaseItem` to delete from trash.
         :returns:
             Whether or not the delete was successful.
         """

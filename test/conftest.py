@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import sys
+import random, string
 from unittest.mock import Mock
 
 import pytest

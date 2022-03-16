@@ -50,8 +50,8 @@ time, only `enterprise` scope templates are supported.  This method returns a
 from boxsdk.object.metadata_template import MetadataField, MetadataFieldType
 
 fields = [
-    MetadataField(MetadataFieldType.STRING, 'Name')
-    MetadataField(MetadataFieldType.DATE, 'Birthday', 'bday')
+    MetadataField(MetadataFieldType.STRING, 'Name'),
+    MetadataField(MetadataFieldType.DATE, 'Birthday', 'bday'),
     MetadataField(MetadataFieldType.ENUM, 'State', options=['CA', 'TX', 'NY'])
 ]
 template = client.create_metadata_template('Employee Record', fields, hidden=True)
