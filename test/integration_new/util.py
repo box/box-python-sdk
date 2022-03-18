@@ -1,6 +1,6 @@
-import logging
 import os.path
 import uuid
+import warnings
 from pathlib import Path
 
 from boxsdk.exception import BoxAPIException
@@ -13,8 +13,11 @@ def permanently_delete(item: BaseItem):
     try:
         client.trash().permanently_delete_item(item)
     except BoxAPIException:
-        logging.getLogger().info(f"Unable to permanently remove {item.type}: {item.id} from trash."
-                                 f"Probably the item is under retention.")
+        warnings.warn(
+            f"Unable to permanently remove {item.type}: {item.id} from trash. Probably this item is under retention.",
+            category=RuntimeWarning,
+            stacklevel=2
+        )
 
 
 def get_file_path(file_name: str) -> str:
