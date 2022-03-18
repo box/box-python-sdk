@@ -32,3 +32,12 @@ def large_file_name():
 def large_file_path(large_file_name):
     return util.get_file_path(large_file_name)
 
+
+@pytest.fixture(scope='package')
+def image_name():
+    return 'image.png'
+
+
+@pytest.fixture(scope='package')
+def image_path(image_name):
+    return util.get_file_path(image_name)

@@ -1,21 +1,20 @@
+import logging
 import os.path
-import random
-import string
+import uuid
 from pathlib import Path
 
-from boxsdk.object.folder import Folder
+from boxsdk.exception import BoxAPIException
 from boxsdk.object.base_item import BaseItem
 from test.integration_new import client
 
 
 def permanently_delete(item: BaseItem):
     item.delete(recursive=True)
-    client.trash().permanently_delete_item(item)
-
-
-def permanently_delete_folder(folder: Folder):
-    folder.delete(recursive=True)
-    client.trash().permanently_delete_item(folder)
+    try:
+        client.trash().permanently_delete_item(item)
+    except BoxAPIException:
+        logging.getLogger().info(f"Unable to permanently remove {item.type}: {item.id} from trash."
+                                 f"Probably the item is under retention.")
 
 
 def get_file_path(file_name: str) -> str:
@@ -23,4 +22,4 @@ def get_file_path(file_name: str) -> str:
 
 
 def random_name():
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+    return str(uuid.uuid4())

@@ -10,8 +10,6 @@ class BoxTestUser:
     def __init__(self, *, name: str = None, login: str = None):
         if name is None:
             name = util.random_name()
-        if login is None:
-            login = f'{util.random_name()}@box.com'
 
         self._user: User = client.create_user(name=name, login=login)
 

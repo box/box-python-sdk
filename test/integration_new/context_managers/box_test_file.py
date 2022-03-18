@@ -10,7 +10,8 @@ class BoxTestFile:
 
     def __init__(self, *, file_path: str, name: str = None, parent_folder: Optional[Folder] = None):
         if name is None:
-            name = util.random_name()
+            extention = file_path.split('.')[-1]
+            name = f'{util.random_name()}.{extention}'
         if parent_folder is None:
             parent_folder = client.folder('0')
         self._file: File = parent_folder.upload(file_path=file_path, file_name=name)

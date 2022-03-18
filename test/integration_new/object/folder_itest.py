@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 import hashlib
 import os
@@ -20,13 +22,13 @@ FOLDER_TESTS_DIRECTORY_NAME = 'folder-integration-tests'
 
 @pytest.fixture(scope="module", autouse=True)
 def parent_folder():
-    with BoxTestFolder(name=FOLDER_TESTS_DIRECTORY_NAME) as folder:
+    with BoxTestFolder(name=f'{FOLDER_TESTS_DIRECTORY_NAME} {datetime.now()}') as folder:
         yield folder
 
 
 @pytest.fixture(scope="module")
 def user():
-    with BoxTestUser() as user:
+    with BoxTestUser(login=f'{util.random_name()}@box.com') as user:
         yield user
 
 
@@ -40,7 +42,7 @@ def test_preflight_check(parent_folder):
     file_size = 1213
     accelerator_url = parent_folder.preflight_check(file_size, util.random_name())
 
-    assert accelerator_url is not None
+    assert accelerator_url
 
 
 def test_manual_chunked_upload(parent_folder, large_file_name, large_file_path):
@@ -68,7 +70,7 @@ def test_manual_chunked_upload(parent_folder, large_file_name, large_file_path):
         content_sha1 = sha1.digest()
         uploaded_file = upload_session.commit(content_sha1=content_sha1, parts=part_array)
 
-        assert uploaded_file.id is not None
+        assert uploaded_file.id
         assert uploaded_file.name == large_file_name
         assert uploaded_file.parent == parent_folder
         assert uploaded_file.size == total_size
@@ -82,7 +84,7 @@ def test_auto_chunked_upload(parent_folder, large_file_name, large_file_path):
 
     uploaded_file = chunked_uploader.start()
 
-    assert uploaded_file.id is not None
+    assert uploaded_file.id
     assert uploaded_file.name == large_file_name
     assert uploaded_file.parent == parent_folder
     assert uploaded_file.size == total_size
@@ -102,7 +104,7 @@ def test_upload_stream_to_folder(parent_folder, small_file_name, small_file_path
     with open(small_file_path, 'rb') as stream_to_be_uploaded:
         uploaded_file = parent_folder.upload_stream(file_stream=stream_to_be_uploaded, file_name=small_file_name)
 
-    assert uploaded_file.id is not None
+    assert uploaded_file.id
     assert uploaded_file.parent == parent_folder
 
     util.permanently_delete(uploaded_file)
@@ -111,7 +113,7 @@ def test_upload_stream_to_folder(parent_folder, small_file_name, small_file_path
 def test_upload_small_file_to_folder(parent_folder, small_file_name, small_file_path):
     uploaded_file = parent_folder.upload(file_path=small_file_path, file_name=small_file_name)
 
-    assert uploaded_file.id is not None
+    assert uploaded_file.id
     assert uploaded_file.parent == parent_folder
 
     util.permanently_delete(uploaded_file)
@@ -120,7 +122,7 @@ def test_upload_small_file_to_folder(parent_folder, small_file_name, small_file_
 def test_create_subfolder(parent_folder):
     created_subfolder = parent_folder.create_subfolder(name=util.random_name())
 
-    assert created_subfolder.id is not None
+    assert created_subfolder.id
     assert created_subfolder.parent == parent_folder
 
     util.permanently_delete(created_subfolder)
@@ -166,7 +168,7 @@ def test_invite_collaboratur_using_when_nonexistent_user_email_provided(parent_f
 def test_create_web_link(parent_folder):
     created_web_link = parent_folder.create_web_link(target_url="https://box.com")
 
-    assert created_web_link.id is not None
+    assert created_web_link.id
     assert created_web_link.parent == parent_folder
 
     util.permanently_delete(created_web_link)
@@ -201,7 +203,7 @@ def test_create_and_get_lock(parent_folder):
         folder.create_lock()
 
         lock = list(folder.get_locks())[0]
-        assert lock.id is not None
+        assert lock.id
         assert lock.folder == folder
 
         with pytest.raises(BoxAPIException):
@@ -211,5 +213,4 @@ def test_create_and_get_lock(parent_folder):
             folder.move(parent_folder=client.root_folder())
 
         lock.delete()
-
 
