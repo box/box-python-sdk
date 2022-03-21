@@ -660,7 +660,7 @@ class File(Item):
         return response.content
 
     @api_call
-    def get_thumbnail_representation(self, dimensions: str, extension: str = 'jpg') -> bytes:
+    def get_thumbnail_representation(self, dimensions: str, extension: str = 'png') -> bytes:
         """
         Retrieve a thumbnail image for the file.
 
