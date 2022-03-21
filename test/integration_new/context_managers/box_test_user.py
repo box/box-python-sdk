@@ -2,7 +2,7 @@ from typing import Any
 
 from boxsdk.object.user import User
 from test.integration_new import util
-from test.integration_new import client
+from test.integration_new import CLIENT
 
 
 class BoxTestUser:
@@ -11,7 +11,7 @@ class BoxTestUser:
         if name is None:
             name = util.random_name()
 
-        self._user: User = client.create_user(name=name, login=login)
+        self._user: User = CLIENT.create_user(name=name, login=login)
 
     def __enter__(self) -> User:
         return self._user

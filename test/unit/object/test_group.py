@@ -253,7 +253,7 @@ def test_base_api_json_object_returns_correctly(test_group_membership, mock_box_
     mock_box_session.get.return_value.json.return_value = expected_data
     membership = test_group_membership.get()
     membership_response = membership.response_object
-    assert isinstance(membership.other_user, User)
+    assert isinstance(membership.user, User)
     assert isinstance(membership_response, dict)
     assert membership_response is not expected_data
     assert membership_response == expected_data

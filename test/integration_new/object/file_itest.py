@@ -9,7 +9,7 @@ import pytz
 from boxsdk import BoxAPIException
 from test.integration_new.context_managers.box_retention_policy import BoxRetentionPolicy
 from test.integration_new.context_managers.box_test_user import BoxTestUser
-from test.integration_new import util, client
+from test.integration_new import util, CLIENT
 from test.integration_new.context_managers.box_test_file import BoxTestFile
 from test.integration_new.context_managers.box_test_folder import BoxTestFolder
 
@@ -37,7 +37,7 @@ def other_user():
 
 @pytest.fixture(scope="module")
 def other_client(other_user):
-    yield client.as_user(other_user)
+    yield CLIENT.as_user(other_user)
 
 
 def test_preflight_check(test_file):
@@ -276,5 +276,3 @@ def test_set_disposition_at(parent_folder, small_file_path):
 
                 assert updated_disposition_datetime.astimezone(pytz.utc) == new_disposition_date
                 assert updated_disposition_datetime.astimezone(pytz.utc) != old_disposition_datetime.astimezone(pytz.utc)
-
-

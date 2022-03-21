@@ -1,6 +1,5 @@
-import pytest
-
 from test.integration_new import util
+import pytest
 
 
 @pytest.fixture(scope='package')

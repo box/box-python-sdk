@@ -1,7 +1,7 @@
 from typing import Any, Optional
 
 from test.integration_new import util
-from test.integration_new import client
+from test.integration_new import CLIENT
 from boxsdk.object.file import File
 from boxsdk.object.folder import Folder
 
@@ -13,7 +13,7 @@ class BoxTestFile:
             extention = file_path.split('.')[-1]
             name = f'{util.random_name()}.{extention}'
         if parent_folder is None:
-            parent_folder = client.folder('0')
+            parent_folder = CLIENT.folder('0')
         self._file: File = parent_folder.upload(file_path=file_path, file_name=name)
 
     def __enter__(self) -> File:

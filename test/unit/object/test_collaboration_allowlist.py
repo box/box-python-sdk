@@ -94,4 +94,4 @@ def test_add_exemption(mock_box_session, test_collaboration_allowlist, mock_user
     exemption = test_collaboration_allowlist.add_exemption(mock_user)
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert exemption.id == mock_exemption['id']
-    assert exemption.other_user['id'] == mock_exemption['user']['id']
+    assert exemption.user['id'] == mock_exemption['user']['id']

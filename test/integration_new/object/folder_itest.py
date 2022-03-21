@@ -12,7 +12,7 @@ from test.integration_new.context_managers.box_metadata_template import BoxTestM
 from test.integration_new.context_managers.box_test_group import BoxTestGroup
 from test.integration_new.context_managers.box_test_user import BoxTestUser
 from test.integration_new.context_managers.box_test_web_link import BoxTestWebLink
-from test.integration_new import client
+from test.integration_new import CLIENT
 from test.integration_new import util
 from test.integration_new.context_managers.box_test_file import BoxTestFile
 from test.integration_new.context_managers.box_test_folder import BoxTestFolder
@@ -64,7 +64,7 @@ def test_manual_chunked_upload(parent_folder, large_file_name, large_file_path):
                 chunk += bytes_read
                 copied_length += len(bytes_read)
 
-            uploaded_part = upload_session.upload_part_bytes(chunk, part_num*upload_session.part_size, total_size)
+            uploaded_part = upload_session.upload_part_bytes(chunk, part_num * upload_session.part_size, total_size)
             part_array.append(uploaded_part)
             sha1.update(chunk)
         content_sha1 = sha1.digest()
@@ -183,11 +183,11 @@ def test_delete_folder(parent_folder):
         created_subfolder.delete(recursive=True)
         assert not list(folder.get_items())
 
-        client.trash().permanently_delete_item(created_subfolder)
+        CLIENT.trash().permanently_delete_item(created_subfolder)
 
 
 def test_cascade_and_get_metadata_cascade_policies(parent_folder):
-    with BoxTestMetadataTemplate(display_name=util.random_name()) as metadata_template,\
+    with BoxTestMetadataTemplate(display_name="test_template") as metadata_template,\
             BoxTestFolder(parent_folder=parent_folder) as folder:
         folder.cascade_metadata(metadata_template)
 
@@ -210,7 +210,6 @@ def test_create_and_get_lock(parent_folder):
             folder.delete()
 
         with pytest.raises(BoxAPIException):
-            folder.move(parent_folder=client.root_folder())
+            folder.move(parent_folder=CLIENT.root_folder())
 
         lock.delete()
-
