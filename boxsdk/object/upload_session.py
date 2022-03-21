@@ -4,6 +4,7 @@ import json
 import os
 from typing import Any, Optional, TYPE_CHECKING, Iterable, IO
 
+from boxsdk import BoxAPIException
 from boxsdk.util.api_call_decorator import api_call
 from boxsdk.util.chunked_uploader import ChunkedUploader
 from .base_object import BaseObject
@@ -126,13 +127,18 @@ class UploadSession(BaseObject):
         }
         if etag is not None:
             headers['If-Match'] = etag
-        response = self._session.post(
-            self.get_url('commit'),
-            headers=headers,
-            data=json.dumps(body),
-        )
-        if response.status_code == 202:
-            return None
+
+        try:
+            response = self._session.post(
+                self.get_url('commit'),
+                headers=headers,
+                data=json.dumps(body),
+            )
+        except BoxAPIException as box_api_exc:
+            if box_api_exc.status == 202:
+                return None
+            raise box_api_exc
+
         entry = response.json()['entries'][0]
         return self.translator.translate(
             session=self._session,
