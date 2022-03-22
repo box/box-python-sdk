@@ -19,7 +19,7 @@ class BoxRetentionPolicy:
         policy_type = 'finite' if retention_length < float('inf') else 'infinite'
         policies_found = list(CLIENT.get_retention_policies(policy_name=name, policy_type=policy_type))
 
-        if policies_found:
+        if policies_found and policies_found[0].get().status == 'active':
             self._retention_policy = policies_found[0]
         else:
             self._retention_policy: RetentionPolicy = CLIENT.create_retention_policy(

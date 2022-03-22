@@ -45,10 +45,10 @@ def test_preflight_check(parent_folder):
     assert accelerator_url
 
 
-def test_manual_chunked_upload(parent_folder, large_file_name, large_file_path):
-    total_size = os.stat(large_file_path).st_size
+def test_manual_chunked_upload(parent_folder, large_file, large_file_name):
+    total_size = os.stat(large_file.path).st_size
     sha1 = hashlib.sha1()
-    with open(large_file_path, 'rb') as content_stream:
+    with open(large_file.path, 'rb') as content_stream:
         upload_session = parent_folder.create_upload_session(file_size=total_size, file_name=large_file_name)
         part_array = []
         for part_num in range(upload_session.total_parts):
@@ -78,9 +78,9 @@ def test_manual_chunked_upload(parent_folder, large_file_name, large_file_path):
         util.permanently_delete(uploaded_file)
 
 
-def test_auto_chunked_upload(parent_folder, large_file_name, large_file_path):
-    total_size = os.stat(large_file_path).st_size
-    chunked_uploader = parent_folder.get_chunked_uploader(large_file_path)
+def test_auto_chunked_upload(parent_folder, large_file, large_file_name):
+    total_size = os.stat(large_file.path).st_size
+    chunked_uploader = parent_folder.get_chunked_uploader(large_file.path)
 
     uploaded_file = chunked_uploader.start()
 
@@ -129,25 +129,14 @@ def test_create_subfolder(parent_folder):
 
 
 @pytest.mark.parametrize(
-    'role', [
-        CollaborationRole.EDITOR,
-        CollaborationRole.VIEWER,
-        CollaborationRole.PREVIEWER,
-        CollaborationRole.UPLOADER,
-        CollaborationRole.PREVIEWER_UPLOADER,
-        CollaborationRole.VIEWER_UPLOADER,
-        CollaborationRole.CO_OWNER
-    ]
-)
-@pytest.mark.parametrize(
     'collaborator', [
         lazy_fixture('user'),
         lazy_fixture('group'),
     ]
 )
-def test_add_collaborator(parent_folder, role, collaborator):
+def test_add_collaborator(parent_folder, collaborator):
     with BoxTestFolder(parent_folder=parent_folder) as folder:
-        folder.add_collaborator(collaborator=collaborator, role=role)
+        folder.add_collaborator(collaborator=collaborator, role=CollaborationRole.EDITOR)
         assert list(folder.get_collaborations())[0].accessible_by == collaborator
 
 

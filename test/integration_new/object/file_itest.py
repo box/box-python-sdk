@@ -55,10 +55,10 @@ def test_create_upload_session_for_file_version(test_file):
     assert upload_session.type == 'upload_session'
 
 
-def test_get_chuncked_uploader_for_file_version(test_file, large_file_path):
-    total_size = os.stat(large_file_path).st_size
+def test_get_chuncked_uploader_for_file_version(test_file, large_file):
+    total_size = os.stat(large_file.path).st_size
 
-    chunked_uploader = test_file.get_chunked_uploader(file_path=large_file_path)
+    chunked_uploader = test_file.get_chunked_uploader(file_path=large_file.path)
 
     assert chunked_uploader._file_size == total_size
     assert chunked_uploader._upload_session
@@ -149,21 +149,16 @@ def test_add_and_get_comments(parent_folder, small_file_path):
         assert comment.message == test_comment
 
 
-@pytest.mark.parametrize(
-    'action', [
-        'review',
-        'complete',
-    ]
-)
-def test_and_get_task(parent_folder, small_file_path, action):
+def test_and_get_task(parent_folder, small_file_path):
+    test_task_action = 'review'
     test_task_message = 'this is a test task message'
     with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as file:
-        file.create_task(message=test_task_message, action=action)
+        file.create_task(message=test_task_message, action=test_task_action)
         task = list(file.get_tasks())[0]
 
         assert task.id
         assert task.message == test_task_message
-        assert task.action == action
+        assert task.action == test_task_action
 
 
 def test_get_previous_versions(parent_folder, small_file_path, small_file_v2_path):
@@ -234,16 +229,9 @@ def test_get_thumbnail(parent_folder, image_path):
         assert thumbnail
 
 
-@pytest.mark.parametrize(
-    'dimensions', [
-        '32x32',
-        '160x160',
-        '320x320'
-    ]
-)
-def test_get_thumbnail_representation(parent_folder, image_path, dimensions):
+def test_get_thumbnail_representation(parent_folder, image_path):
     with BoxTestFile(parent_folder=parent_folder, file_path=image_path) as test_file:
-        thumbnail_representation = test_file.get_thumbnail_representation(extension='jpg', dimensions=dimensions)
+        thumbnail_representation = test_file.get_thumbnail_representation(extension='jpg', dimensions='32x32')
 
         assert thumbnail_representation
 
