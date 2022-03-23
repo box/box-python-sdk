@@ -15,6 +15,8 @@ file's contents, upload new versions, and perform other common file operations
 - [Upload a File](#upload-a-file)
 - [Chunked Upload](#chunked-upload)
   - [Automatic Uploader](#automatic-uploader)
+    - [Upload new file](#upload-new-file)
+    - [Upload new file version](#upload-new-file-version)
     - [Resume Upload](#resume-upload)
     - [Abort Chunked Upload](#abort-chunked-upload)
   - [Manual Process](#manual-process)
@@ -1004,7 +1006,7 @@ Set retention policy expiration date
 -------------------------------------
 
 To set new retention policy expiration date for the file, call [`set_disposition_at(date_time)`][set_disposition_at].
-This method will only work for files under retention with `pernamently_delete` disposition action set. Remember that
+This method will only work for files under retention with `permanently_delete` disposition action set. Remember that
 disposition date can't be shortened once set on a file.
 As the `date_time` parameter you can use either datetime string, e.g. '2035-03-04T10:14:24+14:00' or
 `datetime.datetime` object. 
