@@ -58,7 +58,9 @@ def test_update_info(test_metadata_template, mock_box_session):
     expected_url = f'{API.BASE_API_URL}/metadata_templates/{test_metadata_template.scope}/{test_metadata_template.template_key}/schema'
     updates = test_metadata_template.start_update()
     updates.add_enum_option('state', 'WI')
-    updates.add_field(MetadataField(MetadataFieldType.STRING, 'Name'))
+    updates.add_field(
+        MetadataField(field_type=MetadataFieldType.STRING, display_name='Name', description="Description", hidden=False)
+    )
     updates.reorder_enum_options('state', ['CA', 'NY', 'TX', 'WI'])
     updates.reorder_fields(['bday', 'name', 'state'])
     updates.edit_field('state', MetadataField(None, 'State of Residency'))
@@ -78,6 +80,8 @@ def test_update_info(test_metadata_template, mock_box_session):
             'data': {
                 'type': 'string',
                 'displayName': 'Name',
+                "description": "Description",
+                "hidden": False
             },
         },
         {
@@ -129,6 +133,8 @@ def test_update_info(test_metadata_template, mock_box_session):
                 'type': 'string',
                 'key': 'name',
                 'displayName': 'Name',
+                'description': 'Description',
+                'hidden': False
             },
             {
                 'type': 'enum',
