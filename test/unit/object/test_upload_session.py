@@ -10,7 +10,6 @@ from boxsdk.config import API
 from boxsdk.util.chunked_uploader import ChunkedUploader
 from boxsdk.object.file import File
 from boxsdk.object.upload_session import UploadSession
-from boxsdk.session import session
 
 
 @pytest.fixture()
