@@ -2,6 +2,7 @@ import base64
 import hashlib
 import json
 import os
+from http import HTTPStatus
 from typing import Any, Optional, TYPE_CHECKING, Iterable, IO
 
 from boxsdk import BoxAPIException
@@ -135,7 +136,7 @@ class UploadSession(BaseObject):
                 data=json.dumps(body),
             )
         except BoxAPIException as box_api_exc:
-            if box_api_exc.status == 202:
+            if box_api_exc.status == HTTPStatus.ACCEPTED:
                 return None
             raise box_api_exc
 
