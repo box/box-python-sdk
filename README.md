@@ -410,11 +410,11 @@ A current release is on the leading edge of our SDK development, and is intended
 
 ## Version schedule
 
-| Version | Current Patch/Minor | Supported Environments                                  | State     | First Release | EOL/Terminated |
-|---------|---------------------|---------------------------------------------------------|-----------|---------------|----------------|
-| 3       | 3.2.0               | Python 3.6+                                             | Supported | 17 Jan 2022   | TBD            |
-| 2       | 2.14.0              |                                                         | EOL       | 01 Nov 2018   | 17 Jan 2022    |
-| 1       | 1.5.3               |                                                         | EOL       | 10 Feb 2015   | 01 Nov 2018    |
+| Version | Supported Environments                                  | State     | First Release | EOL/Terminated |
+|---------|---------------------------------------------------------|-----------|---------------|----------------|
+| 3       | Python 3.6+                                             | Supported | 17 Jan 2022   | TBD            |
+| 2       |                                                         | EOL       | 01 Nov 2018   | 17 Jan 2022    |
+| 1       |                                                         | EOL       | 10 Feb 2015   | 01 Nov 2018    |
 
 # Contributing
 
