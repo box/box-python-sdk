@@ -5,6 +5,7 @@ import io
 import json
 import pytest
 
+from boxsdk.exception import BoxAPIException
 from boxsdk.config import API
 from boxsdk.util.chunked_uploader import ChunkedUploader
 from boxsdk.object.file import File
@@ -206,8 +207,7 @@ def test_commit_returns_none_when_202_is_returned(test_upload_session, mock_box_
         'Digest': f'SHA={base64.b64encode(sha1.digest()).decode("utf-8")}',
         'If-Match': '7',
     }
-    mock_box_session.post.return_value.status_code = 202
-    mock_box_session.post.return_value.json.return_value = b''
+    mock_box_session.post.side_effect = BoxAPIException(status=202)
 
     created_file = test_upload_session.commit(content_sha1=sha1.digest(), parts=parts, file_attributes=file_attributes, etag=file_etag)
 
