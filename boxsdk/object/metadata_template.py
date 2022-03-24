@@ -173,7 +173,9 @@ class MetadataField:
             field_type: MetadataFieldType,
             display_name: str,
             key: Optional[str] = None,
-            options: Iterable[str] = None
+            options: Iterable[str] = None,
+            description: Optional[str] = None,
+            hidden: Optional[bool] = None
     ):
         """
         :param field_type:
@@ -184,12 +186,18 @@ class MetadataField:
             The machine-readable key for the metadata field
         :param options:
             For 'enum' or 'multiSelect' fields, the selectable options
+        :param description:
+            A description of the field
+        :param hidden:
+            Whether this field is hidden in the UI for the user and can only be set through the API instead
         """
         super().__init__()
         self.type = field_type
         self.name = display_name
         self.key = key
         self.options = options
+        self.description = description
+        self.hidden = hidden
 
     def json(self) -> dict:
         """
@@ -208,6 +216,12 @@ class MetadataField:
 
         if self.type in ['enum', 'multiSelect']:
             values['options'] = [{'key': opt} for opt in self.options or ()]
+
+        if self.description is not None:
+            values['description'] = self.description
+
+        if self.hidden is not None:
+            values['hidden'] = self.hidden
 
         return values
 
