@@ -385,9 +385,9 @@ class File(Item):
             If specified, instruct the Box API to create the link only if the current version's etag matches.
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates. Takes a datetime string or datetime.datetime object.
-            If no timezone info provided, local timezone will be applied. The time portion can be omitted,
-            which defaults to midnight (00:00:00) on that date.
+            and has permission to set expiration dates. Takes any datetime string supported by dateutil library
+            or datetime.datetime object. If no timezone info provided, local timezone will be applied.
+            The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
         :param allow_preview:
             Whether or not the item being shared can be previewed when accessed via the shared link.
             If this parameter is None, the default setting will be used.
@@ -476,8 +476,8 @@ class File(Item):
         :param message:
             An optional message to include in the task.
         :param due_at:
-            When this task is due. Takes a datetime string or datetime.datetime object.
-            If no timezone info provided, local timezone will be applied
+            When this task is due. Takes any datetime string supported by dateutil library
+            or datetime.datetime object. If no timezone info provided, local timezone will be applied
         :param action:
             The type of task the task assignee will be prompted to perform.
             Value is one of review,complete
