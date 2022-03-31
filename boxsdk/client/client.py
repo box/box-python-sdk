@@ -308,10 +308,10 @@ class Client(Cloneable):
         :param description:
             The description of the legal hold policy.
         :param filter_starting_at:
-            The start date filter for legal hold policy. Takes any datetime string supported by dateutil library
+            The start date filter for legal hold policy. Takes a datetime string supported by the dateutil library
             or datetime.datetime object. If no timezone info provided, local timezone will be applied.
         :param filter_ending_at:
-            The end date filter for legal hold policy. Takes any datetime string supported by dateutil library
+            The end date filter for legal hold policy. Takes a datetime string supported by the dateutil library
             or datetime.datetime object. If no timezone info provided, local timezone will be applied.
         :param is_ongoing:
             After initialization, Assignments under this Policy will continue applying to

@@ -262,10 +262,12 @@ class Folder(Item):
 
             Please notice that this is a premium feature, which might not be available to your app.
         :param content_created_at:
-            The datetime string or datetime.datetime object, which specifies when the file was created.
+            A datetime string in a format supported by the dateutil library library or datetime.datetime object 
+            or datetime.datetime object,which specifies when the file was created.
             If no timezone info provided, local timezone will be applied.
         :param content_modified_at:
-            The datetime string or datetime.datetime object, which specifies when the file was last modified.
+            A datetime string in a format supported by the dateutil library library or datetime.datetime object
+            or datetime.datetime object,which specifies when the file was last modified. 
             If no timezone info provided, local timezone will be applied.
         :param additional_attributes:
             A dictionary containing attributes to add to the file that are not covered by other parameters.
@@ -356,10 +358,12 @@ class Folder(Item):
 
             Please notice that this is a premium feature, which might not be available to your app.
         :param content_created_at:
-            The datetime string or datetime.datetime object, which specifies when the file was created.
+            A datetime string in a format supported by the dateutil library library or datetime.datetime object 
+            or datetime.datetime object, which specifies when the file was created.
             If no timezone info provided, local timezone will be applied.
         :param content_modified_at:
-            The datetime string or datetime.datetime object, which specifies when the file was last modified.
+            A datetime string in a format supported by the dateutil library library or datetime.datetime object 
+            or datetime.datetime object, which specifies when the file was last modified.
             If no timezone info provided, local timezone will be applied.
         :param additional_attributes:
             A dictionary containing attributes to add to the file that are not covered by other parameters.
