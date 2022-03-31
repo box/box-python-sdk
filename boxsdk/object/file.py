@@ -305,8 +305,8 @@ class File(Item):
         :param file_name:
             The new name to give the file on Box.
         :param content_modified_at:
-            A datetime string in a format supported by the dateutil library library or datetime.datetime object 
-            or datetime.datetime object, which specifies when the file content was last modified.
+            A datetime string in a format supported by the dateutil library or a datetime.datetime object,
+            which specifies when the file content was last modified.
             If no timezone info provided, local timezone will be applied.
         :param additional_attributes:
             A dictionary containing attributes to add to the file that are not covered by other parameters.
@@ -339,8 +339,8 @@ class File(Item):
         :param prevent_download:
             Whether or not the lock should prevent other users from downloading the file.
         :param expire_time:
-            A datetime string in a format supported by the dateutil library library or datetime.datetime object or
-            datetime.datetime object, which specifies when the lock should automatically expire, unlocking the file. 
+            A datetime string in a format supported by the dateutil library or a datetime.datetime object,
+            which specifies when the lock should automatically expire, unlocking the file.
             If no timezone info provided, local timezone will be applied.
         :return:
             A new :class:`File` instance reflecting that the file has been locked.
@@ -388,7 +388,7 @@ class File(Item):
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
             and has permission to set expiration dates. Takes a datetime string supported by the dateutil library
-            or datetime.datetime object. If no timezone info provided, local timezone will be applied.
+            or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
             The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
         :param allow_preview:
             Whether or not the item being shared can be previewed when accessed via the shared link.
@@ -479,7 +479,7 @@ class File(Item):
             An optional message to include in the task.
         :param due_at:
             When this task is due. Takes a datetime string supported by the dateutil library
-            or datetime.datetime object. If no timezone info provided, local timezone will be applied
+            or a datetime.datetime object. If no timezone info provided, local timezone will be applied
         :param action:
             The type of task the task assignee will be prompted to perform.
             Value is one of review,complete
@@ -733,8 +733,8 @@ class File(Item):
         Modifies the retention expiration timestamp for the given file. This date can't be shortened once set on a file.
 
         :param date_time:
-            A datetime str, eg. '2012-12-12T10:53:43-08:00' or datetime.datetime object. If no timezone info provided,
-            local timezone will be applied.
+            A datetime string in a format supported by the dateutil library or a datetime.datetime object.
+            If no timezone info provided, local timezone will be applied.
         :return:
             Updated 'File' object
         """

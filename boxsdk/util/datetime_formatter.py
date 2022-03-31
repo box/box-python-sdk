@@ -6,7 +6,7 @@ from dateutil import parser
 
 def normalize_date_to_rfc3339_format(date: Union[None, datetime, str]) -> Optional[str]:
     """
-    Normalizes any datetime string supported by dateutil library or datetime.datetime object to rfc3339 format.
+    Normalizes any datetime string supported by dateutil library or a datetime.datetime object to rfc3339 format.
 
     :param date:  datetime str or datetime object
     :return: date-time str in rfc3339 format

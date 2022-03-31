@@ -30,7 +30,7 @@ class WebLink(BaseItem):
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
             and has permission to set expiration dates. Takes a datetime string supported by the dateutil library
-            or datetime.datetime object. If no timezone info provided, local timezone will be applied.
+            or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
             The time portion can be omitted,
             which defaults to midnight (00:00:00) on that date.
         :param password:
@@ -72,7 +72,7 @@ class WebLink(BaseItem):
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
             and has permission to set expiration dates. Takes a datetime string supported by the dateutil library
-            or datetime.datetime object. If no timezone info provided, local timezone will be applied.
+            or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
             The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
         :param password:
             The password required to view this link. If no password is specified then no password will be set.
