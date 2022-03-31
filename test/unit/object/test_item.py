@@ -5,6 +5,7 @@ from boxsdk.exception import BoxAPIException
 from boxsdk.config import API
 from boxsdk.object.watermark import Watermark
 from boxsdk.object.collaboration import Collaboration
+from boxsdk.util.datetime_formatter import normalize_date_to_rfc3339_format
 from boxsdk.util.default_arg_value import SDK_VALUE_NOT_SET
 from boxsdk.exception import BoxValueError
 
@@ -70,7 +71,7 @@ def test_get_shared_link(
     if shared_link_access is not None:
         expected_data['shared_link']['access'] = shared_link_access
     if shared_link_unshared_at is not SDK_VALUE_NOT_SET:
-        expected_data['shared_link']['unshared_at'] = shared_link_unshared_at
+        expected_data['shared_link']['unshared_at'] = normalize_date_to_rfc3339_format(shared_link_unshared_at)
     if shared_link_can_download is not None or shared_link_can_preview is not None:
         expected_data['shared_link']['permissions'] = permissions = {}
         if shared_link_can_download is not None:

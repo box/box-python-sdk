@@ -1,8 +1,11 @@
 import json
+from datetime import datetime
 from io import BytesIO
 from os.path import basename
 from unittest.mock import mock_open, patch, Mock, MagicMock
 import pytest
+import pytz
+
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.network.default_network import DefaultNetworkResponse
@@ -19,6 +22,8 @@ from boxsdk.util.chunked_uploader import ChunkedUploader
 
 # pylint:disable=protected-access
 # pylint:disable=redefined-outer-name
+from boxsdk.util.datetime_formatter import normalize_date_to_rfc3339_format
+
 
 @pytest.fixture()
 def mock_new_upload_accelerator_url():
@@ -204,6 +209,16 @@ def test_get_items(test_folder, mock_box_session, mock_items_response, limit, of
     assert all(i.id == e.object_id for (i, e) in zip(items, expected_items))
 
 
+@pytest.mark.parametrize('content_created_at', [
+    '1970-01-01T00:00:00+00:00',
+    datetime(1970, 1, 1, 0, 0, 0, tzinfo=pytz.UTC),
+    None
+])
+@pytest.mark.parametrize('content_modified_at', [
+    '1970-01-01T11:11:11+00:00',
+    datetime(1970, 1, 1, 11, 11, 11, tzinfo=pytz.UTC),
+    None
+])
 @pytest.mark.parametrize('is_stream', (True, False))
 def test_upload(
         test_folder,
@@ -220,11 +235,12 @@ def test_upload(
         etag,
         sha1,
         if_match_sha1_header,
+        content_created_at,
+        content_modified_at
 ):
     # pylint:disable=too-many-locals
+    # pylint:disable=too-many-arguments
     file_description = 'Test File Description'
-    content_created_at = '1970-01-01T00:00:00+00:00'
-    content_modified_at = '1970-01-01T11:11:11+11:11'
     additional_attributes = {'attr': 123}
     expected_url = f'{API.UPLOAD_URL}/files/content'
     if upload_using_accelerator:
@@ -269,8 +285,8 @@ def test_upload(
         'name': basename(mock_file_path),
         'parent': {'id': mock_object_id},
         'description': file_description,
-        'content_created_at': content_created_at,
-        'content_modified_at': content_modified_at,
+        'content_created_at': normalize_date_to_rfc3339_format(content_created_at),
+        'content_modified_at': normalize_date_to_rfc3339_format(content_modified_at),
     }
     # Using `update` to mirror the actual impl, since the attributes could otherwise come through in a different order
     # in Python 2 tests

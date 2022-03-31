@@ -1,6 +1,9 @@
 import os
+from datetime import datetime
 from unittest.mock import Mock
 import pytest
+import pytz
+
 from boxsdk.object.collaboration import Collaboration
 from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
@@ -348,7 +351,15 @@ def shared_link_password(request):
     return request.param
 
 
-@pytest.fixture(params=('2018-10-31', '2018-10-31T23:59:59-07:00', None, SDK_VALUE_NOT_SET))
+@pytest.fixture(
+    params=(
+        '2018-10-31',
+        '2018-10-31T00:00:00+14:00',
+        None,
+        SDK_VALUE_NOT_SET,
+        datetime(2018, 10, 31, 23, 59, 59, tzinfo=pytz.timezone('US/Alaska'))
+    )
+)
 def shared_link_unshared_at(request):
     return request.param
 

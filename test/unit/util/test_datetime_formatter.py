@@ -69,7 +69,11 @@ def test_add_timezone_info_when_timezone_naive_datetime_provided(
     assert formatted_str == expected_datetime
 
 
-@pytest.mark.parametrize("inavlid_datetime_object", (None, Mock()))
+def test_return_none_when_none_provided():
+    assert datetime_formatter.normalize_date_to_rfc3339_format(None) is None
+
+
+@pytest.mark.parametrize("inavlid_datetime_object", (Mock(),))
 def test_throw_type_error_when_invalid_datetime_object_provided(
     inavlid_datetime_object,
 ):

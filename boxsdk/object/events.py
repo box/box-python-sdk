@@ -1,9 +1,11 @@
+from datetime import datetime
 from typing import Any, Optional, Iterable, Generator, Union, TYPE_CHECKING
 
 from requests.exceptions import Timeout
 
 from .base_endpoint import BaseEndpoint
 from ..util.api_call_decorator import api_call
+from ..util.datetime_formatter import normalize_date_to_rfc3339_format
 from ..util.enum import ExtendableEnumMeta
 from ..util.lru_cache import LRUCache
 from ..util.text_enum import TextEnum
@@ -97,8 +99,8 @@ class Events(BaseEndpoint):
             self,
             limit: Optional[int] = None,
             stream_position: Union[str, int] = 0,
-            created_after: Optional[str] = None,
-            created_before: Optional[str] = None,
+            created_after: Union[datetime, str] = None,
+            created_before: Union[datetime, str] = None,
             event_types: Iterable[str] = None
     ) -> dict:
         """
@@ -120,8 +122,8 @@ class Events(BaseEndpoint):
         """
         url = self.get_url()
         params = {
-            'created_after': created_after,
-            'created_before': created_before,
+            'created_after': normalize_date_to_rfc3339_format(created_after),
+            'created_before': normalize_date_to_rfc3339_format(created_before),
             'stream_type': 'admin_logs',
         }
         if limit is not None:

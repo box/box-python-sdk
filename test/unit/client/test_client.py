@@ -1,11 +1,11 @@
 # pylint: disable=too-many-lines
-
+import datetime
 import json
 from io import BytesIO
 from unittest.mock import Mock, ANY
 
 import pytest
-
+import pytz
 
 from boxsdk.auth.oauth2 import OAuth2, TokenScope
 from boxsdk.client import Client, DeveloperTokenClient, DevelopmentClient, LoggingClient
@@ -45,6 +45,7 @@ from boxsdk.object.task_assignment import TaskAssignment
 from boxsdk.object.webhook import Webhook
 from boxsdk.object.web_link import WebLink
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
+from boxsdk.util.datetime_formatter import normalize_date_to_rfc3339_format
 
 
 @pytest.fixture
@@ -606,36 +607,47 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
     assert new_group.name == test_group_name
 
 
-@pytest.mark.parametrize('params', [
-    {
-        'description': 'My test policy',
-    },
-    {
-        'filter_starting_at': '2016-01-01T00:00:00Z',
-        'filter_ending_at': '2020-01-01T00:00:00Z',
-    },
-    {
-        'is_ongoing': True,
-    }
-])
-def test_create_legal_hold_policy_returns_the_correct_policy_object(mock_client, mock_box_session, create_policy_response, params):
+@pytest.mark.parametrize('description', ('My test policy',))
+@pytest.mark.parametrize('filter_starting_at', ('2016-01-01T00:00:00+00:00', datetime.datetime(2016, 1, 1, tzinfo=pytz.UTC)))
+@pytest.mark.parametrize('filter_ending_at', ('2020-01-01T00:00:00+00:00', datetime.datetime(2020, 1, 1, tzinfo=pytz.UTC)))
+@pytest.mark.parametrize('is_ongoing', ('True',))
+def test_create_legal_hold_policy_returns_the_correct_policy_object(
+        mock_client,
+        mock_box_session,
+        create_policy_response,
+        description,
+        filter_starting_at,
+        filter_ending_at,
+        is_ongoing
+):
     # pylint:disable=redefined-outer-name
-    test_policy_name = 'Test Policy'
-    expected_url = f'{API.BASE_API_URL}/legal_hold_policies'
-    expected_body = {
-        'policy_name': test_policy_name
+    params = {
+        'description': description,
+        'filter_starting_at': filter_starting_at,
+        'filter_ending_at': filter_ending_at,
+        'is_ongoing': is_ongoing
     }
-    expected_body.update(params)
-    value = json.dumps(expected_body)
+
+    test_policy_name = 'Test Policy'
     create_policy_response.json.return_value.update(params)
     mock_box_session.post.return_value = create_policy_response
+
     new_policy = mock_client.create_legal_hold_policy(test_policy_name, **params)
+
+    expected_url = f'{API.BASE_API_URL}/legal_hold_policies'
+    expected_body = {
+        'policy_name': test_policy_name,
+        'description': description,
+        'filter_starting_at': normalize_date_to_rfc3339_format(filter_starting_at),
+        'filter_ending_at': normalize_date_to_rfc3339_format(filter_ending_at),
+        'is_ongoing': is_ongoing
+    }
     mock_box_session.post.assert_called_once_with(expected_url, data=ANY)
-    assert dict(json.loads(mock_box_session.post.call_args[1]['data'])) == dict(json.loads(value))
+    assert dict(json.loads(mock_box_session.post.call_args[1]['data'])) == expected_body
     assert isinstance(new_policy, LegalHoldPolicy)
     assert new_policy.policy_name == test_policy_name
-    for param in params:
-        assert new_policy[param] == params[param]
+    for param, expected_value in params.items():
+        assert new_policy[param] == expected_value
 
 
 def test_get_legal_hold_policies_return_the_correct_policy_objects(

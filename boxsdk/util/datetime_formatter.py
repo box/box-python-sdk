@@ -1,16 +1,19 @@
 from datetime import datetime
-from typing import Union
+from typing import Union, Optional
 
 from dateutil import parser
 
 
-def normalize_date_to_rfc3339_format(date: Union[datetime, str]) -> str:
+def normalize_date_to_rfc3339_format(date: Union[None, datetime, str]) -> Optional[str]:
     """
     Normalizes any datetime string or object to rfc3339 format.
 
     :param date:  datetime str or datetime object
     :return: date-time str in rfc3339 format
     """
+    if date is None:
+        return None
+
     if isinstance(date, str):
         date = parser.parse(date)
 
