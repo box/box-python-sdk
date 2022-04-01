@@ -214,7 +214,8 @@ class File(Item):
         :param file_name:
             The new name to give the file on Box.
         :param content_modified_at:
-            The datetime string or datetime object, which specifies when the file content was last modified.
+            The A datetime string in a format supported by the dateutil library or datetime object,
+            which specifies when the file content was last modified.
             If no timezone info provided, local timezone will be applied.
         :param additional_attributes:
             A dictionary containing attributes to add to the file that are not covered by other parameters.
