@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 from typing import TYPE_CHECKING, Any, Tuple, Optional, Iterable, IO, Union
 
 from boxsdk.object.group import Group
@@ -8,6 +9,7 @@ from boxsdk.object.user import User
 from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from boxsdk.util.api_call_decorator import api_call
+from boxsdk.util.datetime_formatter import normalize_date_to_rfc3339_format
 from boxsdk.util.text_enum import TextEnum
 
 if TYPE_CHECKING:
@@ -231,8 +233,8 @@ class Folder(Item):
             preflight_check: bool = False,
             preflight_expected_size: int = 0,
             upload_using_accelerator: bool = False,
-            content_created_at: Optional[str] = None,
-            content_modified_at: Optional[str] = None,
+            content_created_at: Union[datetime, str] = None,
+            content_modified_at: Union[datetime, str] = None,
             additional_attributes: Optional[dict] = None,
             sha1: Optional[str] = None,
             etag: Optional[str] = None,
@@ -260,9 +262,11 @@ class Folder(Item):
 
             Please notice that this is a premium feature, which might not be available to your app.
         :param content_created_at:
-            The RFC-3339 datetime when the file was created.
+            A datetime string in a format supported by the dateutil library or a datetime.datetime object,
+            which specifies when the file was created. If no timezone info provided, local timezone will be applied.
         :param content_modified_at:
-            The RFC-3339 datetime when the file content was last modified.
+            A datetime string in a format supported by the dateutil library or a datetime.datetime object, which
+            specifies when the file was last modified. If no timezone info provided, local timezone will be applied.
         :param additional_attributes:
             A dictionary containing attributes to add to the file that are not covered by other parameters.
         :param sha1:
@@ -287,8 +291,8 @@ class Folder(Item):
             'name': file_name,
             'parent': {'id': self._object_id},
             'description': file_description,
-            'content_created_at': content_created_at,
-            'content_modified_at': content_modified_at,
+            'content_created_at': normalize_date_to_rfc3339_format(content_created_at),
+            'content_modified_at': normalize_date_to_rfc3339_format(content_modified_at),
         }
         if additional_attributes:
             attributes.update(additional_attributes)
@@ -322,8 +326,8 @@ class Folder(Item):
             preflight_check: bool = False,
             preflight_expected_size: int = 0,
             upload_using_accelerator: bool = False,
-            content_created_at: Optional[str] = None,
-            content_modified_at: Optional[str] = None,
+            content_created_at: Union[datetime, str] = None,
+            content_modified_at: Union[datetime, str] = None,
             additional_attributes: Optional[dict] = None,
             sha1: Optional[str] = None,
             etag: Optional[str] = None,
@@ -352,9 +356,11 @@ class Folder(Item):
 
             Please notice that this is a premium feature, which might not be available to your app.
         :param content_created_at:
-            The RFC-3339 datetime when the file was created.
+            A datetime string in a format supported by the dateutil library or a datetime.datetime object,
+            which specifies when the file was created. If no timezone info provided, local timezone will be applied.
         :param content_modified_at:
-            The RFC-3339 datetime when the file content was last modified.
+            A datetime string in a format supported by the dateutil library or a datetime.datetime object, which
+            specifies when the file was last modified.If no timezone info provided, local timezone will be applied.
         :param additional_attributes:
             A dictionary containing attributes to add to the file that are not covered by other parameters.
         :param sha1:

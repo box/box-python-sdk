@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from datetime import datetime
 from itertools import chain
 import json
 from typing import Optional, Union
@@ -6,6 +7,7 @@ from unittest.mock import Mock
 from urllib.parse import urlunsplit, urlencode
 
 import pytest
+import pytz
 from requests.exceptions import Timeout
 
 from boxsdk.network.default_network import DefaultNetworkResponse
@@ -190,7 +192,7 @@ def test_get_events(
     assert 'next_stream_position' in events
     mock_box_session.get.assert_any_call(
         expected_url,
-        params=dict(limit=100, stream_position=0, **expected_stream_type_params),
+        params={'limit': 100, 'stream_position': 0, **expected_stream_type_params},
     )
     for event, json in zip(events['entries'], events_response.json.return_value['entries']):
         assert isinstance(event, Event)
@@ -198,11 +200,21 @@ def test_get_events(
 
 
 @pytest.mark.parametrize("limit", [100, None])
+@pytest.mark.parametrize('created_after', [
+    '2019-07-01T22:02:24+14:00',
+    datetime(2019, 7, 1, 22, 2, 24, tzinfo=pytz.timezone('US/Alaska'))
+])
+@pytest.mark.parametrize('created_before', [
+    '2019-08-07T22:02:24+14:00',
+    datetime(2019, 8, 7, 22, 2, 24, tzinfo=pytz.timezone('US/Alaska'))
+])
 def test_get_admin_events(
         test_events,
         mock_box_session,
         events_response,
         limit,
+        created_after,
+        created_before
 ):
     # pylint:disable=redefined-outer-name
     expected_url = test_events.get_url()
@@ -210,26 +222,20 @@ def test_get_admin_events(
     events = test_events.get_admin_events(
         limit=limit,
         stream_position=0,
-        created_after='2019-07-01T22:02:24-07:00',
-        created_before='2019-08-07T22:02:24-07:00',
+        created_after=created_after,
+        created_before=created_before,
         event_types=['ITEM_CREATE', "LOGIN"],
     )
-    expected_params = dict(
-        stream_position=0,
-        created_after='2019-07-01T22:02:24-07:00',
-        created_before='2019-08-07T22:02:24-07:00',
-        event_type='ITEM_CREATE,LOGIN',
-        stream_type='admin_logs',
-    )
+    expected_params = {
+        'stream_position': 0,
+        'created_after': '2019-07-01T22:02:24+14:00',
+        'created_before': '2019-08-07T22:02:24+14:00',
+        'event_type': 'ITEM_CREATE,LOGIN',
+        'stream_type': 'admin_logs'
+    }
     if limit:
-        expected_params = dict(
-            stream_position=0,
-            created_after='2019-07-01T22:02:24-07:00',
-            created_before='2019-08-07T22:02:24-07:00',
-            event_type='ITEM_CREATE,LOGIN',
-            stream_type='admin_logs',
-            limit=limit,
-        )
+        expected_params['limit'] = limit
+
     mock_box_session.get.assert_called_with(
         expected_url,
         params=expected_params
@@ -254,18 +260,14 @@ def test_get_admin_events_streaming(
         stream_position=100,
         event_types=['ITEM_CREATE', "LOGIN"],
     )
-    expected_params = dict(
-        stream_type='admin_logs_streaming',
-        stream_position=100,
-        event_type='ITEM_CREATE,LOGIN',
-    )
+    expected_params = {
+        'stream_type': 'admin_logs_streaming',
+        'stream_position': 100,
+        'event_type': 'ITEM_CREATE,LOGIN'
+    }
     if limit:
-        expected_params = dict(
-            stream_type='admin_logs_streaming',
-            limit=limit,
-            stream_position=100,
-            event_type='ITEM_CREATE,LOGIN',
-        )
+        expected_params['limit'] = limit
+
     mock_box_session.get.assert_called_with(
         expected_url,
         params=expected_params
@@ -336,7 +338,7 @@ def test_generate_events_with_long_polling(
     assert '/events' in expected_url
     mock_box_session.get.assert_any_call(
         expected_url,
-        params=dict(limit=100, stream_position=initial_stream_position, **expected_stream_type_params),
+        params={'limit': 100, 'stream_position': initial_stream_position, **expected_stream_type_params},
     )
     mock_box_session.get.assert_any_call(
         long_poll_url,

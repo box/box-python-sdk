@@ -1,4 +1,5 @@
-from typing import Optional, Any
+from datetime import datetime
+from typing import Optional, Any, Union
 
 from ..util.api_call_decorator import api_call
 from ..util.default_arg_value import SDK_VALUE_NOT_SET
@@ -15,7 +16,7 @@ class WebLink(BaseItem):
             self,
             *,
             access: Optional[str] = None,
-            unshared_at: Optional[str] = SDK_VALUE_NOT_SET,
+            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
             password: Optional[str] = None,
             vanity_name: Optional[str] = None,
             **kwargs: Any
@@ -28,9 +29,10 @@ class WebLink(BaseItem):
             specified, the default access will be used.
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates.  Takes an RFC3339-formatted string, e.g.
-            '2018-10-31T23:59:59-07:00' for 11:59:59 PM on October 31, 2018 in the America/Los_Angeles timezone.
-            The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
+            and has permission to set expiration dates. Takes a datetime string supported by the dateutil library
+            or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
+            The time portion can be omitted,
+            which defaults to midnight (00:00:00) on that date.
         :param password:
             The password required to view this link. If no password is specified then no password will be set.
             Please notice that this is a premium feature, which might not be available to your app.
@@ -56,7 +58,7 @@ class WebLink(BaseItem):
             self,
             *,
             access: Optional[str] = None,
-            unshared_at: Optional[str] = SDK_VALUE_NOT_SET,
+            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
             password: Optional[str] = None,
             vanity_name: Optional[str] = None,
             **kwargs: Any
@@ -69,7 +71,9 @@ class WebLink(BaseItem):
             specified, the default access will be used.
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates.
+            and has permission to set expiration dates. Takes a datetime string supported by the dateutil library
+            or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
+            The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
         :param password:
             The password required to view this link. If no password is specified then no password will be set.
             Please notice that this is a premium feature, which might not be available to your app.

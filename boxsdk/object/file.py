@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Optional, Tuple, Union, IO, Iterable, List
 from boxsdk.util.datetime_formatter import normalize_date_to_rfc3339_format
 from .item import Item
 from ..util.api_call_decorator import api_call
+from ..util.default_arg_value import SDK_VALUE_NOT_SET
 from ..util.deprecation_decorator import deprecated
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -187,7 +188,7 @@ class File(Item):
             preflight_expected_size: int = 0,
             upload_using_accelerator: bool = False,
             file_name: Optional[str] = None,
-            content_modified_at: Optional[str] = None,
+            content_modified_at: Union[datetime, str] = None,
             additional_attributes: Optional[dict] = None,
             sha1: Optional[str] = None,
     ) -> 'File':
@@ -213,7 +214,9 @@ class File(Item):
         :param file_name:
             The new name to give the file on Box.
         :param content_modified_at:
-            The RFC-3339 datetime when the file content was last modified.
+            The A datetime string in a format supported by the dateutil library or datetime object,
+            which specifies when the file content was last modified.
+            If no timezone info provided, local timezone will be applied.
         :param additional_attributes:
             A dictionary containing attributes to add to the file that are not covered by other parameters.
         :param sha1:
@@ -240,7 +243,7 @@ class File(Item):
 
         attributes = {
             'name': file_name,
-            'content_modified_at': content_modified_at,
+            'content_modified_at': normalize_date_to_rfc3339_format(content_modified_at),
         }
         if additional_attributes:
             attributes.update(additional_attributes)
@@ -278,7 +281,7 @@ class File(Item):
             preflight_expected_size: int = 0,
             upload_using_accelerator: bool = False,
             file_name: Optional[str] = None,
-            content_modified_at: Optional[str] = None,
+            content_modified_at: Union[datetime, str] = None,
             additional_attributes: Optional[dict] = None,
             sha1: Optional[str] = None,
     ) -> 'File':
@@ -303,7 +306,9 @@ class File(Item):
         :param file_name:
             The new name to give the file on Box.
         :param content_modified_at:
-            The RFC-3339 datetime when the file content was last modified.
+            A datetime string in a format supported by the dateutil library or a datetime.datetime object,
+            which specifies when the file content was last modified.
+            If no timezone info provided, local timezone will be applied.
         :param additional_attributes:
             A dictionary containing attributes to add to the file that are not covered by other parameters.
         :param sha1:
@@ -328,14 +333,16 @@ class File(Item):
             )
 
     @api_call
-    def lock(self, prevent_download: bool = False, expire_time: Optional[str] = None) -> 'File':
+    def lock(self, prevent_download: bool = False, expire_time: Union[datetime, str] = None) -> 'File':
         """
         Lock a file, preventing others from modifying (or possibly even downloading) it.
 
         :param prevent_download:
             Whether or not the lock should prevent other users from downloading the file.
         :param expire_time:
-            The RFC-3339 datetime when the lock should automatically expire, unlocking the file.
+            A datetime string in a format supported by the dateutil library or a datetime.datetime object,
+            which specifies when the lock should automatically expire, unlocking the file.
+            If no timezone info provided, local timezone will be applied.
         :return:
             A new :class:`File` instance reflecting that the file has been locked.
         """
@@ -346,7 +353,7 @@ class File(Item):
             }
         }
         if expire_time is not None:
-            data['lock']['expires_at'] = expire_time
+            data['lock']['expires_at'] = normalize_date_to_rfc3339_format(expire_time)
         return self.update_info(data=data)
 
     @api_call
@@ -365,7 +372,7 @@ class File(Item):
             self,
             access: Optional[str] = None,
             etag: Optional[str] = None,
-            unshared_at: Optional[str] = None,
+            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
             allow_preview: Optional[bool] = None,
             password: Optional[str] = None,
             vanity_name: Optional[str] = None
@@ -381,8 +388,8 @@ class File(Item):
             If specified, instruct the Box API to create the link only if the current version's etag matches.
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates.  Takes an RFC3339-formatted string, e.g.
-            '2018-10-31T23:59:59-07:00' for 11:59:59 PM on October 31, 2018 in the America/Los_Angeles timezone.
+            and has permission to set expiration dates. Takes a datetime string supported by the dateutil library
+            or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
             The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
         :param allow_preview:
             Whether or not the item being shared can be previewed when accessed via the shared link.
@@ -462,7 +469,7 @@ class File(Item):
     def create_task(
             self,
             message: Optional[str] = None,
-            due_at: Optional[str] = None,
+            due_at: Union[datetime, str] = None,
             action: str = 'review',
             completion_rule: Optional[str] = None
     ) -> 'Task':
@@ -472,7 +479,8 @@ class File(Item):
         :param message:
             An optional message to include in the task.
         :param due_at:
-            When this task is due.
+            When this task is due. Takes a datetime string supported by the dateutil library
+            or a datetime.datetime object. If no timezone info provided, local timezone will be applied
         :param action:
             The type of task the task assignee will be prompted to perform.
             Value is one of review,complete
@@ -494,7 +502,7 @@ class File(Item):
         if message is not None:
             task_attributes['message'] = message
         if due_at is not None:
-            task_attributes['due_at'] = due_at
+            task_attributes['due_at'] = normalize_date_to_rfc3339_format(due_at)
         if completion_rule is not None:
             task_attributes['completion_rule'] = completion_rule
         box_response = self._session.post(url, data=json.dumps(task_attributes))
@@ -726,8 +734,8 @@ class File(Item):
         Modifies the retention expiration timestamp for the given file. This date can't be shortened once set on a file.
 
         :param date_time:
-            A datetime str, eg. '2012-12-12T10:53:43-08:00' or datetime.datetime object. If no timezone info provided,
-            local timezone will be aplied.
+            A datetime string in a format supported by the dateutil library or a datetime.datetime object.
+            If no timezone info provided, local timezone will be applied.
         :return:
             Updated 'File' object
         """

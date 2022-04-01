@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Union
 from .base_object import BaseObject
 from ..exception import BoxValueError
 from ..util.api_call_decorator import api_call
+from ..util.datetime_formatter import normalize_date_to_rfc3339_format
 from ..util.default_arg_value import SDK_VALUE_NOT_SET
 
 if TYPE_CHECKING:
@@ -84,7 +85,7 @@ class BaseItem(BaseObject):
             shared_link['access'] = kwargs.get('access')
 
         if kwargs.get('unshared_at') is not SDK_VALUE_NOT_SET:
-            shared_link['unshared_at'] = kwargs.get('unshared_at')
+            shared_link['unshared_at'] = normalize_date_to_rfc3339_format(kwargs.get('unshared_at'))
 
         if kwargs.get('allow_download') is not None or kwargs.get('allow_preview') is not None:
             shared_link['permissions'] = {}

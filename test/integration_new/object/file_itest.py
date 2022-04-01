@@ -132,7 +132,7 @@ def test_get_shared_link_download_url(parent_folder, small_file_path, other_user
     with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as file:
         file.collaborate(accessible_by=other_user, role='editor')
 
-        shared_link_download_url = other_client.file(file.object_id).get_download_url()
+        shared_link_download_url = other_client.file(file.object_id).get_shared_link_download_url()
 
         with open(small_file_path, 'rb') as expected_file:
             with urllib.request.urlopen(shared_link_download_url) as downloaded_file:

@@ -245,6 +245,7 @@ def test_resume_in_process(test_file, mock_upload_session):
         BoxAPIException(502),
         fourth_part
     ]
+    uploaded_file = None
     try:
         chunked_uploader.start()
     except BoxAPIException:

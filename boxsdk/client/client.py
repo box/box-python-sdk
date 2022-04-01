@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 import json
+from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Iterable, Union, Any, IO
 
 from ..auth.oauth2 import TokenResponse
@@ -12,6 +13,7 @@ from ..object.collaboration_allowlist import CollaborationAllowlist
 from ..object.trash import Trash
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
+from ..util.datetime_formatter import normalize_date_to_rfc3339_format
 from ..util.shared_link import get_shared_link_header
 from ..util.deprecation_decorator import deprecated
 
@@ -294,8 +296,8 @@ class Client(Cloneable):
             self,
             policy_name: str,
             description: Optional[str] = None,
-            filter_starting_at: Optional[str] = None,
-            filter_ending_at: Optional[str] = None,
+            filter_starting_at: Union[datetime, str] = None,
+            filter_ending_at: Union[datetime, str] = None,
             is_ongoing: Optional[bool] = None
     ) -> 'LegalHoldPolicy':
         """
@@ -306,9 +308,11 @@ class Client(Cloneable):
         :param description:
             The description of the legal hold policy.
         :param filter_starting_at:
-            The start time filter for legal hold policy
+            The start date filter for legal hold policy. Takes a datetime string supported by the dateutil library
+            or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
         :param filter_ending_at:
-            The end time filter for legal hold policy
+            The end date filter for legal hold policy. Takes a datetime string supported by the dateutil library
+            or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
         :param is_ongoing:
             After initialization, Assignments under this Policy will continue applying to
             files based on events, indefinitely.
@@ -320,9 +324,9 @@ class Client(Cloneable):
         if description is not None:
             policy_attributes['description'] = description
         if filter_starting_at is not None:
-            policy_attributes['filter_starting_at'] = filter_starting_at
+            policy_attributes['filter_starting_at'] = normalize_date_to_rfc3339_format(filter_starting_at)
         if filter_ending_at is not None:
-            policy_attributes['filter_ending_at'] = filter_ending_at
+            policy_attributes['filter_ending_at'] = normalize_date_to_rfc3339_format(filter_ending_at)
         if is_ongoing is not None:
             policy_attributes['is_ongoing'] = is_ongoing
         box_response = self._session.post(url, data=json.dumps(policy_attributes))

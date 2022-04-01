@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Iterable, Any, Union
 
 from boxsdk.util.text_enum import TextEnum
@@ -144,7 +145,7 @@ class Item(BaseItem):
             *,
             access: Optional[str] = None,
             etag: Optional[str] = None,
-            unshared_at: Optional[str] = SDK_VALUE_NOT_SET,
+            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
             allow_download: Optional[bool] = None,
             allow_preview: Optional[bool] = None,
             password: Optional[str] = None,
@@ -161,8 +162,8 @@ class Item(BaseItem):
             If specified, instruct the Box API to create the link only if the current version's etag matches.
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates.  Takes an RFC3339-formatted string, e.g.
-            '2018-10-31T23:59:59-07:00' for 11:59:59 PM on October 31, 2018 in the America/Los_Angeles timezone.
+            and has permission to set expiration dates. Takes a datetime string supported by the dateutil library
+            or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
             The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
         :param allow_download:
             Whether or not the item being shared can be downloaded when accessed via the shared link.
@@ -200,7 +201,7 @@ class Item(BaseItem):
             *,
             access: Optional[str] = None,
             etag: Optional[str] = None,
-            unshared_at: Optional[str] = SDK_VALUE_NOT_SET,
+            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
             allow_download: Optional[bool] = None,
             allow_preview: Optional[bool] = None,
             password: Optional[str] = None,
@@ -217,7 +218,9 @@ class Item(BaseItem):
             If specified, instruct the Box API to create the link only if the current version's etag matches.
         :param unshared_at:
             The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates.
+            and has permission to set expiration dates. Takes a datetime string supported by the dateutil library
+            or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
+            The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
         :param allow_download:
             Whether or not the item being shared can be downloaded when accessed via the shared link.
             If this parameter is None, the default setting will be used.

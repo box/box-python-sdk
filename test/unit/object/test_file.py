@@ -1,8 +1,10 @@
 import json
+from datetime import datetime
 from io import BytesIO
 from unittest.mock import mock_open, patch, Mock
 
 import pytest
+import pytz
 from pytest_lazyfixture import lazy_fixture
 
 from boxsdk.config import API
@@ -13,10 +15,12 @@ from boxsdk.object.file_version import FileVersion
 from boxsdk.object.task import Task
 from boxsdk.object.upload_session import UploadSession
 from boxsdk.util.chunked_uploader import ChunkedUploader
+from boxsdk.util.datetime_formatter import normalize_date_to_rfc3339_format
 from boxsdk.util.default_arg_value import SDK_VALUE_NOT_SET
 
 
 # pylint:disable=protected-access
+# pylint:disable=too-many-lines
 # pylint:disable=redefined-outer-name
 
 @pytest.fixture()
@@ -112,12 +116,28 @@ def test_get_chunked_uploader(mock_box_session, mock_content_response, mock_file
     assert isinstance(chunked_uploader, ChunkedUploader)
 
 
-def test_create_task(test_file, test_task, mock_box_session):
+@pytest.mark.parametrize(
+    'due_at',
+    [
+        '2014-04-03T11:09:43+14:00',
+        datetime(2014, 4, 3, 11, 9, 43, tzinfo=pytz.timezone('US/Alaska'))
+    ]
+)
+def test_create_task(test_file, test_task, mock_box_session, due_at):
     # pylint:disable=redefined-outer-name
     expected_url = f"{API.BASE_API_URL}/tasks"
-    due_at = '2014-04-03T11:09:43-07:00'
     action = 'review'
     message = 'Test Message'
+    mock_box_session.post.return_value.json.return_value = {
+        'type': test_task.object_type,
+        'id': test_task.object_id,
+        'due_at': '2014-04-03T11:09:43+14:00',
+        'action': action,
+        'message': message,
+    }
+
+    new_task = test_file.create_task(message=message, due_at=due_at)
+
     expected_body = {
         'item': {
             'type': 'file',
@@ -125,30 +145,21 @@ def test_create_task(test_file, test_task, mock_box_session):
         },
         'action': action,
         'message': message,
-        'due_at': due_at,
+        'due_at': '2014-04-03T11:09:43+14:00'
     }
-    mock_box_session.post.return_value.json.return_value = {
-        'type': test_task.object_type,
-        'id': test_task.object_id,
-        'due_at': due_at,
-        'action': action,
-        'message': message,
-    }
-    value = json.dumps(expected_body)
-    new_task = test_file.create_task(message=message, due_at=due_at)
-    mock_box_session.post.assert_called_once_with(expected_url, data=value)
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
     assert isinstance(new_task, Task)
     assert new_task.object_type == test_task.object_type
     assert new_task.object_id == test_task.object_id
     assert new_task.action == action
     assert new_task.message == message
-    assert new_task.due_at == due_at
+    assert new_task.due_at == '2014-04-03T11:09:43+14:00'
 
 
 def test_create_task_with_review(test_file, test_task, mock_box_session):
     # pylint:disable=redefined-outer-name
     expected_url = f"{API.BASE_API_URL}/tasks"
-    due_at = '2020-09-18T12:09:43-00:00'
+    due_at = '2020-09-18T12:09:43+00:00'
     action = 'complete'
     message = 'Test Message'
     completion_rule = 'any_assignee'
@@ -309,6 +320,10 @@ def test_get_content_file_version(test_file, mock_box_session, mock_content_resp
     )
 
 
+@pytest.mark.parametrize('content_modified_at', [
+    '1970-01-01T11:11:11.500+14:00',
+    datetime(1970, 1, 1, 11, 11, 11, microsecond=500, tzinfo=pytz.timezone('US/Alaska'))
+])
 @pytest.mark.parametrize('is_stream', (True, False))
 def test_update_contents(
         test_file,
@@ -324,10 +339,10 @@ def test_update_contents(
         upload_using_accelerator_fails,
         if_match_sha1_header,
         is_stream,
+        content_modified_at
 ):
     # pylint:disable=too-many-locals
     file_new_name = 'new_file_name'
-    content_modified_at = '1970-01-01T11:11:11+11:11'
     additional_attributes = {'attr': 123}
     expected_url = test_file.get_url('content').replace(API.BASE_API_URL, API.UPLOAD_URL)
     if upload_using_accelerator:
@@ -367,7 +382,7 @@ def test_update_contents(
     mock_files = {'file': ('unused', mock_file_stream)}
     attributes = {
         'name': file_new_name,
-        'content_modified_at': content_modified_at,
+        'content_modified_at': '1970-01-01T11:11:11+14:00',
     }
     # Using `update` to mirror the actual impl, since the attributes could otherwise come through in a different order
     # in Python 2 tests
@@ -482,9 +497,15 @@ def test_update_contents_does_preflight_check_if_specified(
     ({}, {'is_download_prevented': False}),
     ({'prevent_download': False}, {'is_download_prevented': False}),
     ({'prevent_download': True}, {'is_download_prevented': True}),
-    ({'expire_time': '2018-11-06T19:40:00-08:00'}, {
+    ({'expire_time': '2018-11-06T19:40:00-08:00'},
+     {
         'is_download_prevented': False,
         'expires_at': '2018-11-06T19:40:00-08:00'
+    }),
+    ({'expire_time': datetime(2018, 11, 6, 19, 40, 00, tzinfo=pytz.timezone('US/Alaska'))},
+     {
+        'is_download_prevented': False,
+        'expires_at': '2018-11-06T19:40:00+14:00'
     }),
 ])
 def test_lock(test_file, mock_box_session, mock_file_response, params, expected_data):
@@ -593,7 +614,7 @@ def test_get_shared_link_download_url(
     if shared_link_access is not None:
         expected_data['shared_link']['access'] = shared_link_access
     if shared_link_unshared_at is not SDK_VALUE_NOT_SET:
-        expected_data['shared_link']['unshared_at'] = shared_link_unshared_at
+        expected_data['shared_link']['unshared_at'] = normalize_date_to_rfc3339_format(shared_link_unshared_at)
     if shared_link_can_preview is not None:
         expected_data['shared_link']['permissions'] = permissions = {}
         permissions['can_preview'] = shared_link_can_preview
@@ -973,18 +994,3 @@ def test_set_diposition_at(
         headers=None,
         params=None,
     )
-
-
-@pytest.mark.parametrize(
-    'disposition_at',
-    (
-        None,
-        Mock()
-    )
-)
-def test_raise_exception_when_set_diposition_at_datetime_is_invalid(
-        test_file,
-        disposition_at,
-):
-    with pytest.raises(Exception):
-        test_file.set_disposition_at(disposition_at)
