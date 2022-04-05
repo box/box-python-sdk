@@ -59,7 +59,7 @@ The default URLs used to authorize a user and obtain OAuth2 authorization tokens
 ```python
 from boxsdk.config import API
 API.OAUTH2_API_URL = 'https://my-company.com/oauth2'
-API.OAUTH2_AUTHORIZE_URL = 'https://my-company/authorize'
+API.OAUTH2_AUTHORIZE_URL = 'https://my-company.com/authorize'
 ```
 
 ### Upload URL
