@@ -7,8 +7,8 @@ class API:
     """Configuration object containing the URLs for the Box API."""
     BASE_API_URL = 'https://api.box.com/2.0'
     UPLOAD_URL = 'https://upload.box.com/api/2.0'
-    OAUTH2_API_URL = 'https://api.box.com/oauth2'  # <https://developers.box.com/docs/#oauth-2>
-    OAUTH2_AUTHORIZE_URL = 'https://account.box.com/api/oauth2/authorize'  # <https://developers.box.com/docs/#oauth-2-authorize>
+    OAUTH2_API_URL = 'https://api.box.com/oauth2'  # <https://developer.box.com/reference/post-oauth2-token>
+    OAUTH2_AUTHORIZE_URL = 'https://account.box.com/api/oauth2/authorize'  # <https://developer.box.com/reference/get-authorize/>
     MAX_RETRY_ATTEMPTS = 5
 
 
