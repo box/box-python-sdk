@@ -9,7 +9,7 @@ The Python SDK has helpful custom config that you can set for a variety of use c
 - [Proxy](#proxy)
   - [Unauthenticated Proxy](#unauthenticated-proxy)
   - [Basic Authentication Proxy](#basic-authentication-proxy)
-- [Dafault URLs](#dafault-urls)
+- [Configure URLs](#configure-urls)
   - [Base URL](#base-url)
   - [OAUTH2 URLs](#oauth2-urls)
   - [Upload URL](#upload-url)
@@ -41,8 +41,8 @@ Proxy.AUTH = {
 }
 ```
 
-Dafault URLs
-------------
+URLs configuration
+------------------
 
 ### Base URL
 The default base URL used for making API calls to Box can be changed by setting the value of the `API.BASE_API_URL` field.
