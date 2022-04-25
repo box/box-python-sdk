@@ -28,4 +28,4 @@ jobs:
           tox -e integration-tests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          JWT_CONFIG_BASE_64: ${{ secrets.JWT_CONFIG_BASE64 }}
+          JWT_CONFIG_BASE_64: ${{ secrets.JWT_CONFIG_BASE_64 }}

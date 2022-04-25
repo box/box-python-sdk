@@ -6,15 +6,14 @@ from boxsdk.auth.jwt_auth import JWTAuth
 from boxsdk.client import Client
 
 
-JWT_CONFIG_ENV_VAR_NAME = 'JWT_CONFIG_BASE64'
+JWT_CONFIG_ENV_VAR_NAME = 'JWT_CONFIG_BASE_64'
 
 
 def read_jwt_path_from_env_var() -> dict:
 
     jwt_config_base64 = os.getenv(JWT_CONFIG_ENV_VAR_NAME)
-    print(os.environ)
     if not jwt_config_base64:
-        raise RuntimeError("JWT config cannot be loaded. Missing required environment variable: JWT_CONFIG_BASE64.")
+        raise RuntimeError("JWT config cannot be loaded. Missing required environment variable: JWT_CONFIG_BASE_64.")
     jwt_config_str = base64.b64decode(jwt_config_base64)
 
     return json.loads(jwt_config_str)
