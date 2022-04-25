@@ -24,9 +24,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements-dev.txt
       - name: Run integration tests
-
+        run: |
+          tox -e integration-tests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JWT_CONFIG_BASE_64: ${{ secrets.JWT_CONFIG_BASE64 }}
-        run: |
-          tox -e integration-tests
