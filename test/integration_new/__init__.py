@@ -34,7 +34,7 @@ def read_jwt_config_from_env_var() -> Optional[JWTAuth]:
     return JWTAuth.from_settings_dictionary(jwt_config_json)
 
 
-def read_jwt_config_from_file():
+def read_jwt_config_from_file() -> Optional[JWTAuth]:
     config_parser = configparser.ConfigParser()
     config_parser.read(CONFIG_PATH)
     jwt_config_file_path = config_parser["JWT"].get('ConfigFilePath')
