@@ -9,7 +9,6 @@ on:
 
 jobs:
   tests:
-    environment: integration-tests
     name: Integration tests
     runs-on: ubuntu-latest
     steps:
