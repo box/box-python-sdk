@@ -14,10 +14,16 @@ Now select `Authorization` and submit application to be reviewed by account admi
 
 ### Export configuration
 
-1. Select `Configuration` tab and in the bottom in the section `App Settings`
-download them as Json.
-2. Encode configuration file to Base64, e.g. using command: `base64 -i path_to_json_file`
-3. Set environment variable: `JWT_CONFIG_BASE_64` with base64 encoded jwt configuration file
+There are two ways to set up JWT configuration:
+1. First method:
+- Select `Configuration` tab and in the bottom in the section `App Settings`
+   download your app configuration settings as JSON.
+- Specify the path to the JWT config file in `integration_tests.cfg`, e.g. `ConfigFilePath = /Users/me/jwt-config.json`
+2. Alternatively:
+- Select `Configuration` tab and in the bottom in the section `App Settings`
+  download your app configuration settings as JSON.
+- Encode configuration file to Base64, e.g. using command: `base64 -i path_to_json_file`
+- Set environment variable: `JWT_CONFIG_BASE_64` with base64 encoded jwt configuration file
 
 ### Running Tests
 
