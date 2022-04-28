@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.3.0](https://github.com/box/box-python-sdk/compare/v3.2.0...v3.3.0) (2022-04-28)
+
+
+### New Features and Enhancements:
+
+* Add support for multiple date time formats ([#722](https://github.com/box/box-python-sdk/issues/722)) ([92364de](https://github.com/box/box-python-sdk/commit/92364de1e7c1eee1e85857546af65c307ca863a0))
+
+### Bug Fixes:
+
+* Add missing fields to metadata template field ([#719](https://github.com/box/box-python-sdk/issues/719)) ([9e574a3](https://github.com/box/box-python-sdk/commit/9e574a3e56f72c0e78a31ddda78bc11d36ff3516)), closes [#717](https://github.com/box/box-python-sdk/issues/717)
+* Upload session commit return None on 202 ([#718](https://github.com/box/box-python-sdk/issues/718)) ([86a1856](https://github.com/box/box-python-sdk/commit/86a185630e6cce8f742123c7340da08267621313)), closes [#715](https://github.com/box/box-python-sdk/issues/715)
+
 ## [3.2.0](https://github.com/box/box-python-sdk/compare/v3.1.0...v3.2.0) (2022-03-11)
 
 
