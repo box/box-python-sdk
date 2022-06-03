@@ -89,11 +89,11 @@ class JWTAuth(ServerAuth):
             <https://developer.box.com/en/guides/authentication/select/>
         :param store_tokens:
             Optional callback to get access to tokens and store them. Callback method should take two
-             paramaters - access_token: str and refresh_token: str - and return nothing.
+             paramaters - access_token: str and refresh_token: str - and it is not expected to return anything.
         :param box_device_id:
             Optional unique ID of this device. Used for applications that want to support device-pinning.
         :param box_device_name:
-            Optional human readable name for this device.
+            Optional human-readable name for this device.
         :param access_token:
             Access token to use for auth until it expires.
         :param session:
