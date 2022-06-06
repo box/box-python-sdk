@@ -128,6 +128,17 @@ def test_create_subfolder(parent_folder):
     util.permanently_delete(created_subfolder)
 
 
+def test_get_shared_link(parent_folder, other_user, other_client):
+    with BoxTestFolder(parent_folder=parent_folder) as folder:
+        folder.collaborate(accessible_by=other_user, role='editor')
+
+        shared_link = other_client.folder(folder.object_id).get_shared_link(allow_preview=True, allow_download=True)
+
+        result_permissions = folder.get().shared_link['permissions']
+        assert result_permissions == {'can_preview': True, 'can_download': True, 'can_edit': False}
+        assert other_client.get_shared_item(shared_link).id == folder.id
+
+
 @pytest.mark.parametrize(
     'collaborator', [
         lazy_fixture('user'),

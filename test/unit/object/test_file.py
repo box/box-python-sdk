@@ -586,6 +586,67 @@ def test_preflight_check(
     assert accelerator_url == mock_accelerator_upload_url_for_update
 
 
+def test_get_shared_link(
+        test_file,
+        mock_box_session,
+        shared_link_access,
+        shared_link_unshared_at,
+        shared_link_password,
+        shared_link_can_download,
+        shared_link_can_preview,
+        shared_link_can_edit,
+        shared_link_vanity_name,
+        test_url,
+        etag,
+        if_match_header,
+):
+    # pylint:disable=redefined-outer-name, protected-access
+    expected_url = test_file.get_url()
+    mock_box_session.put.return_value.json.return_value = {
+        'type': test_file.object_type,
+        'id': test_file.object_id,
+        'shared_link': {
+            'url': test_url,
+        },
+    }
+    expected_data = {'shared_link': {}}
+    if shared_link_access is not None:
+        expected_data['shared_link']['access'] = shared_link_access
+    if shared_link_unshared_at is not SDK_VALUE_NOT_SET:
+        expected_data['shared_link']['unshared_at'] = normalize_date_to_rfc3339_format(shared_link_unshared_at)
+    permissions = {}
+    if shared_link_can_download is not None:
+        permissions['can_download'] = shared_link_can_download
+    if shared_link_can_preview is not None:
+        permissions['can_preview'] = shared_link_can_preview
+    if shared_link_can_edit is not None:
+        permissions['can_edit'] = shared_link_can_edit
+    if permissions:
+        expected_data['shared_link']['permissions'] = permissions
+    if shared_link_password is not None:
+        expected_data['shared_link']['password'] = shared_link_password
+    if shared_link_vanity_name is not None:
+        expected_data['shared_link']['vanity_name'] = shared_link_vanity_name
+
+    url = test_file.get_shared_link(
+        etag=etag,
+        access=shared_link_access,
+        unshared_at=shared_link_unshared_at,
+        password=shared_link_password,
+        allow_download=shared_link_can_download,
+        allow_preview=shared_link_can_preview,
+        allow_edit=shared_link_can_edit,
+        vanity_name=shared_link_vanity_name,
+    )
+    mock_box_session.put.assert_called_once_with(
+        expected_url,
+        data=json.dumps(expected_data),
+        headers=if_match_header,
+        params=None,
+    )
+    assert url == test_url
+
+
 def test_get_shared_link_download_url(
         test_file,
         mock_box_session,

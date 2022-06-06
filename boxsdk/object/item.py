@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Iterable, Any, Union
 
 from boxsdk.util.text_enum import TextEnum
@@ -7,7 +6,6 @@ from .base_item import BaseItem
 from ..exception import BoxAPIException
 from .metadata import Metadata
 from ..util.api_call_decorator import api_call
-from ..util.default_arg_value import SDK_VALUE_NOT_SET
 from ..pagination.marker_based_dict_collection import MarkerBasedDictCollection
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
@@ -138,117 +136,6 @@ class Item(BaseItem):
         self.validate_item_id(self._object_id)
         headers = {'If-None-Match': etag} if etag is not None else None
         return super().get(fields=fields, headers=headers, **kwargs)
-
-    @api_call
-    def create_shared_link(
-            self,
-            *,
-            access: Optional[str] = None,
-            etag: Optional[str] = None,
-            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
-            allow_download: Optional[bool] = None,
-            allow_preview: Optional[bool] = None,
-            password: Optional[str] = None,
-            vanity_name: Optional[str] = None,
-            **kwargs: Any
-    ) -> 'Item':
-        """
-        Baseclass override.
-
-        :param access:
-            Determines who can access the shared link. May be open, company, or collaborators. If no access is
-            specified, the default access will be used.
-        :param etag:
-            If specified, instruct the Box API to create the link only if the current version's etag matches.
-        :param unshared_at:
-            The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates. Takes a datetime string supported by the dateutil library
-            or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
-            The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
-        :param allow_download:
-            Whether or not the item being shared can be downloaded when accessed via the shared link.
-            If this parameter is None, the default setting will be used.
-        :param allow_preview:
-            Whether or not the item being shared can be previewed when accessed via the shared link.
-            If this parameter is None, the default setting will be used.
-        :param password:
-            The password required to view this link. If no password is specified then no password will be set.
-            Please notice that this is a premium feature, which might not be available to your app.
-        :param vanity_name:
-            Defines a custom vanity name to use in the shared link URL, eg. https://app.box.com/v/my-custom-vanity-name.
-            If this parameter is None, the standard shared link URL will be used.
-        :param kwargs:
-            Used to fulfill the contract of overriden method
-        :return:
-            The updated object with shared link.
-            Returns a new object of the same type, without modifying the original object passed as self.
-        :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
-        """
-        # pylint:disable=arguments-differ
-        return super().create_shared_link(
-            access=access,
-            etag=etag,
-            unshared_at=unshared_at,
-            allow_download=allow_download,
-            allow_preview=allow_preview,
-            password=password,
-            vanity_name=vanity_name
-        )
-
-    @api_call
-    def get_shared_link(
-            self,
-            *,
-            access: Optional[str] = None,
-            etag: Optional[str] = None,
-            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
-            allow_download: Optional[bool] = None,
-            allow_preview: Optional[bool] = None,
-            password: Optional[str] = None,
-            vanity_name: Optional[str] = None,
-            **kwargs: Any
-    ) -> 'str':
-        """
-        Baseclass override.
-
-        :param access:
-            Determines who can access the shared link. May be open, company, or collaborators. If no access is
-            specified, the default access will be used.
-        :param etag:
-            If specified, instruct the Box API to create the link only if the current version's etag matches.
-        :param unshared_at:
-            The date on which this link should be disabled. May only be set if the current user is not a free user
-            and has permission to set expiration dates. Takes a datetime string supported by the dateutil library
-            or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
-            The time portion can be omitted, which defaults to midnight (00:00:00) on that date.
-        :param allow_download:
-            Whether or not the item being shared can be downloaded when accessed via the shared link.
-            If this parameter is None, the default setting will be used.
-        :param allow_preview:
-            Whether or not the item being shared can be previewed when accessed via the shared link.
-            If this parameter is None, the default setting will be used.
-        :param password:
-            The password required to view this link. If no password is specified then no password will be set.
-            Please notice that this is a premium feature, which might not be available to your app.
-        :param vanity_name:
-            Defines a custom vanity name to use in the shared link URL, eg. https://app.box.com/v/my-custom-vanity-name.
-            If this parameter is None, the standard shared link URL will be used.
-        :param kwargs:
-            Used to fulfill the contract of overriden method
-        :returns:
-            The URL of the shared link.
-        :raises: :class:`BoxAPIException` if the specified etag doesn't match the latest version of the item.
-        """
-        # pylint:disable=arguments-differ
-        return super().get_shared_link(
-            access=access,
-            etag=etag,
-            unshared_at=unshared_at,
-            allow_download=allow_download,
-            allow_preview=allow_preview,
-            password=password,
-            vanity_name=vanity_name
-        )
 
     @api_call
     def remove_shared_link(self, *, etag: Optional[str] = None, **kwargs: Any) -> bool:

@@ -341,6 +341,11 @@ def shared_link_can_preview(request):
     return request.param
 
 
+@pytest.fixture(params=(True, False, None))
+def shared_link_can_edit(request):
+    return request.param
+
+
 @pytest.fixture(params=('open', None))
 def shared_link_access(request):
     return request.param

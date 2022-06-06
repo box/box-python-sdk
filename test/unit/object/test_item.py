@@ -5,8 +5,6 @@ from boxsdk.exception import BoxAPIException
 from boxsdk.config import API
 from boxsdk.object.watermark import Watermark
 from boxsdk.object.collaboration import Collaboration
-from boxsdk.util.datetime_formatter import normalize_date_to_rfc3339_format
-from boxsdk.util.default_arg_value import SDK_VALUE_NOT_SET
 from boxsdk.exception import BoxValueError
 
 
@@ -42,63 +40,6 @@ def test_update_info_with_default_request_kwargs(test_item_and_response, mock_bo
     mock_box_session_2.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
     assert isinstance(update_response, test_item.__class__)
     assert update_response.object_id == test_item.object_id
-
-
-def test_get_shared_link(
-        test_item_and_response,
-        mock_box_session,
-        shared_link_access,
-        shared_link_unshared_at,
-        shared_link_password,
-        shared_link_can_download,
-        shared_link_can_preview,
-        shared_link_vanity_name,
-        test_url,
-        etag,
-        if_match_header,
-):
-    # pylint:disable=redefined-outer-name, protected-access
-    test_item, _ = test_item_and_response
-    expected_url = test_item.get_url()
-    mock_box_session.put.return_value.json.return_value = {
-        'type': test_item.object_type,
-        'id': test_item.object_id,
-        'shared_link': {
-            'url': test_url,
-        },
-    }
-    expected_data = {'shared_link': {}}
-    if shared_link_access is not None:
-        expected_data['shared_link']['access'] = shared_link_access
-    if shared_link_unshared_at is not SDK_VALUE_NOT_SET:
-        expected_data['shared_link']['unshared_at'] = normalize_date_to_rfc3339_format(shared_link_unshared_at)
-    if shared_link_can_download is not None or shared_link_can_preview is not None:
-        expected_data['shared_link']['permissions'] = permissions = {}
-        if shared_link_can_download is not None:
-            permissions['can_download'] = shared_link_can_download
-        if shared_link_can_preview is not None:
-            permissions['can_preview'] = shared_link_can_preview
-    if shared_link_password is not None:
-        expected_data['shared_link']['password'] = shared_link_password
-    if shared_link_vanity_name is not None:
-        expected_data['shared_link']['vanity_name'] = shared_link_vanity_name
-
-    url = test_item.get_shared_link(
-        etag=etag,
-        access=shared_link_access,
-        unshared_at=shared_link_unshared_at,
-        password=shared_link_password,
-        allow_download=shared_link_can_download,
-        allow_preview=shared_link_can_preview,
-        vanity_name=shared_link_vanity_name,
-    )
-    mock_box_session.put.assert_called_once_with(
-        expected_url,
-        data=json.dumps(expected_data),
-        headers=if_match_header,
-        params=None,
-    )
-    assert url == test_url
 
 
 def test_clear_unshared_at_for_shared_link(

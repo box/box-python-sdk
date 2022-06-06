@@ -8,8 +8,7 @@ import pytz
 
 from boxsdk import BoxAPIException
 from test.integration_new.context_managers.box_retention_policy import BoxRetentionPolicy
-from test.integration_new.context_managers.box_test_user import BoxTestUser
-from test.integration_new import util, CLIENT
+from test.integration_new import util
 from test.integration_new.context_managers.box_test_file import BoxTestFile
 from test.integration_new.context_managers.box_test_folder import BoxTestFolder
 
@@ -27,17 +26,6 @@ def parent_folder():
 def test_file(parent_folder, small_file_path):
     with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as file:
         yield file
-
-
-@pytest.fixture(scope="module")
-def other_user():
-    with BoxTestUser(login=None) as other_user:
-        yield other_user
-
-
-@pytest.fixture(scope="module")
-def other_client(other_user):
-    yield CLIENT.as_user(other_user)
 
 
 def test_preflight_check(test_file):
@@ -126,6 +114,17 @@ def test_lock_and_unlock(parent_folder, small_file_path, small_file_v2_path, oth
         file.unlock()
 
         assert file.get(fields=('lock',)).lock is None
+
+
+def test_get_shared_link(parent_folder, small_file_path, other_user, other_client):
+    with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as file:
+        file.collaborate(accessible_by=other_user, role='editor')
+
+        shared_link = other_client.file(file.object_id).get_shared_link(allow_edit=True, allow_preview=True, allow_download=True)
+
+        result_permissions = file.get().shared_link['permissions']
+        assert result_permissions == {'can_preview': True, 'can_download': True, 'can_edit': True}
+        assert other_client.get_shared_item(shared_link).id == file.id
 
 
 def test_get_shared_link_download_url(parent_folder, small_file_path, other_user, other_client):
