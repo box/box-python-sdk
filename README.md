@@ -44,7 +44,7 @@ pip install boxsdk
 ```
 
 The current version of the SDK is v3.x --- With this release support for
-Python 3.5 and earlier (including 2.x) has been dropped. if you\'re
+Python 3.5 and earlier (including 2.x) has been dropped. if you're
 looking for the code or documentation for v1.5.x, please see the [1.5
 branch](https://github.com/box/box-python-sdk/tree/1.5).
 
@@ -133,6 +133,7 @@ instead use an instance of `JWTAuth`.
 
 ``` python
 from boxsdk import JWTAuth
+from boxsdk import Client
 
 auth = JWTAuth(
     client_id='YOUR_CLIENT_ID',
@@ -141,13 +142,9 @@ auth = JWTAuth(
     jwt_key_id='YOUR_JWT_KEY_ID',
     rsa_private_key_file_sys_path='CERT.PEM',
     rsa_private_key_passphrase='PASSPHRASE',
-    store_tokens=your_store_tokens_callback_method,
 )
 
 access_token = auth.authenticate_instance()
-
-from boxsdk import Client
-
 client = Client(auth)
 ```
 
@@ -166,15 +163,14 @@ ned_auth = JWTAuth(
     user=ned_stark_user,
     jwt_key_id='YOUR_JWT_KEY_ID',
     rsa_private_key_file_sys_path='CERT.PEM',
-    rsa_private_key_passphrase='PASSPHRASE',
-    store_tokens=your_store_tokens_callback_method,
+    rsa_private_key_passphrase='PASSPHRASE'
 )
 ned_auth.authenticate_user()
 ned_client = Client(ned_auth)
 ```
 
 Requests made with `ned_client` (or objects returned from
-`ned_client`\'s methods) will be performed on behalf of the newly
+`ned_client`'s methods) will be performed on behalf of the newly
 created app user.
 
 ## Traditional 3-legged OAuth2
@@ -202,7 +198,7 @@ def store_tokens(access_token, refresh_token):
 ```
 
 The SDK will keep the tokens in memory for the duration of the Python
-script run, so you don\'t always need to pass store_tokens.
+script run, so you don't always need to pass store_tokens.
 
 ### Authenticate (Get Access/Refresh Tokens)
 
@@ -229,7 +225,7 @@ from boxsdk import Client
 client = Client(oauth)
 ```
 
-And that\'s it! You can start using the client to do all kinds of cool
+And that's it! You can start using the client to do all kinds of cool
 stuff and the SDK will handle the token refresh for you automatically.
 
 ### Instantiate a Client Given an Access and a Refresh Token
@@ -263,7 +259,7 @@ provided:
 -   `CooperativelyManagedOAuth2`: Allows multiple auth instances to
     share tokens.
 -   `RemoteOAuth2`: Allows use of the SDK on clients without access to
-    your application\'s client secret. Instead, you provide a
+    your application's client secret. Instead, you provide a
     `retrieve_access_token` callback. That callback should perform the
     token refresh, perhaps on your server that does have access to the
     client secret.
@@ -447,7 +443,7 @@ and PyPy (our CI is configured to run PyPy tests on pypy-3.6, pypy-3.7, pypy-3.8
 
 Need to contact us directly? [Browse the issues
 tickets](https://github.com/box/box-python-sdk/issues)! Or, if that
-doesn\'t work, [file a new
+doesn't work, [file a new
 one](https://github.com/box/box-python-sdk/issues/new) and we will get
 back to you. If you have general questions about the Box API, you can
 post to the [Box Developer

@@ -50,7 +50,7 @@ class OAuth2:
             self,
             client_id: Optional[str],
             client_secret: Optional[str],
-            store_tokens: Optional[Callable] = None,
+            store_tokens: Optional[Callable[[str, str], None]] = None,
             box_device_id: str = '0',
             box_device_name: str = '',
             access_token: str = None,
@@ -64,11 +64,12 @@ class OAuth2:
         :param client_secret:
             Box API secret used for making OAuth2 requests.
         :param store_tokens:
-            Optional callback for getting access to tokens for storing them.
+            Optional callback to get access to tokens and store them. Callback method should take two
+             paramaters - access_token: str and refresh_token: str - and it is not expected to return anything.
         :param box_device_id:
             Optional unique ID of this device. Used for applications that want to support device-pinning.
         :param box_device_name:
-            Optional human readable name for this device.
+            Optional human-readable name for this device.
         :param access_token:
             Access token to use for auth until it expires.
         :param refresh_token:
