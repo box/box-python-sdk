@@ -214,7 +214,7 @@ A shared link for a folder can be generated or updated by calling
 password=None, vanity_name=None, **kwargs)`][get_shared_link].
 This method returns a `unicode` string containing the shared link URL.
 
-<!-- sample put_folders_id shared_link_create -->
+<!-- sample put_folders_id add-shared-link-->
 ```python
 folder_id = '11111'
 

@@ -691,7 +691,7 @@ A shared link for a file can be generated or updated by calling
 allow_edit=None, password=None, vanity_name=None, **kwargs)`][get_shared_link]. 
 This method returns a `unicode` string containing the shared link URL.
 
-<!-- sample put_files_id shared_link_create -->
+<!-- sample put_files_id add-shared-link-->
 ```python
 file_id = '11111'
 
