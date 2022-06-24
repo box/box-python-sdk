@@ -45,6 +45,12 @@ def large_file(large_file_name):
         yield large_file
 
 
+@pytest.fixture(scope="module")
+def user():
+    with BoxTestUser(login=f'{util.random_name()}@box.com') as user:
+        yield user
+
+
 @pytest.fixture(scope="package")
 def other_user():
     with BoxTestUser(login=None) as other_user:

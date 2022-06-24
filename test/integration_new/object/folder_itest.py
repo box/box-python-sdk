@@ -10,7 +10,6 @@ from boxsdk.exception import BoxAPIException
 from boxsdk.object.collaboration import CollaborationRole
 from test.integration_new.context_managers.box_metadata_template import BoxTestMetadataTemplate
 from test.integration_new.context_managers.box_test_group import BoxTestGroup
-from test.integration_new.context_managers.box_test_user import BoxTestUser
 from test.integration_new.context_managers.box_test_web_link import BoxTestWebLink
 from test.integration_new import CLIENT
 from test.integration_new import util
@@ -24,12 +23,6 @@ FOLDER_TESTS_DIRECTORY_NAME = 'folder-integration-tests'
 def parent_folder():
     with BoxTestFolder(name=f'{FOLDER_TESTS_DIRECTORY_NAME} {datetime.now()}') as folder:
         yield folder
-
-
-@pytest.fixture(scope="module")
-def user():
-    with BoxTestUser(login=f'{util.random_name()}@box.com') as user:
-        yield user
 
 
 @pytest.fixture(scope="module")
