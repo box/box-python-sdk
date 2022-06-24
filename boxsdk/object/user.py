@@ -176,7 +176,7 @@ class User(BaseObject):
     def upload_avatar(self, image_path: str) -> str:
         """
         Upload avatar image to user account. Supported formats are JPG, JPEG and PNG.
-        Maximum allowed file size is 1MB and resilution 1024x1024 pixels.
+        Maximum allowed file size is 1MB and resolution 1024x1024 pixels.
 
         :param image_path: Path of the avatar image to upload
         :return: URLs to existing user avatars that were updated
@@ -189,7 +189,7 @@ class User(BaseObject):
     def upload_avatar_stream(self, image_stream: IO[bytes], image_extension: str) -> str:
         """
         Upload avatar image to user account. Supported formats are JPG, JPEG and PNG.
-        Maximum allowed file size is 1MB and resilution 1024x1024 pixels.
+        Maximum allowed file size is 1MB and resolution 1024x1024 pixels.
 
         :param image_extension: Extension of the image. Supported: 'jpg', 'jpeg' and 'png'.
         :param image_stream: The file-like object containing the bytes of the image
