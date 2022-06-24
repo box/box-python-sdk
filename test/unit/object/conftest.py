@@ -61,6 +61,11 @@ def mock_file_path():
 
 
 @pytest.fixture(scope='function')
+def mock_image_path(image_extention):
+    return os.path.join('path', 'to', f'image.{image_extention}')
+
+
+@pytest.fixture(scope='function')
 def mock_content_response(make_mock_box_request):
     mock_box_response, mock_network_response = make_mock_box_request(content=b'Contents of a text file.')
     mock_network_response.response_as_stream = raw = Mock()

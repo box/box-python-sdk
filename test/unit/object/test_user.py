@@ -1,4 +1,5 @@
-from unittest.mock import Mock
+import io
+from unittest.mock import Mock, mock_open, patch
 import json
 import pytest
 
@@ -46,8 +47,10 @@ def memberships_response():
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'entries': [
-            {'type': 'group_membership', 'id': 101, 'user': {'type': 'user', 'id': 100}, 'group': {'type': 'group', 'id': 300}},
-            {'type': 'group_membership', 'id': 202, 'user': {'type': 'user', 'id': 200}, 'group': {'type': 'group', 'id': 400}}
+            {'type': 'group_membership', 'id': 101, 'user': {'type': 'user', 'id': 100},
+             'group': {'type': 'group', 'id': 300}},
+            {'type': 'group_membership', 'id': 202, 'user': {'type': 'user', 'id': 200},
+             'group': {'type': 'group', 'id': 400}}
         ],
         'limit': 2,
         'total_count': 2,
@@ -207,3 +210,45 @@ def test_get_user_avatar(mock_user, mock_box_session, mock_content_response):
         expected_url,
         expect_json_response=False,
     )
+
+
+@pytest.mark.parametrize('image_extention', ['jpg', 'jpeg', 'png'])
+def test_upload_avatar(mock_user, mock_box_session, mock_image_path, image_extention):
+    expected_url = mock_user.get_url('avatar')
+    upload_avatar_response = {'pic_urls': {'large': 'url1', 'preview': 'url2', 'small': 'url3'}}
+    mock_box_session.post.return_value.json.return_value = upload_avatar_response
+
+    with patch('boxsdk.object.user.open', mock_open()) as mock_image:
+        avatar_urls = mock_user.upload_avatar(mock_image_path)
+
+        assert avatar_urls == upload_avatar_response['pic_urls']
+        mock_box_session.post.assert_called_once_with(
+            expected_url,
+            files={'pic': (f'avatar.{image_extention}', mock_image.return_value, f'image/{image_extention}')}
+        )
+
+
+@pytest.mark.parametrize('image_extention', ['jpg', 'jpeg', 'png'])
+def test_upload_avatar_stream(mock_user, mock_box_session, image_extention):
+    expected_url = mock_user.get_url('avatar')
+    upload_avatar_response = {'pic_urls': {'large': 'url1', 'preview': 'url2', 'small': 'url3'}}
+    mock_box_session.post.return_value.json.return_value = upload_avatar_response
+    image_stream = io.BytesIO(b"some image stream")
+
+    avatar_urls = mock_user.upload_avatar_stream(image_stream=image_stream, image_extention=image_extention)
+
+    assert avatar_urls == upload_avatar_response['pic_urls']
+    mock_box_session.post.assert_called_once_with(
+        expected_url,
+        files={'pic': (f'avatar.{image_extention}', image_stream, f'image/{image_extention}')}
+    )
+
+
+def test_delete_avatar_stream(mock_user, mock_box_session):
+    expected_url = mock_user.get_url('avatar')
+    mock_box_session.delete.return_value.ok = True
+
+    was_deleted_successfully = mock_user.delete_avatar()
+
+    assert was_deleted_successfully
+    mock_box_session.delete.assert_called_once_with(expected_url)
