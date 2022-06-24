@@ -6,11 +6,12 @@ Users represent an individual's account on Box.
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Get User Information](#get-user-information)
 - [Get the Current User's Information](#get-the-current-users-information)
 - [Create An Enterprise User](#create-an-enterprise-user)
 - [Get the Avatar for a User](#get-the-avatar-for-a-user)
+- [Upload user avatar](#upload-user-avatar)
+- [Delete user avatar](#delete-user-avatar)
 - [Create An App User](#create-an-app-user)
 - [Update User](#update-user)
 - [Delete User](#delete-user)
@@ -86,6 +87,41 @@ avatar = client.user('33333').get_avatar()
 ```
 
 [get_avatar]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.user.html#boxsdk.user.User.get_avatar
+
+## Upload user avatar
+
+To add or update the avatar for a user, call the [`user.upload_avatar(image_path)`][upload-avatar] method with the [`User`][user_class].
+Put the path to your image as a method parameter. The supported image extensions are `jpg`, `jpeg` and `png`. 
+The image size cannot exceed 1024 * 1024 pixels or 1MB.
+
+<!-- sample post_users_id_avatar -->
+```python
+avatar_urls = client.user('33333').upload_avatar(image_path='path/to/the/image.png')
+```
+In return, you will get links to several representations of an avatar within Box account.
+
+Alternatively you can upload the avatar by passing the image byte stream and the image extension to
+the method [`upload_avatar_stream(image_stream, image_extension)`][upload-avatar-stream]:
+
+```java
+image_stream = open('path/to/the/image.png', 'rb')
+avatar_urls = client.user('33333').upload_avatar_stream(image_stream=image_stream, image_extension='png')
+```
+
+[upload-avatar]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.user.User.upload_avatar
+[upload-avatar-stream]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.user.User.upload_avatar_stream
+
+
+## Delete user avatar
+
+To delete the user avatar image use [`delete_avatar()`][delete-avatar] method with the [`User`][user_class].
+
+<!-- sample delete_users_id_avatar -->
+```java
+client.user('33333').delete_avatar()
+```
+
+[delete-avatar]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.user.User.delete_avatar
 
 Create An App User
 ------------------
