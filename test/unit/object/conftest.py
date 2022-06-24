@@ -61,8 +61,8 @@ def mock_file_path():
 
 
 @pytest.fixture(scope='function')
-def mock_image_path(image_extention):
-    return os.path.join('path', 'to', f'image.{image_extention}')
+def mock_image_path(image_extension):
+    return os.path.join('path', 'to', f'image.{image_extension}')
 
 
 @pytest.fixture(scope='function')

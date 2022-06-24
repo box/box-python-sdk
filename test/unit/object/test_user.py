@@ -212,8 +212,8 @@ def test_get_user_avatar(mock_user, mock_box_session, mock_content_response):
     )
 
 
-@pytest.mark.parametrize('image_extention', ['jpg', 'jpeg', 'png'])
-def test_upload_avatar(mock_user, mock_box_session, mock_image_path, image_extention):
+@pytest.mark.parametrize('image_extension', ['jpg', 'jpeg', 'png'])
+def test_upload_avatar(mock_user, mock_box_session, mock_image_path, image_extension):
     expected_url = mock_user.get_url('avatar')
     upload_avatar_response = {'pic_urls': {'large': 'url1', 'preview': 'url2', 'small': 'url3'}}
     mock_box_session.post.return_value.json.return_value = upload_avatar_response
@@ -224,23 +224,23 @@ def test_upload_avatar(mock_user, mock_box_session, mock_image_path, image_exten
         assert avatar_urls == upload_avatar_response['pic_urls']
         mock_box_session.post.assert_called_once_with(
             expected_url,
-            files={'pic': (f'avatar.{image_extention}', mock_image.return_value, f'image/{image_extention}')}
+            files={'pic': (f'avatar.{image_extension}', mock_image.return_value, f'image/{image_extension}')}
         )
 
 
-@pytest.mark.parametrize('image_extention', ['jpg', 'jpeg', 'png'])
-def test_upload_avatar_stream(mock_user, mock_box_session, image_extention):
+@pytest.mark.parametrize('image_extension', ['jpg', 'jpeg', 'png'])
+def test_upload_avatar_stream(mock_user, mock_box_session, image_extension):
     expected_url = mock_user.get_url('avatar')
     upload_avatar_response = {'pic_urls': {'large': 'url1', 'preview': 'url2', 'small': 'url3'}}
     mock_box_session.post.return_value.json.return_value = upload_avatar_response
     image_stream = io.BytesIO(b"some image stream")
 
-    avatar_urls = mock_user.upload_avatar_stream(image_stream=image_stream, image_extention=image_extention)
+    avatar_urls = mock_user.upload_avatar_stream(image_stream=image_stream, image_extension=image_extension)
 
     assert avatar_urls == upload_avatar_response['pic_urls']
     mock_box_session.post.assert_called_once_with(
         expected_url,
-        files={'pic': (f'avatar.{image_extention}', image_stream, f'image/{image_extention}')}
+        files={'pic': (f'avatar.{image_extension}', image_stream, f'image/{image_extension}')}
     )
 
 

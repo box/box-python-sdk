@@ -497,7 +497,7 @@ Rename a File
 -----------
 
 A file can be renamed by calling [`file.rename(name)`][rename]. This method returns the updated
-[`File`][file_class] object with a new name. Remeber to provide also extention of the file along with the new name. 
+[`File`][file_class] object with a new name. Remeber to provide also extension of the file along with the new name. 
 
 ```python
 file = client.file(file_id='11111')
