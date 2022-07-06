@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.4.0](https://github.com/box/box-python-sdk/compare/v3.3.0...v3.4.0) (2022-07-06)
+
+
+### New Features and Enhancements:
+
+* Add support for editable shared links for files ([#737](https://github.com/box/box-python-sdk/issues/737)) ([1396200](https://github.com/box/box-python-sdk/commit/1396200c24bf62de63f9cb7949af5997593b9fac))
+* Support uploading and deleting user avatar ([#743](https://github.com/box/box-python-sdk/issues/743)) ([fe00a9e](https://github.com/box/box-python-sdk/commit/fe00a9eb3434ee14bc4f01332d54c0272ed5f2d3))
+
 ## [3.3.0](https://github.com/box/box-python-sdk/compare/v3.2.0...v3.3.0) (2022-04-28)
 
 
