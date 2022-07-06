@@ -61,6 +61,11 @@ def mock_file_path():
 
 
 @pytest.fixture(scope='function')
+def mock_image_path(image_extension):
+    return os.path.join('path', 'to', f'image.{image_extension}')
+
+
+@pytest.fixture(scope='function')
 def mock_content_response(make_mock_box_request):
     mock_box_response, mock_network_response = make_mock_box_request(content=b'Contents of a text file.')
     mock_network_response.response_as_stream = raw = Mock()
@@ -338,6 +343,11 @@ def shared_link_can_download(request):
 
 @pytest.fixture(params=(True, False, None))
 def shared_link_can_preview(request):
+    return request.param
+
+
+@pytest.fixture(params=(True, False, None))
+def shared_link_can_edit(request):
     return request.param
 
 

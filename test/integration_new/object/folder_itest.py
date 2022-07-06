@@ -10,7 +10,6 @@ from boxsdk.exception import BoxAPIException
 from boxsdk.object.collaboration import CollaborationRole
 from test.integration_new.context_managers.box_metadata_template import BoxTestMetadataTemplate
 from test.integration_new.context_managers.box_test_group import BoxTestGroup
-from test.integration_new.context_managers.box_test_user import BoxTestUser
 from test.integration_new.context_managers.box_test_web_link import BoxTestWebLink
 from test.integration_new import CLIENT
 from test.integration_new import util
@@ -24,12 +23,6 @@ FOLDER_TESTS_DIRECTORY_NAME = 'folder-integration-tests'
 def parent_folder():
     with BoxTestFolder(name=f'{FOLDER_TESTS_DIRECTORY_NAME} {datetime.now()}') as folder:
         yield folder
-
-
-@pytest.fixture(scope="module")
-def user():
-    with BoxTestUser(login=f'{util.random_name()}@box.com') as user:
-        yield user
 
 
 @pytest.fixture(scope="module")
@@ -126,6 +119,17 @@ def test_create_subfolder(parent_folder):
     assert created_subfolder.parent == parent_folder
 
     util.permanently_delete(created_subfolder)
+
+
+def test_get_shared_link(parent_folder, other_user, other_client):
+    with BoxTestFolder(parent_folder=parent_folder) as folder:
+        folder.collaborate(accessible_by=other_user, role='editor')
+
+        shared_link = other_client.folder(folder.object_id).get_shared_link(allow_preview=True, allow_download=True)
+
+        result_permissions = folder.get().shared_link['permissions']
+        assert result_permissions == {'can_preview': True, 'can_download': True, 'can_edit': False}
+        assert other_client.get_shared_item(shared_link).id == folder.id
 
 
 @pytest.mark.parametrize(

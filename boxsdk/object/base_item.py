@@ -87,12 +87,15 @@ class BaseItem(BaseObject):
         if kwargs.get('unshared_at') is not SDK_VALUE_NOT_SET:
             shared_link['unshared_at'] = normalize_date_to_rfc3339_format(kwargs.get('unshared_at'))
 
-        if kwargs.get('allow_download') is not None or kwargs.get('allow_preview') is not None:
-            shared_link['permissions'] = {}
-            if kwargs.get('allow_download') is not None:
-                shared_link['permissions']['can_download'] = kwargs.get('allow_download')
-            if kwargs.get('allow_preview') is not None:
-                shared_link['permissions']['can_preview'] = kwargs.get('allow_preview')
+        permissions = {}
+        if kwargs.get('allow_download') is not None:
+            permissions['can_download'] = kwargs.get('allow_download')
+        if kwargs.get('allow_preview') is not None:
+            permissions['can_preview'] = kwargs.get('allow_preview')
+        if kwargs.get('allow_edit') is not None:
+            permissions['can_edit'] = kwargs.get('allow_edit')
+        if permissions:
+            shared_link['permissions'] = permissions
 
         if kwargs.get('password') is not None:
             shared_link['password'] = kwargs.get('password')

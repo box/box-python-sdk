@@ -31,7 +31,7 @@ class JWTAuth(ServerAuth):
             rsa_private_key_file_sys_path: Optional[str] = None,
             rsa_private_key_passphrase: Optional[Union[str, bytes]] = None,
             user: Optional[Union[str, 'User']] = None,
-            store_tokens: Callable = None,
+            store_tokens: Optional[Callable[[str, str], None]] = None,
             box_device_id: str = '0',
             box_device_name: str = '',
             access_token: str = None,
@@ -88,11 +88,12 @@ class JWTAuth(ServerAuth):
             <https://developer.box.com/en/guides/applications/>
             <https://developer.box.com/en/guides/authentication/select/>
         :param store_tokens:
-            Optional callback for getting access to tokens for storing them.
+            Optional callback to get access to tokens and store them. Callback method should take two
+             paramaters - access_token: str and refresh_token: str - and it is not expected to return anything.
         :param box_device_id:
             Optional unique ID of this device. Used for applications that want to support device-pinning.
         :param box_device_name:
-            Optional human readable name for this device.
+            Optional human-readable name for this device.
         :param access_token:
             Access token to use for auth until it expires.
         :param session:

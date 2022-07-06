@@ -1,5 +1,6 @@
 import json
-from typing import TYPE_CHECKING, Optional, Iterable
+import os
+from typing import TYPE_CHECKING, Optional, Iterable, IO
 
 from .base_object import BaseObject
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -170,6 +171,45 @@ class User(BaseObject):
         url = self.get_url('avatar')
         response = self._session.get(url, expect_json_response=False)
         return response.content
+
+    @api_call
+    def upload_avatar(self, image_path: str) -> str:
+        """
+        Upload avatar image to user account. Supported formats are JPG, JPEG and PNG.
+        Maximum allowed file size is 1MB and resolution 1024x1024 pixels.
+
+        :param image_path: Path of the avatar image to upload
+        :return: URLs to existing user avatars that were updated
+        """
+        with open(image_path, 'rb') as image_stream:
+            image_extension = os.path.splitext(image_path)[-1][1:]
+            return self.upload_avatar_stream(image_stream=image_stream, image_extension=image_extension)
+
+    @api_call
+    def upload_avatar_stream(self, image_stream: IO[bytes], image_extension: str) -> str:
+        """
+        Upload avatar image to user account. Supported formats are JPG, JPEG and PNG.
+        Maximum allowed file size is 1MB and resolution 1024x1024 pixels.
+
+        :param image_extension: Extension of the image. Supported: 'jpg', 'jpeg' and 'png'.
+        :param image_stream: The file-like object containing the bytes of the image
+        :return: URLs to existing user avatars that were updated
+        """
+        url = self.get_url('avatar')
+        files = {'pic': (f'avatar.{image_extension}', image_stream, f'image/{image_extension}')}
+        response = self._session.post(url, files=files)
+        return response.json()['pic_urls']
+
+    @api_call
+    def delete_avatar(self) -> bool:
+        """
+        Remove avatar from user account
+
+        :return: Whether the deletion succeeded
+        """
+        url = self.get_url('avatar')
+        response = self._session.delete(url)
+        return response.ok
 
     @api_call
     def delete(self, *, notify: bool = True, force: bool = False, **kwargs) -> bool:
