@@ -56,7 +56,7 @@ def test_copy(test_file_request, mock_box_session):
             'id': new_folder_id,
         }
     }
-    new_title = 'File Request Copied',
+    new_title = 'File Request Copied'
     new_folder = Folder(mock_box_session, object_id=new_folder_id)
     file_request = test_file_request.copy(title=new_title, folder=new_folder)
     data = {
