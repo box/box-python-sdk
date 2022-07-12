@@ -19,6 +19,7 @@ from boxsdk.object.comment import Comment
 from boxsdk.object.device_pinner import DevicePinner
 from boxsdk.object.enterprise import Enterprise
 from boxsdk.object.events import Events
+from boxsdk.object.file_request import FileRequest
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
 from boxsdk.object.file_version import FileVersion
@@ -1706,3 +1707,12 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
     assert new_sign_request['source_files'][0]['id'] == source_file['id']
     assert new_sign_request['signers'][0]['email'] == signer['email']
     assert new_sign_request['parent_folder']['id'] == parent_folder_id
+
+
+def test_file_request(mock_client):
+    # pylint:disable=redefined-outer-name
+    file_request_id = '12345'
+    file_request = mock_client.file_request(file_request_id)
+
+    assert isinstance(file_request, FileRequest)
+    assert file_request.object_id == file_request_id

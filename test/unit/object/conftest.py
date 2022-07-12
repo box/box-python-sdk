@@ -9,6 +9,7 @@ from boxsdk.object.collection import Collection
 from boxsdk.object.comment import Comment
 from boxsdk.object.device_pinner import DevicePinner
 from boxsdk.object.file import File
+from boxsdk.object.file_request import FileRequest
 from boxsdk.object.file_version import FileVersion
 from boxsdk.object.file_version_retention import FileVersionRetention
 from boxsdk.object.legal_hold import LegalHold
@@ -414,3 +415,7 @@ def test_folder_lock(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_sign_request(mock_box_session, mock_object_id):
     return SignRequest(mock_box_session, mock_object_id)
+
+@pytest.fixture()
+def test_file_request(mock_box_session, mock_object_id):
+    return FileRequest(mock_box_session, mock_object_id)
