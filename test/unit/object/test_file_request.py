@@ -43,6 +43,7 @@ def test_update(test_file_request, mock_box_session):
     assert file_request['title'] == new_title
     assert file_request['status'] == StatusState.INACTIVE
 
+
 def test_copy(test_file_request, mock_box_session):
     new_folder_id = '100'
     expected_url = f'{API.BASE_API_URL}/file_requests/{test_file_request.object_id}/copy'
@@ -71,6 +72,7 @@ def test_copy(test_file_request, mock_box_session):
     assert file_request['title'] == 'File Request Copied'
     assert file_request['folder']['id'] == '100'
     assert file_request['folder']['type'] == 'folder'
+
 
 def test_delete(test_file_request, mock_box_session):
     expected_url = f'{API.BASE_API_URL}/file_requests/{test_file_request.object_id}'
