@@ -26,24 +26,23 @@ class FileRequest(BaseObject):
     def copy(
             self,
             *,
+            folder: 'Folder',
             description: Optional[str] = None,
-            expire_time: Union[datetime, str] = None,
-            folder: 'Folder' = None,
+            expires_at: Union[datetime, str] = None,
             require_description: Optional[bool] = None,
             require_email: Optional[bool] = None,
             status: Optional[str] = None,
             title: Optional[str] = None,
             **_kwargs
     ) -> 'FileRequest':
-        # pylint: disable=arguments-differ
         """Copy an existing file request already present on one folder, and applies it to another folder.
 
         :param description:
             A new description for the file request.
         :param title:
             A new title for the file request.
-        :param expire_time:
-            A expiration time which after no longer allows the file request to be submitted.
+        :param expires_at:
+            A expiration time for file request which no longer accepts new files.
         :param folder:
             The folder to which the file request will be saved.
         :param require_description:
@@ -53,26 +52,24 @@ class FileRequest(BaseObject):
         :param status:
             The status of the file request.
         :returns:
-            The copy of the file
+            The copy of the file request
         """
-        # pylint: disable=arguments-differ
         url = self.get_url('copy')
         data = {
-            'folder': {'id': folder.object_id, 'type': 'folder'},
+            'folder': {'id': folder.object_id, 'type': folder.object_type},
         }
         if description is not None:
             data['description'] = description
         if title is not None:
             data['title'] = title
-        if expire_time is not None:
-            data['expires_at'] = normalize_date_to_rfc3339_format(expire_time)
+        if expires_at is not None:
+            data['expires_at'] = normalize_date_to_rfc3339_format(expires_at)
         if require_description is not None:
             data['is_description_required'] = require_description
         if require_email is not None:
             data['is_email_required'] = require_email
         if status is not None:
             data['status'] = status
-        print(data)
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
         return self.translator.translate(
