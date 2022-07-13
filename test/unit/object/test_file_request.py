@@ -1,13 +1,12 @@
 import json
 from datetime import datetime
+import pytest
+import pytz
 
 from boxsdk.config import API
 from boxsdk.object.folder import Folder
 from boxsdk.object.file_request import FileRequest
 from boxsdk.object.file_request import StatusState
-
-import pytest
-import pytz
 
 
 def test_get(test_file_request, mock_box_session):
@@ -46,6 +45,7 @@ def test_update(test_file_request, mock_box_session):
     assert file_request['id'] == test_file_request.object_id
     assert file_request['title'] == new_title
     assert file_request['status'] == StatusState.INACTIVE
+
 
 @pytest.mark.parametrize('expires_at', [
     '2019-07-01T22:02:24+14:00',
