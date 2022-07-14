@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from boxsdk.util.translator import Translator
     from boxsdk.object.folder import Folder
     from boxsdk.object.file import File
+    from boxsdk.object.file_request import FileRequest
     from boxsdk.object.file_version import FileVersion
     from boxsdk.object.upload_session import UploadSession
     from boxsdk.object.comment import Comment
@@ -126,6 +127,17 @@ class Client(Cloneable):
             A :class:`File` object with the given file id.
         """
         return self.translator.get('file')(session=self._session, object_id=file_id)
+
+    def file_request(self, request_id: str) -> 'FileRequest':
+        """
+        Initialize a :class:`FileRequest` object, whose box id is request_id.
+
+        :param request_id:
+            The box id of the :class:`FileRequest` object.
+        :return:
+            A :class:`FileRequest` object with the given file request id.
+        """
+        return self.translator.get('file_request')(session=self._session, object_id=request_id)
 
     def file_version(self, version_id: str) -> 'FileVersion':
         """
