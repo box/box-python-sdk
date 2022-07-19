@@ -61,9 +61,7 @@ def main():
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=3']
     coveralls_requires = ['coveralls']
     dev_requires = ['tox']
-    gh_requires = [
-        'tox-gh-actions',
-    ]
+    gh_requires = ['tox-gh-actions']
     test_requires = [
         'bottle',
         'jsonpatch>1.14',
@@ -78,7 +76,7 @@ def main():
         'redis': redis_requires,
         'coveralls': coveralls_requires + dev_requires,
         'dev': dev_requires,
-        'gh': gh_requires,
+        'gh': gh_requires + dev_requires,
         'test': test_requires,
         'all': jwt_requires + redis_requires
     }
