@@ -59,7 +59,7 @@ def main():
     ]
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=3']
-    coveralls_requires = ['coveralls']
+    coveralls_requires = ['coveralls', 'pytest-cov']
     dev_requires = ['tox']
     gh_requires = [
         'tox-gh-actions',
