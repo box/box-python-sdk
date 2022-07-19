@@ -59,7 +59,7 @@ def main():
     ]
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=3']
-    coveralls_requires = ['coveralls', 'pytest-cov']
+    coveralls_requires = ['coveralls']
     dev_requires = ['tox']
     gh_requires = [
         'tox-gh-actions',
@@ -69,6 +69,7 @@ def main():
         'jsonpatch>1.14',
         'sqlalchemy<1.4.0',
         'pytest',
+        'pytest-cov',
         'pytest-lazy-fixture',
         'pytz',
     ]
