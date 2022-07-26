@@ -78,7 +78,6 @@ def main():
         'dev': dev_requires,
         'gh': gh_requires + dev_requires,
         'test': test_requires,
-        'all': jwt_requires + redis_requires
     }
     with open('boxsdk/version.py', encoding='utf-8') as config_py:
         version = re.search(r'^\s*__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE).group(1)
