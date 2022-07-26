@@ -3,7 +3,7 @@ name: Enhancement
 about: Suggest a new feature or change
 title: ''
 labels: enhancement
-assignees: mwwoda, mhagmajer, antusus, arjankowski
+assignees: mwwoda, mhagmajer, antusus, arjankowski, lukaszsocha2, bartlomiejleszczynski
 
 ---
 
