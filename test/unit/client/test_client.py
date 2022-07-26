@@ -1551,6 +1551,8 @@ def mock_sign_request_response():
         'email_subject': 'Sign Request from Acme',
         'external_id': '123',
         'is_document_preparation_needed': 'true',
+        'redirect_url': 'https://www.box.com/accepted',
+        'declined_redirect_url': 'https://www.box.com/declined',
         'parent_folder': {
             'id': '12345',
             'type': 'folder',
@@ -1666,7 +1668,8 @@ def test_get_sign_requests(mock_client, mock_box_session, mock_sign_request_resp
 
 def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_response):
     expected_url = f'{API.BASE_API_URL}/sign_requests'
-
+    redirect_url = 'https://www.box.com/accepted'
+    declined_redirect_url = 'https://www.box.com/declined'
     source_file = {
         'id': '12345',
         'type': 'file'
@@ -1695,18 +1698,23 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
         {
             'id': parent_folder_id,
             'type': 'folder'
-        }
+        },
+        'redirect_url': redirect_url,
+        'declined_redirect_url': declined_redirect_url,
     })
     mock_box_session.post.return_value.json.return_value = mock_sign_request_response
 
     new_sign_request = mock_client.create_sign_request(
-        files, signers, parent_folder_id)
+        files, signers, parent_folder_id, 
+        redirect_url=redirect_url, declined_redirect_url=declined_redirect_url)
 
     mock_box_session.post.assert_called_once_with(expected_url, data=data)
     assert isinstance(new_sign_request, SignRequest)
     assert new_sign_request['source_files'][0]['id'] == source_file['id']
     assert new_sign_request['signers'][0]['email'] == signer['email']
     assert new_sign_request['parent_folder']['id'] == parent_folder_id
+    assert new_sign_request['redirect_url'] == redirect_url
+    assert new_sign_request['declined_redirect_url'] == declined_redirect_url
 
 
 def test_file_request(mock_client):

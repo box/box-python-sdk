@@ -1505,7 +1505,9 @@ class Client(Cloneable):
             email_message: Optional[Iterable] = None,
             email_subject: Optional[str] = None,
             external_id: Optional[str] = None,
-            is_document_preparation_needed: Optional[bool] = None
+            is_document_preparation_needed: Optional[bool] = None,
+            redirect_url: Optional[str] = None,
+            declined_redirect_url: Optional[str] = None,
     ) -> dict:
         """
         Used to create a new sign request.
@@ -1537,6 +1539,11 @@ class Client(Cloneable):
             This can be used to reference an ID in an external system that the sign request is related to.
         :param is_document_preparation_needed:
             Indicates if the sender should receive a prepare_url in the response to complete document preparation via UI.
+        :param redirect_url:
+            The URL that a signer will be redirected to after signing a document. 
+            If no declined redirect URL is specified, this URL will be used for decline actions as well.
+        :param declined_redirect_url:
+            The URL that a signer will be redirected to after declining to sign a document. 
         :returns:
             A dictionary representing a created SignRequest
         """
@@ -1567,7 +1574,10 @@ class Client(Cloneable):
             body['external_id'] = external_id
         if is_document_preparation_needed:
             body['is_document_preparation_needed'] = is_document_preparation_needed
-
+        if redirect_url:
+            body['redirect_url'] = redirect_url
+        if declined_redirect_url:
+            body['declined_redirect_url'] = declined_redirect_url
         box_response = self._session.post(url, data=json.dumps(body))
         response = box_response.json()
         return self.translator.translate(
