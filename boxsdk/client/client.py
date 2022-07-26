@@ -1540,10 +1540,10 @@ class Client(Cloneable):
         :param is_document_preparation_needed:
             Indicates if the sender should receive a prepare_url in the response to complete document preparation via UI.
         :param redirect_url:
-            The URL that a signer will be redirected to after signing a document. 
+            The URL that a signer will be redirected to after signing a document.
             If no declined redirect URL is specified, this URL will be used for decline actions as well.
         :param declined_redirect_url:
-            The URL that a signer will be redirected to after declining to sign a document. 
+            The URL that a signer will be redirected to after declining to sign a document.
         :returns:
             A dictionary representing a created SignRequest
         """

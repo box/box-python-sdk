@@ -1705,7 +1705,7 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
     mock_box_session.post.return_value.json.return_value = mock_sign_request_response
 
     new_sign_request = mock_client.create_sign_request(
-        files, signers, parent_folder_id, 
+        files, signers, parent_folder_id,
         redirect_url=redirect_url, declined_redirect_url=declined_redirect_url)
 
     mock_box_session.post.assert_called_once_with(expected_url, data=data)
