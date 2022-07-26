@@ -19,7 +19,7 @@ A Sign Request can refer to one or more Box Files and can be sent to one or more
 Create Sign Request
 ------------------------
 
-The [`client.create_sign_request(files, signers, parent_folder_id, prefill_tags=None, are_reminders_enabled=None, are_text_signatures_enabled=None, days_valid=None, email_message=None, email_subject=None, external_id=None, is_document_preparation_needed=None, redirect_url=None, declined_redirect_url=None)`][create-sign-request]
+The [`client.create_sign_request(files, signers, parent_folder_id, prefill_tags=None, are_reminders_enabled=None, are_text_signatures_enabled=None, days_valid=None, email_message=None, email_subject=None, external_id=None, is_document_preparation_needed=None)`][create-sign-request]
 method will create a Sign Request. You need to provide at least one file (from which the signing document will be created) and at least one signer to receive the Sign Request.
 
 <!-- sample post_sign_requests -->
