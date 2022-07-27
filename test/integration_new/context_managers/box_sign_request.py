@@ -13,4 +13,5 @@ class BoxTestSignRequest:
         return self._sign_request
 
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
-        self._sign_request.cancel()
+        if self._sign_request is not None and self._sign_request.status != 'cancelled':
+            self._sign_request = self._sign_request.cancel()
