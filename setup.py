@@ -55,30 +55,30 @@ def main():
         'attrs>=17.3.0',
         'requests>=2.4.3',
         'requests-toolbelt>=0.4.0, <1.0.0',
-        'wrapt>=1.10.1',
         'python-dateutil',  # To be removed after dropping Python 3.6
     ]
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=3']
-    extra_requires = {'jwt': jwt_requires, 'redis': redis_requires, 'all': jwt_requires + redis_requires}
+    coveralls_requires = ['coveralls']
+    dev_requires = ['tox']
+    gh_requires = ['tox-gh-actions']
     test_requires = [
         'bottle',
         'jsonpatch>1.14',
-        'pycodestyle',
-        'pylint',
-        'sphinx',
         'sqlalchemy<1.4.0',
-        'tox',
         'pytest',
         'pytest-cov',
-        'pytest-xdist',
         'pytest-lazy-fixture',
-        'coveralls',
-        'coverage',
-        'tox-gh-actions',
         'pytz',
     ]
-    extra_requires['test'] = test_requires
+    extra_requires = {
+        'jwt': jwt_requires,
+        'redis': redis_requires,
+        'coveralls': coveralls_requires + dev_requires,
+        'dev': dev_requires,
+        'gh': gh_requires + dev_requires,
+        'test': test_requires,
+    }
     with open('boxsdk/version.py', encoding='utf-8') as config_py:
         version = re.search(r'^\s*__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE).group(1)
     setup(
