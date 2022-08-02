@@ -1,7 +1,7 @@
 from typing import Any, Union
 
 from boxsdk.object.retention_policy import RetentionPolicy
-from test.integration_new import CLIENT
+from test.integration_new import USER_CLIENT
 
 
 class BoxRetentionPolicy:
@@ -17,12 +17,12 @@ class BoxRetentionPolicy:
     ):
 
         policy_type = 'finite' if retention_length < float('inf') else 'infinite'
-        policies_found = list(CLIENT.get_retention_policies(policy_name=name, policy_type=policy_type))
+        policies_found = list(USER_CLIENT.get_retention_policies(policy_name=name, policy_type=policy_type))
 
         if policies_found and policies_found[0].get().status == 'active':
             self._retention_policy = policies_found[0]
         else:
-            self._retention_policy: RetentionPolicy = CLIENT.create_retention_policy(
+            self._retention_policy: RetentionPolicy = USER_CLIENT.create_retention_policy(
                 policy_name=name,
                 disposition_action=disposition_action,
                 retention_length=retention_length
