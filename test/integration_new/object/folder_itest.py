@@ -63,12 +63,13 @@ def test_manual_chunked_upload(parent_folder, large_file, large_file_name):
         content_sha1 = sha1.digest()
         uploaded_file = upload_session.commit(content_sha1=content_sha1, parts=part_array)
 
-        assert uploaded_file.id
-        assert uploaded_file.name == large_file_name
-        assert uploaded_file.parent == parent_folder
-        assert uploaded_file.size == total_size
-
-        util.permanently_delete(uploaded_file)
+        try:
+            assert uploaded_file.id
+            assert uploaded_file.name == large_file_name
+            assert uploaded_file.parent == parent_folder
+            assert uploaded_file.size == total_size
+        finally:
+            util.permanently_delete(uploaded_file)
 
 
 def test_auto_chunked_upload(parent_folder, large_file, large_file_name):
@@ -77,12 +78,13 @@ def test_auto_chunked_upload(parent_folder, large_file, large_file_name):
 
     uploaded_file = chunked_uploader.start()
 
-    assert uploaded_file.id
-    assert uploaded_file.name == large_file_name
-    assert uploaded_file.parent == parent_folder
-    assert uploaded_file.size == total_size
-
-    util.permanently_delete(uploaded_file)
+    try:
+        assert uploaded_file.id
+        assert uploaded_file.name == large_file_name
+        assert uploaded_file.parent == parent_folder
+        assert uploaded_file.size == total_size
+    finally:
+        util.permanently_delete(uploaded_file)
 
 
 def test_get_items(parent_folder, small_file_path):
@@ -97,28 +99,29 @@ def test_upload_stream_to_folder(parent_folder, small_file_name, small_file_path
     with open(small_file_path, 'rb') as stream_to_be_uploaded:
         uploaded_file = parent_folder.upload_stream(file_stream=stream_to_be_uploaded, file_name=small_file_name)
 
-    assert uploaded_file.id
-    assert uploaded_file.parent == parent_folder
-
-    util.permanently_delete(uploaded_file)
+        try:
+            assert uploaded_file.id
+            assert uploaded_file.parent == parent_folder
+        finally:
+            util.permanently_delete(uploaded_file)
 
 
 def test_upload_small_file_to_folder(parent_folder, small_file_name, small_file_path):
     uploaded_file = parent_folder.upload(file_path=small_file_path, file_name=small_file_name)
-
-    assert uploaded_file.id
-    assert uploaded_file.parent == parent_folder
-
-    util.permanently_delete(uploaded_file)
+    try:
+        assert uploaded_file.id
+        assert uploaded_file.parent == parent_folder
+    finally:
+        util.permanently_delete(uploaded_file)
 
 
 def test_create_subfolder(parent_folder):
     created_subfolder = parent_folder.create_subfolder(name=util.random_name())
-
-    assert created_subfolder.id
-    assert created_subfolder.parent == parent_folder
-
-    util.permanently_delete(created_subfolder)
+    try:
+        assert created_subfolder.id
+        assert created_subfolder.parent == parent_folder
+    finally:
+        util.permanently_delete(created_subfolder)
 
 
 def test_get_shared_link(parent_folder, other_user, other_client):
@@ -160,23 +163,24 @@ def test_invite_collaboratur_using_when_nonexistent_user_email_provided(parent_f
 
 def test_create_web_link(parent_folder):
     created_web_link = parent_folder.create_web_link(target_url="https://box.com")
-
-    assert created_web_link.id
-    assert created_web_link.parent == parent_folder
-
-    util.permanently_delete(created_web_link)
+    try:
+        assert created_web_link.id
+        assert created_web_link.parent == parent_folder
+    finally:
+        util.permanently_delete(created_web_link)
 
 
 def test_delete_folder(parent_folder):
     with BoxTestFolder(parent_folder=parent_folder) as folder:
         created_subfolder = folder.create_subfolder(name=util.random_name())
-        created_subfolder.create_subfolder(name=util.random_name())
+        try:
+            created_subfolder.create_subfolder(name=util.random_name())
 
-        assert list(folder.get_items())
-        created_subfolder.delete(recursive=True)
-        assert not list(folder.get_items())
-
-        CLIENT.trash().permanently_delete_item(created_subfolder)
+            assert list(folder.get_items())
+            created_subfolder.delete(recursive=True)
+            assert not list(folder.get_items())
+        finally:
+            CLIENT.trash().permanently_delete_item(created_subfolder)
 
 
 def test_cascade_and_get_metadata_cascade_policies(parent_folder):
@@ -193,16 +197,16 @@ def test_cascade_and_get_metadata_cascade_policies(parent_folder):
 
 def test_create_and_get_lock(parent_folder):
     with BoxTestFolder(parent_folder=parent_folder) as folder:
-        folder.create_lock()
+        lock = folder.create_lock()
 
-        lock = list(folder.get_locks())[0]
-        assert lock.id
-        assert lock.folder == folder
+        try:
+            assert lock.id == list(folder.get_locks())[0].id
+            assert lock.folder == folder
 
-        with pytest.raises(BoxAPIException):
-            folder.delete()
+            with pytest.raises(BoxAPIException):
+                folder.move(parent_folder=CLIENT.root_folder())
 
-        with pytest.raises(BoxAPIException):
-            folder.move(parent_folder=CLIENT.root_folder())
-
-        lock.delete()
+            with pytest.raises(BoxAPIException):
+                folder.delete()
+        finally:
+            lock.delete()

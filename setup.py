@@ -67,6 +67,7 @@ def main():
         'jsonpatch>1.14',
         'sqlalchemy<1.4.0',
         'pytest',
+        'pytest-timeout',
         'pytest-cov',
         'pytest-lazy-fixture',
         'pytz',
