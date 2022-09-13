@@ -7,6 +7,7 @@ import pytest
 import pytz
 
 from boxsdk import BoxAPIException
+from integration_new.context_managers.box_retention_policy_assigment import BoxRetentionPolicyAssignment
 from test.integration_new.context_managers.box_retention_policy import BoxRetentionPolicy
 from test.integration_new import util
 from test.integration_new.context_managers.box_test_file import BoxTestFile
@@ -252,17 +253,16 @@ def test_copy(test_file, parent_folder):
 def test_set_disposition_at(parent_folder, small_file_path):
     with BoxRetentionPolicy(disposition_action='permanently_delete', retention_length=1) as retention_policy:
         with BoxTestFolder(name=f'{FILE_TESTS_DIRECTORY_NAME} {datetime.now()}') as folder_under_retention:
-            retention_policy.assign(folder_under_retention)
+            with BoxRetentionPolicyAssignment(retention_policy=retention_policy, assignee=folder_under_retention):
+                with BoxTestFile(parent_folder=folder_under_retention, file_path=small_file_path) as file_under_retention:
+                    old_disposition_str = file_under_retention.get(fields=('disposition_at',)).disposition_at
+                    old_disposition_datetime = parser.parse(old_disposition_str)
 
-            with BoxTestFile(parent_folder=folder_under_retention, file_path=small_file_path) as file_under_retention:
-                old_disposition_str = file_under_retention.get(fields=('disposition_at',)).disposition_at
-                old_disposition_datetime = parser.parse(old_disposition_str)
+                    new_disposition_date = datetime.now().replace(microsecond=0).astimezone(pytz.utc) + timedelta(days=2)
+                    file_under_retention.set_disposition_at(new_disposition_date)
 
-                new_disposition_date = datetime.now().replace(microsecond=0).astimezone(pytz.utc) + timedelta(days=2)
-                file_under_retention.set_disposition_at(new_disposition_date)
+                    updated_disposition_str = file_under_retention.get(fields=('disposition_at',)).disposition_at
+                    updated_disposition_datetime = parser.parse(updated_disposition_str)
 
-                updated_disposition_str = file_under_retention.get(fields=('disposition_at',)).disposition_at
-                updated_disposition_datetime = parser.parse(updated_disposition_str)
-
-                assert updated_disposition_datetime.astimezone(pytz.utc) == new_disposition_date
-                assert updated_disposition_datetime.astimezone(pytz.utc) != old_disposition_datetime.astimezone(pytz.utc)
+                    assert updated_disposition_datetime.astimezone(pytz.utc) == new_disposition_date
+                    assert updated_disposition_datetime.astimezone(pytz.utc) != old_disposition_datetime.astimezone(pytz.utc)

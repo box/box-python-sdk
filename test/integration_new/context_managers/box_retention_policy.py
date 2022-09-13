@@ -6,7 +6,7 @@ from test.integration_new import USER_CLIENT
 
 class BoxRetentionPolicy:
 
-    DEFAULT_RETENTION_POLICY_NAME = "retention_policy_for_integration_tests"
+    DEFAULT_RETENTION_POLICY_NAME = "modifiable_retention_policy_for_integration_tests"
 
     def __init__(
             self,
@@ -25,7 +25,8 @@ class BoxRetentionPolicy:
             self._retention_policy: RetentionPolicy = USER_CLIENT.create_retention_policy(
                 policy_name=name,
                 disposition_action=disposition_action,
-                retention_length=retention_length
+                retention_length=retention_length,
+                retention_type='modifiable'
             )
 
     def __enter__(self) -> RetentionPolicy:
