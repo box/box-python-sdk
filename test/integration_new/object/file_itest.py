@@ -7,7 +7,7 @@ import pytest
 import pytz
 
 from boxsdk import BoxAPIException
-from integration_new.context_managers.box_retention_policy_assigment import BoxRetentionPolicyAssignment
+from test.integration_new.context_managers.box_retention_policy_assigment import BoxRetentionPolicyAssignment
 from test.integration_new.context_managers.box_retention_policy import BoxRetentionPolicy
 from test.integration_new import util
 from test.integration_new.context_managers.box_test_file import BoxTestFile
