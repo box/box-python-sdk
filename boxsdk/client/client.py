@@ -862,6 +862,7 @@ class Client(Cloneable):
             can_owner_extend_retention: Optional[bool] = None,
             are_owners_notified: Optional[bool] = None,
             custom_notification_recipients: Iterable['User'] = None,
+            retention_type: Optional[str] = None
     ) -> 'RetentionPolicy':
         """
         Create a retention policy for the given enterprise.
@@ -880,6 +881,13 @@ class Client(Cloneable):
             The owner or co-owner will get notified when a file is nearing expiration.
         :param custom_notification_recipients:
             A custom list of user mini objects that should be notified when a file is nearing expiration.
+        :param retention_type:
+            Specifies the retention type. It can be one of the values:
+            -   `modifiable`: You can modify the retention policy. For example, you can add or remove folders,
+                shorten or lengthen the policy duration, or delete the assignment.
+            -   `non_modifiable`: You can modify the retention policy only in a limited way: add a folder,
+                lengthen the duration, retire the policy, change the disposition action or notification settings.
+                You cannot perform other actions, such as deleting the assignment or shortening the policy duration.
         :return:
             The newly created Retention Policy
         """
@@ -900,6 +908,8 @@ class Client(Cloneable):
         if custom_notification_recipients is not None:
             user_list = [{'type': user.object_type, 'id': user.object_id} for user in custom_notification_recipients]
             retention_attributes['custom_notification_recipients'] = user_list
+        if retention_type is not None:
+            retention_attributes['retention_type'] = retention_type
         box_response = self._session.post(url, data=json.dumps(retention_attributes))
         response = box_response.json()
         return self.translator.translate(
