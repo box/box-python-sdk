@@ -21,17 +21,20 @@ def test_automatic_refresh(
             f'{API.BASE_API_URL}/folders/0',
             headers=ANY,
             params=None,
+            log_response_content=True,
         ),
         call(
             'POST',
             f'{API.OAUTH2_API_URL}/token',
             data=ANY,
             headers={'content-type': 'application/x-www-form-urlencoded', 'User-Agent': ANY, 'X-Box-UA': ANY},
+            log_response_content=True,
         ),
         call(
             'GET',
             f'{API.BASE_API_URL}/folders/0',
             headers=ANY,
             params=None,
+            log_response_content=True,
         ),
     ]
