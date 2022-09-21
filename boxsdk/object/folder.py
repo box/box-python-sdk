@@ -319,8 +319,9 @@ class Folder(Item):
             headers['Content-MD5'] = sha1
         if not headers:
             headers = None
-        file_response = self._session.post(url, data=data, files=files, expect_json_response=False,
-                                           headers=headers).json()
+        file_response = self._session.post(
+            url, data=data, files=files, expect_json_response=False, headers=headers
+        ).json()
         if 'entries' in file_response:
             file_response = file_response['entries'][0]
         return self.translator.translate(
