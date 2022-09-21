@@ -17,6 +17,7 @@ file's contents, upload new versions, and perform other common file operations
   - [Automatic Uploader](#automatic-uploader)
     - [Upload new file](#upload-new-file)
     - [Upload new file version](#upload-new-file-version)
+    - [Preflight check before upload](#preflight-check-before-upload)
     - [Resume Upload](#resume-upload)
     - [Abort Chunked Upload](#abort-chunked-upload)
   - [Manual Process](#manual-process)
@@ -260,7 +261,6 @@ try:
 except BoxAPIException as e:
   print(f'File {file_name} cannot be uploaded to folder with id: {destination_folder_id}. Reason: {e.message}')
 ```
-
 
 [start]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader.start
 [chunked_uploader_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader
