@@ -268,7 +268,7 @@ except BoxAPIException as e:
 [get_chunked_uploader_for_file]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.get_chunked_uploader
 [upload_session_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession
 [get_chunked_uploader_for_stream]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.get_chunked_uploader_for_stream
-[preflight_check]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.
+[preflight_check]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.preflight_check
 
 #### Resume Upload
 
@@ -295,7 +295,7 @@ uploaded_file = chunked_uploader.resume()
 print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 ```
 
-[resume]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.preflight_check
+[resume]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader.resume
 
 #### Abort Chunked Upload
 
