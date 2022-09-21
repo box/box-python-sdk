@@ -45,6 +45,7 @@ class _CollaborationType(TextEnum):
 
 class _Collaborator:
     """This helper class represents a collaborator on Box. A Collaborator can be a User, Group, or an email address"""
+
     def __init__(self, collaborator: Any):
         if isinstance(collaborator, User):
             self._setup(user=collaborator)
@@ -138,21 +139,29 @@ class Folder(Item):
         )
 
     @api_call
-    def get_chunked_uploader(self, file_path: str) -> 'ChunkedUploader':
+    def get_chunked_uploader(self, file_path: str, file_name: Optional[str] = None) -> 'ChunkedUploader':
         # pylint: disable=consider-using-with
         """
         Instantiate the chunked upload instance and create upload session with path to file.
 
         :param file_path:
             The local path to the file you wish to upload.
+         :param file_name:
+            The name with extention of the file that will be uploaded, e.g. new_file_name.zip.
+            If not specified, the name from the local system is used.
         :returns:
             A :class:`ChunkedUploader` object.
         """
         total_size = os.stat(file_path).st_size
+        upload_file_name = file_name if file_name else os.path.basename(file_path)
         content_stream = open(file_path, 'rb')
-        file_name = os.path.basename(file_path)
-        upload_session = self.create_upload_session(total_size, file_name)
-        return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
+
+        try:
+            upload_session = self.create_upload_session(total_size, upload_file_name)
+            return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
+        except Exception:
+            content_stream.close()
+            raise
 
     def _get_accelerator_upload_url_fow_new_uploads(self) -> Optional[str]:
         """
@@ -310,7 +319,8 @@ class Folder(Item):
             headers['Content-MD5'] = sha1
         if not headers:
             headers = None
-        file_response = self._session.post(url, data=data, files=files, expect_json_response=False, headers=headers).json()
+        file_response = self._session.post(url, data=data, files=files, expect_json_response=False,
+                                           headers=headers).json()
         if 'entries' in file_response:
             file_response = file_response['entries'][0]
         return self.translator.translate(
