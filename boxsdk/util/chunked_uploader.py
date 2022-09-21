@@ -125,7 +125,7 @@ class ChunkedUploader:
     def _commit_and_erase_stream_reference_when_succeed(self):
         content_sha1 = self._sha1.digest()
         commit_result = self._upload_session.commit(content_sha1=content_sha1, parts=self._part_array)
-        # self._content_stream = None
+        self._content_stream = None
         return commit_result
 
 
