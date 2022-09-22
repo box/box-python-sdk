@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 class ChunkedUploader:
 
-    def __init__(self, upload_session: 'UploadSession', content_stream: IO, file_size: int):
+    def __init__(self, upload_session: 'UploadSession', content_stream: IO[bytes], file_size: int):
         """
         The initializer for the :class:`ChunkedUploader`
 
@@ -42,8 +42,7 @@ class ChunkedUploader:
         if self._is_aborted:
             raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
         self._upload()
-        content_sha1 = self._sha1.digest()
-        return self._upload_session.commit(content_sha1=content_sha1, parts=self._part_array)
+        return self._commit_and_erase_stream_reference_when_succeed()
 
     def resume(self) -> Optional['File']:
         """
@@ -68,8 +67,7 @@ class ChunkedUploader:
                 self._inflight_part = None
             self._part_definitions[part['offset']] = part
         self._upload()
-        content_sha1 = self._sha1.digest()
-        return self._upload_session.commit(content_sha1=content_sha1, parts=self._part_array)
+        return self._commit_and_erase_stream_reference_when_succeed()
 
     def abort(self) -> bool:
         """
@@ -86,7 +84,7 @@ class ChunkedUploader:
 
     def _upload(self) -> None:
         """
-        Utility function for looping through all parts of of the upload session and uploading them.
+        Utility function for looping through all parts of the upload session and uploading them.
         """
         while len(self._part_array) < self._upload_session.total_parts:
             # Retrieve the part inflight if it exists, if it does not exist then get the next part from the stream.
@@ -123,6 +121,14 @@ class ChunkedUploader:
             chunk += bytes_read
             copied_length += len(bytes_read)
         return InflightPart(offset, chunk, self._upload_session, self._file_size)
+
+    def _commit_and_erase_stream_reference_when_succeed(self):
+        content_sha1 = self._sha1.digest()
+        commit_result = self._upload_session.commit(content_sha1=content_sha1, parts=self._part_array)
+        # Remove file stream reference when uploading file succeeded
+        if commit_result is not None:
+            self._content_stream = None
+        return commit_result
 
 
 class InflightPart:

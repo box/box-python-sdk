@@ -17,6 +17,7 @@ file's contents, upload new versions, and perform other common file operations
   - [Automatic Uploader](#automatic-uploader)
     - [Upload new file](#upload-new-file)
     - [Upload new file version](#upload-new-file-version)
+    - [Preflight check before upload](#preflight-check-before-upload)
     - [Resume Upload](#resume-upload)
     - [Abort Chunked Upload](#abort-chunked-upload)
   - [Manual Process](#manual-process)
@@ -200,39 +201,39 @@ without aborting the entire upload, and failed parts can then be retried.
 
 #### Upload new file
 
-The SDK provides a method of automatically handling a chunked upload. First get a folder you want to upload the file to. Then call [`folder.get_chunked_uploader(file_path, rename_file=False)`][get_chunked_uploader_for_file] to retrieve a [`ChunkedUploader`][chunked_uploader_class] object. Calling the method [`chunked_upload.start()`][start] will kick off the chunked upload process and return the [File][file_class] 
+The SDK provides a method of automatically handling a chunked upload. First get a folder you want to upload the file to.
+Then call [`folder.get_chunked_uploader(file_path, rename_file=False)`][get_chunked_uploader_for_file] to retrieve
+a [`ChunkedUploader`][chunked_uploader_class] object. Calling the method [`chunked_upload.start()`][start] will
+kick off the chunked upload process and return the [File][file_class] 
 object that was uploaded.
 
 <!-- samples x_chunked_uploads automatic -->
 ```python
 # uploads large file to a root folder 
-chunked_uploader = client.folder('0').get_chunked_uploader('/path/to/file')
+chunked_uploader = client.folder('0').get_chunked_uploader(file_path='/path/to/file.txt', file_name='new_name.txt')
 uploaded_file = chunked_uploader.start()
 print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 ```
 
-You can also return a [`ChunkedUploader`][chunked_uploader_class] object by creating a [`UploadSession`][upload_session_class] object first 
-and calling the method [`upload_session.get_chunked_upload(file_path)`][get_chunked_uploader] or 
-[`upload_session.get_chunked_uploader_for_stream(content_stream, file_size)`][get_chunked_uploader_for_stream].
-
-```python
-chunked_uploader = client.upload_session('56781').get_chunked_uploader('/path/to/file')
-uploaded_file = chunked_uploader.start()
-print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
-```
+You can also upload file stream by creating a [`UploadSession`][upload_session_class] first and then calling the 
+method [`upload_session.get_chunked_uploader_for_stream(content_stream, file_size)`][get_chunked_uploader_for_stream].
 
 ```python
 test_file_path = '/path/to/large_file.mp4'
-content_stream = open(test_file_path, 'rb')
-total_size = os.stat(test_file_path).st_size
-chunked_uploader = client.upload_session('56781').get_chunked_uploader_for_stream(content_stream, total_size)
-uploaded_file = chunked_uploader.start()
-print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
+with open(test_file_path, 'rb') as content_stream:
+  total_size = os.stat(test_file_path).st_size
+  upload_session = client.folder('0').create_upload_session(file_size=total_size, file_name='large_file.mp4')
+  chunked_uploader = upload_session.get_chunked_uploader_for_stream(content_stream=content_stream, file_size=total_size)
+  uploaded_file = chunked_uploader.start()
+  print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 ```
 
 #### Upload new file version
 
-To upload a new file version for a large file, first get a file you want to replace. Then call [`file.get_chunked_uploader(file_path)`][get_chunked_uploader_for_version] to retrieve a [`ChunkedUploader`][chunked_uploader_class] object. Calling the method [`chunked_upload.start()`][start] will kick off the chunked upload process and return the updated [File][file_class].
+To upload a new file version for a large file, first get a file you want to replace.
+Then call [`file.get_chunked_uploader(file_path)`][get_chunked_uploader_for_version]
+to retrieve a [`ChunkedUploader`][chunked_uploader_class] object. Calling the method [`chunked_upload.start()`][start]
+will kick off the chunked upload process and return the updated [File][file_class].
 
 <!-- samples x_chunked_uploads automatic_new_version -->
 ```python
@@ -243,13 +244,31 @@ print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.
 # the uploaded_file.id will be the same as 'existing_big_file_id'
 ```
 
+#### Preflight check before upload
+
+To check if a file can be uploaded with given name to a specific folder call 
+[`folder.preflight_check(size, name)`][preflight_check]. If the check did not pass, this method will raise an exception
+including some details on why it did not pass.
+
+<!-- samples x_chunked_uploads automatic_new_version -->
+```python
+file_name = 'large_file.mp4'
+test_file_path = '/path/to/large_file.mp4'
+total_size = os.stat(test_file_path).st_size
+destination_folder_id = '0'
+try:
+  client.folder(destination_folder_id).preflight_check(size=total_size, name=file_name)
+except BoxAPIException as e:
+  print(f'File {file_name} cannot be uploaded to folder with id: {destination_folder_id}. Reason: {e.message}')
+```
+
 [start]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader.start
 [chunked_uploader_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader
 [get_chunked_uploader_for_version]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file.File.get_chunked_uploader
 [get_chunked_uploader_for_file]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.get_chunked_uploader
 [upload_session_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession
-[get_chunked_uploader]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.get_chunked_uploader
 [get_chunked_uploader_for_stream]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.upload_session.UploadSession.get_chunked_uploader_for_stream
+[preflight_check]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.preflight_check
 
 #### Resume Upload
 
