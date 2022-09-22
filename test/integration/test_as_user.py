@@ -30,6 +30,7 @@ def test_client_as_user_causes_as_user_header_to_be_added(
             f'{API.BASE_API_URL}/folders/0',
             headers=as_user_headers,
             params=None,
+            log_response_content=True,
         ),
     ]
 
@@ -52,6 +53,7 @@ def test_folder_object_as_user_causes_as_user_header_to_be_added(
             f'{API.BASE_API_URL}/folders/0',
             headers=as_user_headers,
             params=None,
+            log_response_content=True,
         ),
     ]
 
@@ -74,6 +76,7 @@ def test_group_membership_object_as_user_causes_as_user_header_to_be_added(
             f'{API.BASE_API_URL}/group_memberships/0',
             headers=as_user_headers,
             params=None,
+            log_response_content=True,
         ),
     ]
 
@@ -99,6 +102,7 @@ def test_events_endpoint_as_user_causes_as_user_header_to_be_added(
             headers=as_user_headers,
             timeout=options['retry_timeout'],
             params={'stream_position': stream_position},
+            log_response_content=True,
         ),
     ]
 
@@ -120,5 +124,6 @@ def test_metadata_endpoint_as_user_causes_as_user_header_to_be_added(
             'GET',
             f'{API.BASE_API_URL}/files/0/metadata/global/properties',
             headers=as_user_headers,
+            log_response_content=True,
         ),
     ]

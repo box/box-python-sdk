@@ -438,6 +438,7 @@ class Session:
             request.url,
             access_token=request_kwargs.pop('access_token', None),
             headers=request.headers,
+            log_response_content=request.expect_json_response,
             **request_kwargs
         )
 

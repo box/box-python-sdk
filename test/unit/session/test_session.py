@@ -326,6 +326,7 @@ def test_proxy_attaches_to_request_correctly(
         access_token='fake_access_token',
         headers=ANY,
         proxies=expected_proxy_dict,
+        log_response_content=True,
     )
 
 

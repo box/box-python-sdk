@@ -90,10 +90,11 @@ def make_network_request_and_assert_response(make_network_request, request_respo
 @pytest.fixture
 def construct_network_response(access_token):
 
-    def _construct_network_response(request_response):
+    def _construct_network_response(request_response, log_response_content=True):
         return DefaultNetworkResponse(
             request_response=request_response,
             access_token_used=access_token,
+            log_response_content=log_response_content
         )
 
     return _construct_network_response
@@ -185,7 +186,7 @@ def test_network_response_constructor(make_network_request_and_assert_response):
 def test_network_logs_requests(make_network_request, http_verb, test_url, network, logger):
     kwargs = dict(custom_kwarg='foo')
     make_network_request(network, **kwargs)
-    logger.info.assert_called_once_with(
+    logger.info.assert_any_call(
         network.REQUEST_FORMAT,
         {'method': http_verb, 'url': test_url, 'request_kwargs': pformat(kwargs)},
     )
@@ -211,11 +212,11 @@ def test_network_request_returns_network_response(make_network_request, request_
 # BEGIN Tests for NetworkResponse.
 
 
-def test_error_network_response_logs_immediately(network_response, logger_call_count):
+def test_all_network_responses_log_immediately(network_response, logger_call_count):
     # pylint:disable=unused-argument
     # Need to load the `network_response` fixture for this test to be
     # meaningful.
-    assert logger_call_count() == 0 if network_response.ok else 1
+    assert logger_call_count() == 1
 
 
 def test_network_response_only_logs_once(network_response, logger_call_count):
@@ -226,7 +227,7 @@ def test_network_response_only_logs_once(network_response, logger_call_count):
 
 
 @pytest.mark.parametrize('content_length_header', [False, True])
-def test_network_logs_successful_responses(
+def test_network_logs_successful_json_responses(
         construct_network_response, generic_successful_request_response, assert_logger_called_once_with,
         get_content_from_response, http_verb, test_url, content_length_header,
 ):
@@ -254,9 +255,9 @@ def test_network_logs_successful_responses(
 
 
 @pytest.mark.parametrize('content_length_header', [False, True])
-def test_network_logs_successful_responses_with_stream_placeholder(
+def test_network_logs_successful_responses_with_file_content_placeholder(
         construct_network_response, generic_successful_request_response, assert_logger_called_once_with,
-        do_not_get_content_from_response, logger, content_length_header,
+        logger, content_length_header,
 ):
     if content_length_header:
         expected_content_length = str(len(generic_successful_request_response.content))
@@ -264,10 +265,9 @@ def test_network_logs_successful_responses_with_stream_placeholder(
     else:
         generic_successful_request_response.headers.pop('Content-Length', None)
         expected_content_length = '?'
-    network_response = construct_network_response(generic_successful_request_response)
-    do_not_get_content_from_response(network_response)
+    network_response = construct_network_response(generic_successful_request_response, log_response_content=False)
     assert_logger_called_once_with('info', DefaultNetworkResponse.SUCCESSFUL_RESPONSE_FORMAT, ANY)
-    assert logger.info.call_args[0][1]['content'] == network_response.STREAM_CONTENT_NOT_LOGGED
+    assert logger.info.call_args[0][1]['content'] == network_response.CONTENT_NOT_LOGGED
     assert logger.info.call_args[0][1]['content_length'] == expected_content_length
 
 
@@ -277,10 +277,10 @@ def test_network_logs_successful_responses_with_non_json_content(
 ):
     generic_successful_request_response.content = content = (b''.join(chr(i).encode('utf-8') for i in range(128)) * 4)
     generic_successful_request_response.json.side_effect = lambda: json.loads(content.decode('utf-8'))
-    network_response = construct_network_response(generic_successful_request_response)
+    network_response = construct_network_response(generic_successful_request_response, log_response_content=False)
     get_content_from_response(network_response)
     assert_logger_called_once_with('info', DefaultNetworkResponse.SUCCESSFUL_RESPONSE_FORMAT, ANY)
-    assert logger.info.call_args[0][1]['content'] == pformat(content)
+    assert logger.info.call_args[0][1]['content'] == network_response.CONTENT_NOT_LOGGED
 
 
 def test_network_logs_non_successful_responses(

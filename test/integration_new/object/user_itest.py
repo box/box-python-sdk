@@ -1,3 +1,5 @@
+import time
+
 import pytest
 
 from boxsdk import BoxAPIException
@@ -12,6 +14,7 @@ def test_upload_and_delete_avatar(user, image_path):
             try:
                 avatar = user.get_avatar()
             except BoxAPIException:
+                time.sleep(1)
                 continue
             break
         else:
