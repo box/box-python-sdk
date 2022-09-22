@@ -2,10 +2,12 @@ from logging import getLogger
 from pprint import pformat
 import sys
 import time
-from typing import Any, Callable, Type
+from typing import Any, Callable, Type, Optional
 
 import requests
 from requests import Response
+from requests.structures import CaseInsensitiveDict
+from urllib3 import HTTPResponse
 
 from .network_interface import Network, NetworkResponse
 from ..util.log import sanitize_dictionary
@@ -33,12 +35,14 @@ class DefaultNetwork(Network):
         The logging of the response is deferred to :class:`DefaultNetworkResponse`.
         See that class's docstring for more info.
         """
+        log_response_content = kwargs.pop('log_response_content', True)
         self._log_request(method, url, **kwargs)
         # pylint:disable=abstract-class-instantiated
         try:
             return self.network_response_constructor(
                 request_response=self._session.request(method, url, **kwargs),
                 access_token_used=access_token,
+                log_response_content=log_response_content
             )
         except Exception:
             self._log_exception(method, url, sys.exc_info())
@@ -140,30 +144,23 @@ class DefaultNetworkResponse(NetworkResponse):
     _COMMON_RESPONSE_FORMAT = '"%(method)s %(url)s" %(status_code)s %(content_length)s\n%(headers)s\n%(content)s\n'
     SUCCESSFUL_RESPONSE_FORMAT = f'\x1b[32m{_COMMON_RESPONSE_FORMAT}\x1b[0m'
     ERROR_RESPONSE_FORMAT = f'\x1b[31m{_COMMON_RESPONSE_FORMAT}\x1b[0m'
-    STREAM_CONTENT_NOT_LOGGED = '<File download contents unavailable for logging>'
+    CONTENT_NOT_LOGGED = '<No content or content unavailable for logging>'
 
-    def __init__(self, request_response: 'Response', access_token_used: str):
+    def __init__(self, request_response: 'Response', access_token_used: str, log_response_content: bool = True):
         self._logger = getLogger(__name__)
         self._request_response = request_response
         self._access_token_used = access_token_used
         self._did_log = False
-        if not self.ok:
-            self.log(can_safely_log_content=True)
+        self.log(can_safely_log_content=log_response_content)
 
-    def json(self) -> Any:
+    def json(self) -> dict:
         """Base class override."""
-        try:
-            return self._request_response.json()
-        finally:
-            self.log(can_safely_log_content=True)
+        return self._request_response.json()
 
     @property
-    def content(self) -> Any:
+    def content(self) -> Optional[bytes]:
         """Base class override."""
-        try:
-            return self._request_response.content
-        finally:
-            self.log(can_safely_log_content=True)
+        return self._request_response.content
 
     @property
     def status_code(self) -> int:
@@ -177,17 +174,14 @@ class DefaultNetworkResponse(NetworkResponse):
         return self._request_response.ok
 
     @property
-    def headers(self) -> dict:
+    def headers(self) -> CaseInsensitiveDict:
         """Base class override."""
         return self._request_response.headers
 
     @property
-    def response_as_stream(self) -> Any:
+    def response_as_stream(self) -> HTTPResponse:
         """Base class override."""
-        try:
-            return self._request_response.raw
-        finally:
-            self.log(can_safely_log_content=False)
+        return self._request_response.raw
 
     @property
     def access_token_used(self) -> str:
@@ -199,10 +193,7 @@ class DefaultNetworkResponse(NetworkResponse):
         """
         The response returned from the Requests library.
         """
-        try:
-            return self._request_response
-        finally:
-            self.log(can_safely_log_content=False)
+        return self._request_response
 
     def log(self, can_safely_log_content: bool = False) -> None:
         """Logs information about the Box API response.
@@ -225,7 +216,7 @@ class DefaultNetworkResponse(NetworkResponse):
             return
         self._did_log = True
         content_length = self.headers.get('Content-Length', None)
-        content = self.STREAM_CONTENT_NOT_LOGGED
+        content = self.CONTENT_NOT_LOGGED
         if can_safely_log_content:
             if content_length is None:
                 content_length = str(len(self.content))
