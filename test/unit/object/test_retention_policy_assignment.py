@@ -73,3 +73,13 @@ def test_get_file_versions_under_retention(test_retention_policy_assignment, tes
     mock_box_session.get.assert_called_once_with(target_url, params=params)
     assert isinstance(file_version_under_retention, FileVersion)
     assert file_version_under_retention.object_id == test_file_version.object_id
+
+
+def test_delete_assignment(test_retention_policy_assignment, mock_box_session):
+    expected_url = f'{API.BASE_API_URL}/retention_policy_assignments/{test_retention_policy_assignment.object_id}'
+    mock_box_session.delete.return_value.ok = True
+
+    is_assignment_deleted = test_retention_policy_assignment.delete()
+    mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, params={}, headers=None)
+
+    assert is_assignment_deleted

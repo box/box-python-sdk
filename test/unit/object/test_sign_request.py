@@ -18,6 +18,8 @@ def mock_sign_request_response():
         'email_subject': 'Sign Request from Acme',
         'external_id': '123',
         'is_document_preparation_needed': 'true',
+        'redirect_url': 'https://www.box.com/accepted',
+        'declined_redirect_url': 'https://www.box.com/declined',
         'parent_folder': {
             'id': '12345',
             'type': 'folder',

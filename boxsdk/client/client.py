@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from boxsdk.util.translator import Translator
     from boxsdk.object.folder import Folder
     from boxsdk.object.file import File
+    from boxsdk.object.file_request import FileRequest
     from boxsdk.object.file_version import FileVersion
     from boxsdk.object.upload_session import UploadSession
     from boxsdk.object.comment import Comment
@@ -126,6 +127,17 @@ class Client(Cloneable):
             A :class:`File` object with the given file id.
         """
         return self.translator.get('file')(session=self._session, object_id=file_id)
+
+    def file_request(self, request_id: str) -> 'FileRequest':
+        """
+        Initialize a :class:`FileRequest` object, whose box id is request_id.
+
+        :param request_id:
+            The box id of the :class:`FileRequest` object.
+        :return:
+            A :class:`FileRequest` object with the given file request id.
+        """
+        return self.translator.get('file_request')(session=self._session, object_id=request_id)
 
     def file_version(self, version_id: str) -> 'FileVersion':
         """
@@ -850,6 +862,7 @@ class Client(Cloneable):
             can_owner_extend_retention: Optional[bool] = None,
             are_owners_notified: Optional[bool] = None,
             custom_notification_recipients: Iterable['User'] = None,
+            retention_type: Optional[str] = None
     ) -> 'RetentionPolicy':
         """
         Create a retention policy for the given enterprise.
@@ -868,6 +881,13 @@ class Client(Cloneable):
             The owner or co-owner will get notified when a file is nearing expiration.
         :param custom_notification_recipients:
             A custom list of user mini objects that should be notified when a file is nearing expiration.
+        :param retention_type:
+            Specifies the retention type. It can be one of the values:
+            -   `modifiable`: You can modify the retention policy. For example, you can add or remove folders,
+                shorten or lengthen the policy duration, or delete the assignment.
+            -   `non_modifiable`: You can modify the retention policy only in a limited way: add a folder,
+                lengthen the duration, retire the policy, change the disposition action or notification settings.
+                You cannot perform other actions, such as deleting the assignment or shortening the policy duration.
         :return:
             The newly created Retention Policy
         """
@@ -888,6 +908,8 @@ class Client(Cloneable):
         if custom_notification_recipients is not None:
             user_list = [{'type': user.object_type, 'id': user.object_id} for user in custom_notification_recipients]
             retention_attributes['custom_notification_recipients'] = user_list
+        if retention_type is not None:
+            retention_attributes['retention_type'] = retention_type
         box_response = self._session.post(url, data=json.dumps(retention_attributes))
         response = box_response.json()
         return self.translator.translate(
@@ -1493,7 +1515,9 @@ class Client(Cloneable):
             email_message: Optional[Iterable] = None,
             email_subject: Optional[str] = None,
             external_id: Optional[str] = None,
-            is_document_preparation_needed: Optional[bool] = None
+            is_document_preparation_needed: Optional[bool] = None,
+            redirect_url: Optional[str] = None,
+            declined_redirect_url: Optional[str] = None,
     ) -> dict:
         """
         Used to create a new sign request.
@@ -1525,6 +1549,11 @@ class Client(Cloneable):
             This can be used to reference an ID in an external system that the sign request is related to.
         :param is_document_preparation_needed:
             Indicates if the sender should receive a prepare_url in the response to complete document preparation via UI.
+        :param redirect_url:
+            The URL that a signer will be redirected to after signing a document.
+            If no declined redirect URL is specified, this URL will be used for decline actions as well.
+        :param declined_redirect_url:
+            The URL that a signer will be redirected to after declining to sign a document.
         :returns:
             A dictionary representing a created SignRequest
         """
@@ -1555,7 +1584,10 @@ class Client(Cloneable):
             body['external_id'] = external_id
         if is_document_preparation_needed:
             body['is_document_preparation_needed'] = is_document_preparation_needed
-
+        if redirect_url:
+            body['redirect_url'] = redirect_url
+        if declined_redirect_url:
+            body['declined_redirect_url'] = declined_redirect_url
         box_response = self._session.post(url, data=json.dumps(body))
         response = box_response.json()
         return self.translator.translate(

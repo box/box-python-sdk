@@ -19,6 +19,7 @@ from boxsdk.object.comment import Comment
 from boxsdk.object.device_pinner import DevicePinner
 from boxsdk.object.enterprise import Enterprise
 from boxsdk.object.events import Events
+from boxsdk.object.file_request import FileRequest
 from boxsdk.object.folder import Folder
 from boxsdk.object.file import File
 from boxsdk.object.file_version import FileVersion
@@ -911,6 +912,7 @@ def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
                 'id': mock_user_list[1].object_id,
             },
         ],
+        'retention_type': 'modifiable'
     }
     mock_policy = {
         'type': 'retention_policy',
@@ -931,6 +933,7 @@ def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
                 'id': mock_user_list[1].object_id,
             },
         ],
+        'retention_type': 'modifiable'
     }
     mock_box_session.post.return_value.json.return_value = mock_policy
     policy = mock_client.create_retention_policy(
@@ -939,7 +942,8 @@ def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
         retention_length=5,
         can_owner_extend_retention=True,
         are_owners_notified=False,
-        custom_notification_recipients=mock_user_list
+        custom_notification_recipients=mock_user_list,
+        retention_type='modifiable'
     )
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert policy.object_id == mock_policy['id']
@@ -948,6 +952,7 @@ def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
     assert policy.disposition_action == mock_policy['disposition_action']
     assert policy.can_owner_extend_retention == mock_policy['can_owner_extend_retention']
     assert policy.are_owners_notified == mock_policy['are_owners_notified']
+    assert policy.retention_type == mock_policy['retention_type']
     assert isinstance(policy, RetentionPolicy)
 
 
@@ -962,6 +967,7 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
         'policy_type': policy_type,
         'can_owner_extend_retention': False,
         'are_owners_notified': False,
+        'retention_type': 'non_modifiable',
     }
     mock_policy = {
         'type': 'retention_policy',
@@ -971,6 +977,7 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
         'disposition_action': disposition_action,
         'can_owner_extend_retention': False,
         'are_owners_notified': False,
+        'retention_type': 'non_modifiable',
     }
     mock_box_session.post.return_value.json.return_value = mock_policy
     policy = mock_client.create_retention_policy(
@@ -978,7 +985,8 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
         disposition_action=disposition_action,
         retention_length=float('inf'),
         can_owner_extend_retention=False,
-        are_owners_notified=False
+        are_owners_notified=False,
+        retention_type='non_modifiable'
     )
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert policy.object_id == mock_policy['id']
@@ -987,6 +995,7 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
     assert policy.disposition_action == mock_policy['disposition_action']
     assert policy.can_owner_extend_retention == mock_policy['can_owner_extend_retention']
     assert policy.are_owners_notified == mock_policy['are_owners_notified']
+    assert policy.retention_type == mock_policy['retention_type']
     assert isinstance(policy, RetentionPolicy)
 
 
@@ -1550,6 +1559,8 @@ def mock_sign_request_response():
         'email_subject': 'Sign Request from Acme',
         'external_id': '123',
         'is_document_preparation_needed': 'true',
+        'redirect_url': 'https://www.box.com/accepted',
+        'declined_redirect_url': 'https://www.box.com/declined',
         'parent_folder': {
             'id': '12345',
             'type': 'folder',
@@ -1665,7 +1676,8 @@ def test_get_sign_requests(mock_client, mock_box_session, mock_sign_request_resp
 
 def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_response):
     expected_url = f'{API.BASE_API_URL}/sign_requests'
-
+    redirect_url = 'https://www.box.com/accepted'
+    declined_redirect_url = 'https://www.box.com/declined'
     source_file = {
         'id': '12345',
         'type': 'file'
@@ -1694,15 +1706,29 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
         {
             'id': parent_folder_id,
             'type': 'folder'
-        }
+        },
+        'redirect_url': redirect_url,
+        'declined_redirect_url': declined_redirect_url,
     })
     mock_box_session.post.return_value.json.return_value = mock_sign_request_response
 
     new_sign_request = mock_client.create_sign_request(
-        files, signers, parent_folder_id)
+        files, signers, parent_folder_id,
+        redirect_url=redirect_url, declined_redirect_url=declined_redirect_url)
 
     mock_box_session.post.assert_called_once_with(expected_url, data=data)
     assert isinstance(new_sign_request, SignRequest)
     assert new_sign_request['source_files'][0]['id'] == source_file['id']
     assert new_sign_request['signers'][0]['email'] == signer['email']
     assert new_sign_request['parent_folder']['id'] == parent_folder_id
+    assert new_sign_request['redirect_url'] == redirect_url
+    assert new_sign_request['declined_redirect_url'] == declined_redirect_url
+
+
+def test_file_request(mock_client):
+    # pylint:disable=redefined-outer-name
+    file_request_id = '12345'
+    file_request = mock_client.file_request(file_request_id)
+
+    assert isinstance(file_request, FileRequest)
+    assert file_request.object_id == file_request_id

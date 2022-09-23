@@ -10,6 +10,7 @@ __all__ = [
     'events',
     'event',
     'file',
+    'file_request',
     'file_version',
     'file_version_retention',
     'folder',

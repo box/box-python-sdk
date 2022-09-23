@@ -7,6 +7,7 @@ import pytest
 import pytz
 
 from boxsdk import BoxAPIException
+from test.integration_new.context_managers.box_retention_policy_assigment import BoxRetentionPolicyAssignment
 from test.integration_new.context_managers.box_retention_policy import BoxRetentionPolicy
 from test.integration_new import util
 from test.integration_new.context_managers.box_test_file import BoxTestFile
@@ -101,17 +102,19 @@ def test_lock_and_unlock(parent_folder, small_file_path, small_file_v2_path, oth
     with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as file:
         file.collaborate(accessible_by=other_user, role='editor')
 
-        file.lock(prevent_download=True)
+        try:
+            file.lock(prevent_download=True)
 
-        assert file.get(fields=('lock',)).lock
+            assert file.get(fields=('lock',)).lock
 
-        with pytest.raises(BoxAPIException):
-            other_client.file(file.object_id).update_contents(small_file_v2_path)
+            with pytest.raises(BoxAPIException):
+                other_client.file(file.object_id).update_contents(small_file_v2_path)
 
-        with pytest.raises(BoxAPIException):
-            other_client.file(file.object_id).download_to(io.BytesIO())
+            with pytest.raises(BoxAPIException):
+                other_client.file(file.object_id).download_to(io.BytesIO())
 
-        file.unlock()
+        finally:
+            file.unlock()
 
         assert file.get(fields=('lock',)).lock is None
 
@@ -239,27 +242,27 @@ def test_copy(test_file, parent_folder):
     copied_file_name = util.random_name()
     copied_file = test_file.copy(parent_folder=parent_folder, name=copied_file_name)
 
-    assert copied_file.id != test_file
-    assert copied_file.name == copied_file_name
-    assert test_file.content() == copied_file.content()
-
-    util.permanently_delete(copied_file)
+    try:
+        assert copied_file.id != test_file
+        assert copied_file.name == copied_file_name
+        assert test_file.content() == copied_file.content()
+    finally:
+        util.permanently_delete(copied_file)
 
 
 def test_set_disposition_at(parent_folder, small_file_path):
     with BoxRetentionPolicy(disposition_action='permanently_delete', retention_length=1) as retention_policy:
         with BoxTestFolder(name=f'{FILE_TESTS_DIRECTORY_NAME} {datetime.now()}') as folder_under_retention:
-            retention_policy.assign(folder_under_retention)
+            with BoxRetentionPolicyAssignment(retention_policy=retention_policy, assignee=folder_under_retention):
+                with BoxTestFile(parent_folder=folder_under_retention, file_path=small_file_path) as file_under_retention:
+                    old_disposition_str = file_under_retention.get(fields=('disposition_at',)).disposition_at
+                    old_disposition_datetime = parser.parse(old_disposition_str)
 
-            with BoxTestFile(parent_folder=folder_under_retention, file_path=small_file_path) as file_under_retention:
-                old_disposition_str = file_under_retention.get(fields=('disposition_at',)).disposition_at
-                old_disposition_datetime = parser.parse(old_disposition_str)
+                    new_disposition_date = datetime.now().replace(microsecond=0).astimezone(pytz.utc) + timedelta(days=2)
+                    file_under_retention.set_disposition_at(new_disposition_date)
 
-                new_disposition_date = datetime.now().replace(microsecond=0).astimezone(pytz.utc) + timedelta(days=2)
-                file_under_retention.set_disposition_at(new_disposition_date)
+                    updated_disposition_str = file_under_retention.get(fields=('disposition_at',)).disposition_at
+                    updated_disposition_datetime = parser.parse(updated_disposition_str)
 
-                updated_disposition_str = file_under_retention.get(fields=('disposition_at',)).disposition_at
-                updated_disposition_datetime = parser.parse(updated_disposition_str)
-
-                assert updated_disposition_datetime.astimezone(pytz.utc) == new_disposition_date
-                assert updated_disposition_datetime.astimezone(pytz.utc) != old_disposition_datetime.astimezone(pytz.utc)
+                    assert updated_disposition_datetime.astimezone(pytz.utc) == new_disposition_date
+                    assert updated_disposition_datetime.astimezone(pytz.utc) != old_disposition_datetime.astimezone(pytz.utc)

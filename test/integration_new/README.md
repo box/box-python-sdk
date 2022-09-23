@@ -19,11 +19,13 @@ There are two ways to set up JWT configuration:
 - Select `Configuration` tab and in the bottom in the section `App Settings`
    download your app configuration settings as JSON.
 - Specify the path to the JWT config file in `integration_tests.cfg`, e.g. `ConfigFilePath = /Users/me/jwt-config.json`
+- Specify id of admin user account in `integration_tests.cfg`, e.g. `AdminUserID = 13855142101`
 2. Alternatively:
 - Select `Configuration` tab and in the bottom in the section `App Settings`
   download your app configuration settings as JSON.
 - Encode configuration file to Base64, e.g. using command: `base64 -i path_to_json_file`
 - Set environment variable: `JWT_CONFIG_BASE_64` with base64 encoded jwt configuration file
+- Set environment variable: `ADMIN_USER_ID` with id of admin user account
 
 ### Running Tests
 
