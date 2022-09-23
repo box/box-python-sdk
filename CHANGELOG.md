@@ -9,12 +9,12 @@ All notable changes to this project will be documented in this file. See [standa
 
 * Add `redirect_url` and `declined_redirect_url` fields to Sign Request ([#752](https://github.com/box/box-python-sdk/issues/752)) ([5d1f609](https://github.com/box/box-python-sdk/commit/5d1f609ed4c2ddb24bd88ffac256a2809a012698))
 * Add support for modifiable retention policies & enable deleting retention policy assignment ([#759](https://github.com/box/box-python-sdk/issues/759)) ([847301b](https://github.com/box/box-python-sdk/commit/847301b43be335365858a80420459dffaada4302))
-* Fix closing file after chunked upload ([#761](https://github.com/box/box-python-sdk/issues/761)) ([b433692](https://github.com/box/box-python-sdk/commit/b433692ecc07d62d011785a557128c1780ea1647))
 * Support file request APIs ([#747](https://github.com/box/box-python-sdk/issues/747)) ([71895e3](https://github.com/box/box-python-sdk/commit/71895e33ff7cf339fd8e095a5393f04b86791d5a))
 
 ### Bug Fixes:
 
 * Do not log the content of downloaded file ([#760](https://github.com/box/box-python-sdk/issues/760)) ([5d26431](https://github.com/box/box-python-sdk/commit/5d264314f949c1f4d9136efd5cf8f13dd5897c05))
+* Fix closing file after chunked upload ([#761](https://github.com/box/box-python-sdk/issues/761)) ([b433692](https://github.com/box/box-python-sdk/commit/b433692ecc07d62d011785a557128c1780ea1647))
 
 ## [3.4.0](https://github.com/box/box-python-sdk/compare/v3.3.0...v3.4.0) (2022-07-06)
 
