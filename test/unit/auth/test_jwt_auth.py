@@ -464,7 +464,7 @@ def test_from_settings_dictionary(
 
 @pytest.fixture
 def expect_auth_retry(status_code, error_description, include_date_header, error_code):
-    return status_code == 400 and 'exp' in error_description and include_date_header and error_code == 'invalid_grant'
+    return status_code == 400 and ('exp' in error_description or 'jti' in error_description) and include_date_header and error_code == 'invalid_grant'
 
 
 @pytest.fixture
@@ -486,7 +486,8 @@ def unsuccessful_jwt_response(box_datetime, status_code, error_description, incl
 @pytest.mark.parametrize('rsa_passphrase', (None,))
 @pytest.mark.parametrize('pass_private_key_by_path', (False,))
 @pytest.mark.parametrize('status_code', (400, 401))
-@pytest.mark.parametrize('error_description', ('invalid box_sub_type claim', 'invalid kid', "check the 'exp' claim"))
+@pytest.mark.parametrize('error_description', (
+    'invalid box_sub_type claim', 'invalid kid', "check the 'exp' claim", "check the 'jti' claim"))
 @pytest.mark.parametrize('error_code', ('invalid_grant', 'bad_request'))
 @pytest.mark.parametrize('include_date_header', (True, False))
 def test_auth_retry_for_invalid_exp_claim(

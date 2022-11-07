@@ -1,4 +1,3 @@
-
 import time
 from abc import ABC, abstractmethod
 from datetime import datetime
@@ -132,7 +131,7 @@ class ServerAuth(ABC, OAuth2):
 
                 if code == 429 or code >= 500:
                     date = None
-                elif box_datetime is not None and self._was_exp_claim_rejected_due_to_clock_skew(network_response):
+                elif box_datetime is not None and self._is_auth_error_retryable(network_response):
                     date = box_datetime
                 else:
                     raise ex
@@ -168,13 +167,15 @@ class ServerAuth(ABC, OAuth2):
         return None
 
     @staticmethod
-    def _was_exp_claim_rejected_due_to_clock_skew(network_response: 'NetworkResponse') -> bool:
+    def _is_auth_error_retryable(network_response: 'NetworkResponse') -> bool:
         """
         Determine whether the network response indicates that the authorization request was rejected because of
-        the exp claim. This can happen if the current system time is too different from the Box server time.
+        the exp or jti claim and can be retried. Exp claim error can happen if the current system time is too
+        different from the Box server time. If got an error: "A unique 'jti' value is required",
+         we also retry auth in order to use new 'jti' claim.
 
         Returns True if the status code is 400, the error code is invalid_grant, and the error description indicates
-        a problem with the exp claim; False, otherwise.
+        a problem with the exp or jti claim; False, otherwise.
 
         :param network_response:
             The response from the Box API that should include a Date header.
@@ -186,7 +187,8 @@ class ServerAuth(ABC, OAuth2):
             return False
         error_code = json_response.get('error', '')
         error_description = json_response.get('error_description', '')
-        return status_code == 400 and error_code == 'invalid_grant' and 'exp' in error_description
+        return status_code == 400 and error_code == 'invalid_grant' \
+            and ('exp' in error_description or 'jti' in error_description)
 
     @classmethod
     def _normalize_user_id(cls, user: Any) -> Optional[str]:
