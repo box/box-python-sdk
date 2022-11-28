@@ -324,15 +324,16 @@ class Session:
 
         skip_retry_codes = kwargs.pop('skip_retry_codes', set())
 
+        session_renewal_needed = False
         try:
             network_response = self._send_request(request, **kwargs)
             session_renewal_needed = network_response.status_code == 401
-        except SSLError:
+        except SSLError as e:
+            if 'EOF occurred in violation of protocol' in str(e):
+                session_renewal_needed = True
             network_response = None
-            session_renewal_needed = True
         except RequestException:
             network_response = None
-            session_renewal_needed = False
 
         while True:
             retry = self._get_retry_request_callable(
