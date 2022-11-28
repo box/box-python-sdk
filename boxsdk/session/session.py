@@ -328,8 +328,8 @@ class Session:
         try:
             network_response = self._send_request(request, **kwargs)
             session_renewal_needed = network_response.status_code == 401
-        except SSLError as e:
-            if 'EOF occurred in violation of protocol' in str(e):
+        except SSLError as ssl_exc:
+            if 'EOF occurred in violation of protocol' in str(ssl_exc):
                 session_renewal_needed = True
             network_response = None
         except RequestException:
