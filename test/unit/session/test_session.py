@@ -234,7 +234,6 @@ def test_box_session_raises_requests_library_exception_when_max_retries_limit_is
     mock_network_layer.request.side_effect = [RequestException()] * 6
     mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
 
-
     with pytest.raises(RequestException):
         box_session.get(url=test_url)
 
