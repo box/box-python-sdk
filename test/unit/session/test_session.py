@@ -230,7 +230,7 @@ def test_box_session_retries_requests_library_exceptions(box_session, mock_netwo
     assert box_response.status_code == 200
 
 
-def test_box_session_raises_requests_library_exception_when_max_retries_limit_is_reached(box_session, mock_oauth, mock_network_layer, generic_successful_request_response, test_url):
+def test_box_session_raises_requests_library_exception_when_max_retries_limit_is_reached(box_session, mock_network_layer, test_url):
     mock_network_layer.request.side_effect = [RequestException()] * 6
     mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
 
@@ -244,7 +244,10 @@ def test_box_session_raises_requests_s(box_session, mock_oauth, mock_network_lay
         mock_oauth.access_token = 'fake_new_access_token'
         return (mock_oauth.access_token, None)
 
-    mock_network_layer.request.side_effect = [SSLError("SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:2396)')))"), generic_successful_request_response]
+    mock_network_layer.request.side_effect = [
+        SSLError("SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:2396)')))"),
+        generic_successful_request_response
+    ]
     mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
     mock_oauth.refresh.side_effect = refresh
 
