@@ -251,8 +251,8 @@ def test_box_session_raises_requests_s(box_session, mock_oauth, mock_network_lay
     box_session.get(url=test_url)
 
     assert mock_network_layer.request.call_count == 2
-    assert mock_network_layer.request.mock_calls[0].kwargs['access_token'] == 'fake_access_token'
-    assert mock_network_layer.request.mock_calls[1].kwargs['access_token'] == 'fake_new_access_token'
+    assert mock_network_layer.request.mock_calls[0][2]['access_token'] == 'fake_access_token'
+    assert mock_network_layer.request.mock_calls[1][2]['access_token'] == 'fake_new_access_token'
 
 
 def test_box_session_raises_for_failed_response_with_error_and_error_description(box_session, mock_network_layer, bad_network_response_400, test_url):
