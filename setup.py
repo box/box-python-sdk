@@ -58,7 +58,7 @@ def main():
         'python-dateutil',  # To be removed after dropping Python 3.6
     ]
     redis_requires = ['redis>=2.10.3']
-    jwt_requires = ['pyjwt>=1.3.0', 'cryptography>=3']
+    jwt_requires = ['pyjwt>=1.7.0', 'cryptography>=3']
     coveralls_requires = ['coveralls']
     dev_requires = ['tox']
     gh_requires = ['tox-gh-actions']
