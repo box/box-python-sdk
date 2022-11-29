@@ -4,8 +4,9 @@ import math
 from functools import partial
 from logging import getLogger
 from numbers import Number
-from typing import TYPE_CHECKING, Optional, Any, Type, Callable
+from typing import TYPE_CHECKING, Optional, Any, Type, Callable, Set
 
+from requests.exceptions import RequestException, SSLError
 from boxsdk.exception import BoxException
 from .box_request import BoxRequest as _BoxRequest
 from .box_response import BoxResponse as _BoxResponse
@@ -301,9 +302,9 @@ class Session:
         :param headers:
             Headers to include with the request.
         :param auto_session_renewal:
-            Whether or not to automatically renew the session if the request fails due to an expired access token.
+            Whether to automatically renew the session if the request fails due to an expired access token.
         :param expect_json_response:
-            Whether or not the response content should be json.
+            Whether the response content should be json.
         """
         files = kwargs.get('files')
         kwargs['file_stream_positions'] = None
@@ -322,17 +323,35 @@ class Session:
         )
 
         skip_retry_codes = kwargs.pop('skip_retry_codes', set())
-        network_response = self._send_request(request, **kwargs)
+
+        session_renewal_needed = False
+        try:
+            network_response = self._send_request(request, **kwargs)
+            session_renewal_needed = network_response.status_code == 401
+        except SSLError as ssl_exc:
+            if 'EOF occurred in violation of protocol' in str(ssl_exc):
+                session_renewal_needed = True
+            network_response = None
+        except RequestException:
+            network_response = None
 
         while True:
-            retry = self._get_retry_request_callable(network_response, attempt_number, request, **kwargs)
+            retry = self._get_retry_request_callable(
+                network_response, attempt_number, request, skip_retry_codes, session_renewal_needed, **kwargs
+            )
 
-            if retry is None or attempt_number >= API.MAX_RETRY_ATTEMPTS or network_response.status_code in skip_retry_codes:
+            if retry is None or attempt_number >= API.MAX_RETRY_ATTEMPTS:
                 break
 
             attempt_number += 1
             self._logger.debug('Retrying request')
-            network_response = retry(request, **kwargs)
+
+            try:
+                network_response = retry(request, **kwargs)
+            except RequestException:
+                if attempt_number >= API.MAX_RETRY_ATTEMPTS:
+                    raise
+                network_response = None
 
         self._raise_on_unsuccessful_request(network_response, request)
 
@@ -340,9 +359,11 @@ class Session:
 
     def _get_retry_request_callable(
             self,
-            network_response: 'NetworkResponse',
+            network_response: Optional['NetworkResponse'],
             attempt_number: int,
             request: '_BoxRequest',
+            skip_retry_codes: Set[int],
+            session_renewal_needed: bool = False,
             **kwargs: Any
     ) -> Optional[Callable]:
         """
@@ -364,6 +385,12 @@ class Session:
             Callable that, when called, will retry the request. Takes the same parameters as :meth:`_send_request`.
         """
         # pylint:disable=unused-argument
+        if network_response is None:
+            return partial(
+                self._network_layer.retry_after,
+                self.get_retry_after_time(attempt_number, None),
+                self._send_request,
+            )
         data = kwargs.get('data', {})
         grant_type = None
         try:
@@ -372,7 +399,7 @@ class Session:
         except TypeError:
             pass
         code = network_response.status_code
-        if (code in (202, 429) or code >= 500) and grant_type != self._JWT_GRANT_TYPE:
+        if (code in (202, 429) or code >= 500) and code not in skip_retry_codes and grant_type != self._JWT_GRANT_TYPE:
             return partial(
                 self._network_layer.retry_after,
                 self.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)),
@@ -431,12 +458,13 @@ class Session:
             request_kwargs['data'] = multipart_stream
             del request_kwargs['files']
             request.headers['Content-Type'] = multipart_stream.content_type
+        request.access_token = request_kwargs.pop('access_token', None)
 
         # send the request
         network_response = self._network_layer.request(
             request.method,
             request.url,
-            access_token=request_kwargs.pop('access_token', None),
+            access_token=request.access_token,
             headers=request.headers,
             log_response_content=request.expect_json_response,
             **request_kwargs
@@ -477,9 +505,11 @@ class AuthorizedSession(Session):
 
     def _get_retry_request_callable(
             self,
-            network_response: 'NetworkResponse',
+            network_response: Optional['NetworkResponse'],
             attempt_number: int,
             request: '_BoxRequest',
+            skip_retry_codes: Set[int],
+            session_renewal_needed: bool = False,
             **kwargs: Any
     ) -> Callable:
         """
@@ -498,15 +528,16 @@ class AuthorizedSession(Session):
         :return:
             Callable that, when called, will retry the request. Takes the same parameters as :meth:`_send_request`.
         """
-        code = network_response.status_code
-        if code == 401 and request.auto_session_renewal:
-            self._renew_session(network_response.access_token_used)
+        if request.auto_session_renewal and session_renewal_needed:
+            self._renew_session(request.access_token)
             request.auto_session_renewal = False
             return self._send_request
         return super()._get_retry_request_callable(
             network_response,
             attempt_number,
             request,
+            skip_retry_codes,
+            session_renewal_needed,
             **kwargs
         )
 
