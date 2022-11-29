@@ -20,6 +20,7 @@ class BoxRequest:
     headers: Optional[dict] = attr.ib(default=attr.Factory(dict))
     auto_session_renewal: Optional[bool] = attr.ib(default=True)
     expect_json_response: Optional[bool] = attr.ib(default=True)
+    access_token: Optional[str] = attr.ib(default=None)
 
     def __repr__(self) -> str:
         return f'<BoxRequest for {self.method} {self.url} with headers {sanitize_dictionary(self.headers)}'
