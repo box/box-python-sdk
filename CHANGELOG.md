@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.5.1](https://github.com/box/box-python-sdk/compare/v3.5.0...v3.5.1) (2022-11-30)
+
+
+### Bug Fixes:
+
+* Renew connection when Connection reset error occurs ([#771](https://github.com/box/box-python-sdk/issues/771)) ([bcaab27](https://github.com/box/box-python-sdk/commit/bcaab277c3cabba498076d066366abbaa5507904)), closes [#756](https://github.com/box/box-python-sdk/issues/756) [#757](https://github.com/box/box-python-sdk/issues/757) [#763](https://github.com/box/box-python-sdk/issues/763) [#765](https://github.com/box/box-python-sdk/issues/765) [#766](https://github.com/box/box-python-sdk/issues/766) [#770](https://github.com/box/box-python-sdk/issues/770)
+* Retry JWT auth when got error: required unique `jti` claim. ([#768](https://github.com/box/box-python-sdk/issues/768)) ([878e958](https://github.com/box/box-python-sdk/commit/878e958abfb01740656aaff42492777753e4c8ea))
+* Update `pyjtw` dependency to work with Python 3.10 ([#772](https://github.com/box/box-python-sdk/issues/772)) ([b13c5cd](https://github.com/box/box-python-sdk/commit/b13c5cd34105d3f774d3f6d35db7aaf51dd3e247))
+
 ## [3.5.0](https://github.com/box/box-python-sdk/compare/v3.4.0...v3.5.0) (2022-09-23)
 
 
