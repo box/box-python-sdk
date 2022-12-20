@@ -201,7 +201,7 @@ call [`retention_policy_assignment.get_files_under_retention(limit=None, marker=
 This method will return a `MarkerBasedObjectCollection` that allows you to iterate over the [`File`][file_class]
 objects in the collection.
 
-<!-- sample get-files-under-retention-for-an-assignment -->
+<!-- sample get_retention_policy_assignments_id_files_under_retention -->
 ```python
 retention_policy_assignment = client.retention_policy_assignment(assignment_id='12345').get()
 files_under_retention = retention_policy_assignment.get_files_under_retention()
@@ -221,7 +221,7 @@ call [`retention_policy_assignment.get_file_versions_under_retention(limit=None,
 This method will return a `MarkerBasedObjectCollection` that allows you to iterate over the [`FileVersion`][file_version_class]
 objects in the collection.
 
-<!-- sample get-file-versions-under-retention-for-an-assignment -->
+<!-- sample get_retention_policy_assignments_id_file_versions_under_retention -->
 ```python
 retention_policy_assignment = client.retention_policy_assignment(assignment_id='12345').get()
 file_versions_under_retention = retention_policy_assignment.get_file_versions_under_retention()
