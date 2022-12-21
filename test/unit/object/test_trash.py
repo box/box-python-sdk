@@ -123,6 +123,7 @@ def test_get_trashed_items(test_item_and_response, test_trash, mock_box_session)
     assert trashed_item.id == mock_trash['id']
     assert trashed_item.name == item_name
 
+
 def test_get_trashed_items_with_sort(test_item_and_response, test_trash, mock_box_session):
     test_item, _ = test_item_and_response
     expected_url = f'{API.BASE_API_URL}/folders/trash/items'
@@ -142,6 +143,7 @@ def test_get_trashed_items_with_sort(test_item_and_response, test_trash, mock_bo
     mock_box_session.get.assert_called_once_with(
         expected_url, params={'direction': 'ASC', 'sort': 'name', 'offset': None, 'fields': 'name'})
     assert isinstance(trashed_item, test_item.__class__)
+
 
 def test_get_trashed_items_with_marker(test_item_and_response, test_trash, mock_box_session):
     test_item, _ = test_item_and_response
