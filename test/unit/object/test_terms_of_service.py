@@ -121,7 +121,7 @@ def test_get_user_status(test_terms_of_service, mock_user, test_terms_of_service
     assert new_terms_of_service_user_status.created_at == created_at
 
 
-def test_get_empty_user_status(test_terms_of_service, mock_user, test_terms_of_service_user_status, mock_box_session):
+def test_get_empty_user_status(test_terms_of_service, mock_user, mock_box_session):
     mock_box_session.get.return_value.json.return_value = {
         'total_count': 1,
         'entries': [],
