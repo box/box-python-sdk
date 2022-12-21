@@ -74,6 +74,7 @@ To search using SQL-like syntax to return items that match specific metadata, ca
 
 By default, this method returns only the most basic info about the items for which the query matches. To get additional fields for each item, including any of the metadata, use the fields parameter.
 
+<!-- sample post_metadata_queries_execute_read -->
 ```python
 from_template = 'enterprise_12345.someTemplate'
 ancestor_folder_id = '5555'
