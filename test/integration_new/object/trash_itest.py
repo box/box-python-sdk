@@ -22,56 +22,42 @@ def test_trash_get_items(parent_folder, small_file_path):
     name = f'{util.random_name()}.pdf'
     test_file = parent_folder.upload(file_path=small_file_path, file_name=name)
     test_file.delete()
-    trash_items = CLIENT.trash().get_items()
-    for item in trash_items:
-        if item.id == test_file.id:
-            assert item.type == test_file.type
-            assert item.name == test_file.name
-            CLIENT.trash().permanently_delete_item(item)
-            break
+    try:
+        trash_items = CLIENT.trash().get_items()
+        assert test_file.id in [item.id for item in trash_items]
+    finally:
+        CLIENT.trash().permanently_delete_item(test_file)
 
 
 def test_trash_restore_item(parent_folder, small_file_path):
     with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as test_file:
         test_file.delete()
         trash_items = CLIENT.trash().get_items()
-        for item in trash_items:
-            if item.id == test_file.id:
-                assert item.type == test_file.object_type
-                assert item.name == test_file.name
-                CLIENT.trash().restore_item(item)
-                break
+        assert test_file.id in [item.id for item in trash_items]
+        CLIENT.trash().restore_item(test_file)
         folder_items = parent_folder.get_items()
-        for item in folder_items:
-            if item.id == test_file.id:
-                assert item.type == test_file.type
-                assert item.name == test_file.name
-                break
+        assert test_file.id in [item.id for item in folder_items]
 
 
 def test_trash_get_items_with_offset(parent_folder, small_file_path):
     name = f'{util.random_name()}.pdf'
     test_file = parent_folder.upload(file_path=small_file_path, file_name=name)
     test_file.delete()
-    trash_items = CLIENT.trash().get_items()
-    assert isinstance(trash_items, LimitOffsetBasedObjectCollection)
-    for item in trash_items:
-        if item.id == test_file.id:
-            assert item.type == test_file.type
-            assert item.name == test_file.name
-            CLIENT.trash().permanently_delete_item(item)
-            break
+    try:
+        trash_items = CLIENT.trash().get_items()
+        assert isinstance(trash_items, LimitOffsetBasedObjectCollection)
+        assert test_file.id in [item.id for item in trash_items]
+    finally:
+        CLIENT.trash().permanently_delete_item(test_file)
 
 
 def test_trash_get_items_with_marker(parent_folder, small_file_path):
     name = f'{util.random_name()}.pdf'
     test_file = parent_folder.upload(file_path=small_file_path, file_name=name)
     test_file.delete()
-    trash_items = CLIENT.trash().get_items(limit=100, use_marker=True)
-    assert isinstance(trash_items, MarkerBasedObjectCollection)
-    for item in trash_items:
-        if item.id == test_file.id:
-            assert item.type == test_file.type
-            assert item.name == test_file.name
-            CLIENT.trash().permanently_delete_item(item)
-            break
+    try:
+        trash_items = CLIENT.trash().get_items(limit=100, use_marker=True)
+        assert isinstance(trash_items, MarkerBasedObjectCollection)
+        assert test_file.id in [item.id for item in trash_items]
+    finally:
+        CLIENT.trash().permanently_delete_item(test_file)
