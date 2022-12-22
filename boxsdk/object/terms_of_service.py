@@ -27,7 +27,7 @@ class TermsOfService(BaseObject):
 
     _item_type = 'terms_of_service'
 
-    def get_user_status(self, user: Optional['User'] = None) -> 'TermsOfServiceUserStatus':
+    def get_user_status(self, user: Optional['User'] = None) -> Optional['TermsOfServiceUserStatus']:
         """
         Get the terms of service user status.
 
@@ -35,7 +35,7 @@ class TermsOfService(BaseObject):
             This is the user to get the status of the terms of service for. This defaults to current
             user.
         :returns:
-            A :class:`TermsOfServiceUserStatus` object
+            A :class:`TermsOfServiceUserStatus` object or None if no user status found.
         """
         url = self._session.get_url('terms_of_service_user_statuses')
         additional_params = {
@@ -45,6 +45,10 @@ class TermsOfService(BaseObject):
             additional_params['user_id'] = user.object_id
         box_response = self._session.get(url, params=additional_params)
         response_object = box_response.json()
+
+        if not response_object['entries']:
+            return None
+
         response = response_object['entries'][0]
         return self.translator.translate(
             session=self._session,
