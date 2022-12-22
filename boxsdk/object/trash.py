@@ -99,10 +99,10 @@ class Trash(BaseEndpoint):
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         fields: Iterable[str] = None,
-        sort: Optional[str] = None,
-        direction: Optional[str] = None,
         marker: Optional[str] = None,
-        use_marker: bool = False
+        use_marker: bool = False,
+        sort: Optional[str] = None,
+        direction: Optional[str] = None
     ) -> 'BoxObjectCollection':
         """
         Using limit-offset paging, get the files, folders and web links that are in the user's trash.
@@ -113,23 +113,23 @@ class Trash(BaseEndpoint):
             The offset of the item at which to begin the response.
         :param fields:
             List of fields to request.
-        :param sort:
-            The field to sort by.
-        :param direction:
-            The direction to sort.
         :param marker:
             The marker at which to begin the response.
         :param use_marker:
             Whether or not to use marker-based paging.
+        :param sort:
+            The field to sort by. Can be 'id', 'name', 'date' or 'size'.
+        :param direction:
+            The direction to sort. Can be 'ASC' or 'DESC'.
         :returns:
             An iterator of the entries in the trash
         """
         additional_params = {}
         if limit is not None:
             additional_params['limit'] = limit
-        if direction is not None:
+        if not direction:
             additional_params['direction'] = direction
-        if sort is not None:
+        if not sort:
             additional_params['sort'] = sort
 
         if use_marker:
