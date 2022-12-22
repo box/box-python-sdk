@@ -127,9 +127,9 @@ class Trash(BaseEndpoint):
         additional_params = {}
         if limit is not None:
             additional_params['limit'] = limit
-        if not direction:
+        if direction:
             additional_params['direction'] = direction
-        if not sort:
+        if sort:
             additional_params['sort'] = sort
 
         if use_marker:
