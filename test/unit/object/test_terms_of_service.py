@@ -110,7 +110,7 @@ def test_get_user_status(test_terms_of_service, mock_user, test_terms_of_service
         'created_at': created_at,
     }
     mock_box_session.get.return_value.json.return_value = {
-        'limit': 500,
+        'total_count': 2,
         'entries': [mock_user_status],
     }
     new_terms_of_service_user_status = test_terms_of_service.get_user_status(user=mock_user)
@@ -119,6 +119,15 @@ def test_get_user_status(test_terms_of_service, mock_user, test_terms_of_service
     assert new_terms_of_service_user_status.type == 'terms_of_service_user_status'
     assert new_terms_of_service_user_status.id == test_terms_of_service_user_status.object_id
     assert new_terms_of_service_user_status.created_at == created_at
+
+
+def test_get_empty_user_status(test_terms_of_service, mock_user, mock_box_session):
+    mock_box_session.get.return_value.json.return_value = {
+        'total_count': 1,
+        'entries': [],
+    }
+    new_terms_of_service_user_status = test_terms_of_service.get_user_status(user=mock_user)
+    assert new_terms_of_service_user_status is None
 
 
 def test_set_user_status(test_terms_of_service, mock_user, mock_box_session):
