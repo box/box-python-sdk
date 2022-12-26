@@ -344,17 +344,6 @@ GET https://api.box.com/2.0/users/me {'headers': {u'Authorization': u'Bearer ---
 <boxsdk.object.user.User at 0x10615b8d0>
 ```
 
-For more control over how the information is logged, use the
-`LoggingNetwork` class directly.
-
-``` pycon
-from boxsdk import Client
-from boxsdk.network.logging_network import LoggingNetwork
-
-# Use a custom logger
-client = Client(oauth, network_layer=LoggingNetwork(logger))
-```
-
 ## Developer Token Client
 
 The Box Developer Console allows for the creation of short-lived
