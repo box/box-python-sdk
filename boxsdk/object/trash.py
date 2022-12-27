@@ -1,6 +1,8 @@
 import json
 from typing import Iterable, TYPE_CHECKING, Optional
 
+from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
+
 from .base_endpoint import BaseEndpoint
 
 from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
@@ -69,7 +71,8 @@ class Trash(BaseEndpoint):
         params = {}
         if fields:
             params['fields'] = ','.join(fields)
-        box_response = self._session.post(url, data=json.dumps(body), params=params)
+        box_response = self._session.post(
+            url, data=json.dumps(body), params=params)
         response = box_response.json()
         return self.translator.translate(
             session=self._session,
@@ -91,7 +94,16 @@ class Trash(BaseEndpoint):
         return box_response.ok
 
     @api_call
-    def get_items(self, limit: Optional[int] = None, offset: Optional[int] = None, fields: Iterable[str] = None) -> 'BoxObjectCollection':
+    def get_items(
+        self,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        fields: Iterable[str] = None,
+        marker: Optional[str] = None,
+        use_marker: bool = False,
+        sort: Optional[str] = None,
+        direction: Optional[str] = None
+    ) -> 'BoxObjectCollection':
         """
         Using limit-offset paging, get the files, folders and web links that are in the user's trash.
 
@@ -101,9 +113,37 @@ class Trash(BaseEndpoint):
             The offset of the item at which to begin the response.
         :param fields:
             List of fields to request.
+        :param marker:
+            The marker at which to begin the response.
+        :param use_marker:
+            Whether or not to use marker-based paging.
+        :param sort:
+            The field to sort by. Can be 'id', 'name', 'date' or 'size'.
+        :param direction:
+            The direction to sort. Can be 'ASC' or 'DESC'.
         :returns:
             An iterator of the entries in the trash
         """
+        additional_params = {}
+        if limit is not None:
+            additional_params['limit'] = limit
+        if direction:
+            additional_params['direction'] = direction
+        if sort:
+            additional_params['sort'] = sort
+
+        if use_marker:
+            additional_params['usemarker'] = True
+            return MarkerBasedObjectCollection(
+                url=self._session.get_url('folders', 'trash', 'items'),
+                session=self._session,
+                limit=limit,
+                marker=marker,
+                fields=fields,
+                additional_params=additional_params,
+                return_full_pages=False,
+            )
+
         return LimitOffsetBasedObjectCollection(
             session=self._session,
             url=self._session.get_url('folders', 'trash', 'items'),
@@ -111,4 +151,5 @@ class Trash(BaseEndpoint):
             offset=offset,
             fields=fields,
             return_full_pages=False,
+            additional_params=additional_params,
         )
