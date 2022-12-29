@@ -1,4 +1,5 @@
 import logging
+import re
 import sys
 
 from collections.abc import Mapping
@@ -25,6 +26,11 @@ class Logging:
         'password',
     )
 
+    PROXY_KEYS_TO_SANITIZE = (
+        'http',
+        'https',
+    )
+
     def setup_logging(self, stream_or_file=_no_logger, debug=False, name=None):
         if not self._has_setup:
             self._has_setup = True
@@ -43,13 +49,23 @@ class Logging:
     def sanitize_value(value):
         return f'---{value[-4:]}'
 
-    def sanitize_dictionary(self, dictionary):
+    @staticmethod
+    def sanitize_proxy_value(value: str) -> str:
+        return re.sub(
+            '^(.*://)(.*):(.*)(@.*)$',
+            lambda repl: f'{repl.group(1)}{"---"}:{"---"}{repl.group(4)}',
+            value
+        )
+
+    def sanitize_dictionary(self, dictionary: Mapping) -> Mapping:
         if not isinstance(dictionary, Mapping):
             return dictionary
         sanitized_dictionary = {}
         for key, value in dictionary.items():
             if key in self.KEYS_TO_SANITIZE and isinstance(value, str):
                 sanitized_dictionary[key] = self.sanitize_value(value)
+            elif key in self.PROXY_KEYS_TO_SANITIZE and isinstance(value, str):
+                sanitized_dictionary[key] = self.sanitize_proxy_value(value)
             elif isinstance(value, Mapping):
                 sanitized_dictionary[key] = self.sanitize_dictionary(value)
             else:
