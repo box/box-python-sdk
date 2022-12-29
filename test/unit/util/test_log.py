@@ -105,12 +105,12 @@ def test_setup_logging_is_reentrant(mock_logger):
         # Test for proxy http
         (
             {'http': 'http://username:password@localhost:8080'},
-            {'http': 'http://---name:---word@localhost:8080'},
+            {'http': 'http://---:---@localhost:8080'},
         ),
         # Test for proxy https
         (
             {'https': 'http://username:password@localhost:8080'},
-            {'https': 'http://---name:---word@localhost:8080'},
+            {'https': 'http://---:---@localhost:8080'},
         ),
     ]
 )

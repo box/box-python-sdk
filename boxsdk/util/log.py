@@ -53,7 +53,7 @@ class Logging:
     def sanitize_proxy_value(value: str) -> str:
         return re.sub(
             '^(.*://)(.*):(.*)(@.*)$',
-            lambda repl: f'{repl.group(1)}{Logging.sanitize_value(repl.group(2))}:{Logging.sanitize_value(repl.group(3))}{repl.group(4)}',
+            lambda repl: f'{repl.group(1)}{"---"}:{"---"}{repl.group(4)}',
             value
         )
 
