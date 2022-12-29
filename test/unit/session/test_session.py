@@ -230,18 +230,18 @@ def test_box_session_retries_connection_aborted_exception(box_session, mock_netw
     assert box_response.status_code == 200
 
 
-def test_box_session_retries_requests_library_exceptions_only_once(box_session, mock_network_layer, test_url):
-    mock_network_layer.request.side_effect = [RequestException('Connection aborted'), RequestException('Connection aborted')]
+def test_box_session_retries_requests_library_exceptions_only_once(box_session, mock_network_layer, test_url, generic_successful_request_response):
+    mock_network_layer.request.side_effect = [RequestException('Connection aborted'), RequestException('Connection aborted'), generic_successful_request_response]
     mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
 
     with pytest.raises(RequestException):
         box_session.get(url=test_url)
 
 
-def test_box_session_raises_requests_library_exception_when_set_no_retries(box_session, mock_network_layer, test_url):
+def test_box_session_raises_requests_library_exception_when_set_no_retries(box_session, mock_network_layer, test_url, generic_successful_request_response):
     API.MAX_RETRY_ATTEMPTS = 0
     try:
-        mock_network_layer.request.side_effect = [RequestException('Connection aborted')]
+        mock_network_layer.request.side_effect = [RequestException('Connection aborted'), generic_successful_request_response]
 
         with pytest.raises(RequestException):
             box_session.get(url=test_url)
