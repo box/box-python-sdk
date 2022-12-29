@@ -248,7 +248,7 @@ class Session:
         return exponential * self._retry_base_interval * randomization
 
     @staticmethod
-    def _raise_on_unsuccessful_request(network_response: 'NetworkResponse', request: '_BoxRequest', occured_exception: Exception) -> None:
+    def _raise_on_unsuccessful_request(network_response: 'NetworkResponse', request: '_BoxRequest', raised_exception: Exception) -> None:
         """
         Raise an exception if the request was unsuccessful.
 
@@ -258,7 +258,7 @@ class Session:
             The API request that could be unsuccessful.
         """
         if network_response is None:
-            raise occured_exception
+            raise raised_exception
 
         if not network_response.ok:
             response_json = {}
