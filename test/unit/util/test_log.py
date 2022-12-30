@@ -102,6 +102,16 @@ def test_setup_logging_is_reentrant(mock_logger):
             {'download_url': None},
             {'download_url': None},
         ),
+        # Test for proxy http
+        (
+            {'http': 'http://username:password@localhost:8080'},
+            {'http': 'http://---:---@localhost:8080'},
+        ),
+        # Test for proxy https
+        (
+            {'https': 'http://username:password@localhost:8080'},
+            {'https': 'http://---:---@localhost:8080'},
+        ),
     ]
 )
 def test_sanitize_dictionary_correctly_sanitizes_params(mock_logger, unsanitized_dict, expected_result):

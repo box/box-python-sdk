@@ -6,7 +6,7 @@ from logging import getLogger
 from numbers import Number
 from typing import TYPE_CHECKING, Optional, Any, Type, Callable, Set
 
-from requests.exceptions import RequestException, SSLError
+from requests.exceptions import RequestException
 from boxsdk.exception import BoxException
 from .box_request import BoxRequest as _BoxRequest
 from .box_response import BoxResponse as _BoxResponse
@@ -29,6 +29,7 @@ class Session:
     _retry_randomization_factor = 0.5
     _retry_base_interval = 1
     _JWT_GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+    _CCG_GRANT_TYPE = 'client_credentials'
 
     """
     Box API session. Provides automatic retry of failed requests.
@@ -247,7 +248,7 @@ class Session:
         return exponential * self._retry_base_interval * randomization
 
     @staticmethod
-    def _raise_on_unsuccessful_request(network_response: 'NetworkResponse', request: '_BoxRequest') -> None:
+    def _raise_on_unsuccessful_request(network_response: 'NetworkResponse', request: '_BoxRequest', raised_exception: Exception) -> None:
         """
         Raise an exception if the request was unsuccessful.
 
@@ -256,6 +257,9 @@ class Session:
         :param request:
             The API request that could be unsuccessful.
         """
+        if network_response is None:
+            raise raised_exception
+
         if not network_response.ok:
             response_json = {}
             try:
@@ -324,36 +328,34 @@ class Session:
 
         skip_retry_codes = kwargs.pop('skip_retry_codes', set())
 
-        session_renewal_needed = False
+        raised_exception = None
         try:
             network_response = self._send_request(request, **kwargs)
-            session_renewal_needed = network_response.status_code == 401
-        except SSLError as ssl_exc:
-            if 'EOF occurred in violation of protocol' in str(ssl_exc):
-                session_renewal_needed = True
+            reauthentication_needed = network_response.status_code == 401
+        except RequestException as request_exc:
+            raised_exception = request_exc
             network_response = None
-        except RequestException:
-            network_response = None
+            if 'EOF occurred in violation of protocol' in str(request_exc):
+                reauthentication_needed = True
+            elif 'Connection aborted' in str(request_exc):
+                reauthentication_needed = False
+            else:
+                raise
 
         while True:
             retry = self._get_retry_request_callable(
-                network_response, attempt_number, request, skip_retry_codes, session_renewal_needed, **kwargs
-            )
+                network_response, attempt_number, request, skip_retry_codes, reauthentication_needed, **kwargs)
 
             if retry is None or attempt_number >= API.MAX_RETRY_ATTEMPTS:
+                if network_response is None:
+                    raise raised_exception
                 break
 
             attempt_number += 1
             self._logger.debug('Retrying request')
+            network_response = retry(request, **kwargs)
 
-            try:
-                network_response = retry(request, **kwargs)
-            except RequestException:
-                if attempt_number >= API.MAX_RETRY_ATTEMPTS:
-                    raise
-                network_response = None
-
-        self._raise_on_unsuccessful_request(network_response, request)
+        self._raise_on_unsuccessful_request(network_response, request, raised_exception)
 
         return network_response
 
@@ -385,12 +387,24 @@ class Session:
             Callable that, when called, will retry the request. Takes the same parameters as :meth:`_send_request`.
         """
         # pylint:disable=unused-argument
+        if self._is_server_auth_type(kwargs):
+            return None
         if network_response is None:
             return partial(
                 self._network_layer.retry_after,
                 self.get_retry_after_time(attempt_number, None),
                 self._send_request,
             )
+        code = network_response.status_code
+        if (code in (202, 429) or code >= 500) and code not in skip_retry_codes:
+            return partial(
+                self._network_layer.retry_after,
+                self.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)),
+                self._send_request,
+            )
+        return None
+
+    def _is_server_auth_type(self, kwargs: dict) -> bool:
         data = kwargs.get('data', {})
         grant_type = None
         try:
@@ -398,14 +412,7 @@ class Session:
                 grant_type = data['grant_type']
         except TypeError:
             pass
-        code = network_response.status_code
-        if (code in (202, 429) or code >= 500) and code not in skip_retry_codes and grant_type != self._JWT_GRANT_TYPE:
-            return partial(
-                self._network_layer.retry_after,
-                self.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)),
-                self._send_request,
-            )
-        return None
+        return grant_type in (self._JWT_GRANT_TYPE, self._CCG_GRANT_TYPE)
 
     def _get_request_headers(self) -> dict:
         return self._default_headers.copy()

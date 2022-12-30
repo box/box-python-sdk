@@ -2,7 +2,7 @@ from functools import partial
 from io import IOBase
 from numbers import Number
 from unittest.mock import MagicMock, Mock, PropertyMock, call, patch, ANY
-from requests.exceptions import RequestException, SSLError
+from requests.exceptions import RequestException, SSLError, ConnectionError as RequestsConnectionError
 
 import pytest
 
@@ -222,23 +222,42 @@ def test_box_session_raises_for_failed_response(box_session, mock_network_layer,
         box_session.get(url=test_url)
 
 
-def test_box_session_retries_requests_library_exceptions(box_session, mock_network_layer, generic_successful_request_response, test_url):
-    mock_network_layer.request.side_effect = [RequestException(), generic_successful_request_response]
+def test_box_session_retries_connection_aborted_exception(box_session, mock_network_layer, generic_successful_request_response, test_url):
+    mock_network_layer.request.side_effect = [RequestsConnectionError('Connection aborted'), generic_successful_request_response]
     mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
 
     box_response = box_session.get(url=test_url)
     assert box_response.status_code == 200
 
 
-def test_box_session_raises_requests_library_exception_when_max_retries_limit_is_reached(box_session, mock_network_layer, test_url):
-    mock_network_layer.request.side_effect = [RequestException()] * (API.MAX_RETRY_ATTEMPTS + 1)
+def test_box_session_retries_requests_library_exceptions_only_once(box_session, mock_network_layer, test_url, generic_successful_request_response):
+    mock_network_layer.request.side_effect = [
+        RequestException('Connection aborted'),
+        RequestException('Connection aborted'),
+        generic_successful_request_response
+    ]
     mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
 
     with pytest.raises(RequestException):
         box_session.get(url=test_url)
 
 
-def test_box_session_raises_requests_s(box_session, mock_oauth, mock_network_layer, generic_successful_request_response, test_url):
+def test_box_session_raises_requests_library_exception_when_set_no_retries(
+        box_session, mock_network_layer, test_url, generic_successful_request_response
+):
+    API.MAX_RETRY_ATTEMPTS = 0
+    try:
+        mock_network_layer.request.side_effect = [RequestException('Connection aborted'), generic_successful_request_response]
+
+        with pytest.raises(RequestException):
+            box_session.get(url=test_url)
+    finally:
+        API.MAX_RETRY_ATTEMPTS = 5
+
+
+def test_box_session_retries_and_reauthenticates_on_violation_of_protocol_exception(
+        box_session, mock_oauth, mock_network_layer, generic_successful_request_response, test_url
+):
     def refresh(access_token_used):
         assert access_token_used == mock_oauth.access_token
         mock_oauth.access_token = 'fake_new_access_token'
@@ -256,6 +275,13 @@ def test_box_session_raises_requests_s(box_session, mock_oauth, mock_network_lay
     assert mock_network_layer.request.call_count == 2
     assert mock_network_layer.request.mock_calls[0][2]['access_token'] == 'fake_access_token'
     assert mock_network_layer.request.mock_calls[1][2]['access_token'] == 'fake_new_access_token'
+
+
+def test_box_session_does_not_retry_other_requests_library_exceptions_than_specified(box_session, mock_network_layer, test_url):
+    mock_network_layer.request.side_effect = [RequestException('Unknown error')]
+
+    with pytest.raises(RequestException):
+        box_session.get(url=test_url)
 
 
 def test_box_session_raises_for_failed_response_with_error_and_error_description(box_session, mock_network_layer, bad_network_response_400, test_url):
