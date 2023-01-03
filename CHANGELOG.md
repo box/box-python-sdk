@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.6.0](https://github.com/box/box-python-sdk/compare/v3.5.1...v3.6.0) (2023-01-03)
+
+
+### New Features and Enhancements:
+
+* Add support marker in trash get items ([#781](https://github.com/box/box-python-sdk/issues/781)) ([e2d1846](https://github.com/box/box-python-sdk/commit/e2d1846818aeccfcba2a2f09a5cd924c9f6cd534))
+* Sanitize proxy credentials ([#782](https://github.com/box/box-python-sdk/issues/782)) ([97fb5aa](https://github.com/box/box-python-sdk/commit/97fb5aa2ed72008570abb327269ecec150632af9))
+
+### Bug Fixes:
+
+* Fix index error when getting an empty list of user term of service statuses ([#780](https://github.com/box/box-python-sdk/issues/780)) ([23d763a](https://github.com/box/box-python-sdk/commit/23d763ac4ba592131c43eb0319929db25d041c30))
+* Specify which exceptions should be retried ([#784](https://github.com/box/box-python-sdk/issues/784)) ([833cd46](https://github.com/box/box-python-sdk/commit/833cd46bafe774f19925f78600df90477bf07055))
+
 ### [3.5.1](https://github.com/box/box-python-sdk/compare/v3.5.0...v3.5.1) (2022-11-30)
 
 
