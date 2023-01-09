@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.6.1](https://github.com/box/box-python-sdk/compare/v3.6.0...v3.6.1) (2023-01-09)
+
+
+### Bug Fixes:
+
+* Retry CCG and JWT auth requests on connection reset error ([#790](https://github.com/box/box-python-sdk/issues/790)) ([205997d](https://github.com/box/box-python-sdk/commit/205997db9870395b9dd042854c4201338dcf925f)), closes [#789](https://github.com/box/box-python-sdk/issues/789)
+
 ## [3.6.0](https://github.com/box/box-python-sdk/compare/v3.5.1...v3.6.0) (2023-01-03)
 
 
