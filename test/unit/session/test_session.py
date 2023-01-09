@@ -6,6 +6,7 @@ from requests.exceptions import RequestException, SSLError, ConnectionError as R
 
 import pytest
 
+from boxsdk import CCGAuth
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.config import API, Proxy
 from boxsdk.exception import BoxAPIException, BoxException
@@ -48,6 +49,14 @@ def unauthorized_session(mock_network_layer, translator):
 def box_session(mock_oauth, mock_network_layer, translator):
     # pylint:disable=redefined-outer-name
     return AuthorizedSession(oauth=mock_oauth, network_layer=mock_network_layer, translator=translator)
+
+
+@pytest.fixture
+def ccg_auth(client_id, client_secret, mock_user_id, mock_enterprise_id, box_session) -> CCGAuth:
+    # pylint:disable=protected-access
+    auth = CCGAuth(client_id=client_id, client_secret=client_secret, user=mock_user_id, enterprise_id=mock_enterprise_id)
+    auth._session = box_session
+    return auth
 
 
 @pytest.mark.parametrize('test_method', [
@@ -228,6 +237,15 @@ def test_box_session_retries_connection_aborted_exception(box_session, mock_netw
 
     box_response = box_session.get(url=test_url)
     assert box_response.status_code == 200
+
+
+def test_box_session_retries_connection_aborted_exception_on_ccg_auth_call(successful_token_response, ccg_auth, mock_user_id, access_token):
+    # pylint:disable=protected-access
+    ccg_auth._session._network_layer.request.side_effect = [RequestsConnectionError('Connection aborted'), successful_token_response]
+    ccg_auth._session._network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+
+    new_access_token = ccg_auth.authenticate_user(mock_user_id)
+    assert new_access_token == access_token
 
 
 def test_box_session_retries_requests_library_exceptions_only_once(box_session, mock_network_layer, test_url, generic_successful_request_response):

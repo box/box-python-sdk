@@ -387,8 +387,6 @@ class Session:
             Callable that, when called, will retry the request. Takes the same parameters as :meth:`_send_request`.
         """
         # pylint:disable=unused-argument
-        if self._is_server_auth_type(kwargs):
-            return None
         if network_response is None:
             return partial(
                 self._network_layer.retry_after,
@@ -396,7 +394,7 @@ class Session:
                 self._send_request,
             )
         code = network_response.status_code
-        if (code in (202, 429) or code >= 500) and code not in skip_retry_codes:
+        if (code in (202, 429) or code >= 500) and code not in skip_retry_codes and not self._is_server_auth_type(kwargs):
             return partial(
                 self._network_layer.retry_after,
                 self.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)),
