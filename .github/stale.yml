@@ -8,6 +8,7 @@ daysUntilClose: 7
 exemptLabels:
   - enhancement
   - dontstale
+  - needs-triage
 
 # Label to use when marking an issue as stale
 staleLabel: stale
