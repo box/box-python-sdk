@@ -128,8 +128,8 @@ To download the file contents to an output stream, call
 file_id = '11111'
 
 # Write the Box file contents to disk
-output_file = open('file.pdf', 'wb')
-client.file(file_id).download_to(output_file)
+with open('file.pdf', 'wb') as output_file:
+  client.file(file_id).download_to(output_file)
 ```
 
 [file_version_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.file_version.FileVersion
