@@ -337,7 +337,9 @@ class Session:
             network_response = None
             if 'EOF occurred in violation of protocol' in str(request_exc):
                 reauthentication_needed = True
-            elif 'Connection aborted' in str(request_exc):
+            elif any(text in str(request_exc) for text in [
+                'Connection aborted', 'Connection broken', 'Connection reset'
+            ]):
                 reauthentication_needed = False
             else:
                 raise

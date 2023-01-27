@@ -231,8 +231,14 @@ def test_box_session_raises_for_failed_response(box_session, mock_network_layer,
         box_session.get(url=test_url)
 
 
-def test_box_session_retries_connection_aborted_exception(box_session, mock_network_layer, generic_successful_request_response, test_url):
-    mock_network_layer.request.side_effect = [RequestsConnectionError('Connection aborted'), generic_successful_request_response]
+@pytest.mark.parametrize('exc_message', [
+    'Connection aborted',
+    "Connection broken: ConnectionResetError(54, 'Connection reset by peer')"
+])
+def test_box_session_retries_connection_aborted_exception(
+        box_session, mock_network_layer, generic_successful_request_response, test_url, exc_message
+):
+    mock_network_layer.request.side_effect = [RequestsConnectionError(exc_message), generic_successful_request_response]
     mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
 
     box_response = box_session.get(url=test_url)
