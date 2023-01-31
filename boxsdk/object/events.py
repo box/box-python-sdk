@@ -108,7 +108,7 @@ class Events(BaseEndpoint):
         stream type. Used for historical querying (up to one year). Works for Enterprise admin_logs type.
 
         :param limit:
-            (optional) Maximum number of events to return.
+            (optional) Maximum number of events to return. If None, default API value limit=100 will be used.
         :param stream_position:
             The location in the stream from which to start getting events. 0 is the beginning of time.
         :param created_after:
