@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.6.2](https://github.com/box/box-python-sdk/compare/v3.6.1...v3.6.2) (2023-02-07)
+
+
+### Bug Fixes:
+
+* Retry `Connection broken` and `Connection reset` requests errors ([#794](https://github.com/box/box-python-sdk/issues/794)) ([f1a0aa4](https://github.com/box/box-python-sdk/commit/f1a0aa434369f06e80654a9f5c4b796100881aa6))
+
 ### [3.6.1](https://github.com/box/box-python-sdk/compare/v3.6.0...v3.6.1) (2023-01-09)
 
 
