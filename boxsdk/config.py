@@ -18,6 +18,7 @@ class Client:
     USER_AGENT_STRING = f'box-python-sdk-{VERSION}'
     BOX_UA_STRING = f'agent=box-python-sdk/{VERSION}; ' \
                     f'env=python/{py_version.major}.{py_version.minor}.{py_version.micro}'
+    CHUNK_UPLOAD_THREADS = 5
 
 
 class Proxy:

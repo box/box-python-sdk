@@ -234,9 +234,8 @@ def test_resume_in_process(test_file, mock_upload_session):
     }
     parts = [first_part, second_part, third_part, fourth_part]
     mock_iterator = MagicMock(LimitOffsetBasedDictCollection)
-    mock_iterator.__iter__.return_value = [first_part, second_part, third_part]
+    mock_iterator.__iter__.return_value = [first_part, second_part, fourth_part]
     mock_upload_session.get_parts.return_value = mock_iterator
-    mock_upload_session.upload_part_bytes.side_effect = [third_part]
     mock_upload_session.commit.return_value = test_file
     chunked_uploader = ChunkedUploader(mock_upload_session, stream, file_size)
     mock_upload_session.upload_part_bytes.side_effect = [
@@ -249,6 +248,7 @@ def test_resume_in_process(test_file, mock_upload_session):
     try:
         chunked_uploader.start()
     except BoxAPIException:
+        mock_upload_session.upload_part_bytes.side_effect = [third_part]
         uploaded_file = chunked_uploader.resume()
     calls = [call(offset=6, part_bytes=b'g', total_size=7)]
     mock_upload_session.upload_part_bytes.assert_has_calls(calls, any_order=False)
