@@ -1,4 +1,5 @@
 import hashlib
+from time import sleep
 from queue import Empty, Queue
 from threading import Lock, Thread
 from typing import IO, TYPE_CHECKING, Optional
@@ -37,6 +38,8 @@ class ChunkedUploader:
         self._inflight_part = {}
         self._exception = None
         self._chunk_index = 0
+        self._upload_queue = None
+        self._upload_consumer = None
         self._thread_count = Client.CHUNK_UPLOAD_THREADS
 
     def start(self) -> Optional['File']:
@@ -74,9 +77,9 @@ class ChunkedUploader:
             self._part_array.append(part)
             self._part_definitions[part['offset']] = part
         for item in self._inflight_part:
-            self._upload_queue.put(item)
-        
-        for index in range(self._upload_session.total_parts - self._chunk_index - len(self._inflight_part)):
+            self._upload_queue.put(self._inflight_part[item])
+
+        for _ in range(self._upload_session.total_parts - self._chunk_index - len(self._inflight_part)):
             self._upload_queue.put(True)
         self._inflight_part = {}
         self._upload()
@@ -94,10 +97,11 @@ class ChunkedUploader:
         self._inflight_part = None
         self._is_aborted = True
         return self._upload_session.abort()
-    
+
     def _initial_uploader_thread(self):
         self._upload_consumer = [Thread(target=self._upload_part, args=(str(id),)) for id in range(self._thread_count)]
-        (self._upload_consumer[i].setDaemon(True) for i in range(self._thread_count))
+        for i in range(self._thread_count):
+            self._upload_consumer[i].setDaemon(True)
 
     def _upload(self) -> None:
         """
@@ -117,25 +121,12 @@ class ChunkedUploader:
         # Wait for all parts to be uploaded
         self._upload_queue.join()
         self._part_array = sorted(self._part_array, key=lambda part: part['offset'])
-        
-        return
-        while len(self._part_array) < self._upload_session.total_parts:
-            # Retrieve the part inflight if it exists, if it does not exist then get the next part from the stream.
-            next_part = self._inflight_part or self._get_next_part()
-            # Set the retrieve part to the current part inflight.
-            self._inflight_part = next_part
-            self._sha1.update(next_part.chunk)
-            # Retrieve the uploaded part if the part has already been uploaded. If not upload the current part.
-            uploaded_part = self._part_definitions.get(next_part.offset) or next_part.upload()
-            self._inflight_part = None
-            # Record that the part has been uploaded.
-            self._part_array.append(uploaded_part)
-            self._part_definitions[next_part.offset] = uploaded_part
-    
+
     def _upload_part(self, worker_id):
         while True:
             task = None
             next_part = None
+            # pylint:disable=broad-except
             try:
                 if self._exception:
                     break
@@ -146,7 +137,9 @@ class ChunkedUploader:
                 if next_part is None:
                     with self._lock:
                         next_part = self._get_next_part()
-                        self._inflight_part[worker_id] = next_part
+                        sleep(0.001)
+                        self._sha1.update(next_part.chunk)
+                self._inflight_part[worker_id] = next_part
                 if not self._part_definitions.get(next_part.offset):
                     # Record that the part has been uploaded.
                     uploaded_part = next_part.upload()
@@ -155,8 +148,8 @@ class ChunkedUploader:
                 del self._inflight_part[worker_id]
             except Empty:
                 break
-            except Exception as e:
-                self._exception = e
+            except Exception as exc:
+                self._exception = exc
                 break
             finally:
                 if task is not None:
@@ -184,7 +177,6 @@ class ChunkedUploader:
                 break
             chunk += bytes_read
             copied_length += len(bytes_read)
-        self._sha1.update(chunk)
         return InflightPart(offset, chunk, self._upload_session, self._file_size)
 
     def _commit_and_erase_stream_reference_when_succeed(self):

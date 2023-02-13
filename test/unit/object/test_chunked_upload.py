@@ -245,12 +245,18 @@ def test_resume_in_process(test_file, mock_upload_session):
         fourth_part
     ]
     uploaded_file = None
+    calls = [
+        call(offset=0, part_bytes=b'ab', total_size=7),
+        call(offset=2, part_bytes=b'cd', total_size=7),
+        call(offset=4, part_bytes=b'ef', total_size=7),
+        call(offset=6, part_bytes=b'g', total_size=7),
+    ]
     try:
         chunked_uploader.start()
     except BoxAPIException:
         mock_upload_session.upload_part_bytes.side_effect = [third_part]
         uploaded_file = chunked_uploader.resume()
-    calls = [call(offset=6, part_bytes=b'g', total_size=7)]
+    calls = [call(offset=4, part_bytes=b'ef', total_size=7)]
     mock_upload_session.upload_part_bytes.assert_has_calls(calls, any_order=False)
     mock_upload_session.commit.assert_called_once_with(
         content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@',
