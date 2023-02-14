@@ -138,13 +138,13 @@ class ChunkedUploader:
                     next_part = self._get_next_part()
                     sleep(0.001)
                     self._sha1.update(next_part.chunk)
-            self._inflight_part[next_part.chunk] = next_part
+            self._inflight_part[next_part.offset] = next_part
             if not self._part_definitions.get(next_part.offset):
                 # Record that the part has been uploaded.
                 uploaded_part = next_part.upload()
                 self._part_array.append(uploaded_part)
                 self._part_definitions[next_part.offset] = uploaded_part
-            del self._inflight_part[next_part.chunk]
+            del self._inflight_part[next_part.offset]
         except Empty:
             return
         except Exception as exc:
