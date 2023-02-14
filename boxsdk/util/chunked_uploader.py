@@ -40,7 +40,6 @@ class ChunkedUploader:
         self._exception = None
         self._chunk_index = 0
         self._upload_queue = None
-        self._upload_consumer = None
         self._thread_count = Client.CHUNK_UPLOAD_THREADS
 
     def start(self) -> Optional['File']:
@@ -115,7 +114,7 @@ class ChunkedUploader:
             for future in futures:
                 future.result()
                 self._upload_queue.task_done()
-            
+
         # Raise any exception that occurred during upload
         if self._exception:
             ex = self._exception
@@ -137,7 +136,7 @@ class ChunkedUploader:
             else:
                 with self._lock:
                     next_part = self._get_next_part()
-                    # sleep(0.001)
+                    sleep(0.001)
                     self._sha1.update(next_part.chunk)
             self._inflight_part[next_part.chunk] = next_part
             if not self._part_definitions.get(next_part.offset):
