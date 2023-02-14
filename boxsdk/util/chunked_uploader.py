@@ -1,7 +1,8 @@
 import hashlib
+import concurrent.futures
 from time import sleep
 from queue import Empty, Queue
-from threading import Lock, Thread
+from threading import Lock
 from typing import IO, TYPE_CHECKING, Optional
 
 from boxsdk.exception import BoxException
@@ -98,21 +99,23 @@ class ChunkedUploader:
         self._is_aborted = True
         return self._upload_session.abort()
 
-    def _initial_uploader_thread(self):
-        self._upload_consumer = [Thread(target=self._upload_part, args=(str(id),)) for id in range(self._thread_count)]
-        for i in range(self._thread_count):
-            self._upload_consumer[i].setDaemon(True)
-
     def _upload(self) -> None:
         """
         Utility function for looping through all parts of the upload session and uploading them.
         """
-        self._initial_uploader_thread()
-        # Start all threads and wait for them to finish
-        for thread in self._upload_consumer:
-            thread.start()
-        for thread in self._upload_consumer:
-            thread.join()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self._thread_count) as executor:
+            futures = []
+            try:
+                while True:
+                    item = self._upload_queue.get(False)
+                    futures.append(executor.submit(self._upload_part, item))
+            except Empty:
+                pass
+
+            for future in futures:
+                future.result()
+                self._upload_queue.task_done()
+            
         # Raise any exception that occurred during upload
         if self._exception:
             ex = self._exception
@@ -122,38 +125,31 @@ class ChunkedUploader:
         self._upload_queue.join()
         self._part_array = sorted(self._part_array, key=lambda part: part['offset'])
 
-    def _upload_part(self, worker_id):
-        while True:
-            task = None
-            next_part = None
-            # pylint:disable=broad-except
-            try:
-                if self._exception:
-                    break
-                # Retrieve the part inflight if it exists, if it does not exist then get the next part from the stream.
-                task = self._upload_queue.get(False)
-                if isinstance(task, InflightPart):
-                    next_part = task
-                if next_part is None:
-                    with self._lock:
-                        next_part = self._get_next_part()
-                        sleep(0.001)
-                        self._sha1.update(next_part.chunk)
-                self._inflight_part[worker_id] = next_part
-                if not self._part_definitions.get(next_part.offset):
-                    # Record that the part has been uploaded.
-                    uploaded_part = next_part.upload()
-                    self._part_array.append(uploaded_part)
-                    self._part_definitions[next_part.offset] = uploaded_part
-                del self._inflight_part[worker_id]
-            except Empty:
-                break
-            except Exception as exc:
-                self._exception = exc
-                break
-            finally:
-                if task is not None:
-                    self._upload_queue.task_done()
+    def _upload_part(self, task):
+        next_part = None
+        # pylint:disable=broad-except
+        try:
+            # Exit if an exception has occurred in another thread.
+            if self._exception:
+                return
+            if isinstance(task, InflightPart):
+                next_part = task
+            else:
+                with self._lock:
+                    next_part = self._get_next_part()
+                    # sleep(0.001)
+                    self._sha1.update(next_part.chunk)
+            self._inflight_part[next_part.chunk] = next_part
+            if not self._part_definitions.get(next_part.offset):
+                # Record that the part has been uploaded.
+                uploaded_part = next_part.upload()
+                self._part_array.append(uploaded_part)
+                self._part_definitions[next_part.offset] = uploaded_part
+            del self._inflight_part[next_part.chunk]
+        except Empty:
+            return
+        except Exception as exc:
+            self._exception = exc
 
     def _get_next_part(self) -> 'InflightPart':
         """
