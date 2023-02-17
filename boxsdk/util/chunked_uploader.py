@@ -91,11 +91,11 @@ class ChunkedUploader:
             next_part = self._inflight_part or self._get_next_part()
             # Set the retrieve part to the current part inflight.
             self._inflight_part = next_part
-            self._sha1.update(next_part.chunk)
             # Retrieve the uploaded part if the part has already been uploaded. If not upload the current part.
             uploaded_part = self._part_definitions.get(next_part.offset) or next_part.upload()
             self._inflight_part = None
             # Record that the part has been uploaded.
+            self._sha1.update(next_part.chunk)
             self._part_array.append(uploaded_part)
             self._part_definitions[next_part.offset] = uploaded_part
 
