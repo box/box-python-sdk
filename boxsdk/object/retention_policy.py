@@ -26,7 +26,8 @@ class RetentionPolicy(BaseObject):
     def assign(
             self,
             assignee: Union['Folder', 'Enterprise', 'MetadataTemplate'],
-            fields: Iterable[str] = None
+            fields: Iterable[str] = None,
+            start_date_field: Optional[str] = None,
     ) -> 'RetentionPolicyAssignment':
         """Assign a retention policy to a Box item
 
@@ -34,6 +35,9 @@ class RetentionPolicy(BaseObject):
             The item to assign the retention policy on.
         :param fields:
             List of fields to request.
+        :param start_date_field:
+            The date the retention policy assignment begins.
+            If the assigned_to type is metadata_template, this field can be a date field's metadata attribute key id.
         :returns:
             A :class:`RetentionPolicyAssignment` object.
         """
@@ -48,6 +52,8 @@ class RetentionPolicy(BaseObject):
         params = {}
         if fields is not None:
             params['fields'] = ','.join(fields)
+        if start_date_field is not None:
+            body['start_date_field'] = start_date_field
         response = self._session.post(url, data=json.dumps(body), params=params).json()
         return self.translator.translate(
             session=self._session,
