@@ -10,6 +10,7 @@ class API:
     OAUTH2_API_URL = 'https://api.box.com/oauth2'  # <https://developer.box.com/reference/post-oauth2-token>
     OAUTH2_AUTHORIZE_URL = 'https://account.box.com/api/oauth2/authorize'  # <https://developer.box.com/reference/get-authorize/>
     MAX_RETRY_ATTEMPTS = 5
+    CHUNK_UPLOAD_THREADS = 5
 
 
 class Client:
@@ -18,7 +19,6 @@ class Client:
     USER_AGENT_STRING = f'box-python-sdk-{VERSION}'
     BOX_UA_STRING = f'agent=box-python-sdk/{VERSION}; ' \
                     f'env=python/{py_version.major}.{py_version.minor}.{py_version.micro}'
-    CHUNK_UPLOAD_THREADS = 5
 
 
 class Proxy:

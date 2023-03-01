@@ -4,7 +4,7 @@ from threading import Lock
 from typing import IO, TYPE_CHECKING, Optional, List
 
 from boxsdk.exception import BoxException
-from boxsdk.config import Client
+from boxsdk.config import API
 
 if TYPE_CHECKING:
     from boxsdk.object.file import File
@@ -36,7 +36,7 @@ class ChunkedUploader:
         self._lock = Lock()
         self._inflight_parts = {}
         self._chunk_index = 0
-        self._executor = ThreadPoolExecutor(max_workers=Client.CHUNK_UPLOAD_THREADS)
+        self._executor = ThreadPoolExecutor(max_workers=API.CHUNK_UPLOAD_THREADS)
 
     def start(self) -> Optional['File']:
         """
@@ -65,7 +65,7 @@ class ChunkedUploader:
         if self._is_aborted:
             raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
 
-        self._executor = ThreadPoolExecutor(max_workers=Client.CHUNK_UPLOAD_THREADS)
+        self._executor = ThreadPoolExecutor(max_workers=API.CHUNK_UPLOAD_THREADS)
         parts = self._upload_session.get_parts()
         for part in parts:
             self._part_definitions[part['offset']] = part
