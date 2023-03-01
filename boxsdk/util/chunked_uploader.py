@@ -65,15 +65,15 @@ class ChunkedUploader:
         if self._is_aborted:
             raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
 
+        self._executor = ThreadPoolExecutor(max_workers=Client.CHUNK_UPLOAD_THREADS)
         parts = self._upload_session.get_parts()
-        self._part_array = []
         for part in parts:
-            self._part_array.append(part)
             self._part_definitions[part['offset']] = part
 
-        futures = [self._executor.submit(lambda item=part: self._upload_part(item)) for part in self._inflight_parts]
-        for _ in range(self._upload_session.total_parts - self._chunk_index - len(self._inflight_parts)):
-            futures.append(self._executor.submit(self._upload_part))
+        with self._lock:
+            futures = [self._executor.submit(lambda item=part: self._upload_part(item)) for part in self._inflight_parts.values()]
+            for _ in range(self._upload_session.total_parts - self._chunk_index - len(self._inflight_parts)):
+                futures.append(self._executor.submit(self._upload_part))
 
         self._upload(futures)
         return self._commit_and_erase_stream_reference_when_succeed()
@@ -86,7 +86,7 @@ class ChunkedUploader:
             A boolean indication success of the upload abort.
         """
         self._content_stream = None
-        self._part_array = []
+        self._part_definitions = {}
         self._inflight_parts = {}
         self._is_aborted = True
         return self._upload_session.abort()
@@ -95,10 +95,14 @@ class ChunkedUploader:
         """
         Utility function for looping through all parts of the upload session and uploading them.
         """
-        for future in as_completed(futures):
-            future.result()
+        try:
+            for future in as_completed(futures):
+                future.result()
+        except Exception as exc:
+            self._executor.shutdown(wait=True)
+            raise exc
 
-        self._part_array = sorted(self._part_array, key=lambda part: part['offset'])
+        self._part_array = sorted(self._part_definitions.values(), key=lambda part: part['offset'])
 
     def _upload_part(self, task=None):
         if isinstance(task, InflightPart):
@@ -108,12 +112,16 @@ class ChunkedUploader:
                 next_part = self._get_next_part()
                 self._sha1.update(next_part.chunk)
 
-        self._inflight_parts[next_part.offset] = next_part
-        if not self._part_definitions.get(next_part.offset):
-            uploaded_part = next_part.upload()
-            self._part_array.append(uploaded_part)
+        with self._lock:
+            if self._part_definitions.get(next_part.offset):
+                return
+            self._inflight_parts[next_part.offset] = next_part
+
+        uploaded_part = next_part.upload()
+
+        with self._lock:
             self._part_definitions[next_part.offset] = uploaded_part
-        del self._inflight_parts[next_part.offset]
+            del self._inflight_parts[next_part.offset]
 
     def _get_next_part(self) -> 'InflightPart':
         """
