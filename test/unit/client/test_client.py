@@ -894,6 +894,7 @@ def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
     policy_name = 'Test Retention Policy'
     policy_type = 'finite'
     disposition_action = 'remove_retention'
+    policy_description = 'Test Retention Policy'
     expected_url = f'{API.BASE_API_URL}/retention_policies'
     expected_data = {
         'policy_name': policy_name,
@@ -912,7 +913,8 @@ def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
                 'id': mock_user_list[1].object_id,
             },
         ],
-        'retention_type': 'modifiable'
+        'retention_type': 'modifiable',
+        'description': policy_description,
     }
     mock_policy = {
         'type': 'retention_policy',
@@ -933,7 +935,8 @@ def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
                 'id': mock_user_list[1].object_id,
             },
         ],
-        'retention_type': 'modifiable'
+        'retention_type': 'modifiable',
+        'description': policy_description,
     }
     mock_box_session.post.return_value.json.return_value = mock_policy
     policy = mock_client.create_retention_policy(
@@ -943,7 +946,8 @@ def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
         can_owner_extend_retention=True,
         are_owners_notified=False,
         custom_notification_recipients=mock_user_list,
-        retention_type='modifiable'
+        retention_type='modifiable',
+        description=policy_description,
     )
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert policy.object_id == mock_policy['id']
@@ -953,6 +957,7 @@ def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
     assert policy.can_owner_extend_retention == mock_policy['can_owner_extend_retention']
     assert policy.are_owners_notified == mock_policy['are_owners_notified']
     assert policy.retention_type == mock_policy['retention_type']
+    assert policy.description == mock_policy['description']
     assert isinstance(policy, RetentionPolicy)
 
 
@@ -960,6 +965,7 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
     policy_name = 'Test Retention Policy'
     policy_type = 'indefinite'
     disposition_action = 'remove_retention'
+    policy_description = 'Test Retention Policy'
     expected_url = f'{API.BASE_API_URL}/retention_policies'
     expected_data = {
         'policy_name': policy_name,
@@ -968,6 +974,7 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
         'can_owner_extend_retention': False,
         'are_owners_notified': False,
         'retention_type': 'non_modifiable',
+        'description': policy_description,
     }
     mock_policy = {
         'type': 'retention_policy',
@@ -978,6 +985,7 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
         'can_owner_extend_retention': False,
         'are_owners_notified': False,
         'retention_type': 'non_modifiable',
+        'description': policy_description,
     }
     mock_box_session.post.return_value.json.return_value = mock_policy
     policy = mock_client.create_retention_policy(
@@ -986,7 +994,8 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
         retention_length=float('inf'),
         can_owner_extend_retention=False,
         are_owners_notified=False,
-        retention_type='non_modifiable'
+        retention_type='non_modifiable',
+        description=policy_description,
     )
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert policy.object_id == mock_policy['id']
@@ -996,6 +1005,7 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
     assert policy.can_owner_extend_retention == mock_policy['can_owner_extend_retention']
     assert policy.are_owners_notified == mock_policy['are_owners_notified']
     assert policy.retention_type == mock_policy['retention_type']
+    assert policy.description == mock_policy['description']
     assert isinstance(policy, RetentionPolicy)
 
 

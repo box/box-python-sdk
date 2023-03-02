@@ -14,6 +14,7 @@ def test_get(test_retention_policy, mock_box_session):
         'policy_type': 'finite',
         'retention_length': '10',
         'disposition_action': 'permanently_delete',
+        'description': 'Description',
     }
     retention_policy = test_retention_policy.get()
     mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
@@ -21,12 +22,14 @@ def test_get(test_retention_policy, mock_box_session):
     assert retention_policy['type'] == test_retention_policy.object_type
     assert retention_policy['id'] == test_retention_policy.object_id
     assert retention_policy['policy_name'] == 'Policy Name'
+    assert retention_policy['description'] == 'Description'
 
 
 def test_update(test_retention_policy, mock_box_session):
     new_policy_name = 'New Name'
     new_retention_type = 'modifiable'
     new_retention_length = 60
+    new_description = 'New Description'
     expected_url = f'{API.BASE_API_URL}/retention_policies/{test_retention_policy.object_id}'
     mock_box_session.put.return_value.json.return_value = {
         'type': test_retention_policy.object_type,
@@ -35,11 +38,13 @@ def test_update(test_retention_policy, mock_box_session):
         'policy_type': 'finite',
         'retention_length': new_retention_length,
         'retention_type': new_retention_type,
+        'description': new_description,
     }
     data = {
         'policy_name': new_policy_name,
         'retention_type': new_retention_type,
-        'retention_length': new_retention_length
+        'retention_length': new_retention_length,
+        'description': new_description,
     }
     retention_policy = test_retention_policy.update_info(data=data)
     mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
@@ -49,6 +54,7 @@ def test_update(test_retention_policy, mock_box_session):
     assert retention_policy['policy_name'] == new_policy_name
     assert retention_policy['retention_type'] == new_retention_type
     assert retention_policy['retention_length'] == new_retention_length
+    assert retention_policy['description'] == new_description
 
 
 def test_assign(test_retention_policy, test_folder, mock_box_session):
@@ -59,7 +65,8 @@ def test_assign(test_retention_policy, test_folder, mock_box_session):
         'assign_to': {
             'type': test_folder.object_type,
             'id': test_folder.object_id,
-        }
+        },
+        "start_date_field": "upload_date"
     }
     mock_assignment = {
         'type': 'retention_policy_assignment',
@@ -67,13 +74,15 @@ def test_assign(test_retention_policy, test_folder, mock_box_session):
         'retention_policy': {
             'type': 'retention_policy',
             'id': policy_id,
-        }
+        },
+        "start_date_field": "upload_date"
     }
     mock_box_session.post.return_value.json.return_value = mock_assignment
-    assignment = test_retention_policy.assign(test_folder)
+    assignment = test_retention_policy.assign(test_folder, start_date_field='upload_date')
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data), params={})
     assert assignment.id == mock_assignment['id']
     assert assignment.retention_policy['id'] == mock_assignment['retention_policy']['id']
+    assert assignment.start_date_field == mock_assignment['start_date_field']
     assert isinstance(assignment, RetentionPolicyAssignment)
 
 
