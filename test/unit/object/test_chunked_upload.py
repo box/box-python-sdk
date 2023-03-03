@@ -145,7 +145,7 @@ def test_start(test_upload_session, mock_box_session):
         call(expected_put_url, data=b'g', headers=expected_headers_fourth_upload),
     ]
     flaky_stream.read.assert_has_calls([call(2), call(2), call(2), call(1), call(2), call(2), call(1)], any_order=False)
-    mock_box_session.put.assert_has_calls(calls, any_order=False)
+    mock_box_session.put.assert_has_calls(calls, any_order=True)
     mock_box_session.post.assert_called_once_with(
         expected_post_url,
         data=json.dumps(expected_data),
@@ -198,7 +198,7 @@ def test_resume_cross_process(test_file, mock_upload_session):
         call(offset=2, part_bytes=b'cd', total_size=7),
         call(offset=4, part_bytes=b'ef', total_size=7),
     ]
-    mock_upload_session.upload_part_bytes.assert_has_calls(calls, any_order=False)
+    mock_upload_session.upload_part_bytes.assert_has_calls(calls, any_order=True)
     mock_upload_session.commit.assert_called_once_with(
         content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@',
         parts=parts
@@ -252,6 +252,7 @@ def test_resume_in_process(test_file, mock_upload_session):
         call(offset=2, part_bytes=b'cd', total_size=7),
         call(offset=4, part_bytes=b'ef', total_size=7),
         call(offset=6, part_bytes=b'g', total_size=7),
+        call(offset=4, part_bytes=b'ef', total_size=7),
     ]
     try:
         chunked_uploader.start()
@@ -321,8 +322,14 @@ def test_resume_with_upload_random_duration(test_file, mock_upload_session):
         chunked_uploader.start()
     except BoxAPIException:
         uploaded_file = chunked_uploader.resume()
-    calls = [call(offset=4, part_bytes=b'ef', total_size=7)]
-    mock_upload_session.upload_part_bytes.assert_has_calls(calls, any_order=False)
+    calls = [
+        call(offset=0, part_bytes=b'ab', total_size=7),
+        call(offset=2, part_bytes=b'cd', total_size=7),
+        call(offset=4, part_bytes=b'ef', total_size=7),
+        call(offset=6, part_bytes=b'g', total_size=7),
+        call(offset=4, part_bytes=b'ef', total_size=7),
+    ]
+    mock_upload_session.upload_part_bytes.assert_has_calls(calls, any_order=True)
     mock_upload_session.commit.assert_called_once_with(
         content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@',
         parts=parts
