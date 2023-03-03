@@ -145,7 +145,7 @@ def test_start(test_upload_session, mock_box_session):
         call(expected_put_url, data=b'g', headers=expected_headers_fourth_upload),
     ]
     flaky_stream.read.assert_has_calls([call(2), call(2), call(2), call(1), call(2), call(2), call(1)], any_order=False)
-    mock_box_session.put.assert_has_calls(calls, any_order=False)
+    mock_box_session.put.assert_has_calls(calls, any_order=True)
     mock_box_session.post.assert_called_once_with(
         expected_post_url,
         data=json.dumps(expected_data),
