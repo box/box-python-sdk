@@ -198,10 +198,10 @@ you may want to upload the file in parts.  This allows a single part to fail
 without aborting the entire upload, and failed parts can then be retried.
 
 By default, chunked upload will work on 5 threads to improve the download speed.
-To change this number you can set `Client.CHUNK_UPLOAD_THREADS` field.
+To change this number you can set `API.CHUNK_UPLOAD_THREADS` field.
 ```python
-from boxsdk.config import Client
-Client.CHUNK_UPLOAD_THREADS = 10
+from boxsdk.config import API
+API.CHUNK_UPLOAD_THREADS = 6
 ```
 
 ### Automatic Uploader
