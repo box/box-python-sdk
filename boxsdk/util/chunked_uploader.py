@@ -1,10 +1,14 @@
 import hashlib
-from typing import TYPE_CHECKING, IO, Optional
+from concurrent.futures import ThreadPoolExecutor, as_completed, Future
+from threading import Lock
+from typing import IO, TYPE_CHECKING, Optional, List
+
 from boxsdk.exception import BoxException
+from boxsdk.config import API
 
 if TYPE_CHECKING:
-    from boxsdk.object.upload_session import UploadSession
     from boxsdk.object.file import File
+    from boxsdk.object.upload_session import UploadSession
 
 
 class ChunkedUploader:
@@ -28,8 +32,11 @@ class ChunkedUploader:
         self._part_array = []
         self._sha1 = hashlib.sha1()
         self._part_definitions = {}
-        self._inflight_part = None
         self._is_aborted = False
+        self._lock = Lock()
+        self._inflight_parts = {}
+        self._chunk_index = 0
+        self._executor = ThreadPoolExecutor(max_workers=API.CHUNK_UPLOAD_THREADS)
 
     def start(self) -> Optional['File']:
         """
@@ -41,7 +48,9 @@ class ChunkedUploader:
         """
         if self._is_aborted:
             raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
-        self._upload()
+
+        futures = [self._executor.submit(self._upload_part) for _ in range(self._upload_session.total_parts)]
+        self._upload(futures)
         return self._commit_and_erase_stream_reference_when_succeed()
 
     def resume(self) -> Optional['File']:
@@ -55,18 +64,18 @@ class ChunkedUploader:
         """
         if self._is_aborted:
             raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
+
+        self._executor = ThreadPoolExecutor(max_workers=API.CHUNK_UPLOAD_THREADS)
         parts = self._upload_session.get_parts()
-        self._part_array = []
-        # Construct a part array that is the first consecutive run of uploaded parts up to an inflight part so resume
-        # has a previous state to start from for in process uploads and cross process uploads.
-        # Construct a part definition to be used later to determine if a part has been uploaded by offset.
         for part in parts:
-            if self._inflight_part and part['offset'] <= self._inflight_part.offset:
-                self._part_array.append(part)
-            if self._inflight_part and part['offset'] == self._inflight_part.offset:
-                self._inflight_part = None
             self._part_definitions[part['offset']] = part
-        self._upload()
+
+        with self._lock:
+            futures = [self._executor.submit(lambda item=part: self._upload_part(item)) for part in self._inflight_parts.values()]
+            for _ in range(self._upload_session.total_parts - self._chunk_index - len(self._inflight_parts)):
+                futures.append(self._executor.submit(self._upload_part))
+
+        self._upload(futures)
         return self._commit_and_erase_stream_reference_when_succeed()
 
     def abort(self) -> bool:
@@ -77,27 +86,42 @@ class ChunkedUploader:
             A boolean indication success of the upload abort.
         """
         self._content_stream = None
-        self._part_array = []
-        self._inflight_part = None
+        self._part_definitions = {}
+        self._inflight_parts = {}
         self._is_aborted = True
         return self._upload_session.abort()
 
-    def _upload(self) -> None:
+    def _upload(self, futures: List[Future]) -> None:
         """
         Utility function for looping through all parts of the upload session and uploading them.
         """
-        while len(self._part_array) < self._upload_session.total_parts:
-            # Retrieve the part inflight if it exists, if it does not exist then get the next part from the stream.
-            next_part = self._inflight_part or self._get_next_part()
-            # Set the retrieve part to the current part inflight.
-            self._inflight_part = next_part
-            self._sha1.update(next_part.chunk)
-            # Retrieve the uploaded part if the part has already been uploaded. If not upload the current part.
-            uploaded_part = self._part_definitions.get(next_part.offset) or next_part.upload()
-            self._inflight_part = None
-            # Record that the part has been uploaded.
-            self._part_array.append(uploaded_part)
+        try:
+            for future in as_completed(futures):
+                future.result()
+        except Exception as exc:
+            self._executor.shutdown(wait=True)
+            raise exc
+
+        self._part_array = sorted(self._part_definitions.values(), key=lambda part: part['offset'])
+
+    def _upload_part(self, task=None):
+        if isinstance(task, InflightPart):
+            next_part = task
+        else:
+            with self._lock:
+                next_part = self._get_next_part()
+                self._sha1.update(next_part.chunk)
+
+        with self._lock:
+            if self._part_definitions.get(next_part.offset):
+                return
+            self._inflight_parts[next_part.offset] = next_part
+
+        uploaded_part = next_part.upload()
+
+        with self._lock:
             self._part_definitions[next_part.offset] = uploaded_part
+            del self._inflight_parts[next_part.offset]
 
     def _get_next_part(self) -> 'InflightPart':
         """
@@ -108,7 +132,8 @@ class ChunkedUploader:
         """
         copied_length = 0
         chunk = b''
-        offset = len(self._part_array) * self._upload_session.part_size
+        offset = self._chunk_index * self._upload_session.part_size
+        self._chunk_index += 1
         while copied_length < self._upload_session.part_size:
             bytes_read = self._content_stream.read(self._upload_session.part_size - copied_length)
             if bytes_read is None:
