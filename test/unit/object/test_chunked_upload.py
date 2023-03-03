@@ -270,10 +270,9 @@ def test_resume_with_upload_random_duration(test_file, mock_upload_session):
     # pylint: disable-msg=unused-argument
     def upload_mock_func(part_bytes, offset, total_size):
         value = upload_results.pop(0)
-        if isinstance(value, Exception):
-            time.sleep(randint(0, 1))
-            raise value
         time.sleep(randint(0, 1))
+        if isinstance(value, Exception):
+            raise value
         return value
 
     file_size = 7
