@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.7.0](https://github.com/box/box-python-sdk/compare/v3.6.2...v3.7.0) (2023-03-08)
+
+
+### New Features and Enhancements:
+
+* Update `retention_policies` and `retention_policy_assignments` ([#803](https://github.com/box/box-python-sdk/issues/803)) ([8b72f7e](https://github.com/box/box-python-sdk/commit/8b72f7e992bce676723a40ac12bde06c8cca3bfb))
+* Use multiple threading for chunked upload ([#800](https://github.com/box/box-python-sdk/issues/800)) ([506ce0d](https://github.com/box/box-python-sdk/commit/506ce0d1e72ab4eeb6c5933a32c753e232a2f624))
+
 ### [3.6.2](https://github.com/box/box-python-sdk/compare/v3.6.1...v3.6.2) (2023-02-07)
 
 
