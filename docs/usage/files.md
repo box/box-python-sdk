@@ -199,7 +199,7 @@ without aborting the entire upload, and failed parts can then be retried.
 
 ### Automatic Uploader
 
-Since boxsdk 3.7.0 release, automatic uploader uses multiple threads, which significantly speeds up the upload process.
+Since box-python-sdk 3.7.0 release, automatic uploader uses multiple threads, which significantly speeds up the upload process.
 By default, automatic chunked uploader will use 5 threads.
 You can change this number by setting `API.CHUNK_UPLOAD_THREADS` to a new number.
 
