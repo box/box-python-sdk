@@ -194,10 +194,8 @@ Chunked Upload
 --------------
 
 For large files or in cases where the network connection is less reliable,
-you may want to upload the file in parts. This allows a single part to fail
+you may want to upload the file in parts.  This allows a single part to fail
 without aborting the entire upload, and failed parts can then be retried.
-
-
 
 ### Automatic Uploader
 
