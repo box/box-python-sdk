@@ -280,7 +280,7 @@ except BoxAPIException as e:
 #### Resume Upload
 
 Sometimes an upload can be interrupted, in order to resume uploading where you last left off, simply call the
-[`chunked_uploader.resume()`][resume] method. This will return the the [File][file_class] object that was uploaded.
+[`chunked_uploader.resume()`][resume] method. This will return the [File][file_class] object that was uploaded.
 
 ```python
 chunked_uploader = client.file('12345').get_chunked_uploader('/path/to/file')

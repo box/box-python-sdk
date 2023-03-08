@@ -16,6 +16,7 @@ Download a Zip File
 Calling [`client.download_zip(name, items, writable_stream)`][create_zip] will let you create a new zip file 
 with the specified name and with the specified items and download it to the stream that is passed in. The response is a status `dict` that contains information about the download, including whether it was successful. The created zip file does not show up in your Box account.
 
+<!-- sample get_zip_downloads_id_content -->
 ```python
 name = 'test'
 file = mock_client.file('466239504569')

@@ -862,7 +862,8 @@ class Client(Cloneable):
             can_owner_extend_retention: Optional[bool] = None,
             are_owners_notified: Optional[bool] = None,
             custom_notification_recipients: Iterable['User'] = None,
-            retention_type: Optional[str] = None
+            retention_type: Optional[str] = None,
+            description: Optional[str] = None,
     ) -> 'RetentionPolicy':
         """
         Create a retention policy for the given enterprise.
@@ -888,6 +889,8 @@ class Client(Cloneable):
             -   `non_modifiable`: You can modify the retention policy only in a limited way: add a folder,
                 lengthen the duration, retire the policy, change the disposition action or notification settings.
                 You cannot perform other actions, such as deleting the assignment or shortening the policy duration.
+        :param description:
+            The additional text description of the retention policy.
         :return:
             The newly created Retention Policy
         """
@@ -910,6 +913,8 @@ class Client(Cloneable):
             retention_attributes['custom_notification_recipients'] = user_list
         if retention_type is not None:
             retention_attributes['retention_type'] = retention_type
+        if description is not None:
+            retention_attributes['description'] = description
         box_response = self._session.post(url, data=json.dumps(retention_attributes))
         response = box_response.json()
         return self.translator.translate(
