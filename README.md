@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/box/sdks/blob/master/images/box-dev-logo.png" alt= “box-dev-logo” width="30%" height="50%">
+</p>
+
 # Box Python SDK
 
 [![image](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
