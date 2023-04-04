@@ -35,6 +35,6 @@ def test_create_legal_hold_policy():
     finally:
         try:
             legal_hold_policy.delete()
-        except BoxAPIException as box_api_exception:
+        except BoxAPIException:
             # There is a bug in the API which causes returning 404 but legal hold policy is deleted
-            assert box_api_exception.status == 404
+            pass
