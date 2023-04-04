@@ -69,9 +69,9 @@ Create New Legal Hold Policy
 ----------------------------
 
 To create a new legal hold policy, call
-[`client.create_legal_hold_policy(policy_name, description=None, filter_starting_at=None, filter_ending_at=None, is_ongoing=None)`][create_legal_hold_policy] with the name for the policy.  You can optionally include a human-readable `description`, as
-well as parameters describing which time period the policy applies to.  You must specify either `filter_starting_at`
-and `filter_ending_at` dates, or `is_ongoing=True`.  This method returns a new [`LegalHoldPolicy`][policy_class] object
+[`client.create_legal_hold_policy(policy_name, description=None, filter_started_at=None, filter_ended_at=None, is_ongoing=None)`][create_legal_hold_policy] with the name for the policy.  You can optionally include a human-readable `description`, as
+well as parameters describing which time period the policy applies to.  You must specify either `filter_started_at`
+and `filter_ended_at` dates, or `is_ongoing=True`.  This method returns a new [`LegalHoldPolicy`][policy_class] object
 representing the created policy.
 
 <!-- sample post_legal_hold_policies -->
