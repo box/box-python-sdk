@@ -609,23 +609,23 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
 
 
 @pytest.mark.parametrize('description', ('My test policy',))
-@pytest.mark.parametrize('filter_starting_at', ('2016-01-01T00:00:00+00:00', datetime.datetime(2016, 1, 1, tzinfo=pytz.UTC)))
-@pytest.mark.parametrize('filter_ending_at', ('2020-01-01T00:00:00+00:00', datetime.datetime(2020, 1, 1, tzinfo=pytz.UTC)))
+@pytest.mark.parametrize('filter_started_at', ('2016-01-01T00:00:00+00:00', datetime.datetime(2016, 1, 1, tzinfo=pytz.UTC)))
+@pytest.mark.parametrize('filter_ended_at', ('2020-01-01T00:00:00+00:00', datetime.datetime(2020, 1, 1, tzinfo=pytz.UTC)))
 @pytest.mark.parametrize('is_ongoing', ('True',))
 def test_create_legal_hold_policy_returns_the_correct_policy_object(
         mock_client,
         mock_box_session,
         create_policy_response,
         description,
-        filter_starting_at,
-        filter_ending_at,
+        filter_started_at,
+        filter_ended_at,
         is_ongoing
 ):
     # pylint:disable=redefined-outer-name
     params = {
         'description': description,
-        'filter_starting_at': filter_starting_at,
-        'filter_ending_at': filter_ending_at,
+        'filter_started_at': filter_started_at,
+        'filter_ended_at': filter_ended_at,
         'is_ongoing': is_ongoing
     }
 
@@ -639,8 +639,8 @@ def test_create_legal_hold_policy_returns_the_correct_policy_object(
     expected_body = {
         'policy_name': test_policy_name,
         'description': description,
-        'filter_starting_at': normalize_date_to_rfc3339_format(filter_starting_at),
-        'filter_ending_at': normalize_date_to_rfc3339_format(filter_ending_at),
+        'filter_started_at': normalize_date_to_rfc3339_format(filter_started_at),
+        'filter_ended_at': normalize_date_to_rfc3339_format(filter_ended_at),
         'is_ongoing': is_ongoing
     }
     mock_box_session.post.assert_called_once_with(expected_url, data=ANY)
