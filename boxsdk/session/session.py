@@ -115,6 +115,8 @@ class Session:
         """
         if 'expect_json_response' not in kwargs:
             kwargs['expect_json_response'] = False
+        if 'skip_retry_codes' not in kwargs:
+            kwargs['skip_retry_codes'] = {202}
         return self.request('DELETE', url, **kwargs)
 
     def options(self, url: str, **kwargs: Any) -> '_BoxResponse':

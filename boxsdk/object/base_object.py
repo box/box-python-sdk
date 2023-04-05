@@ -132,13 +132,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         """
         url = self.get_url()
 
-        box_response = self._session.delete(
-            url,
-            expect_json_response=False,
-            params=params or {},
-            headers=headers,
-            skip_retry_codes={202}
-        )
+        box_response = self._session.delete(url, expect_json_response=False, params=params or {}, headers=headers)
         return box_response.ok
 
     def __eq__(self, other: Any) -> bool:
