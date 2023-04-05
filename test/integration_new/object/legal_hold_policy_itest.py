@@ -33,8 +33,4 @@ def test_create_legal_hold_policy():
         assert legal_hold_policy.policy_name == new_policy_name
         assert legal_hold_policy.description == new_policy_description
     finally:
-        try:
-            legal_hold_policy.delete()
-        except BoxAPIException:
-            # There is a bug in the API which causes returning 404 but legal hold policy is deleted
-            pass
+        legal_hold_policy.delete()
