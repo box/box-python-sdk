@@ -308,8 +308,8 @@ class Client(Cloneable):
             self,
             policy_name: str,
             description: Optional[str] = None,
-            filter_starting_at: Union[datetime, str] = None,
-            filter_ending_at: Union[datetime, str] = None,
+            filter_started_at: Union[datetime, str] = None,
+            filter_ended_at: Union[datetime, str] = None,
             is_ongoing: Optional[bool] = None
     ) -> 'LegalHoldPolicy':
         """
@@ -319,10 +319,10 @@ class Client(Cloneable):
             The legal hold policy's display name.
         :param description:
             The description of the legal hold policy.
-        :param filter_starting_at:
+        :param filter_started_at:
             The start date filter for legal hold policy. Takes a datetime string supported by the dateutil library
             or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
-        :param filter_ending_at:
+        :param filter_ended_at:
             The end date filter for legal hold policy. Takes a datetime string supported by the dateutil library
             or a datetime.datetime object. If no timezone info provided, local timezone will be applied.
         :param is_ongoing:
@@ -335,10 +335,10 @@ class Client(Cloneable):
         policy_attributes = {'policy_name': policy_name}
         if description is not None:
             policy_attributes['description'] = description
-        if filter_starting_at is not None:
-            policy_attributes['filter_starting_at'] = normalize_date_to_rfc3339_format(filter_starting_at)
-        if filter_ending_at is not None:
-            policy_attributes['filter_ending_at'] = normalize_date_to_rfc3339_format(filter_ending_at)
+        if filter_started_at is not None:
+            policy_attributes['filter_started_at'] = normalize_date_to_rfc3339_format(filter_started_at)
+        if filter_ended_at is not None:
+            policy_attributes['filter_ended_at'] = normalize_date_to_rfc3339_format(filter_ended_at)
         if is_ongoing is not None:
             policy_attributes['is_ongoing'] = is_ongoing
         box_response = self._session.post(url, data=json.dumps(policy_attributes))

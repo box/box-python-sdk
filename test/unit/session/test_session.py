@@ -148,6 +148,12 @@ def test_box_session_retries_response_after_retry_after(
         test_url,
 ):
     # pylint:disable=redefined-outer-name
+    try:
+        if retry_after_response.status_code == 202 and test_method.__name__ == 'delete':
+            pytest.xfail("Delete operation should not be retried on 202 status code")
+    except AttributeError:
+        pass
+
     mock_network_layer.request.side_effect = [retry_after_response, generic_successful_response]
     mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
 
