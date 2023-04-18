@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.7.1](https://github.com/box/box-python-sdk/compare/v3.7.0...v3.7.1) (2023-04-18)
+
+
+### Bug Fixes:
+
+* Rename filter date parameters in legal hold creation according to the documentation ([#810](https://github.com/box/box-python-sdk/issues/810)) ([f52c66a](https://github.com/box/box-python-sdk/commit/f52c66a8a8399a776493537f692460ace2995e40))
+
 ## [3.7.0](https://github.com/box/box-python-sdk/compare/v3.6.2...v3.7.0) (2023-03-08)
 
 
