@@ -22,7 +22,7 @@ overview of how the Box API handles authentication.
     - [Initialize a Client Given Access and Refresh Token](#initialize-a-client-given-access-and-refresh-token)
   - [Box View Authentication with App Tokens](#box-view-authentication-with-app-tokens)
 - [As-User](#as-user)
-- [Token Exchange](#token-exchange)
+- [Downscoping token](#downscoping-token)
 - [Revoking Tokens](#revoking-tokens)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
