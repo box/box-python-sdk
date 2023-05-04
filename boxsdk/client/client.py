@@ -1211,21 +1211,8 @@ class Client(Cloneable):
     ) -> TokenResponse:
         """
         Generate a downscoped token for the provided file or folder with the provided scopes.
-        To use downscoped token in you client use:
-
-        .. code-block:: python
-
-            token_info = client.downscope_token([TokenScope.ITEM_READ, TokenScope.ITEM_PREVIEW])
-            downscoped_client = Client(
-                OAuth2(
-                client_id=None,
-                client_secret=None,
-                access_token=token_info.access_token
-                )
-            )
-
-        but bear in mind that there is no way of refreshing this token,
-        and you will need to add you own logic to do that.
+        There is no way of refreshing this token. You will need to add you own logic to
+        generate new token if this one expires.
 
         :param scopes:
             The scope(s) to apply to the resulting token.
