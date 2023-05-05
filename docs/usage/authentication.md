@@ -22,7 +22,7 @@ overview of how the Box API handles authentication.
     - [Initialize a Client Given Access and Refresh Token](#initialize-a-client-given-access-and-refresh-token)
   - [Box View Authentication with App Tokens](#box-view-authentication-with-app-tokens)
 - [As-User](#as-user)
-- [Token Exchange](#token-exchange)
+- [Downscoping token](#downscoping-token)
 - [Revoking Tokens](#revoking-tokens)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -371,10 +371,10 @@ user_client = client.as_user(user_to_impersonate)
 
 [as_user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.cloneable.Cloneable.as_user
 
-Token Exchange
+Downscoping token
 --------------
 
-You can exchange a client's access token for one with a lower scope, in order
+You can downscope a client's access token for one with a lower scope, in order
 to restrict the permissions for a child client or to pass to a less secure
 location (e.g. a browser-based app).  This is useful if you want to use the
 [Box UI Elements](https://developer.box.com/en/guides/embed/ui-elements/), since they generally
@@ -390,8 +390,15 @@ This method returns a [`TokenResponse`][token_response] object with the downscop
 ```python
 target_file = client.file(file_id='FILE_ID_HERE')
 token_info = client.downscope_token(['item_preview'], target_file)
-print(f'Got downscoped access token: {token_info.access_token}')
+downscoped_client = Client(
+  OAuth2(
+    client_id=None,
+    client_secret=None,
+    access_token=token_info.access_token
+  )
+)
 ```
+But bear in mind that there is no way of refreshing this token, and you will need to add you own logic to do that.
 
 [downscope_token]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.downscope_token
 [token_response]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.auth.html#boxsdk.auth.oauth2.TokenResponse

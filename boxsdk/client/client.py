@@ -1211,6 +1211,8 @@ class Client(Cloneable):
     ) -> TokenResponse:
         """
         Generate a downscoped token for the provided file or folder with the provided scopes.
+        There is no way of refreshing this token. You will need to add you own logic to
+        generate new token if this one expires.
 
         :param scopes:
             The scope(s) to apply to the resulting token.
