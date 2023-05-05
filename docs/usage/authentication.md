@@ -374,7 +374,7 @@ user_client = client.as_user(user_to_impersonate)
 Downscoping token
 --------------
 
-You can doiwnscope a client's access token for one with a lower scope, in order
+You can downscope a client's access token for one with a lower scope, in order
 to restrict the permissions for a child client or to pass to a less secure
 location (e.g. a browser-based app).  This is useful if you want to use the
 [Box UI Elements](https://developer.box.com/en/guides/embed/ui-elements/), since they generally
