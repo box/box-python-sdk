@@ -53,6 +53,7 @@ def main():
     base_dir = dirname(__file__)
     install_requires = [
         'attrs>=17.3.0',
+        'urllib3<2',
         'requests>=2.4.3',
         'requests-toolbelt>=0.4.0',
         'python-dateutil',  # To be removed after dropping Python 3.6
