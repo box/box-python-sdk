@@ -53,14 +53,15 @@ def main():
     base_dir = dirname(__file__)
     install_requires = [
         'attrs>=17.3.0',
-        'requests>=2.4.3',
+        'urllib3<2',
+        'requests>=2.4.3,<3',
         'requests-toolbelt>=0.4.0',
         'python-dateutil',  # To be removed after dropping Python 3.6
     ]
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.7.0', 'cryptography>=3']
     coveralls_requires = ['coveralls']
-    dev_requires = ['tox']
+    dev_requires = ['tox<=3.28.0']
     gh_requires = ['tox-gh-actions']
     test_requires = [
         'bottle',
