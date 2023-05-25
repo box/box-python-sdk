@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.7.2](https://github.com/box/box-python-sdk/compare/v3.7.1...v3.7.2) (2023-05-25)
+
+
+### Bug Fixes:
+
+* Use the older version of `urllib3` ([#815](https://github.com/box/box-python-sdk/issues/815)) ([ee29aa3](https://github.com/box/box-python-sdk/commit/ee29aa3fcf9ac71e9866913a87414cf625c0b805))
+
 ### [3.7.1](https://github.com/box/box-python-sdk/compare/v3.7.0...v3.7.1) (2023-04-18)
 
 
