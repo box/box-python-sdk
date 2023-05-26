@@ -62,7 +62,7 @@ def main():
     jwt_requires = ['pyjwt>=1.7.0', 'cryptography>=3']
     coveralls_requires = ['coveralls']
     dev_requires = ['tox<=3.28.0']
-    gh_requires = ['tox-gh-actions']
+    gh_requires = ['tox-gh-actions<3.0.0']
     test_requires = [
         'bottle',
         'jsonpatch>1.14',
