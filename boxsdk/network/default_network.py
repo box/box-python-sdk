@@ -220,7 +220,7 @@ class DefaultNetworkResponse(NetworkResponse):
         else:
             logger_method, response_format, level = self._logger.warning, self.ERROR_RESPONSE_FORMAT, logging.WARNING
 
-        if self._logger.isEnabledFor(level):
+        if not self._logger.isEnabledFor(level):
             return
 
         content_length = self.headers.get('Content-Length', None)
