@@ -1,3 +1,4 @@
+import logging
 from logging import getLogger
 from pprint import pformat
 import sys
@@ -74,10 +75,11 @@ class DefaultNetwork(Network):
         :param url:
             The URL for the request.
         """
-        self._logger.info(
-            self.REQUEST_FORMAT,
-            {'method': method, 'url': url, 'request_kwargs': pformat(sanitize_dictionary(kwargs))},
-        )
+        if self._logger.isEnabledFor(logging.INFO):
+            self._logger.info(
+                self.REQUEST_FORMAT,
+                {'method': method, 'url': url, 'request_kwargs': pformat(sanitize_dictionary(kwargs))},
+            )
 
     def _log_exception(self, method: str, url: str, exc_info: Any) -> None:
         """Log information at WARNING level about the exception that was raised when trying to make the request.
@@ -86,11 +88,12 @@ class DefaultNetwork(Network):
         :param url:   The URL for the request.
         :param exc_info:  The exception info returned from `sys.exc_info()`.
         """
-        exc_type, exc_value, _ = exc_info
-        self._logger.warning(
-            self.EXCEPTION_FORMAT,
-            {'method': method, 'url': url, 'exc_type_name': exc_type.__name__, 'exc_value': exc_value},
-        )
+        if self._logger.isEnabledFor(logging.WARNING):
+            exc_type, exc_value, _ = exc_info
+            self._logger.warning(
+                self.EXCEPTION_FORMAT,
+                {'method': method, 'url': url, 'exc_type_name': exc_type.__name__, 'exc_value': exc_value},
+            )
 
 
 class DefaultNetworkResponse(NetworkResponse):
@@ -119,26 +122,19 @@ class DefaultNetworkResponse(NetworkResponse):
     If the caller uses `Response.content`, then it is safe for
     :class:`DefaultNetwork` to also access it. But if the caller uses any of
     the streaming mechanisms, then it is not safe for :class:`DefaultNetwork`
-    to ever read any of the content. Thus, the options available are:
+    to ever read any of the content.
 
-        - Never log the content of a response.
-        - Make logging part of the :class:`Network` interface, and add an
-          optional keyword argument that callers can use to specify when it is
-          unsafe to log the content of a response.
-        - Defer logging until it is possible to auto-detect which mechanism is
-          being used.
+    The SDK logs only the response content of type JSON. Non-JSON responses, e.g.
+    the content of the downloaded file should not be logged by the SDK at any time.
+    In that case the response will be logged with a placeholder for the actual content.
 
-    This class implements the latter option. Instead of response
-    logging taking place in `DefaultNetwork.request()`, it takes place in this
-    `DefaultNetworkResponse` class, as soon as the caller starts reading the
-    content. If `content` or `json()` are accessed, then the response will be
-    logged with its content. Whereas if `response_as_stream` or
-    `request_response` are accessed, then the response will be logged with a
-    placeholder for the actual content.
-
-    Because most SDK methods immediately read the content on success, but not
-    on errors (the SDK may retry the request based on just the status code),
-    this class will log its content if it represents a failed request.
+    :param: `log_response_content` specifies wheather the response content should be logged or not.
+    Its value is determined by `BoxRequest.expect_json_response` field, which is set to False,
+    only if explicitly specified inside SDK method, e.g. self._session.get(url, expect_json_response=False).
+    So the contenet of the response will be read by the logger only when the call inside an SDK method
+    expects a JSON response. In this case we can be sure that the SDK method will read the content
+    of the response using non-streaming mechanism and accessing content of the response by logger
+    with `response.json()` or 'response.content` is safe.
     """
 
     _COMMON_RESPONSE_FORMAT = '"%(method)s %(url)s" %(status_code)s %(content_length)s\n%(headers)s\n%(content)s\n'
@@ -151,11 +147,14 @@ class DefaultNetworkResponse(NetworkResponse):
         self._request_response = request_response
         self._access_token_used = access_token_used
         self._did_log = False
+        self._json = None
         self.log(can_safely_log_content=log_response_content)
 
     def json(self) -> dict:
         """Base class override."""
-        return self._request_response.json()
+        if self._json is None:
+            self._json = self._request_response.json()
+        return self._json
 
     @property
     def content(self) -> Optional[bytes]:
@@ -215,6 +214,15 @@ class DefaultNetworkResponse(NetworkResponse):
         if self._did_log:
             return
         self._did_log = True
+
+        if self.ok:
+            logger_method, logger_level, response_format = self._logger.info, logging.INFO, self.SUCCESSFUL_RESPONSE_FORMAT
+        else:
+            logger_method, logger_level, response_format = self._logger.warning, logging.WARNING, self.ERROR_RESPONSE_FORMAT
+
+        if not self._logger.isEnabledFor(logger_level):
+            return
+
         content_length = self.headers.get('Content-Length', None)
         content = self.CONTENT_NOT_LOGGED
         if can_safely_log_content:
@@ -230,10 +238,6 @@ class DefaultNetworkResponse(NetworkResponse):
             content = pformat(sanitize_dictionary(content))
         if content_length is None:
             content_length = '?'
-        if self.ok:
-            logger_method, response_format = self._logger.info, self.SUCCESSFUL_RESPONSE_FORMAT
-        else:
-            logger_method, response_format = self._logger.warning, self.ERROR_RESPONSE_FORMAT
         logger_method(
             response_format,
             {
