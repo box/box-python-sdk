@@ -1692,7 +1692,11 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
         'id': '12345',
         'type': 'file'
     }
-    files = [source_file]
+    source_file2 = {
+        'id': '34567',
+        'type': 'file'
+    }
+    files = [source_file, source_file2]
 
     signer = {
         'email': 'example@gmail.com'
@@ -1705,6 +1709,10 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
             {
                 'id': source_file['id'],
                 'type': source_file['type']
+            },
+            {
+                'id': source_file2['id'],
+                'type': source_file2['type']
             }
         ],
         'signers': [
