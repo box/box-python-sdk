@@ -216,11 +216,11 @@ class DefaultNetworkResponse(NetworkResponse):
         self._did_log = True
 
         if self.ok:
-            logger_method, response_format, level = self._logger.info, self.SUCCESSFUL_RESPONSE_FORMAT, logging.INFO
+            logger_method, logger_level, response_format = self._logger.info, logging.INFO, self.SUCCESSFUL_RESPONSE_FORMAT
         else:
-            logger_method, response_format, level = self._logger.warning, self.ERROR_RESPONSE_FORMAT, logging.WARNING
+            logger_method, logger_level, response_format = self._logger.warning, logging.WARNING, self.ERROR_RESPONSE_FORMAT
 
-        if not self._logger.isEnabledFor(level):
+        if not self._logger.isEnabledFor(logger_level):
             return
 
         content_length = self.headers.get('Content-Length', None)
