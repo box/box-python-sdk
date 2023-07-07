@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.7.3](https://github.com/box/box-python-sdk/compare/v3.7.2...v3.7.3) (2023-07-07)
+
+
+### Bug Fixes:
+
+* Stop processing data for logging when logging is disabled and cache response `json` ([#824](https://github.com/box/box-python-sdk/issues/824)) ([3079171](https://github.com/box/box-python-sdk/commit/3079171f8dfc1a4c85f8587e8ce90e8fbd826ee4))
+
 ### [3.7.2](https://github.com/box/box-python-sdk/compare/v3.7.1...v3.7.2) (2023-05-26)
 
 
