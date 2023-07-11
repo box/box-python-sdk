@@ -16,9 +16,6 @@ Getting Started Docs: <https://developer.box.com/guides/tooling/sdks/python/>
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Versions](#versions)
-  - [Supported Version](#supported-version)
-  - [Version schedule](#version-schedule)
 - [Installing](#installing)
 - [Getting Started](#getting-started)
 - [Authorization](#authorization)
@@ -33,6 +30,10 @@ Getting Started Docs: <https://developer.box.com/guides/tooling/sdks/python/>
   - [Development Client](#development-client)
 - [Customization](#customization)
   - [Custom Subclasses](#custom-subclasses)
+- [FIPS 140-2 Compliance](#fips-140-2-compliance)
+- [Versions](#versions)
+  - [Supported Version](#supported-version)
+  - [Version schedule](#version-schedule)
 - [Contributing](#contributing)
   - [Developer Setup](#developer-setup)
   - [Testing](#testing)
