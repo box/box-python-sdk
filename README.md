@@ -388,6 +388,14 @@ subclass will be returned from all SDK methods that previously returned
 an instance of the parent. See `BaseAPIJSONObjectMeta` and `Translator`
 to see how the SDK performs dynamic lookups to determine return types.
 
+# FIPS 140-2 Compliance
+
+The Python SDK allows using FIPS 140-2 validated SSL libraries (OpenSSL 3.0).
+To enable FIPS mode for `cryptography` library, it is required to bind a FIPS-compliant version
+of the OpenSSL to the library during the installation process. To use OpenSSL 3.0 for the entire
+network communication, it is required to build a custom version of Python with the OpenSSL module replaced.
+
+
 # Versions
 We use a modified version of [Semantic Versioning](https://semver.org/) for all changes. See [version strategy](VERSIONS.md) for details which is effective from 30 July 2022.
 
