@@ -391,11 +391,17 @@ to see how the SDK performs dynamic lookups to determine return types.
 
 # FIPS 140-2 Compliance
 
-The Python SDK allows using FIPS 140-2 validated SSL libraries (OpenSSL 3.0).
-To enable FIPS mode for `cryptography` library, it is required to bind a FIPS-compliant version
-of the OpenSSL to the library during the installation process. To use OpenSSL 3.0 for the entire
-network communication, it is required to build a custom version of Python with the OpenSSL module replaced.
+The Python SDK allows the use of FIPS 140-2 validated SSL libraries, such as OpenSSL 3.0.
+However, some actions are required to enable this functionality.
 
+Currently, the latest distributions of Python default to OpenSSL v1.1.1,
+which is not FIPS compliant. Therefore, if you want to use OpenSSL 3.0 in your network communication,
+you need to create a custom Python distribution with the `ssl` module replaced.
+
+If you are using JWT for authentication, it is also necessary to ensure that the cryptography library,
+which is one of the extra dependencies for JWT, uses OpenSSL 3.0.
+To enable FIPS mode for the `cryptography` library, you need to install a FIPS-compliant version of OpenSSL
+during the installation process of cryptography using the `pip` command.
 
 # Versions
 We use a modified version of [Semantic Versioning](https://semver.org/) for all changes. See [version strategy](VERSIONS.md) for details which is effective from 30 July 2022.
