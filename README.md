@@ -16,9 +16,6 @@ Getting Started Docs: <https://developer.box.com/guides/tooling/sdks/python/>
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Versions](#versions)
-  - [Supported Version](#supported-version)
-  - [Version schedule](#version-schedule)
 - [Installing](#installing)
 - [Getting Started](#getting-started)
 - [Authorization](#authorization)
@@ -33,6 +30,10 @@ Getting Started Docs: <https://developer.box.com/guides/tooling/sdks/python/>
   - [Development Client](#development-client)
 - [Customization](#customization)
   - [Custom Subclasses](#custom-subclasses)
+- [FIPS 140-2 Compliance](#fips-140-2-compliance)
+- [Versions](#versions)
+  - [Supported Version](#supported-version)
+  - [Version schedule](#version-schedule)
 - [Contributing](#contributing)
   - [Developer Setup](#developer-setup)
   - [Testing](#testing)
@@ -387,6 +388,21 @@ If an object subclass is registered in this way, instances of this
 subclass will be returned from all SDK methods that previously returned
 an instance of the parent. See `BaseAPIJSONObjectMeta` and `Translator`
 to see how the SDK performs dynamic lookups to determine return types.
+
+# FIPS 140-2 Compliance
+
+The Python SDK allows the use of FIPS 140-2 validated SSL libraries, such as OpenSSL 3.0.
+However, some actions are required to enable this functionality.
+
+Currently, the latest distributions of Python default to OpenSSL v1.1.1, which is not FIPS compliant.
+Therefore, if you want to use OpenSSL 3.0 in your network communication,
+you need to ensure that Python uses a custom SSL library.
+One way to achieve this is by creating a custom Python distribution with the ssl module replaced.
+
+If you are using JWT for authentication, it is also necessary to ensure that the cryptography library,
+which is one of the extra dependencies for JWT, uses OpenSSL 3.0.
+To enable FIPS mode for the `cryptography` library, you need to install a FIPS-compliant version of OpenSSL
+during the installation process of cryptography using the `pip` command.
 
 # Versions
 We use a modified version of [Semantic Versioning](https://semver.org/) for all changes. See [version strategy](VERSIONS.md) for details which is effective from 30 July 2022.
