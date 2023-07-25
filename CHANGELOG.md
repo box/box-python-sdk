@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.8.0](https://github.com/box/box-python-sdk/compare/v3.7.3...v3.8.0) (2023-07-25)
+
+
+### New Features and Enhancements:
+
+* Support updating all fields of `collaboration` ([#829](https://github.com/box/box-python-sdk/issues/829)) ([6dc7ecc](https://github.com/box/box-python-sdk/commit/6dc7ecc6f9c94e7531c4147a3645927b85928b2c))
+
 ### [3.7.3](https://github.com/box/box-python-sdk/compare/v3.7.2...v3.7.3) (2023-07-07)
 
 
