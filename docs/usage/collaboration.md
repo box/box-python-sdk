@@ -75,13 +75,14 @@ Edit a Collaboration
 --------------------
 
 A collaboration can be edited by calling [`collaboration.update_info(*, data=None, role=None, status=None, **kwargs)`][update_info].
-This method returns an updated [`Collaboration`][collaboration_class] object, leaving the original unmodified.
+Note that `role` fields is always required when updatuing a collaboration. This method returns an updated
+[`Collaboration`][collaboration_class] object, leaving the original unmodified.
 
 <!-- sample put_collaborations_id -->
 ```python
 from boxsdk.object.collaboration import CollaborationRole
 
-collaboration_update = {'role': 'owner', 'can_view_path': False}
+collaboration_update = {'role': CollaborationRole.EDITOR, 'can_view_path': False}
 collaboration = client.collaboration(collab_id='12345')
 updated_collaboration = collaboration.update_info(data=collaboration_update)
 ```
