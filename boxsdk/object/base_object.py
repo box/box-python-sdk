@@ -91,7 +91,7 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
             The updated information about this object.
             Must be JSON serializable.
             Update the object attributes in data.keys(). The semantics of the
-            values depends on the the type and attributes of the object being
+            values depends on the type and attributes of the object being
             updated. For details on particular semantics, refer to the Box
             developer API documentation <https://developer.box.com/>.
         :param params:

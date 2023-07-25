@@ -34,12 +34,14 @@ class Collaboration(BaseObject):
     def update_info(
             self,
             *,
+            data: dict = None,
             role: Optional[CollaborationRole] = None,
             status: Optional[CollaborationStatus] = None,
             **kwargs: Any
     ) -> 'BaseObject':
         """Edit an existing collaboration on Box
-
+        :param data:
+            The updated information about this object.
         :param role:
             The new role for this collaboration or None to leave unchanged
         :param status:
@@ -51,12 +53,13 @@ class Collaboration(BaseObject):
             :class:`BoxAPIException` if current user doesn't have permissions to edit the collaboration.
         """
         # pylint:disable=arguments-differ
-        data = {}
+        if data is None:
+            data = {}
         if role:
             data['role'] = role
         if status:
             data['status'] = status
-        if role == CollaborationRole.OWNER:
+        if data.get('role', None) == CollaborationRole.OWNER:
             return super().update_info(data=data, expect_json_response=False, **kwargs)
 
         return super().update_info(data=data, **kwargs)
