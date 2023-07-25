@@ -75,7 +75,7 @@ Edit a Collaboration
 --------------------
 
 A collaboration can be edited by calling [`collaboration.update_info(*, data=None, role=None, status=None, **kwargs)`][update_info].
-Note that `role` fields is always required when updatuing a collaboration. This method returns an updated
+Note that `role` fields is always required when updating a collaboration. This method returns an updated
 [`Collaboration`][collaboration_class] object, leaving the original unmodified.
 
 <!-- sample put_collaborations_id -->
