@@ -279,7 +279,7 @@ class Session:
                 context_info=response_json.get('context_info', None),
                 network_response=network_response
             )
-        
+
     @staticmethod
     def _validate_json_response(network_response: 'NetworkResponse', request: '_BoxRequest', throw_exception = False ) -> bool:
         """
@@ -556,9 +556,10 @@ class AuthorizedSession(Session):
             self._renew_session(request.access_token)
             request.auto_session_renewal = False
             return self._send_request
-        
-        is_valid_json = self._validate_json_response(network_response, request, False)
-        if network_response.ok and not is_valid_json:
+
+        if (request.method == 'GET'
+            and network_response and network_response.ok
+            and not self._validate_json_response(network_response, request, False)):
             return self._send_request
 
         return super()._get_retry_request_callable(
