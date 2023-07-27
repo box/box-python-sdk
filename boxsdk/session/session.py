@@ -557,8 +557,7 @@ class AuthorizedSession(Session):
             request.auto_session_renewal = False
             return self._send_request
 
-        # pylint:disable=line-too-long
-        if request.method == 'GET' and network_response and network_response.ok and not self._validate_json_response(network_response, request, False):
+        if request.method == 'GET' and network_response and network_response.ok and not self._validate_json_response(network_response, request):
             return self._send_request
 
         return super()._get_retry_request_callable(
