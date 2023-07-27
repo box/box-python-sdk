@@ -281,7 +281,7 @@ class Session:
             )
 
     @staticmethod
-    def _validate_json_response(network_response: 'NetworkResponse', request: '_BoxRequest', throw_exception = False ) -> bool:
+    def _validate_json_response(network_response: 'NetworkResponse', request: '_BoxRequest', throw_exception=False) -> bool:
         """
         Validate that the response is json if the request expects json response.
 
@@ -557,9 +557,8 @@ class AuthorizedSession(Session):
             request.auto_session_renewal = False
             return self._send_request
 
-        if (request.method == 'GET'
-            and network_response and network_response.ok
-            and not self._validate_json_response(network_response, request, False)):
+        #pylint:disable=line-too-long
+        if request.method == 'GET' and network_response and network_response.ok and not self._validate_json_response(network_response, request, False):
             return self._send_request
 
         return super()._get_retry_request_callable(
