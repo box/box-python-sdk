@@ -279,15 +279,29 @@ class Session:
                 context_info=response_json.get('context_info', None),
                 network_response=network_response
             )
+        
+    @staticmethod
+    def _validate_json_response(network_response: 'NetworkResponse', request: '_BoxRequest', throw_exception = False ) -> bool:
+        """
+        Validate that the response is json if the request expects json response.
+
+        :param network_response:
+            The network response which is being tested for success.
+        :param request:
+            The API request that could be unsuccessful.
+        """
         if request.expect_json_response and not is_json_response(network_response):
-            raise BoxAPIException(
-                status=network_response.status_code,
-                headers=network_response.headers,
-                message='Non-json response received, while expecting json response.',
-                url=request.url,
-                method=request.method,
-                network_response=network_response,
-            )
+            if throw_exception:
+                raise BoxAPIException(
+                    status=network_response.status_code,
+                    headers=network_response.headers,
+                    message='Non-json response received, while expecting json response.',
+                    url=request.url,
+                    method=request.method,
+                    network_response=network_response,
+                )
+            return False
+        return True
 
     def _prepare_and_send_request(
             self,
@@ -360,6 +374,7 @@ class Session:
             network_response = retry(request, **kwargs)
 
         self._raise_on_unsuccessful_request(network_response, request, raised_exception)
+        self._validate_json_response(network_response, request, True)
 
         return network_response
 
@@ -541,6 +556,11 @@ class AuthorizedSession(Session):
             self._renew_session(request.access_token)
             request.auto_session_renewal = False
             return self._send_request
+        
+        is_valid_json = self._validate_json_response(network_response, request, False)
+        if network_response.ok and not is_valid_json:
+            return self._send_request
+
         return super()._get_retry_request_callable(
             network_response,
             attempt_number,
