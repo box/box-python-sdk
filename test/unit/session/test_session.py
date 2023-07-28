@@ -226,20 +226,16 @@ def test_box_session_raises_for_non_json_response(box_session, mock_network_laye
     mock_network_layer.request.side_effect = [non_json_response, generic_successful_response]
     mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
 
-    API.MAX_RETRY_ATTEMPTS = 1
     box_session.get(url=test_url)
-    API.MAX_RETRY_ATTEMPTS = 5
 
 
 def test_box_session_raises_for_non_json_response_after_retry(box_session, mock_network_layer, non_json_response, test_url):
     # pylint:disable=redefined-outer-name
-    API.MAX_RETRY_ATTEMPTS = 1
     mock_network_layer.request.side_effect = [non_json_response] * (API.MAX_RETRY_ATTEMPTS + 1)
     mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
 
     with pytest.raises(BoxAPIException):
         box_session.get(url=test_url)
-    API.MAX_RETRY_ATTEMPTS = 5
 
 
 def test_box_session_raises_for_failed_response(box_session, mock_network_layer, bad_network_response, test_url):
