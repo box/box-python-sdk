@@ -279,7 +279,7 @@ class Session:
                 context_info=response_json.get('context_info', None),
                 network_response=network_response
             )
-        
+
         if not Session._validate_json_response(network_response, request):
             raise BoxAPIException(
                 status=network_response.status_code,
