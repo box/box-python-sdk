@@ -279,9 +279,19 @@ class Session:
                 context_info=response_json.get('context_info', None),
                 network_response=network_response
             )
+        
+        if not Session._validate_json_response(network_response, request):
+            raise BoxAPIException(
+                status=network_response.status_code,
+                headers=network_response.headers,
+                message='Non-json response received, while expecting json response.',
+                url=request.url,
+                method=request.method,
+                network_response=network_response,
+            )
 
     @staticmethod
-    def _validate_json_response(network_response: 'NetworkResponse', request: '_BoxRequest', throw_exception=False) -> bool:
+    def _validate_json_response(network_response: 'NetworkResponse', request: '_BoxRequest') -> bool:
         """
         Validate that the response is json if the request expects json response.
 
@@ -291,15 +301,6 @@ class Session:
             The API request that could be unsuccessful.
         """
         if request.expect_json_response and not is_json_response(network_response):
-            if throw_exception:
-                raise BoxAPIException(
-                    status=network_response.status_code,
-                    headers=network_response.headers,
-                    message='Non-json response received, while expecting json response.',
-                    url=request.url,
-                    method=request.method,
-                    network_response=network_response,
-                )
             return False
         return True
 
@@ -374,7 +375,6 @@ class Session:
             network_response = retry(request, **kwargs)
 
         self._raise_on_unsuccessful_request(network_response, request, raised_exception)
-        self._validate_json_response(network_response, request, True)
 
         return network_response
 
@@ -413,6 +413,10 @@ class Session:
                 self._send_request,
             )
         code = network_response.status_code
+
+        if request.method == 'GET' and network_response and network_response.ok and not self._validate_json_response(network_response, request):
+            return self._send_request
+
         if (code in (202, 429) or code >= 500) and code not in skip_retry_codes and not self._is_server_auth_type(kwargs):
             return partial(
                 self._network_layer.retry_after,
@@ -555,9 +559,6 @@ class AuthorizedSession(Session):
         if request.auto_session_renewal and session_renewal_needed:
             self._renew_session(request.access_token)
             request.auto_session_renewal = False
-            return self._send_request
-
-        if request.method == 'GET' and network_response and network_response.ok and not self._validate_json_response(network_response, request):
             return self._send_request
 
         return super()._get_retry_request_callable(
