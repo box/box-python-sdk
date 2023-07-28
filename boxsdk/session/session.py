@@ -280,7 +280,7 @@ class Session:
                 network_response=network_response
             )
 
-        if not Session._validate_json_response(network_response, request):
+        if not Session._is_json_response_if_expected(network_response, request):
             raise BoxAPIException(
                 status=network_response.status_code,
                 headers=network_response.headers,
@@ -291,7 +291,7 @@ class Session:
             )
 
     @staticmethod
-    def _validate_json_response(network_response: 'NetworkResponse', request: '_BoxRequest') -> bool:
+    def _is_json_response_if_expected(network_response: 'NetworkResponse', request: '_BoxRequest') -> bool:
         """
         Validate that the response is json if the request expects json response.
 
@@ -300,9 +300,7 @@ class Session:
         :param request:
             The API request that could be unsuccessful.
         """
-        if request.expect_json_response and not is_json_response(network_response):
-            return False
-        return True
+        return not request.expect_json_response or is_json_response(network_response)
 
     def _prepare_and_send_request(
             self,
@@ -406,7 +404,8 @@ class Session:
             Callable that, when called, will retry the request. Takes the same parameters as :meth:`_send_request`.
         """
         # pylint:disable=unused-argument
-        if network_response is None:
+        # pylint:disable=line-too-long
+        if network_response is None or (network_response.ok and request.method == 'GET' and not self._is_json_response_if_expected(network_response, request)):
             return partial(
                 self._network_layer.retry_after,
                 self.get_retry_after_time(attempt_number, None),
@@ -414,8 +413,12 @@ class Session:
             )
         code = network_response.status_code
 
-        if request.method == 'GET' and network_response and network_response.ok and not self._validate_json_response(network_response, request):
-            return self._send_request
+        if request.method == 'GET' and network_response.ok and not self._is_json_response_if_expected(network_response, request):
+            return partial(
+                self._network_layer.retry_after,
+                self.get_retry_after_time(attempt_number, None),
+                self._send_request,
+            )
 
         if (code in (202, 429) or code >= 500) and code not in skip_retry_codes and not self._is_server_auth_type(kwargs):
             return partial(
