@@ -232,7 +232,7 @@ def test_box_session_raises_for_non_json_response_after_retry(box_session, mock_
     # pylint:disable=redefined-outer-name
     API.MAX_RETRY_ATTEMPTS = 1
     mock_network_layer.request.side_effect = [non_json_response] * (API.MAX_RETRY_ATTEMPTS + 1)
-    
+
     with pytest.raises(BoxAPIException):
         box_session.get(url=test_url)
     API.MAX_RETRY_ATTEMPTS = 5
