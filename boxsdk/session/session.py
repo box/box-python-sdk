@@ -413,13 +413,6 @@ class Session:
             )
         code = network_response.status_code
 
-        if request.method == 'GET' and network_response.ok and not self._is_json_response_if_expected(network_response, request):
-            return partial(
-                self._network_layer.retry_after,
-                self.get_retry_after_time(attempt_number, None),
-                self._send_request,
-            )
-
         if (code in (202, 429) or code >= 500) and code not in skip_retry_codes and not self._is_server_auth_type(kwargs):
             return partial(
                 self._network_layer.retry_after,
