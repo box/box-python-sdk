@@ -279,7 +279,8 @@ class Session:
                 context_info=response_json.get('context_info', None),
                 network_response=network_response
             )
-        if request.expect_json_response and not is_json_response(network_response):
+
+        if not Session._is_json_response_if_expected(network_response, request):
             raise BoxAPIException(
                 status=network_response.status_code,
                 headers=network_response.headers,
@@ -288,6 +289,18 @@ class Session:
                 method=request.method,
                 network_response=network_response,
             )
+
+    @staticmethod
+    def _is_json_response_if_expected(network_response: 'NetworkResponse', request: '_BoxRequest') -> bool:
+        """
+        Validate that the response is json if the request expects json response.
+
+        :param network_response:
+            The network response which is being tested for success.
+        :param request:
+            The API request that could be unsuccessful.
+        """
+        return not request.expect_json_response or is_json_response(network_response)
 
     def _prepare_and_send_request(
             self,
@@ -391,13 +404,15 @@ class Session:
             Callable that, when called, will retry the request. Takes the same parameters as :meth:`_send_request`.
         """
         # pylint:disable=unused-argument
-        if network_response is None:
+        # pylint:disable=line-too-long
+        if network_response is None or (network_response.ok and request.method == 'GET' and not self._is_json_response_if_expected(network_response, request)):
             return partial(
                 self._network_layer.retry_after,
                 self.get_retry_after_time(attempt_number, None),
                 self._send_request,
             )
         code = network_response.status_code
+
         if (code in (202, 429) or code >= 500) and code not in skip_retry_codes and not self._is_server_auth_type(kwargs):
             return partial(
                 self._network_layer.retry_after,
@@ -541,6 +556,7 @@ class AuthorizedSession(Session):
             self._renew_session(request.access_token)
             request.auto_session_renewal = False
             return self._send_request
+
         return super()._get_retry_request_callable(
             network_response,
             attempt_number,
