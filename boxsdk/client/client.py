@@ -1671,7 +1671,6 @@ class Client(Cloneable):
         :returns:
             Sign template
         """
-
         response = self._session.get(f"{self._session.get_url('sign_templates')}/{sign_template_id}")
         return self.translator.translate(
             session=self._session,
