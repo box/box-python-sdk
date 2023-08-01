@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.1](https://github.com/box/box-python-sdk/compare/v3.8.0...v3.8.1) (2023-08-01)
+
+
+### Bug Fixes:
+
+* Fix JSON response validation retry strategy ([#831](https://github.com/box/box-python-sdk/issues/831)) ([69834eb](https://github.com/box/box-python-sdk/commit/69834eb4c91a5aa4bc294a9fa49ecf753979d029))
+
 ## [3.8.0](https://github.com/box/box-python-sdk/compare/v3.7.3...v3.8.0) (2023-07-25)
 
 
