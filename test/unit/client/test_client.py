@@ -1852,7 +1852,7 @@ def test_file_request(mock_client):
 
 def test_get_sign_template(mock_client, mock_box_session, mock_sign_template_response):
     test_sign_template_id = '93153068-5420-467b-b8ef-8e54bfb7be42'
-    expected_url = '{0}/sign_templates/{1}'.format(API.BASE_API_URL, test_sign_template_id)
+    expected_url = f'{API.BASE_API_URL}/sign_templates/{test_sign_template_id}'
     mock_box_session.get.return_value.json.return_value = mock_sign_template_response
 
     sign_template = mock_client.get_sign_template(test_sign_template_id)

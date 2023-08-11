@@ -1,7 +1,7 @@
 import pytest
 
 from boxsdk.config import API
-from boxsdk.object.sign_template import SignTemplate
+# from boxsdk.object.sign_template import SignTemplate
 
 
 @pytest.fixture(scope='module')
@@ -103,7 +103,7 @@ def mock_sign_template_response():
 
 
 def test_get_sign_template(test_sign_template, mock_box_session, mock_sign_template_response):
-    expected_url = '{0}/sign_templates/{1}'.format(API.BASE_API_URL, test_sign_template.object_id)
+    expected_url = f'{API.BASE_API_URL}/sign_templates/{test_sign_template.object_id}'
     mock_box_session.get.return_value.json.return_value = mock_sign_template_response
 
     sign_template = test_sign_template.get()
