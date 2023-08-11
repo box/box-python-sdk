@@ -148,6 +148,14 @@ boxsdk.object.file module
    :undoc-members:
    :show-inheritance:
 
+boxsdk.object.file\_request module
+----------------------------------
+
+.. automodule:: boxsdk.object.file_request
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 boxsdk.object.file\_version module
 ----------------------------------
 
@@ -296,6 +304,14 @@ boxsdk.object.sign\_request module
 ----------------------------------
 
 .. automodule:: boxsdk.object.sign_request
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+boxsdk.object.sign\_template module
+-----------------------------------
+
+.. automodule:: boxsdk.object.sign_template
    :members:
    :undoc-members:
    :show-inheritance:

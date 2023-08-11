@@ -58,6 +58,7 @@ if TYPE_CHECKING:
     from boxsdk.object.group_membership import GroupMembership
     from boxsdk.object.enterprise import Enterprise
     from boxsdk.object.collection import Collection
+    from boxsdk.object.sign_template import SignTemplate
     from boxsdk.pagination.box_object_collection import BoxObjectCollection
 
 
@@ -1629,7 +1630,18 @@ class Client(Cloneable):
             fields=fields,
             return_full_pages=False,
         )
-    
+
+    def sign_template(self, sign_template_id: str) -> 'SignTemplate':
+        """
+        Initialize a :class:`SignTemplate` object, whose box id is sign_template_id.
+
+        :param sign_template_id:
+            The box id of the :class:`SignTemplate` object.
+        :return:
+            A :class:`SignTemplate` object with the given sign_template_id.
+        """
+        return self.translator.get('sign_template')(session=self._session, object_id=sign_template_id)
+
     @api_call
     def get_sign_templates(
             self,
@@ -1657,7 +1669,7 @@ class Client(Cloneable):
             fields=fields,
             return_full_pages=False,
         )
-    
+
     @api_call
     def get_sign_template(
             self,

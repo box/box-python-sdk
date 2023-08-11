@@ -25,6 +25,7 @@ from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 from boxsdk.object.search import Search
 from boxsdk.object.sign_request import SignRequest
+from boxsdk.object.sign_template import SignTemplate
 from boxsdk.object.storage_policy import StoragePolicy
 from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 from boxsdk.object.terms_of_service import TermsOfService
@@ -420,3 +421,8 @@ def test_sign_request(mock_box_session, mock_object_id):
 @pytest.fixture()
 def test_file_request(mock_box_session, mock_object_id):
     return FileRequest(mock_box_session, mock_object_id)
+
+
+@pytest.fixture()
+def test_sign_template(mock_box_session, mock_object_id):
+    return SignTemplate(mock_box_session, mock_object_id)
