@@ -41,6 +41,7 @@ from boxsdk.object.legal_hold_policy import LegalHoldPolicy
 from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
 from boxsdk.object.metadata_cascade_policy import MetadataCascadePolicy
 from boxsdk.object.sign_request import SignRequest
+from boxsdk.object.sign_template import SignTemplate
 from boxsdk.object.task import Task
 from boxsdk.object.task_assignment import TaskAssignment
 from boxsdk.object.webhook import Webhook
@@ -1667,6 +1668,7 @@ def mock_sign_request_response():
 def mock_sign_template_response():
     mock_sign_template = {
         "id": "93153068-5420-467b-b8ef-8e54bfb7be42",
+        "type": "sign-template",
         "name": "important-file.pdf",
         "email_message": "Please sign this document.\n\nKind regards",
         "email_subject": "Box User (boxuser@box.com) has requested your signature on a document",
@@ -1859,13 +1861,11 @@ def test_get_sign_template(mock_client, mock_box_session, mock_sign_template_res
 
     mock_box_session.get.assert_called_once_with(expected_url)
 
-    # The response object missing `type` attribute,
-    # so the response object will not parsed to SignTemplate object
-    # assert isinstance(sign_template, SignTemplate)
+    assert isinstance(sign_template, SignTemplate)
 
-    assert sign_template['id'] == '93153068-5420-467b-b8ef-8e54bfb7be42'
-    assert sign_template['name'] == 'important-file.pdf'
-    assert sign_template['email_message'] == 'Please sign this document.\n\nKind regards'
+    assert sign_template.id == '93153068-5420-467b-b8ef-8e54bfb7be42'
+    assert sign_template.name == 'important-file.pdf'
+    assert sign_template.email_message == 'Please sign this document.\n\nKind regards'
 
 
 def test_get_sign_templates(mock_client, mock_box_session, mock_sign_template_response):
@@ -1885,6 +1885,6 @@ def test_get_sign_templates(mock_client, mock_box_session, mock_sign_template_re
     sign_template = sign_templates.next()
 
     mock_box_session.get.assert_called_once_with(expected_url, params={})
-    # assert isinstance(sign_template, SignTemplate)
-    assert sign_template['id'] == '93153068-5420-467b-b8ef-8e54bfb7be42'
-    assert sign_template['name'] == 'important-file.pdf'
+    assert isinstance(sign_template, SignTemplate)
+    assert sign_template.id == '93153068-5420-467b-b8ef-8e54bfb7be42'
+    assert sign_template.name == 'important-file.pdf'

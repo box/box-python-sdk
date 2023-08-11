@@ -1647,7 +1647,6 @@ class Client(Cloneable):
             self,
             limit: Optional[int] = None,
             marker: Optional[str] = None,
-            fields: Iterable[str] = None
     ) -> 'BoxObjectCollection':
         """
         Returns all sign templates
@@ -1656,8 +1655,6 @@ class Client(Cloneable):
             The maximum number of entries to return per page. If not specified, then will use the server-side default.
         :param marker:
             The paging marker to start paging from.
-        :param fields:
-            List of fields to request.
         :returns:
             Sign templates
         """
@@ -1666,7 +1663,6 @@ class Client(Cloneable):
             url=self.get_url("sign_templates"),
             limit=limit,
             marker=marker,
-            fields=fields,
             return_full_pages=False,
         )
 
