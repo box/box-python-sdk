@@ -1522,10 +1522,10 @@ class Client(Cloneable):
             email_message: Optional[Iterable] = None,
             email_subject: Optional[str] = None,
             external_id: Optional[str] = None,
-            sign_template_id: Optional[str] = None,
             is_document_preparation_needed: Optional[bool] = None,
             redirect_url: Optional[str] = None,
             declined_redirect_url: Optional[str] = None,
+            template_id: Optional[str] = None,
     ) -> dict:
         """
         Used to create a new sign request.
@@ -1555,8 +1555,6 @@ class Client(Cloneable):
             Subject of sign request email. This is cleaned by sign request. If this field is not passed, a default subject will be used.
         :param external_id:
             This can be used to reference an ID in an external system that the sign request is related to.
-        :param sign_template_id:
-            ID of Sign template to apply.
         :param is_document_preparation_needed:
             Indicates if the sender should receive a prepare_url in the response to complete document preparation via UI.
         :param redirect_url:
@@ -1564,6 +1562,8 @@ class Client(Cloneable):
             If no declined redirect URL is specified, this URL will be used for decline actions as well.
         :param declined_redirect_url:
             The URL that a signer will be redirected to after declining to sign a document.
+        :param template_id:
+            The ID of the sign template to use for the sign request.
         :returns:
             A dictionary representing a created SignRequest
         """
@@ -1598,8 +1598,8 @@ class Client(Cloneable):
             body['redirect_url'] = redirect_url
         if declined_redirect_url:
             body['declined_redirect_url'] = declined_redirect_url
-        if sign_template_id:
-            body['template_id'] = sign_template_id
+        if template_id:
+            body['template_id'] = template_id
 
         box_response = self._session.post(url, data=json.dumps(body))
         response = box_response.json()

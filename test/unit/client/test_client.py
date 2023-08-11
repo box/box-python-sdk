@@ -1658,7 +1658,8 @@ def mock_sign_request_response():
                 }
             }
         ],
-        'status': 'converting'
+        'status': 'converting',
+        'template_id': '123075213-af2c8822-3ef2-4952-8557-52d69c2fe9cb'
     }
     return mock_sign_request
 
@@ -1688,6 +1689,7 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
     expected_url = f'{API.BASE_API_URL}/sign_requests'
     redirect_url = 'https://www.box.com/accepted'
     declined_redirect_url = 'https://www.box.com/declined'
+    template_id = '123075213-af2c8822-3ef2-4952-8557-52d69c2fe9cb'
     source_file = {
         'id': '12345',
         'type': 'file'
@@ -1727,12 +1729,13 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
         },
         'redirect_url': redirect_url,
         'declined_redirect_url': declined_redirect_url,
+        'template_id': template_id
     })
     mock_box_session.post.return_value.json.return_value = mock_sign_request_response
 
     new_sign_request = mock_client.create_sign_request(
         files, signers, parent_folder_id,
-        redirect_url=redirect_url, declined_redirect_url=declined_redirect_url)
+        redirect_url=redirect_url, declined_redirect_url=declined_redirect_url, template_id=template_id)
 
     mock_box_session.post.assert_called_once_with(expected_url, data=data)
     assert isinstance(new_sign_request, SignRequest)
@@ -1741,6 +1744,7 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
     assert new_sign_request['parent_folder']['id'] == parent_folder_id
     assert new_sign_request['redirect_url'] == redirect_url
     assert new_sign_request['declined_redirect_url'] == declined_redirect_url
+    assert new_sign_request['template_id'] == template_id
 
 
 def test_file_request(mock_client):
