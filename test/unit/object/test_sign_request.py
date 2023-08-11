@@ -107,7 +107,8 @@ def mock_sign_request_response():
                 }
             }
         ],
-        'status': 'cancelled'
+        'status': 'cancelled',
+        'template_id': '123075213-af2c8822-3ef2-4952-8557-52d69c2fe9cb'
     }
     return mock_sign_request
 
