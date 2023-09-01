@@ -153,6 +153,7 @@ class ChunkedUploader:
         # Remove file stream reference when uploading file succeeded
         if commit_result is not None:
             self._content_stream = None
+        self._executor.shutdown(wait=True)
         return commit_result
 
 
