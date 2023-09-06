@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.9.0](https://github.com/box/box-python-sdk/compare/v3.8.1...v3.9.0) (2023-09-06)
+
+
+### New Features and Enhancements:
+
+* adds get sign template and get sign templates methods on Client ([#835](https://github.com/box/box-python-sdk/issues/835)) ([fbc783d](https://github.com/box/box-python-sdk/commit/fbc783d5af2e75f883f1a0051613c513139f68fb))
+* Support create sign request with template ID ([#834](https://github.com/box/box-python-sdk/issues/834)) ([4f11d75](https://github.com/box/box-python-sdk/commit/4f11d7596488194fc740936fe987f42864003d41))
+
+### Bug Fixes:
+
+* ChunkedUploader Resume Not Closing ThreadPoolExecutor Instances ([#840](https://github.com/box/box-python-sdk/issues/840)) ([f210f00](https://github.com/box/box-python-sdk/commit/f210f00ad823d7755309f2e8804641e0debf8197))
+
 ### [3.8.1](https://github.com/box/box-python-sdk/compare/v3.8.0...v3.8.1) (2023-08-01)
 
 
