@@ -445,7 +445,7 @@ tox
 
 The tox tests include code style checks via pep8 and pylint.
 
-The tox tests are configured to run on Python 3.6, 3.7, 3.8, 3.9, 3.10
+The tox tests are configured to run on Python 3.6, 3.7, 3.8, 3.9, 3.10, 3.11
 and PyPy (our CI is configured to run PyPy tests on pypy-3.6, pypy-3.7, pypy-3.8).
 
 # Questions, Bugs, and Feature Requests?
