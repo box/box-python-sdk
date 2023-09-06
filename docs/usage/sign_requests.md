@@ -50,7 +50,7 @@ Get All Sign Requests
 ------------------------
 
 Calling the [`client.get_sign_requests()`][get-all-sign-requests]
-will return an iterable that will page through all the Sign Requests. This method offers `limit` and `fields` parameters. The `limit` parameter specifies the maximum number of items to be returned in a single response. The `fields` parameter is used to specify what additional properties should be returned on the return object. For more information on what `fields` are available, please refer to the [developer documentation](https://developer.box.com/guides/sign-request/).
+will return an iterable that will page through all the Sign Requests. This method offers `limit` and `fields` parameters. The `limit` parameter specifies the maximum number of items to be returned in a single response. The `fields` parameter is used to specify what additional properties should be returned on the return object. For more information on what `fields` are available, please refer to the [developer documentation](https://developer.box.com/guides/box-sign/).
 
 <!-- sample get_sign_requests -->
 ```python

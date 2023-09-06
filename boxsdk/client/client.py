@@ -58,6 +58,7 @@ if TYPE_CHECKING:
     from boxsdk.object.group_membership import GroupMembership
     from boxsdk.object.enterprise import Enterprise
     from boxsdk.object.collection import Collection
+    from boxsdk.object.sign_template import SignTemplate
     from boxsdk.pagination.box_object_collection import BoxObjectCollection
 
 
@@ -1634,4 +1635,58 @@ class Client(Cloneable):
             marker=marker,
             fields=fields,
             return_full_pages=False,
+        )
+
+    def sign_template(self, sign_template_id: str) -> 'SignTemplate':
+        """
+        Initialize a :class:`SignTemplate` object, whose box id is sign_template_id.
+
+        :param sign_template_id:
+            The box id of the :class:`SignTemplate` object.
+        :return:
+            A :class:`SignTemplate` object with the given sign_template_id.
+        """
+        return self.translator.get('sign_template')(session=self._session, object_id=sign_template_id)
+
+    @api_call
+    def get_sign_templates(
+            self,
+            limit: Optional[int] = None,
+            marker: Optional[str] = None,
+    ) -> 'BoxObjectCollection':
+        """
+        Returns all sign templates
+
+        :param limit:
+            The maximum number of entries to return per page. If not specified, then will use the server-side default.
+        :param marker:
+            The paging marker to start paging from.
+        :returns:
+            Sign templates
+        """
+        return MarkerBasedObjectCollection(
+            session=self._session,
+            url=self.get_url("sign_templates"),
+            limit=limit,
+            marker=marker,
+            return_full_pages=False,
+        )
+
+    @api_call
+    def get_sign_template(
+            self,
+            sign_template_id: str,
+    ) -> Any:
+        """
+        Returns a sign template
+
+        :param sign_template_id:
+            ID of Sign template to fetch
+        :returns:
+            Sign template
+        """
+        response = self._session.get(f"{self._session.get_url('sign_templates')}/{sign_template_id}")
+        return self.translator.translate(
+            session=self._session,
+            response_object=response.json(),
         )
