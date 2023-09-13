@@ -1461,7 +1461,7 @@ class Client(Cloneable):
             'download_file_name': name,
             'items': zip_file_items
         }
-        return self._session.post(url, data=json.dumps(data)).json()
+        return self._session.post(url, data=json.dumps(data), skip_retry_codes={202}).json()
 
     @api_call
     def download_zip(self, name: str, items: Iterable, writeable_stream: IO) -> dict:

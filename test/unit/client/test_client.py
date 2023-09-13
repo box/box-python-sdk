@@ -1546,7 +1546,9 @@ def test_download_zip(mock_client, mock_box_session, mock_content_response):
     mock_box_session.get.side_effect = [mock_content_response, status_response_mock]
 
     status_returned = mock_client.download_zip(name, items, mock_writeable_stream)
-    mock_box_session.post.assert_called_once_with(expected_create_url, data=json.dumps(expected_create_body))
+    mock_box_session.post.assert_called_once_with(expected_create_url,
+                                                  data=json.dumps(expected_create_body),
+                                                  skip_retry_codes={202})
     mock_box_session.get.assert_any_call('https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content',
                                          expect_json_response=False, stream=True)
     mock_box_session.get.assert_called_with('https://api.box.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/status')
