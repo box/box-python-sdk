@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.9.1](https://github.com/box/box-python-sdk/compare/v3.9.0...v3.9.1) (2023-09-14)
+
+
+### Bug Fixes:
+
+* do not retry creating a ZIP when response code is 202 ([#845](https://github.com/box/box-python-sdk/issues/845)) ([3f6ed4e](https://github.com/box/box-python-sdk/commit/3f6ed4e1053a494ed9f2b79828850e059d0a1617)), closes [#844](https://github.com/box/box-python-sdk/issues/844)
+
 ## [3.9.0](https://github.com/box/box-python-sdk/compare/v3.8.1...v3.9.0) (2023-09-06)
 
 
