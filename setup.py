@@ -73,6 +73,7 @@ def main():
         'pytest-cov',
         'pytest-lazy-fixture',
         'pytz',
+        'urllib3<2'
     ]
     extra_requires = {
         'jwt': jwt_requires,

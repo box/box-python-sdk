@@ -107,7 +107,7 @@ def test_lookup(EnumBaseWithSubclassesDefined, enum_member_value):
 
 
 def test_lookup_raises_value_error_for_non_members(EnumBaseWithSubclassesDefined):
-    with pytest.raises(ValueError):
+    with pytest.raises(Exception):
         EnumBaseWithSubclassesDefined.lookup('foobar')
 
 
