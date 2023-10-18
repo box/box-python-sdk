@@ -65,11 +65,11 @@ class ExtendableEnumMeta(EnumMeta):
         """
         try:
             return cls(value)
-        except ValueError as value_error:
+        except (ValueError, TypeError) as value_error:
             for subclass in cls.__subclasses__():
                 try:
                     return subclass.lookup(value)
-                except ValueError:
+                except (ValueError, TypeError):
                     pass
             raise value_error
 
