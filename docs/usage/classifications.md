@@ -96,34 +96,6 @@ new_updates.edit_enum_option('Box__Security__Classification__Key', 'Sensitive', 
 updated_template = template.update_info(updates=new_updates)
 ```
 
-Delete a classification
------------------------
-
-To delete a classification, call the
-[`template.start_update()`][start_update] API to start making changes to the 
-template, and then call the [`template.update_info(updates=new_updates)`][update_info]
-with the classification to remove from the template.
-
-<!-- sample put_metadata_templates_enterprise_securityClassification-6VMVochwUWo_schema delete -->
-```python
-template = client.metadata_template('enterprise', 'securityClassification-6VMVochwUWo')
-new_updates = template.start_update()
-new_updates.remove_enum_option('Box__Security__Classification__Key', 'Sensitive')
-updated_template = template.update_info(updates=new_updates)
-```
-
-Delete all classifications
---------------------------
-
-To remove all classifications in an enterprise, call the
-[`template.delete()`](https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.base_object.BaseObject.delete)
-method with the name of the classification metadata template. 
-
-<!-- sample delete_metadata_templates_enterprise_securityClassification-6VMVochwUWo_schema -->
-```python
-client.metadata_template('enterprise', 'securityClassification-6VMVochwUWo').delete()
-```
-
 Add classification to file
 --------------------------
 
