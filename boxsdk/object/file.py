@@ -2,6 +2,7 @@ import json
 import os
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Tuple, Union, IO, Iterable, List, Any
+from boxsdk.exception import BoxException
 
 from boxsdk.util.datetime_formatter import normalize_date_to_rfc3339_format
 from .item import Item
@@ -177,6 +178,11 @@ class File(Item):
             expect_json_response=False,
             allow_redirects=False,
         )
+        if box_response.status_code != 302:
+            raise BoxException('Unexpected status code {0} when getting download url'.format(box_response.status_code))
+        if 'location' not in box_response.headers:
+            raise BoxException('Download URL is not present in the response.')
+
         return box_response.headers['location']
 
     @api_call
