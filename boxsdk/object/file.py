@@ -178,8 +178,6 @@ class File(Item):
             expect_json_response=False,
             allow_redirects=False,
         )
-        if box_response.status_code != 302:
-            raise BoxException('Unexpected status code {0} when getting download url'.format(box_response.status_code))
         if 'location' not in box_response.headers:
             raise BoxException('Download URL is not present in the response.')
 
