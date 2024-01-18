@@ -182,7 +182,7 @@ app_user_client = Client(app_user_auth)
 ### Client Credentials Grant
 
 Allows you to obtain an access token by having client credentials and secret with enterprise or user ID,
-which allows you to work using service or user account.
+which allows you to work using a service or user account.
 
 You can use `CCGAuth` to initialize a client object the same way as for other authentication types:
 
@@ -197,7 +197,7 @@ client = Client(auth)
 print(f'Id of the authenticated user is: {client.user().get().id}')
 ```
 
-Obtained token is valid for specified ammount of time, it will be refreshed automatically by default.
+Obtained token is valid for specified amount of time, it will be refreshed automatically by default.
 
 #### Obtaining Service Account token
 
@@ -216,7 +216,7 @@ auth = CCGAuth(
 )
 ```
 
-Remember that you can still make calls on behalf of managed users, which are part of your etnerprise, by using
+Remember that you can still make calls on behalf of managed users, which are part of your enterprise, by using
 [As-User](#as-user) bahaviour.
 
 #### Obtaining User token
