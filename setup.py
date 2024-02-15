@@ -68,10 +68,10 @@ def main():
         'bottle',
         'jsonpatch>1.14',
         'sqlalchemy<1.4.0',
-        'pytest',
-        'pytest-timeout',
-        'pytest-cov',
-        'pytest-lazy-fixture',
+        'pytest<=7.4.4',
+        'pytest-timeout<=2.2.0',
+        'pytest-cov<=4.1.0',
+        'pytest-lazy-fixture<=0.6.3',
         'pytz',
         'urllib3<2'
     ]
