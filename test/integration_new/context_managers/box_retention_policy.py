@@ -26,7 +26,8 @@ class BoxRetentionPolicy:
                 policy_name=name,
                 disposition_action=disposition_action,
                 retention_length=retention_length,
-                retention_type='modifiable'
+                retention_type='modifiable',
+                can_owner_extend_retention=True
             )
 
     def __enter__(self) -> RetentionPolicy:
