@@ -68,10 +68,11 @@ def main():
         'bottle',
         'jsonpatch>1.14',
         'sqlalchemy<1.4.0',
-        'pytest<=7.4.4',
-        'pytest-timeout<=2.2.0',
-        'pytest-cov<=4.1.0',
-        'pytest-lazy-fixture<=0.6.3',
+        # pytest 8.0.0 is not compatible, so we need to use the latest version of pytest 7.x
+        'pytest<8.0.0',
+        'pytest-timeout<3.0.0',
+        'pytest-cov<5.0.0',
+        'pytest-lazy-fixture<1.0.0',
         'pytz',
         'urllib3<2'
     ]
