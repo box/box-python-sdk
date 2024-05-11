@@ -2,7 +2,7 @@ import json
 import os
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Tuple, Union, IO, Iterable, List, Any
-from boxsdk.exception import BoxException
+from boxsdk.exception import BoxAPIException
 
 from boxsdk.util.datetime_formatter import normalize_date_to_rfc3339_format
 from .item import Item
@@ -178,8 +178,16 @@ class File(Item):
             expect_json_response=False,
             allow_redirects=False,
         )
+        network_response = box_response.network_response
         if 'location' not in box_response.headers:
-            raise BoxException('Download URL is not present in the response.')
+            raise BoxAPIException(
+                status=network_response.status_code,
+                headers=network_response.headers,
+                message='Download URL is not present in the response.',
+                url=url,
+                method='GET',
+                network_response=network_response,
+            )
 
         return box_response.headers['location']
 
