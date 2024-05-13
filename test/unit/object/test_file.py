@@ -8,7 +8,7 @@ import pytz
 from pytest_lazyfixture import lazy_fixture
 
 from boxsdk.config import API
-from boxsdk.exception import BoxAPIException, BoxException
+from boxsdk.exception import BoxAPIException
 from boxsdk.object.comment import Comment
 from boxsdk.object.file import File
 from boxsdk.object.file_version import FileVersion
@@ -240,9 +240,9 @@ def test_get_download_url(test_file, mock_box_session):
 def test_get_download_url_failed(test_file, mock_box_session):
     expected_url = f'{API.BASE_API_URL}/files/{test_file.object_id}/content'
     mock_box_session.get.return_value.headers = {}
-    with pytest.raises(BoxException) as exc_info:
+    with pytest.raises(BoxAPIException) as exc_info:
         test_file.get_download_url()
-    assert exc_info.value.args[0] == 'Download URL is not present in the response.'
+    assert exc_info.value.message == 'Download URL is not present in the response.'
     mock_box_session.get.assert_called_once_with(
         expected_url,
         params=None,
