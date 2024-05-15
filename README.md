@@ -12,7 +12,7 @@ From Box Python SDK v3.x, you can find the migration guide [here](https://github
 
 [![image](http://opensource.box.com/badges/stable.svg)](http://opensource.box.com/badges)
 [![Documentation Status](https://readthedocs.org/projects/box-python-sdk/badge/?version=latest)](http://box-python-sdk.readthedocs.org/en/latest)
-[![image](https://github.com/box/box-python-sdk/workflows/build/badge.svg)](https://github.com/box/box-python-sdk/actions)
+[![image](https://github.com/box/box-python-sdk/actions/workflows/build.yml/badge.svg)](https://github.com/box/box-python-sdk/actions)
 [![image](https://img.shields.io/pypi/v/boxsdk.svg)](https://pypi.python.org/pypi/boxsdk)
 [![image](https://img.shields.io/pypi/dm/boxsdk.svg)](https://pypi.python.org/pypi/boxsdk)
 [![image](https://coveralls.io/repos/github/box/box-python-sdk/badge.svg?branch=main)](https://coveralls.io/github/box/box-python-sdk?branch=main)
