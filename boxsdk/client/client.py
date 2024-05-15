@@ -2,6 +2,7 @@
 import json
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Iterable, Union, Any, IO
+from warnings import warn
 
 from ..auth.oauth2 import TokenResponse
 from ..session.session import Session, AuthorizedSession
@@ -74,6 +75,7 @@ class Client(Cloneable):
             The session object to use. If None is provided then an instance of :class:`AuthorizedSession` will be used.
         """
         super().__init__()
+        warn('Package \'boxsdk\' is going to be deprecated soon. Please use \'box-sdk-gen\' instead.', DeprecationWarning)
         self._oauth = oauth
         if session is not None:
             self._session = session
