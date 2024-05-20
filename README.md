@@ -2,11 +2,17 @@
   <img src="https://github.com/box/sdks/blob/master/images/box-dev-logo.png" alt= “box-dev-logo” width="30%" height="50%">
 </p>
 
+# Deprecation notice
+
+This version of the Box Python SDK is under maintenance mode, and will be deprecated soon, only critical security updates and bug fixes will be provided. We recommend using the new version Box Python SDK, which can be found at [box/box-python-sdk-gen](https://github.com/box/box-python-sdk-gen)
+
+You can find the migration guide [here](https://github.com/box/box-python-sdk-gen/blob/main/migration-guide.md) for transitioning from Box Python SDK v3.x to the new `box-sdk-gen` package. If you have any questions, please create an issue in the new repository or reach out to [Box Developer Support](https://developer.box.com/support/).
+
 # Box Python SDK
 
-[![image](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
+[![image](http://opensource.box.com/badges/stable.svg)](http://opensource.box.com/badges)
 [![Documentation Status](https://readthedocs.org/projects/box-python-sdk/badge/?version=latest)](http://box-python-sdk.readthedocs.org/en/latest)
-[![image](https://github.com/box/box-python-sdk/workflows/build/badge.svg)](https://github.com/box/box-python-sdk/actions)
+[![image](https://github.com/box/box-python-sdk/actions/workflows/build.yml/badge.svg)](https://github.com/box/box-python-sdk/actions)
 [![image](https://img.shields.io/pypi/v/boxsdk.svg)](https://pypi.python.org/pypi/boxsdk)
 [![image](https://img.shields.io/pypi/dm/boxsdk.svg)](https://pypi.python.org/pypi/boxsdk)
 [![image](https://coveralls.io/repos/github/box/box-python-sdk/badge.svg?branch=main)](https://coveralls.io/github/box/box-python-sdk?branch=main)
