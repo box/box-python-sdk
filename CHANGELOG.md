@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file. See [standa
 ### Bug Fixes:
 
 * Change exception type for missing location header ([#871](https://github.com/box/box-python-sdk/issues/871)) ([8c5e0ec](https://github.com/box/box-python-sdk/commit/8c5e0eca7e494baa8138dceededa2009abc1717b))
-* fix annnotation of oauths access_token ([#855](https://github.com/box/box-python-sdk/issues/855)) ([804780e](https://github.com/box/box-python-sdk/commit/804780e4c8d410590fa20cdb6dd35224d59d2ec0))
+* Fix annnotation of oauths access_token ([#855](https://github.com/box/box-python-sdk/issues/855)) ([804780e](https://github.com/box/box-python-sdk/commit/804780e4c8d410590fa20cdb6dd35224d59d2ec0))
 * Fix retention policy integration test ([#867](https://github.com/box/box-python-sdk/issues/867)) ([8e0d640](https://github.com/box/box-python-sdk/commit/8e0d6406f26be87799838b0aa57acd62c79d59a2))
 * Remove delete classification ([#861](https://github.com/box/box-python-sdk/issues/861)) ([393cfef](https://github.com/box/box-python-sdk/commit/393cfefa57e729f34221a4e5923a4a50532f4013))
 * Update exception file get download URL ([#866](https://github.com/box/box-python-sdk/issues/866)) ([94dcbcd](https://github.com/box/box-python-sdk/commit/94dcbcd490d98ff19afd38c9880de8022ad2ec89))
