@@ -50,7 +50,8 @@ def test_delete_file(test_file, mock_box_session, etag, if_match_header):
     )
 
 
-def test_create_upload_session(test_file, mock_box_session):
+@pytest.mark.parametrize('use_upload_session_urls', [True, False])
+def test_create_upload_session(test_file, mock_box_session, use_upload_session_urls):
     expected_url = f'{API.UPLOAD_URL}/files/{test_file.object_id}/upload_sessions'
     file_size = 197520
     part_size = 12345
@@ -71,7 +72,9 @@ def test_create_upload_session(test_file, mock_box_session):
         'total_parts': total_parts,
         'part_size': part_size,
     }
-    upload_session = test_file.create_upload_session(file_size, file_name)
+    upload_session = test_file.create_upload_session(
+        file_size, file_name, use_upload_session_urls=use_upload_session_urls
+    )
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     assert isinstance(upload_session, UploadSession)
     assert upload_session._session == mock_box_session
@@ -80,9 +83,13 @@ def test_create_upload_session(test_file, mock_box_session):
     assert upload_session.num_parts_processed == num_parts_processed
     assert upload_session.type == upload_session_type
     assert upload_session.id == upload_session_id
+    assert upload_session._use_upload_session_urls == use_upload_session_urls
 
 
-def test_get_chunked_uploader(mock_box_session, mock_content_response, mock_file_path, test_file):
+@pytest.mark.parametrize('use_upload_session_urls', [True, False])
+def test_get_chunked_uploader(
+        mock_box_session, mock_content_response, mock_file_path, test_file, use_upload_session_urls
+):
     expected_url = f'{API.UPLOAD_URL}/files/{test_file.object_id}/upload_sessions'
     mock_file_stream = BytesIO(mock_content_response.content)
     file_size = 197520
@@ -105,7 +112,9 @@ def test_get_chunked_uploader(mock_box_session, mock_content_response, mock_file
     with patch('os.stat') as stat:
         stat.return_value.st_size = file_size
         with patch('boxsdk.object.file.open', return_value=mock_file_stream):
-            chunked_uploader = test_file.get_chunked_uploader(mock_file_path)
+            chunked_uploader = test_file.get_chunked_uploader(
+                mock_file_path, use_upload_session_urls=use_upload_session_urls
+            )
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
     upload_session = chunked_uploader._upload_session
     assert upload_session.part_size == part_size
@@ -113,6 +122,7 @@ def test_get_chunked_uploader(mock_box_session, mock_content_response, mock_file
     assert upload_session.num_parts_processed == num_parts_processed
     assert upload_session.type == upload_session_type
     assert upload_session.id == upload_session_id
+    assert upload_session._use_upload_session_urls == use_upload_session_urls
     assert isinstance(chunked_uploader, ChunkedUploader)
 
 
