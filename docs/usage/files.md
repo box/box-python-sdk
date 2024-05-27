@@ -199,10 +199,8 @@ without aborting the entire upload, and failed parts can then be retried.
 
 Since box-python-sdk 3.11.0 release, by default the SDK uses upload urls provided in response
 when creating a new upload session. This allowes to always upload your content to the closest Box data center and
-can significantly improve upload speed. You can alwys disable this feature and always use base upload url by 
+can significantly improve upload speed. You can always disable this feature and always use base upload url by 
 setting `use_upload_session_urls` flag to `False` when creating upload session.
-
-```python
 
 ### Automatic Uploader
 
