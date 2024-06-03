@@ -64,6 +64,8 @@ API.OAUTH2_AUTHORIZE_URL = 'https://my-company.com/authorize'
 
 ### Upload URL
 The default URL used when uploading files to Box can be changed by assigning a new value to the `API.UPLOAD_URL` field.
+If this variable is ever changed from default value, the SDK will alwayse use this URL to upload files to Box,
+even if `use_upload_session_urls` is set to `True` while creating an upload session for a chunked upload.
 
 ```python
 from boxsdk.config import API

@@ -9,6 +9,7 @@ from boxsdk import BoxAPIException
 from boxsdk.util.api_call_decorator import api_call
 from boxsdk.util.chunked_uploader import ChunkedUploader
 from boxsdk.session.session import Session
+from boxsdk.config import API
 from .base_object import BaseObject
 from ..pagination.limit_offset_based_dict_collection import LimitOffsetBasedDictCollection
 
@@ -20,6 +21,7 @@ if TYPE_CHECKING:
 class UploadSession(BaseObject):
     _item_type = 'upload_session'
     _parent_item_type = 'file'
+    _default_upload_url = API.UPLOAD_URL
 
     def __init__(
             self, session: Session, object_id: str, response_object: dict = None, use_upload_session_urls: bool = True
@@ -32,7 +34,7 @@ class UploadSession(BaseObject):
         Base class override. Endpoint is a little different - it's /files/upload_sessions.
         """
         session_endpoints = getattr(self, 'session_endpoints', {})
-        if self._use_upload_session_urls and url_key in session_endpoints:
+        if self._use_upload_session_urls and url_key in session_endpoints and self.session.api_config.UPLOAD_URL == self._default_upload_url:
             return session_endpoints[url_key]
 
         return self._session.get_url(

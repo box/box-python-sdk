@@ -125,7 +125,8 @@ class Folder(Item):
             The name of the file that will be uploaded.
         :param use_upload_session_urls:
             The parameter detrermining what urls to use to perform chunked upload.
-            If True, the urls returned by create_upload_session() endpoint response will be used.
+            If True, the urls returned by create_upload_session() endpoint response will be used,
+            unless a custom API.UPLOAD_URL was set in the config.
             If False, the base upload url will be used.
         :returns:
             A :class:`UploadSession` object.
@@ -160,7 +161,8 @@ class Folder(Item):
             If not specified, the name from the local system is used.
         :param use_upload_session_urls:
             The parameter detrermining what urls to use to perform chunked upload.
-            If True, the urls returned by create_upload_session() endpoint response will be used.
+            If True, the urls returned by create_upload_session() endpoint response will be used,
+            unless a custom API.UPLOAD_URL was set in the config.
             If False, the base upload url will be used.
         :returns:
             A :class:`ChunkedUploader` object.

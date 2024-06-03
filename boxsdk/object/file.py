@@ -61,7 +61,8 @@ class File(Item):
             The new name of the file version that will be uploaded.
         :param use_upload_session_urls:
             The parameter detrermining what urls to use to perform chunked upload.
-            If True, the urls returned by create_upload_session() endpoint response will be used.
+            If True, the urls returned by create_upload_session() endpoint response will be used,
+            unless a custom API.UPLOAD_URL was set in the config.
             If False, the base upload url will be used.
         :returns:
             A :class:`UploadSession` object.
@@ -96,7 +97,8 @@ class File(Item):
             Indicates whether the file should be renamed or not.
         :param use_upload_session_urls:
             The parameter detrermining what urls to use to perform chunked upload.
-            If True, the urls returned by create_upload_session() endpoint response will be used.
+            If True, the urls returned by create_upload_session() endpoint response will be used,
+            unless a custom API.UPLOAD_URL was set in the config.
             If False, the base upload url will be used.
         :returns:
             A :class:`ChunkedUploader` object.

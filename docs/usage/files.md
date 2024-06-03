@@ -218,8 +218,8 @@ API.CHUNK_UPLOAD_THREADS = 6
 The SDK provides a method of automatically handling a chunked upload. First get a folder you want to upload the file to.
 Then call [`folder.get_chunked_uploader(file_path, rename_file=False, use_upload_session_urls=True)`][get_chunked_uploader_for_file]
 to retrieve a [`ChunkedUploader`][chunked_uploader_class] object. Setting `use_upload_session_urls` to `True` inilializes
-the uploader that utlizies urls returned by the `Create Upload Session` endpoint response. Setting `use_upload_session_urls`
-to `False` inilializes the uploader that uses always base upload urls.
+the uploader that utlizies urls returned by the `Create Upload Session` endpoint response unless a custom
+API.UPLOAD_URL was set in the config. Setting `use_upload_session_urls` to `False` inilializes the uploader that uses always base upload urls.
 Calling the method [`chunked_upload.start()`][start] will kick off the chunked upload process and return the [File][file_class] 
 object that was uploaded.
 

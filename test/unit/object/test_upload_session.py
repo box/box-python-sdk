@@ -25,7 +25,7 @@ SESSION_ENDPOINTS = {
 
 
 @pytest.fixture()
-def test_upload_session_using_upload_session_urls(mock_box_session):
+def upload_session_using_upload_session_urls(mock_box_session):
     upload_session_response_object = {
         'part_size': 8,
         'total_parts': 10,
@@ -40,7 +40,7 @@ def test_upload_session_using_upload_session_urls(mock_box_session):
 
 
 @pytest.fixture()
-def test_upload_session_not_using_upload_session_urls(mock_box_session):
+def upload_session_not_using_upload_session_urls(mock_box_session):
     upload_session_response_object = {
         'part_size': 8,
         'total_parts': 10,
@@ -57,8 +57,8 @@ def test_upload_session_not_using_upload_session_urls(mock_box_session):
 @pytest.mark.parametrize(
     'test_upload_session, expected_url',
     [
-        (lazy_fixture('test_upload_session_using_upload_session_urls'), SESSION_ENDPOINTS['list_parts']),
-        (lazy_fixture('test_upload_session_not_using_upload_session_urls'),
+        (lazy_fixture('upload_session_using_upload_session_urls'), SESSION_ENDPOINTS['list_parts']),
+        (lazy_fixture('upload_session_not_using_upload_session_urls'),
          f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}/parts')
     ])
 def test_get_parts(mock_box_session, test_upload_session, expected_url):
@@ -86,8 +86,8 @@ def test_get_parts(mock_box_session, test_upload_session, expected_url):
 @pytest.mark.parametrize(
     'test_upload_session, expected_url',
     [
-        (lazy_fixture('test_upload_session_using_upload_session_urls'), SESSION_ENDPOINTS['abort']),
-        (lazy_fixture('test_upload_session_not_using_upload_session_urls'),
+        (lazy_fixture('upload_session_using_upload_session_urls'), SESSION_ENDPOINTS['abort']),
+        (lazy_fixture('upload_session_not_using_upload_session_urls'),
          f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}')
     ])
 def test_abort(mock_box_session, test_upload_session, expected_url):
@@ -100,8 +100,8 @@ def test_abort(mock_box_session, test_upload_session, expected_url):
 @pytest.mark.parametrize(
     'test_upload_session, expected_url',
     [
-        (lazy_fixture('test_upload_session_using_upload_session_urls'), SESSION_ENDPOINTS['upload_part']),
-        (lazy_fixture('test_upload_session_not_using_upload_session_urls'),
+        (lazy_fixture('upload_session_using_upload_session_urls'), SESSION_ENDPOINTS['upload_part']),
+        (lazy_fixture('upload_session_not_using_upload_session_urls'),
          f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}')
     ])
 def test_upload_part_bytes(mock_box_session, test_upload_session, expected_url):
@@ -134,8 +134,8 @@ def test_upload_part_bytes(mock_box_session, test_upload_session, expected_url):
 @pytest.mark.parametrize(
     'test_upload_session, expected_url',
     [
-        (lazy_fixture('test_upload_session_using_upload_session_urls'), SESSION_ENDPOINTS['commit']),
-        (lazy_fixture('test_upload_session_not_using_upload_session_urls'),
+        (lazy_fixture('upload_session_using_upload_session_urls'), SESSION_ENDPOINTS['commit']),
+        (lazy_fixture('upload_session_not_using_upload_session_urls'),
          f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}/commit')
     ])
 def test_commit(mock_box_session, test_upload_session, expected_url):
@@ -193,12 +193,12 @@ def test_commit(mock_box_session, test_upload_session, expected_url):
     'test_upload_session, expected_get_url, expected_commit_url',
     [
         (
-            lazy_fixture('test_upload_session_using_upload_session_urls'),
+            lazy_fixture('upload_session_using_upload_session_urls'),
             SESSION_ENDPOINTS['list_parts'],
             SESSION_ENDPOINTS['commit']
         ),
         (
-            lazy_fixture('test_upload_session_not_using_upload_session_urls'),
+            lazy_fixture('upload_session_not_using_upload_session_urls'),
             f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}/parts',
             f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}/commit'
         )
@@ -256,8 +256,8 @@ def test_commit_with_missing_params(mock_box_session, test_upload_session, expec
 @pytest.mark.parametrize(
     'test_upload_session, expected_url',
     [
-        (lazy_fixture('test_upload_session_using_upload_session_urls'), SESSION_ENDPOINTS['commit']),
-        (lazy_fixture('test_upload_session_not_using_upload_session_urls'),
+        (lazy_fixture('upload_session_using_upload_session_urls'), SESSION_ENDPOINTS['commit']),
+        (lazy_fixture('upload_session_not_using_upload_session_urls'),
          f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}/commit')
     ])
 def test_commit_returns_none_when_202_is_returned(mock_box_session, test_upload_session, expected_url):
@@ -303,8 +303,8 @@ def test_commit_returns_none_when_202_is_returned(mock_box_session, test_upload_
 @pytest.mark.parametrize(
     'test_upload_session',
     [
-        lazy_fixture('test_upload_session_using_upload_session_urls'),
-        lazy_fixture('test_upload_session_not_using_upload_session_urls'),
+        lazy_fixture('upload_session_using_upload_session_urls'),
+        lazy_fixture('upload_session_not_using_upload_session_urls'),
     ])
 def test_get_chunked_uploader_for_stream(test_upload_session):
     file_size = 197520
@@ -317,8 +317,8 @@ def test_get_chunked_uploader_for_stream(test_upload_session):
 @pytest.mark.parametrize(
     'test_upload_session',
     [
-        lazy_fixture('test_upload_session_using_upload_session_urls'),
-        lazy_fixture('test_upload_session_not_using_upload_session_urls'),
+        lazy_fixture('upload_session_using_upload_session_urls'),
+        lazy_fixture('upload_session_not_using_upload_session_urls'),
     ])
 def test_get_chunked_uploader(mock_content_response, mock_file_path, test_upload_session):
     mock_file_stream = io.BytesIO(mock_content_response.content)
@@ -328,3 +328,21 @@ def test_get_chunked_uploader(mock_content_response, mock_file_path, test_upload
         with patch('boxsdk.object.upload_session.open', return_value=mock_file_stream):
             chunked_uploader = test_upload_session.get_chunked_uploader(mock_file_path)
     assert isinstance(chunked_uploader, ChunkedUploader)
+
+
+def test_get_url_do_not_use_session_urls_if_base_url_was_changed(upload_session_using_upload_session_urls):
+    old_base_upload_url = API.UPLOAD_URL
+    new_base_upload_url = 'https://new-upload.box.com/api/2.0'
+    API.UPLOAD_URL = new_base_upload_url
+    try:
+        url = upload_session_using_upload_session_urls.get_url('commit', url_key='commit')
+        assert url == f'{new_base_upload_url}/files/upload_sessions/{UPLOAD_SESSION_ID}/commit'
+        assert url != SESSION_ENDPOINTS['commit']
+    finally:
+        API.UPLOAD_URL = old_base_upload_url
+
+
+def test_get_url_uses_session_urls_if_base_url_was_not_changed(upload_session_using_upload_session_urls):
+    url = upload_session_using_upload_session_urls.get_url('commit', url_key='commit')
+    assert url != f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}/commit'
+    assert url == SESSION_ENDPOINTS['commit']
