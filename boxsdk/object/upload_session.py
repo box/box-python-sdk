@@ -8,6 +8,8 @@ from typing import Any, Optional, TYPE_CHECKING, Iterable, IO
 from boxsdk import BoxAPIException
 from boxsdk.util.api_call_decorator import api_call
 from boxsdk.util.chunked_uploader import ChunkedUploader
+from boxsdk.session.session import Session
+from boxsdk.config import API
 from .base_object import BaseObject
 from ..pagination.limit_offset_based_dict_collection import LimitOffsetBasedDictCollection
 
@@ -19,11 +21,22 @@ if TYPE_CHECKING:
 class UploadSession(BaseObject):
     _item_type = 'upload_session'
     _parent_item_type = 'file'
+    _default_upload_url = API.UPLOAD_URL
 
-    def get_url(self, *args: Any) -> str:
+    def __init__(
+            self, session: Session, object_id: str, response_object: dict = None, use_upload_session_urls: bool = True
+    ):
+        super().__init__(session, object_id, response_object)
+        self._use_upload_session_urls = use_upload_session_urls
+
+    def get_url(self, *args: Any, url_key: str = None) -> str:
         """
         Base class override. Endpoint is a little different - it's /files/upload_sessions.
         """
+        session_endpoints = getattr(self, 'session_endpoints', {})
+        if self._use_upload_session_urls and url_key in session_endpoints and self.session.api_config.UPLOAD_URL == self._default_upload_url:
+            return session_endpoints[url_key]
+
         return self._session.get_url(
             f'{self._parent_item_type}s/{self._item_type}s',
             self._object_id,
@@ -44,7 +57,7 @@ class UploadSession(BaseObject):
         """
         return LimitOffsetBasedDictCollection(
             session=self.session,
-            url=self.get_url('parts'),
+            url=self.get_url('parts', url_key='list_parts'),
             limit=limit,
             offset=offset,
             fields=None,
@@ -87,7 +100,7 @@ class UploadSession(BaseObject):
             'Content-Range': f'bytes {offset}-{range_end}/{total_size}',
         }
         response = self._session.put(
-            self.get_url(),
+            self.get_url(url_key='upload_part'),
             headers=headers,
             data=part_bytes,
         )
@@ -131,7 +144,7 @@ class UploadSession(BaseObject):
 
         try:
             response = self._session.post(
-                self.get_url('commit'),
+                self.get_url('commit', url_key='commit'),
                 headers=headers,
                 data=json.dumps(body),
             )
@@ -154,7 +167,12 @@ class UploadSession(BaseObject):
         :returns:
             A boolean indication success of the upload abort.
         """
-        return self.delete()
+
+        box_response = self._session.delete(
+            self.get_url(url_key='abort'),
+            expect_json_response=False
+        )
+        return box_response.ok
 
     def get_chunked_uploader_for_stream(self, content_stream: IO[bytes], file_size: int) -> ChunkedUploader:
         """

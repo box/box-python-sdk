@@ -194,8 +194,13 @@ Chunked Upload
 --------------
 
 For large files or in cases where the network connection is less reliable,
-you may want to upload the file in parts.  This allows a single part to fail
+you may want to upload the file in parts. This allows a single part to fail
 without aborting the entire upload, and failed parts can then be retried.
+
+Since box-python-sdk 3.11.0 release, by default the SDK uses upload urls provided in response
+when creating a new upload session. This allowes to always upload your content to the closest Box data center and
+can significantly improve upload speed. You can always disable this feature and always use base upload url by 
+setting `use_upload_session_urls` flag to `False` when creating upload session.
 
 ### Automatic Uploader
 
@@ -211,9 +216,11 @@ API.CHUNK_UPLOAD_THREADS = 6
 #### Upload new file
 
 The SDK provides a method of automatically handling a chunked upload. First get a folder you want to upload the file to.
-Then call [`folder.get_chunked_uploader(file_path, rename_file=False)`][get_chunked_uploader_for_file] to retrieve
-a [`ChunkedUploader`][chunked_uploader_class] object. Calling the method [`chunked_upload.start()`][start] will
-kick off the chunked upload process and return the [File][file_class] 
+Then call [`folder.get_chunked_uploader(file_path, rename_file=False, use_upload_session_urls=True)`][get_chunked_uploader_for_file]
+to retrieve a [`ChunkedUploader`][chunked_uploader_class] object. Setting `use_upload_session_urls` to `True` inilializes
+the uploader that utlizies urls returned by the `Create Upload Session` endpoint response unless a custom
+API.UPLOAD_URL was set in the config. Setting `use_upload_session_urls` to `False` inilializes the uploader that uses always base upload urls.
+Calling the method [`chunked_upload.start()`][start] will kick off the chunked upload process and return the [File][file_class] 
 object that was uploaded.
 
 <!-- samples x_chunked_uploads automatic -->
@@ -224,7 +231,10 @@ uploaded_file = chunked_uploader.start()
 print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 ```
 
-You can also upload file stream by creating a [`UploadSession`][upload_session_class] first and then calling the 
+You can also upload file stream by creating a [`UploadSession`][upload_session_class] first. This can be done by calling
+[`folder.create_upload_session(file_size, file_name=None, use_upload_session_urls=True)`][create_upload_session] method.
+`use_upload_session_urls` flag is used to determine if the upload session should use urls returned by 
+the `Create Upload Session` endpoint or should it always use base upload urls. Then you can call
 method [`upload_session.get_chunked_uploader_for_stream(content_stream, file_size)`][get_chunked_uploader_for_stream].
 
 ```python
@@ -240,14 +250,14 @@ with open(test_file_path, 'rb') as content_stream:
 #### Upload new file version
 
 To upload a new file version for a large file, first get a file you want to replace.
-Then call [`file.get_chunked_uploader(file_path)`][get_chunked_uploader_for_version]
+Then call [`file.get_chunked_uploader(file_path, rename_file=False, use_upload_session_urls=True)`][get_chunked_uploader_for_version]
 to retrieve a [`ChunkedUploader`][chunked_uploader_class] object. Calling the method [`chunked_upload.start()`][start]
 will kick off the chunked upload process and return the updated [File][file_class].
 
 <!-- samples x_chunked_uploads automatic_new_version -->
 ```python
 # uploads new large file version 
-chunked_uploader = client.file('existing_big_file_id').get_chunked_uploader('/path/to/file')
+chunked_uploader = client.file('existing_big_file_id').get_chunked_uploader(file_path='/path/to/file')
 uploaded_file = chunked_uploader.start()
 print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 # the uploaded_file.id will be the same as 'existing_big_file_id'
@@ -293,17 +303,6 @@ except:
 print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 ```
 
-Alternatively, you can also create a [`UploadSession`][upload_session_class] object by calling
-[`client.upload_session(session_id)`][upload_session] if you have the upload session id. This can be helpful in 
-resuming an existing upload session.
-
-
-```python
-chunked_uploader = client.upload_session('12345').get_chunked_uploader('/path/to/file')
-uploaded_file = chunked_uploader.resume()
-print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
-```
-
 [resume]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.chunked_uploader.ChunkedUploader.resume
 
 #### Abort Chunked Upload
@@ -317,7 +316,7 @@ from boxsdk.exception import BoxNetworkException
 test_file_path = '/path/to/large_file.mp4'
 content_stream = open(test_file_path, 'rb')
 total_size = os.stat(test_file_path).st_size
-chunked_uploader = client.upload_session('56781').get_chunked_uploader_for_stream(content_stream, total_size)
+chunked_uploader = client.file('existing_big_file_id').get_chunked_uploader(file_path='/path/to/file')
 try:
     uploaded_file = chunked_uploader.start()
 except BoxNetworkException:
@@ -371,8 +370,10 @@ The individual endpoint methods are detailed below:
 #### Create Upload Session for File Version
 
 To create an upload session for uploading a large version, call
-[`file.create_upload_session(file_size, file_name=None)`][create_version_upload_session] with the size of the file to be
-uploaded.  You can optionally specify a new `file_name` to rename the file on upload.  This method returns an
+[`file.create_upload_session(file_size, file_name=None, use_upload_session_urls=True)`][create_version_upload_session]
+with the size of the file to be uploaded. You can optionally specify a new `file_name` to rename the file on upload.
+`use_upload_session_urls` flag is used to determine if the upload session should use urls returned by
+the `Create Upload Session` endpoint or should it always use base upload urls. This method returns an
 [`UploadSession`][upload_session_class] object representing the created upload session.
 
 <!-- sample post_files_id_upload_sessions -->
@@ -388,9 +389,10 @@ print(f'Created upload session {upload_session.id} with chunk size of {upload_se
 #### Create Upload Session for File
 
 To create an upload session for uploading a new large file, call
-[`folder.create_upload_session(file_size, file_name)`][create_upload_session] with the size and filename of the file
-to be uploaded.  This method returns an [`UploadSession`][upload_session_class] object representing the created upload
-session.
+[`folder.create_upload_session(file_size, file_name, use_upload_session_urls=True)`][create_upload_session] with
+the size and filename of the file to be uploaded. `use_upload_session_urls` flag is used to determine if the upload
+session should use urls returned by the `Create Upload Session` endpoint or should it always use base upload urls.
+This method returns an [`UploadSession`][upload_session_class] object representing the created upload session. 
 
 <!-- sample post_files_upload_sessions -->
 ```python

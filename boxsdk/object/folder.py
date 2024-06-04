@@ -115,7 +115,7 @@ class Folder(Item):
         )
 
     @api_call
-    def create_upload_session(self, file_size: int, file_name: str) -> 'UploadSession':
+    def create_upload_session(self, file_size: int, file_name: str, use_upload_session_urls: bool = True) -> 'UploadSession':
         """
         Creates a new chunked upload session for upload a new file.
 
@@ -123,6 +123,11 @@ class Folder(Item):
             The size of the file in bytes that will be uploaded.
         :param file_name:
             The name of the file that will be uploaded.
+        :param use_upload_session_urls:
+            The parameter detrermining what urls to use to perform chunked upload.
+            If True, the urls returned by create_upload_session() endpoint response will be used,
+            unless a custom API.UPLOAD_URL was set in the config.
+            If False, the base upload url will be used.
         :returns:
             A :class:`UploadSession` object.
         """
@@ -133,13 +138,18 @@ class Folder(Item):
             'file_name': file_name,
         }
         response = self._session.post(url, data=json.dumps(body_params)).json()
-        return self.translator.translate(
+        upload_session = self.translator.translate(
             session=self._session,
             response_object=response,
         )
+        # pylint:disable=protected-access
+        upload_session._use_upload_session_urls = use_upload_session_urls
+        return upload_session
 
     @api_call
-    def get_chunked_uploader(self, file_path: str, file_name: Optional[str] = None) -> 'ChunkedUploader':
+    def get_chunked_uploader(
+            self, file_path: str, file_name: Optional[str] = None, use_upload_session_urls: bool = True
+    ) -> 'ChunkedUploader':
         # pylint: disable=consider-using-with
         """
         Instantiate the chunked upload instance and create upload session with path to file.
@@ -149,6 +159,11 @@ class Folder(Item):
          :param file_name:
             The name with extention of the file that will be uploaded, e.g. new_file_name.zip.
             If not specified, the name from the local system is used.
+        :param use_upload_session_urls:
+            The parameter detrermining what urls to use to perform chunked upload.
+            If True, the urls returned by create_upload_session() endpoint response will be used,
+            unless a custom API.UPLOAD_URL was set in the config.
+            If False, the base upload url will be used.
         :returns:
             A :class:`ChunkedUploader` object.
         """
@@ -157,7 +172,7 @@ class Folder(Item):
         content_stream = open(file_path, 'rb')
 
         try:
-            upload_session = self.create_upload_session(total_size, upload_file_name)
+            upload_session = self.create_upload_session(total_size, upload_file_name, use_upload_session_urls)
             return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
         except Exception:
             content_stream.close()

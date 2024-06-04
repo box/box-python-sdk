@@ -72,9 +72,24 @@ def test_manual_chunked_upload(parent_folder, large_file, large_file_name):
             util.permanently_delete(uploaded_file)
 
 
-def test_auto_chunked_upload(parent_folder, large_file, large_file_name):
+def test_auto_chunked_upload_using_upload_session_urls(parent_folder, large_file, large_file_name):
     total_size = os.stat(large_file.path).st_size
-    chunked_uploader = parent_folder.get_chunked_uploader(large_file.path)
+    chunked_uploader = parent_folder.get_chunked_uploader(large_file.path, use_upload_session_urls=True)
+
+    uploaded_file = chunked_uploader.start()
+
+    try:
+        assert uploaded_file.id
+        assert uploaded_file.name == large_file_name
+        assert uploaded_file.parent == parent_folder
+        assert uploaded_file.size == total_size
+    finally:
+        util.permanently_delete(uploaded_file)
+
+
+def test_auto_chunked_upload_NOT_using_upload_session_urls(parent_folder, large_file, large_file_name):
+    total_size = os.stat(large_file.path).st_size
+    chunked_uploader = parent_folder.get_chunked_uploader(large_file.path, use_upload_session_urls=False)
 
     uploaded_file = chunked_uploader.start()
 

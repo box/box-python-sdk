@@ -49,7 +49,9 @@ class File(Item):
         )
 
     @api_call
-    def create_upload_session(self, file_size: int, file_name: Optional[str] = None) -> 'UploadSession':
+    def create_upload_session(
+            self, file_size: int, file_name: Optional[str] = None, use_upload_session_urls: bool = True
+    ) -> 'UploadSession':
         """
         Create a new chunked upload session for uploading a new version of the file.
 
@@ -57,6 +59,11 @@ class File(Item):
             The size of the file in bytes that will be uploaded.
         :param file_name:
             The new name of the file version that will be uploaded.
+        :param use_upload_session_urls:
+            The parameter detrermining what urls to use to perform chunked upload.
+            If True, the urls returned by create_upload_session() endpoint response will be used,
+            unless a custom API.UPLOAD_URL was set in the config.
+            If False, the base upload url will be used.
         :returns:
             A :class:`UploadSession` object.
         """
@@ -68,13 +75,18 @@ class File(Item):
             body_params['file_name'] = file_name
         url = self.get_url('upload_sessions').replace(self.session.api_config.BASE_API_URL, self.session.api_config.UPLOAD_URL)
         response = self._session.post(url, data=json.dumps(body_params)).json()
-        return self.translator.translate(
+        upload_session = self.translator.translate(
             session=self._session,
             response_object=response,
         )
+        # pylint:disable=protected-access
+        upload_session._use_upload_session_urls = use_upload_session_urls
+        return upload_session
 
     @api_call
-    def get_chunked_uploader(self, file_path: str, rename_file: bool = False) -> 'ChunkedUploader':
+    def get_chunked_uploader(
+            self, file_path: str, rename_file: bool = False, use_upload_session_urls: bool = True
+    ) -> 'ChunkedUploader':
         # pylint: disable=consider-using-with
         """
         Instantiate the chunked upload instance and create upload session with path to file.
@@ -83,13 +95,18 @@ class File(Item):
             The local path to the file you wish to upload.
         :param rename_file:
             Indicates whether the file should be renamed or not.
+        :param use_upload_session_urls:
+            The parameter detrermining what urls to use to perform chunked upload.
+            If True, the urls returned by create_upload_session() endpoint response will be used,
+            unless a custom API.UPLOAD_URL was set in the config.
+            If False, the base upload url will be used.
         :returns:
             A :class:`ChunkedUploader` object.
         """
         total_size = os.stat(file_path).st_size
         content_stream = open(file_path, 'rb')
         file_name = os.path.basename(file_path) if rename_file else None
-        upload_session = self.create_upload_session(total_size, file_name)
+        upload_session = self.create_upload_session(total_size, file_name, use_upload_session_urls)
         return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
 
     def _get_accelerator_upload_url_for_update(self) -> Optional[str]:
