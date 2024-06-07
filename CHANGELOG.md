@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.11.0](https://github.com/box/box-python-sdk/compare/v3.10.0...v3.11.0) (2024-06-07)
+
+
+### New Features and Enhancements:
+
+* Use upload session `urls` for chunk upload ([#875](https://github.com/box/box-python-sdk/issues/875)) ([c67b03c](https://github.com/box/box-python-sdk/commit/c67b03c7d88533773d62d72f0b626031805d61eb))
+
 ## [3.10.0](https://github.com/box/box-python-sdk/compare/v3.9.2...v3.10.0) (2024-05-22)
 
 
