@@ -1928,9 +1928,9 @@ def test_send_ai_question(mock_client, mock_box_session, mock_ai_question_respon
     }]
     question = 'Why are public APIs important?'
     mode = 'single_item_qa'
-    
+
     answer = mock_client.send_ai_question(items, question, mode)
-    
+
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps({
         'items': items,
         'prompt': question,
@@ -1950,21 +1950,21 @@ def test_send_ai_text_gen(mock_client, mock_box_session, mock_ai_question_respon
         'id': '12345'
     }]
     dialogue_history = [{
-            "prompt": "Make my email about public APIs sound more professional",
-            "answer": "Here is the first draft of your professional email about public APIs",
-            "created_at": "2013-12-12T10:53:43-08:00"
-        },
-        {
-            "prompt": "Can you add some more information?",
-            "answer": "Public API schemas provide necessary information to integrate with APIs...",
-            "created_at": "2013-12-12T11:20:43-08:00"
+        "prompt": "Make my email about public APIs sound more professional",
+        "answer": "Here is the first draft of your professional email about public APIs",
+        "created_at": "2013-12-12T10:53:43-08:00"
+    },
+    {
+        "prompt": "Can you add some more information?",
+        "answer": "Public API schemas provide necessary information to integrate with APIs...",
+        "created_at": "2013-12-12T11:20:43-08:00"
     }]
     answer = mock_client.send_ai_text_gen(
         dialogue_history=dialogue_history,
         items=items,
         prompt="Write an email to a client about the importance of public APIs."
     )
-    
+
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps({
         'dialogue_history': dialogue_history,
         'items': items,
