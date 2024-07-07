@@ -1692,7 +1692,7 @@ class Client(Cloneable):
             session=self._session,
             response_object=response.json(),
         )
-        
+
     @api_call
     def send_ai_question(
         self,
