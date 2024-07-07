@@ -42,8 +42,7 @@ def test_send_ai_text_gen(parent_folder, small_file_path):
             'prompt': 'How does the sun rise?',
             'answer': 'The sun raises in the east.',
             'created_at': '2013-12-12T10:53:43-08:00'
-        },
-        {
+        }, {
             'prompt': 'How many hours does it take for the sun to rise?',
             'answer': 'It takes 24 hours for the sun to rise.',
             'created_at': '2013-12-12T11:20:43-08:00'

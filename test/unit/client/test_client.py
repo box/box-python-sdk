@@ -1953,8 +1953,7 @@ def test_send_ai_text_gen(mock_client, mock_box_session, mock_ai_question_respon
         "prompt": "Make my email about public APIs sound more professional",
         "answer": "Here is the first draft of your professional email about public APIs",
         "created_at": "2013-12-12T10:53:43-08:00"
-    },
-    {
+    }, {
         "prompt": "Can you add some more information?",
         "answer": "Public API schemas provide necessary information to integrate with APIs...",
         "created_at": "2013-12-12T11:20:43-08:00"
