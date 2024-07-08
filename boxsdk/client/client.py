@@ -1692,3 +1692,79 @@ class Client(Cloneable):
             session=self._session,
             response_object=response.json(),
         )
+
+    @api_call
+    def send_ai_question(
+        self,
+        items: Iterable,
+        prompt: str,
+        mode: Optional[str] = None
+    ) -> Any:
+        """
+        Sends an AI request to supported LLMs and returns an answer specifically focused on the user's
+        question given the provided context.
+
+        :param items:
+            The items to be processed by the LLM, often files.
+        :param prompt:
+            The prompt provided by the client to be answered by the LLM.
+            The prompt's length is limited to 10000 characters.
+        :param mode:
+            The mode specifies if this request is for a single or multiple items.
+            If you select single_item_qa the items array can have one element only.
+            Selecting multiple_item_qa allows you to provide up to 25 items.
+
+            Value is one of `multiple_item_qa`, `single_item_qa`
+        :returns:
+            A response including the answer from the LLM.
+        """
+        url = self._session.get_url('ai/ask')
+        if mode is None:
+            mode = ('single_item_qa' if len(items) == 1 else 'multiple_item_qa')
+        body = {
+            'items': items,
+            'prompt': prompt,
+            'mode': mode
+        }
+
+        box_response = self._session.post(url, data=json.dumps(body))
+        response = box_response.json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
+        )
+
+    @api_call
+    def send_ai_text_gen(
+        self,
+        dialogue_history: Iterable,
+        items: Iterable,
+        prompt: str,
+    ):
+        """
+        Sends an AI request to supported LLMs and returns an answer specifically focused on the creation of new text.
+
+        :param dialogue_history:
+            The history of prompts and answers previously passed to the LLM.
+            This provides additional context to the LLM in generating the response.
+        :param items:
+            The items to be processed by the LLM, often files. The array can include exactly one element.
+        :param prompt:
+            The prompt provided by the client to be answered by the LLM.
+            The prompt's length is limited to 10000 characters.
+        :returns:
+            A response including the generated text from the LLM.
+        """
+        url = self._session.get_url('ai/text_gen')
+        body = {
+            'dialogue_history': dialogue_history,
+            'items': items,
+            'prompt': prompt
+        }
+
+        box_response = self._session.post(url, data=json.dumps(body))
+        response = box_response.json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
+        )

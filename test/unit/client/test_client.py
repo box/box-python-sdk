@@ -1766,6 +1766,16 @@ def mock_sign_template_response():
     return mock_sign_template
 
 
+@pytest.fixture(scope='module')
+def mock_ai_question_response():
+    mock_ai_question_response = {
+        'answer': 'Public APIs are important because of key and important reasons.',
+        'completion_reason': 'done',
+        'created_at': '2021-04-26T08:12:13.982Z',
+    }
+    return mock_ai_question_response
+
+
 def test_get_sign_requests(mock_client, mock_box_session, mock_sign_request_response):
     expected_url = f'{API.BASE_API_URL}/sign_requests'
 
@@ -1906,3 +1916,59 @@ def test_get_sign_templates(mock_client, mock_box_session, mock_sign_template_re
     assert isinstance(sign_template, SignTemplate)
     assert sign_template.id == '93153068-5420-467b-b8ef-8e54bfb7be42'
     assert sign_template.name == 'important-file.pdf'
+
+
+def test_send_ai_question(mock_client, mock_box_session, mock_ai_question_response):
+    expected_url = f'{API.BASE_API_URL}/ai/ask'
+    mock_box_session.post.return_value.json.return_value = mock_ai_question_response
+
+    items = [{
+        'type': 'file',
+        'id': '12345'
+    }]
+    question = 'Why are public APIs important?'
+    mode = 'single_item_qa'
+
+    answer = mock_client.send_ai_question(items, question, mode)
+
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps({
+        'items': items,
+        'prompt': question,
+        'mode': mode
+    }))
+    assert answer['answer'] == 'Public APIs are important because of key and important reasons.'
+    assert answer['completion_reason'] == 'done'
+    assert answer['created_at'] == '2021-04-26T08:12:13.982Z'
+
+
+def test_send_ai_text_gen(mock_client, mock_box_session, mock_ai_question_response):
+    expected_url = f'{API.BASE_API_URL}/ai/text_gen'
+    mock_box_session.post.return_value.json.return_value = mock_ai_question_response
+
+    items = [{
+        'type': 'file',
+        'id': '12345'
+    }]
+    dialogue_history = [{
+        "prompt": "Make my email about public APIs sound more professional",
+        "answer": "Here is the first draft of your professional email about public APIs",
+        "created_at": "2013-12-12T10:53:43-08:00"
+    }, {
+        "prompt": "Can you add some more information?",
+        "answer": "Public API schemas provide necessary information to integrate with APIs...",
+        "created_at": "2013-12-12T11:20:43-08:00"
+    }]
+    answer = mock_client.send_ai_text_gen(
+        dialogue_history=dialogue_history,
+        items=items,
+        prompt="Write an email to a client about the importance of public APIs."
+    )
+
+    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps({
+        'dialogue_history': dialogue_history,
+        'items': items,
+        'prompt': "Write an email to a client about the importance of public APIs."
+    }))
+    assert answer['answer'] == 'Public APIs are important because of key and important reasons.'
+    assert answer['completion_reason'] == 'done'
+    assert answer['created_at'] == '2021-04-26T08:12:13.982Z'
