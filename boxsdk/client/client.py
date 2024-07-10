@@ -1512,8 +1512,8 @@ class Client(Cloneable):
         """
         return self.translator.get('sign_request')(session=self._session, object_id=sign_request_id)
 
-    def __create_sign_request(
     # pylint: disable=too-many-branches
+    def __create_sign_request(
             self,
             signers: Iterable,
             files: Optional[Iterable] = None,
