@@ -1858,6 +1858,7 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
     assert new_sign_request['declined_redirect_url'] == declined_redirect_url
     assert new_sign_request['template_id'] == template_id
 
+
 def test_create_sign_request_v2(mock_client, mock_box_session, mock_sign_request_response):
     expected_url = f'{API.BASE_API_URL}/sign_requests'
     redirect_url = 'https://www.box.com/accepted'
@@ -1891,6 +1892,7 @@ def test_create_sign_request_v2(mock_client, mock_box_session, mock_sign_request
     assert new_sign_request['redirect_url'] == redirect_url
     assert new_sign_request['declined_redirect_url'] == declined_redirect_url
     assert new_sign_request['template_id'] == template_id
+
 
 def test_file_request(mock_client):
     # pylint:disable=redefined-outer-name
