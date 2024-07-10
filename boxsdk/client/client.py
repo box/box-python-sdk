@@ -1512,7 +1512,67 @@ class Client(Cloneable):
         """
         return self.translator.get('sign_request')(session=self._session, object_id=sign_request_id)
 
+    def __create_sign_request(
+            self,
+            signers: Iterable,
+            files: Optional[Iterable] = None,
+            parent_folder_id: Optional[str] = None,
+            prefill_tags: Optional[Iterable] = None,
+            are_reminders_enabled: Optional[bool] = None,
+            are_text_signatures_enabled: Optional[bool] = None,
+            days_valid: Optional[str] = None,
+            email_message: Optional[Iterable] = None,
+            email_subject: Optional[str] = None,
+            external_id: Optional[str] = None,
+            is_document_preparation_needed: Optional[bool] = None,
+            redirect_url: Optional[str] = None,
+            declined_redirect_url: Optional[str] = None,
+            template_id: Optional[str] = None) -> dict:
+        url = self._session.get_url('sign_requests')
+
+        body = {
+            'signers': signers,
+        }
+
+        if files:
+            body['source_files'] = files
+        if parent_folder_id:
+            body['parent_folder'] = {
+                'id': parent_folder_id,
+                'type': 'folder'
+            }
+        if prefill_tags:
+            body['prefill_tags'] = prefill_tags
+        if are_reminders_enabled:
+            body['are_reminders_enabled'] = are_reminders_enabled
+        if are_text_signatures_enabled:
+            body['are_text_signatures_enabled'] = are_text_signatures_enabled
+        if days_valid:
+            body['days_valid'] = days_valid
+        if email_message:
+            body['email_message'] = email_message
+        if email_subject:
+            body['email_subject'] = email_subject
+        if external_id:
+            body['external_id'] = external_id
+        if is_document_preparation_needed:
+            body['is_document_preparation_needed'] = is_document_preparation_needed
+        if redirect_url:
+            body['redirect_url'] = redirect_url
+        if declined_redirect_url:
+            body['declined_redirect_url'] = declined_redirect_url
+        if template_id:
+            body['template_id'] = template_id
+
+        box_response = self._session.post(url, data=json.dumps(body))
+        response = box_response.json()
+        return self.translator.translate(
+            session=self._session,
+            response_object=response,
+        )
+
     @api_call
+    @deprecated('Use create_sign_request_v2 instead')
     def create_sign_request(
             self,
             files: Iterable,
@@ -1570,46 +1630,71 @@ class Client(Cloneable):
         :returns:
             A dictionary representing a created SignRequest
         """
-        url = self._session.get_url('sign_requests')
+        return self.__create_sign_request(
+            signers, files, parent_folder_id, prefill_tags, are_reminders_enabled, are_text_signatures_enabled, days_valid, email_message,
+            email_subject, external_id, is_document_preparation_needed, redirect_url, declined_redirect_url, template_id)
 
-        body = {
-            'source_files': files,
-            'signers': signers,
-            'parent_folder': {
-                'id': parent_folder_id,
-                'type': 'folder'
-            }
-        }
+    @api_call
+    def create_sign_request_v2(
+            self,
+            signers: Iterable,
+            files: Optional[Iterable] = None,
+            parent_folder_id: Optional[str] = None,
+            prefill_tags: Optional[Iterable] = None,
+            are_reminders_enabled: Optional[bool] = None,
+            are_text_signatures_enabled: Optional[bool] = None,
+            days_valid: Optional[str] = None,
+            email_message: Optional[Iterable] = None,
+            email_subject: Optional[str] = None,
+            external_id: Optional[str] = None,
+            is_document_preparation_needed: Optional[bool] = None,
+            redirect_url: Optional[str] = None,
+            declined_redirect_url: Optional[str] = None,
+            template_id: Optional[str] = None,
+    ) -> dict:
+        """
+        Used to create a new sign request.
 
-        if prefill_tags:
-            body['prefill_tags'] = prefill_tags
-        if are_reminders_enabled:
-            body['are_reminders_enabled'] = are_reminders_enabled
-        if are_text_signatures_enabled:
-            body['are_text_signatures_enabled'] = are_text_signatures_enabled
-        if days_valid:
-            body['days_valid'] = days_valid
-        if email_message:
-            body['email_message'] = email_message
-        if email_subject:
-            body['email_subject'] = email_subject
-        if external_id:
-            body['external_id'] = external_id
-        if is_document_preparation_needed:
-            body['is_document_preparation_needed'] = is_document_preparation_needed
-        if redirect_url:
-            body['redirect_url'] = redirect_url
-        if declined_redirect_url:
-            body['declined_redirect_url'] = declined_redirect_url
-        if template_id:
-            body['template_id'] = template_id
-
-        box_response = self._session.post(url, data=json.dumps(body))
-        response = box_response.json()
-        return self.translator.translate(
-            session=self._session,
-            response_object=response,
-        )
+        :param signers:
+            List of signers for the sign request. 35 is the max number of signers permitted.
+        :param files:
+            List of files to create a signing document from.
+        :param parent_folder_id:
+            The id of the destination folder to place sign request specific data in.
+        :param prefill_tags:
+            When a document contains sign related tags in the content,
+            you can prefill them using this prefill_tags by referencing the 'id' of the tag as the external_id field of the prefill tag.
+        :param are_reminders_enabled:
+            Reminds signers to sign a document on day 3, 8, 13 and 18. Reminders are only sent to outstanding signers.
+        :param are_text_signatures_enabled:
+            Disables the usage of signatures generated by typing (text).
+        :param days_valid:
+            Number of days after which this request will automatically expire if not completed.
+        :param email_message:
+            Message to include in sign request email. The field is cleaned through sanitization of specific characters.
+            However, some html tags are allowed. Links included in the message are also converted to hyperlinks in the email.
+            The message may contain the following html tags including a, abbr, acronym, b, blockquote, code, em, i, ul, li, ol, and strong.
+            Be aware that when the text to html ratio is too high, the email may end up in spam filters. Custom styles on these tags are not allowed.
+            If this field is not passed, a default message will be used.
+        :param email_subject:
+            Subject of sign request email. This is cleaned by sign request. If this field is not passed, a default subject will be used.
+        :param external_id:
+            This can be used to reference an ID in an external system that the sign request is related to.
+        :param is_document_preparation_needed:
+            Indicates if the sender should receive a prepare_url in the response to complete document preparation via UI.
+        :param redirect_url:
+            The URL that a signer will be redirected to after signing a document.
+            If no declined redirect URL is specified, this URL will be used for decline actions as well.
+        :param declined_redirect_url:
+            The URL that a signer will be redirected to after declining to sign a document.
+        :param template_id:
+            The ID of the sign template to use for the sign request.
+        :returns:
+            A dictionary representing a created SignRequest
+        """
+        return self.__create_sign_request(
+            signers, files, parent_folder_id, prefill_tags, are_reminders_enabled, are_text_signatures_enabled, days_valid, email_message,
+            email_subject, external_id, is_document_preparation_needed, redirect_url, declined_redirect_url, template_id)
 
     @api_call
     def get_sign_requests(
