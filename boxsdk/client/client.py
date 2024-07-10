@@ -1528,7 +1528,7 @@ class Client(Cloneable):
             is_document_preparation_needed: Optional[bool] = None,
             redirect_url: Optional[str] = None,
             declined_redirect_url: Optional[str] = None,
-            template_id: Optional[str] = None) -> dict:
+            template_id: Optional[str] = None) -> SignRequest:
         url = self._session.get_url('sign_requests')
 
         body = {
@@ -1590,7 +1590,7 @@ class Client(Cloneable):
             redirect_url: Optional[str] = None,
             declined_redirect_url: Optional[str] = None,
             template_id: Optional[str] = None,
-    ) -> dict:
+    ) -> SignRequest:
         """
         Used to create a new sign request.
 
@@ -1652,7 +1652,7 @@ class Client(Cloneable):
             redirect_url: Optional[str] = None,
             declined_redirect_url: Optional[str] = None,
             template_id: Optional[str] = None,
-    ) -> dict:
+    ) -> SignRequest:
         """
         Used to create a new sign request.
 
