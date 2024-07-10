@@ -40,7 +40,7 @@ signer = {
 signers = [signer]
 parent_folder_id = '123456789'
 
-new_sign_request = client.create_sign_request_v2(signers, files, parent_folder_id)
+new_sign_request = client.create_sign_request_v2(signers, files=files, parent_folder_id=parent_folder_id)
 print(f'(Sign Request ID: {new_sign_request.id})')
 ```
 
