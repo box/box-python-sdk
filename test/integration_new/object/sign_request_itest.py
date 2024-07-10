@@ -34,7 +34,7 @@ def test_test_sign_request(parent_folder, small_file_path):
         }
         signers = [signer1, signer2]
 
-        sign_request = CLIENT.create_sign_request(
+        sign_request = CLIENT.create_sign_request_v2(
             files=files,
             signers=signers,
             parent_folder_id=parent_folder.id

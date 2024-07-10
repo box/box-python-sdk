@@ -19,10 +19,13 @@ A Sign Request can refer to one or more Box Files and can be sent to one or more
 Create Sign Request
 ------------------------
 
-The [`client.create_sign_request(files, signers, parent_folder_id, prefill_tags=None, are_reminders_enabled=None, are_text_signatures_enabled=None, days_valid=None, email_message=None, email_subject=None, external_id=None, is_document_preparation_needed=None, redirect_url=None, declined_redirect_url=None, template_id=None)`][create-sign-request]
-method will create a Sign Request. You need to provide at least one file and up to 10 files (from which the signing document will be created) with at least one signer to receive the Sign Request.
+The [`client.create_sign_request_v2(signers, files=None, parent_folder_id=None, prefill_tags=None, are_reminders_enabled=None, are_text_signatures_enabled=None, days_valid=None, email_message=None, email_subject=None, external_id=None, is_document_preparation_needed=None, redirect_url=None, declined_redirect_url=None, template_id=None)`][create-sign-request]
+method will create a Sign Request. You need to provide at least one file and up to 10 files (from which the signing document will be created) or template_id of the sign request template. You need to include at least one signer that will receive the Sign Request.
+
+Example with files:
 
 <!-- sample post_sign_requests -->
+
 ```python
 source_file = {
     'id': '12345',
@@ -32,12 +35,24 @@ files = [source_file]
 
 signer = {
     'name': 'John Doe',
-    'email': 'signer@mail.com' 
+    'email': 'signer@mail.com'
 }
 signers = [signer]
-
 parent_folder_id = '123456789'
-new_sign_request = client.create_sign_request(files, signers, parent_folder_id)
+
+new_sign_request = client.create_sign_request_v2(signers, files=files, parent_folder_id=parent_folder_id)
+print(f'(Sign Request ID: {new_sign_request.id})')
+```
+
+Example with sign template
+
+```python
+signer = {
+    'name': 'John Doe',
+    'email': 'signer@mail.com'
+}
+
+new_sign_request = client.create_sign_request_v2(signers, template_id='12345')
 print(f'(Sign Request ID: {new_sign_request.id})')
 ```
 

@@ -1819,6 +1819,11 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
     parent_folder_id = '12345'
 
     data = json.dumps({
+        'signers': [
+            {
+                'email': signer['email']
+            }
+        ],
         'source_files': [
             {
                 'id': source_file['id'],
@@ -1827,11 +1832,6 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
             {
                 'id': source_file2['id'],
                 'type': source_file2['type']
-            }
-        ],
-        'signers': [
-            {
-                'email': signer['email']
             }
         ],
         'parent_folder':
@@ -1854,6 +1854,41 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
     assert new_sign_request['source_files'][0]['id'] == source_file['id']
     assert new_sign_request['signers'][0]['email'] == signer['email']
     assert new_sign_request['parent_folder']['id'] == parent_folder_id
+    assert new_sign_request['redirect_url'] == redirect_url
+    assert new_sign_request['declined_redirect_url'] == declined_redirect_url
+    assert new_sign_request['template_id'] == template_id
+
+
+def test_create_sign_request_v2(mock_client, mock_box_session, mock_sign_request_response):
+    expected_url = f'{API.BASE_API_URL}/sign_requests'
+    redirect_url = 'https://www.box.com/accepted'
+    declined_redirect_url = 'https://www.box.com/declined'
+    template_id = '123075213-af2c8822-3ef2-4952-8557-52d69c2fe9cb'
+
+    signer = {
+        'email': 'example@gmail.com'
+    }
+    signers = [signer]
+
+    data = json.dumps({
+        'signers': [
+            {
+                'email': signer['email']
+            }
+        ],
+        'redirect_url': redirect_url,
+        'declined_redirect_url': declined_redirect_url,
+        'template_id': template_id
+    })
+    mock_box_session.post.return_value.json.return_value = mock_sign_request_response
+
+    new_sign_request = mock_client.create_sign_request_v2(
+        signers,
+        redirect_url=redirect_url, declined_redirect_url=declined_redirect_url, template_id=template_id)
+
+    mock_box_session.post.assert_called_once_with(expected_url, data=data)
+    assert isinstance(new_sign_request, SignRequest)
+    assert new_sign_request['signers'][0]['email'] == signer['email']
     assert new_sign_request['redirect_url'] == redirect_url
     assert new_sign_request['declined_redirect_url'] == declined_redirect_url
     assert new_sign_request['template_id'] == template_id
