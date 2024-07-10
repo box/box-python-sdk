@@ -38,8 +38,9 @@ signer = {
     'email': 'signer@mail.com'
 }
 signers = [signer]
+parent_folder_id = '123456789'
 
-new_sign_request = client.create_sign_request_v2(signers, files)
+new_sign_request = client.create_sign_request_v2(signers, files, parent_folder_id)
 print(f'(Sign Request ID: {new_sign_request.id})')
 ```
 
@@ -51,7 +52,7 @@ signer = {
     'email': 'signer@mail.com'
 }
 
-new_sign_request = client.create_sign_request_v2(signers, template_id = '12345')
+new_sign_request = client.create_sign_request_v2(signers, template_id='12345')
 print(f'(Sign Request ID: {new_sign_request.id})')
 ```
 
