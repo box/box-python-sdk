@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.12.0](https://github.com/box/box-python-sdk/compare/v3.11.0...v3.12.0) (2024-08-06)
+
+
+### New Features and Enhancements:
+
+* add create sign request function with different required parameters ([#878](https://github.com/box/box-python-sdk/issues/878)) ([d972f54](https://github.com/box/box-python-sdk/commit/d972f54dcf9962c6b911422793a682d8f6289f9e))
+* Support Box AI features ([#877](https://github.com/box/box-python-sdk/issues/877)) ([3026d2a](https://github.com/box/box-python-sdk/commit/3026d2ab9932cd07aa9ff15a3ac3c3c14d3089b0))
+
 ## [3.11.0](https://github.com/box/box-python-sdk/compare/v3.10.0...v3.11.0) (2024-06-07)
 
 
