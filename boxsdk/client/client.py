@@ -1784,7 +1784,8 @@ class Client(Cloneable):
         self,
         items: Iterable,
         prompt: str,
-        mode: Optional[str] = None
+        mode: Optional[str] = None,
+        ai_agent: Optional[dict] = None
     ) -> Any:
         """
         Sends an AI request to supported LLMs and returns an answer specifically focused on the user's
@@ -1801,6 +1802,8 @@ class Client(Cloneable):
             Selecting multiple_item_qa allows you to provide up to 25 items.
 
             Value is one of `multiple_item_qa`, `single_item_qa`
+        :param ai_agent:
+            The AI agent used to handle queries.
         :returns:
             A response including the answer from the LLM.
         """
@@ -1812,6 +1815,9 @@ class Client(Cloneable):
             'prompt': prompt,
             'mode': mode
         }
+
+        if ai_agent is not None:
+            body['ai_agent'] = ai_agent
 
         box_response = self._session.post(url, data=json.dumps(body))
         response = box_response.json()
@@ -1826,6 +1832,7 @@ class Client(Cloneable):
         dialogue_history: Iterable,
         items: Iterable,
         prompt: str,
+        ai_agent: Optional[dict] = None
     ):
         """
         Sends an AI request to supported LLMs and returns an answer specifically focused on the creation of new text.
@@ -1838,6 +1845,8 @@ class Client(Cloneable):
         :param prompt:
             The prompt provided by the client to be answered by the LLM.
             The prompt's length is limited to 10000 characters.
+        :param ai_agent:
+            The AI agent used for generating text.
         :returns:
             A response including the generated text from the LLM.
         """
@@ -1848,9 +1857,48 @@ class Client(Cloneable):
             'prompt': prompt
         }
 
+        if ai_agent is not None:
+            body['ai_agent'] = ai_agent
+
         box_response = self._session.post(url, data=json.dumps(body))
         response = box_response.json()
         return self.translator.translate(
             session=self._session,
             response_object=response,
+        )
+
+    @api_call
+    def get_ai_agent_default_config(
+            self,
+            mode: str,
+            language: Optional[str] = None,
+            model: Optional[str] = None,
+    ):
+        """
+        Get the AI agent default configuration.
+
+        :param mode:
+            The mode to filter the agent config to return.
+        :param language:
+            The ISO language code to return the agent config for.
+            If the language is not supported the default agent configuration is returned.
+        :param model:
+            The model to return the default agent config for.
+        :returns:
+            A default agent configuration.
+            This can be one of the following two objects:
+            AI agent for questions and AI agent for text generation.
+            The response depends on the agent configuration requested in this endpoint.
+        """
+        url = self._session.get_url('ai_agent_default')
+        params = {'mode': mode}
+        if language is not None:
+            params['language'] = language
+        if model is not None:
+            params['model'] = model
+
+        box_response = self._session.get(url, params=params)
+        return self.translator.translate(
+            session=self._session,
+            response_object=box_response.json(),
         )
