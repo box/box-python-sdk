@@ -88,7 +88,7 @@ print(answer)
 Get AI agent default configuration
 ------------------------
 
-To get an AI agent default configuration call the [`client.get_ai_agent_default_config(mode, language, model)`][get-ai-agent-default] method. The `mode` parameter filtering the agent configuration to return. It could be either `ask` or `text_gen`. The `language` parameter determines the ISO language code to return the agent config for. If the language is not supported the default agent config is returned. The `model` parameter determines the model to return the default agent config for.
+To get an AI agent default configuration call the [`client.get_ai_agent_default_config(mode, language, model)`][get-ai-agent-default] method. The `mode` parameter filters the agent configuration to be returned. It can be either `ask` or `text_gen`. The `language` parameter specifies the ISO language code to return the agent config for. If the language is not supported, the default agent configuration is returned. The `model` parameter specifies the model for which the default agent configuration should be returned.
 
 <!-- sample get_ai_agent_default -->
 ```python
