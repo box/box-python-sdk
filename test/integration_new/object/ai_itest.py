@@ -22,10 +22,17 @@ def test_send_ai_question(parent_folder, small_file_path):
             'type': 'file',
             'content': 'The sun raises in the east.'
         }]
+        ai_agent = {
+            'type': 'ai_agent_ask',
+            'basic_text_multi': {
+                'model': 'openai__gpt_3_5_turbo'
+            }
+        }
         answer = CLIENT.send_ai_question(
             items=items,
             prompt='Which direction does the sun raise?',
-            mode='single_item_qa'
+            mode='single_item_qa',
+            ai_agent=ai_agent
         )
         assert 'east' in answer['answer'].lower()
         assert answer['completion_reason'] == 'done'
@@ -47,10 +54,27 @@ def test_send_ai_text_gen(parent_folder, small_file_path):
             'answer': 'It takes 24 hours for the sun to rise.',
             'created_at': '2013-12-12T11:20:43-08:00'
         }]
+        ai_agent = {
+            'type': 'ai_agent_text_gen',
+            'basic_gen': {
+                'model': 'openai__gpt_3_5_turbo_16k'
+            }
+        }
         answer = CLIENT.send_ai_text_gen(
             dialogue_history=dialogue_history,
             items=items,
-            prompt='Which direction does the sun raise?'
+            prompt='Which direction does the sun raise?',
+            ai_agent=ai_agent
         )
         assert 'east' in answer['answer'].lower()
         assert answer['completion_reason'] == 'done'
+
+
+def test_get_ai_agent_default_config():
+    config = CLIENT.get_ai_agent_default_config(
+        mode='text_gen',
+        language='en',
+        model='openai__gpt_3_5_turbo'
+    )
+    assert config['type'] == 'ai_agent_text_gen'
+    assert config['basic_gen']['model'] == 'openai__gpt_3_5_turbo'

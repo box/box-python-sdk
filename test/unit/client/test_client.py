@@ -1776,6 +1776,37 @@ def mock_ai_question_response():
     return mock_ai_question_response
 
 
+@pytest.fixture(scope='module')
+def mock_ai_agent_default_config_response():
+    mock_ai_agent_default_config_response = {
+        'type': 'ai_agent_text_gen',
+        'basic_gen': {
+            'content_template': '---{content}---',
+            'embeddings': {
+                'model': 'openai__text_embedding_ada_002',
+                'strategy': {
+                    'id': 'basic',
+                    'num_tokens_per_chunk': 64
+                }
+            },
+            'llm_endpoint_params': {
+                'type': 'openai_params',
+                'frequency_penalty': 1.5,
+                'presence_penalty': 1.5,
+                'stop': '<|im_end|>',
+                'temperature': 0,
+                'top_p': 1
+            },
+            'model': 'openai__gpt_3_5_turbo',
+            'num_tokens_for_completion': 8400,
+            'prompt_template': 'It is `{current_date}`, and I have $8000 and want to spend a week in the Azores. What '
+                               'should I see?',
+            'system_message': 'You are a helpful travel assistant specialized in budget travel'
+        }
+    }
+    return mock_ai_agent_default_config_response
+
+
 def test_get_sign_requests(mock_client, mock_box_session, mock_sign_request_response):
     expected_url = f'{API.BASE_API_URL}/sign_requests'
 
@@ -1963,13 +1994,25 @@ def test_send_ai_question(mock_client, mock_box_session, mock_ai_question_respon
     }]
     question = 'Why are public APIs important?'
     mode = 'single_item_qa'
+    ai_agent = {
+        'type': 'ai_agent_ask',
+        'basic_text_multi': {
+            'model': 'openai__gpt_3_5_turbo'
+        }
+    }
 
-    answer = mock_client.send_ai_question(items, question, mode)
+    answer = mock_client.send_ai_question(items, question, mode, ai_agent)
 
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps({
         'items': items,
         'prompt': question,
-        'mode': mode
+        'mode': mode,
+        'ai_agent': {
+            'type': 'ai_agent_ask',
+            'basic_text_multi': {
+                'model': 'openai__gpt_3_5_turbo'
+            }
+        }
     }))
     assert answer['answer'] == 'Public APIs are important because of key and important reasons.'
     assert answer['completion_reason'] == 'done'
@@ -1993,17 +2036,41 @@ def test_send_ai_text_gen(mock_client, mock_box_session, mock_ai_question_respon
         "answer": "Public API schemas provide necessary information to integrate with APIs...",
         "created_at": "2013-12-12T11:20:43-08:00"
     }]
+    ai_agent = {
+        'type': 'ai_agent_text_gen',
+        'basic_gen': {
+            'model': 'openai__gpt_3_5_turbo_16k'
+        }
+    }
     answer = mock_client.send_ai_text_gen(
         dialogue_history=dialogue_history,
         items=items,
-        prompt="Write an email to a client about the importance of public APIs."
+        prompt="Write an email to a client about the importance of public APIs.",
+        ai_agent=ai_agent
     )
 
     mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps({
         'dialogue_history': dialogue_history,
         'items': items,
-        'prompt': "Write an email to a client about the importance of public APIs."
+        'prompt': "Write an email to a client about the importance of public APIs.",
+        'ai_agent': ai_agent
     }))
     assert answer['answer'] == 'Public APIs are important because of key and important reasons.'
     assert answer['completion_reason'] == 'done'
     assert answer['created_at'] == '2021-04-26T08:12:13.982Z'
+
+
+def test_get_ai_agent_default_config(mock_client, mock_box_session, mock_ai_agent_default_config_response):
+    expected_url = f'{API.BASE_API_URL}/ai_agent_default'
+    mock_box_session.get.return_value.json.return_value = mock_ai_agent_default_config_response
+
+    config = mock_client.get_ai_agent_default_config(
+        mode='text_gen',
+        language='en',
+        model='openai__gpt_3_5_turbo'
+    )
+
+    mock_box_session.get.assert_called_once_with(expected_url, params={'mode': 'text_gen', 'language': 'en', 'model': 'openai__gpt_3_5_turbo'})
+    assert config['type'] == 'ai_agent_text_gen'
+    assert config['basic_gen']['model'] == 'openai__gpt_3_5_turbo'
+    assert config['basic_gen']['embeddings']['model'] == 'openai__text_embedding_ada_002'
