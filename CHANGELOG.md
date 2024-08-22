@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.13.0](https://github.com/box/box-python-sdk/compare/v3.12.0...v3.13.0) (2024-08-22)
+
+
+### New Features and Enhancements:
+
+* Add support for get AI agent default ([#883](https://github.com/box/box-python-sdk/issues/883)) ([c1010e0](https://github.com/box/box-python-sdk/commit/c1010e0349847586a9f00046570e975ec48eb0c5))
+
 ## [3.12.0](https://github.com/box/box-python-sdk/compare/v3.11.0...v3.12.0) (2024-08-06)
 
 
