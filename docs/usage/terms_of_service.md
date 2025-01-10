@@ -2,18 +2,19 @@ Terms of Service
 ================
 
 Terms of Service allows Box Admins to configure a custom Terms of Service for end users to
-accept/re-accept/decline for custom applications
+accept/re-accept/decline for platform applications
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [Create a Terms of Service](#create-a-terms-of-service)
-- [Edit a Terms of Service](#edit-a-terms-of-service)
-- [Get Terms of Service](#get-terms-of-service)
-- [List Terms of Service](#list-terms-of-service)
-- [Accept or Decline a Terms of Service](#accept-or-decline-a-terms-of-service)
-- [Get User Status for a Terms of Service](#get-user-status-for-a-terms-of-service)
+- [Terms of Service](#terms-of-service)
+  - [Create a Terms of Service](#create-a-terms-of-service)
+  - [Edit a Terms of Service](#edit-a-terms-of-service)
+  - [Get Terms of Service](#get-terms-of-service)
+  - [List Terms of Service](#list-terms-of-service)
+  - [Accept or Decline a Terms of Service](#accept-or-decline-a-terms-of-service)
+  - [Get User Status for a Terms of Service](#get-user-status-for-a-terms-of-service)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

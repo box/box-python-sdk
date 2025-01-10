@@ -6,21 +6,22 @@ Users represent an individual's account on Box.
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Get User Information](#get-user-information)
-- [Get the Current User's Information](#get-the-current-users-information)
-- [Create An Enterprise User](#create-an-enterprise-user)
-- [Get the Avatar for a User](#get-the-avatar-for-a-user)
-- [Upload user avatar](#upload-user-avatar)
-- [Delete user avatar](#delete-user-avatar)
-- [Create An App User](#create-an-app-user)
-- [Update User](#update-user)
-- [Delete User](#delete-user)
-- [Invite User to Enterprise](#invite-user-to-enterprise)
-- [Get Email Aliases](#get-email-aliases)
-- [Add Email Alias](#add-email-alias)
-- [Remove Email Alias](#remove-email-alias)
-- [Get Enterprise Users](#get-enterprise-users)
-- [Transfer User Content](#transfer-user-content)
+- [Users](#users)
+  - [Get User Information](#get-user-information)
+  - [Get the Current User's Information](#get-the-current-users-information)
+  - [Create An Enterprise User](#create-an-enterprise-user)
+  - [Get the Avatar for a User](#get-the-avatar-for-a-user)
+  - [Upload user avatar](#upload-user-avatar)
+  - [Delete user avatar](#delete-user-avatar)
+  - [Create An App User](#create-an-app-user)
+  - [Update User](#update-user)
+  - [Delete User](#delete-user)
+  - [Invite User to Enterprise](#invite-user-to-enterprise)
+  - [Get Email Aliases](#get-email-aliases)
+  - [Add Email Alias](#add-email-alias)
+  - [Remove Email Alias](#remove-email-alias)
+  - [Get Enterprise Users](#get-enterprise-users)
+  - [Transfer User Content](#transfer-user-content)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -126,7 +127,7 @@ client.user('33333').delete_avatar()
 Create An App User
 ------------------
 
-Custom applications may create App Users, which represent a "headless" user managed exclusively by the application.
+Platform applications may create App Users, which represent a "headless" user managed exclusively by the application.
 These users can only be accessed via the API, and cannot login to the web application or other Box services.
 
 To create a new app user, call [`client.create_user(name, login=None, **user_attributes)`][create_user] without a
