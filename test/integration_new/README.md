@@ -2,7 +2,7 @@
 
 ## Running integration tests locally
 
-### Create Custom Application
+### Create Platform Application
 To run integration tests locally you will need a `Custom App` created at https://cloud.app.box.com/developers/console
 with `Server Authentication (with JWT)` selected as authentication method.
 Once created you can edit properties of the application:
