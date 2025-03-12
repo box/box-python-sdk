@@ -458,11 +458,11 @@ Create a Folder Lock
 -------------
 
 To lock a folder, call
-[`client.folders(folder_id).create_lock()`][create-folder-lock]
+[`client.folder(folder_id).create_lock()`][create-folder-lock]
 with the ID of the folder. This prevents the folder from being moved and/or deleted.
 
 ```python
-lock = client.folders(folder_id).create_lock()
+lock = client.folder(folder_id).create_lock()
 print(f'Created a lock with ID {lock.folder.id}')
 ```
 
@@ -473,11 +473,11 @@ Get Folder Locks
 -------------------------
 
 To retrieve a list of the locks on a folder, call
-[`client.folders(folder_id).get_locks()][get-folder-locks]
+[`client.folder(folder_id).get_locks()][get-folder-locks]
 with the ID of the folder. Currently only one lock can exist per folder. Folder locks define access restrictions placed by folder owners to prevent specific folders from being moved or deleted.
 
 ```python
-locks = client.folders(folder_id).get_locks()
+locks = client.folder(folder_id).get_locks()
 lock = locks.next()
 print(f'A lock on a folder with ID {lock.folder.id}')
 ```
