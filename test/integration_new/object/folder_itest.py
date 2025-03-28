@@ -103,8 +103,8 @@ def test_auto_chunked_upload_NOT_using_upload_session_urls(parent_folder, large_
 
 
 def test_get_items(parent_folder, small_file_path):
-    with BoxTestFolder(parent_folder=parent_folder) as subfolder,\
-            BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as file,\
+    with BoxTestFolder(parent_folder=parent_folder) as subfolder, \
+            BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as file, \
             BoxTestWebLink(parent_folder=parent_folder, url='https://box.com') as web_link:
 
         assert set(parent_folder.get_items()) == {subfolder, file, web_link}
@@ -123,6 +123,17 @@ def test_upload_stream_to_folder(parent_folder, small_file_name, small_file_path
 
 def test_upload_small_file_to_folder(parent_folder, small_file_name, small_file_path):
     uploaded_file = parent_folder.upload(file_path=small_file_path, file_name=small_file_name)
+    try:
+        assert uploaded_file.id
+        assert uploaded_file.parent == parent_folder
+    finally:
+        util.permanently_delete(uploaded_file)
+
+
+def test_upload_small_file_to_folder_with_disabled_streaming_file_content(
+        parent_folder, small_file_name, small_file_path
+):
+    uploaded_file = parent_folder.upload(file_path=small_file_path, file_name=small_file_name, stream_file_content=False)
     try:
         assert uploaded_file.id
         assert uploaded_file.parent == parent_folder
@@ -199,7 +210,7 @@ def test_delete_folder(parent_folder):
 
 
 def test_cascade_and_get_metadata_cascade_policies(parent_folder):
-    with BoxTestMetadataTemplate(display_name="test_template") as metadata_template,\
+    with BoxTestMetadataTemplate(display_name="test_template") as metadata_template, \
             BoxTestFolder(parent_folder=parent_folder) as folder:
         folder.cascade_metadata(metadata_template)
 
