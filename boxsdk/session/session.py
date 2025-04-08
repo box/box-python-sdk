@@ -468,7 +468,8 @@ class Session:
         """
         # Reset stream positions to what they were when the request was made so the same data is sent even if this
         # is a retried attempt.
-        files, file_stream_positions = kwargs.get('files'), kwargs.pop('file_stream_positions')
+        files, file_stream_positions, stream_file_content = (
+            kwargs.get('files'), kwargs.pop('file_stream_positions'), kwargs.pop('stream_file_content', True))
         request_kwargs = self._default_network_request_kwargs.copy()
         request_kwargs.update(kwargs)
         proxy_dict = self._prepare_proxy()
@@ -477,11 +478,12 @@ class Session:
         if files and file_stream_positions:
             for name, position in file_stream_positions.items():
                 files[name][1].seek(position)
-            data = request_kwargs.pop('data', {})
-            multipart_stream = MultipartStream(data, files)
-            request_kwargs['data'] = multipart_stream
-            del request_kwargs['files']
-            request.headers['Content-Type'] = multipart_stream.content_type
+            if stream_file_content:
+                data = request_kwargs.pop('data', {})
+                multipart_stream = MultipartStream(data, files)
+                request_kwargs['data'] = multipart_stream
+                del request_kwargs['files']
+                request.headers['Content-Type'] = multipart_stream.content_type
         request.access_token = request_kwargs.pop('access_token', None)
 
         # send the request

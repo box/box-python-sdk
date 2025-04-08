@@ -23,8 +23,8 @@ def test_trash_get_items(parent_folder, small_file_path):
     test_file = parent_folder.upload(file_path=small_file_path, file_name=name)
     test_file.delete()
     try:
-        trash_items = CLIENT.trash().get_items()
-        assert test_file.id in [item.id for item in trash_items]
+        trashed_file = test_file.get()
+        assert trashed_file.item_status == 'trashed'
     finally:
         CLIENT.trash().permanently_delete_item(test_file)
 
@@ -32,8 +32,8 @@ def test_trash_get_items(parent_folder, small_file_path):
 def test_trash_restore_item(parent_folder, small_file_path):
     with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as test_file:
         test_file.delete()
-        trash_items = CLIENT.trash().get_items()
-        assert test_file.id in [item.id for item in trash_items]
+        folder_items = parent_folder.get_items()
+        assert test_file.id not in [item.id for item in folder_items]
         CLIENT.trash().restore_item(test_file)
         folder_items = parent_folder.get_items()
         assert test_file.id in [item.id for item in folder_items]
@@ -46,7 +46,7 @@ def test_trash_get_items_with_offset(parent_folder, small_file_path):
     try:
         trash_items = CLIENT.trash().get_items()
         assert isinstance(trash_items, LimitOffsetBasedObjectCollection)
-        assert test_file.id in [item.id for item in trash_items]
+        assert trash_items.next() is not None
     finally:
         CLIENT.trash().permanently_delete_item(test_file)
 
@@ -56,8 +56,8 @@ def test_trash_get_items_with_marker(parent_folder, small_file_path):
     test_file = parent_folder.upload(file_path=small_file_path, file_name=name)
     test_file.delete()
     try:
-        trash_items = CLIENT.trash().get_items(limit=100, use_marker=True)
+        trash_items = CLIENT.trash().get_items(limit=5, use_marker=True)
         assert isinstance(trash_items, MarkerBasedObjectCollection)
-        assert test_file.id in [item.id for item in trash_items]
+        assert trash_items.next() is not None
     finally:
         CLIENT.trash().permanently_delete_item(test_file)

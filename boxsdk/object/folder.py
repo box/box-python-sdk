@@ -263,6 +263,7 @@ class Folder(Item):
             additional_attributes: Optional[dict] = None,
             sha1: Optional[str] = None,
             etag: Optional[str] = None,
+            stream_file_content: bool = True,
     ) -> 'File':
         """
         Upload a file to the folder.
@@ -298,6 +299,9 @@ class Folder(Item):
             A sha1 checksum for the file.
         :param etag:
             If specified, instruct the Box API to update the item only if the current version's etag matches.
+        :param stream_file_content:
+            If True, the upload will be performed as a stream request. If False, the file will be read into memory
+            before being uploaded, but this may be required if using some proxy servers to handle redirects correctly.
         :returns:
             The newly uploaded file.
         """
@@ -335,7 +339,7 @@ class Folder(Item):
         if not headers:
             headers = None
         file_response = self._session.post(
-            url, data=data, files=files, expect_json_response=False, headers=headers
+            url, data=data, files=files, expect_json_response=False, headers=headers, stream_file_content=stream_file_content,
         ).json()
         if 'entries' in file_response:
             file_response = file_response['entries'][0]
@@ -358,6 +362,7 @@ class Folder(Item):
             additional_attributes: Optional[dict] = None,
             sha1: Optional[str] = None,
             etag: Optional[str] = None,
+            stream_file_content: bool = True,
     ) -> 'File':
         """
         Upload a file to the folder.
@@ -394,6 +399,9 @@ class Folder(Item):
             A sha1 checksum for the new content.
         :param etag:
             If specified, instruct the Box API to update the item only if the current version's etag matches.
+        :param stream_file_content:
+            If True, the upload will be performed as a stream request. If False, the file will be read into memory
+            before being uploaded, but this may be required if using some proxy servers to handle redirects correctly.
         :returns:
             The newly uploaded file.
         """
@@ -412,6 +420,7 @@ class Folder(Item):
                 additional_attributes=additional_attributes,
                 sha1=sha1,
                 etag=etag,
+                stream_file_content=stream_file_content,
             )
 
     @api_call

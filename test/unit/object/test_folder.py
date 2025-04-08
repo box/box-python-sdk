@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from io import BytesIO
 from os.path import basename
-from unittest.mock import mock_open, patch, Mock, MagicMock
+from unittest.mock import mock_open, patch, Mock, MagicMock, ANY
 import pytest
 import pytz
 
@@ -334,7 +334,14 @@ def test_upload(
     # in Python 2 tests
     attributes.update(additional_attributes)
     data = {'attributes': json.dumps(attributes)}
-    mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=False, files=mock_files, data=data, headers=if_match_sha1_header)
+    mock_box_session.post.assert_called_once_with(
+        expected_url,
+        expect_json_response=False,
+        files=mock_files,
+        data=data,
+        headers=if_match_sha1_header,
+        stream_file_content=True
+    )
     assert isinstance(new_file, File)
     assert new_file.object_id == mock_object_id
     assert 'id' in new_file
@@ -436,6 +443,27 @@ def test_upload_does_preflight_check_if_specified(
             _assert_post_called_correctly(mock_box_session, preflight_fails)
         else:
             assert not test_folder.preflight_check.called
+
+
+@patch('boxsdk.object.folder.open', mock_open(read_data=b'some bytes'), create=True)
+@pytest.mark.parametrize('stream_file_content', (True, False))
+def test_upload_if_flag_stream_file_content_is_passed_to_session(
+        mock_box_session,
+        test_folder,
+        stream_file_content,
+):
+    expected_url = f'{API.UPLOAD_URL}/files/content'
+
+    test_folder.upload('foo.txt', file_name='foo.txt', stream_file_content=stream_file_content)
+
+    mock_files = {'file': ('unused', ANY)}
+    mock_box_session.post.assert_called_once_with(
+        expected_url,
+        data=ANY,
+        files=mock_files,
+        expect_json_response=False,
+        headers=None,
+        stream_file_content=stream_file_content)
 
 
 def test_create_subfolder(test_folder, mock_box_session, mock_object_id, mock_folder_response):

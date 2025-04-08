@@ -1,8 +1,10 @@
 from functools import partial
-from io import IOBase
+from io import IOBase, BytesIO
 from numbers import Number
+import os
 from unittest.mock import MagicMock, Mock, PropertyMock, call, patch, ANY
 from requests.exceptions import RequestException, SSLError, ConnectionError as RequestsConnectionError
+from requests_toolbelt import MultipartEncoder
 
 import pytest
 
@@ -449,3 +451,48 @@ def test_proxy_malformed_dict_does_not_attach(box_session, monkeypatch, mock_net
 
 def test_proxy_network_config_property(box_session):
     assert isinstance(box_session.proxy_config, Proxy)
+
+
+def test_multipart_request_with_disabled_streaming_file_content(
+        box_session, mock_network_layer, generic_successful_response):
+    test_url = 'https://example.com'
+    file_bytes = os.urandom(1024)
+    mock_network_layer.request.side_effect = [generic_successful_response]
+    box_session.post(
+        url=test_url,
+        files={'file': ('unused', BytesIO(file_bytes))},
+        data={'attributes': '{"name": "test_file"}'},
+        stream_file_content=False
+    )
+    mock_network_layer.request.assert_called_once_with(
+        'POST',
+        test_url,
+        access_token='fake_access_token',
+        headers=ANY,
+        log_response_content=True,
+        files={'file': ('unused', ANY)},
+        data={'attributes': '{"name": "test_file"}'},
+    )
+
+
+def test_multipart_request_with_enabled_streaming_file_content(
+        box_session, mock_network_layer, generic_successful_response):
+    test_url = 'https://example.com'
+    file_bytes = os.urandom(1024)
+    mock_network_layer.request.side_effect = [generic_successful_response]
+    box_session.post(
+        url=test_url,
+        files={'file': ('unused', BytesIO(file_bytes))},
+        data={'attributes': '{"name": "test_file"}'},
+        stream_file_content=True
+    )
+    call_args = mock_network_layer.request.call_args[0]
+    call_kwargs = mock_network_layer.request.call_args[1]
+    assert call_args[0] == 'POST'
+    assert call_args[1] == test_url
+    assert call_kwargs['access_token'] == 'fake_access_token'
+    assert call_kwargs['log_response_content'] is True
+    assert isinstance(call_kwargs['data'], MultipartEncoder)
+    assert call_kwargs['data'].fields['attributes'] == '{"name": "test_file"}'
+    assert call_kwargs['data'].fields['file'][0] == 'unused'
+    assert isinstance(call_kwargs['data'].fields['file'][1], BytesIO)

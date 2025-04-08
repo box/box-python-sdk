@@ -187,9 +187,32 @@ new_file = client.folder(folder_id).upload_stream(stream, file_name)
 print(f'File "{new_file.name}" uploaded to Box with file ID {new_file.id}')
 ```
 
+----
+**NOTE:**
+
+Both methods `folder.upload()` and `folder.upload_stream()` include the `stream_file_content` parameter, 
+which controls how the file content is uploaded.
+
+If you are uploading a large file, you may want to stream the request to avoid excessive memory usage. 
+According to `requests'` library [docs][request_docs], by default, the `requests` library does not support streaming uploads,
+and all the data must be read into memory before being sent to the server.
+However, the `requests-toolbelt` package includes a `MultipartEncoder` class, which enables file uploads without
+loading the entire file into memory. This approach is the default in the Box Python SDK.
+
+That said, handling 307 Temporary Redirects presents a challenge with streamed file uploads. 
+307 redirect requires that both the request method and body remain unchanged. 
+This can be problematic when uploading a file stream because the stream will already be exhausted when the redirect occurs. 
+
+To address this issue, the `stream_file_content` parameter has been introduced in upload methods. This allows you to choose between:
+ - Streaming the file (`stream_file_content=True`): Optimizes memory usage but may cause issues with redirects.
+  
+ - Using the default `requests'` library behavior (`stream_file_content=False`): Ensures the file can be re-read if a 
+   redirect occurs but may consume more memory. This is especially important when working with proxy servers.
+
 [folder_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder
 [upload]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.upload
 [upload_stream]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.folder.Folder.upload_stream
+[request_docs]: https://docs.python-requests.org/en/latest/user/quickstart/#post-a-multipart-encoded-file
 
 Chunked Upload
 --------------
