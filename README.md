@@ -22,11 +22,17 @@ Getting Started Docs: <https://developer.box.com/guides/tooling/sdks/python/>
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+- [Deprecation notice](#deprecation-notice)
+- [Box Python SDK](#box-python-sdk)
 - [Installing](#installing)
 - [Getting Started](#getting-started)
 - [Authorization](#authorization)
   - [Server-to-Server Auth with JWT](#server-to-server-auth-with-jwt)
   - [Traditional 3-legged OAuth2](#traditional-3-legged-oauth2)
+    - [Get the Authorization URL](#get-the-authorization-url)
+    - [Authenticate (Get Access/Refresh Tokens)](#authenticate-get-accessrefresh-tokens)
+    - [Create an Authenticated Client](#create-an-authenticated-client)
+    - [Instantiate a Client Given an Access and a Refresh Token](#instantiate-a-client-given-an-access-and-a-refresh-token)
   - [Other Auth Options](#other-auth-options)
 - [Usage Documentation](#usage-documentation)
   - [Making API Calls Manually](#making-api-calls-manually)
@@ -451,8 +457,7 @@ tox
 
 The tox tests include code style checks via pep8 and pylint.
 
-The tox tests are configured to run on Python 3.6, 3.7, 3.8, 3.9, 3.10, 3.11
-and PyPy (our CI is configured to run PyPy tests on pypy-3.6, pypy-3.7, pypy-3.8).
+The tox tests are configured to run on Python 3.6, 3.7, 3.8, 3.9, 3.10, 3.11.
 
 # Questions, Bugs, and Feature Requests?
 

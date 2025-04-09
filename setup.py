@@ -20,7 +20,6 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: Implementation :: CPython',
-    'Programming Language :: Python :: Implementation :: PyPy',
     'Operating System :: OS Independent',
     'Operating System :: POSIX',
     'Operating System :: Microsoft :: Windows',
