@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.14.0](https://github.com/box/box-python-sdk/compare/v3.13.0...v3.14.0) (2025-04-09)
+
+
+### New Features and Enhancements:
+
+* Add `stream_file_content` parameter to upload methods ([#890](https://github.com/box/box-python-sdk/issues/890)) ([0e63c00](https://github.com/box/box-python-sdk/commit/0e63c002ee17618c08200c12caae4bb3890b1e90))
+
 ## [3.13.0](https://github.com/box/box-python-sdk/compare/v3.12.0...v3.13.0) (2024-08-22)
 
 
