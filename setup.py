@@ -55,6 +55,7 @@ def main():
     install_requires = [
         'attrs>=17.3.0',
         'urllib3',
+        'dataclasses',
         'requests>=2.4.3,<3',
         'requests-toolbelt>=0.4.0',
         'python-dateutil',  # To be removed after dropping Python 3.6
@@ -62,7 +63,7 @@ def main():
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.7.0', 'cryptography>=3']
     coveralls_requires = ['coveralls']
-    dev_requires = ['tox<=3.28.0']
+    dev_requires = ['tox']
     gh_requires = ['tox-gh-actions']
     test_requires = [
         'bottle',
@@ -73,6 +74,7 @@ def main():
         'pytest-timeout<3.0.0',
         'pytest-cov<5.0.0',
         'pytest-lazy-fixture<1.0.0',
+        'pytest-rerunfailures',
         'pytz',
         'urllib3<2'
     ]
