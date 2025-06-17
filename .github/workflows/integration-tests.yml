@@ -11,8 +11,6 @@ jobs:
   tests:
     name: Integration tests
     runs-on: ubuntu-latest
-    container:
-      image: python:3.6
     strategy:
       max-parallel: 1
       matrix:
