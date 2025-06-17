@@ -26,6 +26,7 @@ jobs:
           python -m pip install -e .[gh]
       - name: Test with tox
         run: tox
+
   build-Python-3.7:
     runs-on: ubuntu-22.04
     container:
