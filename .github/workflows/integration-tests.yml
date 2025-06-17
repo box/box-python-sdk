@@ -10,13 +10,14 @@ on:
 jobs:
   tests:
     name: Integration tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       max-parallel: 1
       matrix:
         python-version:
         - '3.6'
-        - '3.11'
+        - '3.12'
+        - '3.13'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
