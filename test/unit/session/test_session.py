@@ -217,10 +217,10 @@ def test_box_session_seeks_file_after_retry(box_session, mock_network_layer, ser
     mock_file_2.tell.assert_called_with()
     mock_file_1.seek.assert_called_with(0)
     assert mock_file_1.seek.call_count == 2
-    assert mock_file_1.seek.has_calls(call(0) * 2)
+    mock_file_1.seek.assert_has_calls([call(0), call(0)])
     mock_file_2.seek.assert_called_with(3)
     assert mock_file_2.seek.call_count == 2
-    assert mock_file_2.seek.has_calls(call(3) * 2)
+    mock_file_2.seek.assert_has_calls([call(3), call(3)])
 
 
 def test_box_session_raises_for_non_json_response(box_session, mock_network_layer, non_json_response, generic_successful_response, test_url):
