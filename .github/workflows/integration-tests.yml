@@ -8,7 +8,7 @@ on:
       - main
 
 jobs:
-  tests-Python-3.6:
+  tests-old:
     name: Integration tests
     runs-on: ubuntu-22.04
     container:
