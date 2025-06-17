@@ -477,7 +477,7 @@ def test_update_contents_with_stream_does_preflight_check_if_specified(
             test_file.update_contents_with_stream(**kwargs)
 
         if preflight_check:
-            assert test_file.preflight_check.called_once_with(size=file_size)
+            test_file.preflight_check.assert_called_once_with(size=file_size)
             if preflight_fails:
                 assert not mock_box_session.post.called
             else:
@@ -508,7 +508,7 @@ def test_update_contents_does_preflight_check_if_specified(
             test_file.update_contents(**kwargs)
 
         if preflight_check:
-            assert test_file.preflight_check.called_once_with(size=file_size)
+            test_file.preflight_check.assert_called_once_with(size=file_size)
             if preflight_fails:
                 assert not mock_box_session.post.called
             else:

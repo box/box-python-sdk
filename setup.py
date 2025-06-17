@@ -19,6 +19,7 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
     'Programming Language :: Python :: Implementation :: CPython',
     'Operating System :: OS Independent',
     'Operating System :: POSIX',
@@ -62,7 +63,7 @@ def main():
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.7.0', 'cryptography>=3']
     coveralls_requires = ['coveralls']
-    dev_requires = ['tox<=3.28.0']
+    dev_requires = ['tox<=3.28.0', 'setuptools']
     gh_requires = ['tox-gh-actions']
     test_requires = [
         'bottle',

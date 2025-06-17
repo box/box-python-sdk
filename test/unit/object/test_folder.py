@@ -403,7 +403,7 @@ def test_upload_stream_does_preflight_check_if_specified(
             test_folder.upload_stream(**kwargs)
 
         if preflight_check:
-            assert test_folder.preflight_check.called_once_with(size=file_size, name='foo.txt')
+            test_folder.preflight_check.assert_called_once_with(size=file_size, name='foo.txt')
             _assert_post_called_correctly(mock_box_session, preflight_fails)
         else:
             assert not test_folder.preflight_check.called
@@ -439,7 +439,7 @@ def test_upload_does_preflight_check_if_specified(
             test_folder.upload(**kwargs)
 
         if preflight_check:
-            assert test_folder.preflight_check.called_once_with(size=file_size, name='foo.txt')
+            test_folder.preflight_check.assert_called_once_with(size=file_size, name='foo.txt')
             _assert_post_called_correctly(mock_box_session, preflight_fails)
         else:
             assert not test_folder.preflight_check.called

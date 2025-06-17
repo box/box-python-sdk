@@ -9,40 +9,40 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    name: Build and unit tests
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version:
-        - '3.6'
-        - '3.7'
-        - '3.8'
-        - '3.9'
-        - '3.10'
-        - '3.11'
-    name: Build with Python ${{ matrix.python-version }}
+          - '3.6'
+          - '3.7'
+          - '3.8'
+          - '3.9'
+          - '3.10'
+          - '3.11'
+          - '3.12'
+          - '3.13'
+    container:
+      image: python:${{ matrix.python-version }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Upgrade pip and install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e .[gh]
-      - name: Test with tox
-        run: tox
+
+      - name: Run tests with tox
+        run: tox -e py$(echo "${{ matrix.python-version }}" | tr -d '.')
   coverage:
     name: Coverage report
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.13
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.11'
+        uses: actions/checkout@v3
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
