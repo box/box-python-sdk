@@ -34,7 +34,7 @@ jobs:
           python -m pip install -e .[gh]
 
       - name: Run tests with tox
-        run: tox
+        run: tox -e py$(echo "${{ matrix.python-version }}" | tr -d '.')
   coverage:
     name: Coverage report
     runs-on: ubuntu-latest
