@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build and test on multiple Python versions
+    name: Build and unit tests
     runs-on: ubuntu-22.04
     strategy:
       matrix:
