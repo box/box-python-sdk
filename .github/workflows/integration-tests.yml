@@ -10,7 +10,9 @@ on:
 jobs:
   tests-old:
     name: Integration tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
+    container:
+      image: python:3.6
     strategy:
       max-parallel: 1
       matrix:
