@@ -106,7 +106,6 @@ def main():
         keywords='box oauth2 sdk',
         license='Apache Software License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0',
         package_data={'boxsdk': ['py.typed']},
-        python_requires='>=3.8',
     )
 
 
