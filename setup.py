@@ -12,8 +12,6 @@ CLASSIFIERS = [
     'Intended Audience :: Developers',
     'License :: OSI Approved :: Apache Software License',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 3.6',
-    'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
@@ -58,7 +56,7 @@ def main():
         'urllib3',
         'requests>=2.4.3,<3',
         'requests-toolbelt>=0.4.0',
-        'python-dateutil',  # To be removed after dropping Python 3.6
+        'python-dateutil',
     ]
     redis_requires = ['redis>=2.10.3']
     jwt_requires = ['pyjwt>=1.7.0', 'cryptography>=3']
@@ -108,6 +106,7 @@ def main():
         keywords='box oauth2 sdk',
         license='Apache Software License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0',
         package_data={'boxsdk': ['py.typed']},
+        python_requires='>=3.8',
     )
 
 
