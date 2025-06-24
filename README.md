@@ -429,7 +429,7 @@ A current release is on the leading edge of our SDK development, and is intended
 
 | Version | Supported Environments                                  | State     | First Release | EOL/Terminated |
 |---------|---------------------------------------------------------|-----------|---------------|----------------|
-| 4       |                                                         |           |               |                |
+| 4       | Python 3.8+                                             |           |               |                |
 | 3       | Python 3.6+                                             | Supported | 17 Jan 2022   | TBD            |
 | 2       |                                                         | EOL       | 01 Nov 2018   | 17 Jan 2022    |
 | 1       |                                                         | EOL       | 10 Feb 2015   | 01 Nov 2018    |
