@@ -59,7 +59,7 @@ def main():
         'python-dateutil',
     ]
     redis_requires = ['redis>=2.10.3']
-    jwt_requires = ['pyjwt==2.9.0', 'cryptography>=3']
+    jwt_requires = ['pyjwt>=1.7.0', 'cryptography>=3']
     coveralls_requires = ['coveralls']
     dev_requires = ['tox==4.25.0', 'setuptools']
     gh_requires = ['tox-gh-actions']
