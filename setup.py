@@ -59,7 +59,7 @@ def main():
         'python-dateutil',
     ]
     redis_requires = ['redis>=2.10.3']
-    jwt_requires = ['pyjwt<2', 'cryptography>=3']
+    jwt_requires = ['pyjwt>=1.7.0,<2', 'cryptography>=3']
     coveralls_requires = ['coveralls']
     dev_requires = ['tox<5', 'setuptools']
     gh_requires = ['tox-gh-actions']
@@ -67,7 +67,6 @@ def main():
         'bottle',
         'jsonpatch>1.14',
         'sqlalchemy<1.4.0',
-        # pytest 8.0.0 is not compatible, so we need to use the latest version of pytest 7.x
         'pytest>=8,<9',
         'pytest-timeout<3.0.0',
         'pytest-cov<6',
