@@ -69,7 +69,7 @@ def main():
         'sqlalchemy<1.4.0',
         # pytest 8.0.0 is not compatible, so we need to use the latest version of pytest 7.x
         'pytest>=8,<9',
-        'pytest-timeout<3',
+        'pytest-timeout<3.0.0',
         'pytest-cov<6',
         'pytest-lazy-fixtures<2',
         'pytz',
