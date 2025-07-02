@@ -54,24 +54,24 @@ def main():
     install_requires = [
         'attrs>=17.3.0',
         'urllib3',
-        'requests==2.32.3',
-        'requests-toolbelt==1.0.0',
+        'requests<3',
+        'requests-toolbelt<2',
         'python-dateutil',
     ]
     redis_requires = ['redis>=2.10.3']
-    jwt_requires = ['pyjwt>=1.7.0', 'cryptography>=3']
+    jwt_requires = ['pyjwt<2', 'cryptography>=3']
     coveralls_requires = ['coveralls']
-    dev_requires = ['tox==4.25.0', 'setuptools']
+    dev_requires = ['tox<5', 'setuptools']
     gh_requires = ['tox-gh-actions']
     test_requires = [
         'bottle',
         'jsonpatch>1.14',
         'sqlalchemy<1.4.0',
         # pytest 8.0.0 is not compatible, so we need to use the latest version of pytest 7.x
-        'pytest==8.3.5',
-        'pytest-timeout==2.4.0',
-        'pytest-cov==5.0.0',
-        'pytest-lazy-fixtures==1.0.7',
+        'pytest>=8,<9',
+        'pytest-timeout<3',
+        'pytest-cov<6',
+        'pytest-lazy-fixtures<2',
         'pytz',
         'urllib3<2'
     ]
