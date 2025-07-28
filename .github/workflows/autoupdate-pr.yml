@@ -1,0 +1,39 @@
+name: Autoupdate PR
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update_pull_requests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.DISPATCH_ACCESS_TOKEN }}
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'box-sdk-build'
+          git config --global user.email 'box-sdk-build@box.com'
+
+      - name: Fetch all branches and tags
+        run: git fetch --prune --unshallow
+
+      - name: Auto update pull requests
+        run: |
+          PR_LIST=$(curl -s -H "Authorization: Bearer ${{ secrets.DISPATCH_ACCESS_TOKEN }}" "https://api.github.com/repos/$GITHUB_REPOSITORY/pulls?state=open" | jq -r '.[] | .head.ref')
+          for pr_branch in $PR_LIST; do
+            git checkout "$pr_branch"
+            if git merge origin/main; then
+              git push
+            else
+              # Conflict occurred, resolve by keeping our changes
+              git checkout --ours .
+              git add .
+              git commit -m "Auto resolve conflict by keeping our changes"
+              git push
+            fi
+          done

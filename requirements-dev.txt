@@ -1,1 +1,1 @@
--e .[dev,test,jwt,redis]
+-e .[test,dev]
