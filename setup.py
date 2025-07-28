@@ -1,113 +1,59 @@
-from codecs import open   # pylint:disable=redefined-builtin
-from os.path import dirname, join
-import re
-import sys
-
 from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
 
+from os.path import dirname, join
 
-CLASSIFIERS = [
-    'Development Status :: 6 - Mature',
-    'Intended Audience :: Developers',
-    'License :: OSI Approved :: Apache Software License',
-    'Programming Language :: Python',
-    'Programming Language :: Python :: 3.6',
-    'Programming Language :: Python :: 3.7',
-    'Programming Language :: Python :: 3.8',
-    'Programming Language :: Python :: 3.9',
-    'Programming Language :: Python :: 3.10',
-    'Programming Language :: Python :: 3.11',
-    'Programming Language :: Python :: 3.12',
-    'Programming Language :: Python :: 3.13',
-    'Programming Language :: Python :: Implementation :: CPython',
-    'Operating System :: OS Independent',
-    'Operating System :: POSIX',
-    'Operating System :: Microsoft :: Windows',
-    'Operating System :: MacOS :: MacOS X',
-    'Topic :: Software Development :: Libraries :: Python Modules',
-]
-
-
-class PyTest(TestCommand):
-    # pylint:disable=attribute-defined-outside-init
-
-    user_options = [(b'pytest-args=', b'a', b"Arguments to pass to py.test")]
-
-    def initialize_options(self):
-        TestCommand.initialize_options(self)
-        self.pytest_args = None
-
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        # Do the import here, once the eggs are loaded.
-        # pylint:disable=import-outside-toplevel
-        import pytest
-        errno = pytest.main(self.pytest_args)
-        sys.exit(errno)
+import re
 
 
 def main():
-    base_dir = dirname(__file__)
-    install_requires = [
-        'attrs>=17.3.0',
-        'urllib3',
-        'requests>=2.4.3,<3',
-        'requests-toolbelt>=0.4.0',
-        'python-dateutil',  # To be removed after dropping Python 3.6
-    ]
-    redis_requires = ['redis>=2.10.3']
+    install_requires = ['requests', 'requests-toolbelt']
+    tests_require = ['pytest', 'pytest-timeout', 'pytest-cov', 'pytest-rerunfailures']
+    dev_requires = ['tox']
     jwt_requires = ['pyjwt>=1.7.0', 'cryptography>=3']
-    coveralls_requires = ['coveralls']
-    dev_requires = ['tox<=3.28.0', 'setuptools']
-    gh_requires = ['tox-gh-actions']
-    test_requires = [
-        'bottle',
-        'jsonpatch>1.14',
-        'sqlalchemy<1.4.0',
-        # pytest 8.0.0 is not compatible, so we need to use the latest version of pytest 7.x
-        'pytest<8.0.0',
-        'pytest-timeout<3.0.0',
-        'pytest-cov<5.0.0',
-        'pytest-lazy-fixture<1.0.0',
-        'pytz',
-        'urllib3<2'
-    ]
-    extra_requires = {
-        'jwt': jwt_requires,
-        'redis': redis_requires,
-        'coveralls': coveralls_requires + dev_requires,
+    version_file = open(join(dirname(__file__), 'box_sdk_gen/networking/version.py'))
+    version_regex = re.compile('.*__version__ = \'(.*?)\'', re.S)
+    version_string_grouped = version_regex.match(version_file.read())
+    __version__ = version_string_grouped.group(1)
+    extras_require = {
+        'test': tests_require + jwt_requires,
         'dev': dev_requires,
-        'gh': gh_requires + dev_requires,
-        'test': test_requires,
+        'jwt': jwt_requires,
     }
-    with open('boxsdk/version.py', encoding='utf-8') as config_py:
-        version = re.search(r'^\s*__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE).group(1)
     setup(
-        name='boxsdk',
-        version=version,
-        description='Official Box Python SDK',
-        long_description_content_type="text/markdown",
-        long_description=open(join(base_dir, 'README.md'), encoding='utf-8').read(),  # pylint:disable=consider-using-with
+        name='box-sdk-gen',
+        version=__version__,
+        description='Official Box Python Generated SDK',
+        url='https://github.com/box/box-python-sdk-gen.git',
+        licence='Apache-2.0, http://www.apache.org/licenses/LICENSE-2.0',
         author='Box',
+        long_description_content_type='text/markdown',
+        long_description=open(
+            join(dirname(__file__), 'README.md'), encoding='utf-8'
+        ).read(),
         author_email='oss@box.com',
-        url='https://github.com/box/box-python-sdk',
-        project_urls={
-            'Changelog': 'https://github.com/box/box-python-sdk/blob/main/CHANGELOG.md',
-        },
-        packages=find_packages(exclude=['demo', 'docs', 'test', 'test*', '*test', '*test*']),
+        classifiers=[
+            'Development Status :: 5 - Production/Stable',
+            'Intended Audience :: Developers',
+            'License :: OSI Approved :: Apache Software License',
+            'Programming Language :: Python',
+            'Programming Language :: Python :: 3.8',
+            'Programming Language :: Python :: 3.9',
+            'Programming Language :: Python :: 3.10',
+            'Programming Language :: Python :: 3.11',
+            'Programming Language :: Python :: 3.12',
+            'Programming Language :: Python :: Implementation :: CPython',
+            'Programming Language :: Python :: Implementation :: PyPy',
+            'Operating System :: OS Independent',
+            'Operating System :: POSIX',
+            'Operating System :: Microsoft :: Windows',
+            'Operating System :: MacOS :: MacOS X',
+            'Topic :: Software Development :: Libraries :: Python Modules',
+        ],
+        keywords='box, sdk, api, rest, boxsdk, box-sdk-gen',
         install_requires=install_requires,
-        extras_require=extra_requires,
-        tests_require=test_requires,
-        cmdclass={'test': PyTest},
-        classifiers=CLASSIFIERS,
-        keywords='box oauth2 sdk',
-        license='Apache Software License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0',
-        package_data={'boxsdk': ['py.typed']},
+        tests_require=tests_require,
+        extras_require=extras_require,
+        packages=find_packages(exclude=['docs', '*test*']),
     )
 
 

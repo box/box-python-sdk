@@ -19,4 +19,4 @@ markComment: >
 
 # Comment to post when closing a stale issue. Set to `false` to disable
 closeComment: >
-  This issue has been automatically closed due to maximum period of being stale. Thank you for your contribution to Box Python SDK and feel free to open another PR/issue at any time.
+  This issue has been automatically closed due to maximum period of being stale. Thank you for your contribution to Box SDK and feel free to open another PR/issue at any time.

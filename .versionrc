@@ -1,13 +1,34 @@
 {
-    "types": [
-        {"type": "feat", "section": "New Features and Enhancements:", "hidden": false},
-        {"type": "fix", "section": "Bug Fixes:", "hidden": false},
-        {"type": "build", "section": "Dependency Upgrades:", "hidden": false},
-        {"type": "chore", "hidden": true},
-        {"type": "docs", "hidden": true},
-        {"type": "style", "hidden": true},
-        {"type": "refactor", "hidden": true},
-        {"type": "test", "hidden": true},
-        {"type": "ci", "hidden":true}
-    ]
+  "types": [
+    {
+      "type": "feat",
+      "section": "New Features and Enhancements",
+      "hidden": false
+    },
+    {
+      "type": "fix",
+      "section": "Bug Fixes",
+      "hidden": false
+    },
+    {
+      "type": "chore",
+      "hidden": true
+    },
+    {
+      "type": "docs",
+      "hidden": true
+    },
+    {
+      "type": "style",
+      "hidden": true
+    },
+    {
+      "type": "refactor",
+      "hidden": true
+    },
+    {
+      "type": "test",
+      "hidden": true
+    }
+  ]
 }

@@ -5,13 +5,13 @@ on:
     branches:
       - main
 jobs:
-  spellcheck-request-title:
+  spellcheck-request:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Checkout spellchecker
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: refs/heads/main
           repository: box/box-sdk-spellchecker
@@ -19,3 +19,5 @@ jobs:
           path: spellchecker
       - name: Execute spellchecker
         uses: ./spellchecker
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
