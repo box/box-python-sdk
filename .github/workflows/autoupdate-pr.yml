@@ -2,7 +2,7 @@ name: Autoupdate PR
 on:
   push:
     branches:
-      - main
+      - sdk-gen
 
 jobs:
   update_pull_requests:
