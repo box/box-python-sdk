@@ -2,11 +2,10 @@ name: Build
 on:
   pull_request:
     branches:
-      - main
+      - sdk-gen
   push:
     branches:
-      - main
-
+      - sdk-gen
 jobs:
   build:
     runs-on: ubuntu-latest
