@@ -24,4 +24,4 @@ jobs:
           token: ${{ secrets.DISPATCH_ACCESS_TOKEN }}
           repository: box/box-developer-changelog
           event-type: new-release-note
-          client-payload: '{"ref": "${{ github.ref }}", "repository": "${{github.repository}}", "labels": "sdks,python", "repo_display_name": "Box Python SDK Generated"}'
+          client-payload: '{"ref": "${{ github.ref }}", "repository": "${{github.repository}}", "labels": "sdks,python", "repo_display_name": "Box Python SDK"}'
