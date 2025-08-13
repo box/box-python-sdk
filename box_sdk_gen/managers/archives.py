@@ -63,6 +63,9 @@ class ArchivesManager:
     ) -> ArchivesV2025R0:
         """
                 Retrieves archives for an enterprise.
+
+                To learn more about the archive APIs, see the [Archive API Guide](g://archives).
+
                 :param limit: The maximum number of items to return per page., defaults to None
                 :type limit: Optional[int], optional
                 :param marker: Defines the position marker at which to begin returning results. This is
@@ -103,6 +106,9 @@ class ArchivesManager:
     ) -> ArchiveV2025R0:
         """
         Creates an archive.
+
+        To learn more about the archive APIs, see the [Archive API Guide](g://archives).
+
         :param name: The name of the archive.
         :type name: str
         :param box_version: Version header., defaults to BoxVersionHeaderV2025R0._2025_0
@@ -139,6 +145,9 @@ class ArchivesManager:
     ) -> None:
         """
                 Permanently deletes an archive.
+
+                To learn more about the archive APIs, see the [Archive API Guide](g://archives).
+
                 :param archive_id: The ID of the archive.
         Example: "982312"
                 :type archive_id: str

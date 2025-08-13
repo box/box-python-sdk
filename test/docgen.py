@@ -73,7 +73,7 @@ def testDocgenBatchAndJobs():
     assert docgen_batch_jobs.entries[0].template_file.id == uploaded_file.id
     assert docgen_batch_jobs.entries[0].batch.id == docgen_batch.id
     docgen_jobs: DocGenJobsFullV2025R0 = client.docgen.get_docgen_jobs_v2025_r0(
-        limit=500
+        limit=10000
     )
     assert len(docgen_jobs.entries) >= 1
     assert not docgen_jobs.entries[0].batch.id == ''
@@ -90,7 +90,7 @@ def testDocgenBatchAndJobs():
     )
     assert not docgen_jobs.entries[0].template_file_version.id == ''
     assert to_string(docgen_jobs.entries[0].type) == 'docgen_job'
-    index_of_item: int = 0
+    index_of_item: int = len(docgen_jobs.entries) - 1
     docgen_job_item_from_list: DocGenJobFullV2025R0 = docgen_jobs.entries[index_of_item]
     docgen_job: DocGenJobV2025R0 = client.docgen.get_docgen_job_by_id_v2025_r0(
         docgen_job_item_from_list.id

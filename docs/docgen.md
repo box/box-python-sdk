@@ -47,7 +47,7 @@ See the endpoint docs at
 <!-- sample get_docgen_jobs_v2025.0 -->
 
 ```python
-client.docgen.get_docgen_jobs_v2025_r0(limit=500)
+client.docgen.get_docgen_jobs_v2025_r0(limit=10000)
 ```
 
 ### Arguments
