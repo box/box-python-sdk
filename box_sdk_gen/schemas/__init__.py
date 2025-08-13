@@ -206,8 +206,6 @@ from box_sdk_gen.schemas.metadata_instance_value import *
 
 from box_sdk_gen.schemas.metadata_query import *
 
-from box_sdk_gen.schemas.metadata_query_index import *
-
 from box_sdk_gen.schemas.metadata_template import *
 
 from box_sdk_gen.schemas.metadata_templates import *
@@ -231,8 +229,6 @@ from box_sdk_gen.schemas.retention_policy_mini import *
 from box_sdk_gen.schemas.file_version_retention import *
 
 from box_sdk_gen.schemas.file_version_retentions import *
-
-from box_sdk_gen.schemas.retention_policy_assignment_base import *
 
 from box_sdk_gen.schemas.role_variable import *
 
@@ -484,8 +480,6 @@ from box_sdk_gen.schemas.metadata_query_results import *
 
 from box_sdk_gen.schemas.event import *
 
-from box_sdk_gen.schemas.skill_invocation import *
-
 from box_sdk_gen.schemas.events import *
 
 from box_sdk_gen.schemas.collaboration import *
@@ -504,15 +498,11 @@ from box_sdk_gen.schemas.webhooks import *
 
 from box_sdk_gen.schemas.webhook import *
 
-from box_sdk_gen.schemas.webhook_invocation import *
-
 from box_sdk_gen.schemas.workflow_mini import *
 
 from box_sdk_gen.schemas.workflow import *
 
 from box_sdk_gen.schemas.workflows import *
-
-from box_sdk_gen.schemas.workflow_full import *
 
 from box_sdk_gen.schemas.zip_download import *
 
