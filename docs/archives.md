@@ -8,6 +8,8 @@
 
 Retrieves archives for an enterprise.
 
+To learn more about the archive APIs, see the [Archive API Guide](g://archives).
+
 This operation is performed by calling function `get_archives_v2025_r0`.
 
 See the endpoint docs at
@@ -40,6 +42,8 @@ Returns a list of archives in the enterprise.
 
 Creates an archive.
 
+To learn more about the archive APIs, see the [Archive API Guide](g://archives).
+
 This operation is performed by calling function `create_archive_v2025_r0`.
 
 See the endpoint docs at
@@ -69,6 +73,8 @@ Returns a new archive object.
 ## Delete archive
 
 Permanently deletes an archive.
+
+To learn more about the archive APIs, see the [Archive API Guide](g://archives).
 
 This operation is performed by calling function `delete_archive_by_id_v2025_r0`.
 
