@@ -182,8 +182,6 @@ from box_sdk_gen.managers.shield_lists import ShieldListsManager
 
 from box_sdk_gen.managers.archives import ArchivesManager
 
-from box_sdk_gen.managers.external_users import ExternalUsersManager
-
 from box_sdk_gen.networking.auth import Authentication
 
 from box_sdk_gen.networking.network import NetworkSession
@@ -440,9 +438,6 @@ class BoxClient:
             auth=self.auth, network_session=self.network_session
         )
         self.archives = ArchivesManager(
-            auth=self.auth, network_session=self.network_session
-        )
-        self.external_users = ExternalUsersManager(
             auth=self.auth, network_session=self.network_session
         )
 

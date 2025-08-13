@@ -18,10 +18,6 @@ from box_sdk_gen.schemas.v2025_r0.doc_gen_tags_processing_message_v2025_r0 impor
 
 from box_sdk_gen.schemas.v2025_r0.enterprise_reference_v2025_r0 import *
 
-from box_sdk_gen.schemas.v2025_r0.external_user_deletion_result_v2025_r0 import *
-
-from box_sdk_gen.schemas.v2025_r0.external_users_submit_delete_job_response_v2025_r0 import *
-
 from box_sdk_gen.schemas.v2025_r0.file_reference_v2025_r0 import *
 
 from box_sdk_gen.schemas.v2025_r0.doc_gen_template_create_request_v2025_r0 import *
@@ -111,8 +107,6 @@ from box_sdk_gen.schemas.v2025_r0.doc_gen_job_full_v2025_r0 import *
 from box_sdk_gen.schemas.v2025_r0.doc_gen_jobs_full_v2025_r0 import *
 
 from box_sdk_gen.schemas.v2025_r0.user_reference_v2025_r0 import *
-
-from box_sdk_gen.schemas.v2025_r0.external_users_submit_delete_job_request_v2025_r0 import *
 
 from box_sdk_gen.schemas.v2025_r0.weblink_reference_v2025_r0 import *
 
