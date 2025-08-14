@@ -1,3 +1,5 @@
+from box_sdk_gen.box.event_stream import *
+
 from box_sdk_gen.box.errors import *
 
 from box_sdk_gen.box.token_storage import *

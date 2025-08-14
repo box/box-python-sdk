@@ -16,6 +16,8 @@ from box_sdk_gen.schemas.realtime_server import RealtimeServer
 
 from box_sdk_gen.internal.utils import DateTime
 
+from box_sdk_gen.box.event_stream import EventStream
+
 from test.commons import get_default_client
 
 from box_sdk_gen.schemas.event_source import EventSource
@@ -103,3 +105,8 @@ def testGetEventsWithDateFilters():
         created_before=created_before_date,
     )
     assert len(servers.entries) == 1
+
+
+def testGetEventStream():
+    event_stream: EventStream = client.events.get_event_stream()
+    assert not event_stream == None
