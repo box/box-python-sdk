@@ -20,6 +20,12 @@ from box_sdk_gen.schemas.keyword_skill_card import KeywordSkillCardInvocationTyp
 
 from box_sdk_gen.schemas.keyword_skill_card import KeywordSkillCardEntriesField
 
+from box_sdk_gen.schemas.timeline_skill_card import TimelineSkillCard
+
+from box_sdk_gen.schemas.transcript_skill_card import TranscriptSkillCard
+
+from box_sdk_gen.schemas.status_skill_card import StatusSkillCard
+
 from box_sdk_gen.schemas.skill_cards_metadata import SkillCardsMetadata
 
 from box_sdk_gen.managers.skills import UpdateBoxSkillCardsOnFileRequestBody
@@ -33,6 +39,8 @@ from test.commons import get_default_client
 from test.commons import upload_new_file
 
 from box_sdk_gen.schemas.keyword_skill_card import KeywordSkillCard
+
+from box_sdk_gen.schemas.skill_card import SkillCard
 
 client: BoxClient = get_default_client()
 
@@ -56,7 +64,7 @@ def test_skills_cards_CRUD():
         ),
         entries=[KeywordSkillCardEntriesField(text='DN86 BOX')],
     )
-    cards_to_create: List[KeywordSkillCard] = [card_to_create]
+    cards_to_create: List[SkillCard] = [card_to_create]
     skill_cards_metadata: SkillCardsMetadata = (
         client.skills.create_box_skill_cards_on_file(file.id, cards_to_create)
     )
