@@ -6,13 +6,13 @@ from box_sdk_gen.internal.base_object import BaseObject
 
 from typing import List
 
-from typing import Union
-
 from box_sdk_gen.schemas.file_full import FileFull
 
 from box_sdk_gen.schemas.folder_mini import FolderMini
 
 from box_sdk_gen.schemas.web_link import WebLink
+
+from box_sdk_gen.schemas.item import Item
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -51,7 +51,7 @@ class Items(BaseObject):
         total_count: Optional[int] = None,
         offset: Optional[int] = None,
         order: Optional[List[ItemsOrderField]] = None,
-        entries: Optional[List[Union[FileFull, FolderMini, WebLink]]] = None,
+        entries: Optional[List[Item]] = None,
         **kwargs
     ):
         """
@@ -82,7 +82,7 @@ class Items(BaseObject):
         For marker-based paginated APIs, this field will be omitted., defaults to None
                 :type order: Optional[List[ItemsOrderField]], optional
                 :param entries: The items in this collection., defaults to None
-                :type entries: Optional[List[Union[FileFull, FolderMini, WebLink]]], optional
+                :type entries: Optional[List[Item]], optional
         """
         super().__init__(**kwargs)
         self.limit = limit

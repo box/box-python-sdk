@@ -26,7 +26,7 @@ from box_sdk_gen.schemas.file import File
 
 from box_sdk_gen.schemas.user_mini import UserMini
 
-from box_sdk_gen.schemas.file_or_folder_scope import FileOrFolderScope
+from box_sdk_gen.schemas.resource_scope import ResourceScope
 
 from box_sdk_gen.schemas.metadata_full import MetadataFull
 
@@ -162,7 +162,7 @@ class FileFullExpiringEmbedLinkField(BaseObject):
         access_token: Optional[str] = None,
         expires_in: Optional[int] = None,
         token_type: Optional[FileFullExpiringEmbedLinkTokenTypeField] = None,
-        restricted_to: Optional[List[FileOrFolderScope]] = None,
+        restricted_to: Optional[List[ResourceScope]] = None,
         url: Optional[str] = None,
         **kwargs
     ):
@@ -176,7 +176,7 @@ class FileFullExpiringEmbedLinkField(BaseObject):
                 :param restricted_to: The permissions that this access token permits,
         providing a list of resources (files, folders, etc)
         and the scopes permitted for each of those resources., defaults to None
-                :type restricted_to: Optional[List[FileOrFolderScope]], optional
+                :type restricted_to: Optional[List[ResourceScope]], optional
                 :param url: The actual expiring embed URL for this file, constructed
         from the file ID and access tokens specified in this object., defaults to None
                 :type url: Optional[str], optional

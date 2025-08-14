@@ -30,7 +30,7 @@ class MetadataTemplateFieldsOptionsField(BaseObject):
                 :param key: The text value of the option. This represents both the display name of the
         option and the internal key used when updating templates.
                 :type key: str
-                :param id: The internal unique identifier of the the option., defaults to None
+                :param id: The internal unique identifier of the option., defaults to None
                 :type id: Optional[str], optional
         """
         super().__init__(**kwargs)

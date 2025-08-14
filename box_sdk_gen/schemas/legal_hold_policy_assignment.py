@@ -1,10 +1,14 @@
 from typing import Optional
 
-from typing import Union
-
 from box_sdk_gen.schemas.legal_hold_policy_assignment_base import (
     LegalHoldPolicyAssignmentBaseTypeField,
 )
+
+from box_sdk_gen.schemas.file import File
+
+from box_sdk_gen.schemas.folder import Folder
+
+from box_sdk_gen.schemas.web_link import WebLink
 
 from box_sdk_gen.schemas.legal_hold_policy_assignment_base import (
     LegalHoldPolicyAssignmentBase,
@@ -12,11 +16,9 @@ from box_sdk_gen.schemas.legal_hold_policy_assignment_base import (
 
 from box_sdk_gen.schemas.legal_hold_policy_mini import LegalHoldPolicyMini
 
-from box_sdk_gen.schemas.file import File
-
-from box_sdk_gen.schemas.folder import Folder
-
-from box_sdk_gen.schemas.web_link import WebLink
+from box_sdk_gen.schemas.legal_hold_policy_assigned_item import (
+    LegalHoldPolicyAssignedItem,
+)
 
 from box_sdk_gen.schemas.user_mini import UserMini
 
@@ -30,7 +32,7 @@ class LegalHoldPolicyAssignment(LegalHoldPolicyAssignmentBase):
         self,
         *,
         legal_hold_policy: Optional[LegalHoldPolicyMini] = None,
-        assigned_to: Optional[Union[File, Folder, WebLink]] = None,
+        assigned_to: Optional[LegalHoldPolicyAssignedItem] = None,
         assigned_by: Optional[UserMini] = None,
         assigned_at: Optional[DateTime] = None,
         deleted_at: Optional[DateTime] = None,

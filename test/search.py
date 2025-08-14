@@ -1,7 +1,5 @@
 from typing import Dict
 
-from typing import Union
-
 from box_sdk_gen.internal.utils import to_string
 
 from box_sdk_gen.client import BoxClient
@@ -33,6 +31,8 @@ from box_sdk_gen.managers.file_metadata import CreateFileMetadataByIdScope
 from box_sdk_gen.schemas.metadata_query_results import MetadataQueryResults
 
 from box_sdk_gen.managers.metadata_templates import DeleteMetadataTemplateScope
+
+from box_sdk_gen.schemas.search_results_response import SearchResultsResponse
 
 from box_sdk_gen.schemas.metadata_filter import MetadataFilter
 
@@ -224,17 +224,15 @@ def testMetadataFilters():
         'enumField': 'enumValue2',
         'multiSelectField': ['multiSelectValue1', 'multiSelectValue2'],
     }
-    query: Union[SearchResults, SearchResultsWithSharedLinks] = (
-        client.search.search_for_content(
-            ancestor_folder_ids=['0'],
-            mdfilters=[
-                MetadataFilter(
-                    filters=search_filters,
-                    scope=MetadataFilterScopeField.ENTERPRISE,
-                    template_key=template_key,
-                )
-            ],
-        )
+    query: SearchResultsResponse = client.search.search_for_content(
+        ancestor_folder_ids=['0'],
+        mdfilters=[
+            MetadataFilter(
+                filters=search_filters,
+                scope=MetadataFilterScopeField.ENTERPRISE,
+                template_key=template_key,
+            )
+        ],
     )
     query_results: SearchResults = query
     assert len(query_results.entries) >= 0
@@ -246,23 +244,19 @@ def testMetadataFilters():
 
 def testGetSearch():
     keyword: str = 'test'
-    search: Union[SearchResults, SearchResultsWithSharedLinks] = (
-        client.search.search_for_content(
-            query=keyword,
-            ancestor_folder_ids=['0'],
-            trash_content=SearchForContentTrashContent.NON_TRASHED_ONLY,
-        )
+    search: SearchResultsResponse = client.search.search_for_content(
+        query=keyword,
+        ancestor_folder_ids=['0'],
+        trash_content=SearchForContentTrashContent.NON_TRASHED_ONLY,
     )
     assert to_string(search.type) == 'search_results_items'
     search_results: SearchResults = search
     assert len(search_results.entries) >= 0
-    search_with_shared_link: Union[SearchResults, SearchResultsWithSharedLinks] = (
-        client.search.search_for_content(
-            query=keyword,
-            ancestor_folder_ids=['0'],
-            trash_content=SearchForContentTrashContent.NON_TRASHED_ONLY,
-            include_recent_shared_links=True,
-        )
+    search_with_shared_link: SearchResultsResponse = client.search.search_for_content(
+        query=keyword,
+        ancestor_folder_ids=['0'],
+        trash_content=SearchForContentTrashContent.NON_TRASHED_ONLY,
+        include_recent_shared_links=True,
     )
     assert to_string(search_with_shared_link.type) == 'search_results_with_shared_links'
     search_results_with_shared_link: SearchResultsWithSharedLinks = (

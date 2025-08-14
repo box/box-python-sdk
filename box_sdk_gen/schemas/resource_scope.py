@@ -2,18 +2,18 @@ from enum import Enum
 
 from typing import Optional
 
-from typing import Union
-
 from box_sdk_gen.internal.base_object import BaseObject
 
 from box_sdk_gen.schemas.folder_mini import FolderMini
 
 from box_sdk_gen.schemas.file_mini import FileMini
 
+from box_sdk_gen.schemas.resource import Resource
+
 from box_sdk_gen.box.errors import BoxSDKError
 
 
-class FileOrFolderScopeScopeField(str, Enum):
+class ResourceScopeScopeField(str, Enum):
     ANNOTATION_EDIT = 'annotation_edit'
     ANNOTATION_VIEW_ALL = 'annotation_view_all'
     ANNOTATION_VIEW_SELF = 'annotation_view_self'
@@ -30,17 +30,17 @@ class FileOrFolderScopeScopeField(str, Enum):
     ITEM_READ = 'item_read'
 
 
-class FileOrFolderScope(BaseObject):
+class ResourceScope(BaseObject):
     def __init__(
         self,
         *,
-        scope: Optional[FileOrFolderScopeScopeField] = None,
-        object: Optional[Union[FolderMini, FileMini]] = None,
+        scope: Optional[ResourceScopeScopeField] = None,
+        object: Optional[Resource] = None,
         **kwargs
     ):
         """
         :param scope: The scopes for the resource access., defaults to None
-        :type scope: Optional[FileOrFolderScopeScopeField], optional
+        :type scope: Optional[ResourceScopeScopeField], optional
         """
         super().__init__(**kwargs)
         self.scope = scope

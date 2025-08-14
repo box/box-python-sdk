@@ -6,13 +6,13 @@ from box_sdk_gen.internal.base_object import BaseObject
 
 from typing import List
 
-from typing import Union
-
-from box_sdk_gen.schemas.ai_dialogue_history import AiDialogueHistory
-
 from box_sdk_gen.schemas.ai_agent_reference import AiAgentReference
 
 from box_sdk_gen.schemas.ai_agent_text_gen import AiAgentTextGen
+
+from box_sdk_gen.schemas.ai_dialogue_history import AiDialogueHistory
+
+from box_sdk_gen.schemas.ai_text_gen_agent import AiTextGenAgent
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -53,7 +53,7 @@ class AiTextGen(BaseObject):
         items: List[AiTextGenItemsField],
         *,
         dialogue_history: Optional[List[AiDialogueHistory]] = None,
-        ai_agent: Optional[Union[AiAgentReference, AiAgentTextGen]] = None,
+        ai_agent: Optional[AiTextGenAgent] = None,
         **kwargs
     ):
         """

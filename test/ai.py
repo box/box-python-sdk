@@ -1,10 +1,10 @@
-from typing import Union
-
 from typing import Optional
 
 from box_sdk_gen.internal.utils import to_string
 
 from box_sdk_gen.client import BoxClient
+
+from box_sdk_gen.schemas.ai_agent import AiAgent
 
 from box_sdk_gen.managers.ai import GetAiAgentDefaultConfigMode
 
@@ -90,9 +90,7 @@ client: BoxClient = get_default_client()
 
 
 def testAskAISingleItem():
-    ai_agent_config: Union[
-        AiAgentAsk, AiAgentTextGen, AiAgentExtract, AiAgentExtractStructured
-    ] = client.ai.get_ai_agent_default_config(
+    ai_agent_config: AiAgent = client.ai.get_ai_agent_default_config(
         GetAiAgentDefaultConfigMode.ASK, language='en-US'
     )
     ai_ask_agent_config: AiAgentAsk = ai_agent_config
@@ -141,9 +139,7 @@ def testAskAIMultipleItems():
 
 def testAITextGenWithDialogueHistory():
     file_to_ask: FileFull = upload_new_file()
-    ai_agent_config: Union[
-        AiAgentAsk, AiAgentTextGen, AiAgentExtract, AiAgentExtractStructured
-    ] = client.ai.get_ai_agent_default_config(
+    ai_agent_config: AiAgent = client.ai.get_ai_agent_default_config(
         GetAiAgentDefaultConfigMode.TEXT_GEN, language='en-US'
     )
     ai_text_gen_agent_config: AiAgentTextGen = ai_agent_config
@@ -176,9 +172,7 @@ def testAITextGenWithDialogueHistory():
 
 
 def testGettingAIAskAgentConfig():
-    ai_agent_config: Union[
-        AiAgentAsk, AiAgentTextGen, AiAgentExtract, AiAgentExtractStructured
-    ] = client.ai.get_ai_agent_default_config(
+    ai_agent_config: AiAgent = client.ai.get_ai_agent_default_config(
         GetAiAgentDefaultConfigMode.ASK, language='en-US'
     )
     assert ai_agent_config.type == 'ai_agent_ask'
@@ -206,9 +200,7 @@ def testGettingAIAskAgentConfig():
 
 
 def testGettingAITextGenAgentConfig():
-    ai_agent_config: Union[
-        AiAgentAsk, AiAgentTextGen, AiAgentExtract, AiAgentExtractStructured
-    ] = client.ai.get_ai_agent_default_config(
+    ai_agent_config: AiAgent = client.ai.get_ai_agent_default_config(
         GetAiAgentDefaultConfigMode.TEXT_GEN, language='en-US'
     )
     assert ai_agent_config.type == 'ai_agent_text_gen'
@@ -223,9 +215,7 @@ def testGettingAITextGenAgentConfig():
 
 
 def testAIExtract():
-    ai_agent_config: Union[
-        AiAgentAsk, AiAgentTextGen, AiAgentExtract, AiAgentExtractStructured
-    ] = client.ai.get_ai_agent_default_config(
+    ai_agent_config: AiAgent = client.ai.get_ai_agent_default_config(
         GetAiAgentDefaultConfigMode.EXTRACT, language='en-US'
     )
     ai_extract_agent_config: AiAgentExtract = ai_agent_config
@@ -265,9 +255,7 @@ def testAIExtract():
 
 
 def testAIExtractStructuredWithFields():
-    ai_agent_config: Union[
-        AiAgentAsk, AiAgentTextGen, AiAgentExtract, AiAgentExtractStructured
-    ] = client.ai.get_ai_agent_default_config(
+    ai_agent_config: AiAgent = client.ai.get_ai_agent_default_config(
         GetAiAgentDefaultConfigMode.EXTRACT_STRUCTURED, language='en-US'
     )
     ai_extract_structured_agent_config: AiAgentExtractStructured = ai_agent_config

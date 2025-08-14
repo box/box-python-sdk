@@ -1,16 +1,16 @@
 from enum import Enum
 
-from typing import Union
-
 from box_sdk_gen.internal.base_object import BaseObject
-
-from box_sdk_gen.schemas.app_item import AppItem
 
 from box_sdk_gen.schemas.file_base import FileBase
 
 from box_sdk_gen.schemas.folder_base import FolderBase
 
 from box_sdk_gen.schemas.web_link_base import WebLinkBase
+
+from box_sdk_gen.schemas.app_item import AppItem
+
+from box_sdk_gen.schemas.app_item_associated_item import AppItemAssociatedItem
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -26,7 +26,7 @@ class AppItemAssociation(BaseObject):
         self,
         id: str,
         app_item: AppItem,
-        item: Union[FileBase, FolderBase, WebLinkBase],
+        item: AppItemAssociatedItem,
         *,
         type: AppItemAssociationTypeField = AppItemAssociationTypeField.APP_ITEM_ASSOCIATION,
         **kwargs

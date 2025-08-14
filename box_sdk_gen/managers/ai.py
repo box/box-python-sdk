@@ -8,8 +8,6 @@ from typing import List
 
 from typing import Dict
 
-from typing import Union
-
 from box_sdk_gen.serialization.json import serialize
 
 from box_sdk_gen.internal.utils import to_string
@@ -22,9 +20,25 @@ from box_sdk_gen.schemas.ai_dialogue_history import AiDialogueHistory
 
 from box_sdk_gen.schemas.ai_agent_reference import AiAgentReference
 
+from box_sdk_gen.schemas.ai_agent_ask import AiAgentAsk
+
+from box_sdk_gen.schemas.ai_ask_agent import AiAskAgent
+
 from box_sdk_gen.networking.fetch_options import ResponseFormat
 
+from box_sdk_gen.schemas.ai_agent_text_gen import AiAgentTextGen
+
+from box_sdk_gen.schemas.ai_text_gen_agent import AiTextGenAgent
+
+from box_sdk_gen.schemas.ai_agent_extract import AiAgentExtract
+
+from box_sdk_gen.schemas.ai_agent_extract_structured import AiAgentExtractStructured
+
 from box_sdk_gen.schemas.ai_item_base import AiItemBase
+
+from box_sdk_gen.schemas.ai_extract_agent import AiExtractAgent
+
+from box_sdk_gen.schemas.ai_extract_structured_agent import AiExtractStructuredAgent
 
 from box_sdk_gen.schemas.ai_response_full import AiResponseFull
 
@@ -36,13 +50,7 @@ from box_sdk_gen.schemas.ai_response import AiResponse
 
 from box_sdk_gen.schemas.ai_text_gen import AiTextGen
 
-from box_sdk_gen.schemas.ai_agent_ask import AiAgentAsk
-
-from box_sdk_gen.schemas.ai_agent_text_gen import AiAgentTextGen
-
-from box_sdk_gen.schemas.ai_agent_extract import AiAgentExtract
-
-from box_sdk_gen.schemas.ai_agent_extract_structured import AiAgentExtractStructured
+from box_sdk_gen.schemas.ai_agent import AiAgent
 
 from box_sdk_gen.schemas.ai_extract import AiExtract
 
@@ -222,7 +230,7 @@ class AiManager:
         *,
         dialogue_history: Optional[List[AiDialogueHistory]] = None,
         include_citations: Optional[bool] = None,
-        ai_agent: Optional[Union[AiAgentAsk, AiAgentReference]] = None,
+        ai_agent: Optional[AiAskAgent] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> Optional[AiResponseFull]:
         """
@@ -280,7 +288,7 @@ class AiManager:
         items: List[CreateAiTextGenItems],
         *,
         dialogue_history: Optional[List[AiDialogueHistory]] = None,
-        ai_agent: Optional[Union[AiAgentReference, AiAgentTextGen]] = None,
+        ai_agent: Optional[AiTextGenAgent] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> AiResponse:
         """
@@ -330,7 +338,7 @@ class AiManager:
         language: Optional[str] = None,
         model: Optional[str] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
-    ) -> Union[AiAgentAsk, AiAgentTextGen, AiAgentExtract, AiAgentExtractStructured]:
+    ) -> AiAgent:
         """
                 Get the AI agent default config.
                 :param mode: The mode to filter the agent config to return.
@@ -366,17 +374,14 @@ class AiManager:
                 network_session=self.network_session,
             )
         )
-        return deserialize(
-            response.data,
-            Union[AiAgentAsk, AiAgentTextGen, AiAgentExtract, AiAgentExtractStructured],
-        )
+        return deserialize(response.data, AiAgent)
 
     def create_ai_extract(
         self,
         prompt: str,
         items: List[AiItemBase],
         *,
-        ai_agent: Optional[Union[AiAgentReference, AiAgentExtract]] = None,
+        ai_agent: Optional[AiExtractAgent] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> AiResponse:
         """
@@ -420,7 +425,7 @@ class AiManager:
         *,
         metadata_template: Optional[CreateAiExtractStructuredMetadataTemplate] = None,
         fields: Optional[List[CreateAiExtractStructuredFields]] = None,
-        ai_agent: Optional[Union[AiAgentReference, AiAgentExtractStructured]] = None,
+        ai_agent: Optional[AiExtractStructuredAgent] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> AiExtractStructuredResponse:
         """

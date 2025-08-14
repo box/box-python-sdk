@@ -6,7 +6,7 @@ from typing import List
 
 from box_sdk_gen.internal.base_object import BaseObject
 
-from box_sdk_gen.schemas.file_or_folder_scope import FileOrFolderScope
+from box_sdk_gen.schemas.resource_scope import ResourceScope
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -28,7 +28,7 @@ class AccessToken(BaseObject):
         access_token: Optional[str] = None,
         expires_in: Optional[int] = None,
         token_type: Optional[AccessTokenTokenTypeField] = None,
-        restricted_to: Optional[List[FileOrFolderScope]] = None,
+        restricted_to: Optional[List[ResourceScope]] = None,
         refresh_token: Optional[str] = None,
         issued_token_type: Optional[AccessTokenIssuedTokenTypeField] = None,
         **kwargs
@@ -43,7 +43,7 @@ class AccessToken(BaseObject):
                 :param restricted_to: The permissions that this access token permits,
         providing a list of resources (files, folders, etc)
         and the scopes permitted for each of those resources., defaults to None
-                :type restricted_to: Optional[List[FileOrFolderScope]], optional
+                :type restricted_to: Optional[List[ResourceScope]], optional
                 :param refresh_token: The refresh token for this access token, which can be used
         to request a new access token when the current one expires., defaults to None
                 :type refresh_token: Optional[str], optional

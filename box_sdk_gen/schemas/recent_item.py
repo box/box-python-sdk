@@ -2,8 +2,6 @@ from enum import Enum
 
 from typing import Optional
 
-from typing import Union
-
 from box_sdk_gen.internal.base_object import BaseObject
 
 from box_sdk_gen.schemas.file_full import FileFull
@@ -11,6 +9,8 @@ from box_sdk_gen.schemas.file_full import FileFull
 from box_sdk_gen.schemas.folder_full import FolderFull
 
 from box_sdk_gen.schemas.web_link import WebLink
+
+from box_sdk_gen.schemas.recent_item_resource import RecentItemResource
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -30,7 +30,7 @@ class RecentItem(BaseObject):
         self,
         *,
         type: Optional[str] = None,
-        item: Optional[Union[FileFull, FolderFull, WebLink]] = None,
+        item: Optional[RecentItemResource] = None,
         interaction_type: Optional[RecentItemInteractionTypeField] = None,
         interacted_at: Optional[DateTime] = None,
         interaction_shared_link: Optional[str] = None,

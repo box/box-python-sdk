@@ -14,9 +14,13 @@ from box_sdk_gen.serialization.json import deserialize
 
 from box_sdk_gen.internal.utils import to_string
 
-from typing import Union
-
 from box_sdk_gen.networking.fetch_options import ResponseFormat
+
+from box_sdk_gen.schemas.search_results import SearchResults
+
+from box_sdk_gen.schemas.search_results_with_shared_links import (
+    SearchResultsWithSharedLinks,
+)
 
 from box_sdk_gen.schemas.metadata_query_results import MetadataQueryResults
 
@@ -24,11 +28,7 @@ from box_sdk_gen.schemas.client_error import ClientError
 
 from box_sdk_gen.schemas.metadata_query import MetadataQuery
 
-from box_sdk_gen.schemas.search_results import SearchResults
-
-from box_sdk_gen.schemas.search_results_with_shared_links import (
-    SearchResultsWithSharedLinks,
-)
+from box_sdk_gen.schemas.search_results_response import SearchResultsResponse
 
 from box_sdk_gen.schemas.metadata_filter import MetadataFilter
 
@@ -269,7 +269,7 @@ class SearchManager:
         deleted_user_ids: Optional[List[str]] = None,
         deleted_at_range: Optional[List[str]] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
-    ) -> Union[SearchResults, SearchResultsWithSharedLinks]:
+    ) -> SearchResultsResponse:
         """
                 Searches for files, folders, web links, and shared files across the
 
@@ -332,7 +332,7 @@ class SearchManager:
         Date ranges are defined as comma separated RFC3339
         timestamps.
 
-        If the the start date is omitted (`,2014-05-17T13:35:01-07:00`)
+        If the start date is omitted (`,2014-05-17T13:35:01-07:00`)
         anything created before the end date will be returned.
 
         If the end date is omitted (`2014-05-15T13:35:01-07:00,`) the
@@ -500,7 +500,7 @@ class SearchManager:
 
         Date ranges are defined as comma separated RFC3339 timestamps.
 
-        If the the start date is omitted (`2014-05-17T13:35:01-07:00`),
+        If the start date is omitted (`2014-05-17T13:35:01-07:00`),
         anything deleted before the end date will be returned.
 
         If the end date is omitted (`2014-05-15T13:35:01-07:00`),
@@ -555,6 +555,4 @@ class SearchManager:
                 network_session=self.network_session,
             )
         )
-        return deserialize(
-            response.data, Union[SearchResults, SearchResultsWithSharedLinks]
-        )
+        return deserialize(response.data, SearchResultsResponse)

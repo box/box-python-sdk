@@ -71,7 +71,7 @@ client.tasks.create_task(
 - due_at `Optional[DateTime]`
   - Defines when the task is due. Defaults to `null` if not provided.
 - completion_rule `Optional[CreateTaskCompletionRule]`
-  - Defines which assignees need to complete this task before the task is considered completed. _ `all_assignees` (default) requires all assignees to review or approve the the task in order for it to be considered completed. _ `any_assignee` accepts any one assignee to review or approve the the task in order for it to be considered completed.
+  - Defines which assignees need to complete this task before the task is considered completed. _ `all_assignees` (default) requires all assignees to review or approve the task in order for it to be considered completed. _ `any_assignee` accepts any one assignee to review or approve the task in order for it to be considered completed.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
@@ -136,7 +136,7 @@ client.tasks.update_task_by_id(task.id, message="updated message")
 - due_at `Optional[DateTime]`
   - When the task is due at.
 - completion_rule `Optional[UpdateTaskByIdCompletionRule]`
-  - Defines which assignees need to complete this task before the task is considered completed. _ `all_assignees` (default) requires all assignees to review or approve the the task in order for it to be considered completed. _ `any_assignee` accepts any one assignee to review or approve the the task in order for it to be considered completed.
+  - Defines which assignees need to complete this task before the task is considered completed. _ `all_assignees` (default) requires all assignees to review or approve the task in order for it to be considered completed. _ `any_assignee` accepts any one assignee to review or approve the task in order for it to be considered completed.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 

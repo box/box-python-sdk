@@ -4,8 +4,6 @@ from typing import Optional
 
 from typing import List
 
-from typing import Union
-
 from box_sdk_gen.internal.base_object import BaseObject
 
 from box_sdk_gen.schemas.file_full import FileFull
@@ -13,6 +11,8 @@ from box_sdk_gen.schemas.file_full import FileFull
 from box_sdk_gen.schemas.folder_full import FolderFull
 
 from box_sdk_gen.schemas.web_link import WebLink
+
+from box_sdk_gen.schemas.search_result_item import SearchResultItem
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -31,7 +31,7 @@ class SearchResults(BaseObject):
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         type: SearchResultsTypeField = SearchResultsTypeField.SEARCH_RESULTS_ITEMS,
-        entries: Optional[List[Union[FileFull, FolderFull, WebLink]]] = None,
+        entries: Optional[List[SearchResultItem]] = None,
         **kwargs
     ):
         """
@@ -49,7 +49,7 @@ class SearchResults(BaseObject):
                 :param type: Specifies the response as search result items without shared links., defaults to SearchResultsTypeField.SEARCH_RESULTS_ITEMS
                 :type type: SearchResultsTypeField, optional
                 :param entries: The search results for the query provided., defaults to None
-                :type entries: Optional[List[Union[FileFull, FolderFull, WebLink]]], optional
+                :type entries: Optional[List[SearchResultItem]], optional
         """
         super().__init__(**kwargs)
         self.total_count = total_count

@@ -2,8 +2,6 @@ from enum import Enum
 
 from typing import Optional
 
-from typing import Union
-
 from box_sdk_gen.schemas.integration_mapping_base import IntegrationMappingBaseTypeField
 
 from box_sdk_gen.schemas.integration_mapping_base import IntegrationMappingBase
@@ -26,7 +24,7 @@ class IntegrationMappingTeamsIntegrationTypeField(str, Enum):
 class IntegrationMappingTeams(IntegrationMappingBase):
     def __init__(
         self,
-        partner_item: Union[IntegrationMappingPartnerItemTeams],
+        partner_item: IntegrationMappingPartnerItemTeams,
         box_item: FolderReference,
         id: str,
         *,
@@ -39,7 +37,7 @@ class IntegrationMappingTeams(IntegrationMappingBase):
     ):
         """
                 :param partner_item: Mapped item object for Teams.
-                :type partner_item: Union[IntegrationMappingPartnerItemTeams]
+                :type partner_item: IntegrationMappingPartnerItemTeams
                 :param id: A unique identifier of a folder mapping
         (part of a composite key together
         with `integration_type`).

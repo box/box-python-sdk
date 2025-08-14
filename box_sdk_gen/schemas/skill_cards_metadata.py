@@ -2,8 +2,6 @@ from typing import Optional
 
 from typing import List
 
-from typing import Union
-
 from typing import Dict
 
 from box_sdk_gen.internal.base_object import BaseObject
@@ -15,6 +13,8 @@ from box_sdk_gen.schemas.timeline_skill_card import TimelineSkillCard
 from box_sdk_gen.schemas.transcript_skill_card import TranscriptSkillCard
 
 from box_sdk_gen.schemas.status_skill_card import StatusSkillCard
+
+from box_sdk_gen.schemas.skill_card import SkillCard
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -54,16 +54,7 @@ class SkillCardsMetadata(BaseObject):
         type: Optional[str] = None,
         type_version: Optional[int] = None,
         version: Optional[int] = None,
-        cards: Optional[
-            List[
-                Union[
-                    KeywordSkillCard,
-                    TimelineSkillCard,
-                    TranscriptSkillCard,
-                    StatusSkillCard,
-                ]
-            ]
-        ] = None,
+        cards: Optional[List[SkillCard]] = None,
         **kwargs
     ):
         """
@@ -88,7 +79,7 @@ class SkillCardsMetadata(BaseObject):
         a user-defined property is modified., defaults to None
                 :type version: Optional[int], optional
                 :param cards: A list of Box Skill cards that have been applied to this file., defaults to None
-                :type cards: Optional[List[Union[KeywordSkillCard, TimelineSkillCard, TranscriptSkillCard, StatusSkillCard]]], optional
+                :type cards: Optional[List[SkillCard]], optional
         """
         super().__init__(**kwargs)
         self.can_edit = can_edit

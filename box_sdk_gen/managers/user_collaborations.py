@@ -369,7 +369,7 @@ class UserCollaborationsManager:
                 :param is_access_only: If set to `true`, collaborators have access to
         shared items, but such items won't be visible in the
         All Files list. Additionally, collaborators won't
-        see the the path to the root folder for the
+        see the path to the root folder for the
         shared item., defaults to None
                 :type is_access_only: Optional[bool], optional
                 :param can_view_path: Determines if the invited users can see the entire parent path to

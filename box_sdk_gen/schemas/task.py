@@ -68,9 +68,9 @@ class Task(BaseObject):
         is considered completed.
 
         * `all_assignees` requires all assignees to review or
-        approve the the task in order for it to be considered completed.
+        approve the task in order for it to be considered completed.
         * `any_assignee` accepts any one assignee to review or
-        approve the the task in order for it to be considered completed., defaults to None
+        approve the task in order for it to be considered completed., defaults to None
                 :type completion_rule: Optional[TaskCompletionRuleField], optional
         """
         super().__init__(**kwargs)

@@ -349,7 +349,7 @@ class FileVersionsManager:
                 top of the versions history. The file will have the exact same contents
 
 
-                as the older version, with the the same hash digest, `etag`, and
+                as the older version, with the same hash digest, `etag`, and
 
 
                 name as the original.
