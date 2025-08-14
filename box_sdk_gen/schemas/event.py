@@ -4,12 +4,6 @@ from box_sdk_gen.internal.base_object import BaseObject
 
 from typing import Optional
 
-from typing import Union
-
-from typing import Dict
-
-from box_sdk_gen.schemas.user_mini import UserMini
-
 from box_sdk_gen.schemas.user import User
 
 from box_sdk_gen.schemas.event_source import EventSource
@@ -19,6 +13,10 @@ from box_sdk_gen.schemas.file import File
 from box_sdk_gen.schemas.folder import Folder
 
 from box_sdk_gen.schemas.app_item_event_source import AppItemEventSource
+
+from box_sdk_gen.schemas.user_mini import UserMini
+
+from box_sdk_gen.schemas.event_source_resource import EventSourceResource
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -203,9 +201,7 @@ class Event(BaseObject):
         created_by: Optional[UserMini] = None,
         event_type: Optional[EventEventTypeField] = None,
         session_id: Optional[str] = None,
-        source: Optional[
-            Union[User, EventSource, File, Folder, Dict, AppItemEventSource]
-        ] = None,
+        source: Optional[EventSourceResource] = None,
         additional_details: Optional[EventAdditionalDetailsField] = None,
         **kwargs
     ):

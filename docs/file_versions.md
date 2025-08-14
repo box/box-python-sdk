@@ -162,7 +162,7 @@ promote one of the older versions to the top of the version history.
 
 This creates a new copy of the old version and puts it at the
 top of the versions history. The file will have the exact same contents
-as the older version, with the the same hash digest, `etag`, and
+as the older version, with the same hash digest, `etag`, and
 name as the original.
 
 Other properties such as comments do not get updated to their

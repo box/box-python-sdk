@@ -52,6 +52,8 @@ from box_sdk_gen.schemas.ai_studio_agent_text_gen_response import *
 
 from box_sdk_gen.schemas.ai_agent_text_gen import *
 
+from box_sdk_gen.schemas.ai_text_gen_agent import *
+
 from box_sdk_gen.schemas.ai_text_gen import *
 
 from box_sdk_gen.schemas.ai_agent_basic_text_tool import *
@@ -76,15 +78,23 @@ from box_sdk_gen.schemas.ai_studio_agent_ask import *
 
 from box_sdk_gen.schemas.ai_agent_extract_structured import *
 
+from box_sdk_gen.schemas.ai_extract_structured_agent import *
+
 from box_sdk_gen.schemas.ai_extract_structured import *
 
 from box_sdk_gen.schemas.ai_agent_extract import *
+
+from box_sdk_gen.schemas.ai_extract_agent import *
 
 from box_sdk_gen.schemas.ai_extract import *
 
 from box_sdk_gen.schemas.ai_agent_ask import *
 
+from box_sdk_gen.schemas.ai_ask_agent import *
+
 from box_sdk_gen.schemas.ai_ask import *
+
+from box_sdk_gen.schemas.ai_agent import *
 
 from box_sdk_gen.schemas.app_item import *
 
@@ -138,7 +148,9 @@ from box_sdk_gen.schemas.folder_base import *
 
 from box_sdk_gen.schemas.folder_mini import *
 
-from box_sdk_gen.schemas.file_or_folder_scope import *
+from box_sdk_gen.schemas.resource import *
+
+from box_sdk_gen.schemas.resource_scope import *
 
 from box_sdk_gen.schemas.access_token import *
 
@@ -199,6 +211,8 @@ from box_sdk_gen.schemas.metadata_error import *
 from box_sdk_gen.schemas.metadata_field_filter_date_range import *
 
 from box_sdk_gen.schemas.metadata_field_filter_float_range import *
+
+from box_sdk_gen.schemas.metadata_filter_value import *
 
 from box_sdk_gen.schemas.metadata_filter import *
 
@@ -297,6 +311,8 @@ from box_sdk_gen.schemas.timeline_skill_card import *
 from box_sdk_gen.schemas.tracking_code import *
 
 from box_sdk_gen.schemas.transcript_skill_card import *
+
+from box_sdk_gen.schemas.skill_card import *
 
 from box_sdk_gen.schemas.skill_cards_metadata import *
 
@@ -404,6 +420,8 @@ from box_sdk_gen.schemas.app_item_event_source import *
 
 from box_sdk_gen.schemas.user_collaborations import *
 
+from box_sdk_gen.schemas.collaboration_access_grantee import *
+
 from box_sdk_gen.schemas.shield_information_barrier_segment_restriction import *
 
 from box_sdk_gen.schemas.shield_information_barrier_segment_restrictions import *
@@ -450,11 +468,15 @@ from box_sdk_gen.schemas.web_link_mini import *
 
 from box_sdk_gen.schemas.web_link import *
 
+from box_sdk_gen.schemas.item import *
+
 from box_sdk_gen.schemas.items_offset_paginated import *
 
 from box_sdk_gen.schemas.items import *
 
 from box_sdk_gen.schemas.folder import *
+
+from box_sdk_gen.schemas.legal_hold_policy_assigned_item import *
 
 from box_sdk_gen.schemas.legal_hold_policy_assignment import *
 
@@ -466,27 +488,43 @@ from box_sdk_gen.schemas.file_version_legal_holds import *
 
 from box_sdk_gen.schemas.folder_full import *
 
-from box_sdk_gen.schemas.search_results import *
+from box_sdk_gen.schemas.search_result_with_shared_link_item import *
 
 from box_sdk_gen.schemas.search_result_with_shared_link import *
 
 from box_sdk_gen.schemas.search_results_with_shared_links import *
 
+from box_sdk_gen.schemas.search_result_item import *
+
+from box_sdk_gen.schemas.search_results import *
+
+from box_sdk_gen.schemas.search_results_response import *
+
+from box_sdk_gen.schemas.recent_item_resource import *
+
 from box_sdk_gen.schemas.recent_item import *
 
 from box_sdk_gen.schemas.recent_items import *
 
+from box_sdk_gen.schemas.metadata_query_result_item import *
+
 from box_sdk_gen.schemas.metadata_query_results import *
+
+from box_sdk_gen.schemas.event_source_resource import *
 
 from box_sdk_gen.schemas.event import *
 
 from box_sdk_gen.schemas.events import *
+
+from box_sdk_gen.schemas.collaboration_item import *
 
 from box_sdk_gen.schemas.collaboration import *
 
 from box_sdk_gen.schemas.collaborations_offset_paginated import *
 
 from box_sdk_gen.schemas.collaborations import *
+
+from box_sdk_gen.schemas.app_item_associated_item import *
 
 from box_sdk_gen.schemas.app_item_association import *
 

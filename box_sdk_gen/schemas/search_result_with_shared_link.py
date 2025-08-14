@@ -1,7 +1,5 @@
 from typing import Optional
 
-from typing import Union
-
 from box_sdk_gen.internal.base_object import BaseObject
 
 from box_sdk_gen.schemas.file_full import FileFull
@@ -9,6 +7,10 @@ from box_sdk_gen.schemas.file_full import FileFull
 from box_sdk_gen.schemas.folder_full import FolderFull
 
 from box_sdk_gen.schemas.web_link import WebLink
+
+from box_sdk_gen.schemas.search_result_with_shared_link_item import (
+    SearchResultWithSharedLinkItem,
+)
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -18,7 +20,7 @@ class SearchResultWithSharedLink(BaseObject):
         self,
         *,
         accessible_via_shared_link: Optional[str] = None,
-        item: Optional[Union[FileFull, FolderFull, WebLink]] = None,
+        item: Optional[SearchResultWithSharedLinkItem] = None,
         type: Optional[str] = None,
         **kwargs
     ):

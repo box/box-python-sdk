@@ -4,19 +4,21 @@ from typing import Optional
 
 from box_sdk_gen.internal.base_object import BaseObject
 
-from typing import Union
-
 from box_sdk_gen.schemas.file import File
 
 from box_sdk_gen.schemas.folder import Folder
 
 from box_sdk_gen.schemas.web_link import WebLink
 
+from box_sdk_gen.schemas.group_mini import GroupMini
+
+from box_sdk_gen.schemas.collaboration_item import CollaborationItem
+
 from box_sdk_gen.schemas.app_item import AppItem
 
-from box_sdk_gen.schemas.user_collaborations import UserCollaborations
+from box_sdk_gen.schemas.collaboration_access_grantee import CollaborationAccessGrantee
 
-from box_sdk_gen.schemas.group_mini import GroupMini
+from box_sdk_gen.schemas.user_collaborations import UserCollaborations
 
 from box_sdk_gen.schemas.terms_of_service_base import TermsOfServiceBase
 
@@ -155,9 +157,9 @@ class Collaboration(BaseObject):
         id: str,
         *,
         type: CollaborationTypeField = CollaborationTypeField.COLLABORATION,
-        item: Optional[Union[File, Folder, WebLink]] = None,
+        item: Optional[CollaborationItem] = None,
         app_item: Optional[AppItem] = None,
-        accessible_by: Optional[Union[UserCollaborations, GroupMini]] = None,
+        accessible_by: Optional[CollaborationAccessGrantee] = None,
         invite_email: Optional[str] = None,
         role: Optional[CollaborationRoleField] = None,
         expires_at: Optional[DateTime] = None,
@@ -188,7 +190,7 @@ class Collaboration(BaseObject):
                 :param is_access_only: If set to `true`, collaborators have access to
         shared items, but such items won't be visible in the
         All Files list. Additionally, collaborators won't
-        see the the path to the root folder for the
+        see the path to the root folder for the
         shared item., defaults to None
                 :type is_access_only: Optional[bool], optional
                 :param status: The status of the collaboration invitation. If the status

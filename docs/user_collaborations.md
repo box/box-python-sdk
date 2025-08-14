@@ -150,7 +150,7 @@ client.user_collaborations.create_collaboration(
 - role `CreateCollaborationRole`
   - The level of access granted.
 - is_access_only `Optional[bool]`
-  - If set to `true`, collaborators have access to shared items, but such items won't be visible in the All Files list. Additionally, collaborators won't see the the path to the root folder for the shared item.
+  - If set to `true`, collaborators have access to shared items, but such items won't be visible in the All Files list. Additionally, collaborators won't see the path to the root folder for the shared item.
 - can_view_path `Optional[bool]`
   - Determines if the invited users can see the entire parent path to the associated folder. The user will not gain privileges in any parent folder and therefore can not see content the user is not collaborated on. Be aware that this meaningfully increases the time required to load the invitee's **All Files** page. We recommend you limit the number of collaborations with `can_view_path` enabled to 1,000 per user. Only owner or co-owners can invite collaborators with a `can_view_path` of `true`. `can_view_path` can only be used for folder collaborations.
 - expires_at `Optional[DateTime]`

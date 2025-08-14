@@ -2,8 +2,6 @@ from enum import Enum
 
 from typing import Optional
 
-from typing import Union
-
 from box_sdk_gen.schemas.integration_mapping_base import IntegrationMappingBaseTypeField
 
 from box_sdk_gen.schemas.integration_mapping_base import IntegrationMappingBase
@@ -32,7 +30,7 @@ class IntegrationMappingIntegrationTypeField(str, Enum):
 class IntegrationMapping(IntegrationMappingBase):
     def __init__(
         self,
-        partner_item: Union[IntegrationMappingPartnerItemSlack],
+        partner_item: IntegrationMappingPartnerItemSlack,
         box_item: FolderMini,
         id: str,
         *,
@@ -48,7 +46,7 @@ class IntegrationMapping(IntegrationMappingBase):
     ):
         """
                 :param partner_item: Mapped item object for Slack.
-                :type partner_item: Union[IntegrationMappingPartnerItemSlack]
+                :type partner_item: IntegrationMappingPartnerItemSlack
                 :param box_item: The Box folder, to which the object from the
         partner app domain (referenced in `partner_item_id`) is mapped.
                 :type box_item: FolderMini

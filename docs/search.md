@@ -95,7 +95,7 @@ client.search.search_for_content(
 - file_extensions `Optional[List[str]]`
   - Limits the search results to any files that match any of the provided file extensions. This list is a comma-separated list of file extensions without the dots.
 - created_at_range `Optional[List[str]]`
-  - Limits the search results to any items created within a given date range. Date ranges are defined as comma separated RFC3339 timestamps. If the the start date is omitted (`,2014-05-17T13:35:01-07:00`) anything created before the end date will be returned. If the end date is omitted (`2014-05-15T13:35:01-07:00,`) the current date will be used as the end date instead.
+  - Limits the search results to any items created within a given date range. Date ranges are defined as comma separated RFC3339 timestamps. If the start date is omitted (`,2014-05-17T13:35:01-07:00`) anything created before the end date will be returned. If the end date is omitted (`2014-05-15T13:35:01-07:00,`) the current date will be used as the end date instead.
 - updated_at_range `Optional[List[str]]`
   - Limits the search results to any items updated within a given date range. Date ranges are defined as comma separated RFC3339 timestamps. If the start date is omitted (`,2014-05-17T13:35:01-07:00`) anything updated before the end date will be returned. If the end date is omitted (`2014-05-15T13:35:01-07:00,`) the current date will be used as the end date instead.
 - size_range `Optional[List[int]]`
@@ -129,13 +129,13 @@ client.search.search_for_content(
 - deleted_user_ids `Optional[List[str]]`
   - Limits the search results to items that were deleted by the given list of users, defined as a list of comma separated user IDs. The `trash_content` parameter needs to be set to `trashed_only`. If searching in trash is not performed, an empty result set is returned. The items need to be owned or shared with the currently authenticated user for them to show up in the search results. If the user does not have access to any files owned by any of the users, an empty result set is returned. Data available from 2023-02-01 onwards.
 - deleted_at_range `Optional[List[str]]`
-  - Limits the search results to any items deleted within a given date range. Date ranges are defined as comma separated RFC3339 timestamps. If the the start date is omitted (`2014-05-17T13:35:01-07:00`), anything deleted before the end date will be returned. If the end date is omitted (`2014-05-15T13:35:01-07:00`), the current date will be used as the end date instead. The `trash_content` parameter needs to be set to `trashed_only`. If searching in trash is not performed, then an empty result is returned. Data available from 2023-02-01 onwards.
+  - Limits the search results to any items deleted within a given date range. Date ranges are defined as comma separated RFC3339 timestamps. If the start date is omitted (`2014-05-17T13:35:01-07:00`), anything deleted before the end date will be returned. If the end date is omitted (`2014-05-15T13:35:01-07:00`), the current date will be used as the end date instead. The `trash_content` parameter needs to be set to `trashed_only`. If searching in trash is not performed, then an empty result is returned. Data available from 2023-02-01 onwards.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
 ### Returns
 
-This function returns a value of type `Union[SearchResults, SearchResultsWithSharedLinks]`.
+This function returns a value of type `SearchResultsResponse`.
 
 Returns a collection of search results. If there are no matching
 search results, the `entries` array will be empty.

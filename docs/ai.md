@@ -44,7 +44,7 @@ client.ai.create_ai_ask(
   - The history of prompts and answers previously passed to the LLM. This provides additional context to the LLM in generating the response.
 - include_citations `Optional[bool]`
   - A flag to indicate whether citations should be returned.
-- ai_agent `Optional[Union[AiAgentAsk, AiAgentReference]]`
+- ai_agent `Optional[AiAskAgent]`
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
@@ -99,7 +99,7 @@ client.ai.create_ai_text_gen(
   - The items to be processed by the LLM, often files. The array can include **exactly one** element. **Note**: Box AI handles documents with text representations up to 1MB in size. If the file size exceeds 1MB, the first 1MB of text representation will be processed.
 - dialogue_history `Optional[List[AiDialogueHistory]]`
   - The history of prompts and answers previously passed to the LLM. This parameter provides the additional context to the LLM when generating the response.
-- ai_agent `Optional[Union[AiAgentReference, AiAgentTextGen]]`
+- ai_agent `Optional[AiTextGenAgent]`
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
@@ -137,7 +137,7 @@ client.ai.get_ai_agent_default_config(GetAiAgentDefaultConfigMode.ASK, language=
 
 ### Returns
 
-This function returns a value of type `Union[AiAgentAsk, AiAgentTextGen, AiAgentExtract, AiAgentExtractStructured]`.
+This function returns a value of type `AiAgent`.
 
 A successful response including the default agent configuration.
 This response can be one of the following four objects:
@@ -175,7 +175,7 @@ client.ai.create_ai_extract(
   - The prompt provided to a Large Language Model (LLM) in the request. The prompt can be up to 10000 characters long and it can be an XML or a JSON schema.
 - items `List[AiItemBase]`
   - The items that LLM will process. Currently, you can use files only.
-- ai_agent `Optional[Union[AiAgentReference, AiAgentExtract]]`
+- ai_agent `Optional[AiExtractAgent]`
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
@@ -256,7 +256,7 @@ client.ai.create_ai_extract_structured(
   - The metadata template containing the fields to extract. For your request to work, you must provide either `metadata_template` or `fields`, but not both.
 - fields `Optional[List[CreateAiExtractStructuredFields]]`
   - The fields to be extracted from the provided items. For your request to work, you must provide either `metadata_template` or `fields`, but not both.
-- ai_agent `Optional[Union[AiAgentReference, AiAgentExtractStructured]]`
+- ai_agent `Optional[AiExtractStructuredAgent]`
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 

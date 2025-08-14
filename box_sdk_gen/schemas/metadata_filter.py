@@ -4,10 +4,6 @@ from typing import Optional
 
 from typing import Dict
 
-from typing import Union
-
-from typing import List
-
 from box_sdk_gen.internal.base_object import BaseObject
 
 from box_sdk_gen.schemas.metadata_field_filter_float_range import (
@@ -17,6 +13,8 @@ from box_sdk_gen.schemas.metadata_field_filter_float_range import (
 from box_sdk_gen.schemas.metadata_field_filter_date_range import (
     MetadataFieldFilterDateRange,
 )
+
+from box_sdk_gen.schemas.metadata_filter_value import MetadataFilterValue
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -42,18 +40,7 @@ class MetadataFilter(BaseObject):
         *,
         scope: Optional[MetadataFilterScopeField] = None,
         template_key: Optional[str] = None,
-        filters: Optional[
-            Dict[
-                str,
-                Union[
-                    str,
-                    float,
-                    List[str],
-                    MetadataFieldFilterFloatRange,
-                    MetadataFieldFilterDateRange,
-                ],
-            ]
-        ] = None,
+        filters: Optional[Dict[str, MetadataFilterValue]] = None,
         **kwargs
     ):
         """
@@ -82,7 +69,7 @@ class MetadataFilter(BaseObject):
         results by. When more than one field is specified, the query
         performs a logical `AND` to ensure that the instance of the
         template matches each of the fields specified., defaults to None
-                :type filters: Optional[Dict[str, Union[str, float, List[str], MetadataFieldFilterFloatRange, MetadataFieldFilterDateRange]]], optional
+                :type filters: Optional[Dict[str, MetadataFilterValue]], optional
         """
         super().__init__(**kwargs)
         self.scope = scope

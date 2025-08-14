@@ -109,7 +109,7 @@ any specific fields.
 Deletes a file, either permanently or by moving it to
 the trash.
 
-The the enterprise settings determine whether the item will
+The enterprise settings determine whether the item will
 be permanently deleted from Box or moved to the trash.
 
 This operation is performed by calling function `delete_file_by_id`.

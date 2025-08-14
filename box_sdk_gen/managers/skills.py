@@ -2,8 +2,6 @@ from enum import Enum
 
 from typing import Optional
 
-from typing import Union
-
 from box_sdk_gen.internal.base_object import BaseObject
 
 from typing import List
@@ -16,12 +14,6 @@ from box_sdk_gen.serialization.json import deserialize
 
 from box_sdk_gen.serialization.json import serialize
 
-from box_sdk_gen.networking.fetch_options import ResponseFormat
-
-from box_sdk_gen.schemas.skill_cards_metadata import SkillCardsMetadata
-
-from box_sdk_gen.schemas.client_error import ClientError
-
 from box_sdk_gen.schemas.keyword_skill_card import KeywordSkillCard
 
 from box_sdk_gen.schemas.timeline_skill_card import TimelineSkillCard
@@ -29,6 +21,14 @@ from box_sdk_gen.schemas.timeline_skill_card import TimelineSkillCard
 from box_sdk_gen.schemas.transcript_skill_card import TranscriptSkillCard
 
 from box_sdk_gen.schemas.status_skill_card import StatusSkillCard
+
+from box_sdk_gen.networking.fetch_options import ResponseFormat
+
+from box_sdk_gen.schemas.skill_cards_metadata import SkillCardsMetadata
+
+from box_sdk_gen.schemas.client_error import ClientError
+
+from box_sdk_gen.schemas.skill_card import SkillCard
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -61,14 +61,7 @@ class UpdateBoxSkillCardsOnFileRequestBody(BaseObject):
         *,
         op: Optional[UpdateBoxSkillCardsOnFileRequestBodyOpField] = None,
         path: Optional[str] = None,
-        value: Optional[
-            Union[
-                KeywordSkillCard,
-                TimelineSkillCard,
-                TranscriptSkillCard,
-                StatusSkillCard,
-            ]
-        ] = None,
+        value: Optional[SkillCard] = None,
         **kwargs
     ):
         """
@@ -94,24 +87,10 @@ class UpdateAllSkillCardsOnFileStatus(str, Enum):
 
 
 class UpdateAllSkillCardsOnFileMetadata(BaseObject):
-    def __init__(
-        self,
-        *,
-        cards: Optional[
-            List[
-                Union[
-                    KeywordSkillCard,
-                    TimelineSkillCard,
-                    TranscriptSkillCard,
-                    StatusSkillCard,
-                ]
-            ]
-        ] = None,
-        **kwargs
-    ):
+    def __init__(self, *, cards: Optional[List[SkillCard]] = None, **kwargs):
         """
         :param cards: A list of Box Skill cards to apply to this file., defaults to None
-        :type cards: Optional[List[Union[KeywordSkillCard, TimelineSkillCard, TranscriptSkillCard, StatusSkillCard]]], optional
+        :type cards: Optional[List[SkillCard]], optional
         """
         super().__init__(**kwargs)
         self.cards = cards
@@ -236,14 +215,7 @@ class SkillsManager:
     def create_box_skill_cards_on_file(
         self,
         file_id: str,
-        cards: List[
-            Union[
-                KeywordSkillCard,
-                TimelineSkillCard,
-                TranscriptSkillCard,
-                StatusSkillCard,
-            ]
-        ],
+        cards: List[SkillCard],
         *,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> SkillCardsMetadata:
@@ -259,7 +231,7 @@ class SkillsManager:
         Example: "12345"
                 :type file_id: str
                 :param cards: A list of Box Skill cards to apply to this file.
-                :type cards: List[Union[KeywordSkillCard, TimelineSkillCard, TranscriptSkillCard, StatusSkillCard]]
+                :type cards: List[SkillCard]
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
                 :type extra_headers: Optional[Dict[str, Optional[str]]], optional
         """

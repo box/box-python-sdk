@@ -8,13 +8,13 @@ from typing import List
 
 from typing import Dict
 
-from typing import Union
-
-from box_sdk_gen.schemas.ai_item_base import AiItemBase
-
 from box_sdk_gen.schemas.ai_agent_reference import AiAgentReference
 
 from box_sdk_gen.schemas.ai_agent_extract_structured import AiAgentExtractStructured
+
+from box_sdk_gen.schemas.ai_item_base import AiItemBase
+
+from box_sdk_gen.schemas.ai_extract_structured_agent import AiExtractStructuredAgent
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -114,7 +114,7 @@ class AiExtractStructured(BaseObject):
         *,
         metadata_template: Optional[AiExtractStructuredMetadataTemplateField] = None,
         fields: Optional[List[AiExtractStructuredFieldsField]] = None,
-        ai_agent: Optional[Union[AiAgentReference, AiAgentExtractStructured]] = None,
+        ai_agent: Optional[AiExtractStructuredAgent] = None,
         **kwargs
     ):
         """
