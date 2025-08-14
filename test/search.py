@@ -64,8 +64,6 @@ from box_sdk_gen.schemas.search_results_with_shared_links import (
     SearchResultsWithSharedLinks,
 )
 
-from box_sdk_gen.schemas.metadata_filter_value import MetadataFilterValue
-
 client: BoxClient = get_default_client()
 
 
@@ -216,7 +214,7 @@ def testMetadataFilters():
             'multiSelectField': ['multiSelectValue1', 'multiSelectValue2'],
         },
     )
-    search_filters: Dict[str, MetadataFilterValue] = {
+    search_filters: Dict[str, str] = {
         'stringField': 'stringValue',
         'dateField': MetadataFieldFilterDateRange(
             lt=date_time_from_string('2035-01-01T00:00:00Z'),
