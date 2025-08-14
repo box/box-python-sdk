@@ -1,4 +1,4 @@
-# Migration guide from `boxsdk` to `box-sdk-gen`
+# Migration guide from v3 to v10 version of `boxsdk`
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -36,35 +36,38 @@
 
 ## Introduction
 
-The new `box-sdk-gen` SDK library, which helps Python developers to conveniently integrate with Box API.
-In the contrary to the previous library (`boxsdk`), it is not manually maintained, but auto-generated
+The v10 release of Box Python SDK library helps Python developers to conveniently integrate with Box API.
+In the contrary to the previous version (v3 or lower), it is not manually maintained, but auto-generated
 based on Open API Specification. This means you can leverage the most up-to-date Box API features in your
-applications without delay. More information and benefits of using the new can be found in the
-[README](https://github.com/box/box-python-sdk-gen/blob/main/README.md) file.
+applications without delay. We introduced this major version bump to reflect the significant codebase changes
+and to align with other Box SDKs, which will also adopt generated code starting from their v10 releases.
+More information and benefits of using the new can be found in the
+[README](https://github.com/box/box-python-sdk/blob/main/README.md) file.
 
 ## Installation
 
-To install a new Box Python SDK GENERATED use command:
+To install v10 version of Box Python SDK use command:
 
 ```console
-pip install box-sdk-gen
+pip install box-sdk-gen>=10
 ```
 
-The new Box Python SDK GENERATED library could be used in the same project along with the legacy one.
-If you want to use a feature available only in the new SDK, you don't need to necessarily migrate all your code
-to use Box Python SDK GENERATED at once. You can use a new feature from the new library,
-while keeping the rest of your code unchanged. Note that it may be required to alias some imported names
-from the new SDK to avoid conflicts with the old one. However, we recommend to fully migrate to the new SDK eventually.
+Soon we are going to introduce v4 version of Box Python SDK that will combine package `boxsdk` from
+v3 and `box_sdk_gen` from v10 of the SDK, so that code from both versions could be used in the same project.
+If you would like to use a feature available only in the new SDK, you won't need to necessarily migrate all your code
+to use generated SDK at once. You will be able to use a new feature from the `box_sdk_gen` package,
+while keeping the rest of your code unchanged. Note that it may be required to use aliases for some of the imported names
+to avoid conflicts between two packages. However, we recommend to fully migrate to the v10 of the SDK eventually.
 
 ## Key differences
 
 ### Manager approach
 
-The main difference between the old SDK and the new one is the way how API methods are aggregated into objects.
+The main difference between the manual v3 and v10 version of Box Python SDK is the way how API methods are aggregated into objects.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
-Firstly, in the old SDK to be able to perform any action on an API object, e.g. `User`, you first had to create its class.
+Firstly, in the v3 release to be able to perform any action on an API object, e.g. `User`, you first had to create its class.
 To do it is required to call:
 
 ```python
@@ -83,9 +86,9 @@ Then, you could perform any action on created class, which will affect the user,
 updated_user = user.update_info(data={'name': 'New User Name'})
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
-In the new SDK the API methods are grouped into dedicated manager classes, e.g. `User` object
+In the v10 release, the API methods are grouped into dedicated manager classes, e.g. `User` object
 has dedicated `UserManager` class. Each manager class instance is available in `BoxClient` object.
 The fields storing references to the managers are named in the plural form of the resource that the
 manager handles - `client.users` for `UsersManager`. If you want to perform any operation
@@ -113,9 +116,9 @@ updated_user = client.users.update_user_by_id(user_id=user.id, name='New User Na
 
 ### Explicitly defined schemas
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
-In the old SDK there were no data types explicitly defined -
+In v3 release, there were no data types explicitly defined -
 the responses were dynamically mapped into classes in the runtime. For example, if you get information about a file:
 
 ```python
@@ -125,9 +128,9 @@ file = client.file(file_id='12345678').get()
 you couldn't be sure which fields to expect in the response object until the runtime,
 because `File` class doesn't have any predefined fields.
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
-In the new SDK the data classe are defined in `schemas` module, so you know, which fields to expect before
+In v10 release, the data classes are defined in `schemas` module, so you know, which fields to expect before
 actually making a call. For example `FileBase` class is defined this way:
 
 ```python
@@ -141,12 +144,12 @@ class FileBase(BaseObject):
 
 ### Immutable design
 
-The new SDK is designed to be mostly immutable. This means that methods,
-which used to modify the existing object in old SDK now return a new instance of the class with the modified state.
+The new v10 version of Box Python SDK is designed to be mostly immutable. This means that methods,
+which used to modify the existing object in v3 release of SDK now return a new instance of the class with the modified state.
 This design pattern is used to avoid side effects and make the code more predictable and easier to reason about.
 Methods, which returns a new modified instance of an object, will always have a prefix `with_` in their names, e.g.
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
 ```python
 from box_sdk_gen import BoxClient
@@ -156,12 +159,12 @@ as_user_client: BoxClient = client.with_as_user_header('USER_ID')
 
 ## Authentication
 
-The Box Python SDK GENERATED library offers the same authentication methods as the legacy one.
+The v10 release Box Python SDK library offers the same authentication methods as v3 release.
 Let's see the differences of their usage:
 
 ### Developer Token
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
 ```python
 from boxsdk import Client, OAuth2
@@ -174,10 +177,10 @@ auth = OAuth2(
 client = Client(auth)
 ```
 
-The new SDK provides a convenient `BoxDeveloperTokenAuth`, which allows authenticating
+The v10 version, provides a convenient `BoxDeveloperTokenAuth`, which allows authenticating
 using developer token without necessity to provide a Client ID and Client Secret
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
 ```python
 from box_sdk_gen import BoxClient, BoxDeveloperTokenAuth
@@ -190,7 +193,7 @@ client = BoxClient(auth=auth)
 
 #### Using JWT configuration file
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
 The static method, which reads the JWT configuration file has been changed:
 
@@ -201,7 +204,7 @@ auth = JWTAuth.from_settings_file('/path/to/config.json')
 client = Client(auth)
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
 ```python
 from box_sdk_gen import BoxClient, BoxJWTAuth, JWTConfig
@@ -213,9 +216,9 @@ client = BoxClient(auth=auth)
 
 #### Providing JWT configuration manually
 
-Some params in `JWTConfig` constructor have slightly different names than one in old `JWTAuth` class.
+Some params in `JWTConfig` constructor have slightly different names than one in the old `JWTAuth` class.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
 ```python
 from boxsdk import JWTAuth
@@ -232,7 +235,7 @@ auth = JWTAuth(
 )
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
 ```python
 from box_sdk_gen import BoxJWTAuth, JWTConfig, JwtAlgorithm
@@ -252,12 +255,12 @@ auth = BoxJWTAuth(config=jwt_config)
 
 #### Authenticate user
 
-In old SDK method for user authentication was named `authenticate_user(self, user: Union[str, 'User'] = None) -> str`
+In v3 release, method for user authentication was named `authenticate_user(self, user: Union[str, 'User'] = None) -> str`
 and was accepting either user object or user id. If none provided, user ID stored in `JWTAuth` class instance was used.
 The `authenticate_user` method was modifying existing `BoxJWTAuth` class, which was exchanging the existing token with
 the one with the user access.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
 ```python
 auth.authenticate_user(user)
@@ -269,9 +272,9 @@ or
 auth.authenticate_user('USER_ID')
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
-In new SDK, to authenticate as user you need to call
+In new v10 release, to authenticate as user you need to call
 `with_user_subject(self, user_id: str, *, token_storage: TokenStorage = None) -> BoxJWTAuth` method with id of the user
 to authenticate. The method returns a new instance of `BoxJWTAuth` class, which will perform authentication call
 in scope of the user on the first API call. The `token_storage` parameter is optional and allows to provide a custom
@@ -288,10 +291,10 @@ user_client: BoxClient = BoxClient(auth=user_auth)
 
 #### Obtaining Service Account token
 
-To authenticate as enterprise, the only difference between the old and the new SDK,
+To authenticate as enterprise, the only difference between the versions of SDK,
 is using the `CCGConfig` as a middle step.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
 ```python
 from boxsdk import CCGAuth, Client
@@ -305,7 +308,7 @@ auth = CCGAuth(
 client = Client(auth)
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
 ```python
 from box_sdk_gen import BoxClient, BoxCCGAuth, CCGConfig
@@ -321,10 +324,10 @@ client = BoxClient(auth=auth)
 
 #### Obtaining User token
 
-In old SDK `CCGAuth` was accepting both user object and User ID. In the box-sdk-gen the `BoxCCGAuth` constructor accepts
+In v3 `CCGAuth` was accepting both user object and User ID. In v10 the `BoxCCGAuth` constructor accepts
 only User ID instead.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
 ```python
 from boxsdk import CCGAuth
@@ -336,7 +339,7 @@ auth = CCGAuth(
 )
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
 ```python
 from box_sdk_gen import BoxCCGAuth, CCGConfig
@@ -351,10 +354,10 @@ auth = BoxCCGAuth(config=ccg_config)
 
 ### Switching between Service Account and User
 
-In old SDK there were two methods which allowed to switch between using service and user account. Calling these methods
+In v3 release, there were two methods which allowed to switch between using service and user account. Calling these methods
 were modifying existing state of `CCGAuth` class, which was fetching a new token on the next API call.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
 ```python
 auth.authenticate_enterprise('ENTERPRISE_ID')
@@ -364,13 +367,13 @@ auth.authenticate_enterprise('ENTERPRISE_ID')
 auth.authenticate_user('USER_ID')
 ```
 
-In the new SDK, to keep the immutability design, the methods switching authenticated subject were replaced with methods
+In the new release, to keep the immutability design, the methods switching authenticated subject were replaced with methods
 returning a new instance of `BoxCCGAuth` class. The new instance will fetch a new token on the next API call.
 The new auth instance can be used to create a new client instance. You can also specify `token_storage` parameter
 to provide a custom token storage for the new instance.
 The old instance of `BoxCCGAuth` class will remain unchanged and will still use the old token.
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
 ```python
 from box_sdk_gen import BoxCCGAuth, BoxClient
@@ -391,7 +394,7 @@ user and enterprise object too.
 
 #### Get Authorization URL
 
-To get authorization url in the new SDK, you need to first create the `BoxOAuth` class (previously `OAuth2`) using
+To get authorization url in the v10 version of SDK, you need to first create the `BoxOAuth` class (previously `OAuth2`) using
 `OAuthConfig` class. Then to get authorization url, call
 `get_authorize_url(self, *, options: GetAuthorizeUrlOptions = None) -> str` instead of
 `get_authorization_url(self, redirect_url: Optional[str]) -> Tuple[str, str]`. Note that this method
@@ -399,7 +402,7 @@ now accepts the instance of `GetAuthorizeUrlOptions` class, which allows specify
 The new function returns only the authentication url string, while the old one returns tuple of
 authentication url and csrf_token.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
 ```python
 from boxsdk import OAuth2
@@ -412,7 +415,7 @@ auth = OAuth2(
 auth_url, csrf_token = auth.get_authorization_url('http://YOUR_REDIRECT_URL')
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
 ```python
 from box_sdk_gen import BoxOAuth, OAuthConfig, GetAuthorizeUrlOptions
@@ -434,7 +437,7 @@ The signature of method for authenticating with obtained auth code got changed f
 The method now returns an AccessToken object with `access_token` and `refresh_token` fields,
 while the old one was returning a tuple of access token and refresh token.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
 ```python
 from boxsdk import Client
@@ -442,7 +445,7 @@ access_token, refresh_token = auth.authenticate('YOUR_AUTH_CODE')
 client = Client(auth)
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
 ```python
 from box_sdk_gen import BoxClient, AccessToken
@@ -453,14 +456,14 @@ client = BoxClient(auth)
 
 ### Store token and retrieve token callbacks
 
-In old SDK you could provide a `store_tokens` callback method to an authentication class, which was called each time
+In v3 release you could provide a `store_tokens` callback method to an authentication class, which was called each time
 an access token was refreshed. It could be used to save your access token to a custom token storage
 and allow to reuse this token later.
-What is more, old SDK allowed also to provide `retrieve_tokens` callback, which is called each time the SDK needs to use
+What is more, v3 release allowed also to provide `retrieve_tokens` callback, which is called each time the SDK needs to use
 token to perform an API call. To provide that, it was required to use `CooperativelyManagedOAuth2` and provide
 `retrieve_tokens` callback method to its constructor.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
 ```python
 from typing import Tuple
@@ -486,11 +489,11 @@ access_token, refresh_token = auth.authenticate('YOUR_AUTH_CODE')
 client = Client(auth)
 ```
 
-In the new SDK you can define your own class delegated for storing and retrieving a token. It has to inherit from
+In the new release you can define your own class delegated for storing and retrieving a token. It has to inherit from
 `TokenStorage` and implement all of its abstract methods. Next step would be to pass an instance of this class to the
 AuthConfig constructor.
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
 ```python
 from typing import Optional
@@ -535,10 +538,10 @@ auth = BoxOAuth(
 
 ### Downscope token
 
-The process of downscoping token in the new SDK is similar to the old one. The main difference is that the new method
+The process of downscoping token in the new release is similar to the old one. The main difference is that the new method
 accepts the full resource path instead of file object.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
 ```python
 from boxsdk import Client, OAuth2
@@ -553,7 +556,7 @@ downscoped_auth = OAuth2(
 downscoped_client = Client(downscoped_auth)
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
 ```python
 from box_sdk_gen import BoxDeveloperTokenAuth, AccessToken, BoxClient
@@ -569,16 +572,16 @@ client = BoxClient(auth=downscoped_auth)
 
 ### Revoke token
 
-To revoke current client's tokens in the new SDK, you need to call `revoke_token` method of the auth class instead of
+To revoke current client's tokens in the v10 release, you need to call `revoke_token` method of the auth class instead of
 `revoke` method.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
 ```python
 oauth.revoke()
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
 ```python
 client.auth.revoke_token()
@@ -592,9 +595,9 @@ The As-User header is used by enterprise admins to make API calls on behalf of t
 This requires the API request to pass an `As-User: USER-ID` header. The following examples assume that the client has
 been instantiated with an access token with appropriate privileges to make As-User calls.
 
-In old SDK you could call client `as_user(self, user: User)` method to create a new client to impersonate the provided user.
+In v3 you could call client `as_user(self, user: User)` method to create a new client to impersonate the provided user.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
 ```python
 from boxsdk import Client
@@ -603,9 +606,9 @@ user_to_impersonate = client.user(user_id='USER_ID')
 user_client: Client = client.as_user(user_to_impersonate)
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
-In the new SDK the method was renamed to `with_as_user_header(self, user_id: str) -> BoxClient`
+In v10 the method was renamed to `with_as_user_header(self, user_id: str) -> BoxClient`
 and returns a new instance of `BoxClient` class with the As-User header appended to all API calls made by the client.
 The method accepts only user id as a parameter.
 
@@ -627,9 +630,9 @@ new_client: BoxClient = client.with_extra_headers(extra_headers={'customHeader':
 
 ### Custom Base URLs
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
-In old SDK you could specify the custom base URLs, which will be used for API calls made by setting
+In manual v3 release, you could specify the custom base URLs, which will be used for API calls made by setting
 the new values of static variables of the `API` class.
 
 ```python
@@ -640,9 +643,9 @@ API.OAUTH2_API_URL = 'https://my-company.com/oauth2'
 API.UPLOAD_URL = 'https://my-company-upload-url.com'
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
-In the new SDK this functionality has been implemented as part of the `BoxClient` class.
+In the new release this functionality has been implemented as part of the `BoxClient` class.
 By calling the `client.with_custom_base_urls()` method, you can specify the custom base URLs that will be used for API
 calls made by client. Following the immutability pattern, this call creates a new client, leaving the original client unmodified.
 
@@ -662,9 +665,9 @@ new_client: BoxClient = client.with_custom_base_urls(base_urls=BaseUrls(
 
 Webhook validation is used to validate a webhook message by verifying the signature and the delivery timestamp.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
-In the old SDK, you could pass the `body` as `bytes`, and it would return a `boolean` value indicating whether the message was valid.
+In the v3 version of Box Python SDK, you could pass the `body` as `bytes`, and it would return a `boolean` value indicating whether the message was valid.
 
 ```python
 body = b'{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"Test.txt"}}'
@@ -680,9 +683,9 @@ is_validated = Webhook.validate_message(body, headers, primary_key, secondary_ke
 print(f'The webhook message is validated to: {is_validated}')
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
-In the new SDK, the `WebhooksManager.validate_message()` method requires the `body` to be of type `string` and
+In the new v10 version, the `WebhooksManager.validate_message()` method requires the `body` to be of type `string` and
 the rest of the code remains the same
 
 ```python
@@ -707,9 +710,9 @@ WebhooksManager.validate_message(
 For large files or in cases where the network connection is less reliable, you may want to upload the file in parts.
 This allows a single part to fail without aborting the entire upload, and failed parts are being retried automatically.
 
-**Old (`boxsdk`)**
+**Old (`v3`)**
 
-In the old SDK, you could use the `get_chunked_uploader()` method to create a chunked uploader object.
+In v3, you could use the `get_chunked_uploader()` method to create a chunked uploader object.
 Then, you would call the `start()` method to begin the upload process.
 The `get_chunked_uploader()` method requires the `file_path` and `file_name` parameters.
 
@@ -719,9 +722,9 @@ uploaded_file = chunked_uploader.start()
 print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 ```
 
-**New (`box-sdk-gen`)**
+**New (`v10`)**
 
-In the new SDK, the equivalent method is `chunked_uploads.upload_big_file()`. It accepts a file-like object
+In v10, the equivalent method is `chunked_uploads.upload_big_file()`. It accepts a file-like object
 as the `file` parameter, and the `file_name` and `file_size` parameters are now passed as arguments.
 The `parent_folder_id` parameter is also required to specify the folder where the file will be uploaded.
 
