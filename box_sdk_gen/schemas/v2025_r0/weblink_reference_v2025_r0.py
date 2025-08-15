@@ -20,7 +20,7 @@ class WeblinkReferenceV2025R0(BaseObject):
         **kwargs
     ):
         """
-        :param id: ID of the weblink.
+        :param id: ID of the web link.
         :type id: str
         :param type: The value will always be `weblink`., defaults to WeblinkReferenceV2025R0TypeField.WEBLINK
         :type type: WeblinkReferenceV2025R0TypeField, optional
