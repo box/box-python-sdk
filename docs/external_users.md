@@ -7,12 +7,12 @@
 Delete external users from current user enterprise. This will remove each
 external user from all invited collaborations within the current enterprise.
 
-This operation is performed by calling function `create_external_user_submit_delete_job_v2025_r0`.
+This operation is performed by calling function `submit_job_to_delete_external_users_v2025_r0`.
 
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2025.0/post-external-users-submit-delete-job/).
 
-_Currently we don't have an example for calling `create_external_user_submit_delete_job_v2025_r0` in integration tests_
+_Currently we don't have an example for calling `submit_job_to_delete_external_users_v2025_r0` in integration tests_
 
 ### Arguments
 
