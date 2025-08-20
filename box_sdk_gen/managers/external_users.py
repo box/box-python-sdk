@@ -61,7 +61,7 @@ class ExternalUsersManager:
         self.auth = auth
         self.network_session = network_session
 
-    def create_external_user_submit_delete_job_v2025_r0(
+    def submit_job_to_delete_external_users_v2025_r0(
         self,
         external_users: List[UserReferenceV2025R0],
         *,
