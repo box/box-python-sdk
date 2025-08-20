@@ -20,10 +20,10 @@ def main():
         'jwt': jwt_requires,
     }
     setup(
-        name='box-sdk-gen',
+        name='boxsdk',
         version=__version__,
-        description='Official Box Python Generated SDK',
-        url='https://github.com/box/box-python-sdk-gen.git',
+        description='Official Box Python SDK',
+        url='https://github.com/box/box-python-sdk.git',
         licence='Apache-2.0, http://www.apache.org/licenses/LICENSE-2.0',
         author='Box',
         long_description_content_type='text/markdown',
