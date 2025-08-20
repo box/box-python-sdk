@@ -22,7 +22,7 @@ class ShieldListContentIpV2025R0(BaseObject):
         **kwargs
     ):
         """
-        :param ip_addresses: List of ips and cidrs.
+        :param ip_addresses: List of ip addresses and CIDRs.
         :type ip_addresses: List[str]
         :param type: The type of content in the shield list., defaults to ShieldListContentIpV2025R0TypeField.IP
         :type type: ShieldListContentIpV2025R0TypeField, optional

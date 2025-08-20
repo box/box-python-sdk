@@ -155,3 +155,5 @@ from box_sdk_gen.managers.hub_items import *
 from box_sdk_gen.managers.shield_lists import *
 
 from box_sdk_gen.managers.archives import *
+
+from box_sdk_gen.managers.external_users import *
