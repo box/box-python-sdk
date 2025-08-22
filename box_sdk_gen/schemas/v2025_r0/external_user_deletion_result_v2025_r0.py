@@ -14,7 +14,7 @@ class ExternalUserDeletionResultV2025R0(BaseObject):
         :type user_id: str
         :param status: HTTP status code for a specific user's deletion request.
         :type status: int
-        :param detail: Deletion request status details., defaults to None
+        :param detail: Deletion request status details. This property is only present when the deletion request is not successful., defaults to None
         :type detail: Optional[str], optional
         """
         super().__init__(**kwargs)
