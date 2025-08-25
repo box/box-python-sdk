@@ -12,7 +12,13 @@ This operation is performed by calling function `submit_job_to_delete_external_u
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2025.0/post-external-users-submit-delete-job/).
 
-_Currently we don't have an example for calling `submit_job_to_delete_external_users_v2025_r0` in integration tests_
+<!-- sample post_external_users_submit_delete_job_v2025.0 -->
+
+```python
+client.external_users.submit_job_to_delete_external_users_v2025_r0(
+    [UserReferenceV2025R0(id=get_env_var("BOX_EXTERNAL_USER_ID"))]
+)
+```
 
 ### Arguments
 
