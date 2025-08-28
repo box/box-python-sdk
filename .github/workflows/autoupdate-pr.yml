@@ -27,7 +27,7 @@ jobs:
           PR_LIST=$(curl -s -H "Authorization: Bearer ${{ secrets.DISPATCH_ACCESS_TOKEN }}" "https://api.github.com/repos/$GITHUB_REPOSITORY/pulls?state=open" | jq -r '.[] | .head.ref')
           for pr_branch in $PR_LIST; do
             git checkout "$pr_branch"
-            if git merge origin/main; then
+            if git merge origin/sdk-gen; then
               git push
             else
               # Conflict occurred, resolve by keeping our changes
