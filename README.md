@@ -92,7 +92,7 @@ Browse the [docs](docs/README.md) or see [API Reference](https://developer.box.c
 # Upgrades
 
 The SDK is updated regularly to include new features, enhancements, and bug fixes.
-If you are upgrading from manual v3 SDK version to this new generated v10, checkout the [migration guide](migration-guide.md) and [changelog](CHANGELOG.md) for more information.
+If you are upgrading from manual v3 SDK version to this new generated v10, checkout the [migration guide](migration-guides/from-v3-to-v10.md) and [changelog](CHANGELOG.md) for more information.
 
 # Integration Tests
 
