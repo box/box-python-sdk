@@ -49,7 +49,7 @@ More information and benefits of using the new can be found in the
 To install v10 version of Box Python SDK use command:
 
 ```console
-pip install box-sdk-gen>=10
+pip install boxsdk>=10
 ```
 
 Soon we are going to introduce v4 version of Box Python SDK that will combine package `boxsdk` from
@@ -71,19 +71,19 @@ Firstly, in the v3 release to be able to perform any action on an API object, e.
 To do it is required to call:
 
 ```python
-user = client.user(user_id='123456')
+user = client.user(user_id="123456")
 ```
 
 to create a class representing an already existing User with id '12345', or create a new one with a call:
 
 ```python
-user = client.create_user(name='Some User')
+user = client.create_user(name="Some User")
 ```
 
 Then, you could perform any action on created class, which will affect the user, e.g.
 
 ```python
-updated_user = user.update_info(data={'name': 'New User Name'})
+updated_user = user.update_info(data={"name": "New User Name"})
 ```
 
 **New (`v10`)**
@@ -96,13 +96,13 @@ connected with a `User` you need to call a respective method of `UserManager`.
 For example, to get info about existing user you need to call:
 
 ```python
-user = client.users.get_user_by_id(user_id='123456')
+user = client.users.get_user_by_id(user_id="123456")
 ```
 
 or to create a new user:
 
 ```python
-user = client.users.create_user(name='Some User')
+user = client.users.create_user(name="Some User")
 ```
 
 The `User` object returned by both of these methods is a data class - it does not contain any methods to call.
@@ -111,7 +111,7 @@ Usually these methods have a first argument, which accepts id of the object you 
 e.g. to update a user name, call method:
 
 ```python
-updated_user = client.users.update_user_by_id(user_id=user.id, name='New User Name')
+updated_user = client.users.update_user_by_id(user_id=user.id, name="New User Name")
 ```
 
 ### Explicitly defined schemas
@@ -122,7 +122,7 @@ In v3 release, there were no data types explicitly defined -
 the responses were dynamically mapped into classes in the runtime. For example, if you get information about a file:
 
 ```python
-file = client.file(file_id='12345678').get()
+file = client.file(file_id="12345678").get()
 ```
 
 you couldn't be sure which fields to expect in the response object until the runtime,
@@ -135,7 +135,14 @@ actually making a call. For example `FileBase` class is defined this way:
 
 ```python
 class FileBase(BaseObject):
-    def __init__(self, id: str, *, etag: Optional[str] = None, type: FileBaseTypeField = FileBaseTypeField.FILE.value, **kwargs):
+    def __init__(
+        self,
+        id: str,
+        *,
+        etag: Optional[str] = None,
+        type: FileBaseTypeField = FileBaseTypeField.FILE.value,
+        **kwargs
+    ):
         super().__init__(**kwargs)
         self.id = id
         self.type = type
@@ -154,7 +161,7 @@ Methods, which returns a new modified instance of an object, will always have a 
 ```python
 from box_sdk_gen import BoxClient
 
-as_user_client: BoxClient = client.with_as_user_header('USER_ID')
+as_user_client: BoxClient = client.with_as_user_header("USER_ID")
 ```
 
 ## Authentication
@@ -170,9 +177,9 @@ Let's see the differences of their usage:
 from boxsdk import Client, OAuth2
 
 auth = OAuth2(
-    client_id='YOUR_CLIENT_ID',
-    client_secret='YOUR_CLIENT_SECRET',
-    access_token='DEVELOPER_TOKEN_GOES_HERE',
+    client_id="YOUR_CLIENT_ID",
+    client_secret="YOUR_CLIENT_SECRET",
+    access_token="DEVELOPER_TOKEN_GOES_HERE",
 )
 client = Client(auth)
 ```
@@ -185,7 +192,7 @@ using developer token without necessity to provide a Client ID and Client Secret
 ```python
 from box_sdk_gen import BoxClient, BoxDeveloperTokenAuth
 
-auth = BoxDeveloperTokenAuth(token='DEVELOPER_TOKEN_GOES_HERE')
+auth = BoxDeveloperTokenAuth(token="DEVELOPER_TOKEN_GOES_HERE")
 client = BoxClient(auth=auth)
 ```
 
@@ -200,7 +207,7 @@ The static method, which reads the JWT configuration file has been changed:
 ```python
 from boxsdk import JWTAuth, Client
 
-auth = JWTAuth.from_settings_file('/path/to/config.json')
+auth = JWTAuth.from_settings_file("/path/to/config.json")
 client = Client(auth)
 ```
 
@@ -209,7 +216,7 @@ client = Client(auth)
 ```python
 from box_sdk_gen import BoxClient, BoxJWTAuth, JWTConfig
 
-jwt_config = JWTConfig.from_config_file(config_file_path='/path/to/config.json')
+jwt_config = JWTConfig.from_config_file(config_file_path="/path/to/config.json")
 auth = BoxJWTAuth(config=jwt_config)
 client = BoxClient(auth=auth)
 ```
@@ -224,14 +231,14 @@ Some params in `JWTConfig` constructor have slightly different names than one in
 from boxsdk import JWTAuth
 
 auth = JWTAuth(
-    client_id='YOUR_CLIENT_ID',
-    client_secret='YOUR_CLIENT_SECRET',
-    enterprise_id='YOUR_ENTERPRISE_ID',
-    user_id='USER_ID',
-    jwt_key_id='YOUR_JWT_KEY_ID',
-    rsa_private_key_file_sys_path='CERT.PEM',
-    rsa_private_key_passphrase='PASSPHRASE',
-    jwt_algorithm='RS256',
+    client_id="YOUR_CLIENT_ID",
+    client_secret="YOUR_CLIENT_SECRET",
+    enterprise_id="YOUR_ENTERPRISE_ID",
+    user_id="USER_ID",
+    jwt_key_id="YOUR_JWT_KEY_ID",
+    rsa_private_key_file_sys_path="CERT.PEM",
+    rsa_private_key_passphrase="PASSPHRASE",
+    jwt_algorithm="RS256",
 )
 ```
 
@@ -241,13 +248,13 @@ auth = JWTAuth(
 from box_sdk_gen import BoxJWTAuth, JWTConfig, JwtAlgorithm
 
 jwt_config = JWTConfig(
-    client_id='YOUR_CLIENT_ID',
-    client_secret='YOUR_CLIENT_SECRET',
-    enterprise_id='YOUR_ENTERPRISE_ID',
-    user_id='USER_ID',
-    jwt_key_id='YOUR_JWT_KEY_ID',
-    private_key='YOUR_PRIVATE_KEY',
-    private_key_passphrase='PASSPHRASE',
+    client_id="YOUR_CLIENT_ID",
+    client_secret="YOUR_CLIENT_SECRET",
+    enterprise_id="YOUR_ENTERPRISE_ID",
+    user_id="USER_ID",
+    jwt_key_id="YOUR_JWT_KEY_ID",
+    private_key="YOUR_PRIVATE_KEY",
+    private_key_passphrase="PASSPHRASE",
     algorithm=JwtAlgorithm.RS256,
 )
 auth = BoxJWTAuth(config=jwt_config)
@@ -269,7 +276,7 @@ auth.authenticate_user(user)
 or
 
 ```python
-auth.authenticate_user('USER_ID')
+auth.authenticate_user("USER_ID")
 ```
 
 **New (`v10`)**
@@ -283,7 +290,8 @@ instance.
 
 ```python
 from box_sdk_gen import BoxJWTAuth, BoxClient
-user_auth: BoxJWTAuth = auth.with_user_subject('USER_ID')
+
+user_auth: BoxJWTAuth = auth.with_user_subject("USER_ID")
 user_client: BoxClient = BoxClient(auth=user_auth)
 ```
 
@@ -333,9 +341,7 @@ only User ID instead.
 from boxsdk import CCGAuth
 
 auth = CCGAuth(
-    client_id="YOUR_CLIENT_ID",
-    client_secret="YOUR_CLIENT_SECRET",
-    user="YOUR_USER_ID"
+    client_id="YOUR_CLIENT_ID", client_secret="YOUR_CLIENT_SECRET", user="YOUR_USER_ID"
 )
 ```
 
@@ -345,9 +351,9 @@ auth = CCGAuth(
 from box_sdk_gen import BoxCCGAuth, CCGConfig
 
 ccg_config = CCGConfig(
-  client_id="YOUR_CLIENT_ID",
-  client_secret="YOUR_CLIENT_SECRET",
-  user_id="YOUR_USER_ID"
+    client_id="YOUR_CLIENT_ID",
+    client_secret="YOUR_CLIENT_SECRET",
+    user_id="YOUR_USER_ID",
 )
 auth = BoxCCGAuth(config=ccg_config)
 ```
@@ -360,11 +366,11 @@ were modifying existing state of `CCGAuth` class, which was fetching a new token
 **Old (`v3`)**
 
 ```python
-auth.authenticate_enterprise('ENTERPRISE_ID')
+auth.authenticate_enterprise("ENTERPRISE_ID")
 ```
 
 ```python
-auth.authenticate_user('USER_ID')
+auth.authenticate_user("USER_ID")
 ```
 
 In the new release, to keep the immutability design, the methods switching authenticated subject were replaced with methods
@@ -377,13 +383,17 @@ The old instance of `BoxCCGAuth` class will remain unchanged and will still use 
 
 ```python
 from box_sdk_gen import BoxCCGAuth, BoxClient
-enterprise_auth: BoxCCGAuth = auth.with_enterprise_subject(enterprise_id='ENTERPRISE_ID')
+
+enterprise_auth: BoxCCGAuth = auth.with_enterprise_subject(
+    enterprise_id="ENTERPRISE_ID"
+)
 enterprise_client: BoxClient = BoxClient(auth=enterprise_auth)
 ```
 
 ```python
 from box_sdk_gen import BoxCCGAuth, BoxClient
-user_auth: BoxCCGAuth = auth.with_user_subject(user_id='USER_ID')
+
+user_auth: BoxCCGAuth = auth.with_user_subject(user_id="USER_ID")
 user_client: BoxClient = BoxClient(auth=user_auth)
 ```
 
@@ -408,11 +418,11 @@ authentication url and csrf_token.
 from boxsdk import OAuth2
 
 auth = OAuth2(
-    client_id='YOUR_CLIENT_ID',
-    client_secret='YOUR_CLIENT_SECRET',
+    client_id="YOUR_CLIENT_ID",
+    client_secret="YOUR_CLIENT_SECRET",
 )
 
-auth_url, csrf_token = auth.get_authorization_url('http://YOUR_REDIRECT_URL')
+auth_url, csrf_token = auth.get_authorization_url("http://YOUR_REDIRECT_URL")
 ```
 
 **New (`v10`)**
@@ -421,12 +431,14 @@ auth_url, csrf_token = auth.get_authorization_url('http://YOUR_REDIRECT_URL')
 from box_sdk_gen import BoxOAuth, OAuthConfig, GetAuthorizeUrlOptions
 
 auth = BoxOAuth(
-  OAuthConfig(
-      client_id='YOUR_CLIENT_ID',
-      client_secret='YOUR_CLIENT_SECRET',
-  )
+    OAuthConfig(
+        client_id="YOUR_CLIENT_ID",
+        client_secret="YOUR_CLIENT_SECRET",
+    )
 )
-auth_url = auth.get_authorize_url(options=GetAuthorizeUrlOptions(redirect_uri='http://YOUR_REDIRECT_URL'))
+auth_url = auth.get_authorize_url(
+    options=GetAuthorizeUrlOptions(redirect_uri="http://YOUR_REDIRECT_URL")
+)
 ```
 
 #### Authenticate
@@ -441,7 +453,8 @@ while the old one was returning a tuple of access token and refresh token.
 
 ```python
 from boxsdk import Client
-access_token, refresh_token = auth.authenticate('YOUR_AUTH_CODE')
+
+access_token, refresh_token = auth.authenticate("YOUR_AUTH_CODE")
 client = Client(auth)
 ```
 
@@ -450,7 +463,7 @@ client = Client(auth)
 ```python
 from box_sdk_gen import BoxClient, AccessToken
 
-access_token: AccessToken = auth.get_tokens_authorization_code_grant('YOUR_AUTH_CODE')
+access_token: AccessToken = auth.get_tokens_authorization_code_grant("YOUR_AUTH_CODE")
 client = BoxClient(auth)
 ```
 
@@ -470,9 +483,11 @@ from typing import Tuple
 from boxsdk.auth import CooperativelyManagedOAuth2
 from boxsdk import Client
 
+
 def retrieve_tokens() -> Tuple[str, str]:
     # retrieve access_token and refresh_token
     return access_token, refresh_token
+
 
 def store_tokens(access_token: str, refresh_token: str):
     # store access_token and refresh_token
@@ -480,12 +495,12 @@ def store_tokens(access_token: str, refresh_token: str):
 
 
 auth = CooperativelyManagedOAuth2(
-  client_id='YOUR_CLIENT_ID',
-  client_secret='YOUR_CLIENT_SECRET',
-  retrieve_tokens=retrieve_tokens,
-  store_tokens=store_tokens
+    client_id="YOUR_CLIENT_ID",
+    client_secret="YOUR_CLIENT_SECRET",
+    retrieve_tokens=retrieve_tokens,
+    store_tokens=store_tokens,
 )
-access_token, refresh_token = auth.authenticate('YOUR_AUTH_CODE')
+access_token, refresh_token = auth.authenticate("YOUR_AUTH_CODE")
 client = Client(auth)
 ```
 
@@ -499,26 +514,27 @@ AuthConfig constructor.
 from typing import Optional
 from box_sdk_gen import BoxOAuth, OAuthConfig, TokenStorage, AccessToken
 
+
 class MyCustomTokenStorage(TokenStorage):
-  def store(self, token: AccessToken) -> None:
-    # store token
-    pass
+    def store(self, token: AccessToken) -> None:
+        # store token
+        pass
 
-  def get(self) -> Optional[AccessToken]:
-    # get token
-    pass
+    def get(self) -> Optional[AccessToken]:
+        # get token
+        pass
 
-  def clear(self) -> None:
-    # clear token
-    pass
+    def clear(self) -> None:
+        # clear token
+        pass
 
 
 auth = BoxOAuth(
-  OAuthConfig(
-    client_id='YOUR_CLIENT_ID',
-    client_secret='YOUR_CLIENT_SECRET',
-    token_storage=MyCustomTokenStorage()
-  )
+    OAuthConfig(
+        client_id="YOUR_CLIENT_ID",
+        client_secret="YOUR_CLIENT_SECRET",
+        token_storage=MyCustomTokenStorage(),
+    )
 )
 ```
 
@@ -528,11 +544,11 @@ or reuse one of the provided implementations: `FileTokenStorage` or `FileWithInM
 from box_sdk_gen import BoxOAuth, OAuthConfig, FileWithInMemoryCacheTokenStorage
 
 auth = BoxOAuth(
-  OAuthConfig(
-    client_id='YOUR_CLIENT_ID',
-    client_secret='YOUR_CLIENT_SECRET',
-    token_storage=FileWithInMemoryCacheTokenStorage()
-  )
+    OAuthConfig(
+        client_id="YOUR_CLIENT_ID",
+        client_secret="YOUR_CLIENT_SECRET",
+        token_storage=FileWithInMemoryCacheTokenStorage(),
+    )
 )
 ```
 
@@ -546,12 +562,10 @@ accepts the full resource path instead of file object.
 ```python
 from boxsdk import Client, OAuth2
 
-target_file = client.file(file_id='FILE_ID_HERE')
-token_info = client.downscope_token(['item_preview'], target_file)
+target_file = client.file(file_id="FILE_ID_HERE")
+token_info = client.downscope_token(["item_preview"], target_file)
 downscoped_auth = OAuth2(
-  client_id=None,
-  client_secret=None,
-  access_token=token_info.access_token
+    client_id=None, client_secret=None, access_token=token_info.access_token
 )
 downscoped_client = Client(downscoped_auth)
 ```
@@ -561,9 +575,9 @@ downscoped_client = Client(downscoped_auth)
 ```python
 from box_sdk_gen import BoxDeveloperTokenAuth, AccessToken, BoxClient
 
-resource = 'https://api.box.com/2.0/files/123456789'
+resource = "https://api.box.com/2.0/files/123456789"
 downscoped_token: AccessToken = auth.downscope_token(
-    scopes=['item_preview'],
+    scopes=["item_preview"],
     resource=resource,
 )
 downscoped_auth = BoxDeveloperTokenAuth(token=downscoped_token.access_token)
@@ -602,7 +616,7 @@ In v3 you could call client `as_user(self, user: User)` method to create a new c
 ```python
 from boxsdk import Client
 
-user_to_impersonate = client.user(user_id='USER_ID')
+user_to_impersonate = client.user(user_id="USER_ID")
 user_client: Client = client.as_user(user_to_impersonate)
 ```
 
@@ -615,7 +629,7 @@ The method accepts only user id as a parameter.
 ```python
 from box_sdk_gen import BoxClient
 
-user_client: BoxClient = client.with_as_user_header(user_id='USER_ID')
+user_client: BoxClient = client.with_as_user_header(user_id="USER_ID")
 ```
 
 Additionally `BoxClient` offers a `with_extra_headers(self, *, extra_headers: Dict[str, str] = None) -> BoxClient`
@@ -625,7 +639,9 @@ Calling the `client.with_extra_headers()` method creates a new client, leaving t
 ```python
 from box_sdk_gen import BoxClient
 
-new_client: BoxClient = client.with_extra_headers(extra_headers={'customHeader': 'customValue'})
+new_client: BoxClient = client.with_extra_headers(
+    extra_headers={"customHeader": "customValue"}
+)
 ```
 
 ### Custom Base URLs
@@ -638,9 +654,9 @@ the new values of static variables of the `API` class.
 ```python
 from boxsdk.config import API
 
-API.BASE_API_URL = 'https://new-base-url.com'
-API.OAUTH2_API_URL = 'https://my-company.com/oauth2'
-API.UPLOAD_URL = 'https://my-company-upload-url.com'
+API.BASE_API_URL = "https://new-base-url.com"
+API.OAUTH2_API_URL = "https://my-company.com/oauth2"
+API.UPLOAD_URL = "https://my-company-upload-url.com"
 ```
 
 **New (`v10`)**
@@ -652,11 +668,13 @@ calls made by client. Following the immutability pattern, this call creates a ne
 ```python
 from box_sdk_gen import BoxClient, BaseUrls
 
-new_client: BoxClient = client.with_custom_base_urls(base_urls=BaseUrls(
-  base_url='https://new-base-url.com',
-  upload_url='https://my-company-upload-url.com',
-  oauth_2_url='https://my-company.com/oauth2',
-))
+new_client: BoxClient = client.with_custom_base_urls(
+    base_urls=BaseUrls(
+        base_url="https://new-base-url.com",
+        upload_url="https://my-company-upload-url.com",
+        oauth_2_url="https://my-company.com/oauth2",
+    )
+)
 ```
 
 ## Convenience methods
@@ -672,15 +690,15 @@ In the v3 version of Box Python SDK, you could pass the `body` as `bytes`, and i
 ```python
 body = b'{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"Test.txt"}}'
 headers = {
-    'box-delivery-id': 'f96bb54b-ee16-4fc5-aa65-8c2d9e5b546f',
-    'box-delivery-timestamp': '2020-01-01T00:00:00-07:00',
-    'box-signature-algorithm': 'HmacSHA256',
-    'box-signature-primary': '4KvFa5/unRL8aaqOlnbInTwkOmieZkn1ZVzsAJuRipE=',
-    'box-signature-secondary': 'yxxwBNk7tFyQSy95/VNKAf1o+j8WMPJuo/KcFc7OS0Q=',
-    'box-signature-version': '1',
+    "box-delivery-id": "f96bb54b-ee16-4fc5-aa65-8c2d9e5b546f",
+    "box-delivery-timestamp": "2020-01-01T00:00:00-07:00",
+    "box-signature-algorithm": "HmacSHA256",
+    "box-signature-primary": "4KvFa5/unRL8aaqOlnbInTwkOmieZkn1ZVzsAJuRipE=",
+    "box-signature-secondary": "yxxwBNk7tFyQSy95/VNKAf1o+j8WMPJuo/KcFc7OS0Q=",
+    "box-signature-version": "1",
 }
 is_validated = Webhook.validate_message(body, headers, primary_key, secondary_key)
-print(f'The webhook message is validated to: {is_validated}')
+print(f"The webhook message is validated to: {is_validated}")
 ```
 
 **New (`v10`)**
@@ -693,15 +711,15 @@ from box_sdk_gen import WebhooksManager
 
 body = '{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"Test.txt"}}'
 headers = {
-  'box-delivery-id': 'f96bb54b-ee16-4fc5-aa65-8c2d9e5b546f',
-  'box-delivery-timestamp': '2020-01-01T00:00:00-07:00',
-  'box-signature-algorithm': 'HmacSHA256',
-  'box-signature-primary': '4KvFa5/unRL8aaqOlnbInTwkOmieZkn1ZVzsAJuRipE=',
-  'box-signature-secondary': 'yxxwBNk7tFyQSy95/VNKAf1o+j8WMPJuo/KcFc7OS0Q=',
-  'box-signature-version': '1',
+    "box-delivery-id": "f96bb54b-ee16-4fc5-aa65-8c2d9e5b546f",
+    "box-delivery-timestamp": "2020-01-01T00:00:00-07:00",
+    "box-signature-algorithm": "HmacSHA256",
+    "box-signature-primary": "4KvFa5/unRL8aaqOlnbInTwkOmieZkn1ZVzsAJuRipE=",
+    "box-signature-secondary": "yxxwBNk7tFyQSy95/VNKAf1o+j8WMPJuo/KcFc7OS0Q=",
+    "box-signature-version": "1",
 }
 WebhooksManager.validate_message(
-        body=body, headers=headers, primary_key=primary_key, secondary_key=secondary_key
+    body=body, headers=headers, primary_key=primary_key, secondary_key=secondary_key
 )
 ```
 
@@ -717,7 +735,9 @@ Then, you would call the `start()` method to begin the upload process.
 The `get_chunked_uploader()` method requires the `file_path` and `file_name` parameters.
 
 ```python
-chunked_uploader = client.folder('0').get_chunked_uploader(file_path='/path/to/file.txt', file_name='new_name.txt')
+chunked_uploader = client.folder("0").get_chunked_uploader(
+    file_path="/path/to/file.txt", file_name="new_name.txt"
+)
 uploaded_file = chunked_uploader.start()
 print(f'File "{uploaded_file.name}" uploaded to Box with file ID {uploaded_file.id}')
 ```
@@ -731,11 +751,14 @@ The `parent_folder_id` parameter is also required to specify the folder where th
 ```python
 import os
 
-with open('/path/to/file.txt', 'rb') as file_byte_stream:
-    file_name = 'new_name.txt'
-    file_size = os.path.getsize('/path/to/file.txt')
-    parent_folder_id = '0'  # ID of the folder where the file will be uploaded
+with open("/path/to/file.txt", "rb") as file_byte_stream:
+    file_name = "new_name.txt"
+    file_size = os.path.getsize("/path/to/file.txt")
+    parent_folder_id = "0"  # ID of the folder where the file will be uploaded
     uploaded_file = client.chunked_uploads.upload_big_file(
-        file=file_byte_stream, file_name=file_name, file_size=file_size, parent_folder_id=parent_folder_id
+        file=file_byte_stream,
+        file_name=file_name,
+        file_size=file_size,
+        parent_folder_id=parent_folder_id,
     )
 ```
