@@ -1,11 +1,11 @@
 # HubItemsManager
 
-- [Get hub items](#get-hub-items)
-- [Manage hub items](#manage-hub-items)
+- [Get Box Hub items](#get-box-hub-items)
+- [Manage Box Hub items](#manage-box-hub-items)
 
-## Get hub items
+## Get Box Hub items
 
-Retrieves all items associated with a Hub.
+Retrieves all items associated with a Box Hub.
 
 This operation is performed by calling function `get_hub_items_v2025_r0`.
 
@@ -35,11 +35,11 @@ client.hub_items.get_hub_items_v2025_r0(created_hub.id)
 
 This function returns a value of type `HubItemsV2025R0`.
 
-Retrieves the items associated with the specified Hub.
+Retrieves the items associated with the specified Box Hub.
 
-## Manage hub items
+## Manage Box Hub items
 
-Adds and/or removes Hub items from a Hub.
+Adds and/or removes Box Hub items from a Box Hub.
 
 This operation is performed by calling function `manage_hub_items_v2025_r0`.
 
@@ -65,7 +65,7 @@ client.hub_items.manage_hub_items_v2025_r0(
 - hub_id `str`
   - The unique identifier that represent a hub. The ID for any hub can be determined by visiting this hub in the web application and copying the ID from the URL. For example, for the URL `https://*.app.box.com/hubs/123` the `hub_id` is `123`. Example: "12345"
 - operations `Optional[List[HubItemOperationV2025R0]]`
-  - List of operations to perform on Hub items.
+  - List of operations to perform on Box Hub items.
 - box_version `BoxVersionHeaderV2025R0`
   - Version header.
 - extra_headers `Optional[Dict[str, Optional[str]]]`

@@ -14,9 +14,9 @@ class HubCopyRequestV2025R0(BaseObject):
         **kwargs
     ):
         """
-        :param title: Title of the Hub. It cannot be empty and should be less than 50 characters., defaults to None
+        :param title: Title of the Box Hub. It cannot be empty and should be less than 50 characters., defaults to None
         :type title: Optional[str], optional
-        :param description: Description of the Hub., defaults to None
+        :param description: Description of the Box Hub., defaults to None
         :type description: Optional[str], optional
         """
         super().__init__(**kwargs)

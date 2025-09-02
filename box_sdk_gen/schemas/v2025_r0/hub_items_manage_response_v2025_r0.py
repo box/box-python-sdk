@@ -12,7 +12,7 @@ from box_sdk_gen.box.errors import BoxSDKError
 class HubItemsManageResponseV2025R0(BaseObject):
     def __init__(self, operations: List[HubItemOperationResultV2025R0], **kwargs):
         """
-        :param operations: List of operations performed on Hub items.
+        :param operations: List of operations performed on Box Hub items.
         :type operations: List[HubItemOperationResultV2025R0]
         """
         super().__init__(**kwargs)

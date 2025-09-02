@@ -75,7 +75,7 @@ class HubItemsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubItemsV2025R0:
         """
-                Retrieves all items associated with a Hub.
+                Retrieves all items associated with a Box Hub.
                 :param hub_id: The unique identifier that represent a hub.
 
         The ID for any hub can be determined
@@ -132,7 +132,7 @@ class HubItemsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubItemsManageResponseV2025R0:
         """
-                Adds and/or removes Hub items from a Hub.
+                Adds and/or removes Box Hub items from a Box Hub.
                 :param hub_id: The unique identifier that represent a hub.
 
         The ID for any hub can be determined
@@ -142,7 +142,7 @@ class HubItemsManager:
         the `hub_id` is `123`.
         Example: "12345"
                 :type hub_id: str
-                :param operations: List of operations to perform on Hub items., defaults to None
+                :param operations: List of operations to perform on Box Hub items., defaults to None
                 :type operations: Optional[List[HubItemOperationV2025R0]], optional
                 :param box_version: Version header., defaults to BoxVersionHeaderV2025R0._2025_0
                 :type box_version: BoxVersionHeaderV2025R0, optional

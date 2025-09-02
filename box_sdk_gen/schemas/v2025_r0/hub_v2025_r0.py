@@ -31,33 +31,33 @@ class HubV2025R0(HubBaseV2025R0):
         **kwargs
     ):
         """
-                :param id: The unique identifier that represent a hub.
+                :param id: The unique identifier that represent a Box Hub.
 
-        The ID for any hub can be determined
-        by visiting a hub in the web application
+        The ID for any Box Hub can be determined
+        by visiting a Box Hub in the web application
         and copying the ID from the URL. For example,
         for the URL `https://*.app.box.com/hubs/123`
         the `hub_id` is `123`.
                 :type id: str
-                :param title: The title given to the hub., defaults to None
+                :param title: The title given to the Box Hub., defaults to None
                 :type title: Optional[str], optional
-                :param description: The description of the hub. First 200 characters are returned., defaults to None
+                :param description: The description of the Box Hub. First 200 characters are returned., defaults to None
                 :type description: Optional[str], optional
                 :param created_at: The date and time when the folder was created. This value may
         be `null` for some folders such as the root folder or the trash
         folder., defaults to None
                 :type created_at: Optional[DateTime], optional
-                :param updated_at: The date and time when the hub was last updated., defaults to None
+                :param updated_at: The date and time when the Box Hub was last updated., defaults to None
                 :type updated_at: Optional[DateTime], optional
-                :param view_count: The number of views for the hub., defaults to None
+                :param view_count: The number of views for the Box Hub., defaults to None
                 :type view_count: Optional[int], optional
-                :param is_ai_enabled: Indicates if AI features are enabled for the hub., defaults to None
+                :param is_ai_enabled: Indicates if AI features are enabled for the Box Hub., defaults to None
                 :type is_ai_enabled: Optional[bool], optional
                 :param is_collaboration_restricted_to_enterprise: Indicates if collaboration is restricted to the enterprise., defaults to None
                 :type is_collaboration_restricted_to_enterprise: Optional[bool], optional
-                :param can_non_owners_invite: Indicates if non-owners can invite others to the hub., defaults to None
+                :param can_non_owners_invite: Indicates if non-owners can invite others to the Box Hub., defaults to None
                 :type can_non_owners_invite: Optional[bool], optional
-                :param can_shared_link_be_created: Indicates if a shared link can be created for the hub., defaults to None
+                :param can_shared_link_be_created: Indicates if a shared link can be created for the Box Hub., defaults to None
                 :type can_shared_link_be_created: Optional[bool], optional
                 :param type: The value will always be `hubs`., defaults to HubBaseV2025R0TypeField.HUBS
                 :type type: HubBaseV2025R0TypeField, optional
