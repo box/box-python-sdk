@@ -2,11 +2,11 @@
   <img src="https://github.com/box/sdks/blob/master/images/box-dev-logo.png" alt= “box-dev-logo” width="30%" height="50%">
 </p>
 
-# Deprecation notice
+# Migration to v10
+The `sdk-gen` branch contains the v10 version of our Box Python SDK, which represents the current major version of our `box-python-sdk-gen` package. This is intended primarily for developers migrating from the [generated SDK](https://github.com/box/box-python-sdk-gen).
+As part of our upcoming major release, we will be introducing a combined SDK that consolidates the previously separate generated SDK into one unified SDK package.
 
-This version of the Box Python SDK is under maintenance mode, and will be deprecated soon, only critical security updates and bug fixes will be provided. We recommend using the new version Box Python SDK, which can be found at [box/box-python-sdk-gen](https://github.com/box/box-python-sdk-gen)
-
-You can find the migration guide [here](https://github.com/box/box-python-sdk-gen/blob/main/migration-guide.md) for transitioning from Box Python SDK v3.x to the new `box-sdk-gen` package. If you have any questions, please create an issue in the new repository or reach out to [Box Developer Support](https://developer.box.com/support/).
+You can find the migration guide [here](https://github.com/box/box-python-sdk/blob/sdk-gen/migration-guides/from-v3-to-v10.md) for transitioning from Box Python SDK v3 to v10. If you have any questions, please create an issue in the new repository or reach out to [Box Developer Support](https://developer.box.com/support/).
 
 # Box Python SDK
 
