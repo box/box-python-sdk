@@ -133,7 +133,7 @@ class HubCollaborationsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubCollaborationsV2025R0:
         """
-                Retrieves all collaborations for a hub.
+                Retrieves all collaborations for a Box Hub.
                 :param hub_id: The unique identifier that represent a hub.
 
         The ID for any hub can be determined
@@ -191,15 +191,15 @@ class HubCollaborationsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubCollaborationV2025R0:
         """
-                Adds a collaboration for a single user or a single group to a hub.
+                Adds a collaboration for a single user or a single group to a Box Hub.
 
                 Collaborations can be created using email address, user IDs, or group IDs.
 
-                :param hub: Hubs reference.
+                :param hub: Box Hubs reference.
                 :type hub: CreateHubCollaborationV2025R0Hub
                 :param accessible_by: The user or group who gets access to the item.
                 :type accessible_by: CreateHubCollaborationV2025R0AccessibleBy
-                :param role: The level of access granted to hub.
+                :param role: The level of access granted to a Box Hub.
         Possible values are `editor`, `viewer`, and `co-owner`.
                 :type role: str
                 :param box_version: Version header., defaults to BoxVersionHeaderV2025R0._2025_0
@@ -237,7 +237,7 @@ class HubCollaborationsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubCollaborationV2025R0:
         """
-                Retrieves details for a hub collaboration by collaboration ID.
+                Retrieves details for a Box Hub collaboration by collaboration ID.
                 :param hub_collaboration_id: The ID of the hub collaboration.
         Example: "1234"
                 :type hub_collaboration_id: str
@@ -278,14 +278,14 @@ class HubCollaborationsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubCollaborationV2025R0:
         """
-                Updates a hub collaboration.
+                Updates a Box Hub collaboration.
 
-                Can be used to change the hub role.
+                Can be used to change the Box Hub role.
 
                 :param hub_collaboration_id: The ID of the hub collaboration.
         Example: "1234"
                 :type hub_collaboration_id: str
-                :param role: The level of access granted to hub.
+                :param role: The level of access granted to a Box Hub.
         Possible values are `editor`, `viewer`, and `co-owner`., defaults to None
                 :type role: Optional[str], optional
                 :param box_version: Version header., defaults to BoxVersionHeaderV2025R0._2025_0
@@ -327,7 +327,7 @@ class HubCollaborationsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> None:
         """
-                Deletes a single hub collaboration.
+                Deletes a single Box Hub collaboration.
                 :param hub_collaboration_id: The ID of the hub collaboration.
         Example: "1234"
                 :type hub_collaboration_id: str

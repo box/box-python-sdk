@@ -18,17 +18,17 @@ class HubUpdateRequestV2025R0(BaseObject):
         **kwargs
     ):
         """
-        :param title: Title of the Hub. It cannot be empty and should be less than 50 characters., defaults to None
+        :param title: Title of the Box Hub. It cannot be empty and should be less than 50 characters., defaults to None
         :type title: Optional[str], optional
-        :param description: Description of the Hub., defaults to None
+        :param description: Description of the Box Hub., defaults to None
         :type description: Optional[str], optional
-        :param is_ai_enabled: Indicates if AI features are enabled for the Hub., defaults to None
+        :param is_ai_enabled: Indicates if AI features are enabled for the Box Hub., defaults to None
         :type is_ai_enabled: Optional[bool], optional
         :param is_collaboration_restricted_to_enterprise: Indicates if collaboration is restricted to the enterprise., defaults to None
         :type is_collaboration_restricted_to_enterprise: Optional[bool], optional
-        :param can_non_owners_invite: Indicates if non-owners can invite others to the Hub., defaults to None
+        :param can_non_owners_invite: Indicates if non-owners can invite others to the Box Hub., defaults to None
         :type can_non_owners_invite: Optional[bool], optional
-        :param can_shared_link_be_created: Indicates if a shared link can be created for the Hub., defaults to None
+        :param can_shared_link_be_created: Indicates if a shared link can be created for the Box Hub., defaults to None
         :type can_shared_link_be_created: Optional[bool], optional
         """
         super().__init__(**kwargs)

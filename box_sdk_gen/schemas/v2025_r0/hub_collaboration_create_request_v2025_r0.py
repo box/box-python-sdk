@@ -70,11 +70,11 @@ class HubCollaborationCreateRequestV2025R0(BaseObject):
         **kwargs
     ):
         """
-                :param hub: Hubs reference.
+                :param hub: Box Hubs reference.
                 :type hub: HubCollaborationCreateRequestV2025R0HubField
                 :param accessible_by: The user or group who gets access to the item.
                 :type accessible_by: HubCollaborationCreateRequestV2025R0AccessibleByField
-                :param role: The level of access granted to hub.
+                :param role: The level of access granted to a Box Hub.
         Possible values are `editor`, `viewer`, and `co-owner`.
                 :type role: str
         """

@@ -19,7 +19,7 @@ class HubItemsV2025R0(BaseObject):
         **kwargs
     ):
         """
-                :param entries: A list of Hub items., defaults to None
+                :param entries: A list of Box Hub items., defaults to None
                 :type entries: Optional[List[HubItemV2025R0]], optional
                 :param limit: The limit that was used for these entries. This will be the same as the
         `limit` query parameter unless that value exceeded the maximum value

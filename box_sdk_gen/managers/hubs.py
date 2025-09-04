@@ -88,10 +88,10 @@ class HubsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubsV2025R0:
         """
-                Retrieves all hubs for requesting user.
-                :param query: The query string to search for hubs., defaults to None
+                Retrieves all Box Hubs for requesting user.
+                :param query: The query string to search for Box Hubs., defaults to None
                 :type query: Optional[str], optional
-                :param scope: The scope of the hubs to retrieve. Possible values include `editable`,
+                :param scope: The scope of the Box Hubs to retrieve. Possible values include `editable`,
         `view_only`, and `all`. Default is `all`., defaults to None
                 :type scope: Optional[str], optional
                 :param sort: The field to sort results by.
@@ -149,10 +149,10 @@ class HubsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubV2025R0:
         """
-        Creates a new Hub.
-        :param title: Title of the Hub. It cannot be empty and should be less than 50 characters.
+        Creates a new Box Hub.
+        :param title: Title of the Box Hub. It cannot be empty and should be less than 50 characters.
         :type title: str
-        :param description: Description of the Hub., defaults to None
+        :param description: Description of the Box Hub., defaults to None
         :type description: Optional[str], optional
         :param box_version: Version header., defaults to BoxVersionHeaderV2025R0._2025_0
         :type box_version: BoxVersionHeaderV2025R0, optional
@@ -191,14 +191,14 @@ class HubsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubsV2025R0:
         """
-                Retrieves all hubs for a given enterprise.
+                Retrieves all Box Hubs for a given enterprise.
 
                 Admins or Hub Co-admins of an enterprise
 
 
                 with GCM scope can make this call.
 
-                :param query: The query string to search for hubs., defaults to None
+                :param query: The query string to search for Box Hubs., defaults to None
                 :type query: Optional[str], optional
                 :param sort: The field to sort results by.
         Possible values include `name`, `updated_at`,
@@ -255,7 +255,7 @@ class HubsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubV2025R0:
         """
-                Retrieves details for a hub by its ID.
+                Retrieves details for a Box Hub by its ID.
                 :param hub_id: The unique identifier that represent a hub.
 
         The ID for any hub can be determined
@@ -307,7 +307,7 @@ class HubsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubV2025R0:
         """
-                Updates a Hub. Can be used to change title, description, or Hub settings.
+                Updates a Box Hub. Can be used to change title, description, or Box Hub settings.
                 :param hub_id: The unique identifier that represent a hub.
 
         The ID for any hub can be determined
@@ -317,17 +317,17 @@ class HubsManager:
         the `hub_id` is `123`.
         Example: "12345"
                 :type hub_id: str
-                :param title: Title of the Hub. It cannot be empty and should be less than 50 characters., defaults to None
+                :param title: Title of the Box Hub. It cannot be empty and should be less than 50 characters., defaults to None
                 :type title: Optional[str], optional
-                :param description: Description of the Hub., defaults to None
+                :param description: Description of the Box Hub., defaults to None
                 :type description: Optional[str], optional
-                :param is_ai_enabled: Indicates if AI features are enabled for the Hub., defaults to None
+                :param is_ai_enabled: Indicates if AI features are enabled for the Box Hub., defaults to None
                 :type is_ai_enabled: Optional[bool], optional
                 :param is_collaboration_restricted_to_enterprise: Indicates if collaboration is restricted to the enterprise., defaults to None
                 :type is_collaboration_restricted_to_enterprise: Optional[bool], optional
-                :param can_non_owners_invite: Indicates if non-owners can invite others to the Hub., defaults to None
+                :param can_non_owners_invite: Indicates if non-owners can invite others to the Box Hub., defaults to None
                 :type can_non_owners_invite: Optional[bool], optional
-                :param can_shared_link_be_created: Indicates if a shared link can be created for the Hub., defaults to None
+                :param can_shared_link_be_created: Indicates if a shared link can be created for the Box Hub., defaults to None
                 :type can_shared_link_be_created: Optional[bool], optional
                 :param box_version: Version header., defaults to BoxVersionHeaderV2025R0._2025_0
                 :type box_version: BoxVersionHeaderV2025R0, optional
@@ -377,7 +377,7 @@ class HubsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> None:
         """
-                Deletes a single hub.
+                Deletes a single Box Hub.
                 :param hub_id: The unique identifier that represent a hub.
 
         The ID for any hub can be determined
@@ -425,9 +425,9 @@ class HubsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubV2025R0:
         """
-                Creates a copy of a Hub.
+                Creates a copy of a Box Hub.
 
-                The original Hub will not be modified.
+                The original Box Hub will not be modified.
 
                 :param hub_id: The unique identifier that represent a hub.
 
@@ -438,9 +438,9 @@ class HubsManager:
         the `hub_id` is `123`.
         Example: "12345"
                 :type hub_id: str
-                :param title: Title of the Hub. It cannot be empty and should be less than 50 characters., defaults to None
+                :param title: Title of the Box Hub. It cannot be empty and should be less than 50 characters., defaults to None
                 :type title: Optional[str], optional
-                :param description: Description of the Hub., defaults to None
+                :param description: Description of the Box Hub., defaults to None
                 :type description: Optional[str], optional
                 :param box_version: Version header., defaults to BoxVersionHeaderV2025R0._2025_0
                 :type box_version: BoxVersionHeaderV2025R0, optional

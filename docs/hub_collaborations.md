@@ -1,14 +1,14 @@
 # HubCollaborationsManager
 
-- [Get hub collaborations](#get-hub-collaborations)
-- [Create hub collaboration](#create-hub-collaboration)
-- [Get hub collaboration by collaboration ID](#get-hub-collaboration-by-collaboration-id)
-- [Update hub collaboration](#update-hub-collaboration)
-- [Remove hub collaboration](#remove-hub-collaboration)
+- [Get Box Hub collaborations](#get-box-hub-collaborations)
+- [Create Box Hub collaboration](#create-box-hub-collaboration)
+- [Get Box Hub collaboration by collaboration ID](#get-box-hub-collaboration-by-collaboration-id)
+- [Update Box Hub collaboration](#update-box-hub-collaboration)
+- [Remove Box Hub collaboration](#remove-box-hub-collaboration)
 
-## Get hub collaborations
+## Get Box Hub collaborations
 
-Retrieves all collaborations for a hub.
+Retrieves all collaborations for a Box Hub.
 
 This operation is performed by calling function `get_hub_collaborations_v2025_r0`.
 
@@ -38,11 +38,11 @@ client.hub_collaborations.get_hub_collaborations_v2025_r0(hub.id)
 
 This function returns a value of type `HubCollaborationsV2025R0`.
 
-Retrieves the collaborations associated with the specified hub.
+Retrieves the collaborations associated with the specified Box Hub.
 
-## Create hub collaboration
+## Create Box Hub collaboration
 
-Adds a collaboration for a single user or a single group to a hub.
+Adds a collaboration for a single user or a single group to a Box Hub.
 
 Collaborations can be created using email address, user IDs, or group IDs.
 
@@ -64,11 +64,11 @@ client.hub_collaborations.create_hub_collaboration_v2025_r0(
 ### Arguments
 
 - hub `CreateHubCollaborationV2025R0Hub`
-  - Hubs reference.
+  - Box Hubs reference.
 - accessible_by `CreateHubCollaborationV2025R0AccessibleBy`
   - The user or group who gets access to the item.
 - role `str`
-  - The level of access granted to hub. Possible values are `editor`, `viewer`, and `co-owner`.
+  - The level of access granted to a Box Hub. Possible values are `editor`, `viewer`, and `co-owner`.
 - box_version `BoxVersionHeaderV2025R0`
   - Version header.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
@@ -78,11 +78,11 @@ client.hub_collaborations.create_hub_collaboration_v2025_r0(
 
 This function returns a value of type `HubCollaborationV2025R0`.
 
-Returns a new hub collaboration object.
+Returns a new Box Hub collaboration object.
 
-## Get hub collaboration by collaboration ID
+## Get Box Hub collaboration by collaboration ID
 
-Retrieves details for a hub collaboration by collaboration ID.
+Retrieves details for a Box Hub collaboration by collaboration ID.
 
 This operation is performed by calling function `get_hub_collaboration_by_id_v2025_r0`.
 
@@ -108,12 +108,12 @@ client.hub_collaborations.get_hub_collaboration_by_id_v2025_r0(created_collabora
 
 This function returns a value of type `HubCollaborationV2025R0`.
 
-Returns a hub collaboration object.
+Returns a Box Hub collaboration object.
 
-## Update hub collaboration
+## Update Box Hub collaboration
 
-Updates a hub collaboration.
-Can be used to change the hub role.
+Updates a Box Hub collaboration.
+Can be used to change the Box Hub role.
 
 This operation is performed by calling function `update_hub_collaboration_by_id_v2025_r0`.
 
@@ -133,7 +133,7 @@ client.hub_collaborations.update_hub_collaboration_by_id_v2025_r0(
 - hub_collaboration_id `str`
   - The ID of the hub collaboration. Example: "1234"
 - role `Optional[str]`
-  - The level of access granted to hub. Possible values are `editor`, `viewer`, and `co-owner`.
+  - The level of access granted to a Box Hub. Possible values are `editor`, `viewer`, and `co-owner`.
 - box_version `BoxVersionHeaderV2025R0`
   - Version header.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
@@ -143,11 +143,11 @@ client.hub_collaborations.update_hub_collaboration_by_id_v2025_r0(
 
 This function returns a value of type `HubCollaborationV2025R0`.
 
-Returns an updated hub collaboration object.
+Returns an updated Box Hub collaboration object.
 
-## Remove hub collaboration
+## Remove Box Hub collaboration
 
-Deletes a single hub collaboration.
+Deletes a single Box Hub collaboration.
 
 This operation is performed by calling function `delete_hub_collaboration_by_id_v2025_r0`.
 
@@ -175,5 +175,5 @@ client.hub_collaborations.delete_hub_collaboration_by_id_v2025_r0(
 
 This function returns a value of type `None`.
 
-A blank response is returned if the hub collaboration was
+A blank response is returned if the Box Hub collaboration was
 successfully deleted.

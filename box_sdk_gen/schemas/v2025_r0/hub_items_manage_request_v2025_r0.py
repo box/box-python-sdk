@@ -16,7 +16,7 @@ class HubItemsManageRequestV2025R0(BaseObject):
         self, *, operations: Optional[List[HubItemOperationV2025R0]] = None, **kwargs
     ):
         """
-        :param operations: List of operations to perform on Hub items., defaults to None
+        :param operations: List of operations to perform on Box Hub items., defaults to None
         :type operations: Optional[List[HubItemOperationV2025R0]], optional
         """
         super().__init__(**kwargs)

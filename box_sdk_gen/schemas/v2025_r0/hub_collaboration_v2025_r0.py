@@ -156,7 +156,7 @@ class HubCollaborationV2025R0(BaseObject):
                 :type id: str
                 :param type: The value will always be `hub_collaboration`., defaults to HubCollaborationV2025R0TypeField.HUB_COLLABORATION
                 :type type: HubCollaborationV2025R0TypeField, optional
-                :param role: The level of access granted to hub.
+                :param role: The level of access granted to a Box Hub.
         Possible values are `editor`, `viewer`, and `co-owner`., defaults to None
                 :type role: Optional[str], optional
                 :param status: The status of the collaboration invitation. If the status
