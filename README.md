@@ -7,7 +7,7 @@
 The `sdk-gen` branch contains the generated code for the `v10` version of the Box Python SDK. This is intended primarily for developers migrating from [Box Python SDK Gen](https://github.com/box/box-python-sdk-gen) to the v10 version.
 As part of our upcoming major release, we will be introducing a combined SDK that consolidates the previously separate generated SDK into one unified SDK package for improved usability and maintenance.
 
-You can find the migration guide [here](https://github.com/box/box-python-sdk/blob/sdk-gen/migration-guides/from-box-python-sdk-gen-v1-to-box-python-sdk-v10.md) for transitioning from Box Python SDK Gen to Box Python SDK v10. If you have any questions, please create an issue in the new repository or reach out to [Box Developer Support](https://developer.box.com/support/).
+You can find the migration guide [here](https://github.com/box/box-python-sdk/blob/sdk-gen/migration-guides/from-box-python-sdk-gen-v1-to-box-python-sdk-v10.md) for transitioning from Box Python SDK Gen to Box Python SDK v10. If you have any questions, please create an issue in the repository or reach out to [Box Developer Support](https://developer.box.com/support/).
 
 # Box Python SDK
 
