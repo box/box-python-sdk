@@ -25,17 +25,18 @@ class BoxObjectCollection(Iterator, ABC):
     will be used to retrieve the next page of Box objects. This pointer can be used when requesting new
     BoxObjectCollection instances that start off from a particular page, instead of from the very beginning.
     """
+
     _page_constructor = Page
 
     def __init__(
-            self,
-            session: 'Session',
-            url: str,
-            limit: Optional[int] = None,
-            fields: Optional[Iter[str]] = None,
-            additional_params: Optional[dict] = None,
-            return_full_pages: bool = False,
-            use_post: bool = False
+        self,
+        session: 'Session',
+        url: str,
+        limit: Optional[int] = None,
+        fields: Optional[Iter[str]] = None,
+        additional_params: Optional[dict] = None,
+        return_full_pages: bool = False,
+        use_post: bool = False,
     ):
         """
         :param session:
@@ -117,7 +118,11 @@ class BoxObjectCollection(Iterator, ABC):
         if self._use_post:
             if self._fields:
                 params['fields'] = self._fields
-            box_response = self._session.post(self._url, data=json.dumps(params), headers={b'Content-Type': b'application/json'})
+            box_response = self._session.post(
+                self._url,
+                data=json.dumps(params),
+                headers={b'Content-Type': b'application/json'},
+            )
         else:
             if self._fields:
                 params['fields'] = ','.join(self._fields)

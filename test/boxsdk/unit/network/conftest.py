@@ -16,8 +16,19 @@ def mock_request(monkeypatch):
     return session.request
 
 
-@pytest.fixture(params=['generic_successful_request_response', 'server_error_request_response_502', 'server_error_request_response_503'])
-def request_response(generic_successful_request_response, server_error_request_response_502, server_error_request_response_503, request):
+@pytest.fixture(
+    params=[
+        'generic_successful_request_response',
+        'server_error_request_response_502',
+        'server_error_request_response_503',
+    ]
+)
+def request_response(
+    generic_successful_request_response,
+    server_error_request_response_502,
+    server_error_request_response_503,
+    request,
+):
     # pylint:disable=unused-argument
     return locals()[request.param]
 

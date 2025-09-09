@@ -4,6 +4,7 @@ from .base_object import BaseObject
 
 class ResolutionState(TextEnum):
     """An enum of possible resolution states"""
+
     COMPLETED = 'completed'
     INCOMPLETE = 'incomplete'
     APPROVED = 'approved'

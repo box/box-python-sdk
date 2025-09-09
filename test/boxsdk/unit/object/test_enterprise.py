@@ -18,14 +18,16 @@ def test_invite_user(test_enterprise, mock_box_session):
     # pylint:disable=redefined-outer-name
     expected_url = f'{API.BASE_API_URL}/invites'
     test_user_login = 'test@user.com'
-    expected_body = json.dumps({
-        'enterprise': {
-            'id': test_enterprise.object_id,
-        },
-        'actionable_by': {
-            'login': test_user_login,
-        },
-    })
+    expected_body = json.dumps(
+        {
+            'enterprise': {
+                'id': test_enterprise.object_id,
+            },
+            'actionable_by': {
+                'login': test_user_login,
+            },
+        }
+    )
     invite_json = {
         'type': 'invite',
         'id': '11111',

@@ -60,9 +60,13 @@ class Translator(ChainMap):
     #     `BoxSession`.
     #     - Calling `client.translator.register()` on an existing `Client`.
     # :type _default_translator:   :class:`Translator`
-    _default_translator = {}   # Will be set to a `Translator` instance below, after the class is defined.
+    _default_translator = (
+        {}
+    )  # Will be set to a `Translator` instance below, after the class is defined.
 
-    def __init__(self, *translation_maps: Dict[str, 'BaseAPIJSONObjectMeta'], **kwargs: Any):
+    def __init__(
+        self, *translation_maps: Dict[str, 'BaseAPIJSONObjectMeta'], **kwargs: Any
+    ):
         """Baseclass override.
 
         :param translation_maps:
@@ -105,7 +109,9 @@ class Translator(ChainMap):
         """
         self[type_name] = box_cls
 
-    def get(self, key: str, default: 'BaseAPIJSONObjectMeta' = None) -> 'BaseAPIJSONObjectMeta':
+    def get(
+        self, key: str, default: 'BaseAPIJSONObjectMeta' = None
+    ) -> 'BaseAPIJSONObjectMeta':
         """Get the box object class associated with the given type name.
 
         :param key:
@@ -116,6 +122,7 @@ class Translator(ChainMap):
         """
         # pylint:disable=import-outside-toplevel
         from boxsdk.object.base_object import BaseObject
+
         if default is None:
             default = BaseObject
         return super().get(key, default)
@@ -139,7 +146,9 @@ class Translator(ChainMap):
         object_type = response_object.get('type', None)
         object_class = self.get(object_type) if object_type is not None else None
         # Parent classes have the ability to skip fields that they do not want translated
-        fields_to_skip = object_class.untranslated_fields() if object_class is not None else ()
+        fields_to_skip = (
+            object_class.untranslated_fields() if object_class is not None else ()
+        )
         for key in response_object:
             if key in fields_to_skip:
                 translated_obj[key] = response_object[key]
@@ -147,7 +156,9 @@ class Translator(ChainMap):
             if isinstance(response_object[key], dict):
                 translated_obj[key] = self.translate(session, response_object[key])
             elif isinstance(response_object[key], list):
-                translated_obj[key] = [self.translate(session, o) for o in response_object[key]]
+                translated_obj[key] = [
+                    self.translate(session, o) for o in response_object[key]
+                ]
             else:
                 translated_obj[key] = response_object[key]
 
@@ -169,4 +180,6 @@ class Translator(ChainMap):
         return translated_obj
 
 
-Translator._default_translator = Translator(extend_default_translator=False)  # pylint:disable=protected-access
+Translator._default_translator = Translator(
+    extend_default_translator=False
+)  # pylint:disable=protected-access

@@ -16,7 +16,9 @@ class MockNetwork(Network):
         """Base class override.
         Make a mock network request using a mock requests.Session.
         """
-        return DefaultNetworkResponse(self._session.request(method, url, **kwargs), access_token)
+        return DefaultNetworkResponse(
+            self._session.request(method, url, **kwargs), access_token
+        )
 
     def retry_after(self, delay, request_method, *args, **kwargs):
         """Base class override.

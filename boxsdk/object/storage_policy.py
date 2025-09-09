@@ -61,7 +61,7 @@ class StoragePolicy(BaseObject):
             'assigned_to': {
                 'type': user.object_type,
                 'id': user.object_id,
-            }
+            },
         }
         response = self._session.post(url, data=json.dumps(body)).json()
         return self.translator.translate(

@@ -7,7 +7,9 @@ from boxsdk.object.web_link import WebLink
 class BoxTestSignRequest:
 
     def __init__(self, *, files: Iterable, signers: Iterable, parent_folder_id: str):
-        self._sign_request = CLIENT.create_sign_request_v2(signers, files, parent_folder_id)
+        self._sign_request = CLIENT.create_sign_request_v2(
+            signers, files, parent_folder_id
+        )
 
     def __enter__(self) -> WebLink:
         return self._sign_request

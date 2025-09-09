@@ -125,7 +125,9 @@ class ExtendableEnumMeta(EnumMeta):
             raise attribute_error
 
     def __iter__(cls):
-        return chain(super().__iter__(), chain.from_iterable(map(iter, cls.__subclasses__())))
+        return chain(
+            super().__iter__(), chain.from_iterable(map(iter, cls.__subclasses__()))
+        )
 
     def __len__(cls):
         return super().__len__() + sum(map(len, cls.__subclasses__()))

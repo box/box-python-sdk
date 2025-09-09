@@ -10,6 +10,7 @@ class BoxException(Exception):
     """
     Base class exception for all errors raised from the SDK.
     """
+
     def __str__(self):
         return self.__class__.__name__
 
@@ -53,6 +54,7 @@ class BoxAPIException(BoxException):
     :param network_response:
         The failed response
     """
+
     status: int = attr.ib()
     code: Optional[str] = attr.ib(default=None)
     message: Optional[str] = attr.ib(default=None)
@@ -64,16 +66,18 @@ class BoxAPIException(BoxException):
     network_response: 'NetworkResponse' = attr.ib(default=None, repr=False)
 
     def __str__(self):
-        return '\n'.join((
-            f'Message: {self.message}',
-            f'Status: {self.status}',
-            f'Code: {self.code}',
-            f'Request ID: {self.request_id}',
-            f'Headers: {sanitize_dictionary(self.headers)}',
-            f'URL: {self.url}',
-            f'Method: {self.method}',
-            f'Context Info: {self.context_info}',
-        ))
+        return '\n'.join(
+            (
+                f'Message: {self.message}',
+                f'Status: {self.status}',
+                f'Code: {self.code}',
+                f'Request ID: {self.request_id}',
+                f'Headers: {sanitize_dictionary(self.headers)}',
+                f'URL: {self.url}',
+                f'Method: {self.method}',
+                f'Context Info: {self.context_info}',
+            )
+        )
 
 
 @attr.s(repr=True, slots=True, frozen=True)
@@ -94,6 +98,7 @@ class BoxOAuthException(BoxException):
     :param code:
         The 'code' field of the failed response
     """
+
     status: int = attr.ib()
     message: str = attr.ib(default=None)
     url: str = attr.ib(default=None)
@@ -108,8 +113,15 @@ class BoxOAuthException(BoxException):
         # pylint:enable=no-member
         else:
             headers = 'N/A'
-        return f'\nMessage: {self.message}\nStatus: {self.status}\nURL: {self.url}\nMethod: {self.method}' \
-               f'\nHeaders: {headers}'
+        return (
+            f'\nMessage: {self.message}\nStatus: {self.status}\nURL: {self.url}\nMethod: {self.method}'
+            f'\nHeaders: {headers}'
+        )
 
 
-__all__ = ['BoxException', 'BoxAPIException', 'BoxOAuthException', 'BoxNetworkException']
+__all__ = [
+    'BoxException',
+    'BoxAPIException',
+    'BoxOAuthException',
+    'BoxNetworkException',
+]

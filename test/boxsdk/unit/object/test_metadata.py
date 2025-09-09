@@ -37,7 +37,14 @@ def test_object(test_file, test_folder, request):
 
 
 @pytest.mark.parametrize('success', [True, False])
-def test_delete(mock_box_session, make_mock_box_request, test_object, metadata_scope, metadata_template, success):
+def test_delete(
+    mock_box_session,
+    make_mock_box_request,
+    test_object,
+    metadata_scope,
+    metadata_template,
+    success,
+):
     # pylint:disable=redefined-outer-name
     mock_box_session.delete.return_value, _ = make_mock_box_request(response_ok=success)
     metadata = test_object.metadata(metadata_scope, metadata_template)
@@ -46,15 +53,17 @@ def test_delete(mock_box_session, make_mock_box_request, test_object, metadata_s
 
 
 def test_create(
-        mock_box_session,
-        make_mock_box_request,
-        test_object,
-        metadata_scope,
-        metadata_template,
-        metadata_response,
+    mock_box_session,
+    make_mock_box_request,
+    test_object,
+    metadata_scope,
+    metadata_template,
+    metadata_response,
 ):
     # pylint:disable=redefined-outer-name
-    mock_box_session.post.return_value, _ = make_mock_box_request(response=metadata_response)
+    mock_box_session.post.return_value, _ = make_mock_box_request(
+        response=metadata_response
+    )
     metadata = test_object.metadata(metadata_scope, metadata_template)
     response = metadata.create(metadata_response)
     assert response is metadata_response
@@ -66,40 +75,56 @@ def test_create(
 
 
 def test_set(
-        mock_box_session,
-        test_object,
-        metadata_scope,
-        metadata_template,
-        metadata_response,
+    mock_box_session,
+    test_object,
+    metadata_scope,
+    metadata_template,
+    metadata_response,
 ):
     post_data = {
         'case_status': 'in-progress',
     }
     post_value = json.dumps(post_data)
-    put_value = json.dumps([{
-        'op': 'add',
-        'path': '/case_status',
-        'value': 'in-progress',
-    }])
-    mock_box_session.post.side_effect = [BoxAPIException(status=409, message="Conflict")]
+    put_value = json.dumps(
+        [
+            {
+                'op': 'add',
+                'path': '/case_status',
+                'value': 'in-progress',
+            }
+        ]
+    )
+    mock_box_session.post.side_effect = [
+        BoxAPIException(status=409, message="Conflict")
+    ]
     mock_box_session.put.return_value.json.return_value = metadata_response
     metadata = test_object.metadata(metadata_scope, metadata_template)
     response = metadata.set(post_data)
     assert response is metadata_response
-    mock_box_session.post.assert_called_once_with(metadata.get_url(), data=post_value, headers={b'Content-Type': b'application/json'})
-    mock_box_session.put.assert_called_once_with(metadata.get_url(), data=put_value, headers={b'Content-Type': b'application/json-patch+json'})
+    mock_box_session.post.assert_called_once_with(
+        metadata.get_url(),
+        data=post_value,
+        headers={b'Content-Type': b'application/json'},
+    )
+    mock_box_session.put.assert_called_once_with(
+        metadata.get_url(),
+        data=put_value,
+        headers={b'Content-Type': b'application/json-patch+json'},
+    )
 
 
 def test_get(
-        mock_box_session,
-        make_mock_box_request,
-        test_object,
-        metadata_scope,
-        metadata_template,
-        metadata_response,
+    mock_box_session,
+    make_mock_box_request,
+    test_object,
+    metadata_scope,
+    metadata_template,
+    metadata_response,
 ):
     # pylint:disable=redefined-outer-name
-    mock_box_session.get.return_value, _ = make_mock_box_request(response=metadata_response)
+    mock_box_session.get.return_value, _ = make_mock_box_request(
+        response=metadata_response
+    )
     metadata = test_object.metadata(metadata_scope, metadata_template)
     response = metadata.get()
     assert response is metadata_response
@@ -117,16 +142,18 @@ def metadata_update():
 
 
 def test_update(
-        mock_box_session,
-        make_mock_box_request,
-        test_object,
-        metadata_scope,
-        metadata_template,
-        metadata_response,
-        metadata_update,
+    mock_box_session,
+    make_mock_box_request,
+    test_object,
+    metadata_scope,
+    metadata_template,
+    metadata_response,
+    metadata_update,
 ):
     # pylint:disable=redefined-outer-name
-    mock_box_session.put.return_value, _ = make_mock_box_request(response=metadata_response)
+    mock_box_session.put.return_value, _ = make_mock_box_request(
+        response=metadata_response
+    )
     metadata = test_object.metadata(metadata_scope, metadata_template)
     response = metadata.update(metadata_update)
     assert response is metadata_response

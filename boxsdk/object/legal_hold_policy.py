@@ -23,7 +23,9 @@ class LegalHoldPolicy(BaseObject):
         return self._session.get_url('legal_hold_policies', self._object_id, *args)
 
     @api_call
-    def assign(self, assignee: Union['FileVersion', 'File', 'Folder', 'User']) -> 'LegalHoldPolicyAssignment':
+    def assign(
+        self, assignee: Union['FileVersion', 'File', 'Folder', 'User']
+    ) -> 'LegalHoldPolicyAssignment':
         """Assign legal hold policy
 
         :param assignee:
@@ -34,10 +36,7 @@ class LegalHoldPolicy(BaseObject):
         url = self._session.get_url('legal_hold_policy_assignments')
         body = {
             'policy_id': self.object_id,
-            'assign_to': {
-                'type': assignee.object_type,
-                'id': assignee.object_id
-            }
+            'assign_to': {'type': assignee.object_type, 'id': assignee.object_id},
         }
         response = self._session.post(url, data=json.dumps(body)).json()
         return self.translator.translate(
@@ -47,12 +46,12 @@ class LegalHoldPolicy(BaseObject):
 
     @api_call
     def get_assignments(
-            self,
-            assign_to_type: Optional[str] = None,
-            assign_to_id: Optional[str] = None,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        assign_to_type: Optional[str] = None,
+        assign_to_id: Optional[str] = None,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get the entries in the legal hold policy assignment using limit-offset paging.
@@ -89,10 +88,10 @@ class LegalHoldPolicy(BaseObject):
 
     @api_call
     def get_file_version_legal_holds(
-            self,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get legal holds for a file version.

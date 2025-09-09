@@ -8,12 +8,16 @@ from boxsdk.object.folder import Folder
 
 class BoxTestWebLink:
 
-    def __init__(self, *, url: str, name: str = None, parent_folder: Optional[Folder] = None):
+    def __init__(
+        self, *, url: str, name: str = None, parent_folder: Optional[Folder] = None
+    ):
         if name is None:
             name = util.random_name()
         if parent_folder is None:
             parent_folder = CLIENT.folder('0')
-        self._web_link: WebLink = parent_folder.create_web_link(target_url=url, name=name)
+        self._web_link: WebLink = parent_folder.create_web_link(
+            target_url=url, name=name
+        )
 
     def __enter__(self) -> WebLink:
         return self._web_link
