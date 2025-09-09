@@ -12,7 +12,14 @@ class RedisManagedOAuth2Mixin(OAuth2):
     Box SDK OAuth2 subclass.
     Allows for storing auth tokens in redis.
     """
-    def __init__(self, unique_id: str = uuid4(), redis_server: Redis = None, *args: Any, **kwargs: Any):
+
+    def __init__(
+        self,
+        unique_id: str = uuid4(),
+        redis_server: Redis = None,
+        *args: Any,
+        **kwargs: Any,
+    ):
         """
         :param unique_id:
             An identifier for this auth object. Auth instances which wish to share tokens must use the same ID.
@@ -48,7 +55,9 @@ class RedisManagedOAuth2Mixin(OAuth2):
         Saves the refreshed tokens in redis.
         """
         super()._store_tokens(access_token, refresh_token)
-        self._redis_server.hmset(self._unique_id, {'access': access_token, 'refresh': refresh_token})
+        self._redis_server.hmset(
+            self._unique_id, {'access': access_token, 'refresh': refresh_token}
+        )
 
 
 class RedisManagedOAuth2(RedisManagedOAuth2Mixin):

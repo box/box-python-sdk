@@ -22,7 +22,9 @@ def test_get(test_storage_policy_assignment, mock_box_session):
         'id': test_storage_policy_assignment.object_id,
     }
     storage_policy_assignment = test_storage_policy_assignment.get()
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params=None
+    )
     assert isinstance(storage_policy_assignment, StoragePolicyAssignment)
 
 
@@ -33,25 +35,33 @@ def test_update(test_storage_policy_assignment, mock_box_session):
         'type': 'storage_policy_assignment',
         'id': new_policy_id,
     }
-    storage_policy_assignment = test_storage_policy_assignment.update_info(data={
-        'storage_policy': {
-            'type': 'storage_policy',
-            'id': new_policy_id,
+    storage_policy_assignment = test_storage_policy_assignment.update_info(
+        data={
+            'storage_policy': {
+                'type': 'storage_policy',
+                'id': new_policy_id,
+            }
         }
-    })
+    )
     data = {
         'storage_policy': {
             'type': 'storage_policy',
             'id': new_policy_id,
         }
     }
-    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
+    mock_box_session.put.assert_called_once_with(
+        expected_url, data=json.dumps(data), headers=None, params=None
+    )
     assert isinstance(storage_policy_assignment, StoragePolicyAssignment)
 
 
-def test_delete(test_storage_policy_assignment, delete_assignment_response, mock_box_session):
+def test_delete(
+    test_storage_policy_assignment, delete_assignment_response, mock_box_session
+):
     mock_box_session.delete.return_value = delete_assignment_response
     response = test_storage_policy_assignment.delete()
     expected_url = test_storage_policy_assignment.get_url()
-    mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
+    mock_box_session.delete.assert_called_once_with(
+        expected_url, params={}, expect_json_response=False, headers=None
+    )
     assert response is True

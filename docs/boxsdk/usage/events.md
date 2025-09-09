@@ -1,5 +1,4 @@
-Events
-======
+# Events
 
 It is possible to poll the Box API for events, in order to get information about activity within Box as it happens.
 
@@ -8,7 +7,6 @@ the events in an enterprise.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 
 - [User Events](#user-events)
   - [Listening to the Event Stream](#listening-to-the-event-stream)
@@ -19,8 +17,7 @@ the events in an enterprise.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-User Events
------------
+## User Events
 
 The Box API provides an events endpoint that utilizes long-polling to send events in real-time. The SDK provides a
 generator that automatically handles long-polling and deduplicating events.
@@ -29,10 +26,11 @@ generator that automatically handles long-polling and deduplicating events.
 
 To automatically receive events as they happen, call
 [`events.generate_events_with_long_polling(stream_position=None, stream_type=UserEventsStreamType.ALL)`][generator] and iterate over
-the results.  By default, this will start listening for events from the current time onward; to get all available events,
-pass a `stream_position` of `0`.  The generator yields [`Event`][event_class] objects representing each event.
+the results. By default, this will start listening for events from the current time onward; to get all available events,
+pass a `stream_position` of `0`. The generator yields [`Event`][event_class] objects representing each event.
 
 <!-- sample options_events -->
+
 ```python
 events = client.events().generate_events_with_long_polling()
 for event in events:
@@ -58,12 +56,13 @@ print(f'The current stream position is {stream_position}')
 ### Get Events Manually
 
 To manually retrieve a set of events, call
-[`events.get_events(limit=100, stream_position=0, stream_type=UserEventsStreamType.ALL)`][get_events].  By default, this
+[`events.get_events(limit=100, stream_position=0, stream_type=UserEventsStreamType.ALL)`][get_events]. By default, this
 will fetch the first available events chronologically; you can pass a specific `stream_position` to get events from a
-particular time.  This method returns a `dict` with the relevant [`Event`][event_class] objects in a `list` under the
+particular time. This method returns a `dict` with the relevant [`Event`][event_class] objects in a `list` under the
 `entries` key and the next stream position value under the `next_stream_position` key.
 
 <!-- sample get_events -->
+
 ```python
 stream_position = 0
 events = client.events().get_events(stream_position=stream_position)
@@ -74,8 +73,7 @@ for event in events['entries']:
 
 [get_events]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.events.Events.get_events
 
-Enterprise Events
------------------
+## Enterprise Events
 
 Currently, the SDK only provides a manual interface for retrieving Enterprise (or Admin) Events.
 
@@ -83,8 +81,8 @@ Currently, the SDK only provides a manual interface for retrieving Enterprise (o
 
 To manually retrieve a set of admin events, call
 [`events.get_events(limit=100, stream_position=0, stream_type=UserEventsStreamType.ALL)`][get_events] with `stream_type`
-set to `EnterpriseEventsStreamType.ADMIN_LOGS`.  By default, this will fetch the first available events chronologically;
-you can pass a specific `stream_position` to get events from a particular time.  This method returns a `dict` with the
+set to `EnterpriseEventsStreamType.ADMIN_LOGS`. By default, this will fetch the first available events chronologically;
+you can pass a specific `stream_position` to get events from a particular time. This method returns a `dict` with the
 relevant [`Event`][event_class] objects in a `list` under the `entries` key and the next stream position value under the
 `next_stream_position` key.
 
@@ -105,21 +103,23 @@ If `limit` param is set to None, then default API value (limit=100) will be used
 Live monitoring example
 
 <!-- sample get_events enterprise_stream -->
+
 ```python
  events = client.events()
     .get_admin_events_streaming()
  for event in events['entries']:
-    print(f'Got {event.event_type} event that occurred at {event.created_at}') 
+    print(f'Got {event.event_type} event that occurred at {event.created_at}')
 ```
 
 Addditionally, a list of event types can be passed along to filter down the returned events.
 
 <!-- sample get_events enterprise_stream_filter -->
+
 ```python
  events = client.events()
     .get_admin_events_streaming(event_types=['ITEM_CREATE'])
  for event in events['entries']:
-    print(f'Got {event.event_type} event that occurred at {event.created_at}') 
+    print(f'Got {event.event_type} event that occurred at {event.created_at}')
 ```
 
 When using historical querying you can specify before and after a certain datetime and the types of events to retrieve with the `event_type` by calling
@@ -131,21 +131,23 @@ This method returns a `dict` with the relevant [`Event`][event_class] objects in
 `entries` key and the next stream position value under the `next_stream_position` key.
 
 <!-- sample get_events enterprise -->
+
 ```python
  events = client.events()
     .get_admin_events(created_after='2019-07-01T22:02:24-07:00')
  for event in events['entries']:
-    print(f'Got {event.event_type} event that occurred at {event.created_at}') 
+    print(f'Got {event.event_type} event that occurred at {event.created_at}')
 ```
 
 Addditionally, a list of event types can be passed along to filter down the returned events.
 
 <!-- sample get_events enterprise_filter -->
+
 ```python
  events = client.events()
     .get_admin_events(created_after='2019-07-01T22:02:24-07:00', event_types=['ITEM_CREATE'])
  for event in events['entries']:
-    print(f'Got {event.event_type} event that occurred at {event.created_at}') 
+    print(f'Got {event.event_type} event that occurred at {event.created_at}')
 ```
 
 [admin_events_details]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.events.Events.get_admin_events

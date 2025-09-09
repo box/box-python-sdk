@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 class Task(BaseObject):
     """Represents a Box task."""
+
     _item_type = 'task'
 
     @api_call

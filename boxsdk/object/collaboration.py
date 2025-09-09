@@ -7,6 +7,7 @@ from ..util.api_call_decorator import api_call
 
 class CollaborationRole(TextEnum):
     """An enum of possible collaboration roles"""
+
     EDITOR = 'editor'
     VIEWER = 'viewer'
 
@@ -21,6 +22,7 @@ class CollaborationRole(TextEnum):
 
 class CollaborationStatus(TextEnum):
     """An enum of possible statuses of a collaboration"""
+
     PENDING = 'pending'
     ACCEPTED = 'accepted'
     REJECTED = 'rejected'
@@ -28,16 +30,17 @@ class CollaborationStatus(TextEnum):
 
 class Collaboration(BaseObject):
     """An object that represents a collaboration between a folder and an individual or group"""
+
     _item_type = 'collaboration'
 
     @api_call
     def update_info(
-            self,
-            *,
-            data: dict = None,
-            role: Optional[CollaborationRole] = None,
-            status: Optional[CollaborationStatus] = None,
-            **kwargs: Any
+        self,
+        *,
+        data: dict = None,
+        role: Optional[CollaborationRole] = None,
+        status: Optional[CollaborationStatus] = None,
+        **kwargs: Any
     ) -> 'BaseObject':
         """Edit an existing collaboration on Box
         :param data:

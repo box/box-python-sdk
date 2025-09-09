@@ -10,7 +10,9 @@ from ..util.api_call_decorator import api_call
 from ..util.default_arg_value import SDK_VALUE_NOT_SET
 from ..util.deprecation_decorator import deprecated
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
-from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.limit_offset_based_object_collection import (
+    LimitOffsetBasedObjectCollection,
+)
 
 if TYPE_CHECKING:
     from boxsdk.object.upload_session import UploadSession
@@ -50,7 +52,10 @@ class File(Item):
 
     @api_call
     def create_upload_session(
-            self, file_size: int, file_name: Optional[str] = None, use_upload_session_urls: bool = True
+        self,
+        file_size: int,
+        file_name: Optional[str] = None,
+        use_upload_session_urls: bool = True,
     ) -> 'UploadSession':
         """
         Create a new chunked upload session for uploading a new version of the file.
@@ -73,7 +78,9 @@ class File(Item):
         }
         if file_name is not None:
             body_params['file_name'] = file_name
-        url = self.get_url('upload_sessions').replace(self.session.api_config.BASE_API_URL, self.session.api_config.UPLOAD_URL)
+        url = self.get_url('upload_sessions').replace(
+            self.session.api_config.BASE_API_URL, self.session.api_config.UPLOAD_URL
+        )
         response = self._session.post(url, data=json.dumps(body_params)).json()
         upload_session = self.translator.translate(
             session=self._session,
@@ -85,7 +92,10 @@ class File(Item):
 
     @api_call
     def get_chunked_uploader(
-            self, file_path: str, rename_file: bool = False, use_upload_session_urls: bool = True
+        self,
+        file_path: str,
+        rename_file: bool = False,
+        use_upload_session_urls: bool = True,
     ) -> 'ChunkedUploader':
         # pylint: disable=consider-using-with
         """
@@ -106,8 +116,12 @@ class File(Item):
         total_size = os.stat(file_path).st_size
         content_stream = open(file_path, 'rb')
         file_name = os.path.basename(file_path) if rename_file else None
-        upload_session = self.create_upload_session(total_size, file_name, use_upload_session_urls)
-        return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
+        upload_session = self.create_upload_session(
+            total_size, file_name, use_upload_session_urls
+        )
+        return upload_session.get_chunked_uploader_for_stream(
+            content_stream, total_size
+        )
 
     def _get_accelerator_upload_url_for_update(self) -> Optional[str]:
         """
@@ -137,7 +151,11 @@ class File(Item):
         raise ValueError('Expected a 1-tuple or 2-tuple for byte range')
 
     @api_call
-    def content(self, file_version: Optional['FileVersion'] = None, byte_range: Tuple[int, int] = None) -> bytes:
+    def content(
+        self,
+        file_version: Optional['FileVersion'] = None,
+        byte_range: Tuple[int, int] = None,
+    ) -> bytes:
         """
         Get the content of a file on Box.
 
@@ -149,17 +167,25 @@ class File(Item):
             File content as bytes.
         """
         url = self.get_url('content')
-        params = {'version': file_version.object_id} if file_version is not None else None
-        headers = {'Range': self._construct_range_header(byte_range)} if byte_range is not None else None
-        box_response = self._session.get(url, expect_json_response=False, params=params, headers=headers)
+        params = (
+            {'version': file_version.object_id} if file_version is not None else None
+        )
+        headers = (
+            {'Range': self._construct_range_header(byte_range)}
+            if byte_range is not None
+            else None
+        )
+        box_response = self._session.get(
+            url, expect_json_response=False, params=params, headers=headers
+        )
         return box_response.content
 
     @api_call
     def download_to(
-            self,
-            writeable_stream: IO[bytes],
-            file_version: Optional['FileVersion'] = None,
-            byte_range: Tuple[int, int] = None
+        self,
+        writeable_stream: IO[bytes],
+        file_version: Optional['FileVersion'] = None,
+        byte_range: Tuple[int, int] = None,
     ) -> None:
         """
         Download the file; write it to the given stream.
@@ -172,10 +198,20 @@ class File(Item):
             A tuple of inclusive byte offsets to download, e.g. (100, 199) to download the second 100 bytes of a file
         """
         url = self.get_url('content')
-        params = {'version': file_version.object_id} if file_version is not None else None
-        headers = {'Range': self._construct_range_header(byte_range)} if byte_range is not None else None
-        box_response = self._session.get(url, expect_json_response=False, stream=True, params=params, headers=headers)
-        for chunk in box_response.network_response.response_as_stream.stream(decode_content=True):
+        params = (
+            {'version': file_version.object_id} if file_version is not None else None
+        )
+        headers = (
+            {'Range': self._construct_range_header(byte_range)}
+            if byte_range is not None
+            else None
+        )
+        box_response = self._session.get(
+            url, expect_json_response=False, stream=True, params=params, headers=headers
+        )
+        for chunk in box_response.network_response.response_as_stream.stream(
+            decode_content=True
+        ):
             writeable_stream.write(chunk)
 
     @api_call
@@ -188,7 +224,9 @@ class File(Item):
         :return: Url to download the file
         """
         url = self.get_url('content')
-        params = {'version': file_version.object_id} if file_version is not None else None
+        params = (
+            {'version': file_version.object_id} if file_version is not None else None
+        )
         box_response = self._session.get(
             url,
             params=params,
@@ -210,16 +248,16 @@ class File(Item):
 
     @api_call
     def update_contents_with_stream(
-            self,
-            file_stream: IO[bytes],
-            etag: Optional[str] = None,
-            preflight_check: bool = False,
-            preflight_expected_size: int = 0,
-            upload_using_accelerator: bool = False,
-            file_name: Optional[str] = None,
-            content_modified_at: Union[datetime, str] = None,
-            additional_attributes: Optional[dict] = None,
-            sha1: Optional[str] = None,
+        self,
+        file_stream: IO[bytes],
+        etag: Optional[str] = None,
+        preflight_check: bool = False,
+        preflight_expected_size: int = 0,
+        upload_using_accelerator: bool = False,
+        file_name: Optional[str] = None,
+        content_modified_at: Union[datetime, str] = None,
+        additional_attributes: Optional[dict] = None,
+        sha1: Optional[str] = None,
     ) -> 'File':
         """
         Upload a new version of a file, taking the contents from the given file stream.
@@ -272,7 +310,9 @@ class File(Item):
 
         attributes = {
             'name': file_name,
-            'content_modified_at': normalize_date_to_rfc3339_format(content_modified_at),
+            'content_modified_at': normalize_date_to_rfc3339_format(
+                content_modified_at
+            ),
         }
         if additional_attributes:
             attributes.update(additional_attributes)
@@ -303,16 +343,16 @@ class File(Item):
 
     @api_call
     def update_contents(
-            self,
-            file_path: str,
-            etag: Optional[str] = None,
-            preflight_check: bool = False,
-            preflight_expected_size: int = 0,
-            upload_using_accelerator: bool = False,
-            file_name: Optional[str] = None,
-            content_modified_at: Union[datetime, str] = None,
-            additional_attributes: Optional[dict] = None,
-            sha1: Optional[str] = None,
+        self,
+        file_path: str,
+        etag: Optional[str] = None,
+        preflight_check: bool = False,
+        preflight_expected_size: int = 0,
+        upload_using_accelerator: bool = False,
+        file_name: Optional[str] = None,
+        content_modified_at: Union[datetime, str] = None,
+        additional_attributes: Optional[dict] = None,
+        sha1: Optional[str] = None,
     ) -> 'File':
         """Upload a new version of a file. The contents are taken from the given file path.
 
@@ -362,7 +402,9 @@ class File(Item):
             )
 
     @api_call
-    def lock(self, prevent_download: bool = False, expire_time: Union[datetime, str] = None) -> 'File':
+    def lock(
+        self, prevent_download: bool = False, expire_time: Union[datetime, str] = None
+    ) -> 'File':
         """
         Lock a file, preventing others from modifying (or possibly even downloading) it.
 
@@ -398,17 +440,17 @@ class File(Item):
 
     @api_call
     def create_shared_link(
-            self,
-            *,
-            access: Optional[str] = None,
-            etag: Optional[str] = None,
-            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
-            allow_download: Optional[bool] = None,
-            allow_preview: Optional[bool] = None,
-            allow_edit: Optional[bool] = None,
-            password: Optional[str] = None,
-            vanity_name: Optional[str] = None,
-            **kwargs: Any
+        self,
+        *,
+        access: Optional[str] = None,
+        etag: Optional[str] = None,
+        unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
+        allow_download: Optional[bool] = None,
+        allow_preview: Optional[bool] = None,
+        allow_edit: Optional[bool] = None,
+        password: Optional[str] = None,
+        vanity_name: Optional[str] = None,
+        **kwargs: Any,
     ) -> 'File':
         """
         Baseclass override.
@@ -454,22 +496,22 @@ class File(Item):
             allow_preview=allow_preview,
             allow_edit=allow_edit,
             password=password,
-            vanity_name=vanity_name
+            vanity_name=vanity_name,
         )
 
     @api_call
     def get_shared_link(
-            self,
-            *,
-            access: Optional[str] = None,
-            etag: Optional[str] = None,
-            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
-            allow_download: Optional[bool] = None,
-            allow_preview: Optional[bool] = None,
-            allow_edit: Optional[bool] = None,
-            password: Optional[str] = None,
-            vanity_name: Optional[str] = None,
-            **kwargs: Any
+        self,
+        *,
+        access: Optional[str] = None,
+        etag: Optional[str] = None,
+        unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
+        allow_download: Optional[bool] = None,
+        allow_preview: Optional[bool] = None,
+        allow_edit: Optional[bool] = None,
+        password: Optional[str] = None,
+        vanity_name: Optional[str] = None,
+        **kwargs: Any,
     ) -> 'str':
         """
         Baseclass override.
@@ -514,18 +556,18 @@ class File(Item):
             allow_preview=allow_preview,
             allow_edit=allow_edit,
             password=password,
-            vanity_name=vanity_name
+            vanity_name=vanity_name,
         )
 
     @api_call
     def get_shared_link_download_url(
-            self,
-            access: Optional[str] = None,
-            etag: Optional[str] = None,
-            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
-            allow_preview: Optional[bool] = None,
-            password: Optional[str] = None,
-            vanity_name: Optional[str] = None
+        self,
+        access: Optional[str] = None,
+        etag: Optional[str] = None,
+        unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
+        allow_preview: Optional[bool] = None,
+        password: Optional[str] = None,
+        vanity_name: Optional[str] = None,
     ) -> str:
         """
         Get a shared link download url for the file with the given access permissions.
@@ -560,16 +602,13 @@ class File(Item):
             unshared_at=unshared_at,
             allow_preview=allow_preview,
             password=password,
-            vanity_name=vanity_name
+            vanity_name=vanity_name,
         )
         return item.shared_link['download_url']  # pylint:disable=no-member
 
     @api_call
     def get_comments(
-            self,
-            limit: Optional[int] = None,
-            offset: int = 0,
-            fields: Iterable[str] = None
+        self, limit: Optional[int] = None, offset: int = 0, fields: Iterable[str] = None
     ) -> 'BoxObjectCollection':
         """
         Get the comments on the file.
@@ -604,10 +643,7 @@ class File(Item):
         url = self._session.get_url('comments')
         comment_class = self._session.translator.get('comment')
         data = comment_class.construct_params_from_message(message)
-        data['item'] = {
-            'type': 'file',
-            'id': self.object_id
-        }
+        data['item'] = {'type': 'file', 'id': self.object_id}
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
         return self._session.translator.translate(
@@ -617,11 +653,11 @@ class File(Item):
 
     @api_call
     def create_task(
-            self,
-            message: Optional[str] = None,
-            due_at: Union[datetime, str] = None,
-            action: str = 'review',
-            completion_rule: Optional[str] = None
+        self,
+        message: Optional[str] = None,
+        due_at: Union[datetime, str] = None,
+        action: str = 'review',
+        completion_rule: Optional[str] = None,
     ) -> 'Task':
         """
         Create a task on the given file.
@@ -643,10 +679,7 @@ class File(Item):
         """
         url = self._session.get_url('tasks')
         task_attributes = {
-            'item': {
-                'type': 'file',
-                'id': self.object_id
-            },
+            'item': {'type': 'file', 'id': self.object_id},
             'action': action,
         }
         if message is not None:
@@ -683,10 +716,10 @@ class File(Item):
 
     @api_call
     def get_previous_versions(
-            self,
-            limit: Optional[int] = None,
-            offset: int = None,
-            fields: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        offset: int = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get previous versions of the file.
@@ -732,7 +765,9 @@ class File(Item):
         )
 
     @api_call
-    def delete_version(self, file_version: 'FileVersion', etag: Optional[str] = None) -> bool:
+    def delete_version(
+        self, file_version: 'FileVersion', etag: Optional[str] = None
+    ) -> bool:
         """
         Delete a specific version of a file.
 
@@ -745,7 +780,9 @@ class File(Item):
         """
         url = self.get_url('versions', file_version.object_id)
         headers = {'If-Match': etag} if etag is not None else None
-        response = self._session.delete(url, expect_json_response=False, headers=headers)
+        response = self._session.delete(
+            url, expect_json_response=False, headers=headers
+        )
         return response.ok
 
     @api_call
@@ -780,12 +817,12 @@ class File(Item):
     @deprecated('Use get_thumbnail_representation')
     @api_call
     def get_thumbnail(
-            self,
-            extension: str = 'png',
-            min_width: Optional[int] = None,
-            min_height: Optional[int] = None,
-            max_width: Optional[int] = None,
-            max_height: Optional[int] = None
+        self,
+        extension: str = 'png',
+        min_width: Optional[int] = None,
+        min_height: Optional[int] = None,
+        max_width: Optional[int] = None,
+        max_height: Optional[int] = None,
     ) -> bytes:
         """
         Retrieve a thumbnail image for the file.
@@ -818,7 +855,9 @@ class File(Item):
         return response.content
 
     @api_call
-    def get_thumbnail_representation(self, dimensions: str, extension: str = 'png') -> bytes:
+    def get_thumbnail_representation(
+        self, dimensions: str, extension: str = 'png'
+    ) -> bytes:
         """
         Retrieve a thumbnail image for the file.
 
@@ -833,7 +872,10 @@ class File(Item):
         representations = self.get_representation_info(rep_hints)
         if representations:
             representation = representations[0]
-            if representation['status'].get('code') in ('error_conversion_failed', 'error_password_protected'):
+            if representation['status'].get('code') in (
+                'error_conversion_failed',
+                'error_password_protected',
+            ):
                 return b''
             url = representation['content']['url_template']
             url = url.replace('{+asset_path}', '')
@@ -843,12 +885,12 @@ class File(Item):
 
     @api_call
     def copy(
-            self,
-            *,
-            parent_folder: 'Folder',
-            name: Optional[str] = None,
-            file_version: 'FileVersion' = None,
-            **_kwargs
+        self,
+        *,
+        parent_folder: 'Folder',
+        name: Optional[str] = None,
+        file_version: 'FileVersion' = None,
+        **_kwargs,
     ) -> 'File':
         # pylint: disable=arguments-differ
         """Copy the item to the given folder.
@@ -864,9 +906,7 @@ class File(Item):
         """
         # pylint: disable=arguments-differ
         url = self.get_url('copy')
-        data = {
-            'parent': {'id': parent_folder.object_id}
-        }
+        data = {'parent': {'id': parent_folder.object_id}}
         if name is not None:
             data['name'] = name
         if file_version is not None:

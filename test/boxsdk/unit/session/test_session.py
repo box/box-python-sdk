@@ -3,7 +3,11 @@ from io import IOBase, BytesIO
 from numbers import Number
 import os
 from unittest.mock import MagicMock, Mock, PropertyMock, call, patch, ANY
-from requests.exceptions import RequestException, SSLError, ConnectionError as RequestsConnectionError
+from requests.exceptions import (
+    RequestException,
+    SSLError,
+    ConnectionError as RequestsConnectionError,
+)
 from requests_toolbelt import MultipartEncoder
 
 import pytest
@@ -50,41 +54,58 @@ def unauthorized_session(mock_network_layer, translator):
 @pytest.fixture
 def box_session(mock_oauth, mock_network_layer, translator):
     # pylint:disable=redefined-outer-name
-    return AuthorizedSession(oauth=mock_oauth, network_layer=mock_network_layer, translator=translator)
+    return AuthorizedSession(
+        oauth=mock_oauth, network_layer=mock_network_layer, translator=translator
+    )
 
 
 @pytest.fixture
-def ccg_auth(client_id, client_secret, mock_user_id, mock_enterprise_id, box_session) -> CCGAuth:
+def ccg_auth(
+    client_id, client_secret, mock_user_id, mock_enterprise_id, box_session
+) -> CCGAuth:
     # pylint:disable=protected-access
-    auth = CCGAuth(client_id=client_id, client_secret=client_secret, user=mock_user_id, enterprise_id=mock_enterprise_id)
+    auth = CCGAuth(
+        client_id=client_id,
+        client_secret=client_secret,
+        user=mock_user_id,
+        enterprise_id=mock_enterprise_id,
+    )
     auth._session = box_session
     return auth
 
 
-@pytest.mark.parametrize('test_method', [
-    Session.get,
-    Session.post,
-    Session.put,
-    Session.delete,
-    Session.options,
-])
+@pytest.mark.parametrize(
+    'test_method',
+    [
+        Session.get,
+        Session.post,
+        Session.put,
+        Session.delete,
+        Session.options,
+    ],
+)
 def test_box_session_handles_unauthorized_response(
-        test_method,
-        box_session,
-        mock_oauth,
-        mock_network_layer,
-        unauthorized_response,
-        generic_successful_response,
-        test_url,
+    test_method,
+    box_session,
+    mock_oauth,
+    mock_network_layer,
+    unauthorized_response,
+    generic_successful_response,
+    test_url,
 ):
     # pylint:disable=redefined-outer-name
 
     def get_access_token_from_auth_object():
         return mock_oauth.access_token
 
-    mock_network_layer.request.side_effect = mock_responses = [unauthorized_response, generic_successful_response]
+    mock_network_layer.request.side_effect = mock_responses = [
+        unauthorized_response,
+        generic_successful_response,
+    ]
     for mock_response in mock_responses:
-        type(mock_response).access_token_used = PropertyMock(side_effect=get_access_token_from_auth_object)
+        type(mock_response).access_token_used = PropertyMock(
+            side_effect=get_access_token_from_auth_object
+        )
 
     def refresh(access_token_used):
         assert access_token_used == mock_oauth.access_token
@@ -97,30 +118,37 @@ def test_box_session_handles_unauthorized_response(
     assert box_response.status_code == 200
 
 
-@pytest.mark.parametrize('test_method', [
-    Session.get,
-    Session.post,
-    Session.put,
-    Session.delete,
-    Session.options,
-])
+@pytest.mark.parametrize(
+    'test_method',
+    [
+        Session.get,
+        Session.post,
+        Session.put,
+        Session.delete,
+        Session.options,
+    ],
+)
 @pytest.mark.parametrize('initial_access_token', [None])
 def test_box_session_gets_access_token_before_request(
-        test_method,
-        box_session,
-        mock_oauth,
-        mock_network_layer,
-        generic_successful_response,
-        test_url,
+    test_method,
+    box_session,
+    mock_oauth,
+    mock_network_layer,
+    generic_successful_response,
+    test_url,
 ):
     # pylint:disable=redefined-outer-name
 
     def get_access_token_from_auth_object():
         return mock_oauth.access_token
 
-    mock_network_layer.request.side_effect = mock_responses = [generic_successful_response]
+    mock_network_layer.request.side_effect = mock_responses = [
+        generic_successful_response
+    ]
     for mock_response in mock_responses:
-        type(mock_response).access_token_used = PropertyMock(side_effect=get_access_token_from_auth_object)
+        type(mock_response).access_token_used = PropertyMock(
+            side_effect=get_access_token_from_auth_object
+        )
 
     def refresh(access_token_used):
         assert access_token_used == mock_oauth.access_token
@@ -133,21 +161,24 @@ def test_box_session_gets_access_token_before_request(
     assert box_response.status_code == 200
 
 
-@pytest.mark.parametrize('test_method', [
-    Session.get,
-    Session.post,
-    Session.put,
-    Session.delete,
-    Session.options,
-    partial(Session.request, method='head'),
-])
+@pytest.mark.parametrize(
+    'test_method',
+    [
+        Session.get,
+        Session.post,
+        Session.put,
+        Session.delete,
+        Session.options,
+        partial(Session.request, method='head'),
+    ],
+)
 def test_box_session_retries_response_after_retry_after(
-        test_method,
-        box_session,
-        mock_network_layer,
-        retry_after_response,
-        generic_successful_response,
-        test_url,
+    test_method,
+    box_session,
+    mock_network_layer,
+    retry_after_response,
+    generic_successful_response,
+    test_url,
 ):
     # pylint:disable=redefined-outer-name
     try:
@@ -156,8 +187,13 @@ def test_box_session_retries_response_after_retry_after(
     except AttributeError:
         pass
 
-    mock_network_layer.request.side_effect = [retry_after_response, generic_successful_response]
-    mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    mock_network_layer.request.side_effect = [
+        retry_after_response,
+        generic_successful_response,
+    ]
+    mock_network_layer.retry_after.side_effect = (
+        lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    )
 
     with patch('random.uniform', return_value=0.68):
         box_response = test_method(box_session, url=test_url)
@@ -167,25 +203,34 @@ def test_box_session_retries_response_after_retry_after(
     assert round(mock_network_layer.retry_after.call_args[0][0], 4) == 1
 
 
-@pytest.mark.parametrize('test_method', [
-    Session.get,
-    Session.post,
-    Session.put,
-    Session.delete,
-    Session.options,
-    partial(Session.request, method='head'),
-])
+@pytest.mark.parametrize(
+    'test_method',
+    [
+        Session.get,
+        Session.post,
+        Session.put,
+        Session.delete,
+        Session.options,
+        partial(Session.request, method='head'),
+    ],
+)
 def test_box_session_retries_request_after_server_error(
-        test_method,
-        box_session,
-        mock_network_layer,
-        server_error_response,
-        generic_successful_response,
-        test_url,
+    test_method,
+    box_session,
+    mock_network_layer,
+    server_error_response,
+    generic_successful_response,
+    test_url,
 ):
     # pylint:disable=redefined-outer-name
-    mock_network_layer.request.side_effect = [server_error_response, server_error_response, generic_successful_response]
-    mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    mock_network_layer.request.side_effect = [
+        server_error_response,
+        server_error_response,
+        generic_successful_response,
+    ]
+    mock_network_layer.retry_after.side_effect = (
+        lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    )
 
     with patch('random.uniform', return_value=0.68):
         box_response = test_method(box_session, url=test_url)
@@ -200,10 +245,21 @@ def test_box_session_retries_request_after_server_error(
     assert round(mock_network_layer.retry_after.call_args_list[1][0][0], 4) == 2.36
 
 
-def test_box_session_seeks_file_after_retry(box_session, mock_network_layer, server_error_response, generic_successful_response, test_url):
+def test_box_session_seeks_file_after_retry(
+    box_session,
+    mock_network_layer,
+    server_error_response,
+    generic_successful_response,
+    test_url,
+):
     # pylint:disable=redefined-outer-name
-    mock_network_layer.request.side_effect = [server_error_response, generic_successful_response]
-    mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    mock_network_layer.request.side_effect = [
+        server_error_response,
+        generic_successful_response,
+    ]
+    mock_network_layer.retry_after.side_effect = (
+        lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    )
     mock_file_1, mock_file_2 = MagicMock(IOBase), MagicMock(IOBase)
     mock_file_1.tell.return_value = 0
     mock_file_2.tell.return_value = 3
@@ -223,24 +279,43 @@ def test_box_session_seeks_file_after_retry(box_session, mock_network_layer, ser
     mock_file_2.seek.assert_has_calls([call(3), call(3)])
 
 
-def test_box_session_raises_for_non_json_response(box_session, mock_network_layer, non_json_response, generic_successful_response, test_url):
+def test_box_session_raises_for_non_json_response(
+    box_session,
+    mock_network_layer,
+    non_json_response,
+    generic_successful_response,
+    test_url,
+):
     # pylint:disable=redefined-outer-name
-    mock_network_layer.request.side_effect = [non_json_response, generic_successful_response]
-    mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    mock_network_layer.request.side_effect = [
+        non_json_response,
+        generic_successful_response,
+    ]
+    mock_network_layer.retry_after.side_effect = (
+        lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    )
 
     box_session.get(url=test_url)
 
 
-def test_box_session_raises_for_non_json_response_after_retry(box_session, mock_network_layer, non_json_response, test_url):
+def test_box_session_raises_for_non_json_response_after_retry(
+    box_session, mock_network_layer, non_json_response, test_url
+):
     # pylint:disable=redefined-outer-name
-    mock_network_layer.request.side_effect = [non_json_response] * (API.MAX_RETRY_ATTEMPTS + 1)
-    mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    mock_network_layer.request.side_effect = [non_json_response] * (
+        API.MAX_RETRY_ATTEMPTS + 1
+    )
+    mock_network_layer.retry_after.side_effect = (
+        lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    )
 
     with pytest.raises(BoxAPIException):
         box_session.get(url=test_url)
 
 
-def test_box_session_raises_for_failed_response(box_session, mock_network_layer, bad_network_response, test_url):
+def test_box_session_raises_for_failed_response(
+    box_session, mock_network_layer, bad_network_response, test_url
+):
     # pylint:disable=redefined-outer-name
     mock_network_layer.request.side_effect = [bad_network_response]
 
@@ -248,47 +323,73 @@ def test_box_session_raises_for_failed_response(box_session, mock_network_layer,
         box_session.get(url=test_url)
 
 
-@pytest.mark.parametrize('exc_message', [
-    'Connection aborted',
-    "Connection broken: ConnectionResetError(54, 'Connection reset by peer')"
-])
+@pytest.mark.parametrize(
+    'exc_message',
+    [
+        'Connection aborted',
+        "Connection broken: ConnectionResetError(54, 'Connection reset by peer')",
+    ],
+)
 def test_box_session_retries_connection_aborted_exception(
-        box_session, mock_network_layer, generic_successful_request_response, test_url, exc_message
+    box_session,
+    mock_network_layer,
+    generic_successful_request_response,
+    test_url,
+    exc_message,
 ):
-    mock_network_layer.request.side_effect = [RequestsConnectionError(exc_message), generic_successful_request_response]
-    mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    mock_network_layer.request.side_effect = [
+        RequestsConnectionError(exc_message),
+        generic_successful_request_response,
+    ]
+    mock_network_layer.retry_after.side_effect = (
+        lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    )
 
     box_response = box_session.get(url=test_url)
     assert box_response.status_code == 200
 
 
-def test_box_session_retries_connection_aborted_exception_on_ccg_auth_call(successful_token_response, ccg_auth, mock_user_id, access_token):
+def test_box_session_retries_connection_aborted_exception_on_ccg_auth_call(
+    successful_token_response, ccg_auth, mock_user_id, access_token
+):
     # pylint:disable=protected-access
-    ccg_auth._session._network_layer.request.side_effect = [RequestsConnectionError('Connection aborted'), successful_token_response]
-    ccg_auth._session._network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    ccg_auth._session._network_layer.request.side_effect = [
+        RequestsConnectionError('Connection aborted'),
+        successful_token_response,
+    ]
+    ccg_auth._session._network_layer.retry_after.side_effect = (
+        lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    )
 
     new_access_token = ccg_auth.authenticate_user(mock_user_id)
     assert new_access_token == access_token
 
 
-def test_box_session_retries_requests_library_exceptions_only_once(box_session, mock_network_layer, test_url, generic_successful_request_response):
+def test_box_session_retries_requests_library_exceptions_only_once(
+    box_session, mock_network_layer, test_url, generic_successful_request_response
+):
     mock_network_layer.request.side_effect = [
         RequestException('Connection aborted'),
         RequestException('Connection aborted'),
-        generic_successful_request_response
+        generic_successful_request_response,
     ]
-    mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    mock_network_layer.retry_after.side_effect = (
+        lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    )
 
     with pytest.raises(RequestException):
         box_session.get(url=test_url)
 
 
 def test_box_session_raises_requests_library_exception_when_set_no_retries(
-        box_session, mock_network_layer, test_url, generic_successful_request_response
+    box_session, mock_network_layer, test_url, generic_successful_request_response
 ):
     API.MAX_RETRY_ATTEMPTS = 0
     try:
-        mock_network_layer.request.side_effect = [RequestException('Connection aborted'), generic_successful_request_response]
+        mock_network_layer.request.side_effect = [
+            RequestException('Connection aborted'),
+            generic_successful_request_response,
+        ]
 
         with pytest.raises(RequestException):
             box_session.get(url=test_url)
@@ -297,7 +398,11 @@ def test_box_session_raises_requests_library_exception_when_set_no_retries(
 
 
 def test_box_session_retries_and_reauthenticates_on_violation_of_protocol_exception(
-        box_session, mock_oauth, mock_network_layer, generic_successful_request_response, test_url
+    box_session,
+    mock_oauth,
+    mock_network_layer,
+    generic_successful_request_response,
+    test_url,
 ):
     def refresh(access_token_used):
         assert access_token_used == mock_oauth.access_token
@@ -305,27 +410,41 @@ def test_box_session_retries_and_reauthenticates_on_violation_of_protocol_except
         return (mock_oauth.access_token, None)
 
     mock_network_layer.request.side_effect = [
-        SSLError("SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:2396)')))"),
-        generic_successful_request_response
+        SSLError(
+            "SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:2396)')))"
+        ),
+        generic_successful_request_response,
     ]
-    mock_network_layer.retry_after.side_effect = lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    mock_network_layer.retry_after.side_effect = (
+        lambda delay, request, *args, **kwargs: request(*args, **kwargs)
+    )
     mock_oauth.refresh.side_effect = refresh
 
     box_session.get(url=test_url)
 
     assert mock_network_layer.request.call_count == 2
-    assert mock_network_layer.request.mock_calls[0][2]['access_token'] == 'fake_access_token'
-    assert mock_network_layer.request.mock_calls[1][2]['access_token'] == 'fake_new_access_token'
+    assert (
+        mock_network_layer.request.mock_calls[0][2]['access_token']
+        == 'fake_access_token'
+    )
+    assert (
+        mock_network_layer.request.mock_calls[1][2]['access_token']
+        == 'fake_new_access_token'
+    )
 
 
-def test_box_session_does_not_retry_other_requests_library_exceptions_than_specified(box_session, mock_network_layer, test_url):
+def test_box_session_does_not_retry_other_requests_library_exceptions_than_specified(
+    box_session, mock_network_layer, test_url
+):
     mock_network_layer.request.side_effect = [RequestException('Unknown error')]
 
     with pytest.raises(RequestException):
         box_session.get(url=test_url)
 
 
-def test_box_session_raises_for_failed_response_with_error_and_error_description(box_session, mock_network_layer, bad_network_response_400, test_url):
+def test_box_session_raises_for_failed_response_with_error_and_error_description(
+    box_session, mock_network_layer, bad_network_response_400, test_url
+):
     mock_network_layer.request.side_effect = [bad_network_response_400]
     try:
         box_session.get(url=test_url)
@@ -335,7 +454,9 @@ def test_box_session_raises_for_failed_response_with_error_and_error_description
         assert exception.message == 'Example Error Description'
 
 
-def test_box_session_raises_for_failed_non_json_response(box_session, mock_network_layer, failed_non_json_response, test_url):
+def test_box_session_raises_for_failed_non_json_response(
+    box_session, mock_network_layer, failed_non_json_response, test_url
+):
     # pylint:disable=redefined-outer-name
     mock_network_layer.request.side_effect = [failed_non_json_response]
 
@@ -353,7 +474,9 @@ def test_box_response_properties_pass_through_to_network_response_properties():
     assert box_result.network_response == mock_network_response
 
 
-def test_translator(box_session, translator, default_translator, original_default_translator):
+def test_translator(
+    box_session, translator, default_translator, original_default_translator
+):
     assert isinstance(box_session.translator, Translator)
     assert box_session.translator == default_translator
     if translator:
@@ -373,14 +496,18 @@ def test_translator(box_session, translator, default_translator, original_defaul
     assert (set(box_session.translator) - set(default_translator)) == {item_type}
 
 
-def test_session_uses_global_config(box_session, mock_network_layer, generic_successful_response, monkeypatch):
+def test_session_uses_global_config(
+    box_session, mock_network_layer, generic_successful_response, monkeypatch
+):
     mock_network_layer.request.side_effect = generic_successful_response
     example_dot_com = 'https://example.com/'
     monkeypatch.setattr(API, 'BASE_API_URL', example_dot_com)
     assert example_dot_com in box_session.get_url('foo', 'bar')
 
 
-def test_session_uses_local_config(box_session, mock_network_layer, generic_successful_response, monkeypatch):
+def test_session_uses_local_config(
+    box_session, mock_network_layer, generic_successful_response, monkeypatch
+):
     mock_network_layer.request.side_effect = generic_successful_response
     example_dot_com = 'https://example.com/'
     box_session.api_config.BASE_API_URL = example_dot_com
@@ -396,11 +523,15 @@ def test_session_uses_local_config(box_session, mock_network_layer, generic_succ
         (2, '', 4.72),
         (3, '', 9.44),
         (4, '', 18.88),
-    ]
+    ],
 )
-def test_get_retry_after_time(box_session, attempt_number, retry_after_header, expected_result):
+def test_get_retry_after_time(
+    box_session, attempt_number, retry_after_header, expected_result
+):
     with patch('random.uniform', return_value=0.68):
-        retry_time = box_session.get_retry_after_time(attempt_number, retry_after_header)  # pylint: disable=protected-access
+        retry_time = box_session.get_retry_after_time(
+            attempt_number, retry_after_header
+        )  # pylint: disable=protected-access
     retry_time = round(retry_time, 4)
     assert retry_time == expected_result
 
@@ -408,18 +539,33 @@ def test_get_retry_after_time(box_session, attempt_number, retry_after_header, e
 @pytest.mark.parametrize(
     'test_proxy_url,test_proxy_auth,expected_proxy_dict',
     [
-        ('http://example-proxy.com', {'user': 'test_user', 'password': 'test_password', },
-         {'http': 'http://test_user:test_password@example-proxy.com', 'https': 'http://test_user:test_password@example-proxy.com'}),
-        ('http://example-proxy.com', None, {'http': 'http://example-proxy.com', 'https': 'http://example-proxy.com'}),
-    ]
+        (
+            'http://example-proxy.com',
+            {
+                'user': 'test_user',
+                'password': 'test_password',
+            },
+            {
+                'http': 'http://test_user:test_password@example-proxy.com',
+                'https': 'http://test_user:test_password@example-proxy.com',
+            },
+        ),
+        (
+            'http://example-proxy.com',
+            None,
+            {'http': 'http://example-proxy.com', 'https': 'http://example-proxy.com'},
+        ),
+    ],
 )
 def test_proxy_attaches_to_request_correctly(
-        box_session,
-        monkeypatch,
-        mock_network_layer,
-        generic_successful_response,
-        test_proxy_url, test_proxy_auth,
-        expected_proxy_dict):
+    box_session,
+    monkeypatch,
+    mock_network_layer,
+    generic_successful_response,
+    test_proxy_url,
+    test_proxy_auth,
+    expected_proxy_dict,
+):
     monkeypatch.setattr(Proxy, 'URL', test_proxy_url)
     monkeypatch.setattr(Proxy, 'AUTH', test_proxy_auth)
     mock_network_layer.request.side_effect = [generic_successful_response]
@@ -434,7 +580,9 @@ def test_proxy_attaches_to_request_correctly(
     )
 
 
-def test_proxy_malformed_dict_does_not_attach(box_session, monkeypatch, mock_network_layer, generic_successful_response):
+def test_proxy_malformed_dict_does_not_attach(
+    box_session, monkeypatch, mock_network_layer, generic_successful_response
+):
     test_proxy_url = 'http://example.com'
     test_proxy_auth = {
         'foo': 'bar',
@@ -445,8 +593,11 @@ def test_proxy_malformed_dict_does_not_attach(box_session, monkeypatch, mock_net
     with pytest.raises(BoxException) as exc_info:
         box_session.request('GET', test_proxy_url)
     assert isinstance(exc_info.value, BoxException)
-    assert exc_info.value.args[0] == "The proxy auth dict you provided does not match pattern " \
-                                     "{'user': 'example_user', 'password': 'example_password'}"
+    assert (
+        exc_info.value.args[0]
+        == "The proxy auth dict you provided does not match pattern "
+        "{'user': 'example_user', 'password': 'example_password'}"
+    )
 
 
 def test_proxy_network_config_property(box_session):
@@ -454,7 +605,8 @@ def test_proxy_network_config_property(box_session):
 
 
 def test_multipart_request_with_disabled_streaming_file_content(
-        box_session, mock_network_layer, generic_successful_response):
+    box_session, mock_network_layer, generic_successful_response
+):
     test_url = 'https://example.com'
     file_bytes = os.urandom(1024)
     mock_network_layer.request.side_effect = [generic_successful_response]
@@ -462,7 +614,7 @@ def test_multipart_request_with_disabled_streaming_file_content(
         url=test_url,
         files={'file': ('unused', BytesIO(file_bytes))},
         data={'attributes': '{"name": "test_file"}'},
-        stream_file_content=False
+        stream_file_content=False,
     )
     mock_network_layer.request.assert_called_once_with(
         'POST',
@@ -476,7 +628,8 @@ def test_multipart_request_with_disabled_streaming_file_content(
 
 
 def test_multipart_request_with_enabled_streaming_file_content(
-        box_session, mock_network_layer, generic_successful_response):
+    box_session, mock_network_layer, generic_successful_response
+):
     test_url = 'https://example.com'
     file_bytes = os.urandom(1024)
     mock_network_layer.request.side_effect = [generic_successful_response]
@@ -484,7 +637,7 @@ def test_multipart_request_with_enabled_streaming_file_content(
         url=test_url,
         files={'file': ('unused', BytesIO(file_bytes))},
         data={'attributes': '{"name": "test_file"}'},
-        stream_file_content=True
+        stream_file_content=True,
     )
     call_args = mock_network_layer.request.call_args[0]
     call_kwargs = mock_network_layer.request.call_args[1]

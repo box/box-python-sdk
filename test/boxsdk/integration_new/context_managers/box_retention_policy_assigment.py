@@ -10,9 +10,9 @@ from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 class BoxRetentionPolicyAssignment:
 
     def __init__(
-            self,
-            retention_policy: RetentionPolicy,
-            assignee: Union['Folder', 'Enterprise', 'MetadataTemplate']
+        self,
+        retention_policy: RetentionPolicy,
+        assignee: Union['Folder', 'Enterprise', 'MetadataTemplate'],
     ):
         self._retention_policy_assignment = retention_policy.assign(assignee)
 

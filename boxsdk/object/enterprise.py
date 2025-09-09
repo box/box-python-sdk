@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 
 
 class Enterprise(BaseObject):
-
     """Represents a single enterprise."""
+
     _item_type = 'enterprise'
 
     @api_call

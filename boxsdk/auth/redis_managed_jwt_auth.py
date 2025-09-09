@@ -8,6 +8,7 @@ class RedisManagedJWTAuth(RedisManagedOAuth2Mixin, JWTAuth):
     """
     JWT Auth subclass which uses Redis to manage access tokens.
     """
+
     def _auth_with_jwt(self, sub: str, sub_type: str) -> Tuple[str, None]:
         """
         Base class override. Returns the access token in a tuple to match the OAuth2 interface.

@@ -6,7 +6,9 @@ class MockTextEnum(TextEnum):
 
 
 def test_text_enum_repr_is_value():
-    assert MockTextEnum.MEMBER.__repr__() == MockTextEnum.MEMBER.value  # pylint:disable=no-member
+    assert (
+        MockTextEnum.MEMBER.__repr__() == MockTextEnum.MEMBER.value
+    )  # pylint:disable=no-member
 
 
 def test_text_enum_str_is_value():

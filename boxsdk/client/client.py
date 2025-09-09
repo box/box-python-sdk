@@ -12,7 +12,9 @@ from ..object.search import Search
 from ..object.events import Events
 from ..object.collaboration_allowlist import CollaborationAllowlist
 from ..object.trash import Trash
-from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.limit_offset_based_object_collection import (
+    LimitOffsetBasedObjectCollection,
+)
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.datetime_formatter import normalize_date_to_rfc3339_format
 from ..util.shared_link import get_shared_link_header
@@ -30,7 +32,9 @@ if TYPE_CHECKING:
     from boxsdk.object.legal_hold import LegalHold
     from boxsdk.object.legal_hold_policy_assignment import LegalHoldPolicyAssignment
     from boxsdk.object.legal_hold_policy import LegalHoldPolicy
-    from boxsdk.object.collaboration_allowlist_exempt_target import CollaborationAllowlistExemptTarget
+    from boxsdk.object.collaboration_allowlist_exempt_target import (
+        CollaborationAllowlistExemptTarget,
+    )
     from boxsdk.object.collaboration_allowlist_entry import CollaborationAllowlistEntry
     from boxsdk.object.collaboration import Collaboration
     from boxsdk.object.group import Group
@@ -52,7 +56,11 @@ if TYPE_CHECKING:
     from boxsdk.object.task_assignment import TaskAssignment
     from boxsdk.object.task import Task
     from boxsdk.object.terms_of_service_user_status import TermsOfServiceUserStatus
-    from boxsdk.object.terms_of_service import TermsOfService, TermsOfServiceType, TermsOfServiceStatus
+    from boxsdk.object.terms_of_service import (
+        TermsOfService,
+        TermsOfServiceType,
+        TermsOfServiceStatus,
+    )
     from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
     from boxsdk.object.storage_policy import StoragePolicy
     from boxsdk.object.webhook import Webhook
@@ -75,13 +83,18 @@ class Client(Cloneable):
             The session object to use. If None is provided then an instance of :class:`AuthorizedSession` will be used.
         """
         super().__init__()
-        warn('Package \'boxsdk\' is going to be deprecated soon. Please use \'box-sdk-gen\' instead.', DeprecationWarning)
+        warn(
+            'Package \'boxsdk\' is going to be deprecated soon. Please use \'box-sdk-gen\' instead.',
+            DeprecationWarning,
+        )
         self._oauth = oauth
         if session is not None:
             self._session = session
         else:
             session = session or self.unauthorized_session_class()
-            self._session = self.authorized_session_class(self._oauth, **session.get_constructor_kwargs())
+            self._session = self.authorized_session_class(
+                self._oauth, **session.get_constructor_kwargs()
+            )
 
     @property
     def auth(self) -> 'OAuth2':
@@ -99,8 +112,7 @@ class Client(Cloneable):
 
     @property
     def translator(self) -> 'Translator':
-        """The translator used for translating Box API JSON responses into `BaseAPIJSONObject` smart objects.
-        """
+        """The translator used for translating Box API JSON responses into `BaseAPIJSONObject` smart objects."""
         return self._session.translator
 
     def folder(self, folder_id: str) -> 'Folder':
@@ -140,7 +152,9 @@ class Client(Cloneable):
         :return:
             A :class:`FileRequest` object with the given file request id.
         """
-        return self.translator.get('file_request')(session=self._session, object_id=request_id)
+        return self.translator.get('file_request')(
+            session=self._session, object_id=request_id
+        )
 
     def file_version(self, version_id: str) -> 'FileVersion':
         """
@@ -151,7 +165,9 @@ class Client(Cloneable):
         :return:
             A :class:`FileVersion` object with the given file version id.
         """
-        return self.translator.get('file_version')(session=self._session, object_id=version_id)
+        return self.translator.get('file_version')(
+            session=self._session, object_id=version_id
+        )
 
     def upload_session(self, session_id: str) -> 'UploadSession':
         """
@@ -162,7 +178,9 @@ class Client(Cloneable):
         :return:
             A :class:`UploadSession` object with the given session id.
         """
-        return self.translator.get('upload_session')(session=self._session, object_id=session_id)
+        return self.translator.get('upload_session')(
+            session=self._session, object_id=session_id
+        )
 
     def comment(self, comment_id: str) -> 'Comment':
         """
@@ -173,7 +191,9 @@ class Client(Cloneable):
         :return:
             A :class:`Comment` object with the given comment ID.
         """
-        return self.translator.get('comment')(session=self._session, object_id=comment_id)
+        return self.translator.get('comment')(
+            session=self._session, object_id=comment_id
+        )
 
     def user(self, user_id: str = 'me') -> 'User':
         """
@@ -206,7 +226,9 @@ class Client(Cloneable):
         :return:
             A :class:`EmailAlias` object with the given entry ID.
         """
-        return self.translator.get('email_alias')(session=self._session, object_id=alias_id)
+        return self.translator.get('email_alias')(
+            session=self._session, object_id=alias_id
+        )
 
     def group(self, group_id: str) -> 'Group':
         """
@@ -228,7 +250,9 @@ class Client(Cloneable):
         :return:
             A :class:`Collaboration` object with the given group id.
         """
-        return self.translator.get('collaboration')(session=self._session, object_id=collab_id)
+        return self.translator.get('collaboration')(
+            session=self._session, object_id=collab_id
+        )
 
     def collaboration_allowlist(self):
         """
@@ -239,7 +263,9 @@ class Client(Cloneable):
         """
         return CollaborationAllowlist(self._session)
 
-    def collaboration_allowlist_entry(self, entry_id: str) -> 'CollaborationAllowlistEntry':
+    def collaboration_allowlist_entry(
+        self, entry_id: str
+    ) -> 'CollaborationAllowlistEntry':
         """
         Initialize a :class:`CollaborationAllowlistEntry` object, whose box id is entry_id.
 
@@ -248,9 +274,13 @@ class Client(Cloneable):
         :return:
             A :class:`CollaborationAllowlistEntry` object with the given entry id.
         """
-        return self.translator.get('collaboration_whitelist_entry')(session=self._session, object_id=entry_id)
+        return self.translator.get('collaboration_whitelist_entry')(
+            session=self._session, object_id=entry_id
+        )
 
-    def collaboration_allowlist_exempt_target(self, exemption_id: str) -> 'CollaborationAllowlistExemptTarget':
+    def collaboration_allowlist_exempt_target(
+        self, exemption_id: str
+    ) -> 'CollaborationAllowlistExemptTarget':
         """
         Initialize a :class:`CollaborationAllowlistExemptTarget` object, whose box id is target_id.
 
@@ -260,8 +290,7 @@ class Client(Cloneable):
             A :class:`CollaborationAllowlistExemptTarget` object with the given target id.
         """
         return self.translator.get('collaboration_whitelist_exempt_target')(
-            session=self._session,
-            object_id=exemption_id
+            session=self._session, object_id=exemption_id
         )
 
     def trash(self) -> Trash:
@@ -282,9 +311,13 @@ class Client(Cloneable):
         :return:
             A :class:`LegalHoldPolicy` object with the given entry ID.
         """
-        return self.translator.get('legal_hold_policy')(session=self._session, object_id=policy_id)
+        return self.translator.get('legal_hold_policy')(
+            session=self._session, object_id=policy_id
+        )
 
-    def legal_hold_policy_assignment(self, policy_assignment_id: str) -> 'LegalHoldPolicyAssignment':
+    def legal_hold_policy_assignment(
+        self, policy_assignment_id: str
+    ) -> 'LegalHoldPolicyAssignment':
         """
         Initialize a :class:`LegalHoldPolicyAssignment` object, whose box id is policy_assignment_id.
 
@@ -293,7 +326,9 @@ class Client(Cloneable):
         :return:
             A :class:`LegalHoldPolicyAssignment` object with the given entry ID.
         """
-        return self.translator.get('legal_hold_policy_assignment')(session=self._session, object_id=policy_assignment_id)
+        return self.translator.get('legal_hold_policy_assignment')(
+            session=self._session, object_id=policy_assignment_id
+        )
 
     def legal_hold(self, hold_id: str) -> 'LegalHold':
         """
@@ -304,16 +339,18 @@ class Client(Cloneable):
         :return:
             A :class:`LegalHold` object with the given entry ID.
         """
-        return self.translator.get('legal_hold')(session=self._session, object_id=hold_id)
+        return self.translator.get('legal_hold')(
+            session=self._session, object_id=hold_id
+        )
 
     @api_call
     def create_legal_hold_policy(
-            self,
-            policy_name: str,
-            description: Optional[str] = None,
-            filter_started_at: Union[datetime, str] = None,
-            filter_ended_at: Union[datetime, str] = None,
-            is_ongoing: Optional[bool] = None
+        self,
+        policy_name: str,
+        description: Optional[str] = None,
+        filter_started_at: Union[datetime, str] = None,
+        filter_ended_at: Union[datetime, str] = None,
+        is_ongoing: Optional[bool] = None,
     ) -> 'LegalHoldPolicy':
         """
         Create a legal hold policy.
@@ -339,9 +376,13 @@ class Client(Cloneable):
         if description is not None:
             policy_attributes['description'] = description
         if filter_started_at is not None:
-            policy_attributes['filter_started_at'] = normalize_date_to_rfc3339_format(filter_started_at)
+            policy_attributes['filter_started_at'] = normalize_date_to_rfc3339_format(
+                filter_started_at
+            )
         if filter_ended_at is not None:
-            policy_attributes['filter_ended_at'] = normalize_date_to_rfc3339_format(filter_ended_at)
+            policy_attributes['filter_ended_at'] = normalize_date_to_rfc3339_format(
+                filter_ended_at
+            )
         if is_ongoing is not None:
             policy_attributes['is_ongoing'] = is_ongoing
         box_response = self._session.post(url, data=json.dumps(policy_attributes))
@@ -353,11 +394,11 @@ class Client(Cloneable):
 
     @api_call
     def get_legal_hold_policies(
-            self,
-            policy_name: Optional[str] = None,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        policy_name: Optional[str] = None,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get the entries in the legal hold policy using limit-offset paging.
@@ -395,14 +436,13 @@ class Client(Cloneable):
         :return:
             A :class:`Collection` object with the given collection ID.
         """
-        return self.translator.get('collection')(session=self._session, object_id=collection_id)
+        return self.translator.get('collection')(
+            session=self._session, object_id=collection_id
+        )
 
     @api_call
     def collections(
-            self,
-            limit: Optional[int] = None,
-            offset: int = 0,
-            fields: Iterable[str] = None
+        self, limit: Optional[int] = None, offset: int = 0, fields: Iterable[str] = None
     ) -> 'BoxObjectCollection':
         """
         Get a list of collections for the current user.
@@ -432,7 +472,9 @@ class Client(Cloneable):
         :return:
             A :class:`Enterprise` object with the given enterprise ID.
         """
-        return self.translator.get('enterprise')(session=self._session, object_id=enterprise_id)
+        return self.translator.get('enterprise')(
+            session=self._session, object_id=enterprise_id
+        )
 
     @api_call
     def get_current_enterprise(self) -> 'Enterprise':
@@ -451,14 +493,14 @@ class Client(Cloneable):
 
     @api_call
     def users(
-            self,
-            limit: Optional[int] = None,
-            offset: int = 0,
-            filter_term: Optional[str] = None,
-            user_type: Optional[str] = None,
-            fields: Iterable[str] = None,
-            use_marker: bool = False,
-            marker: Optional[str] = None
+        self,
+        limit: Optional[int] = None,
+        offset: int = 0,
+        filter_term: Optional[str] = None,
+        user_type: Optional[str] = None,
+        fields: Iterable[str] = None,
+        use_marker: bool = False,
+        marker: Optional[str] = None,
     ) -> Iterable['User']:
         """
         Get a list of all users for the Enterprise along with their user_id, public_name, and login.
@@ -540,11 +582,11 @@ class Client(Cloneable):
 
     @api_call
     def get_groups(
-            self,
-            name: Optional[str] = None,
-            limit: Optional[int] = None,
-            offset: Optional[int] = None,
-            fields: Iterable[str] = None
+        self,
+        name: Optional[str] = None,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        fields: Iterable[str] = None,
     ) -> Iterable['Group']:
         """
         Get a list of all groups for the current user.
@@ -583,10 +625,14 @@ class Client(Cloneable):
         :return:
             A :class:`Webhook` object with the given entry ID.
         """
-        return self.translator.get('webhook')(session=self._session, object_id=webhook_id)
+        return self.translator.get('webhook')(
+            session=self._session, object_id=webhook_id
+        )
 
     @api_call
-    def create_webhook(self, target: Union['File', 'Folder'], triggers: Union[list, str], address: str) -> 'Webhook':
+    def create_webhook(
+        self, target: Union['File', 'Folder'], triggers: Union[list, str], address: str
+    ) -> 'Webhook':
         """
         Create a webhook on the given file.
 
@@ -617,10 +663,10 @@ class Client(Cloneable):
 
     @api_call
     def get_webhooks(
-            self,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get all webhooks in an enterprise.
@@ -644,14 +690,14 @@ class Client(Cloneable):
 
     @api_call
     def create_group(
-            self,
-            name: str,
-            provenance: Optional[str] = None,
-            external_sync_identifier: Optional[str] = None,
-            description: Optional[str] = None,
-            invitability_level: str = None,
-            member_viewability_level: str = None,
-            fields: Iterable[str] = None,
+        self,
+        name: str,
+        provenance: Optional[str] = None,
+        external_sync_identifier: Optional[str] = None,
+        description: Optional[str] = None,
+        invitability_level: str = None,
+        member_viewability_level: str = None,
+        fields: Iterable[str] = None,
     ) -> 'Group':
         """
         Create a group with the given name.
@@ -692,7 +738,9 @@ class Client(Cloneable):
             body_attributes['member_viewability_level'] = member_viewability_level
         if fields is not None:
             additional_params['fields'] = ','.join(fields)
-        box_response = self._session.post(url, data=json.dumps(body_attributes), params=additional_params)
+        box_response = self._session.post(
+            url, data=json.dumps(body_attributes), params=additional_params
+        )
         response = box_response.json()
         return self.translator.translate(
             session=self._session,
@@ -708,9 +756,13 @@ class Client(Cloneable):
         :return:
             A :class:`StoragePolicy` object with the given entry ID.
         """
-        return self.translator.get('storage_policy')(session=self._session, object_id=policy_id)
+        return self.translator.get('storage_policy')(
+            session=self._session, object_id=policy_id
+        )
 
-    def storage_policy_assignment(self, assignment_id: str) -> 'StoragePolicyAssignment':
+    def storage_policy_assignment(
+        self, assignment_id: str
+    ) -> 'StoragePolicyAssignment':
         """
         Initialize a :class:`StoragePolicyAssignment` object, whose box id is assignment_id.
 
@@ -719,13 +771,15 @@ class Client(Cloneable):
         :return:
             A :class:`StoragePolicyAssignment` object with the given entry ID.
         """
-        return self.translator.get('storage_policy_assignment')(session=self._session, object_id=assignment_id)
+        return self.translator.get('storage_policy_assignment')(
+            session=self._session, object_id=assignment_id
+        )
 
     def get_storage_policies(
-            self,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get the entries in the storage policy using marker-based paging.
@@ -757,9 +811,13 @@ class Client(Cloneable):
         :return:
             A :class:`TermsOfService` object with the given terms of service id.
         """
-        return self.translator.get('terms_of_service')(session=self._session, object_id=tos_id)
+        return self.translator.get('terms_of_service')(
+            session=self._session, object_id=tos_id
+        )
 
-    def terms_of_service_user_status(self, tos_user_status_id: str) -> 'TermsOfServiceUserStatus':
+    def terms_of_service_user_status(
+        self, tos_user_status_id: str
+    ) -> 'TermsOfServiceUserStatus':
         """
         Initialize a :class:`TermsOfServiceUserStatus` object, whose box id is tos_user_status_id.
 
@@ -768,13 +826,15 @@ class Client(Cloneable):
         :return:
             A :class:`TermsOfServiceUserStatus` object with the given terms of service user status id.
         """
-        return self.translator.get('terms_of_service_user_status')(session=self._session, object_id=tos_user_status_id)
+        return self.translator.get('terms_of_service_user_status')(
+            session=self._session, object_id=tos_user_status_id
+        )
 
     def get_terms_of_services(
-            self,
-            tos_type: 'TermsOfServiceType' = None,
-            limit: Optional[int] = None,
-            fields: Iterable[str] = None
+        self,
+        tos_type: 'TermsOfServiceType' = None,
+        limit: Optional[int] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get the entries in the terms of service using limit-offset paging.
@@ -821,7 +881,9 @@ class Client(Cloneable):
         :return:
             A :class:`TaskAssignment` object with the given entry ID.
         """
-        return self.translator.get('task_assignment')(session=self._session, object_id=assignment_id)
+        return self.translator.get('task_assignment')(
+            session=self._session, object_id=assignment_id
+        )
 
     def retention_policy(self, retention_id: str) -> 'RetentionPolicy':
         """
@@ -832,7 +894,9 @@ class Client(Cloneable):
         :return:
             A :class:`RetentionPolicy` object with the given entry ID.
         """
-        return self.translator.get('retention_policy')(session=self._session, object_id=retention_id)
+        return self.translator.get('retention_policy')(
+            session=self._session, object_id=retention_id
+        )
 
     def file_version_retention(self, retention_id: str) -> 'FileVersionRetention':
         """
@@ -843,9 +907,13 @@ class Client(Cloneable):
         :return:
             A :class:`FileVersionRetention` object with the given retention ID.
         """
-        return self.translator.get('file_version_retention')(session=self._session, object_id=retention_id)
+        return self.translator.get('file_version_retention')(
+            session=self._session, object_id=retention_id
+        )
 
-    def retention_policy_assignment(self, assignment_id: str) -> 'RetentionPolicyAssignment':
+    def retention_policy_assignment(
+        self, assignment_id: str
+    ) -> 'RetentionPolicyAssignment':
         """
         Initialize a :class:`RetentionPolicyAssignment` object, whose box id is assignment_id.
 
@@ -854,19 +922,21 @@ class Client(Cloneable):
         :return:
             A :class:`RetentionPolicyAssignment` object with the given assignment ID.
         """
-        return self.translator.get('retention_policy_assignment')(session=self._session, object_id=assignment_id)
+        return self.translator.get('retention_policy_assignment')(
+            session=self._session, object_id=assignment_id
+        )
 
     @api_call
     def create_retention_policy(
-            self,
-            policy_name: str,
-            disposition_action: str,
-            retention_length: Union[int, float],
-            can_owner_extend_retention: Optional[bool] = None,
-            are_owners_notified: Optional[bool] = None,
-            custom_notification_recipients: Iterable['User'] = None,
-            retention_type: Optional[str] = None,
-            description: Optional[str] = None,
+        self,
+        policy_name: str,
+        disposition_action: str,
+        retention_length: Union[int, float],
+        can_owner_extend_retention: Optional[bool] = None,
+        are_owners_notified: Optional[bool] = None,
+        custom_notification_recipients: Iterable['User'] = None,
+        retention_type: Optional[str] = None,
+        description: Optional[str] = None,
     ) -> 'RetentionPolicy':
         """
         Create a retention policy for the given enterprise.
@@ -908,11 +978,16 @@ class Client(Cloneable):
             retention_attributes['policy_type'] = 'finite'
             retention_attributes['retention_length'] = retention_length
         if can_owner_extend_retention is not None:
-            retention_attributes['can_owner_extend_retention'] = can_owner_extend_retention
+            retention_attributes['can_owner_extend_retention'] = (
+                can_owner_extend_retention
+            )
         if are_owners_notified is not None:
             retention_attributes['are_owners_notified'] = are_owners_notified
         if custom_notification_recipients is not None:
-            user_list = [{'type': user.object_type, 'id': user.object_id} for user in custom_notification_recipients]
+            user_list = [
+                {'type': user.object_type, 'id': user.object_id}
+                for user in custom_notification_recipients
+            ]
             retention_attributes['custom_notification_recipients'] = user_list
         if retention_type is not None:
             retention_attributes['retention_type'] = retention_type
@@ -921,19 +996,18 @@ class Client(Cloneable):
         box_response = self._session.post(url, data=json.dumps(retention_attributes))
         response = box_response.json()
         return self.translator.translate(
-            session=self._session,
-            response_object=response
+            session=self._session, response_object=response
         )
 
     @api_call
     def get_retention_policies(
-            self,
-            policy_name: Optional[str] = None,
-            policy_type: Optional[str] = None,
-            user: Optional['User'] = None,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None,
+        self,
+        policy_name: Optional[str] = None,
+        policy_type: Optional[str] = None,
+        user: Optional['User'] = None,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get the entries in the retention policy using marker-based paging.
@@ -971,10 +1045,7 @@ class Client(Cloneable):
         )
 
     def create_terms_of_service(
-            self,
-            status: 'TermsOfServiceStatus',
-            tos_type: 'TermsOfServiceType',
-            text: str
+        self, status: 'TermsOfServiceStatus', tos_type: 'TermsOfServiceType', text: str
     ) -> 'TermsOfService':
         """
         Create a terms of service.
@@ -989,11 +1060,7 @@ class Client(Cloneable):
             A newly created :class:`TermsOfService` object
         """
         url = self.get_url('terms_of_services')
-        body = {
-            'status': status,
-            'tos_type': tos_type,
-            'text': text
-        }
+        body = {'status': status, 'tos_type': tos_type, 'text': text}
         box_response = self._session.post(url, data=json.dumps(body))
         response = box_response.json()
         return self.translator.translate(
@@ -1001,20 +1068,22 @@ class Client(Cloneable):
             response_object=response,
         )
 
-    @deprecated("Use RetentionPolicyAssignment.get_files_under_retention "
-                "or RetentionPolicyAssignment.get_file_versions_under_retention instead")
+    @deprecated(
+        "Use RetentionPolicyAssignment.get_files_under_retention "
+        "or RetentionPolicyAssignment.get_file_versions_under_retention instead"
+    )
     @api_call
     def get_file_version_retentions(
-            self,
-            target_file: Optional['File'] = None,
-            file_version: Optional['FileVersion'] = None,
-            policy: Optional['RetentionPolicy'] = None,
-            disposition_action: Optional[str] = None,
-            disposition_before: Optional[str] = None,
-            disposition_after: Optional[str] = None,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None,
+        self,
+        target_file: Optional['File'] = None,
+        file_version: Optional['FileVersion'] = None,
+        policy: Optional['RetentionPolicy'] = None,
+        disposition_action: Optional[str] = None,
+        disposition_before: Optional[str] = None,
+        disposition_after: Optional[str] = None,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get the entries in the file version retention.
@@ -1071,15 +1140,17 @@ class Client(Cloneable):
         :return:
             A :class:`WebLink` object with the given entry ID.
         """
-        return self.translator.get('web_link')(session=self._session, object_id=web_link_id)
+        return self.translator.get('web_link')(
+            session=self._session, object_id=web_link_id
+        )
 
     @api_call
     def get_recent_items(
-            self,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None,
-            **collection_kwargs: Any
+        self,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
+        **collection_kwargs: Any,
     ) -> MarkerBasedObjectCollection:
         """
         Get the user's recently accessed items.
@@ -1103,7 +1174,7 @@ class Client(Cloneable):
             limit=limit,
             fields=fields,
             marker=marker,
-            **collection_kwargs
+            **collection_kwargs,
         )
 
     @api_call
@@ -1147,7 +1218,9 @@ class Client(Cloneable):
         return self._session.request(method, url, **kwargs)
 
     @api_call
-    def create_user(self, name: str, login: Optional[str] = None, **user_attributes: Any) -> 'User':
+    def create_user(
+        self, name: str, login: Optional[str] = None, **user_attributes: Any
+    ) -> 'User':
         """
         Create a new user. Can only be used if the current user is an enterprise admin, or the current authorization
         scope is a Box developer edition instance.
@@ -1177,10 +1250,10 @@ class Client(Cloneable):
 
     @api_call
     def get_pending_collaborations(
-            self,
-            limit: Optional[int] = None,
-            offset: Optional[int] = None,
-            fields: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get the entries in the pending collaborations using limit-offset paging.
@@ -1206,11 +1279,11 @@ class Client(Cloneable):
 
     @api_call
     def downscope_token(
-            self,
-            scopes: Iterable['TokenScope'],
-            item: 'Item' = None,
-            additional_data: dict = None,
-            shared_link: str = None
+        self,
+        scopes: Iterable['TokenScope'],
+        item: 'Item' = None,
+        additional_data: dict = None,
+        shared_link: str = None,
     ) -> TokenResponse:
         """
         Generate a downscoped token for the provided file or folder with the provided scopes.
@@ -1275,15 +1348,17 @@ class Client(Cloneable):
         :return:
             A :class:`DevicePinner` object with the given entry ID.
         """
-        return self.translator.get('device_pinner')(session=self._session, object_id=device_pin_id)
+        return self.translator.get('device_pinner')(
+            session=self._session, object_id=device_pin_id
+        )
 
     def device_pinners(
-            self,
-            enterprise: Optional['Enterprise'] = None,
-            direction: Optional[str] = None,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        enterprise: Optional['Enterprise'] = None,
+        direction: Optional[str] = None,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Returns all of the device pins for the given enterprise.
@@ -1301,7 +1376,11 @@ class Client(Cloneable):
         :returns:
             An iterator of the entries in the device pins.
         """
-        enterprise_id = enterprise.object_id if enterprise is not None else self.get_current_enterprise().id
+        enterprise_id = (
+            enterprise.object_id
+            if enterprise is not None
+            else self.get_current_enterprise().id
+        )
         additional_params = {}
         if direction is not None:
             additional_params['direction'] = direction
@@ -1366,11 +1445,11 @@ class Client(Cloneable):
 
     @api_call
     def get_metadata_templates(
-            self,
-            scope: str = 'enterprise',
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        scope: str = 'enterprise',
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get all metadata templates for a given scope.  By default, retrieves all metadata templates for the current
@@ -1398,13 +1477,13 @@ class Client(Cloneable):
 
     @api_call
     def create_metadata_template(
-            self,
-            display_name: str,
-            fields: Iterable['MetadataField'],
-            template_key: str = None,
-            hidden: bool = False,
-            scope: str = 'enterprise',
-            copy_instance_on_item_copy: bool = False
+        self,
+        display_name: str,
+        fields: Iterable['MetadataField'],
+        template_key: str = None,
+        hidden: bool = False,
+        scope: str = 'enterprise',
+        copy_instance_on_item_copy: bool = False,
     ) -> 'MetadataTemplate':
         """
         Create a new metadata template.  By default, only the display name and fields are required; the template key
@@ -1430,7 +1509,7 @@ class Client(Cloneable):
             'displayName': display_name,
             'hidden': hidden,
             'fields': [field.json() for field in fields],
-            'copyInstanceOnItemCopy': copy_instance_on_item_copy
+            'copyInstanceOnItemCopy': copy_instance_on_item_copy,
         }
 
         if template_key is not None:
@@ -1459,11 +1538,10 @@ class Client(Cloneable):
         zip_file_items = []
         for item in items:
             zip_file_items.append({'type': item._item_type, 'id': item.object_id})
-        data = {
-            'download_file_name': name,
-            'items': zip_file_items
-        }
-        return self._session.post(url, data=json.dumps(data), skip_retry_codes={202}).json()
+        data = {'download_file_name': name, 'items': zip_file_items}
+        return self._session.post(
+            url, data=json.dumps(data), skip_retry_codes={202}
+        ).json()
 
     @api_call
     def download_zip(self, name: str, items: Iterable, writeable_stream: IO) -> dict:
@@ -1480,8 +1558,12 @@ class Client(Cloneable):
             A status response object
         """
         created_zip = self.__create_zip(name, items)
-        response = self._session.get(created_zip['download_url'], expect_json_response=False, stream=True)
-        for chunk in response.network_response.response_as_stream.stream(decode_content=True):
+        response = self._session.get(
+            created_zip['download_url'], expect_json_response=False, stream=True
+        )
+        for chunk in response.network_response.response_as_stream.stream(
+            decode_content=True
+        ):
             writeable_stream.write(chunk)
         status = self._session.get(created_zip['status_url']).json()
         status.update(created_zip)
@@ -1499,7 +1581,9 @@ class Client(Cloneable):
         :return:
             A :class:`FolderLock` object with the given entry ID.
         """
-        return self.translator.get('folder_lock')(session=self._session, object_id=folder_lock_id)
+        return self.translator.get('folder_lock')(
+            session=self._session, object_id=folder_lock_id
+        )
 
     def sign_request(self, sign_request_id: str) -> 'SignRequest':
         """
@@ -1510,25 +1594,28 @@ class Client(Cloneable):
         :return:
             A :class:`SignRequest` object with the given file id.
         """
-        return self.translator.get('sign_request')(session=self._session, object_id=sign_request_id)
+        return self.translator.get('sign_request')(
+            session=self._session, object_id=sign_request_id
+        )
 
     # pylint: disable=too-many-branches
     def __create_sign_request(
-            self,
-            signers: Iterable,
-            files: Optional[Iterable] = None,
-            parent_folder_id: Optional[str] = None,
-            prefill_tags: Optional[Iterable] = None,
-            are_reminders_enabled: Optional[bool] = None,
-            are_text_signatures_enabled: Optional[bool] = None,
-            days_valid: Optional[str] = None,
-            email_message: Optional[Iterable] = None,
-            email_subject: Optional[str] = None,
-            external_id: Optional[str] = None,
-            is_document_preparation_needed: Optional[bool] = None,
-            redirect_url: Optional[str] = None,
-            declined_redirect_url: Optional[str] = None,
-            template_id: Optional[str] = None) -> 'SignRequest':
+        self,
+        signers: Iterable,
+        files: Optional[Iterable] = None,
+        parent_folder_id: Optional[str] = None,
+        prefill_tags: Optional[Iterable] = None,
+        are_reminders_enabled: Optional[bool] = None,
+        are_text_signatures_enabled: Optional[bool] = None,
+        days_valid: Optional[str] = None,
+        email_message: Optional[Iterable] = None,
+        email_subject: Optional[str] = None,
+        external_id: Optional[str] = None,
+        is_document_preparation_needed: Optional[bool] = None,
+        redirect_url: Optional[str] = None,
+        declined_redirect_url: Optional[str] = None,
+        template_id: Optional[str] = None,
+    ) -> 'SignRequest':
         url = self._session.get_url('sign_requests')
 
         body = {
@@ -1538,10 +1625,7 @@ class Client(Cloneable):
         if files:
             body['source_files'] = files
         if parent_folder_id:
-            body['parent_folder'] = {
-                'id': parent_folder_id,
-                'type': 'folder'
-            }
+            body['parent_folder'] = {'id': parent_folder_id, 'type': 'folder'}
         if prefill_tags:
             body['prefill_tags'] = prefill_tags
         if are_reminders_enabled:
@@ -1575,21 +1659,21 @@ class Client(Cloneable):
     @api_call
     @deprecated('Use create_sign_request_v2 instead')
     def create_sign_request(
-            self,
-            files: Iterable,
-            signers: Iterable,
-            parent_folder_id: str,
-            prefill_tags: Optional[Iterable] = None,
-            are_reminders_enabled: Optional[bool] = None,
-            are_text_signatures_enabled: Optional[bool] = None,
-            days_valid: Optional[str] = None,
-            email_message: Optional[Iterable] = None,
-            email_subject: Optional[str] = None,
-            external_id: Optional[str] = None,
-            is_document_preparation_needed: Optional[bool] = None,
-            redirect_url: Optional[str] = None,
-            declined_redirect_url: Optional[str] = None,
-            template_id: Optional[str] = None,
+        self,
+        files: Iterable,
+        signers: Iterable,
+        parent_folder_id: str,
+        prefill_tags: Optional[Iterable] = None,
+        are_reminders_enabled: Optional[bool] = None,
+        are_text_signatures_enabled: Optional[bool] = None,
+        days_valid: Optional[str] = None,
+        email_message: Optional[Iterable] = None,
+        email_subject: Optional[str] = None,
+        external_id: Optional[str] = None,
+        is_document_preparation_needed: Optional[bool] = None,
+        redirect_url: Optional[str] = None,
+        declined_redirect_url: Optional[str] = None,
+        template_id: Optional[str] = None,
     ) -> 'SignRequest':
         """
         Used to create a new sign request.
@@ -1632,26 +1716,39 @@ class Client(Cloneable):
             A dictionary representing a created SignRequest
         """
         return self.__create_sign_request(
-            signers, files, parent_folder_id, prefill_tags, are_reminders_enabled, are_text_signatures_enabled, days_valid, email_message,
-            email_subject, external_id, is_document_preparation_needed, redirect_url, declined_redirect_url, template_id)
+            signers,
+            files,
+            parent_folder_id,
+            prefill_tags,
+            are_reminders_enabled,
+            are_text_signatures_enabled,
+            days_valid,
+            email_message,
+            email_subject,
+            external_id,
+            is_document_preparation_needed,
+            redirect_url,
+            declined_redirect_url,
+            template_id,
+        )
 
     @api_call
     def create_sign_request_v2(
-            self,
-            signers: Iterable,
-            files: Optional[Iterable] = None,
-            parent_folder_id: Optional[str] = None,
-            prefill_tags: Optional[Iterable] = None,
-            are_reminders_enabled: Optional[bool] = None,
-            are_text_signatures_enabled: Optional[bool] = None,
-            days_valid: Optional[str] = None,
-            email_message: Optional[Iterable] = None,
-            email_subject: Optional[str] = None,
-            external_id: Optional[str] = None,
-            is_document_preparation_needed: Optional[bool] = None,
-            redirect_url: Optional[str] = None,
-            declined_redirect_url: Optional[str] = None,
-            template_id: Optional[str] = None,
+        self,
+        signers: Iterable,
+        files: Optional[Iterable] = None,
+        parent_folder_id: Optional[str] = None,
+        prefill_tags: Optional[Iterable] = None,
+        are_reminders_enabled: Optional[bool] = None,
+        are_text_signatures_enabled: Optional[bool] = None,
+        days_valid: Optional[str] = None,
+        email_message: Optional[Iterable] = None,
+        email_subject: Optional[str] = None,
+        external_id: Optional[str] = None,
+        is_document_preparation_needed: Optional[bool] = None,
+        redirect_url: Optional[str] = None,
+        declined_redirect_url: Optional[str] = None,
+        template_id: Optional[str] = None,
     ) -> 'SignRequest':
         """
         Used to create a new sign request.
@@ -1694,15 +1791,28 @@ class Client(Cloneable):
             A dictionary representing a created SignRequest
         """
         return self.__create_sign_request(
-            signers, files, parent_folder_id, prefill_tags, are_reminders_enabled, are_text_signatures_enabled, days_valid, email_message,
-            email_subject, external_id, is_document_preparation_needed, redirect_url, declined_redirect_url, template_id)
+            signers,
+            files,
+            parent_folder_id,
+            prefill_tags,
+            are_reminders_enabled,
+            are_text_signatures_enabled,
+            days_valid,
+            email_message,
+            email_subject,
+            external_id,
+            is_document_preparation_needed,
+            redirect_url,
+            declined_redirect_url,
+            template_id,
+        )
 
     @api_call
     def get_sign_requests(
-            self,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Returns all the sign requests.
@@ -1734,13 +1844,15 @@ class Client(Cloneable):
         :return:
             A :class:`SignTemplate` object with the given sign_template_id.
         """
-        return self.translator.get('sign_template')(session=self._session, object_id=sign_template_id)
+        return self.translator.get('sign_template')(
+            session=self._session, object_id=sign_template_id
+        )
 
     @api_call
     def get_sign_templates(
-            self,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
+        self,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Returns all sign templates
@@ -1762,8 +1874,8 @@ class Client(Cloneable):
 
     @api_call
     def get_sign_template(
-            self,
-            sign_template_id: str,
+        self,
+        sign_template_id: str,
     ) -> Any:
         """
         Returns a sign template
@@ -1773,7 +1885,9 @@ class Client(Cloneable):
         :returns:
             Sign template
         """
-        response = self._session.get(f"{self._session.get_url('sign_templates')}/{sign_template_id}")
+        response = self._session.get(
+            f"{self._session.get_url('sign_templates')}/{sign_template_id}"
+        )
         return self.translator.translate(
             session=self._session,
             response_object=response.json(),
@@ -1785,7 +1899,7 @@ class Client(Cloneable):
         items: Iterable,
         prompt: str,
         mode: Optional[str] = None,
-        ai_agent: Optional[dict] = None
+        ai_agent: Optional[dict] = None,
     ) -> Any:
         """
         Sends an AI request to supported LLMs and returns an answer specifically focused on the user's
@@ -1809,12 +1923,8 @@ class Client(Cloneable):
         """
         url = self._session.get_url('ai/ask')
         if mode is None:
-            mode = ('single_item_qa' if len(items) == 1 else 'multiple_item_qa')
-        body = {
-            'items': items,
-            'prompt': prompt,
-            'mode': mode
-        }
+            mode = 'single_item_qa' if len(items) == 1 else 'multiple_item_qa'
+        body = {'items': items, 'prompt': prompt, 'mode': mode}
 
         if ai_agent is not None:
             body['ai_agent'] = ai_agent
@@ -1832,7 +1942,7 @@ class Client(Cloneable):
         dialogue_history: Iterable,
         items: Iterable,
         prompt: str,
-        ai_agent: Optional[dict] = None
+        ai_agent: Optional[dict] = None,
     ):
         """
         Sends an AI request to supported LLMs and returns an answer specifically focused on the creation of new text.
@@ -1851,11 +1961,7 @@ class Client(Cloneable):
             A response including the generated text from the LLM.
         """
         url = self._session.get_url('ai/text_gen')
-        body = {
-            'dialogue_history': dialogue_history,
-            'items': items,
-            'prompt': prompt
-        }
+        body = {'dialogue_history': dialogue_history, 'items': items, 'prompt': prompt}
 
         if ai_agent is not None:
             body['ai_agent'] = ai_agent
@@ -1869,10 +1975,10 @@ class Client(Cloneable):
 
     @api_call
     def get_ai_agent_default_config(
-            self,
-            mode: str,
-            language: Optional[str] = None,
-            model: Optional[str] = None,
+        self,
+        mode: str,
+        language: Optional[str] = None,
+        model: Optional[str] = None,
     ):
         """
         Get the AI agent default configuration.

@@ -18,7 +18,11 @@ def serializer_factory(cls):
                 if DbModel not in self._cls.__bases__:
                     self._cls = o.__class__
                 fields = {}
-                for field in (x for x in dir(o) if not x.startswith('_') and x not in self._denylist):
+                for field in (
+                    x
+                    for x in dir(o)
+                    if not x.startswith('_') and x not in self._denylist
+                ):
                     data = o.__getattribute__(field)
                     if isinstance(o, self._cls):
                         fields[field] = data
@@ -52,8 +56,16 @@ def load(file_pointer, **kwargs):
 
 
 def dump(obj, file_pointer, **kwargs):
-    return json.dump(obj, file_pointer, cls=serializer_factory(obj.__class__), check_circular=False, **kwargs)
+    return json.dump(
+        obj,
+        file_pointer,
+        cls=serializer_factory(obj.__class__),
+        check_circular=False,
+        **kwargs
+    )
 
 
 def dumps(obj, **kwargs):
-    return json.dumps(obj, cls=serializer_factory(obj.__class__), check_circular=False, **kwargs)
+    return json.dumps(
+        obj, cls=serializer_factory(obj.__class__), check_circular=False, **kwargs
+    )

@@ -13,7 +13,9 @@ if TYPE_CHECKING:
 
 class ChunkedUploader:
 
-    def __init__(self, upload_session: 'UploadSession', content_stream: IO[bytes], file_size: int):
+    def __init__(
+        self, upload_session: 'UploadSession', content_stream: IO[bytes], file_size: int
+    ):
         """
         The initializer for the :class:`ChunkedUploader`
 
@@ -47,9 +49,14 @@ class ChunkedUploader:
             An uploaded :class:`File` or None if session was not processed
         """
         if self._is_aborted:
-            raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
+            raise BoxException(
+                'The upload has been previously aborted. Please retry upload with a new upload session.'
+            )
 
-        futures = [self._executor.submit(self._upload_part) for _ in range(self._upload_session.total_parts)]
+        futures = [
+            self._executor.submit(self._upload_part)
+            for _ in range(self._upload_session.total_parts)
+        ]
         self._upload(futures)
         return self._commit_and_erase_stream_reference_when_succeed()
 
@@ -63,7 +70,9 @@ class ChunkedUploader:
             An uploaded :class:`File` or None if session was not processed
         """
         if self._is_aborted:
-            raise BoxException('The upload has been previously aborted. Please retry upload with a new upload session.')
+            raise BoxException(
+                'The upload has been previously aborted. Please retry upload with a new upload session.'
+            )
 
         self._executor = ThreadPoolExecutor(max_workers=API.CHUNK_UPLOAD_THREADS)
         parts = self._upload_session.get_parts()
@@ -71,8 +80,15 @@ class ChunkedUploader:
             self._part_definitions[part['offset']] = part
 
         with self._lock:
-            futures = [self._executor.submit(lambda item=part: self._upload_part(item)) for part in self._inflight_parts.values()]
-            for _ in range(self._upload_session.total_parts - self._chunk_index - len(self._inflight_parts)):
+            futures = [
+                self._executor.submit(lambda item=part: self._upload_part(item))
+                for part in self._inflight_parts.values()
+            ]
+            for _ in range(
+                self._upload_session.total_parts
+                - self._chunk_index
+                - len(self._inflight_parts)
+            ):
                 futures.append(self._executor.submit(self._upload_part))
 
         self._upload(futures)
@@ -102,7 +118,9 @@ class ChunkedUploader:
             self._executor.shutdown(wait=True)
             raise exc
 
-        self._part_array = sorted(self._part_definitions.values(), key=lambda part: part['offset'])
+        self._part_array = sorted(
+            self._part_definitions.values(), key=lambda part: part['offset']
+        )
 
     def _upload_part(self, task=None):
         if isinstance(task, InflightPart):
@@ -135,7 +153,9 @@ class ChunkedUploader:
         offset = self._chunk_index * self._upload_session.part_size
         self._chunk_index += 1
         while copied_length < self._upload_session.part_size:
-            bytes_read = self._content_stream.read(self._upload_session.part_size - copied_length)
+            bytes_read = self._content_stream.read(
+                self._upload_session.part_size - copied_length
+            )
             if bytes_read is None:
                 # stream returns none when no bytes are ready currently but there are
                 # potentially more bytes in the stream to be read.
@@ -149,7 +169,9 @@ class ChunkedUploader:
 
     def _commit_and_erase_stream_reference_when_succeed(self):
         content_sha1 = self._sha1.digest()
-        commit_result = self._upload_session.commit(content_sha1=content_sha1, parts=self._part_array)
+        commit_result = self._upload_session.commit(
+            content_sha1=content_sha1, parts=self._part_array
+        )
         # Remove file stream reference when uploading file succeeded
         if commit_result is not None:
             self._content_stream = None
@@ -159,7 +181,13 @@ class ChunkedUploader:
 
 class InflightPart:
 
-    def __init__(self, offset: int, chunk: bytes, upload_session: 'UploadSession', total_size: int):
+    def __init__(
+        self,
+        offset: int,
+        chunk: bytes,
+        upload_session: 'UploadSession',
+        total_size: int,
+    ):
         """
         The initializer for the :class:`InflightPart` object.
 
@@ -199,7 +227,5 @@ class InflightPart:
             The uploaded part record.
         """
         return self._upload_session.upload_part_bytes(
-            part_bytes=self.chunk,
-            offset=self.offset,
-            total_size=self._total_size
+            part_bytes=self.chunk, offset=self.offset, total_size=self._total_size
         )

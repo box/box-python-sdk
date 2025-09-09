@@ -14,7 +14,7 @@ def streamable_mock_open(mock=None, read_data=b''):
             handle.position = len(read_data)
             return read_data
 
-        data = read_data[handle.position:handle.position + size]
+        data = read_data[handle.position : handle.position + size]
         handle.position += size
         return data
 

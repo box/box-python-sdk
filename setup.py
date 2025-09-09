@@ -1,11 +1,10 @@
-from codecs import open   # pylint:disable=redefined-builtin
+from codecs import open  # pylint:disable=redefined-builtin
 from os.path import dirname, join
 import re
 import sys
 
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
-
 
 CLASSIFIERS = [
     'Development Status :: 6 - Mature',
@@ -47,6 +46,7 @@ class PyTest(TestCommand):
         # Do the import here, once the eggs are loaded.
         # pylint:disable=import-outside-toplevel
         import pytest
+
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
@@ -75,7 +75,7 @@ def main():
         'pytest-cov<5.0.0',
         'pytest-lazy-fixture<1.0.0',
         'pytz',
-        'urllib3<2'
+        'urllib3<2',
     ]
     extra_requires = {
         'jwt': jwt_requires,
@@ -86,20 +86,26 @@ def main():
         'test': test_requires,
     }
     with open('boxsdk/version.py', encoding='utf-8') as config_py:
-        version = re.search(r'^\s*__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE).group(1)
+        version = re.search(
+            r'^\s*__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE
+        ).group(1)
     setup(
         name='boxsdk',
         version=version,
         description='Official Box Python SDK',
         long_description_content_type="text/markdown",
-        long_description=open(join(base_dir, 'README.md'), encoding='utf-8').read(),  # pylint:disable=consider-using-with
+        long_description=open(
+            join(base_dir, 'README.md'), encoding='utf-8'
+        ).read(),  # pylint:disable=consider-using-with
         author='Box',
         author_email='oss@box.com',
         url='https://github.com/box/box-python-sdk',
         project_urls={
             'Changelog': 'https://github.com/box/box-python-sdk/blob/main/CHANGELOG.md',
         },
-        packages=find_packages(exclude=['demo', 'docs', 'test', 'test*', '*test', '*test*']),
+        packages=find_packages(
+            exclude=['demo', 'docs', 'test', 'test*', '*test', '*test*']
+        ),
         install_requires=install_requires,
         extras_require=extra_requires,
         tests_require=test_requires,

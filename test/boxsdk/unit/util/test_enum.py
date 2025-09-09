@@ -4,7 +4,6 @@ import pytest
 
 from boxsdk.util.enum import ExtendableEnumMeta
 
-
 # pylint:disable=invalid-name
 # So that we can have class definitions as pytest function fixtures.
 
@@ -55,7 +54,9 @@ def Enum2_2(Enum2):
 
 
 @pytest.fixture(scope='function')
-def EnumBaseWithSubclassesDefined(EnumBase, Enum1, Enum2_1, Enum2_2):   # pylint:disable=unused-argument
+def EnumBaseWithSubclassesDefined(
+    EnumBase, Enum1, Enum2_1, Enum2_2
+):  # pylint:disable=unused-argument
     return EnumBase
 
 
@@ -76,7 +77,9 @@ def enum_member_value(request):
 @pytest.fixture(scope='function')
 def enum_members(Enum1, Enum2_1, Enum2_2):
     members = OrderedDict()
-    for enum_member_name, enum_class in zip(enum_member_names, [Enum1, Enum2_1, Enum2_2]):
+    for enum_member_name, enum_class in zip(
+        enum_member_names, [Enum1, Enum2_1, Enum2_2]
+    ):
         members[enum_member_name] = enum_class[enum_member_name]
     return members
 
@@ -86,13 +89,16 @@ def enum_instance(enum_member_name, enum_members):
     return enum_members[enum_member_name]
 
 
-def test_can_construct_enum_hierarchy(EnumBaseWithSubclassesDefined):   # pylint:disable=unused-argument
+def test_can_construct_enum_hierarchy(
+    EnumBaseWithSubclassesDefined,
+):  # pylint:disable=unused-argument
     pass
 
 
 def test_can_not_construct_non_leaf_enum_with_members(Enum1):
     with pytest.raises(TypeError):
-        class Enum1_1(Enum1):   # pylint:disable=unused-variable
+
+        class Enum1_1(Enum1):  # pylint:disable=unused-variable
             pass
 
 
@@ -119,7 +125,9 @@ def test_contains_enum_instances(EnumBaseWithSubclassesDefined, enum_instance):
     assert enum_instance in EnumBaseWithSubclassesDefined
 
 
-def test_contains_returns_false_for_non_instances(EnumBaseWithSubclassesDefined, enum_member_name):
+def test_contains_returns_false_for_non_instances(
+    EnumBaseWithSubclassesDefined, enum_member_name
+):
     assert enum_member_name not in EnumBaseWithSubclassesDefined
 
 
@@ -127,27 +135,37 @@ def test_getitem(EnumBaseWithSubclassesDefined, enum_member_name, enum_instance)
     assert EnumBaseWithSubclassesDefined[enum_member_name] == enum_instance
 
 
-def test_getitem_raises_key_error_for_non_member_names(EnumBaseWithSubclassesDefined, enum_member_value):
+def test_getitem_raises_key_error_for_non_member_names(
+    EnumBaseWithSubclassesDefined, enum_member_value
+):
     with pytest.raises(KeyError):
-        EnumBaseWithSubclassesDefined[enum_member_value]  # pylint:disable=pointless-statement
+        EnumBaseWithSubclassesDefined[
+            enum_member_value
+        ]  # pylint:disable=pointless-statement
 
 
 def test_getattr(EnumBaseWithSubclassesDefined, enum_member_name, enum_instance):
     assert getattr(EnumBaseWithSubclassesDefined, enum_member_name) == enum_instance
 
 
-def test_getattr_raises_attribute_error_for_non_member_names(EnumBaseWithSubclassesDefined):
+def test_getattr_raises_attribute_error_for_non_member_names(
+    EnumBaseWithSubclassesDefined,
+):
     with pytest.raises(AttributeError):
         EnumBaseWithSubclassesDefined.foobar  # pylint:disable=pointless-statement
 
 
-def test_getattr_does_get_arbitrary_attributes_from_itself(EnumBaseWithSubclassesDefined):
+def test_getattr_does_get_arbitrary_attributes_from_itself(
+    EnumBaseWithSubclassesDefined,
+):
     EnumBase = EnumBaseWithSubclassesDefined
     EnumBase.foobar = 'foobar'
     assert EnumBase.foobar == 'foobar'
 
 
-def test_getattr_does_not_get_arbitrary_attributes_from_subclasses(EnumBaseWithSubclassesDefined, Enum1):
+def test_getattr_does_not_get_arbitrary_attributes_from_subclasses(
+    EnumBaseWithSubclassesDefined, Enum1
+):
     Enum1.foobar = 'foobar'
     with pytest.raises(AttributeError):
         EnumBaseWithSubclassesDefined.foobar  # pylint:disable=pointless-statement

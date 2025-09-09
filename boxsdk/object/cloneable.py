@@ -20,7 +20,9 @@ class Cloneable:
         """
         return self.clone(self.session.as_user(user))
 
-    def with_shared_link(self, shared_link: str, shared_link_password: str) -> 'Cloneable':
+    def with_shared_link(
+        self, shared_link: str, shared_link_password: str
+    ) -> 'Cloneable':
         """
         Returns a new endpoint object with default headers set up to make requests using the shared link for auth.
 
@@ -29,7 +31,9 @@ class Cloneable:
         :param shared_link_password:
             The password for the shared link.
         """
-        return self.clone(self.session.with_shared_link(shared_link, shared_link_password))
+        return self.clone(
+            self.session.with_shared_link(shared_link, shared_link_password)
+        )
 
     def clone(self, session: 'Session' = None) -> NoReturn:
         """

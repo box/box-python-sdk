@@ -26,7 +26,9 @@ class DefaultNetwork(Network):
         self._session = requests.Session()
         self._logger = getLogger(__name__)
 
-    def request(self, method: str, url: str, access_token: str, **kwargs: Any) -> NetworkResponse:
+    def request(
+        self, method: str, url: str, access_token: str, **kwargs: Any
+    ) -> NetworkResponse:
         """Base class override.
 
         Make a network request using a requests.Session. Logs information about an API request and response.
@@ -43,13 +45,15 @@ class DefaultNetwork(Network):
             return self.network_response_constructor(
                 request_response=self._session.request(method, url, **kwargs),
                 access_token_used=access_token,
-                log_response_content=log_response_content
+                log_response_content=log_response_content,
             )
         except Exception:
             self._log_exception(method, url, sys.exc_info())
             raise
 
-    def retry_after(self, delay: float, request_method: Callable, *args: Any, **kwargs: Any) -> Any:
+    def retry_after(
+        self, delay: float, request_method: Callable, *args: Any, **kwargs: Any
+    ) -> Any:
         """Base class override.
         Retry after sleeping for delay seconds.
         """
@@ -78,7 +82,11 @@ class DefaultNetwork(Network):
         if self._logger.isEnabledFor(logging.INFO):
             self._logger.info(
                 self.REQUEST_FORMAT,
-                {'method': method, 'url': url, 'request_kwargs': pformat(sanitize_dictionary(kwargs))},
+                {
+                    'method': method,
+                    'url': url,
+                    'request_kwargs': pformat(sanitize_dictionary(kwargs)),
+                },
             )
 
     def _log_exception(self, method: str, url: str, exc_info: Any) -> None:
@@ -92,7 +100,12 @@ class DefaultNetwork(Network):
             exc_type, exc_value, _ = exc_info
             self._logger.warning(
                 self.EXCEPTION_FORMAT,
-                {'method': method, 'url': url, 'exc_type_name': exc_type.__name__, 'exc_value': exc_value},
+                {
+                    'method': method,
+                    'url': url,
+                    'exc_type_name': exc_type.__name__,
+                    'exc_value': exc_value,
+                },
             )
 
 
@@ -142,7 +155,12 @@ class DefaultNetworkResponse(NetworkResponse):
     ERROR_RESPONSE_FORMAT = f'\x1b[31m{_COMMON_RESPONSE_FORMAT}\x1b[0m'
     CONTENT_NOT_LOGGED = '<No content or content unavailable for logging>'
 
-    def __init__(self, request_response: 'Response', access_token_used: str, log_response_content: bool = True):
+    def __init__(
+        self,
+        request_response: 'Response',
+        access_token_used: str,
+        log_response_content: bool = True,
+    ):
         self._logger = getLogger(__name__)
         self._request_response = request_response
         self._access_token_used = access_token_used
@@ -216,9 +234,17 @@ class DefaultNetworkResponse(NetworkResponse):
         self._did_log = True
 
         if self.ok:
-            logger_method, logger_level, response_format = self._logger.info, logging.INFO, self.SUCCESSFUL_RESPONSE_FORMAT
+            logger_method, logger_level, response_format = (
+                self._logger.info,
+                logging.INFO,
+                self.SUCCESSFUL_RESPONSE_FORMAT,
+            )
         else:
-            logger_method, logger_level, response_format = self._logger.warning, logging.WARNING, self.ERROR_RESPONSE_FORMAT
+            logger_method, logger_level, response_format = (
+                self._logger.warning,
+                logging.WARNING,
+                self.ERROR_RESPONSE_FORMAT,
+            )
 
         if not self._logger.isEnabledFor(logger_level):
             return
@@ -251,5 +277,7 @@ class DefaultNetworkResponse(NetworkResponse):
         )
 
     def __repr__(self) -> str:
-        return f'<Box Network Response ({self._request_response.request.method} {self._request_response.request.url} ' \
-               f'{self.status_code})>'
+        return (
+            f'<Box Network Response ({self._request_response.request.method} {self._request_response.request.url} '
+            f'{self.status_code})>'
+        )

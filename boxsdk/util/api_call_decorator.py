@@ -31,8 +31,12 @@ class APICallWrapper:
         self.__name__ = func_that_makes_an_api_call.__name__
         update_wrapper(self, func_that_makes_an_api_call)
 
-    def __call__(self, cloneable_instance: 'Cloneable', *args: Any, **kwargs: Any) -> Any:
-        return self.__get__(cloneable_instance, type(cloneable_instance))(*args, **kwargs)
+    def __call__(
+        self, cloneable_instance: 'Cloneable', *args: Any, **kwargs: Any
+    ) -> Any:
+        return self.__get__(cloneable_instance, type(cloneable_instance))(
+            *args, **kwargs
+        )
 
     def __get__(self, _instance: Any, owner: Any) -> Any:
         # `APICallWrapper` is imitating a function. For native functions,
@@ -57,7 +61,11 @@ class APICallWrapper:
             if extra_network_parameters:
                 # If extra_network_parameters is specified, then clone the instance, and specify the parameters
                 # as the defaults to be used.
-                instance = instance.clone(instance.session.with_default_network_request_kwargs(extra_network_parameters))
+                instance = instance.clone(
+                    instance.session.with_default_network_request_kwargs(
+                        extra_network_parameters
+                    )
+                )
 
             method = self._func_that_makes_an_api_call.__get__(instance, owner)
             return method(*args, **kwargs)
