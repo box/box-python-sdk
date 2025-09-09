@@ -32,7 +32,11 @@ from boxsdk.object.user import User
 from boxsdk.object.upload_session import UploadSession
 from boxsdk.object.trash import Trash
 from boxsdk.object.group_membership import GroupMembership
-from boxsdk.object.metadata_template import MetadataTemplate, MetadataField, MetadataFieldType
+from boxsdk.object.metadata_template import (
+    MetadataTemplate,
+    MetadataField,
+    MetadataFieldType,
+)
 from boxsdk.object.retention_policy import RetentionPolicy
 from boxsdk.object.retention_policy_assignment import RetentionPolicyAssignment
 from boxsdk.object.file_version_retention import FileVersionRetention
@@ -115,7 +119,9 @@ def mock_folder_response(mock_object_id, make_mock_box_request):
 
 @pytest.fixture(scope='function')
 def mock_content_response(make_mock_box_request):
-    mock_box_response, mock_network_response = make_mock_box_request(content=b'Contents of a text file.')
+    mock_box_response, mock_network_response = make_mock_box_request(
+        content=b'Contents of a text file.'
+    )
     mock_network_response.response_as_stream = raw = Mock()
     raw.stream.return_value = (bytes((b,)) for b in mock_box_response.content)
     return mock_box_response
@@ -133,11 +139,11 @@ def users_response(user_id_1, user_id_2):
     mock_network_response.json.return_value = {
         'entries': [
             {'type': 'user', 'id': user_id_1},
-            {'type': 'user', 'id': user_id_2}
+            {'type': 'user', 'id': user_id_2},
         ],
         'limit': 100,
         'offset': 0,
-        'total_count': 2
+        'total_count': 2,
     }
     return mock_network_response
 
@@ -197,7 +203,7 @@ def groups_response(group_id_1, group_id_2):
         ],
         'limit': 100,
         'offset': 0,
-        'total_count': 2
+        'total_count': 2,
     }
     return mock_network_response
 
@@ -218,8 +224,16 @@ def legal_hold_policies_response(legal_hold_policy_id_1, legal_hold_policy_id_2)
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'entries': [
-            {'type': 'legal_hold_policy', 'id': legal_hold_policy_id_1, 'name': 'Test Policy 1'},
-            {'type': 'legal_hold_policy', 'id': legal_hold_policy_id_2, 'name': 'Test Policy 2'},
+            {
+                'type': 'legal_hold_policy',
+                'id': legal_hold_policy_id_1,
+                'name': 'Test Policy 1',
+            },
+            {
+                'type': 'legal_hold_policy',
+                'id': legal_hold_policy_id_2,
+                'name': 'Test Policy 2',
+            },
         ],
         'limit': 5,
     }
@@ -233,7 +247,7 @@ def create_policy_response():
     mock_network_response.json.return_value = {
         'type': 'legal_hold_policy',
         'id': 1234,
-        'policy_name': 'Test Policy'
+        'policy_name': 'Test Policy',
     }
     return mock_network_response
 
@@ -298,7 +312,9 @@ def create_invite_response():
 
 
 @pytest.fixture(params=('file', 'folder'))
-def test_item_and_response(mock_file, test_folder, mock_file_response, mock_folder_response, request):
+def test_item_and_response(
+    mock_file, test_folder, mock_file_response, mock_folder_response, request
+):
     if request.param == 'file':
         return mock_file, mock_file_response
     return test_folder, mock_folder_response
@@ -345,11 +361,11 @@ def search_response(file_id, folder_id):
     mock_network_response.json.return_value = {
         'entries': [
             {'type': 'file', 'id': file_id},
-            {'type': 'folder', 'id': folder_id}
+            {'type': 'folder', 'id': folder_id},
         ],
         'limit': 100,
         'offset': 0,
-        'total_count': 2
+        'total_count': 2,
     }
     return mock_network_response
 
@@ -358,9 +374,7 @@ def search_response(file_id, folder_id):
 def recent_items_response(file_id):
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
-        'entries': [
-            {'type': 'recent_item', 'item': {'type': 'file', 'id': file_id}}
-        ],
+        'entries': [{'type': 'recent_item', 'item': {'type': 'file', 'id': file_id}}],
         'next_marker': None,
         'limit': 100,
     }
@@ -391,25 +405,30 @@ def device_pins_response(device_pin_id_1, device_pin_id_2):
     return mock_network_response
 
 
-@pytest.mark.parametrize('test_class, factory_method_name', [
-    (EmailAlias, 'email_alias'),
-    (Enterprise, 'enterprise'),
-    (Folder, 'folder'),
-    (File, 'file'),
-    (FileVersion, 'file_version'),
-    (Invite, 'invite'),
-    (User, 'user'),
-    (Group, 'group'),
-    (GroupMembership, 'group_membership'),
-    (Enterprise, 'enterprise'),
-    (Webhook, 'webhook'),
-    (MetadataCascadePolicy, 'metadata_cascade_policy'),
-    (UploadSession, 'upload_session'),
-    (StoragePolicy, 'storage_policy'),
-    (StoragePolicyAssignment, 'storage_policy_assignment'),
-])
-def test_factory_returns_the_correct_object(mock_client, test_class, factory_method_name):
-    """ Tests the various id-only factory methods in the Client class """
+@pytest.mark.parametrize(
+    'test_class, factory_method_name',
+    [
+        (EmailAlias, 'email_alias'),
+        (Enterprise, 'enterprise'),
+        (Folder, 'folder'),
+        (File, 'file'),
+        (FileVersion, 'file_version'),
+        (Invite, 'invite'),
+        (User, 'user'),
+        (Group, 'group'),
+        (GroupMembership, 'group_membership'),
+        (Enterprise, 'enterprise'),
+        (Webhook, 'webhook'),
+        (MetadataCascadePolicy, 'metadata_cascade_policy'),
+        (UploadSession, 'upload_session'),
+        (StoragePolicy, 'storage_policy'),
+        (StoragePolicyAssignment, 'storage_policy_assignment'),
+    ],
+)
+def test_factory_returns_the_correct_object(
+    mock_client, test_class, factory_method_name
+):
+    """Tests the various id-only factory methods in the Client class"""
     # pylint:disable=redefined-outer-name
     fake_id = 'fake_id'
 
@@ -448,19 +467,24 @@ def users_type(request):
 
 
 def test_users_return_the_correct_user_objects(
-        mock_client,
-        mock_box_session,
-        users_response,
-        user_id_1,
-        user_id_2,
-        users_filter_term,
-        users_type,
-        users_offset,
-        users_limit,
+    mock_client,
+    mock_box_session,
+    users_response,
+    user_id_1,
+    user_id_2,
+    users_filter_term,
+    users_type,
+    users_offset,
+    users_limit,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = users_response
-    users = mock_client.users(limit=users_limit, offset=users_offset, filter_term=users_filter_term, user_type=users_type)
+    users = mock_client.users(
+        limit=users_limit,
+        offset=users_offset,
+        filter_term=users_filter_term,
+        user_type=users_type,
+    )
     expected_params = {'offset': users_offset}
     if users_limit is not None:
         expected_params['limit'] = users_limit
@@ -470,29 +494,37 @@ def test_users_return_the_correct_user_objects(
         expected_params['user_type'] = users_type
     assert users.next().object_id == user_id_1
     assert users.next().object_id == user_id_2
-    mock_box_session.get.assert_called_once_with(f'{API.BASE_API_URL}/users', params=expected_params)
+    mock_box_session.get.assert_called_once_with(
+        f'{API.BASE_API_URL}/users', params=expected_params
+    )
 
 
 def test_users_return_the_correct_user_objects_marker(
-        mock_client,
-        mock_box_session,
-        user_id_1,
-        user_id_2,
-        users_filter_term,
-        users_type,
-        marker_id,
-        users_limit,
+    mock_client,
+    mock_box_session,
+    user_id_1,
+    user_id_2,
+    users_filter_term,
+    users_type,
+    marker_id,
+    users_limit,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value.json.return_value = {
         'entries': [
             {'type': 'user', 'id': user_id_1},
-            {'type': 'user', 'id': user_id_2}
+            {'type': 'user', 'id': user_id_2},
         ],
         'next_marker': 'JGWUGKNJFSAH123NDSA',
-        'total_count': 2
+        'total_count': 2,
     }
-    users = mock_client.users(limit=users_limit, marker=marker_id, use_marker=True, filter_term=users_filter_term, user_type=users_type)
+    users = mock_client.users(
+        limit=users_limit,
+        marker=marker_id,
+        use_marker=True,
+        filter_term=users_filter_term,
+        user_type=users_type,
+    )
     expected_params = {'marker': marker_id, 'usemarker': True}
     if users_limit is not None:
         expected_params['limit'] = users_limit
@@ -502,12 +534,14 @@ def test_users_return_the_correct_user_objects_marker(
         expected_params['user_type'] = users_type
     assert users.next().object_id == user_id_1
     assert users.next().object_id == user_id_2
-    mock_box_session.get.assert_called_once_with(f'{API.BASE_API_URL}/users', params=expected_params)
+    mock_box_session.get.assert_called_once_with(
+        f'{API.BASE_API_URL}/users', params=expected_params
+    )
 
 
 def test_users_returns_correct_with_default_values(
-        mock_client,
-        mock_box_session,
+    mock_client,
+    mock_box_session,
 ):
     expected_url = f'{API.BASE_API_URL}/users'
     mock_box_session.get.return_value.json.return_value = {
@@ -519,7 +553,7 @@ def test_users_returns_correct_with_default_values(
                 'type': 'user',
                 'id': '12345',
             }
-        ]
+        ],
     }
     users = mock_client.users()
     user = users.next()
@@ -530,11 +564,11 @@ def test_users_returns_correct_with_default_values(
 
 
 def test_search_instantiates_search_and_calls_search(
-        mock_client,
-        mock_box_session,
-        search_response,
-        file_id,
-        folder_id,
+    mock_client,
+    mock_box_session,
+    search_response,
+    file_id,
+    folder_id,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.get.return_value = search_response
@@ -561,11 +595,11 @@ def test_collaboration_allowlist_initializer(mock_client):
 
 
 def test_get_groups_return_the_correct_group_objects(
-        mock_client,
-        mock_box_session,
-        groups_response,
-        group_id_1,
-        group_id_2,
+    mock_client,
+    mock_box_session,
+    groups_response,
+    group_id_1,
+    group_id_2,
 ):
     # pylint:disable=redefined-outer-name
     group_name = 'Employees'
@@ -577,21 +611,27 @@ def test_get_groups_return_the_correct_group_objects(
         assert group.name == str(expected_id)
         # pylint:disable=protected-access
         assert group._session == mock_box_session
-    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None, 'filter_term': group_name})
+    mock_box_session.get.assert_called_once_with(
+        expected_url, params={'offset': None, 'filter_term': group_name}
+    )
 
 
-def test_create_group_returns_the_correct_group_object(mock_client, mock_box_session, create_group_response):
+def test_create_group_returns_the_correct_group_object(
+    mock_client, mock_box_session, create_group_response
+):
     # pylint:disable=redefined-outer-name
     expected_url = f'{API.BASE_API_URL}/groups'
     test_group_name = 'test_group_name'
-    value = json.dumps({
-        'name': test_group_name,
-        'provenance': 'Example',
-        'external_sync_identifier': 'Example-User',
-        'description': 'Description of group',
-        'invitability_level': 'admins_and_members',
-        'member_viewability_level': 'admins_only',
-    })
+    value = json.dumps(
+        {
+            'name': test_group_name,
+            'provenance': 'Example',
+            'external_sync_identifier': 'Example-User',
+            'description': 'Description of group',
+            'invitability_level': 'admins_and_members',
+            'member_viewability_level': 'admins_only',
+        }
+    )
     mock_box_session.post.return_value = create_group_response
     new_group = mock_client.create_group(
         name=test_group_name,
@@ -603,31 +643,39 @@ def test_create_group_returns_the_correct_group_object(mock_client, mock_box_ses
         fields=['name,description'],
     )
 
-    mock_box_session.post.assert_called_once_with(expected_url, data=value, params={'fields': 'name,description'})
+    mock_box_session.post.assert_called_once_with(
+        expected_url, data=value, params={'fields': 'name,description'}
+    )
     assert isinstance(new_group, Group)
     assert new_group.object_id == 1234
     assert new_group.name == test_group_name
 
 
 @pytest.mark.parametrize('description', ('My test policy',))
-@pytest.mark.parametrize('filter_started_at', ('2016-01-01T00:00:00+00:00', datetime.datetime(2016, 1, 1, tzinfo=pytz.UTC)))
-@pytest.mark.parametrize('filter_ended_at', ('2020-01-01T00:00:00+00:00', datetime.datetime(2020, 1, 1, tzinfo=pytz.UTC)))
+@pytest.mark.parametrize(
+    'filter_started_at',
+    ('2016-01-01T00:00:00+00:00', datetime.datetime(2016, 1, 1, tzinfo=pytz.UTC)),
+)
+@pytest.mark.parametrize(
+    'filter_ended_at',
+    ('2020-01-01T00:00:00+00:00', datetime.datetime(2020, 1, 1, tzinfo=pytz.UTC)),
+)
 @pytest.mark.parametrize('is_ongoing', ('True',))
 def test_create_legal_hold_policy_returns_the_correct_policy_object(
-        mock_client,
-        mock_box_session,
-        create_policy_response,
-        description,
-        filter_started_at,
-        filter_ended_at,
-        is_ongoing
+    mock_client,
+    mock_box_session,
+    create_policy_response,
+    description,
+    filter_started_at,
+    filter_ended_at,
+    is_ongoing,
 ):
     # pylint:disable=redefined-outer-name
     params = {
         'description': description,
         'filter_started_at': filter_started_at,
         'filter_ended_at': filter_ended_at,
-        'is_ongoing': is_ongoing
+        'is_ongoing': is_ongoing,
     }
 
     test_policy_name = 'Test Policy'
@@ -642,7 +690,7 @@ def test_create_legal_hold_policy_returns_the_correct_policy_object(
         'description': description,
         'filter_started_at': normalize_date_to_rfc3339_format(filter_started_at),
         'filter_ended_at': normalize_date_to_rfc3339_format(filter_ended_at),
-        'is_ongoing': is_ongoing
+        'is_ongoing': is_ongoing,
     }
     mock_box_session.post.assert_called_once_with(expected_url, data=ANY)
     assert dict(json.loads(mock_box_session.post.call_args[1]['data'])) == expected_body
@@ -653,22 +701,26 @@ def test_create_legal_hold_policy_returns_the_correct_policy_object(
 
 
 def test_get_legal_hold_policies_return_the_correct_policy_objects(
-        mock_client,
-        mock_box_session,
-        legal_hold_policies_response,
-        legal_hold_policy_id_1,
-        legal_hold_policy_id_2,
+    mock_client,
+    mock_box_session,
+    legal_hold_policies_response,
+    legal_hold_policy_id_1,
+    legal_hold_policy_id_2,
 ):
     # pylint:disable=redefined-outer-name
     policy_name = 'Arbitration'
     expected_url = f'{API.BASE_API_URL}/legal_hold_policies'
     mock_box_session.get.return_value = legal_hold_policies_response
     policies = mock_client.get_legal_hold_policies(policy_name)
-    for policy, expected_id in zip(policies, [legal_hold_policy_id_1, legal_hold_policy_id_2]):
+    for policy, expected_id in zip(
+        policies, [legal_hold_policy_id_1, legal_hold_policy_id_2]
+    ):
         assert policy.object_id == expected_id
         # pylint:disable=protected-access
         assert policy._session == mock_box_session
-    mock_box_session.get.assert_called_once_with(expected_url, params={'policy_name': policy_name})
+    mock_box_session.get.assert_called_once_with(
+        expected_url, params={'policy_name': policy_name}
+    )
 
 
 def test_trash_initializer(mock_client):
@@ -676,7 +728,9 @@ def test_trash_initializer(mock_client):
     assert isinstance(trash, Trash)
 
 
-def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_session, recent_items_response, file_id):
+def test_get_recent_items_returns_the_correct_items(
+    mock_client, mock_box_session, recent_items_response, file_id
+):
     mock_box_session.get.return_value = recent_items_response
     recent_items = mock_client.get_recent_items()
     assert isinstance(recent_items, MarkerBasedObjectCollection)
@@ -686,7 +740,9 @@ def test_get_recent_items_returns_the_correct_items(mock_client, mock_box_sessio
     assert next_pointer is None
 
 
-def test_get_recent_items_sends_get_with_correct_params(mock_client, mock_box_session, recent_items_response, marker_id):
+def test_get_recent_items_sends_get_with_correct_params(
+    mock_client, mock_box_session, recent_items_response, marker_id
+):
     limit = 50
     marker = marker_id
     fields = ['modified_at', 'name']
@@ -696,13 +752,19 @@ def test_get_recent_items_sends_get_with_correct_params(mock_client, mock_box_se
         'fields': ','.join(fields),
     }
     mock_box_session.get.return_value = recent_items_response
-    object_collection = mock_client.get_recent_items(limit=limit, marker=marker, fields=fields)
+    object_collection = mock_client.get_recent_items(
+        limit=limit, marker=marker, fields=fields
+    )
     object_collection.next()
-    mock_box_session.get.assert_called_once_with(f'{API.BASE_API_URL}/recent_items', params=expected_params)
+    mock_box_session.get.assert_called_once_with(
+        f'{API.BASE_API_URL}/recent_items', params=expected_params
+    )
 
 
 @pytest.mark.parametrize('password', (None, 'p4ssw0rd'))
-def test_get_shared_item_returns_the_correct_item(mock_client, mock_box_session, shared_item_response, password):
+def test_get_shared_item_returns_the_correct_item(
+    mock_client, mock_box_session, shared_item_response, password
+):
     # pylint:disable=redefined-outer-name
     shared_link = 'https://cloud.box.com/s/661wcw2iz6q5r7v5xxkm'
     mock_box_session.request.return_value = shared_item_response
@@ -712,25 +774,34 @@ def test_get_shared_item_returns_the_correct_item(mock_client, mock_box_session,
         'GET',
         f'{API.BASE_API_URL}/shared_items',
         headers={
-            'BoxApi': f'shared_link={shared_link}{f"&shared_link_password={password}" if password is not None else ""}'
+            'BoxApi': (
+                f'shared_link={shared_link}{f"&shared_link_password={password}" if password is not None else ""}'
+            )
         },
     )
 
 
-@pytest.mark.parametrize('test_method', [
-    'get',
-    'post',
-    'put',
-    'delete',
-    'options',
-])
-def test_make_request_passes_request_on_to_session(mock_client, mock_box_session, test_method):
+@pytest.mark.parametrize(
+    'test_method',
+    [
+        'get',
+        'post',
+        'put',
+        'delete',
+        'options',
+    ],
+)
+def test_make_request_passes_request_on_to_session(
+    mock_client, mock_box_session, test_method
+):
     # pylint:disable=redefined-outer-name
     mock_client.make_request(test_method, 'url')
     assert mock_box_session.request.call_args[0] == (test_method, 'url')
 
 
-def test_create_app_user_returns_the_correct_user_object(mock_client, mock_box_session, create_user_response):
+def test_create_app_user_returns_the_correct_user_object(
+    mock_client, mock_box_session, create_user_response
+):
     # pylint:disable=redefined-outer-name
     test_user_name = 'Ned Stark'
     value = json.dumps({'name': test_user_name, 'is_platform_access_only': True})
@@ -746,7 +817,9 @@ def test_create_app_user_returns_the_correct_user_object(mock_client, mock_box_s
     assert new_user.name == test_user_name
 
 
-def test_create_enterprise_user_returns_the_correct_user_object(mock_client, mock_box_session, create_user_response):
+def test_create_enterprise_user_returns_the_correct_user_object(
+    mock_client, mock_box_session, create_user_response
+):
     # pylint:disable=redefined-outer-name
     test_user_name = 'Ned Stark'
     test_user_login = 'eddard@box.com'
@@ -768,11 +841,11 @@ def test_get_storage_policies(mock_client, mock_box_session):
     mock_policy = {
         'type': 'storage_policy',
         'id': '12345',
-        'name': 'Test Storage Policy'
+        'name': 'Test Storage Policy',
     }
     mock_box_session.get.return_value.json.return_value = {
         'limit': 100,
-        'entries': [mock_policy]
+        'entries': [mock_policy],
     }
     policies = mock_client.get_storage_policies()
     policy = policies.next()
@@ -789,11 +862,13 @@ def test_create_terms_of_service(mock_client, mock_box_session):
     test_text = 'This is a test text'
     test_tos_type = 'external'
     test_status = 'enabled'
-    value = json.dumps({
-        'status': 'enabled',
-        'tos_type': 'external',
-        'text': 'This is a test text',
-    })
+    value = json.dumps(
+        {
+            'status': 'enabled',
+            'tos_type': 'external',
+            'text': 'This is a test text',
+        }
+    )
     mock_box_session.post.return_value.json.return_value = {
         'type': 'terms_of_service',
         'id': '12345',
@@ -801,7 +876,9 @@ def test_create_terms_of_service(mock_client, mock_box_session):
         'tos_type': test_tos_type,
         'text': test_text,
     }
-    new_terms_of_service = mock_client.create_terms_of_service('enabled', 'external', 'This is a test text')
+    new_terms_of_service = mock_client.create_terms_of_service(
+        'enabled', 'external', 'This is a test text'
+    )
     mock_box_session.post.assert_called_once_with(expected_url, data=value)
     assert isinstance(new_terms_of_service, TermsOfService)
     assert new_terms_of_service.type == 'terms_of_service'
@@ -825,7 +902,9 @@ def test_get_all_terms_of_services(mock_client, mock_box_session):
     }
     services = mock_client.get_terms_of_services(tos_type='external')
     service = services.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={'tos_type': 'external'})
+    mock_box_session.get.assert_called_once_with(
+        expected_url, params={'tos_type': 'external'}
+    )
     assert isinstance(service, TermsOfService)
     assert service.type == 'terms_of_service'
     assert service.id == '12345'
@@ -834,11 +913,11 @@ def test_get_all_terms_of_services(mock_client, mock_box_session):
 
 
 def test_create_webhook_returns_the_correct_policy_object(
-        test_item_and_response,
-        test_webhook,
-        mock_client,
-        mock_box_session,
-        create_webhook_response,
+    test_item_and_response,
+    test_webhook,
+    mock_client,
+    mock_box_session,
+    create_webhook_response,
 ):
     # pylint:disable=redefined-outer-name
     test_item, _ = test_item_and_response
@@ -853,7 +932,9 @@ def test_create_webhook_returns_the_correct_policy_object(
     }
     value = json.dumps(expected_body)
     mock_box_session.post.return_value = create_webhook_response
-    new_webhook = mock_client.create_webhook(test_item, ['FILE.UPLOADED', 'FOLDER.CREATED'], 'https://test.com')
+    new_webhook = mock_client.create_webhook(
+        test_item, ['FILE.UPLOADED', 'FOLDER.CREATED'], 'https://test.com'
+    )
     mock_box_session.post.assert_called_once_with(
         expected_url,
         data=value,
@@ -950,12 +1031,16 @@ def test_create_retention_policy(mock_client, mock_box_session, mock_user_list):
         retention_type='modifiable',
         description=policy_description,
     )
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    mock_box_session.post.assert_called_once_with(
+        expected_url, data=json.dumps(expected_data)
+    )
     assert policy.object_id == mock_policy['id']
     assert policy.object_type == mock_policy['type']
     assert policy.policy_name == mock_policy['policy_name']
     assert policy.disposition_action == mock_policy['disposition_action']
-    assert policy.can_owner_extend_retention == mock_policy['can_owner_extend_retention']
+    assert (
+        policy.can_owner_extend_retention == mock_policy['can_owner_extend_retention']
+    )
     assert policy.are_owners_notified == mock_policy['are_owners_notified']
     assert policy.retention_type == mock_policy['retention_type']
     assert policy.description == mock_policy['description']
@@ -998,12 +1083,16 @@ def test_create_infinte_retention_policy(mock_client, mock_box_session):
         retention_type='non_modifiable',
         description=policy_description,
     )
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    mock_box_session.post.assert_called_once_with(
+        expected_url, data=json.dumps(expected_data)
+    )
     assert policy.object_id == mock_policy['id']
     assert policy.object_type == mock_policy['type']
     assert policy.policy_name == mock_policy['policy_name']
     assert policy.disposition_action == mock_policy['disposition_action']
-    assert policy.can_owner_extend_retention == mock_policy['can_owner_extend_retention']
+    assert (
+        policy.can_owner_extend_retention == mock_policy['can_owner_extend_retention']
+    )
     assert policy.are_owners_notified == mock_policy['are_owners_notified']
     assert policy.retention_type == mock_policy['retention_type']
     assert policy.description == mock_policy['description']
@@ -1022,7 +1111,9 @@ def test_get_retention_policies(mock_client, mock_box_session, mock_user, mock_u
         'entries': [mock_policy],
         'next_marker': 'testMarker',
     }
-    policies = mock_client.get_retention_policies(policy_name='Test Name', policy_type='finite', user=mock_user)
+    policies = mock_client.get_retention_policies(
+        policy_name='Test Name', policy_type='finite', user=mock_user
+    )
     policy = policies.next()
     params = {
         'policy_name': 'Test Name',
@@ -1035,7 +1126,9 @@ def test_get_retention_policies(mock_client, mock_box_session, mock_user, mock_u
     assert policy.name == mock_policy['name']
 
 
-def test_get_file_version_retentions(mock_client, mock_box_session, mock_file, mock_retention_policy):
+def test_get_file_version_retentions(
+    mock_client, mock_box_session, mock_file, mock_retention_policy
+):
     expected_url = f'{API.BASE_API_URL}/file_version_retentions'
     mock_retention = {
         'type': 'file_version_retention',
@@ -1086,7 +1179,9 @@ def test_get_pending_collaborations(mock_client, mock_box_session):
     }
     pending_collaborations = mock_client.get_pending_collaborations(limit=2)
     pending_collaboration = pending_collaborations.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 2, 'status': 'pending', 'offset': None})
+    mock_box_session.get.assert_called_once_with(
+        expected_url, params={'limit': 2, 'status': 'pending', 'offset': None}
+    )
     assert isinstance(pending_collaboration, Collaboration)
     assert pending_collaboration.id == mock_collaboration['id']
     assert pending_collaboration.type == mock_collaboration['type']
@@ -1096,29 +1191,36 @@ def test_get_pending_collaborations(mock_client, mock_box_session):
 
 @pytest.fixture
 def check_downscope_token_request(
-        mock_client,
-        mock_box_session,
-        mock_object_id,
-        make_mock_box_request,
+    mock_client,
+    mock_box_session,
+    mock_object_id,
+    make_mock_box_request,
 ):
     def do_check(scopes, item_class, additional_data, shared_link, expected_data):
         temp_downscoped_token = 'temp_downscoped_token'
         temp_expires_in = 1234
         mock_box_response, _ = make_mock_box_request(
-            response={'access_token': temp_downscoped_token, 'expires_in': temp_expires_in},
+            response={
+                'access_token': temp_downscoped_token,
+                'expires_in': temp_expires_in,
+            },
         )
         mock_box_session.post.return_value = mock_box_response
 
         item = item_class(mock_box_session, mock_object_id) if item_class else None
 
-        downscoped_token_response = mock_client.downscope_token(scopes, item, additional_data, shared_link)
+        downscoped_token_response = mock_client.downscope_token(
+            scopes, item, additional_data, shared_link
+        )
 
         assert downscoped_token_response.access_token == temp_downscoped_token
         assert downscoped_token_response.expires_in == temp_expires_in
 
         if item:
             expected_data['resource'] = item.get_url()
-        mock_box_session.post.assert_called_once_with(f'{API.OAUTH2_API_URL}/token', data=expected_data)
+        mock_box_session.post.assert_called_once_with(
+            f'{API.OAUTH2_API_URL}/token', data=expected_data
+        )
 
     return do_check
 
@@ -1127,17 +1229,25 @@ def check_downscope_token_request(
     'item_class,scopes,expected_scopes',
     [
         (File, [TokenScope.ITEM_READWRITE], 'item_readwrite'),
-        (Folder, [TokenScope.ITEM_PREVIEW, TokenScope.ITEM_SHARE], 'item_preview item_share'),
-        (File, [TokenScope.ITEM_READ, TokenScope.ITEM_SHARE, TokenScope.ITEM_DELETE], 'item_read item_share item_delete'),
+        (
+            Folder,
+            [TokenScope.ITEM_PREVIEW, TokenScope.ITEM_SHARE],
+            'item_preview item_share',
+        ),
+        (
+            File,
+            [TokenScope.ITEM_READ, TokenScope.ITEM_SHARE, TokenScope.ITEM_DELETE],
+            'item_read item_share item_delete',
+        ),
         (None, [TokenScope.ITEM_DOWNLOAD], 'item_download'),
     ],
 )
 def test_downscope_token_sends_downscope_request(
-        mock_client,
-        check_downscope_token_request,
-        item_class,
-        scopes,
-        expected_scopes,
+    mock_client,
+    check_downscope_token_request,
+    item_class,
+    scopes,
+    expected_scopes,
 ):
     mock_client.auth.access_token = 'existing_access_token'
     expected_data = {
@@ -1150,8 +1260,8 @@ def test_downscope_token_sends_downscope_request(
 
 
 def test_downscope_token_sends_downscope_request_with_shared_link(
-        mock_client,
-        check_downscope_token_request,
+    mock_client,
+    check_downscope_token_request,
 ):
     shared_link = 'https://cloud.box.com/s/foo'
     expected_data = {
@@ -1159,16 +1269,21 @@ def test_downscope_token_sends_downscope_request_with_shared_link(
         'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
         'scope': 'item_readwrite',
         'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
-        'box_shared_link': shared_link
+        'box_shared_link': shared_link,
     }
-    check_downscope_token_request([TokenScope.ITEM_READWRITE], None, None, shared_link, expected_data)
+    check_downscope_token_request(
+        [TokenScope.ITEM_READWRITE], None, None, shared_link, expected_data
+    )
 
 
 def test_downscope_token_sends_downscope_request_with_additional_data(
-        mock_client,
-        check_downscope_token_request,
+    mock_client,
+    check_downscope_token_request,
 ):
-    additional_data = {'grant_type': 'new_grant_type', 'extra_data_key': 'extra_data_value'}
+    additional_data = {
+        'grant_type': 'new_grant_type',
+        'extra_data_key': 'extra_data_value',
+    }
     expected_data = {
         'subject_token': mock_client.auth.access_token,
         'subject_token_type': 'urn:ietf:params:oauth:token-type:access_token',
@@ -1176,12 +1291,14 @@ def test_downscope_token_sends_downscope_request_with_additional_data(
         'grant_type': 'new_grant_type',
         'extra_data_key': 'extra_data_value',
     }
-    check_downscope_token_request([TokenScope.ITEM_READWRITE], File, additional_data, None, expected_data)
+    check_downscope_token_request(
+        [TokenScope.ITEM_READWRITE], File, additional_data, None, expected_data
+    )
 
 
 def test_downscope_token_sends_downscope_request_when_no_initial_token(
-        mock_client,
-        check_downscope_token_request,
+    mock_client,
+    check_downscope_token_request,
 ):
     mock_client.auth.access_token = None
     mock_client.auth.refresh.return_value = 'new_access_token'
@@ -1192,11 +1309,19 @@ def test_downscope_token_sends_downscope_request_when_no_initial_token(
         'scope': 'item_readwrite',
         'grant_type': 'urn:ietf:params:oauth:grant-type:token-exchange',
     }
-    check_downscope_token_request([TokenScope.ITEM_READWRITE], File, None, None, expected_data)
+    check_downscope_token_request(
+        [TokenScope.ITEM_READWRITE], File, None, None, expected_data
+    )
     mock_client.auth.refresh.assert_called_once_with(None)
 
 
-def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_response, device_pin_id_1, device_pin_id_2):
+def test_device_pins_for_enterprise(
+    mock_client,
+    mock_box_session,
+    device_pins_response,
+    device_pin_id_1,
+    device_pin_id_2,
+):
     # pylint:disable=redefined-outer-name
     enterprise_id = '11111'
     expected_url = f'{API.BASE_API_URL}/enterprises/{enterprise_id}/device_pinners'
@@ -1207,7 +1332,9 @@ def test_device_pins_for_enterprise(mock_client, mock_box_session, device_pins_r
         assert pin.object_id == expected_id
         # pylint:disable=protected-access
         assert pin._session == mock_box_session
-    mock_box_session.get.assert_called_once_with(expected_url, params={'direction': 'ASC'})
+    mock_box_session.get.assert_called_once_with(
+        expected_url, params={'direction': 'ASC'}
+    )
 
 
 def test_metadata_template_initializer(mock_client, mock_box_session):
@@ -1307,9 +1434,13 @@ def test_create_metadata_template(mock_client, mock_box_session):
     response.update(expected_body)
     mock_box_session.post.return_value.json.return_value = response
 
-    template = mock_client.create_metadata_template(name, [field1, field2], key, hidden=True)
+    template = mock_client.create_metadata_template(
+        name, [field1, field2], key, hidden=True
+    )
 
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
+    mock_box_session.post.assert_called_once_with(
+        expected_url, data=json.dumps(expected_body)
+    )
     assert isinstance(template, MetadataTemplate)
     assert template.object_id is None
     assert template.displayName == 'Vendor Contract'
@@ -1323,9 +1454,7 @@ def test_create_metadata_template(mock_client, mock_box_session):
 
 def test_get_current_enterprise(mock_client, mock_box_session):
     expected_url = f'{API.BASE_API_URL}/users/me'
-    expected_params = {
-        'fields': 'enterprise'
-    }
+    expected_params = {'fields': 'enterprise'}
     enterprise_id = '44444'
     enterprise_name = 'Acme, Inc.'
     user_json = {
@@ -1341,12 +1470,16 @@ def test_get_current_enterprise(mock_client, mock_box_session):
 
     enterprise = mock_client.get_current_enterprise()
 
-    mock_box_session.get.assert_called_once_with(expected_url, params=expected_params, headers=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, params=expected_params, headers=None
+    )
     assert isinstance(enterprise, Enterprise)
     assert enterprise.object_id == enterprise_id
     assert enterprise._session == mock_box_session  # pylint:disable=protected-access
     assert enterprise.name == enterprise_name
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params={'fields': 'enterprise'})
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params={'fields': 'enterprise'}
+    )
 
 
 def test_comment(mock_client):
@@ -1422,7 +1555,9 @@ def test_collections(mock_client, mock_box_session):
     }
     collections = mock_client.collections(limit=2)
     collection = collections.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={'limit': 2, 'offset': 0})
+    mock_box_session.get.assert_called_once_with(
+        expected_url, params={'limit': 2, 'offset': 0}
+    )
     assert isinstance(collection, Collection)
     assert collection.id == mock_collection['id']
     assert collection.type == mock_collection['type']
@@ -1503,15 +1638,9 @@ def test_download_zip(mock_client, mock_box_session, mock_content_response):
     expected_create_body = {
         'download_file_name': name,
         'items': [
-            {
-                'type': 'file',
-                'id': '466239504569'
-            },
-            {
-                'type': 'folder',
-                'id': '466239504580'
-            }
-        ]
+            {'type': 'file', 'id': '466239504569'},
+            {'type': 'folder', 'id': '466239504580'},
+        ],
     }
     status_response_mock = Mock()
     status_response_mock.json.return_value = {
@@ -1519,10 +1648,12 @@ def test_download_zip(mock_client, mock_box_session, mock_content_response):
         'downloaded_file_count': 10,
         'skipped_file_count': 10,
         'skipped_folder_count': 10,
-        'state': 'succeeded'
+        'state': 'succeeded',
     }
     mock_box_session.post.return_value.json.return_value = {
-        'download_url': 'https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content',
+        'download_url': (
+            'https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content'
+        ),
         'status_url': 'https://api.box.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/status',
         'expires_at': '2018-04-25T11:00:18-07:00',
         'name_conflicts': [
@@ -1531,27 +1662,34 @@ def test_download_zip(mock_client, mock_box_session, mock_content_response):
                     'id': '100',
                     'type': 'file',
                     'original_name': 'salary.pdf',
-                    'download_name': 'aqc823.pdf'
+                    'download_name': 'aqc823.pdf',
                 },
                 {
                     'id': '200',
                     'type': 'file',
                     'original_name': 'salary.pdf',
-                    'download_name': 'aci23s.pdf'
-                }
+                    'download_name': 'aci23s.pdf',
+                },
             ]
-        ]
+        ],
     }
 
     mock_box_session.get.side_effect = [mock_content_response, status_response_mock]
 
     status_returned = mock_client.download_zip(name, items, mock_writeable_stream)
-    mock_box_session.post.assert_called_once_with(expected_create_url,
-                                                  data=json.dumps(expected_create_body),
-                                                  skip_retry_codes={202})
-    mock_box_session.get.assert_any_call('https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content',
-                                         expect_json_response=False, stream=True)
-    mock_box_session.get.assert_called_with('https://api.box.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/status')
+    mock_box_session.post.assert_called_once_with(
+        expected_create_url,
+        data=json.dumps(expected_create_body),
+        skip_retry_codes={202},
+    )
+    mock_box_session.get.assert_any_call(
+        'https://dl.boxcloud.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/content',
+        expect_json_response=False,
+        stream=True,
+    )
+    mock_box_session.get.assert_called_with(
+        'https://api.box.com/2.0/zip_downloads/124hfiowk3fa8kmrwh/status'
+    )
     mock_writeable_stream.seek(0)
     assert mock_writeable_stream.read() == mock_content_response.content
     assert status_returned['total_file_count'] == 20
@@ -1579,14 +1717,14 @@ def mock_sign_request_response():
             'type': 'folder',
             'etag': '1',
             'name': 'Contracts',
-            'sequence_id': '3'
+            'sequence_id': '3',
         },
         'prefill_tags': [
             {
                 'document_tag_id': '1234',
                 'text_value': 'text',
                 'checkbox_value': 'true',
-                'date_value': '2021-04-26T08:12:13.982Z'
+                'date_value': '2021-04-26T08:12:13.982Z',
             }
         ],
         'prepare_url': 'https://prepareurl.com',
@@ -1602,11 +1740,11 @@ def mock_sign_request_response():
                     'file_version': {
                         'id': '12345',
                         'type': 'file_version',
-                        'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
-                    }
+                        'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc',
+                    },
                 }
             ],
-            'is_ready_for_download': 'true'
+            'is_ready_for_download': 'true',
         },
         'signers': [
             {
@@ -1618,7 +1756,7 @@ def mock_sign_request_response():
                 'has_viewed_document': 'true',
                 'signer_decision': {
                     'type': 'signed',
-                    'finalized_at': '2021-04-26T08:12:13.982Z'
+                    'finalized_at': '2021-04-26T08:12:13.982Z',
                 },
                 'inputs': [
                     {
@@ -1627,10 +1765,10 @@ def mock_sign_request_response():
                         'checkbox_value': 'true',
                         'date_value': '2021-04-26T08:12:13.982Z',
                         'type': 'text',
-                        'page_index': '4'
+                        'page_index': '4',
                     }
                 ],
-                'embed_url': 'https://example.com'
+                'embed_url': 'https://example.com',
             }
         ],
         'signing_log': {
@@ -1640,11 +1778,11 @@ def mock_sign_request_response():
             'file_version': {
                 'id': '12345',
                 'type': 'file_version',
-                'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
+                'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc',
             },
             'name': 'Contract.pdf',
             'sequence_id': '3',
-            'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37'
+            'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37',
         },
         'source_files': [
             {
@@ -1657,12 +1795,12 @@ def mock_sign_request_response():
                 'file_version': {
                     'id': '12345',
                     'type': 'file_version',
-                    'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
-                }
+                    'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc',
+                },
             }
         ],
         'status': 'converting',
-        'template_id': '123075213-af2c8822-3ef2-4952-8557-52d69c2fe9cb'
+        'template_id': '123075213-af2c8822-3ef2-4952-8557-52d69c2fe9cb',
     }
     return mock_sign_request
 
@@ -1674,13 +1812,15 @@ def mock_sign_template_response():
         "type": "sign-template",
         "name": "important-file.pdf",
         "email_message": "Please sign this document.\n\nKind regards",
-        "email_subject": "Box User (boxuser@box.com) has requested your signature on a document",
+        "email_subject": (
+            "Box User (boxuser@box.com) has requested your signature on a document"
+        ),
         "parent_folder": {
             "id": "123456789",
             "etag": "0",
             "type": "folder",
             "sequence_id": "0",
-            "name": "My Sign Requests"
+            "name": "My Sign Requests",
         },
         "auto_expire_days": "null",
         "source_files": [
@@ -1693,8 +1833,8 @@ def mock_sign_template_response():
                 "file_version": {
                     "id": "123456",
                     "type": "file_version",
-                    "sha1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                }
+                    "sha1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                },
             }
         ],
         "are_email_settings_locked": "false",
@@ -1710,7 +1850,7 @@ def mock_sign_template_response():
                 "role": "final_copy_reader",
                 "is_in_person": "false",
                 "order": 1,
-                "inputs": []
+                "inputs": [],
             },
             {
                 "email": "",
@@ -1728,11 +1868,11 @@ def mock_sign_template_response():
                         "is_required": True,
                         "coordinates": {
                             "x": 0.27038464059712,
-                            "y": 0.10051756244533624
+                            "y": 0.10051756244533624,
                         },
                         "dimensions": {
                             "width": 0.23570031566618235,
-                            "height": 0.04781003891921971
+                            "height": 0.04781003891921971,
                         },
                         "date_value": None,
                         "page_index": 0,
@@ -1741,27 +1881,18 @@ def mock_sign_template_response():
                         "content_type": "signature",
                         "dropdown_choices": None,
                         "group_id": None,
-                        "label": None
+                        "label": None,
                     }
-                ]
-            }
+                ],
+            },
         ],
         "ready_sign_link": None,
         "custom_branding": None,
         "days_valid": 0,
         "additional_info": {
             "non_editable": [],
-            "required": {
-                "signers": [
-                    [
-                        "email"
-                    ],
-                    [
-                        "email"
-                    ]
-                ]
-            }
-        }
+            "required": {"signers": [["email"], ["email"]]},
+        },
     }
     return mock_sign_template
 
@@ -1784,10 +1915,7 @@ def mock_ai_agent_default_config_response():
             'content_template': '---{content}---',
             'embeddings': {
                 'model': 'openai__text_embedding_ada_002',
-                'strategy': {
-                    'id': 'basic',
-                    'num_tokens_per_chunk': 64
-                }
+                'strategy': {'id': 'basic', 'num_tokens_per_chunk': 64},
             },
             'llm_endpoint_params': {
                 'type': 'openai_params',
@@ -1795,14 +1923,18 @@ def mock_ai_agent_default_config_response():
                 'presence_penalty': 1.5,
                 'stop': '<|im_end|>',
                 'temperature': 0,
-                'top_p': 1
+                'top_p': 1,
             },
             'model': 'openai__gpt_3_5_turbo',
             'num_tokens_for_completion': 8400,
-            'prompt_template': 'It is `{current_date}`, and I have $8000 and want to spend a week in the Azores. What '
-                               'should I see?',
-            'system_message': 'You are a helpful travel assistant specialized in budget travel'
-        }
+            'prompt_template': (
+                'It is `{current_date}`, and I have $8000 and want to spend a week in the Azores. What '
+                'should I see?'
+            ),
+            'system_message': (
+                'You are a helpful travel assistant specialized in budget travel'
+            ),
+        },
     }
     return mock_ai_agent_default_config_response
 
@@ -1833,52 +1965,37 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
     redirect_url = 'https://www.box.com/accepted'
     declined_redirect_url = 'https://www.box.com/declined'
     template_id = '123075213-af2c8822-3ef2-4952-8557-52d69c2fe9cb'
-    source_file = {
-        'id': '12345',
-        'type': 'file'
-    }
-    source_file2 = {
-        'id': '34567',
-        'type': 'file'
-    }
+    source_file = {'id': '12345', 'type': 'file'}
+    source_file2 = {'id': '34567', 'type': 'file'}
     files = [source_file, source_file2]
 
-    signer = {
-        'email': 'example@gmail.com'
-    }
+    signer = {'email': 'example@gmail.com'}
     signers = [signer]
     parent_folder_id = '12345'
 
-    data = json.dumps({
-        'signers': [
-            {
-                'email': signer['email']
-            }
-        ],
-        'source_files': [
-            {
-                'id': source_file['id'],
-                'type': source_file['type']
-            },
-            {
-                'id': source_file2['id'],
-                'type': source_file2['type']
-            }
-        ],
-        'parent_folder':
+    data = json.dumps(
         {
-            'id': parent_folder_id,
-            'type': 'folder'
-        },
-        'redirect_url': redirect_url,
-        'declined_redirect_url': declined_redirect_url,
-        'template_id': template_id
-    })
+            'signers': [{'email': signer['email']}],
+            'source_files': [
+                {'id': source_file['id'], 'type': source_file['type']},
+                {'id': source_file2['id'], 'type': source_file2['type']},
+            ],
+            'parent_folder': {'id': parent_folder_id, 'type': 'folder'},
+            'redirect_url': redirect_url,
+            'declined_redirect_url': declined_redirect_url,
+            'template_id': template_id,
+        }
+    )
     mock_box_session.post.return_value.json.return_value = mock_sign_request_response
 
     new_sign_request = mock_client.create_sign_request(
-        files, signers, parent_folder_id,
-        redirect_url=redirect_url, declined_redirect_url=declined_redirect_url, template_id=template_id)
+        files,
+        signers,
+        parent_folder_id,
+        redirect_url=redirect_url,
+        declined_redirect_url=declined_redirect_url,
+        template_id=template_id,
+    )
 
     mock_box_session.post.assert_called_once_with(expected_url, data=data)
     assert isinstance(new_sign_request, SignRequest)
@@ -1890,32 +2007,33 @@ def test_create_sign_request(mock_client, mock_box_session, mock_sign_request_re
     assert new_sign_request['template_id'] == template_id
 
 
-def test_create_sign_request_v2(mock_client, mock_box_session, mock_sign_request_response):
+def test_create_sign_request_v2(
+    mock_client, mock_box_session, mock_sign_request_response
+):
     expected_url = f'{API.BASE_API_URL}/sign_requests'
     redirect_url = 'https://www.box.com/accepted'
     declined_redirect_url = 'https://www.box.com/declined'
     template_id = '123075213-af2c8822-3ef2-4952-8557-52d69c2fe9cb'
 
-    signer = {
-        'email': 'example@gmail.com'
-    }
+    signer = {'email': 'example@gmail.com'}
     signers = [signer]
 
-    data = json.dumps({
-        'signers': [
-            {
-                'email': signer['email']
-            }
-        ],
-        'redirect_url': redirect_url,
-        'declined_redirect_url': declined_redirect_url,
-        'template_id': template_id
-    })
+    data = json.dumps(
+        {
+            'signers': [{'email': signer['email']}],
+            'redirect_url': redirect_url,
+            'declined_redirect_url': declined_redirect_url,
+            'template_id': template_id,
+        }
+    )
     mock_box_session.post.return_value.json.return_value = mock_sign_request_response
 
     new_sign_request = mock_client.create_sign_request_v2(
         signers,
-        redirect_url=redirect_url, declined_redirect_url=declined_redirect_url, template_id=template_id)
+        redirect_url=redirect_url,
+        declined_redirect_url=declined_redirect_url,
+        template_id=template_id,
+    )
 
     mock_box_session.post.assert_called_once_with(expected_url, data=data)
     assert isinstance(new_sign_request, SignRequest)
@@ -1934,14 +2052,18 @@ def test_file_request(mock_client):
     assert file_request.object_id == file_request_id
 
 
-def test_get_sign_templates_from_id(mock_client, mock_box_session, mock_sign_template_response):
+def test_get_sign_templates_from_id(
+    mock_client, mock_box_session, mock_sign_template_response
+):
     test_sign_template_id = '93153068-5420-467b-b8ef-8e54bfb7be42'
     expected_url = f'{API.BASE_API_URL}/sign_templates/{test_sign_template_id}'
     mock_box_session.get.return_value.json.return_value = mock_sign_template_response
 
     sign_template = mock_client.sign_template(test_sign_template_id).get()
 
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params=None
+    )
 
     assert isinstance(sign_template, SignTemplate)
     assert sign_template.id == '93153068-5420-467b-b8ef-8e54bfb7be42'
@@ -1988,33 +2110,34 @@ def test_send_ai_question(mock_client, mock_box_session, mock_ai_question_respon
     expected_url = f'{API.BASE_API_URL}/ai/ask'
     mock_box_session.post.return_value.json.return_value = mock_ai_question_response
 
-    items = [{
-        'type': 'file',
-        'id': '12345'
-    }]
+    items = [{'type': 'file', 'id': '12345'}]
     question = 'Why are public APIs important?'
     mode = 'single_item_qa'
     ai_agent = {
         'type': 'ai_agent_ask',
-        'basic_text_multi': {
-            'model': 'openai__gpt_3_5_turbo'
-        }
+        'basic_text_multi': {'model': 'openai__gpt_3_5_turbo'},
     }
 
     answer = mock_client.send_ai_question(items, question, mode, ai_agent)
 
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps({
-        'items': items,
-        'prompt': question,
-        'mode': mode,
-        'ai_agent': {
-            'type': 'ai_agent_ask',
-            'basic_text_multi': {
-                'model': 'openai__gpt_3_5_turbo'
+    mock_box_session.post.assert_called_once_with(
+        expected_url,
+        data=json.dumps(
+            {
+                'items': items,
+                'prompt': question,
+                'mode': mode,
+                'ai_agent': {
+                    'type': 'ai_agent_ask',
+                    'basic_text_multi': {'model': 'openai__gpt_3_5_turbo'},
+                },
             }
-        }
-    }))
-    assert answer['answer'] == 'Public APIs are important because of key and important reasons.'
+        ),
+    )
+    assert (
+        answer['answer']
+        == 'Public APIs are important because of key and important reasons.'
+    )
     assert answer['completion_reason'] == 'done'
     assert answer['created_at'] == '2021-04-26T08:12:13.982Z'
 
@@ -2023,54 +2146,73 @@ def test_send_ai_text_gen(mock_client, mock_box_session, mock_ai_question_respon
     expected_url = f'{API.BASE_API_URL}/ai/text_gen'
     mock_box_session.post.return_value.json.return_value = mock_ai_question_response
 
-    items = [{
-        'type': 'file',
-        'id': '12345'
-    }]
-    dialogue_history = [{
-        "prompt": "Make my email about public APIs sound more professional",
-        "answer": "Here is the first draft of your professional email about public APIs",
-        "created_at": "2013-12-12T10:53:43-08:00"
-    }, {
-        "prompt": "Can you add some more information?",
-        "answer": "Public API schemas provide necessary information to integrate with APIs...",
-        "created_at": "2013-12-12T11:20:43-08:00"
-    }]
+    items = [{'type': 'file', 'id': '12345'}]
+    dialogue_history = [
+        {
+            "prompt": "Make my email about public APIs sound more professional",
+            "answer": (
+                "Here is the first draft of your professional email about public APIs"
+            ),
+            "created_at": "2013-12-12T10:53:43-08:00",
+        },
+        {
+            "prompt": "Can you add some more information?",
+            "answer": (
+                "Public API schemas provide necessary information to integrate with APIs..."
+            ),
+            "created_at": "2013-12-12T11:20:43-08:00",
+        },
+    ]
     ai_agent = {
         'type': 'ai_agent_text_gen',
-        'basic_gen': {
-            'model': 'openai__gpt_3_5_turbo_16k'
-        }
+        'basic_gen': {'model': 'openai__gpt_3_5_turbo_16k'},
     }
     answer = mock_client.send_ai_text_gen(
         dialogue_history=dialogue_history,
         items=items,
         prompt="Write an email to a client about the importance of public APIs.",
-        ai_agent=ai_agent
+        ai_agent=ai_agent,
     )
 
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps({
-        'dialogue_history': dialogue_history,
-        'items': items,
-        'prompt': "Write an email to a client about the importance of public APIs.",
-        'ai_agent': ai_agent
-    }))
-    assert answer['answer'] == 'Public APIs are important because of key and important reasons.'
+    mock_box_session.post.assert_called_once_with(
+        expected_url,
+        data=json.dumps(
+            {
+                'dialogue_history': dialogue_history,
+                'items': items,
+                'prompt': (
+                    "Write an email to a client about the importance of public APIs."
+                ),
+                'ai_agent': ai_agent,
+            }
+        ),
+    )
+    assert (
+        answer['answer']
+        == 'Public APIs are important because of key and important reasons.'
+    )
     assert answer['completion_reason'] == 'done'
     assert answer['created_at'] == '2021-04-26T08:12:13.982Z'
 
 
-def test_get_ai_agent_default_config(mock_client, mock_box_session, mock_ai_agent_default_config_response):
+def test_get_ai_agent_default_config(
+    mock_client, mock_box_session, mock_ai_agent_default_config_response
+):
     expected_url = f'{API.BASE_API_URL}/ai_agent_default'
-    mock_box_session.get.return_value.json.return_value = mock_ai_agent_default_config_response
-
-    config = mock_client.get_ai_agent_default_config(
-        mode='text_gen',
-        language='en',
-        model='openai__gpt_3_5_turbo'
+    mock_box_session.get.return_value.json.return_value = (
+        mock_ai_agent_default_config_response
     )
 
-    mock_box_session.get.assert_called_once_with(expected_url, params={'mode': 'text_gen', 'language': 'en', 'model': 'openai__gpt_3_5_turbo'})
+    config = mock_client.get_ai_agent_default_config(
+        mode='text_gen', language='en', model='openai__gpt_3_5_turbo'
+    )
+
+    mock_box_session.get.assert_called_once_with(
+        expected_url,
+        params={'mode': 'text_gen', 'language': 'en', 'model': 'openai__gpt_3_5_turbo'},
+    )
     assert config['type'] == 'ai_agent_text_gen'
     assert config['basic_gen']['model'] == 'openai__gpt_3_5_turbo'
-    assert config['basic_gen']['embeddings']['model'] == 'openai__text_embedding_ada_002'
+    assert (
+        config['basic_gen']['embeddings']['model'] == 'openai__text_embedding_ada_002'
+    )

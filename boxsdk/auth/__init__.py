@@ -1,11 +1,13 @@
 from .cooperatively_managed_oauth2 import CooperativelyManagedOAuth2
 from .developer_token_auth import DeveloperTokenAuth
+
 try:
     from .jwt_auth import JWTAuth
 except ImportError:
     JWTAuth = None  # If extras[jwt] are not installed, JWTAuth won't be available.
 from .ccg_auth import CCGAuth
 from .oauth2 import OAuth2
+
 try:
     from .redis_managed_oauth2 import RedisManagedOAuth2
 except ImportError:

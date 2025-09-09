@@ -11,7 +11,9 @@ from boxsdk.util.chunked_uploader import ChunkedUploader
 from boxsdk.session.session import Session
 from boxsdk.config import API
 from .base_object import BaseObject
-from ..pagination.limit_offset_based_dict_collection import LimitOffsetBasedDictCollection
+from ..pagination.limit_offset_based_dict_collection import (
+    LimitOffsetBasedDictCollection,
+)
 
 if TYPE_CHECKING:
     from boxsdk.pagination.box_object_collection import BoxObjectCollection
@@ -24,7 +26,11 @@ class UploadSession(BaseObject):
     _default_upload_url = API.UPLOAD_URL
 
     def __init__(
-            self, session: Session, object_id: str, response_object: dict = None, use_upload_session_urls: bool = True
+        self,
+        session: Session,
+        object_id: str,
+        response_object: dict = None,
+        use_upload_session_urls: bool = True,
     ):
         super().__init__(session, object_id, response_object)
         self._use_upload_session_urls = use_upload_session_urls
@@ -34,17 +40,23 @@ class UploadSession(BaseObject):
         Base class override. Endpoint is a little different - it's /files/upload_sessions.
         """
         session_endpoints = getattr(self, 'session_endpoints', {})
-        if self._use_upload_session_urls and url_key in session_endpoints and self.session.api_config.UPLOAD_URL == self._default_upload_url:
+        if (
+            self._use_upload_session_urls
+            and url_key in session_endpoints
+            and self.session.api_config.UPLOAD_URL == self._default_upload_url
+        ):
             return session_endpoints[url_key]
 
         return self._session.get_url(
-            f'{self._parent_item_type}s/{self._item_type}s',
-            self._object_id,
-            *args
-        ).replace(self.session.api_config.BASE_API_URL, self.session.api_config.UPLOAD_URL)
+            f'{self._parent_item_type}s/{self._item_type}s', self._object_id, *args
+        ).replace(
+            self.session.api_config.BASE_API_URL, self.session.api_config.UPLOAD_URL
+        )
 
     @api_call
-    def get_parts(self, limit: Optional[int] = None, offset: Optional[int] = None) -> 'BoxObjectCollection':
+    def get_parts(
+        self, limit: Optional[int] = None, offset: Optional[int] = None
+    ) -> 'BoxObjectCollection':
         """
         Get a list of parts uploaded so far.
 
@@ -66,11 +78,11 @@ class UploadSession(BaseObject):
 
     @api_call
     def upload_part_bytes(
-            self,
-            part_bytes: bytes,
-            offset: int,
-            total_size: int,
-            part_content_sha1: Optional[bytes] = None
+        self,
+        part_bytes: bytes,
+        offset: int,
+        total_size: int,
+        part_content_sha1: Optional[bytes] = None,
     ) -> dict:
         """
         Upload a part of a file.
@@ -93,7 +105,9 @@ class UploadSession(BaseObject):
             sha1.update(part_bytes)
             part_content_sha1 = sha1.digest()
 
-        range_end = min(offset + self.part_size - 1, total_size - 1)  # pylint:disable=no-member
+        range_end = min(
+            offset + self.part_size - 1, total_size - 1
+        )  # pylint:disable=no-member
         headers = {
             'Content-Type': 'application/octet-stream',
             'Digest': f'SHA={base64.b64encode(part_content_sha1).decode("utf-8")}',
@@ -108,11 +122,11 @@ class UploadSession(BaseObject):
 
     @api_call
     def commit(
-            self,
-            content_sha1: bytes,
-            parts: Iterable[Optional[dict]] = None,
-            file_attributes: dict = None,
-            etag: Optional[str] = None
+        self,
+        content_sha1: bytes,
+        parts: Iterable[Optional[dict]] = None,
+        file_attributes: dict = None,
+        etag: Optional[str] = None,
     ) -> Optional['File']:
         """
         Commit a multiput upload.
@@ -169,12 +183,13 @@ class UploadSession(BaseObject):
         """
 
         box_response = self._session.delete(
-            self.get_url(url_key='abort'),
-            expect_json_response=False
+            self.get_url(url_key='abort'), expect_json_response=False
         )
         return box_response.ok
 
-    def get_chunked_uploader_for_stream(self, content_stream: IO[bytes], file_size: int) -> ChunkedUploader:
+    def get_chunked_uploader_for_stream(
+        self, content_stream: IO[bytes], file_size: int
+    ) -> ChunkedUploader:
         """
         Instantiate the chunked upload instance and create upload session.
 

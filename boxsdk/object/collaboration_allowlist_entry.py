@@ -15,4 +15,6 @@ class CollaborationAllowlistEntry(BaseObject):
         :return:
             The collaboration allowlist entries endpoint URL.
         """
-        return self._session.get_url('collaboration_whitelist_entries', self._object_id, *args)
+        return self._session.get_url(
+            'collaboration_whitelist_entries', self._object_id, *args
+        )

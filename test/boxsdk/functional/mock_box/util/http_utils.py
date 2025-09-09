@@ -2,7 +2,6 @@ from bottle import HTTPError, ServerAdapter
 from functools import partial, wraps
 from threading import Thread
 
-
 RETRY_AFTER_HEADER = str('Retry-After')
 
 
@@ -25,44 +24,52 @@ def retry_after(delay, code=429):
 
 def authorize(method):
     """Decorator for a method that requires authorization. Unauthorized requests will be aborted with a 401."""
+
     @wraps(method)
     def authorized_method(self, *args, **kwargs):
         skip_auth = kwargs.pop('skip_auth', False)
         if not skip_auth:
             self.check_authorization_header()
         return method(self, *args, **kwargs)
+
     return authorized_method
 
 
 def rate_limit(method):
     """Decorator for a method that requires rate limiting. Too many requests will be aborted with a 429."""
+
     @wraps(method)
     def limited_method(self, *args, **kwargs):
         skip_limit = kwargs.pop('skip_limit', False)
         if not skip_limit:
             self.check_rate_limits()
         return method(self, *args, **kwargs)
+
     return limited_method
 
 
 def _route(verb, app, route):
     """Helper decorator to apply methods to routes."""
+
     def routed_method(method):
         setattr(method, 'verb', verb)
         setattr(method, 'app', app)
         setattr(method, 'route', route)
         return method
+
     return routed_method
 
 
 def log_request(method):
     """Decorator for a method to add its request to the request log."""
+
     @wraps(method)
     def logged_method(self, *args, **kwargs):
         skip_log = kwargs.pop('skip_log', False)
         if not skip_log:
             self.append_to_request_log()
         return method(self, *args, **kwargs)
+
     return logged_method
 
 
@@ -78,6 +85,7 @@ class StoppableWSGIRefServer(ServerAdapter):
     Subclass of built-in Bottle server adapter that allows the server to be stopped.
     This is important for testing, since we don't want to "serve forever".
     """
+
     def __init__(self, host='127.0.0.1', port=8080, **options):
         super().__init__(host, port, **options)
         self.srv = None

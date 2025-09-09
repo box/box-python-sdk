@@ -29,7 +29,9 @@ def test_get(test_task, mock_box_session):
         'message': message,
     }
     retrieved_task = test_task.get()
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params=None
+    )
     assert isinstance(retrieved_task, Task)
     assert retrieved_task.object_type == test_task.object_type
     assert retrieved_task.object_id == test_task.object_id
@@ -50,7 +52,9 @@ def test_update(test_task, mock_box_session):
         'message': new_message,
     }
     updated_task = test_task.update_info(data={'message': new_message})
-    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body), headers=None, params=None)
+    mock_box_session.put.assert_called_once_with(
+        expected_url, data=json.dumps(expected_body), headers=None, params=None
+    )
     assert isinstance(updated_task, Task)
     assert updated_task.message == new_message
     assert updated_task.object_type == test_task.object_type
@@ -58,9 +62,9 @@ def test_update(test_task, mock_box_session):
 
 
 def test_delete_policy_return_the_correct_response(
-        test_task,
-        mock_box_session,
-        delete_task_response,
+    test_task,
+    mock_box_session,
+    delete_task_response,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.delete.return_value = delete_task_response
@@ -68,7 +72,9 @@ def test_delete_policy_return_the_correct_response(
     # pylint:disable=protected-access
     expected_url = f'{API.BASE_API_URL}/tasks/{test_task.object_id}'
     # pylint:enable = protected-access
-    mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
+    mock_box_session.delete.assert_called_once_with(
+        expected_url, params={}, expect_json_response=False, headers=None
+    )
     assert response is True
 
 
@@ -93,7 +99,9 @@ def test_assign(test_task, mock_user, mock_box_session):
         'assigned_at': '2013-05-10T11:43:41-07:00',
     }
     new_task_assignment = test_task.assign(assignee=mock_user)
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
+    mock_box_session.post.assert_called_once_with(
+        expected_url, data=json.dumps(expected_body)
+    )
     assert isinstance(new_task_assignment, TaskAssignment)
     assert new_task_assignment.object_type == 'task_assignment'
     assert new_task_assignment.object_id == '42'
@@ -121,8 +129,12 @@ def test_assign_with_login(test_task, mock_box_session):
         },
         'assigned_at': '2013-05-10T11:43:41-07:00',
     }
-    new_task_assignment = test_task.assign_with_login(assignee_login='test_user@example.com')
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
+    new_task_assignment = test_task.assign_with_login(
+        assignee_login='test_user@example.com'
+    )
+    mock_box_session.post.assert_called_once_with(
+        expected_url, data=json.dumps(expected_body)
+    )
     assert isinstance(new_task_assignment, TaskAssignment)
     assert new_task_assignment.object_type == 'task_assignment'
     assert new_task_assignment.object_id == '42'
@@ -135,14 +147,11 @@ def test_get_assignments(test_task, mock_box_session):
     mock_assignment = {
         'type': 'task_assignment',
         'id': '12345',
-        'item': {
-            'type': 'file',
-            'id': '33333'
-        }
+        'item': {'type': 'file', 'id': '33333'},
     }
     mock_box_session.get.return_value.json.return_value = {
         'limit': 100,
-        'entries': [mock_assignment]
+        'entries': [mock_assignment],
     }
     assignments = test_task.get_assignments()
     assignment = assignments.next()

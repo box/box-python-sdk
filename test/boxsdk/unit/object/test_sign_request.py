@@ -25,14 +25,14 @@ def mock_sign_request_response():
             'type': 'folder',
             'etag': '1',
             'name': 'Contracts',
-            'sequence_id': '3'
+            'sequence_id': '3',
         },
         'prefill_tags': [
             {
                 'document_tag_id': '1234',
                 'text_value': 'text',
                 'checkbox_value': 'true',
-                'date_value': '2021-04-26T08:12:13.982Z'
+                'date_value': '2021-04-26T08:12:13.982Z',
             }
         ],
         'prepare_url': 'https://prepareurl.com',
@@ -48,11 +48,11 @@ def mock_sign_request_response():
                     'file_version': {
                         'id': '12345',
                         'type': 'file_version',
-                        'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
-                    }
+                        'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc',
+                    },
                 }
             ],
-            'is_ready_for_download': 'true'
+            'is_ready_for_download': 'true',
         },
         'signers': [
             {
@@ -64,7 +64,7 @@ def mock_sign_request_response():
                 'has_viewed_document': 'true',
                 'signer_decision': {
                     'type': 'signed',
-                    'finalized_at': '2021-04-26T08:12:13.982Z'
+                    'finalized_at': '2021-04-26T08:12:13.982Z',
                 },
                 'inputs': [
                     {
@@ -73,10 +73,10 @@ def mock_sign_request_response():
                         'checkbox_value': 'true',
                         'date_value': '2021-04-26T08:12:13.982Z',
                         'type': 'text',
-                        'page_index': '4'
+                        'page_index': '4',
                     }
                 ],
-                'embed_url': 'https://example.com'
+                'embed_url': 'https://example.com',
             }
         ],
         'signing_log': {
@@ -86,11 +86,11 @@ def mock_sign_request_response():
             'file_version': {
                 'id': '12345',
                 'type': 'file_version',
-                'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
+                'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc',
             },
             'name': 'Contract.pdf',
             'sequence_id': '3',
-            'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37'
+            'sha1': '85136C79CBF9FE36BB9D05D0639C70C265C18D37',
         },
         'source_files': [
             {
@@ -103,30 +103,37 @@ def mock_sign_request_response():
                 'file_version': {
                     'id': '12345',
                     'type': 'file_version',
-                    'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc'
-                }
+                    'sha1': '134b65991ed521fcfe4724b7d814ab8ded5185dc',
+                },
             }
         ],
         'status': 'cancelled',
-        'template_id': '123075213-af2c8822-3ef2-4952-8557-52d69c2fe9cb'
+        'template_id': '123075213-af2c8822-3ef2-4952-8557-52d69c2fe9cb',
     }
     return mock_sign_request
 
 
-def test_get_sign_request(test_sign_request, mock_box_session, mock_sign_request_response):
+def test_get_sign_request(
+    test_sign_request, mock_box_session, mock_sign_request_response
+):
     expected_url = f'{API.BASE_API_URL}/sign_requests/{test_sign_request.object_id}'
     mock_box_session.get.return_value.json.return_value = mock_sign_request_response
 
     sign_request = test_sign_request.get()
 
     mock_box_session.get.assert_called_once_with(
-        expected_url, headers=None, params=None)
+        expected_url, headers=None, params=None
+    )
     assert isinstance(sign_request, SignRequest)
     assert sign_request['id'] == test_sign_request.object_id
 
 
-def test_cancel_sign_request(test_sign_request, mock_box_session, mock_sign_request_response):
-    expected_url = f'{API.BASE_API_URL}/sign_requests/{test_sign_request.object_id}/cancel'
+def test_cancel_sign_request(
+    test_sign_request, mock_box_session, mock_sign_request_response
+):
+    expected_url = (
+        f'{API.BASE_API_URL}/sign_requests/{test_sign_request.object_id}/cancel'
+    )
     mock_box_session.post.return_value.json.return_value = mock_sign_request_response
 
     sign_request = test_sign_request.cancel()
@@ -138,9 +145,12 @@ def test_cancel_sign_request(test_sign_request, mock_box_session, mock_sign_requ
 
 
 def test_resend_sign_request(test_sign_request, mock_box_session):
-    expected_url = f'{API.BASE_API_URL}/sign_requests/{test_sign_request.object_id}/resend'
+    expected_url = (
+        f'{API.BASE_API_URL}/sign_requests/{test_sign_request.object_id}/resend'
+    )
 
     test_sign_request.resend()
 
     mock_box_session.post.assert_called_once_with(
-        expected_url, expect_json_response=False, skip_retry_codes={202})
+        expected_url, expect_json_response=False, skip_retry_codes={202}
+    )

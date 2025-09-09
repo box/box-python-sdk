@@ -54,7 +54,9 @@ def test_client_retries_on_server_error(box_client, mock_box, error_code, should
 def test_client_retries_on_retry_after(box_client, mock_box, retry_code, should_apply):
     # pylint:disable=redefined-outer-name
     should_apply, expected_num_requests = should_apply
-    mock_box.get_folder_info.add_chaos(error(retry_code, headers={RETRY_AFTER_HEADER: 1}), should_apply)
+    mock_box.get_folder_info.add_chaos(
+        error(retry_code, headers={RETRY_AFTER_HEADER: 1}), should_apply
+    )
     box_client.folder('0').get()
     assert len(mock_box.requests) == expected_num_requests
 

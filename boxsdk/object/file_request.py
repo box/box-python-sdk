@@ -14,26 +14,28 @@ if TYPE_CHECKING:
 
 class StatusState(TextEnum):
     """An enum of possible status states"""
+
     ACTIVE = 'active'
     INACTIVE = 'inactive'
 
 
 class FileRequest(BaseObject):
     """Represents the file request."""
+
     _item_type = 'file_request'
 
     @api_call
     def copy(
-            self,
-            *,
-            folder: 'Folder',
-            description: Optional[str] = None,
-            expires_at: Union[datetime, str] = None,
-            require_description: Optional[bool] = None,
-            require_email: Optional[bool] = None,
-            status: Optional[str] = None,
-            title: Optional[str] = None,
-            **_kwargs
+        self,
+        *,
+        folder: 'Folder',
+        description: Optional[str] = None,
+        expires_at: Union[datetime, str] = None,
+        require_description: Optional[bool] = None,
+        require_email: Optional[bool] = None,
+        status: Optional[str] = None,
+        title: Optional[str] = None,
+        **_kwargs
     ) -> 'FileRequest':
         """Copy an existing file request already present on one folder, and applies it to another folder.
 

@@ -11,13 +11,15 @@ def mock_sign_template_response():
         "type": "sign-template",
         "name": "important-file.pdf",
         "email_message": "Please sign this document.\n\nKind regards",
-        "email_subject": "Box User (boxuser@box.com) has requested your signature on a document",
+        "email_subject": (
+            "Box User (boxuser@box.com) has requested your signature on a document"
+        ),
         "parent_folder": {
             "id": "123456789",
             "etag": "0",
             "type": "folder",
             "sequence_id": "0",
-            "name": "My Sign Requests"
+            "name": "My Sign Requests",
         },
         "auto_expire_days": "null",
         "source_files": [
@@ -30,8 +32,8 @@ def mock_sign_template_response():
                 "file_version": {
                     "id": "123456",
                     "type": "file_version",
-                    "sha1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                }
+                    "sha1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                },
             }
         ],
         "are_email_settings_locked": "false",
@@ -47,7 +49,7 @@ def mock_sign_template_response():
                 "role": "final_copy_reader",
                 "is_in_person": "false",
                 "order": 1,
-                "inputs": []
+                "inputs": [],
             },
             {
                 "email": "",
@@ -65,11 +67,11 @@ def mock_sign_template_response():
                         "is_required": True,
                         "coordinates": {
                             "x": 0.27038464059712,
-                            "y": 0.10051756244533624
+                            "y": 0.10051756244533624,
                         },
                         "dimensions": {
                             "width": 0.23570031566618235,
-                            "height": 0.04781003891921971
+                            "height": 0.04781003891921971,
                         },
                         "date_value": None,
                         "page_index": 0,
@@ -78,38 +80,33 @@ def mock_sign_template_response():
                         "content_type": "signature",
                         "dropdown_choices": None,
                         "group_id": None,
-                        "label": None
+                        "label": None,
                     }
-                ]
-            }
+                ],
+            },
         ],
         "ready_sign_link": None,
         "custom_branding": None,
         "days_valid": 0,
         "additional_info": {
             "non_editable": [],
-            "required": {
-                "signers": [
-                    [
-                        "email"
-                    ],
-                    [
-                        "email"
-                    ]
-                ]
-            }
-        }
+            "required": {"signers": [["email"], ["email"]]},
+        },
     }
     return mock_sign_template
 
 
-def test_get_sign_template(test_sign_template, mock_box_session, mock_sign_template_response):
+def test_get_sign_template(
+    test_sign_template, mock_box_session, mock_sign_template_response
+):
     expected_url = f'{API.BASE_API_URL}/sign_templates/{test_sign_template.object_id}'
     mock_box_session.get.return_value.json.return_value = mock_sign_template_response
 
     sign_template = test_sign_template.get()
 
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params=None
+    )
 
     assert isinstance(sign_template, SignTemplate)
 

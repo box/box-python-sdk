@@ -10,7 +10,9 @@ from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
 from boxsdk.exception import BoxException
 from boxsdk.object.file import File
-from boxsdk.pagination.limit_offset_based_dict_collection import LimitOffsetBasedDictCollection
+from boxsdk.pagination.limit_offset_based_dict_collection import (
+    LimitOffsetBasedDictCollection,
+)
 from boxsdk.object.upload_session import UploadSession
 from boxsdk.util.chunked_uploader import ChunkedUploader
 
@@ -23,9 +25,13 @@ def test_upload_session(mock_box_session):
         'session_expires_at': '2017-11-09T21:59:16Z',
         'id': 'D5E3F7ADA11A38A0A66AD0B64AACA658',
         'type': 'upload_session',
-        'num_parts_processed': 0
+        'num_parts_processed': 0,
     }
-    return UploadSession(mock_box_session, 'D5E3F7ADA11A38A0A66AD0B64AACA658', upload_session_response_object)
+    return UploadSession(
+        mock_box_session,
+        'D5E3F7ADA11A38A0A66AD0B64AACA658',
+        upload_session_response_object,
+    )
 
 
 @pytest.fixture()
@@ -40,8 +46,12 @@ def mock_upload_session():
 
 
 def test_start(test_upload_session, mock_box_session):
-    expected_put_url = f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}'
-    expected_post_url = f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}/commit'
+    expected_put_url = (
+        f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}'
+    )
+    expected_post_url = (
+        f'{API.UPLOAD_URL}/files/upload_sessions/{test_upload_session.object_id}/commit'
+    )
     file_size = 7
     first_sha1 = '2iNhTgJGmg18e9G9q1ycR0sZBNw='
     second_sha1 = 'A0d4GYoEXB7YC+JxzdApt2h09vw='
@@ -106,23 +116,15 @@ def test_start(test_upload_session, mock_box_session):
     third_response_mock = Mock()
     fourth_response_mock = Mock()
 
-    first_response_mock.json.return_value = {
-        'part': part_one
-    }
-    second_response_mock.json.return_value = {
-        'part': part_two
-    }
-    third_response_mock.json.return_value = {
-        'part': part_three
-    }
-    fourth_response_mock.json.return_value = {
-        'part': part_four
-    }
+    first_response_mock.json.return_value = {'part': part_one}
+    second_response_mock.json.return_value = {'part': part_two}
+    third_response_mock.json.return_value = {'part': part_three}
+    fourth_response_mock.json.return_value = {'part': part_four}
     mock_box_session.put.side_effect = [
         first_response_mock,
         second_response_mock,
         third_response_mock,
-        fourth_response_mock
+        fourth_response_mock,
     ]
     mock_box_session.post.return_value.json.return_value = {
         'entries': [
@@ -144,12 +146,12 @@ def test_start(test_upload_session, mock_box_session):
         call(expected_put_url, data=b'ef', headers=expected_headers_third_upload),
         call(expected_put_url, data=b'g', headers=expected_headers_fourth_upload),
     ]
-    flaky_stream.read.assert_has_calls([call(2), call(2), call(2), call(1), call(2), call(2), call(1)], any_order=False)
+    flaky_stream.read.assert_has_calls(
+        [call(2), call(2), call(2), call(1), call(2), call(2), call(1)], any_order=False
+    )
     mock_box_session.put.assert_has_calls(calls, any_order=True)
     mock_box_session.post.assert_called_once_with(
-        expected_post_url,
-        data=json.dumps(expected_data),
-        headers=expected_headers
+        expected_post_url, data=json.dumps(expected_data), headers=expected_headers
     )
     assert uploaded_file.type == 'file'
     assert uploaded_file.id == '12345'
@@ -200,8 +202,7 @@ def test_resume_cross_process(test_file, mock_upload_session):
     ]
     mock_upload_session.upload_part_bytes.assert_has_calls(calls, any_order=True)
     mock_upload_session.commit.assert_called_once_with(
-        content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@',
-        parts=parts
+        content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@', parts=parts
     )
     assert uploaded_file is test_file
 
@@ -244,7 +245,7 @@ def test_resume_in_process(test_file, mock_upload_session):
         first_part,
         second_part,
         BoxAPIException(502),
-        fourth_part
+        fourth_part,
     ]
     uploaded_file = None
     calls = [
@@ -261,8 +262,7 @@ def test_resume_in_process(test_file, mock_upload_session):
         uploaded_file = chunked_uploader.resume()
     mock_upload_session.upload_part_bytes.assert_has_calls(calls, any_order=True)
     mock_upload_session.commit.assert_called_once_with(
-        content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@',
-        parts=parts
+        content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@', parts=parts
     )
     assert uploaded_file is test_file
 
@@ -314,7 +314,7 @@ def test_resume_with_upload_random_duration(test_file, mock_upload_session):
         second_part,
         BoxAPIException(502),
         fourth_part,
-        third_part
+        third_part,
     ]
     mock_upload_session.upload_part_bytes.side_effect = upload_mock_func
     uploaded_file = None
@@ -331,8 +331,7 @@ def test_resume_with_upload_random_duration(test_file, mock_upload_session):
     ]
     mock_upload_session.upload_part_bytes.assert_has_calls(calls, any_order=True)
     mock_upload_session.commit.assert_called_once_with(
-        content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@',
-        parts=parts
+        content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@', parts=parts
     )
     assert uploaded_file is test_file
 
@@ -398,7 +397,12 @@ def test_resume_after_commit_failed(test_file, mock_upload_session):
     }
     parts = [first_part, second_part, third_part, fourth_part]
     mock_iterator = MagicMock(LimitOffsetBasedDictCollection)
-    mock_iterator.__iter__.return_value = [first_part, second_part, third_part, fourth_part]
+    mock_iterator.__iter__.return_value = [
+        first_part,
+        second_part,
+        third_part,
+        fourth_part,
+    ]
     mock_upload_session.get_parts.return_value = mock_iterator
     mock_upload_session.commit.side_effect = [None, test_file]
     chunked_uploader = ChunkedUploader(mock_upload_session, stream, file_size)
@@ -406,7 +410,7 @@ def test_resume_after_commit_failed(test_file, mock_upload_session):
         first_part,
         second_part,
         third_part,
-        fourth_part
+        fourth_part,
     ]
 
     # when
@@ -420,8 +424,7 @@ def test_resume_after_commit_failed(test_file, mock_upload_session):
 
     # then
     expected_call = call(
-        content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@',
-        parts=parts
+        content_sha1=b'/\xb5\xe14\x19\xfc\x89$he\xe7\xa3$\xf4v\xecbN\x87@', parts=parts
     )
     mock_upload_session.commit.assert_has_calls([expected_call, expected_call])
     assert uploaded_file is test_file

@@ -1,7 +1,9 @@
 import json
 from typing import Optional, List, Any, Iterable, TYPE_CHECKING, Tuple, Union
 from .base_endpoint import BaseEndpoint
-from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.limit_offset_based_object_collection import (
+    LimitOffsetBasedObjectCollection,
+)
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.api_call_decorator import api_call
 from ..util.deprecation_decorator import deprecated_param
@@ -16,12 +18,14 @@ if TYPE_CHECKING:
 
 class SearchScope(TextEnum):
     """Enum of possible serach scopes."""
+
     USER = 'user_content'
     ENTERPRISE = 'enterprise_content'
 
 
 class TrashContent(TextEnum):
     """Enum of trash content values."""
+
     NONE = 'non_trashed_only'
     ONLY = 'trashed_only'
 
@@ -32,6 +36,7 @@ class MetadataSearchFilter:
     but can filter on many fields.
     See :class:`MetadataSearchFilters`.
     """
+
     def __init__(self, template_key: str, scope: str):
         """
         :param template_key:
@@ -53,7 +58,7 @@ class MetadataSearchFilter:
         return {
             'templateKey': self._template_key,
             'scope': self._scope,
-            'filters': self._field_filters
+            'filters': self._field_filters,
         }
 
     def add_value_based_filter(self, field_key: str, value: str) -> None:
@@ -68,10 +73,10 @@ class MetadataSearchFilter:
         self._field_filters.update({field_key: value})
 
     def add_range_filter(
-            self,
-            field_key: str,
-            gt_value: Union[str, int, float] = None,
-            lt_value: Union[str, int, float] = None
+        self,
+        field_key: str,
+        gt_value: Union[str, int, float] = None,
+        lt_value: Union[str, int, float] = None,
     ) -> None:
         """
         Add a range filter (used for ranged searches on numbers and dates)
@@ -98,6 +103,7 @@ class MetadataSearchFilters:
     Helper class to encapsulate a list of metadata search filter params (mdfilters API param)
     See https://developers.box.com/metadata-api/#search for more details
     """
+
     def __init__(self):
         self._filters = []
 
@@ -143,7 +149,9 @@ class Search(BaseEndpoint):
         return MetadataSearchFilters()
 
     @staticmethod
-    def make_single_metadata_filter(template_key: str, scope: str) -> MetadataSearchFilter:
+    def make_single_metadata_filter(
+        template_key: str, scope: str
+    ) -> MetadataSearchFilter:
         """
         Make a single :class:`MetadataSearchFilter` that represents a filter on a template. It must be
         added to a :class:`MetadataSearchFilters`.
@@ -159,25 +167,25 @@ class Search(BaseEndpoint):
     @api_call
     # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
     def query(
-            self,
-            query: str,
-            limit: int = None,
-            offset: int = 0,
-            ancestor_folders: Iterable['Folder'] = None,
-            file_extensions: Iterable[str] = None,
-            metadata_filters: MetadataSearchFilters = None,
-            result_type: str = None,
-            content_types: Iterable[str] = None,
-            scope: Optional[str] = None,
-            created_at_range: Tuple[Optional[str], Optional[str]] = None,
-            updated_at_range: Tuple[Optional[str], Optional[str]] = None,
-            size_range: Tuple[Optional[int], Optional[int]] = None,
-            owner_users: Iterable['User'] = None,
-            trash_content: Optional[str] = None,
-            fields: Iterable[str] = None,
-            sort: Optional[str] = None,
-            direction: Optional[str] = None,
-            **kwargs: Any
+        self,
+        query: str,
+        limit: int = None,
+        offset: int = 0,
+        ancestor_folders: Iterable['Folder'] = None,
+        file_extensions: Iterable[str] = None,
+        metadata_filters: MetadataSearchFilters = None,
+        result_type: str = None,
+        content_types: Iterable[str] = None,
+        scope: Optional[str] = None,
+        created_at_range: Tuple[Optional[str], Optional[str]] = None,
+        updated_at_range: Tuple[Optional[str], Optional[str]] = None,
+        size_range: Tuple[Optional[int], Optional[int]] = None,
+        owner_users: Iterable['User'] = None,
+        trash_content: Optional[str] = None,
+        fields: Iterable[str] = None,
+        sort: Optional[str] = None,
+        direction: Optional[str] = None,
+        **kwargs: Any,
     ) -> Iterable['Item']:
         """
         Search Box for items matching the given query.
@@ -222,7 +230,9 @@ class Search(BaseEndpoint):
         url = self.get_url()
         additional_params = {'query': query}
         if ancestor_folders is not None:
-            additional_params['ancestor_folder_ids'] = ','.join([folder.object_id for folder in ancestor_folders])
+            additional_params['ancestor_folder_ids'] = ','.join(
+                [folder.object_id for folder in ancestor_folders]
+            )
         if file_extensions is not None:
             additional_params['file_extensions'] = ','.join(file_extensions)
         if metadata_filters is not None:
@@ -234,13 +244,21 @@ class Search(BaseEndpoint):
         if scope is not None:
             additional_params['scope'] = scope
         if created_at_range is not None:
-            additional_params['created_at_range'] = f'{created_at_range[0] or ""},{created_at_range[1] or ""}'
+            additional_params['created_at_range'] = (
+                f'{created_at_range[0] or ""},{created_at_range[1] or ""}'
+            )
         if updated_at_range is not None:
-            additional_params['updated_at_range'] = f'{updated_at_range[0] or ""},{updated_at_range[1] or ""}'
+            additional_params['updated_at_range'] = (
+                f'{updated_at_range[0] or ""},{updated_at_range[1] or ""}'
+            )
         if size_range is not None:
-            additional_params['size_range'] = f'{size_range[0] or ""},{size_range[1] or ""}'
+            additional_params['size_range'] = (
+                f'{size_range[0] or ""},{size_range[1] or ""}'
+            )
         if owner_users is not None:
-            additional_params['owner_user_ids'] = ','.join([user.object_id for user in owner_users])
+            additional_params['owner_user_ids'] = ','.join(
+                [user.object_id for user in owner_users]
+            )
         if trash_content is not None:
             additional_params['trash_content'] = trash_content
         if sort is not None:
@@ -260,19 +278,23 @@ class Search(BaseEndpoint):
             return_full_pages=False,
         )
 
-    @deprecated_param(name="use_index", position=5, message="Parameter will be ignored. See docs for details.")
+    @deprecated_param(
+        name="use_index",
+        position=5,
+        message="Parameter will be ignored. See docs for details.",
+    )
     @api_call
     def metadata_query(
-            self,
-            from_template: str,
-            ancestor_folder_id: str,
-            query: Optional[str] = None,
-            query_params: Optional[dict] = None,
-            use_index: Optional[str] = None,
-            order_by: List[dict] = None,
-            marker: Optional[str] = None,
-            limit: int = None,
-            fields: Iterable[Optional[str]] = None
+        self,
+        from_template: str,
+        ancestor_folder_id: str,
+        query: Optional[str] = None,
+        query_params: Optional[dict] = None,
+        use_index: Optional[str] = None,
+        order_by: List[dict] = None,
+        marker: Optional[str] = None,
+        limit: int = None,
+        fields: Iterable[Optional[str]] = None,
     ) -> 'BoxObjectCollection':
         # pylint:disable=unused-argument
         """Query Box items by their metadata.
@@ -298,10 +320,7 @@ class Search(BaseEndpoint):
             An iterator of the item search results
         """
         url = super().get_url('metadata_queries/execute_read')
-        data = {
-            'from': from_template,
-            'ancestor_folder_id': ancestor_folder_id
-        }
+        data = {'from': from_template, 'ancestor_folder_id': ancestor_folder_id}
         if query is not None:
             data['query'] = query
         if query_params is not None:
@@ -317,31 +336,31 @@ class Search(BaseEndpoint):
             fields=fields,
             additional_params=data,
             return_full_pages=False,
-            use_post=True
+            use_post=True,
         )
 
     @api_call
     # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
     def query_with_shared_links(
-            self,
-            query: str,
-            limit: int = None,
-            offset: int = 0,
-            ancestor_folders: Iterable['Folder'] = None,
-            file_extensions: Iterable[str] = None,
-            metadata_filters: MetadataSearchFilters = None,
-            result_type: str = None,
-            content_types: Iterable[str] = None,
-            scope: Optional[str] = None,
-            created_at_range: Tuple[Optional[str], Optional[str]] = None,
-            updated_at_range: Tuple[Optional[str], Optional[str]] = None,
-            size_range: Tuple[Optional[int], Optional[int]] = None,
-            owner_users: Iterable['User'] = None,
-            trash_content: Optional[str] = None,
-            fields: Iterable[str] = None,
-            sort: Optional[str] = None,
-            direction: Optional[str] = None,
-            **kwargs: Any
+        self,
+        query: str,
+        limit: int = None,
+        offset: int = 0,
+        ancestor_folders: Iterable['Folder'] = None,
+        file_extensions: Iterable[str] = None,
+        metadata_filters: MetadataSearchFilters = None,
+        result_type: str = None,
+        content_types: Iterable[str] = None,
+        scope: Optional[str] = None,
+        created_at_range: Tuple[Optional[str], Optional[str]] = None,
+        updated_at_range: Tuple[Optional[str], Optional[str]] = None,
+        size_range: Tuple[Optional[int], Optional[int]] = None,
+        owner_users: Iterable['User'] = None,
+        trash_content: Optional[str] = None,
+        fields: Iterable[str] = None,
+        sort: Optional[str] = None,
+        direction: Optional[str] = None,
+        **kwargs: Any,
     ) -> Iterable['Item']:
         """
         Search Box for items matching the given query. May also include items that are only accessible via recently used shared links.
@@ -386,7 +405,9 @@ class Search(BaseEndpoint):
         url = self.get_url()
         additional_params = {'query': query, 'include_recent_shared_links': True}
         if ancestor_folders is not None:
-            additional_params['ancestor_folder_ids'] = ','.join([folder.object_id for folder in ancestor_folders])
+            additional_params['ancestor_folder_ids'] = ','.join(
+                [folder.object_id for folder in ancestor_folders]
+            )
         if file_extensions is not None:
             additional_params['file_extensions'] = ','.join(file_extensions)
         if metadata_filters is not None:
@@ -398,13 +419,21 @@ class Search(BaseEndpoint):
         if scope is not None:
             additional_params['scope'] = scope
         if created_at_range is not None:
-            additional_params['created_at_range'] = f'{created_at_range[0] or ""},{created_at_range[1] or ""}'
+            additional_params['created_at_range'] = (
+                f'{created_at_range[0] or ""},{created_at_range[1] or ""}'
+            )
         if updated_at_range is not None:
-            additional_params['updated_at_range'] = f'{updated_at_range[0] or ""},{updated_at_range[1] or ""}'
+            additional_params['updated_at_range'] = (
+                f'{updated_at_range[0] or ""},{updated_at_range[1] or ""}'
+            )
         if size_range is not None:
-            additional_params['size_range'] = f'{size_range[0] or ""},{size_range[1] or ""}'
+            additional_params['size_range'] = (
+                f'{size_range[0] or ""},{size_range[1] or ""}'
+            )
         if owner_users is not None:
-            additional_params['owner_user_ids'] = ','.join([user.object_id for user in owner_users])
+            additional_params['owner_user_ids'] = ','.join(
+                [user.object_id for user in owner_users]
+            )
         if trash_content is not None:
             additional_params['trash_content'] = trash_content
         if sort is not None:
