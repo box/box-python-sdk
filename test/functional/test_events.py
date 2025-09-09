@@ -54,55 +54,96 @@ def test_create_folder_causes_create_event(created_subfolder, assert_event):
     assert_event(lambda: created_subfolder, 'ITEM_CREATE')
 
 
-def test_move_file_causes_move_event(box_events, move_target, uploaded_file, assert_event):
+def test_move_file_causes_move_event(
+    box_events, move_target, uploaded_file, assert_event
+):
     # pylint:disable=redefined-outer-name
-    assert_event(lambda: uploaded_file.move(move_target), 'ITEM_MOVE', box_events.get_latest_stream_position())
+    assert_event(
+        lambda: uploaded_file.move(move_target),
+        'ITEM_MOVE',
+        box_events.get_latest_stream_position(),
+    )
 
 
-def test_move_folder_causes_move_event(box_events, move_target, created_subfolder, assert_event):
+def test_move_folder_causes_move_event(
+    box_events, move_target, created_subfolder, assert_event
+):
     # pylint:disable=redefined-outer-name
-    assert_event(lambda: created_subfolder.move(move_target), 'ITEM_MOVE', box_events.get_latest_stream_position())
+    assert_event(
+        lambda: created_subfolder.move(move_target),
+        'ITEM_MOVE',
+        box_events.get_latest_stream_position(),
+    )
 
 
 def test_rename_file_causes_rename_event(box_events, uploaded_file, assert_event):
     # pylint:disable=redefined-outer-name
     updated_name = f'updated_{uploaded_file.name}'
-    assert_event(lambda: uploaded_file.rename(updated_name), 'ITEM_RENAME', box_events.get_latest_stream_position())
+    assert_event(
+        lambda: uploaded_file.rename(updated_name),
+        'ITEM_RENAME',
+        box_events.get_latest_stream_position(),
+    )
 
 
 def test_rename_folder_causes_rename_event(box_events, created_subfolder, assert_event):
     # pylint:disable=redefined-outer-name
     updated_name = f'updated_{created_subfolder.name}'
-    assert_event(lambda: created_subfolder.rename(updated_name), 'ITEM_RENAME', box_events.get_latest_stream_position())
+    assert_event(
+        lambda: created_subfolder.rename(updated_name),
+        'ITEM_RENAME',
+        box_events.get_latest_stream_position(),
+    )
 
 
-def test_copy_file_causes_copy_event(box_events, copy_target, uploaded_file, assert_event):
+def test_copy_file_causes_copy_event(
+    box_events, copy_target, uploaded_file, assert_event
+):
     # pylint:disable=redefined-outer-name
-    assert_event(lambda: uploaded_file.copy(parent_folder=copy_target), 'ITEM_COPY', box_events.get_latest_stream_position())
+    assert_event(
+        lambda: uploaded_file.copy(parent_folder=copy_target),
+        'ITEM_COPY',
+        box_events.get_latest_stream_position(),
+    )
 
 
-def test_copy_folder_causes_copy_event(box_events, copy_target, created_subfolder, assert_event):
+def test_copy_folder_causes_copy_event(
+    box_events, copy_target, created_subfolder, assert_event
+):
     # pylint:disable=redefined-outer-name
-    assert_event(lambda: created_subfolder.copy(parent_folder=copy_target), 'ITEM_COPY', box_events.get_latest_stream_position())
+    assert_event(
+        lambda: created_subfolder.copy(parent_folder=copy_target),
+        'ITEM_COPY',
+        box_events.get_latest_stream_position(),
+    )
 
 
 @pytest.mark.xfail(reason='trash event has no source')
 def test_delete_file_causes_trash_event(box_events, uploaded_file, assert_event):
     # pylint:disable=redefined-outer-name
-    assert_event(uploaded_file.delete, 'ITEM_TRASH', box_events.get_latest_stream_position())
+    assert_event(
+        uploaded_file.delete, 'ITEM_TRASH', box_events.get_latest_stream_position()
+    )
 
 
 @pytest.mark.xfail(reason='trash event has no source')
 def test_delete_folder_causes_trash_event(box_events, created_subfolder, assert_event):
     # pylint:disable=redefined-outer-name
-    assert_event(created_subfolder.delete, 'ITEM_TRASH', box_events.get_latest_stream_position())
+    assert_event(
+        created_subfolder.delete, 'ITEM_TRASH', box_events.get_latest_stream_position()
+    )
 
 
-@pytest.mark.parametrize('sync_state,event_type', [
-    (FolderSyncState.IS_SYNCED, 'ITEM_SYNC'),
-    (FolderSyncState.NOT_SYNCED, 'ITEM_UNSYNC'),
-])
-def test_sync_folder_causes_sync_event(box_events, created_subfolder, assert_event, sync_state, event_type):
+@pytest.mark.parametrize(
+    'sync_state,event_type',
+    [
+        (FolderSyncState.IS_SYNCED, 'ITEM_SYNC'),
+        (FolderSyncState.NOT_SYNCED, 'ITEM_UNSYNC'),
+    ],
+)
+def test_sync_folder_causes_sync_event(
+    box_events, created_subfolder, assert_event, sync_state, event_type
+):
     # pylint:disable=redefined-outer-name
     assert_event(
         lambda: created_subfolder.update_sync_state(sync_state.value),
@@ -145,7 +186,9 @@ def long_poll_generator(box_events, uploaded_file, request):
     return long_poll_thread
 
 
-def test_generate_events_with_long_polling(long_poll_generator, created_subfolder, uploaded_file):
+def test_generate_events_with_long_polling(
+    long_poll_generator, created_subfolder, uploaded_file
+):
     # pylint:disable=redefined-outer-name
     long_poll_generator.event_ready.wait()
     long_poll_generator.event_ready.clear()
@@ -156,8 +199,12 @@ def test_generate_events_with_long_polling(long_poll_generator, created_subfolde
     assert not long_poll_generator.event_ready.wait(timeout=0.01)
 
     assert len(long_poll_generator.events) == 2
-    folder_event = next(e for e in long_poll_generator.events if e['source']['type'] == 'folder')
-    file_event = next(e for e in long_poll_generator.events if e['source']['type'] == 'file')
+    folder_event = next(
+        e for e in long_poll_generator.events if e['source']['type'] == 'folder'
+    )
+    file_event = next(
+        e for e in long_poll_generator.events if e['source']['type'] == 'file'
+    )
     assert folder_event['event_type'] == 'ITEM_CREATE'
     assert file_event['event_type'] == 'ITEM_UPLOAD'
     assert folder_event['source']['id'] == created_subfolder.id
@@ -179,8 +226,12 @@ def test_generate_events_with_long_polling(long_poll_generator, created_subfolde
     assert not long_poll_generator.event_ready.wait(timeout=0.01)
 
     assert len(long_poll_generator.events) == 2
-    folder_event = next(e for e in long_poll_generator.events if e['source']['type'] == 'folder')
-    file_event = next(e for e in long_poll_generator.events if e['source']['type'] == 'file')
+    folder_event = next(
+        e for e in long_poll_generator.events if e['source']['type'] == 'folder'
+    )
+    file_event = next(
+        e for e in long_poll_generator.events if e['source']['type'] == 'file'
+    )
     assert folder_event['event_type'] == 'ITEM_RENAME'
     assert file_event['event_type'] == 'ITEM_RENAME'
     assert folder_event['source']['id'] == created_subfolder.id

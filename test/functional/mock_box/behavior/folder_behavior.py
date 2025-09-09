@@ -7,7 +7,10 @@ from test.functional.mock_box.behavior.item_behavior import ItemBehavior
 from test.functional.mock_box.db_model.event_model import EventModel
 from test.functional.mock_box.db_model.file_model import FileModel
 from test.functional.mock_box.db_model.folder_model import FolderModel
-from test.functional.mock_box.util.db_utils import get_folder_by_id, get_user_from_header
+from test.functional.mock_box.util.db_utils import (
+    get_folder_by_id,
+    get_user_from_header,
+)
 from test.functional.mock_box.util.http_utils import abort
 from test.functional.mock_box.util import json_utils as json
 
@@ -32,18 +35,34 @@ class FolderBehavior(ItemBehavior):
                 parent_folder = get_folder_by_id(self._db_session, parent_id)
                 folder.parent_id = parent_folder.id
                 self._db_session.add(
-                    EventModel(event_type='ITEM_MOVE', source_id=folder.folder_id, source_type='folder'),
+                    EventModel(
+                        event_type='ITEM_MOVE',
+                        source_id=folder.folder_id,
+                        source_type='folder',
+                    ),
                 )
             else:
                 setattr(folder, key, value)
                 if key == 'name':
                     self._db_session.add(
-                        EventModel(event_type='ITEM_RENAME', source_id=folder.folder_id, source_type='folder'),
+                        EventModel(
+                            event_type='ITEM_RENAME',
+                            source_id=folder.folder_id,
+                            source_type='folder',
+                        ),
                     )
                 elif key == 'sync_state':
-                    event_type = 'ITEM_SYNC' if value == FolderSyncState.IS_SYNCED else 'ITEM_UNSYNC'
+                    event_type = (
+                        'ITEM_SYNC'
+                        if value == FolderSyncState.IS_SYNCED
+                        else 'ITEM_UNSYNC'
+                    )
                     self._db_session.add(
-                        EventModel(event_type=event_type, source_id=folder.folder_id, source_type='folder'),
+                        EventModel(
+                            event_type=event_type,
+                            source_id=folder.folder_id,
+                            source_type='folder',
+                        ),
                     )
         self._db_session.commit()
         return json.dumps(folder)
@@ -58,7 +77,11 @@ class FolderBehavior(ItemBehavior):
         folder.parent_id = parent_folder.id
         self._db_session.add(folder)
         self._db_session.commit()
-        self._db_session.add(EventModel(event_type='ITEM_COPY', source_id=folder.folder_id, source_type='folder'))
+        self._db_session.add(
+            EventModel(
+                event_type='ITEM_COPY', source_id=folder.folder_id, source_type='folder'
+            )
+        )
         self._db_session.commit()
         return json.dumps(folder)
 
@@ -66,13 +89,23 @@ class FolderBehavior(ItemBehavior):
         folder = get_folder_by_id(self._db_session, folder_id)
         self._db_session.delete(folder)
         self._db_session.commit()
-        self._db_session.add(EventModel(event_type='ITEM_TRASH', source_id=folder.folder_id, source_type='folder'))
+        self._db_session.add(
+            EventModel(
+                event_type='ITEM_TRASH',
+                source_id=folder.folder_id,
+                source_type='folder',
+            )
+        )
         response.status = 204
 
     def _gat(self, folder_id):
         # pylint:disable=unused-argument
         files = self._db_session.query(FileModel).all()
-        folders = self._db_session.query(FolderModel).filter(FolderModel.folder_id != '0').all()
+        folders = (
+            self._db_session.query(FolderModel)
+            .filter(FolderModel.folder_id != '0')
+            .all()
+        )
         return json.dumps({'items': files + folders})
 
     def get_folder_items(self, folder_id):
@@ -84,17 +117,31 @@ class FolderBehavior(ItemBehavior):
         # fields = request.params.get('fields')
         # fields = set(fields.split(',')) if fields else set() | set(['name'])
         folder = get_folder_by_id(self._db_session, folder_id)
-        folder_count = self._db_session.query(FolderModel).filter_by(parent_id=folder.id).count()
+        folder_count = (
+            self._db_session.query(FolderModel).filter_by(parent_id=folder.id).count()
+        )
         folders = []
         if folder_count > offset:
-            folders = self._db_session.query(
-                FolderModel,
-            ).filter_by(parent_id=folder.id).limit(limit).offset(offset).all()
+            folders = (
+                self._db_session.query(
+                    FolderModel,
+                )
+                .filter_by(parent_id=folder.id)
+                .limit(limit)
+                .offset(offset)
+                .all()
+            )
         files = []
         if len(folders) < limit:
             limit -= len(folders)
             offset -= folder_count
-            files = self._db_session.query(FileModel).filter_by(parent_id=folder.id).limit(limit).offset(offset).all()
+            files = (
+                self._db_session.query(FileModel)
+                .filter_by(parent_id=folder.id)
+                .limit(limit)
+                .offset(offset)
+                .all()
+            )
         items = folders + files
         return json.dumps({'total_count': len(items), 'entries': items})
 
@@ -111,16 +158,26 @@ class FolderBehavior(ItemBehavior):
             abort(400, 'Missing parameter: parent(id)')
         parent_id = parent['id']
         try:
-            parent_folder = self._db_session.query(FolderModel).filter_by(folder_id=parent_id).one()
+            parent_folder = (
+                self._db_session.query(FolderModel).filter_by(folder_id=parent_id).one()
+            )
         except NoResultFound:
             abort(404)
         owner = get_user_from_header(self._db_session)
         name_in_use = self._db_session.query(FolderModel).filter_by(name=name).count()
         if name_in_use:
             abort(409, 'An item with that name already exists.')
-        folder = FolderModel(name=name, parent_id=parent_folder.id, owned_by=owner, created_by=owner)
+        folder = FolderModel(
+            name=name, parent_id=parent_folder.id, owned_by=owner, created_by=owner
+        )
         self._db_session.add(folder)
         self._db_session.commit()
-        self._db_session.add(EventModel(event_type='ITEM_CREATE', source_id=folder.folder_id, source_type='folder'))
+        self._db_session.add(
+            EventModel(
+                event_type='ITEM_CREATE',
+                source_id=folder.folder_id,
+                source_type='folder',
+            )
+        )
         self._db_session.commit()
         return json.dumps(folder)

@@ -35,7 +35,17 @@ def mocked_logger(logger):
 
 @pytest.fixture(scope='module')
 def logger_method_names():
-    return ['critical', 'debug', 'error', 'exception', 'fatal', 'info', 'log', 'warn', 'warning']
+    return [
+        'critical',
+        'debug',
+        'error',
+        'exception',
+        'fatal',
+        'info',
+        'log',
+        'warn',
+        'warning',
+    ]
 
 
 @pytest.fixture
@@ -94,7 +104,7 @@ def construct_network_response(access_token):
         return DefaultNetworkResponse(
             request_response=request_response,
             access_token_used=access_token,
-            log_response_content=log_response_content
+            log_response_content=log_response_content,
         )
 
     return _construct_network_response
@@ -133,7 +143,9 @@ def do_not_get_content_from_response(request):
 # BEGIN Tests for DefaultNetwork.
 
 
-def test_default_network_response_properties_pass_through_to_session_response_properties(access_token):
+def test_default_network_response_properties_pass_through_to_session_response_properties(
+    access_token,
+):
     mock_session_response = Mock(Response)
     mock_session_response.status_code = 200
     mock_session_response.headers = {}
@@ -183,7 +195,9 @@ def test_network_response_constructor(make_network_request_and_assert_response):
     assert isinstance(response, DefaultNetworkResponseSubclass)
 
 
-def test_network_logs_requests(make_network_request, http_verb, test_url, network, logger):
+def test_network_logs_requests(
+    make_network_request, http_verb, test_url, network, logger
+):
     kwargs = dict(custom_kwarg='foo')
     make_network_request(network, **kwargs)
     logger.info.assert_any_call(
@@ -192,18 +206,29 @@ def test_network_logs_requests(make_network_request, http_verb, test_url, networ
     )
 
 
-def test_network_logs_request_exception(make_network_request, mock_request, http_verb, test_url, logger, network):
-    mock_request.side_effect = expected_exception = ExceptionSubclass('exception raised from request()')
+def test_network_logs_request_exception(
+    make_network_request, mock_request, http_verb, test_url, logger, network
+):
+    mock_request.side_effect = expected_exception = ExceptionSubclass(
+        'exception raised from request()'
+    )
     with pytest.raises(ExceptionSubclass) as pytest_exc_info:
         make_network_request(network)
     assert pytest_exc_info.value is expected_exception
     logger.warning.assert_called_once_with(
         network.EXCEPTION_FORMAT,
-        {'method': http_verb, 'url': test_url, 'exc_type_name': ExceptionSubclass.__name__, 'exc_value': expected_exception},
+        {
+            'method': http_verb,
+            'url': test_url,
+            'exc_type_name': ExceptionSubclass.__name__,
+            'exc_value': expected_exception,
+        },
     )
 
 
-def test_network_request_returns_network_response(make_network_request, request_response, network):
+def test_network_request_returns_network_response(
+    make_network_request, request_response, network
+):
     response = make_network_request(network)
     assert response.request_response is request_response
     assert isinstance(response, DefaultNetworkResponse)
@@ -228,12 +253,19 @@ def test_network_response_only_logs_once(network_response, logger_call_count):
 
 @pytest.mark.parametrize('content_length_header', [False, True])
 def test_network_logs_successful_json_responses(
-        construct_network_response, generic_successful_request_response, assert_logger_called_once_with,
-        get_content_from_response, http_verb, test_url, content_length_header,
+    construct_network_response,
+    generic_successful_request_response,
+    assert_logger_called_once_with,
+    get_content_from_response,
+    http_verb,
+    test_url,
+    content_length_header,
 ):
     expected_content_length = str(len(generic_successful_request_response.content))
     if content_length_header:
-        generic_successful_request_response.headers['Content-Length'] = expected_content_length
+        generic_successful_request_response.headers['Content-Length'] = (
+            expected_content_length
+        )
     else:
         generic_successful_request_response.headers.pop('Content-Length', None)
     generic_successful_request_response.request.method = http_verb
@@ -250,42 +282,65 @@ def test_network_logs_successful_json_responses(
             'content_length': expected_content_length,
             'headers': pformat(generic_successful_request_response.headers),
             'content': pformat(generic_successful_request_response.json()),
-        }
+        },
     )
 
 
 @pytest.mark.parametrize('content_length_header', [False, True])
 def test_network_logs_successful_responses_with_file_content_placeholder(
-        construct_network_response, generic_successful_request_response, assert_logger_called_once_with,
-        logger, content_length_header,
+    construct_network_response,
+    generic_successful_request_response,
+    assert_logger_called_once_with,
+    logger,
+    content_length_header,
 ):
     if content_length_header:
         expected_content_length = str(len(generic_successful_request_response.content))
-        generic_successful_request_response.headers['Content-Length'] = expected_content_length
+        generic_successful_request_response.headers['Content-Length'] = (
+            expected_content_length
+        )
     else:
         generic_successful_request_response.headers.pop('Content-Length', None)
         expected_content_length = '?'
-    network_response = construct_network_response(generic_successful_request_response, log_response_content=False)
-    assert_logger_called_once_with('info', DefaultNetworkResponse.SUCCESSFUL_RESPONSE_FORMAT, ANY)
+    network_response = construct_network_response(
+        generic_successful_request_response, log_response_content=False
+    )
+    assert_logger_called_once_with(
+        'info', DefaultNetworkResponse.SUCCESSFUL_RESPONSE_FORMAT, ANY
+    )
     assert logger.info.call_args[0][1]['content'] == network_response.CONTENT_NOT_LOGGED
     assert logger.info.call_args[0][1]['content_length'] == expected_content_length
 
 
 def test_network_logs_successful_responses_with_non_json_content(
-        construct_network_response, generic_successful_request_response, assert_logger_called_once_with,
-        logger, get_content_from_response,
+    construct_network_response,
+    generic_successful_request_response,
+    assert_logger_called_once_with,
+    logger,
+    get_content_from_response,
 ):
-    generic_successful_request_response.content = content = (b''.join(chr(i).encode('utf-8') for i in range(128)) * 4)
-    generic_successful_request_response.json.side_effect = lambda: json.loads(content.decode('utf-8'))
-    network_response = construct_network_response(generic_successful_request_response, log_response_content=False)
+    generic_successful_request_response.content = content = (
+        b''.join(chr(i).encode('utf-8') for i in range(128)) * 4
+    )
+    generic_successful_request_response.json.side_effect = lambda: json.loads(
+        content.decode('utf-8')
+    )
+    network_response = construct_network_response(
+        generic_successful_request_response, log_response_content=False
+    )
     get_content_from_response(network_response)
-    assert_logger_called_once_with('info', DefaultNetworkResponse.SUCCESSFUL_RESPONSE_FORMAT, ANY)
+    assert_logger_called_once_with(
+        'info', DefaultNetworkResponse.SUCCESSFUL_RESPONSE_FORMAT, ANY
+    )
     assert logger.info.call_args[0][1]['content'] == network_response.CONTENT_NOT_LOGGED
 
 
 def test_network_logs_non_successful_responses(
-        construct_network_response, server_error_request_response, assert_logger_called_once_with,
-        http_verb, test_url,
+    construct_network_response,
+    server_error_request_response,
+    assert_logger_called_once_with,
+    http_verb,
+    test_url,
 ):
     server_error_request_response.request.method = http_verb
     server_error_request_response.request.url = test_url
@@ -300,7 +355,7 @@ def test_network_logs_non_successful_responses(
             'content_length': str(len(server_error_request_response.content)),
             'headers': pformat(server_error_request_response.headers),
             'content': pformat(server_error_request_response.json()),
-        }
+        },
     )
 
 

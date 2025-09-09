@@ -8,7 +8,13 @@ class CooperativelyManagedOAuth2Mixin(OAuth2):
     Box SDK OAuth2 mixin.
     Allows for sharing auth tokens between multiple clients.
     """
-    def __init__(self, retrieve_tokens: Callable[[], Tuple[str, str]] = None, *args: Any, **kwargs: Any):
+
+    def __init__(
+        self,
+        retrieve_tokens: Callable[[], Tuple[str, str]] = None,
+        *args: Any,
+        **kwargs: Any
+    ):
         """
         :param retrieve_tokens:
             Callback to get the current access/refresh token pair.

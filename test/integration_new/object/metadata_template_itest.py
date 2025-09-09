@@ -23,7 +23,7 @@ def test_create_metedata_template_with_fields(parent_folder):
             key='state',
             description='Which state in USA',
             options=['CA', 'TX', 'NY'],
-            hidden=True
+            hidden=True,
         )
     ]
 

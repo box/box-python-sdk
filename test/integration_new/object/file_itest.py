@@ -7,12 +7,15 @@ import pytest
 import pytz
 
 from boxsdk import BoxAPIException
-from test.integration_new.context_managers.box_retention_policy_assigment import BoxRetentionPolicyAssignment
-from test.integration_new.context_managers.box_retention_policy import BoxRetentionPolicy
+from test.integration_new.context_managers.box_retention_policy_assigment import (
+    BoxRetentionPolicyAssignment,
+)
+from test.integration_new.context_managers.box_retention_policy import (
+    BoxRetentionPolicy,
+)
 from test.integration_new import util
 from test.integration_new.context_managers.box_test_file import BoxTestFile
 from test.integration_new.context_managers.box_test_folder import BoxTestFolder
-
 
 FILE_TESTS_DIRECTORY_NAME = 'file-integration-tests'
 
@@ -81,7 +84,9 @@ def test_get_download_url(test_file, small_file_path):
             assert downloaded_file.read() == expected_file.read()
 
 
-def test_update_contents_with_stream(parent_folder, small_file_path, small_file_v2_path):
+def test_update_contents_with_stream(
+    parent_folder, small_file_path, small_file_v2_path
+):
     with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as file:
         with open(small_file_v2_path, 'rb') as file_v2:
             updated_file = file.update_contents_with_stream(file_stream=file_v2)
@@ -98,7 +103,9 @@ def test_update_contents(parent_folder, small_file_path, small_file_v2_path):
             assert updated_file.content() == file_v2.read()
 
 
-def test_lock_and_unlock(parent_folder, small_file_path, small_file_v2_path, other_user, other_client):
+def test_lock_and_unlock(
+    parent_folder, small_file_path, small_file_v2_path, other_user, other_client
+):
     with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as file:
         file.collaborate(accessible_by=other_user, role='editor')
 
@@ -123,18 +130,28 @@ def test_get_shared_link(parent_folder, small_file_path, other_user, other_clien
     with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as file:
         file.collaborate(accessible_by=other_user, role='editor')
 
-        shared_link = other_client.file(file.object_id).get_shared_link(allow_edit=True, allow_preview=True, allow_download=True)
+        shared_link = other_client.file(file.object_id).get_shared_link(
+            allow_edit=True, allow_preview=True, allow_download=True
+        )
 
         result_permissions = file.get().shared_link['permissions']
-        assert result_permissions == {'can_preview': True, 'can_download': True, 'can_edit': True}
+        assert result_permissions == {
+            'can_preview': True,
+            'can_download': True,
+            'can_edit': True,
+        }
         assert other_client.get_shared_item(shared_link).id == file.id
 
 
-def test_get_shared_link_download_url(parent_folder, small_file_path, other_user, other_client):
+def test_get_shared_link_download_url(
+    parent_folder, small_file_path, other_user, other_client
+):
     with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as file:
         file.collaborate(accessible_by=other_user, role='editor')
 
-        shared_link_download_url = other_client.file(file.object_id).get_shared_link_download_url()
+        shared_link_download_url = other_client.file(
+            file.object_id
+        ).get_shared_link_download_url()
 
         with open(small_file_path, 'rb') as expected_file:
             with urllib.request.urlopen(shared_link_download_url) as downloaded_file:
@@ -164,7 +181,9 @@ def test_and_get_task(parent_folder, small_file_path):
 
 
 def test_get_previous_versions(parent_folder, small_file_path, small_file_v2_path):
-    with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as test_file:
+    with BoxTestFile(
+        parent_folder=parent_folder, file_path=small_file_path
+    ) as test_file:
         test_file_version = test_file.file_version
 
         assert not list(test_file.get_previous_versions())
@@ -180,7 +199,9 @@ def test_get_previous_versions(parent_folder, small_file_path, small_file_v2_pat
 
 
 def test_promote_version(parent_folder, small_file_path, small_file_v2_path):
-    with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as test_file:
+    with BoxTestFile(
+        parent_folder=parent_folder, file_path=small_file_path
+    ) as test_file:
         test_file_version = test_file.file_version
 
         updated_test_file = test_file.update_contents(small_file_v2_path)
@@ -188,23 +209,35 @@ def test_promote_version(parent_folder, small_file_path, small_file_v2_path):
 
         assert updated_file_version != test_file_version
 
-        promoted_file_version = updated_test_file.promote_version(file_version=test_file_version)
+        promoted_file_version = updated_test_file.promote_version(
+            file_version=test_file_version
+        )
 
-        assert test_file.get(fields=('file_version',)).file_version == promoted_file_version
-        assert set(updated_test_file.get_previous_versions()) == {test_file_version, updated_file_version}
+        assert (
+            test_file.get(fields=('file_version',)).file_version
+            == promoted_file_version
+        )
+        assert set(updated_test_file.get_previous_versions()) == {
+            test_file_version,
+            updated_file_version,
+        }
 
         with open(small_file_path, 'rb') as expected_file_v1:
             assert expected_file_v1.read() == test_file.content()
 
 
 def test_delete_version(parent_folder, small_file_path, small_file_v2_path):
-    with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as test_file:
+    with BoxTestFile(
+        parent_folder=parent_folder, file_path=small_file_path
+    ) as test_file:
         updated_test_file = test_file.update_contents(small_file_v2_path)
 
         previous_version = list(updated_test_file.get_previous_versions())[0]
         assert previous_version.trashed_at is None
 
-        was_deletion_successs = updated_test_file.delete_version(file_version=previous_version)
+        was_deletion_successs = updated_test_file.delete_version(
+            file_version=previous_version
+        )
 
         assert was_deletion_successs
         assert list(test_file.get_previous_versions())[0].trashed_at
@@ -226,14 +259,18 @@ def test_get_representation_info(parent_folder, image_path):
 
 def test_get_thumbnail(parent_folder, image_path):
     with BoxTestFile(parent_folder=parent_folder, file_path=image_path) as test_file:
-        thumbnail = test_file.get_thumbnail(extension='jpg', min_width=32, max_width=32, min_height=32, max_height=32)
+        thumbnail = test_file.get_thumbnail(
+            extension='jpg', min_width=32, max_width=32, min_height=32, max_height=32
+        )
 
         assert thumbnail
 
 
 def test_get_thumbnail_representation(parent_folder, image_path):
     with BoxTestFile(parent_folder=parent_folder, file_path=image_path) as test_file:
-        thumbnail_representation = test_file.get_thumbnail_representation(extension='jpg', dimensions='32x32')
+        thumbnail_representation = test_file.get_thumbnail_representation(
+            extension='jpg', dimensions='32x32'
+        )
 
         assert thumbnail_representation
 
@@ -251,18 +288,37 @@ def test_copy(test_file, parent_folder):
 
 
 def test_set_disposition_at(parent_folder, small_file_path):
-    with BoxRetentionPolicy(disposition_action='permanently_delete', retention_length=1) as retention_policy:
-        with BoxTestFolder(name=f'{FILE_TESTS_DIRECTORY_NAME} {datetime.now()}') as folder_under_retention:
-            with BoxRetentionPolicyAssignment(retention_policy=retention_policy, assignee=folder_under_retention):
-                with BoxTestFile(parent_folder=folder_under_retention, file_path=small_file_path) as file_under_retention:
-                    old_disposition_str = file_under_retention.get(fields=('disposition_at',)).disposition_at
+    with BoxRetentionPolicy(
+        disposition_action='permanently_delete', retention_length=1
+    ) as retention_policy:
+        with BoxTestFolder(
+            name=f'{FILE_TESTS_DIRECTORY_NAME} {datetime.now()}'
+        ) as folder_under_retention:
+            with BoxRetentionPolicyAssignment(
+                retention_policy=retention_policy, assignee=folder_under_retention
+            ):
+                with BoxTestFile(
+                    parent_folder=folder_under_retention, file_path=small_file_path
+                ) as file_under_retention:
+                    old_disposition_str = file_under_retention.get(
+                        fields=('disposition_at',)
+                    ).disposition_at
                     old_disposition_datetime = parser.parse(old_disposition_str)
 
-                    new_disposition_date = datetime.now().replace(microsecond=0).astimezone(pytz.utc) + timedelta(days=2)
+                    new_disposition_date = datetime.now().replace(
+                        microsecond=0
+                    ).astimezone(pytz.utc) + timedelta(days=2)
                     file_under_retention.set_disposition_at(new_disposition_date)
 
-                    updated_disposition_str = file_under_retention.get(fields=('disposition_at',)).disposition_at
+                    updated_disposition_str = file_under_retention.get(
+                        fields=('disposition_at',)
+                    ).disposition_at
                     updated_disposition_datetime = parser.parse(updated_disposition_str)
 
-                    assert updated_disposition_datetime.astimezone(pytz.utc) == new_disposition_date
-                    assert updated_disposition_datetime.astimezone(pytz.utc) != old_disposition_datetime.astimezone(pytz.utc)
+                    assert (
+                        updated_disposition_datetime.astimezone(pytz.utc)
+                        == new_disposition_date
+                    )
+                    assert updated_disposition_datetime.astimezone(
+                        pytz.utc
+                    ) != old_disposition_datetime.astimezone(pytz.utc)

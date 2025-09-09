@@ -12,6 +12,7 @@ from test.functional.mock_box.behavior.folder_behavior import FolderBehavior
 from test.functional.mock_box.behavior.oauth2_behavior import OAuth2Behavior
 from test.functional.mock_box.behavior.user_behavior import UserBehavior
 from test.functional.mock_box.db_model import DbModel
+
 # pylint:disable=unused-import
 from test.functional.mock_box.db_model.collaboration_model import CollaborationModel
 from test.functional.mock_box.db_model.event_model import EventModel
@@ -19,7 +20,11 @@ from test.functional.mock_box.db_model.file_model import FileModel
 from test.functional.mock_box.db_model.folder_model import FolderModel
 from test.functional.mock_box.db_model.group_model import GroupModel
 from test.functional.mock_box.db_model.lock_model import LockModel
-from test.functional.mock_box.db_model.share_model import ShareFileModel, ShareFolderModel
+from test.functional.mock_box.db_model.share_model import (
+    ShareFileModel,
+    ShareFolderModel,
+)
+
 # pylint:enable=unused-import
 from test.functional.mock_box.db_model.user_model import UserModel
 from test.functional.mock_box.util.chaos_utils import allow_chaos
@@ -36,7 +41,6 @@ from test.functional.mock_box.util.http_utils import (
     StoppableWSGIRefServer,
 )
 
-
 TEMPLATE_PATH.insert(0, join(dirname(__file__), 'views'))
 
 
@@ -44,6 +48,7 @@ class Box:
     """
     Fake Box. Sets up 4 webservers - one for auth, one for upload, one for events, and one for the rest of the api.
     """
+
     API_PORT = 18086
     UPLOAD_PORT = 18087
     OAUTH_API_PORT = 18088
@@ -59,7 +64,13 @@ class Box:
         self._db_session_maker = None
         self.reset_filesystem()
         # Mock Box consists of 3 webservers - one for the content API, one for the upload API, and one for OAuth2
-        api, upload, oauth_api, event, oauth_authorize = Bottle(), Bottle(), Bottle(), Bottle(), Bottle()
+        api, upload, oauth_api, event, oauth_authorize = (
+            Bottle(),
+            Bottle(),
+            Bottle(),
+            Bottle(),
+            Bottle(),
+        )
         app_mapping = {
             self.API_PORT: api,
             self.EVENT_PORT: event,
@@ -68,18 +79,30 @@ class Box:
             self.OAUTH_AUTHORIZE_PORT: oauth_authorize,
         }
         # Since we don't instantiate the servers until Box is instantiated, we have to apply the routes now
-        for routed_method in (getattr(self, m) for m in dir(self) if hasattr(getattr(self, m), 'route')):
+        for routed_method in (
+            getattr(self, m) for m in dir(self) if hasattr(getattr(self, m), 'route')
+        ):
             app_port = routed_method.app
             app = app_mapping[app_port]
             app.route(routed_method.route, routed_method.verb, routed_method)
         for code in [400, 401, 404, 409, 429, 500]:
             for app in app_mapping.values():
                 app.error(code)(self.handle_error)
-        self._api = StoppableWSGIRefServer(host='localhost', port=self.API_PORT).run(api)
-        self._upload = StoppableWSGIRefServer(host='localhost', port=self.UPLOAD_PORT).run(upload)
-        self._oauth_api = StoppableWSGIRefServer(host='localhost', port=self.OAUTH_API_PORT).run(oauth_api)
-        self._event = StoppableWSGIRefServer(host='localhost', port=self.EVENT_PORT).run(event)
-        self._oauth_authorize = StoppableWSGIRefServer(host='localhost', port=self.OAUTH_AUTHORIZE_PORT).run(oauth_authorize)
+        self._api = StoppableWSGIRefServer(host='localhost', port=self.API_PORT).run(
+            api
+        )
+        self._upload = StoppableWSGIRefServer(
+            host='localhost', port=self.UPLOAD_PORT
+        ).run(upload)
+        self._oauth_api = StoppableWSGIRefServer(
+            host='localhost', port=self.OAUTH_API_PORT
+        ).run(oauth_api)
+        self._event = StoppableWSGIRefServer(
+            host='localhost', port=self.EVENT_PORT
+        ).run(event)
+        self._oauth_authorize = StoppableWSGIRefServer(
+            host='localhost', port=self.OAUTH_AUTHORIZE_PORT
+        ).run(oauth_authorize)
         self._rate_limit_bucket = (self.RATE_LIMIT_THRESHOLD, datetime.utcnow())
 
     @staticmethod
@@ -166,7 +189,9 @@ class Box:
         """
         capactiy, timestamp = self._rate_limit_bucket
         now = datetime.utcnow()
-        delta = self.RATE_LIMIT_REQUEST_PER_SECOND * (now - timestamp).microseconds / 1e6
+        delta = (
+            self.RATE_LIMIT_REQUEST_PER_SECOND * (now - timestamp).microseconds / 1e6
+        )
         new_capacity = min(self.RATE_LIMIT_THRESHOLD, capactiy + delta)
         self._rate_limit_bucket = (new_capacity - 1, now)
         if new_capacity < 1:

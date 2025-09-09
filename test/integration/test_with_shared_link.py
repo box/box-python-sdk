@@ -27,12 +27,12 @@ def box_api_headers(shared_link, shared_link_password, access_token):
 
 
 def test_client_with_shared_link_causes_box_api_header_to_be_added(
-        box_client,
-        mock_box_network,
-        generic_successful_response,
-        shared_link,
-        shared_link_password,
-        box_api_headers,
+    box_client,
+    mock_box_network,
+    generic_successful_response,
+    shared_link,
+    shared_link_password,
+    box_api_headers,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
@@ -51,12 +51,12 @@ def test_client_with_shared_link_causes_box_api_header_to_be_added(
 
 
 def test_folder_object_with_shared_link_causes_box_api_header_to_be_added(
-        box_client,
-        mock_box_network,
-        generic_successful_response,
-        shared_link,
-        shared_link_password,
-        box_api_headers,
+    box_client,
+    mock_box_network,
+    generic_successful_response,
+    shared_link,
+    shared_link_password,
+    box_api_headers,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
@@ -75,18 +75,20 @@ def test_folder_object_with_shared_link_causes_box_api_header_to_be_added(
 
 
 def test_group_membership_object_with_shared_link_causes_box_api_header_to_be_added(
-        box_client,
-        mock_box_network,
-        generic_successful_response,
-        shared_link,
-        shared_link_password,
-        box_api_headers,
+    box_client,
+    mock_box_network,
+    generic_successful_response,
+    shared_link,
+    shared_link_password,
+    box_api_headers,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
-    box_client.group_membership('0').with_shared_link(shared_link, shared_link_password).get()
+    box_client.group_membership('0').with_shared_link(
+        shared_link, shared_link_password
+    ).get()
     assert mock_box_network.session.request.mock_calls == [
         call(
             'GET',
@@ -99,12 +101,12 @@ def test_group_membership_object_with_shared_link_causes_box_api_header_to_be_ad
 
 
 def test_events_endpoint_with_shared_link_causes_box_api_header_to_be_added(
-        box_client,
-        mock_box_network,
-        generic_successful_response,
-        shared_link,
-        shared_link_password,
-        box_api_headers,
+    box_client,
+    mock_box_network,
+    generic_successful_response,
+    shared_link,
+    shared_link_password,
+    box_api_headers,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
@@ -112,7 +114,9 @@ def test_events_endpoint_with_shared_link_causes_box_api_header_to_be_added(
     ]
     stream_position = 1348790499819
     options = {'url': f'{API.BASE_API_URL}/events', 'retry_timeout': 60}
-    box_client.events().with_shared_link(shared_link, shared_link_password).long_poll(options, stream_position)
+    box_client.events().with_shared_link(shared_link, shared_link_password).long_poll(
+        options, stream_position
+    )
     assert mock_box_network.session.request.mock_calls == [
         call(
             'GET',
@@ -126,18 +130,20 @@ def test_events_endpoint_with_shared_link_causes_box_api_header_to_be_added(
 
 
 def test_metadata_endpoint_with_shared_link_causes_box_api_header_to_be_added(
-        box_client,
-        mock_box_network,
-        generic_successful_response,
-        shared_link,
-        shared_link_password,
-        box_api_headers,
+    box_client,
+    mock_box_network,
+    generic_successful_response,
+    shared_link,
+    shared_link_password,
+    box_api_headers,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
         generic_successful_response,
     ]
-    box_client.file('0').metadata().with_shared_link(shared_link, shared_link_password).get()
+    box_client.file('0').metadata().with_shared_link(
+        shared_link, shared_link_password
+    ).get()
     assert mock_box_network.session.request.mock_calls == [
         call(
             'GET',

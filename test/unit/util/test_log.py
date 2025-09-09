@@ -6,7 +6,6 @@ import pytest
 
 import boxsdk.util.log
 
-
 _MOCK_FILEPATH = '/home/user/boxsdk.log'
 _MOCK_LOG_NAME = 'boxsdk'
 
@@ -42,7 +41,9 @@ def test_setup_logging(stream_or_file, debug, expected_log_level, name, mock_log
     with patch('logging.getLogger') as get_logger:
         with patch('logging.open', mock_file_open, create=True):
             get_logger.return_value = mock_logger
-            boxsdk.util.log.Logging().setup_logging(stream_or_file, debug=debug, name=name)
+            boxsdk.util.log.Logging().setup_logging(
+                stream_or_file, debug=debug, name=name
+            )
             get_logger.assert_called_once_with(name)
 
     assert mock_logger.addHandler.call_count == 1
@@ -51,7 +52,10 @@ def test_setup_logging(stream_or_file, debug, expected_log_level, name, mock_log
 
     if isinstance(stream_or_file, str):
         assert mock_file_open.call_count == 1
-        assert mock_file_open.call_args[0][:2] == (stream_or_file, 'a')   # Python 3 passes additional args.
+        assert mock_file_open.call_args[0][:2] == (
+            stream_or_file,
+            'a',
+        )  # Python 3 passes additional args.
 
 
 def test_setup_logging_is_reentrant(mock_logger):
@@ -112,13 +116,17 @@ def test_setup_logging_is_reentrant(mock_logger):
             {'https': 'http://username:password@localhost:8080'},
             {'https': 'http://---:---@localhost:8080'},
         ),
-    ]
+    ],
 )
-def test_sanitize_dictionary_correctly_sanitizes_params(mock_logger, unsanitized_dict, expected_result):
+def test_sanitize_dictionary_correctly_sanitizes_params(
+    mock_logger, unsanitized_dict, expected_result
+):
     mock_file_open = mock_open()
 
     with patch('logging.getLogger') as get_logger:
         with patch('logging.open', mock_file_open, create=True):
             get_logger.return_value = mock_logger
-            actual_result = boxsdk.util.log.Logging().sanitize_dictionary(unsanitized_dict)
+            actual_result = boxsdk.util.log.Logging().sanitize_dictionary(
+                unsanitized_dict
+            )
             assert actual_result == expected_result

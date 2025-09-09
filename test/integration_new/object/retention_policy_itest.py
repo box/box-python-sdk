@@ -14,7 +14,7 @@ def test_create_metedata_template_with_fields():
         disposition_action=disposition_action,
         retention_length=retention_length,
         retention_type=retention_type,
-        description=policy_description
+        description=policy_description,
     )
 
     try:
@@ -26,15 +26,14 @@ def test_create_metedata_template_with_fields():
 
         new_policy_name = 'Test Retention Policy ' + util.random_name()
         new_policy_description = 'Test Retention Policy Updated'
-        retention_policy.update_info(data={
-            'policy_name': new_policy_name,
-            'description': new_policy_description
-        })
+        retention_policy.update_info(
+            data={'policy_name': new_policy_name, 'description': new_policy_description}
+        )
 
-        retention_policy = CLIENT.retention_policy(retention_id=retention_policy.object_id).get()
+        retention_policy = CLIENT.retention_policy(
+            retention_id=retention_policy.object_id
+        ).get()
         assert retention_policy.policy_name == new_policy_name
         assert retention_policy.description == new_policy_description
     finally:
-        retention_policy.update_info(data={
-            'status': 'retired'
-        })
+        retention_policy.update_info(data={'status': 'retired'})

@@ -39,5 +39,5 @@ __all__ = [
     'upload_session',
     'webhook',
     'watermark',
-    'web_link'
+    'web_link',
 ]

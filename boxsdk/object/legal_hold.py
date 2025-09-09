@@ -4,8 +4,8 @@ from .base_object import BaseObject
 
 
 class LegalHold(BaseObject):
-
     """Represents the legal hold policy for a file version"""
+
     _item_type = 'legal_hold'
 
     def get_url(self, *args: Any) -> str:

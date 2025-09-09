@@ -20,25 +20,26 @@ class JWTAuth(ServerAuth):
     """
     Responsible for handling JWT Auth for Box Developer Edition. Can authenticate enterprise instances or app users.
     """
+
     _GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:jwt-bearer'
 
     def __init__(
-            self,
-            client_id: str,
-            client_secret: str,
-            enterprise_id: Optional[str],
-            jwt_key_id: str,
-            rsa_private_key_file_sys_path: Optional[str] = None,
-            rsa_private_key_passphrase: Optional[Union[str, bytes]] = None,
-            user: Optional[Union[str, 'User']] = None,
-            store_tokens: Optional[Callable[[str, str], None]] = None,
-            box_device_id: str = '0',
-            box_device_name: str = '',
-            access_token: str = None,
-            session: Optional['Network'] = None,
-            jwt_algorithm: str = 'RS256',
-            rsa_private_key_data: Union[bytes, IOBase, RSAPrivateKey] = None,
-            **kwargs
+        self,
+        client_id: str,
+        client_secret: str,
+        enterprise_id: Optional[str],
+        jwt_key_id: str,
+        rsa_private_key_file_sys_path: Optional[str] = None,
+        rsa_private_key_passphrase: Optional[Union[str, bytes]] = None,
+        user: Optional[Union[str, 'User']] = None,
+        store_tokens: Optional[Callable[[str, str], None]] = None,
+        box_device_id: str = '0',
+        box_device_name: str = '',
+        access_token: str = None,
+        session: Optional['Network'] = None,
+        jwt_algorithm: str = 'RS256',
+        rsa_private_key_data: Union[bytes, IOBase, RSAPrivateKey] = None,
+        **kwargs,
     ):
         """Extends baseclass method.
 
@@ -123,13 +124,15 @@ class JWTAuth(ServerAuth):
             access_token=access_token,
             refresh_token=None,
             session=session,
-            **kwargs
+            **kwargs,
         )
         self._rsa_private_key = rsa_private_key
         self._jwt_algorithm = jwt_algorithm
         self._jwt_key_id = jwt_key_id
 
-    def _fetch_access_token(self, subject_id: str, subject_type: str, now_time: Optional[datetime] = None) -> str:
+    def _fetch_access_token(
+        self, subject_id: str, subject_type: str, now_time: Optional[datetime] = None
+    ) -> str:
         """
         Construct the claims used for JWT auth and send a request to get a JWT.
         Pass an enterprise ID to get an enterprise token (which can be used to provision/deprovision users),
@@ -149,7 +152,10 @@ class JWTAuth(ServerAuth):
         jti_length = system_random.randint(16, 128)
         ascii_alphabet = string.ascii_letters + string.digits
         ascii_len = len(ascii_alphabet)
-        jti = ''.join(ascii_alphabet[int(system_random.random() * ascii_len)] for _ in range(jti_length))
+        jti = ''.join(
+            ascii_alphabet[int(system_random.random() * ascii_len)]
+            for _ in range(jti_length)
+        )
         if now_time is None:
             now_time = datetime.utcnow()
         now_plus_30 = now_time + timedelta(seconds=30)
@@ -178,17 +184,21 @@ class JWTAuth(ServerAuth):
             data['box_device_id'] = self._box_device_id
         if self._box_device_name:
             data['box_device_name'] = self._box_device_name
-        return self.send_token_request(data, access_token=None, expect_refresh_token=False)[0]
+        return self.send_token_request(
+            data, access_token=None, expect_refresh_token=False
+        )[0]
 
     @classmethod
     def _normalize_rsa_private_key(
-            cls,
-            file_sys_path: str,
-            data: Union[bytes, IOBase, RSAPrivateKey],
-            passphrase: Optional[Union[str, bytes]] = None
+        cls,
+        file_sys_path: str,
+        data: Union[bytes, IOBase, RSAPrivateKey],
+        passphrase: Optional[Union[str, bytes]] = None,
     ) -> Any:
         if len(list(filter(None, [file_sys_path, data]))) != 1:
-            raise TypeError("must pass exactly one of either rsa_private_key_file_sys_path or rsa_private_key_data")
+            raise TypeError(
+                "must pass exactly one of either rsa_private_key_file_sys_path or rsa_private_key_data"
+            )
         if file_sys_path:
             with open(file_sys_path, 'rb') as key_file:
                 data = key_file.read()
@@ -236,7 +246,9 @@ class JWTAuth(ServerAuth):
         return passphrase
 
     @classmethod
-    def from_settings_dictionary(cls, settings_dictionary: dict, **kwargs: Any) -> 'JWTAuth':
+    def from_settings_dictionary(
+        cls, settings_dictionary: dict, **kwargs: Any
+    ) -> 'JWTAuth':
         """
         Create an auth instance as defined by the given settings dictionary.
 
@@ -251,14 +263,22 @@ class JWTAuth(ServerAuth):
             client_id=settings_dictionary['boxAppSettings']['clientID'],
             client_secret=settings_dictionary['boxAppSettings']['clientSecret'],
             enterprise_id=settings_dictionary.get('enterpriseID', None),
-            jwt_key_id=settings_dictionary['boxAppSettings']['appAuth'].get('publicKeyID', None),
-            rsa_private_key_data=settings_dictionary['boxAppSettings']['appAuth'].get('privateKey', None),
-            rsa_private_key_passphrase=settings_dictionary['boxAppSettings']['appAuth'].get('passphrase', None),
-            **kwargs
+            jwt_key_id=settings_dictionary['boxAppSettings']['appAuth'].get(
+                'publicKeyID', None
+            ),
+            rsa_private_key_data=settings_dictionary['boxAppSettings']['appAuth'].get(
+                'privateKey', None
+            ),
+            rsa_private_key_passphrase=settings_dictionary['boxAppSettings'][
+                'appAuth'
+            ].get('passphrase', None),
+            **kwargs,
         )
 
     @classmethod
-    def from_settings_file(cls, settings_file_sys_path: str, **kwargs: Any) -> 'JWTAuth':
+    def from_settings_file(
+        cls, settings_file_sys_path: str, **kwargs: Any
+    ) -> 'JWTAuth':
         """
         Create an auth instance as defined by a JSON file downloaded from the Box Developer Console.
         See https://developer.box.com/en/guides/authentication/jwt/ for more information.

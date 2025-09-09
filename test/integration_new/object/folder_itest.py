@@ -8,7 +8,9 @@ from pytest_lazyfixture import lazy_fixture
 
 from boxsdk.exception import BoxAPIException
 from boxsdk.object.collaboration import CollaborationRole
-from test.integration_new.context_managers.box_metadata_template import BoxTestMetadataTemplate
+from test.integration_new.context_managers.box_metadata_template import (
+    BoxTestMetadataTemplate,
+)
 from test.integration_new.context_managers.box_test_group import BoxTestGroup
 from test.integration_new.context_managers.box_test_web_link import BoxTestWebLink
 from test.integration_new import CLIENT
@@ -21,7 +23,9 @@ FOLDER_TESTS_DIRECTORY_NAME = 'folder-integration-tests'
 
 @pytest.fixture(scope="module", autouse=True)
 def parent_folder():
-    with BoxTestFolder(name=f'{FOLDER_TESTS_DIRECTORY_NAME} {datetime.now()}') as folder:
+    with BoxTestFolder(
+        name=f'{FOLDER_TESTS_DIRECTORY_NAME} {datetime.now()}'
+    ) as folder:
         yield folder
 
 
@@ -42,14 +46,18 @@ def test_manual_chunked_upload(parent_folder, large_file, large_file_name):
     total_size = os.stat(large_file.path).st_size
     sha1 = hashlib.sha1()
     with open(large_file.path, 'rb') as content_stream:
-        upload_session = parent_folder.create_upload_session(file_size=total_size, file_name=large_file_name)
+        upload_session = parent_folder.create_upload_session(
+            file_size=total_size, file_name=large_file_name
+        )
         part_array = []
         for part_num in range(upload_session.total_parts):
 
             copied_length = 0
             chunk = b''
             while copied_length < upload_session.part_size:
-                bytes_read = content_stream.read(upload_session.part_size - copied_length)
+                bytes_read = content_stream.read(
+                    upload_session.part_size - copied_length
+                )
                 if bytes_read is None:
                     continue
                 if len(bytes_read) == 0:
@@ -57,11 +65,15 @@ def test_manual_chunked_upload(parent_folder, large_file, large_file_name):
                 chunk += bytes_read
                 copied_length += len(bytes_read)
 
-            uploaded_part = upload_session.upload_part_bytes(chunk, part_num * upload_session.part_size, total_size)
+            uploaded_part = upload_session.upload_part_bytes(
+                chunk, part_num * upload_session.part_size, total_size
+            )
             part_array.append(uploaded_part)
             sha1.update(chunk)
         content_sha1 = sha1.digest()
-        uploaded_file = upload_session.commit(content_sha1=content_sha1, parts=part_array)
+        uploaded_file = upload_session.commit(
+            content_sha1=content_sha1, parts=part_array
+        )
 
         try:
             assert uploaded_file.id
@@ -72,9 +84,13 @@ def test_manual_chunked_upload(parent_folder, large_file, large_file_name):
             util.permanently_delete(uploaded_file)
 
 
-def test_auto_chunked_upload_using_upload_session_urls(parent_folder, large_file, large_file_name):
+def test_auto_chunked_upload_using_upload_session_urls(
+    parent_folder, large_file, large_file_name
+):
     total_size = os.stat(large_file.path).st_size
-    chunked_uploader = parent_folder.get_chunked_uploader(large_file.path, use_upload_session_urls=True)
+    chunked_uploader = parent_folder.get_chunked_uploader(
+        large_file.path, use_upload_session_urls=True
+    )
 
     uploaded_file = chunked_uploader.start()
 
@@ -87,9 +103,13 @@ def test_auto_chunked_upload_using_upload_session_urls(parent_folder, large_file
         util.permanently_delete(uploaded_file)
 
 
-def test_auto_chunked_upload_NOT_using_upload_session_urls(parent_folder, large_file, large_file_name):
+def test_auto_chunked_upload_NOT_using_upload_session_urls(
+    parent_folder, large_file, large_file_name
+):
     total_size = os.stat(large_file.path).st_size
-    chunked_uploader = parent_folder.get_chunked_uploader(large_file.path, use_upload_session_urls=False)
+    chunked_uploader = parent_folder.get_chunked_uploader(
+        large_file.path, use_upload_session_urls=False
+    )
 
     uploaded_file = chunked_uploader.start()
 
@@ -103,16 +123,20 @@ def test_auto_chunked_upload_NOT_using_upload_session_urls(parent_folder, large_
 
 
 def test_get_items(parent_folder, small_file_path):
-    with BoxTestFolder(parent_folder=parent_folder) as subfolder, \
-            BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as file, \
-            BoxTestWebLink(parent_folder=parent_folder, url='https://box.com') as web_link:
+    with BoxTestFolder(parent_folder=parent_folder) as subfolder, BoxTestFile(
+        parent_folder=parent_folder, file_path=small_file_path
+    ) as file, BoxTestWebLink(
+        parent_folder=parent_folder, url='https://box.com'
+    ) as web_link:
 
         assert set(parent_folder.get_items()) == {subfolder, file, web_link}
 
 
 def test_upload_stream_to_folder(parent_folder, small_file_name, small_file_path):
     with open(small_file_path, 'rb') as stream_to_be_uploaded:
-        uploaded_file = parent_folder.upload_stream(file_stream=stream_to_be_uploaded, file_name=small_file_name)
+        uploaded_file = parent_folder.upload_stream(
+            file_stream=stream_to_be_uploaded, file_name=small_file_name
+        )
 
         try:
             assert uploaded_file.id
@@ -122,7 +146,9 @@ def test_upload_stream_to_folder(parent_folder, small_file_name, small_file_path
 
 
 def test_upload_small_file_to_folder(parent_folder, small_file_name, small_file_path):
-    uploaded_file = parent_folder.upload(file_path=small_file_path, file_name=small_file_name)
+    uploaded_file = parent_folder.upload(
+        file_path=small_file_path, file_name=small_file_name
+    )
     try:
         assert uploaded_file.id
         assert uploaded_file.parent == parent_folder
@@ -131,9 +157,11 @@ def test_upload_small_file_to_folder(parent_folder, small_file_name, small_file_
 
 
 def test_upload_small_file_to_folder_with_disabled_streaming_file_content(
-        parent_folder, small_file_name, small_file_path
+    parent_folder, small_file_name, small_file_path
 ):
-    uploaded_file = parent_folder.upload(file_path=small_file_path, file_name=small_file_name, stream_file_content=False)
+    uploaded_file = parent_folder.upload(
+        file_path=small_file_path, file_name=small_file_name, stream_file_content=False
+    )
     try:
         assert uploaded_file.id
         assert uploaded_file.parent == parent_folder
@@ -154,22 +182,31 @@ def test_get_shared_link(parent_folder, other_user, other_client):
     with BoxTestFolder(parent_folder=parent_folder) as folder:
         folder.collaborate(accessible_by=other_user, role='editor')
 
-        shared_link = other_client.folder(folder.object_id).get_shared_link(allow_preview=True, allow_download=True)
+        shared_link = other_client.folder(folder.object_id).get_shared_link(
+            allow_preview=True, allow_download=True
+        )
 
         result_permissions = folder.get().shared_link['permissions']
-        assert result_permissions == {'can_preview': True, 'can_download': True, 'can_edit': False}
+        assert result_permissions == {
+            'can_preview': True,
+            'can_download': True,
+            'can_edit': False,
+        }
         assert other_client.get_shared_item(shared_link).id == folder.id
 
 
 @pytest.mark.parametrize(
-    'collaborator', [
+    'collaborator',
+    [
         lazy_fixture('user'),
         lazy_fixture('group'),
-    ]
+    ],
 )
 def test_add_collaborator(parent_folder, collaborator):
     with BoxTestFolder(parent_folder=parent_folder) as folder:
-        folder.add_collaborator(collaborator=collaborator, role=CollaborationRole.EDITOR)
+        folder.add_collaborator(
+            collaborator=collaborator, role=CollaborationRole.EDITOR
+        )
         assert list(folder.get_collaborations())[0].accessible_by == collaborator
 
 
@@ -180,11 +217,17 @@ def test_add_collaborator_using_email(parent_folder, user):
         assert list(folder.get_collaborations())[0].accessible_by == user
 
 
-def test_invite_collaboratur_using_when_nonexistent_user_email_provided(parent_folder, user):
+def test_invite_collaboratur_using_when_nonexistent_user_email_provided(
+    parent_folder, user
+):
     nonexistent_user_email = 'non-existant-user-email@box.com'
     with BoxTestFolder(parent_folder=parent_folder) as folder:
-        folder.add_collaborator(collaborator=nonexistent_user_email, role=CollaborationRole.VIEWER)
-        assert list(folder.get_collaborations())[0].invite_email == nonexistent_user_email
+        folder.add_collaborator(
+            collaborator=nonexistent_user_email, role=CollaborationRole.VIEWER
+        )
+        assert (
+            list(folder.get_collaborations())[0].invite_email == nonexistent_user_email
+        )
 
 
 def test_create_web_link(parent_folder):
@@ -210,8 +253,9 @@ def test_delete_folder(parent_folder):
 
 
 def test_cascade_and_get_metadata_cascade_policies(parent_folder):
-    with BoxTestMetadataTemplate(display_name="test_template") as metadata_template, \
-            BoxTestFolder(parent_folder=parent_folder) as folder:
+    with BoxTestMetadataTemplate(
+        display_name="test_template"
+    ) as metadata_template, BoxTestFolder(parent_folder=parent_folder) as folder:
         folder.cascade_metadata(metadata_template)
 
         policy_applied_to_folder = list(folder.get_metadata_cascade_policies())[0]

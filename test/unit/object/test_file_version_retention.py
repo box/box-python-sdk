@@ -9,5 +9,7 @@ def test_get(test_file_version_retention, mock_box_session):
         'id': test_file_version_retention.object_id,
     }
     file_version_retention = test_file_version_retention.get()
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params=None
+    )
     assert isinstance(file_version_retention, FileVersionRetention)

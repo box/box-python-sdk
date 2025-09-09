@@ -45,19 +45,27 @@ def allow_chaos(method):
 
 
 def delay(delay_seconds):
-    return lambda delayed_function: lambda *args, **kwargs: sleep(delay_seconds) or delayed_function(*args, **kwargs)
+    return lambda delayed_function: lambda *args, **kwargs: sleep(
+        delay_seconds
+    ) or delayed_function(*args, **kwargs)
 
 
 def error(code, message=None, headers=None):
-    return lambda erroneous_function: lambda *args, **kwargs: abort(code, message=message, headers=headers)
+    return lambda erroneous_function: lambda *args, **kwargs: abort(
+        code, message=message, headers=headers
+    )
 
 
 def html(method):
-    return lambda *args, **kwargs: template('html_response', response=method(*args, **kwargs))
+    return lambda *args, **kwargs: template(
+        'html_response', response=method(*args, **kwargs)
+    )
 
 
 def xml(method):
-    return lambda *args, **kwargs: template('xml_response', response=method(*args, **kwargs))
+    return lambda *args, **kwargs: template(
+        'xml_response', response=method(*args, **kwargs)
+    )
 
 
 def patch(operations):
@@ -78,5 +86,7 @@ def patch(operations):
             if not_json:
                 return_value = json.loads(return_value)
             return return_value
+
         return patched_inner
+
     return inner

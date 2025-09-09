@@ -16,7 +16,9 @@ def delete_task_assignment_response():
 
 
 def test_get_assignment(test_task_assignment, mock_box_session):
-    expected_url = f'{API.BASE_API_URL}/task_assignments/{test_task_assignment.object_id}'
+    expected_url = (
+        f'{API.BASE_API_URL}/task_assignments/{test_task_assignment.object_id}'
+    )
     mock_box_session.get.return_value.json.return_value = {
         'type': test_task_assignment.object_type,
         'id': test_task_assignment.object_id,
@@ -26,7 +28,9 @@ def test_get_assignment(test_task_assignment, mock_box_session):
         },
     }
     retrieved_task = test_task_assignment.get()
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params=None
+    )
     assert isinstance(retrieved_task, TaskAssignment)
     assert retrieved_task.object_type == test_task_assignment.object_type
     assert retrieved_task.object_id == test_task_assignment.object_id
@@ -35,24 +39,30 @@ def test_get_assignment(test_task_assignment, mock_box_session):
 
 
 def test_delete_policy_return_the_correct_response(
-        test_task_assignment,
-        mock_box_session,
-        delete_task_assignment_response,
+    test_task_assignment,
+    mock_box_session,
+    delete_task_assignment_response,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.delete.return_value = delete_task_assignment_response
     response = test_task_assignment.delete()
     # pylint:disable=protected-access
-    expected_url = f'{API.BASE_API_URL}/task_assignments/{test_task_assignment.object_id}'
+    expected_url = (
+        f'{API.BASE_API_URL}/task_assignments/{test_task_assignment.object_id}'
+    )
     # pylint:enable = protected-access
-    mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
+    mock_box_session.delete.assert_called_once_with(
+        expected_url, params={}, expect_json_response=False, headers=None
+    )
     assert response is True
 
 
 def test_update(test_task_assignment, mock_box_session):
     new_message = 'New Message'
     resolution_state = ResolutionState.APPROVED
-    expected_url = f'{API.BASE_API_URL}/task_assignments/{test_task_assignment.object_id}'
+    expected_url = (
+        f'{API.BASE_API_URL}/task_assignments/{test_task_assignment.object_id}'
+    )
     mock_box_session.put.return_value.json.return_value = {
         'type': 'task_assignment',
         'id': test_task_assignment.object_id,
@@ -63,8 +73,12 @@ def test_update(test_task_assignment, mock_box_session):
         'message': new_message,
         'resolution_state': resolution_state,
     }
-    updated_task_assignment = test_task_assignment.update_info(data={'message': new_message, 'resolution_state': resolution_state})
-    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body), headers=None, params=None)
+    updated_task_assignment = test_task_assignment.update_info(
+        data={'message': new_message, 'resolution_state': resolution_state}
+    )
+    mock_box_session.put.assert_called_once_with(
+        expected_url, data=json.dumps(expected_body), headers=None, params=None
+    )
     assert isinstance(updated_task_assignment, TaskAssignment)
     assert updated_task_assignment.message == new_message
     assert updated_task_assignment.object_type == test_task_assignment.object_type

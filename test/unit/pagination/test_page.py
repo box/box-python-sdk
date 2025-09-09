@@ -16,19 +16,15 @@ def translator():
 @pytest.fixture()
 def mock_session(translator):
     mock_box_session = Mock(Session)
-    type(mock_box_session).translator = PropertyMock(
-        return_value=translator
-    )
+    type(mock_box_session).translator = PropertyMock(return_value=translator)
     return mock_box_session
 
 
 @pytest.fixture()
 def page_builder(mock_session):
     def factory_function(response):
-        return Page(
-            session=mock_session,
-            response_object=response
-        )
+        return Page(session=mock_session, response_object=response)
+
     return factory_function
 
 
@@ -55,14 +51,14 @@ def test_getitem(page_builder, item_checker):
         "id": "192429928",
         "sequence_id": "1",
         "etag": "1",
-        "name": "Stephen Curry Three Pointers"
+        "name": "Stephen Curry Three Pointers",
     }
     entry_2 = {
         "type": "file",
         "id": "818853862",
         "sequence_id": "0",
         "etag": "0",
-        "name": "Warriors.jpg"
+        "name": "Warriors.jpg",
     }
     response_entries = [entry_1, entry_2]
     response = {"entries": response_entries}
@@ -86,17 +82,22 @@ def test_getitem_past_length_raises(page_builder):
 @pytest.mark.parametrize('length', (0, 1, 10))
 def test_len(page_builder, length):
     response_entries = [object() for _ in range(length)]
-    response = {
-        "entries": response_entries
-    }
+    response = {"entries": response_entries}
     page = page_builder(response=response)
     assert len(page) == length
 
 
 def test_translation_of_page_entries(page_builder, mock_session, item_checker):
     tested_item_types = ['folder', 'file', 'user', 'collaboration', 'group', 'foobar']
-    response_entries = [{'type': item_type_string, 'id': str(i)} for i, item_type_string in enumerate(tested_item_types)]
+    response_entries = [
+        {'type': item_type_string, 'id': str(i)}
+        for i, item_type_string in enumerate(tested_item_types)
+    ]
     response = {"entries": response_entries}
     page = page_builder(response=response)
     for i, item in enumerate(page):
-        item_checker(mock_session.translator.get(response_entries[i]['type']), response_entries[i], item)
+        item_checker(
+            mock_session.translator.get(response_entries[i]['type']),
+            response_entries[i],
+            item,
+        )

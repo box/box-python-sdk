@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 class RetentionPolicy(BaseObject):
     """Represents a Box retention policy."""
+
     _item_type = 'retention_policy'
 
     def get_url(self, *args: Any) -> str:
@@ -24,10 +25,10 @@ class RetentionPolicy(BaseObject):
 
     @api_call
     def assign(
-            self,
-            assignee: Union['Folder', 'Enterprise', 'MetadataTemplate'],
-            fields: Iterable[str] = None,
-            start_date_field: Optional[str] = None,
+        self,
+        assignee: Union['Folder', 'Enterprise', 'MetadataTemplate'],
+        fields: Iterable[str] = None,
+        start_date_field: Optional[str] = None,
     ) -> 'RetentionPolicyAssignment':
         """Assign a retention policy to a Box item
 
@@ -47,7 +48,7 @@ class RetentionPolicy(BaseObject):
             'assign_to': {
                 'type': assignee.object_type,
                 'id': assignee.object_id,
-            }
+            },
         }
         params = {}
         if fields is not None:
@@ -62,11 +63,11 @@ class RetentionPolicy(BaseObject):
 
     @api_call
     def assignments(
-            self,
-            assignment_type: Optional[str] = None,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        assignment_type: Optional[str] = None,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """Get the assignments for the retention policy.
 

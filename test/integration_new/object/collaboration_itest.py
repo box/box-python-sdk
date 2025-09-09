@@ -16,8 +16,14 @@ def parent_folder():
         yield folder
 
 
-def test_collaboration(parent_folder, small_file_path, other_user,):
-    with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as test_file:
+def test_collaboration(
+    parent_folder,
+    small_file_path,
+    other_user,
+):
+    with BoxTestFile(
+        parent_folder=parent_folder, file_path=small_file_path
+    ) as test_file:
         collaboration = test_file.collaborate(other_user, CollaborationRole.VIEWER)
         try:
             assert collaboration.item.id == test_file.id
@@ -25,7 +31,10 @@ def test_collaboration(parent_folder, small_file_path, other_user,):
             assert collaboration.role == CollaborationRole.VIEWER
 
             updated_expiration_date = '2088-01-01T00:00:00-08:00'
-            collaboration_update = {'role': CollaborationRole.EDITOR, 'expires_at': updated_expiration_date}
+            collaboration_update = {
+                'role': CollaborationRole.EDITOR,
+                'expires_at': updated_expiration_date,
+            }
             updated_collaboration = collaboration.update_info(data=collaboration_update)
 
             assert updated_collaboration.role == CollaborationRole.EDITOR

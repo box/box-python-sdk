@@ -12,12 +12,14 @@ if TYPE_CHECKING:
 
 class TermsOfServiceType(TextEnum):
     """An enum of possible terms of service types"""
+
     MANAGED = 'managed'
     EXTERNAL = 'external'
 
 
 class TermsOfServiceStatus(TextEnum):
     """An enum of possible terms of service status"""
+
     ENABLED = 'enabled'
     DISABLED = 'disabled'
 
@@ -27,7 +29,9 @@ class TermsOfService(BaseObject):
 
     _item_type = 'terms_of_service'
 
-    def get_user_status(self, user: Optional['User'] = None) -> Optional['TermsOfServiceUserStatus']:
+    def get_user_status(
+        self, user: Optional['User'] = None
+    ) -> Optional['TermsOfServiceUserStatus']:
         """
         Get the terms of service user status.
 
@@ -77,7 +81,9 @@ class TermsOfService(BaseObject):
         """
         return self.set_user_status(is_accepted=False, user=user)
 
-    def set_user_status(self, is_accepted: bool, user: Optional['User'] = None) -> 'TermsOfServiceUserStatus':
+    def set_user_status(
+        self, is_accepted: bool, user: Optional['User'] = None
+    ) -> 'TermsOfServiceUserStatus':
         """
         Create a terms of service user status.
 
@@ -112,5 +118,7 @@ class TermsOfService(BaseObject):
         except BoxAPIException as err:
             if err.status == 409:
                 user_status = self.get_user_status(user)
-                translated_response = user_status.update_info(data={'is_accepted': is_accepted})
+                translated_response = user_status.update_info(
+                    data={'is_accepted': is_accepted}
+                )
         return translated_response

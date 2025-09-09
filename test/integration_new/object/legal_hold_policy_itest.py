@@ -13,7 +13,7 @@ def test_create_legal_hold_policy():
         policy_name=policy_name,
         description=description,
         filter_started_at=filter_started_at,
-        filter_ended_at=filter_ended_at
+        filter_ended_at=filter_ended_at,
     )
 
     try:
@@ -24,12 +24,13 @@ def test_create_legal_hold_policy():
 
         new_policy_name = 'Test Legal Hold Policy ' + util.random_name()
         new_policy_description = 'Test Legal Hold Policy Description'
-        legal_hold_policy.update_info(data={
-            'policy_name': new_policy_name,
-            'description': new_policy_description
-        })
+        legal_hold_policy.update_info(
+            data={'policy_name': new_policy_name, 'description': new_policy_description}
+        )
 
-        legal_hold_policy = CLIENT.legal_hold_policy(policy_id=legal_hold_policy.object_id).get()
+        legal_hold_policy = CLIENT.legal_hold_policy(
+            policy_id=legal_hold_policy.object_id
+        ).get()
         assert legal_hold_policy.policy_name == new_policy_name
         assert legal_hold_policy.description == new_policy_description
     finally:

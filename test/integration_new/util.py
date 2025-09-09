@@ -16,16 +16,22 @@ def permanently_delete(item: BaseItem):
         warnings.warn(
             f"Unable to permanently remove {item.type}: {item.id} from trash. Probably this item is under retention.",
             category=RuntimeWarning,
-            stacklevel=2
+            stacklevel=2,
         )
 
 
 def get_current_dir_path() -> str:
-    return str(Path(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))))
+    return str(
+        Path(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))))
+    )
 
 
 def get_file_path(file_name: str) -> str:
-    return str(Path(f"{os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))}/resources/{file_name}"))
+    return str(
+        Path(
+            f"{os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))}/resources/{file_name}"
+        )
+    )
 
 
 def random_name():

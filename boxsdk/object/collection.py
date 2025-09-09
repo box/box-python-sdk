@@ -1,7 +1,9 @@
 from typing import Optional, Iterable, TYPE_CHECKING
 
 from boxsdk.object.base_object import BaseObject
-from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from boxsdk.pagination.limit_offset_based_object_collection import (
+    LimitOffsetBasedObjectCollection,
+)
 from boxsdk.util.api_call_decorator import api_call
 
 if TYPE_CHECKING:
@@ -15,10 +17,7 @@ class Collection(BaseObject):
 
     @api_call
     def get_items(
-            self,
-            limit: Optional[int] = None,
-            offset: int = 0,
-            fields: Iterable[str] = None
+        self, limit: Optional[int] = None, offset: int = 0, fields: Iterable[str] = None
     ) -> 'BoxObjectCollection':
         """
         Get the items in a collection using limit-offset paging.

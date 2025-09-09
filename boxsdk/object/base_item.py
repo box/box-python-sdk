@@ -16,7 +16,9 @@ if TYPE_CHECKING:
 class BaseItem(BaseObject):
 
     @api_call
-    def copy(self, *, parent_folder: 'Folder', name: str = None, **_kwargs) -> 'BaseItem':
+    def copy(
+        self, *, parent_folder: 'Folder', name: str = None, **_kwargs
+    ) -> 'BaseItem':
         """Copy the item to the given folder.
 
         :param parent_folder:
@@ -26,9 +28,7 @@ class BaseItem(BaseObject):
         """
         self.validate_item_id(self._object_id)
         url = self.get_url('copy')
-        data = {
-            'parent': {'id': parent_folder.object_id}
-        }
+        data = {'parent': {'id': parent_folder.object_id}}
         if name is not None:
             data['name'] = name
         box_response = self._session.post(url, data=json.dumps(data))
@@ -48,9 +48,7 @@ class BaseItem(BaseObject):
         :param name:
             A new name for the item, in case there is already another item in the new parent folder with the same name.
         """
-        data = {
-            'parent': {'id': parent_folder.object_id}
-        }
+        data = {'parent': {'id': parent_folder.object_id}}
         if name is not None:
             data['name'] = name
         return self.update_info(data=data)
@@ -85,7 +83,9 @@ class BaseItem(BaseObject):
             shared_link['access'] = kwargs.get('access')
 
         if kwargs.get('unshared_at') is not SDK_VALUE_NOT_SET:
-            shared_link['unshared_at'] = normalize_date_to_rfc3339_format(kwargs.get('unshared_at'))
+            shared_link['unshared_at'] = normalize_date_to_rfc3339_format(
+                kwargs.get('unshared_at')
+            )
 
         permissions = {}
         if kwargs.get('allow_download') is not None:
@@ -104,7 +104,9 @@ class BaseItem(BaseObject):
             shared_link['vanity_name'] = kwargs.get('vanity_name')
 
         data = {'shared_link': shared_link}
-        update_info_kwargs = {'etag': kwargs.get('etag')} if kwargs.get('etag') is not None else {}
+        update_info_kwargs = (
+            {'etag': kwargs.get('etag')} if kwargs.get('etag') is not None else {}
+        )
 
         return self.update_info(data=data, **update_info_kwargs)
 
@@ -133,7 +135,9 @@ class BaseItem(BaseObject):
             Whether or not the update was successful.
         """
         data = {'shared_link': None}
-        update_info_kwargs = {'etag': kwargs.get('etag')} if kwargs.get('etag') is not None else {}
+        update_info_kwargs = (
+            {'etag': kwargs.get('etag')} if kwargs.get('etag') is not None else {}
+        )
 
         item = self.update_info(data=data, **update_info_kwargs)
         return item.shared_link is None  # pylint:disable=no-member
@@ -148,11 +152,11 @@ class BaseItem(BaseObject):
         :return:
             This item.
         """
-        collections = self.get(fields=['collections']).collections  # pylint:disable=no-member
+        collections = self.get(
+            fields=['collections']
+        ).collections  # pylint:disable=no-member
         collections.append({'id': collection.object_id})
-        data = {
-            'collections': collections
-        }
+        data = {'collections': collections}
         return self.update_info(data=data)
 
     @api_call
@@ -165,11 +169,13 @@ class BaseItem(BaseObject):
         :return:
             This item.
         """
-        collections = self.get(fields=['collections']).collections  # pylint:disable=no-member
-        updated_collections = [c for c in collections if c['id'] != collection.object_id]
-        data = {
-            'collections': updated_collections
-        }
+        collections = self.get(
+            fields=['collections']
+        ).collections  # pylint:disable=no-member
+        updated_collections = [
+            c for c in collections if c['id'] != collection.object_id
+        ]
+        data = {'collections': updated_collections}
         return self.update_info(data=data)
 
     @staticmethod

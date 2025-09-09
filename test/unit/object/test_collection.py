@@ -6,12 +6,14 @@ def test_get(mock_collection, mock_box_session):
         'type': 'collection',
         'id': mock_collection.object_id,
         'name': collection_name,
-        'collection_type': 'favorites'
+        'collection_type': 'favorites',
     }
 
     fetched_collection = mock_collection.get()
 
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params=None
+    )
     assert fetched_collection.name == collection_name
 
 
@@ -25,15 +27,9 @@ def test_get_items(mock_collection, mock_box_session):
         'offset': 0,
         'total_count': 2,
         'entries': [
-            {
-                'type': 'folder',
-                'id': item_id1
-            },
-            {
-                'type': 'file',
-                'id': item_id2
-            }
-        ]
+            {'type': 'folder', 'id': item_id1},
+            {'type': 'file', 'id': item_id2},
+        ],
     }
 
     items = mock_collection.get_items()

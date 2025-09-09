@@ -8,7 +8,13 @@ from boxsdk.object.folder import Folder
 
 class BoxTestFile:
 
-    def __init__(self, *, file_path: str, name: str = None, parent_folder: Optional[Folder] = None):
+    def __init__(
+        self,
+        *,
+        file_path: str,
+        name: str = None,
+        parent_folder: Optional[Folder] = None,
+    ):
         if name is None:
             extention = file_path.split('.')[-1]
             name = f'{util.random_name()}.{extention}'

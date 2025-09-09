@@ -15,6 +15,7 @@ class BoxRequest:
     :param auto_session_renewal:    Whether or not the session can be automatically renewed if the request fails.
     :param expect_json_response:    Whether or not the API response must be JSON.
     """
+
     url: str = attr.ib()
     method: Optional[str] = attr.ib(default='GET')
     headers: Optional[dict] = attr.ib(default=attr.Factory(dict))

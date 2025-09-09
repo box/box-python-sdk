@@ -15,7 +15,9 @@ def box_client(box_oauth, mock_box_session):
 
 
 @pytest.fixture()
-def box_oauth(unauthorized_session, client_id, client_secret, access_token, refresh_token):
+def box_oauth(
+    unauthorized_session, client_id, client_secret, access_token, refresh_token
+):
     # pylint:disable=redefined-outer-name
     return OAuth2(
         client_id,

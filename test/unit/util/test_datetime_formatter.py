@@ -51,7 +51,7 @@ def test_normalize_date_to_rfc3339_format_timezone_aware_datetime(
     (
         "2035-03-04T10:14:24.000",
         "2035-03-04T10:14:24",
-        lazy_fixture('mock_timezone_naive_datetime_obj')
+        lazy_fixture('mock_timezone_naive_datetime_obj'),
     ),
 )
 def test_add_timezone_info_when_timezone_naive_datetime_provided(

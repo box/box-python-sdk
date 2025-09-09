@@ -8,10 +8,11 @@ from typing import Optional
 from boxsdk.auth.jwt_auth import JWTAuth
 from boxsdk.client import Client
 
-
 JWT_CONFIG_ENV_VAR_NAME = 'JWT_CONFIG_BASE_64'
 ADMIN_USER_ID_ENV_VAR_NAME = 'ADMIN_USER_ID'
-CURRENT_DIR_PATH = str(Path(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))))
+CURRENT_DIR_PATH = str(
+    Path(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))))
+)
 CONFIG_PATH = f'{CURRENT_DIR_PATH}/integration_tests.cfg'
 CONFIG_PARSER = configparser.ConfigParser()
 CONFIG_PARSER.read(CONFIG_PATH)
@@ -28,7 +29,9 @@ def get_jwt_config() -> JWTAuth:
 
 
 def get_admin_user_id() -> str:
-    admin_user_id = os.getenv(ADMIN_USER_ID_ENV_VAR_NAME) or CONFIG_PARSER["JWT"].get('AdminUserID')
+    admin_user_id = os.getenv(ADMIN_USER_ID_ENV_VAR_NAME) or CONFIG_PARSER["JWT"].get(
+        'AdminUserID'
+    )
 
     if not admin_user_id:
         raise RuntimeError(
