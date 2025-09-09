@@ -15,7 +15,9 @@ def test_user_url(mock_user):
     assert mock_user.get_url() == f'{API.BASE_API_URL}/users/{mock_user.object_id}'
 
 
-def test_get_storage_policy_assignments(test_storage_policy_assignment, mock_user, mock_box_session):
+def test_get_storage_policy_assignments(
+    test_storage_policy_assignment, mock_user, mock_box_session
+):
     expected_url = mock_box_session.get_url('storage_policy_assignments')
     mock_assignment = {
         'type': test_storage_policy_assignment.object_type,
@@ -47,10 +49,18 @@ def memberships_response():
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.json.return_value = {
         'entries': [
-            {'type': 'group_membership', 'id': 101, 'user': {'type': 'user', 'id': 100},
-             'group': {'type': 'group', 'id': 300}},
-            {'type': 'group_membership', 'id': 202, 'user': {'type': 'user', 'id': 200},
-             'group': {'type': 'group', 'id': 400}}
+            {
+                'type': 'group_membership',
+                'id': 101,
+                'user': {'type': 'user', 'id': 100},
+                'group': {'type': 'group', 'id': 300},
+            },
+            {
+                'type': 'group_membership',
+                'id': 202,
+                'user': {'type': 'user', 'id': 200},
+                'group': {'type': 'group', 'id': 400},
+            },
         ],
         'limit': 2,
         'total_count': 2,
@@ -81,7 +91,9 @@ def test_update(mock_user, mock_box_session):
     }
     mock_box_session.put.return_value.json.return_value = user
     new_user = mock_user.update_info(data=data)
-    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
+    mock_box_session.put.assert_called_once_with(
+        expected_url, data=json.dumps(data), headers=None, params=None
+    )
     assert new_user.id == user['id']
     assert new_user.type == user['type']
     assert new_user.name == user['name']
@@ -127,13 +139,17 @@ def test_get_email_aliases(mock_user, mock_box_session):
         assert alias.email == alias_json['email']
 
 
-def test_add_email_alias_returns_the_correct_email_alias_object(mock_user, mock_box_session):
+def test_add_email_alias_returns_the_correct_email_alias_object(
+    mock_user, mock_box_session
+):
     # pylint:disable=redefined-outer-name
     test_email_alias = 'test@example.com'
     expected_url = f'{API.BASE_API_URL}/users/{mock_user.object_id}/email_aliases'
-    expected_body = json.dumps({
-        'email': test_email_alias,
-    })
+    expected_body = json.dumps(
+        {
+            'email': test_email_alias,
+        }
+    )
     mock_box_session.post.return_value.json.return_value = {
         'type': 'email_alias',
         'id': '1234',
@@ -142,7 +158,9 @@ def test_add_email_alias_returns_the_correct_email_alias_object(mock_user, mock_
     new_email_alias = mock_user.add_email_alias(test_email_alias)
     mock_box_session.post.assert_called_once_with(expected_url, data=expected_body)
     assert isinstance(new_email_alias, EmailAlias)
-    assert new_email_alias._session == mock_box_session  # pylint: disable=protected-access
+    assert (
+        new_email_alias._session == mock_box_session
+    )  # pylint: disable=protected-access
     assert new_email_alias.object_id == '1234'
 
 
@@ -152,25 +170,30 @@ def test_remove_email_alias(mock_user, mock_box_session, test_email_alias):
 
     result = mock_user.remove_email_alias(test_email_alias)
 
-    mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False)
+    mock_box_session.delete.assert_called_once_with(
+        expected_url, expect_json_response=False
+    )
     assert result is True
 
 
-@pytest.mark.parametrize('notify,fields,expected_params', [
-    (None, None, {}),
-    (True, None, {'notify': True}),
-    (False, None, {'notify': False}),
-    (None, ['type', 'id', 'name'], {'fields': 'type,id,name'}),
-    (False, ['type', 'id'], {'notify': False, 'fields': 'type,id'}),
-])
+@pytest.mark.parametrize(
+    'notify,fields,expected_params',
+    [
+        (None, None, {}),
+        (True, None, {'notify': True}),
+        (False, None, {'notify': False}),
+        (None, ['type', 'id', 'name'], {'fields': 'type,id,name'}),
+        (False, ['type', 'id'], {'notify': False, 'fields': 'type,id'}),
+    ],
+)
 def test_transfer_content(mock_user, mock_box_session, notify, fields, expected_params):
     # pylint:disable=redefined-outer-name
     expected_url = f"{API.BASE_API_URL}/users/{mock_user.object_id}/folders/0"
-    expected_body = json.dumps({
-        'owned_by': {
-            'id': mock_user.object_id
-        },
-    })
+    expected_body = json.dumps(
+        {
+            'owned_by': {'id': mock_user.object_id},
+        }
+    )
     move_items_response = {
         'type': 'folder',
         'id': '12345',
@@ -178,7 +201,9 @@ def test_transfer_content(mock_user, mock_box_session, notify, fields, expected_
     }
     mock_box_session.put.return_value.json.return_value = move_items_response
     moved_item = mock_user.transfer_content(mock_user, notify=notify, fields=fields)
-    mock_box_session.put.assert_called_once_with(expected_url, data=expected_body, params=expected_params)
+    mock_box_session.put.assert_called_once_with(
+        expected_url, data=expected_body, params=expected_params
+    )
     assert isinstance(moved_item, Folder)
     assert moved_item.id == move_items_response['id']
     assert moved_item.name == move_items_response['name']
@@ -186,9 +211,9 @@ def test_transfer_content(mock_user, mock_box_session, notify, fields, expected_
 
 
 def test_get_group_memberships(
-        mock_user,
-        mock_box_session,
-        memberships_response,
+    mock_user,
+    mock_box_session,
+    memberships_response,
 ):
     # pylint:disable=redefined-outer-name
     expected_url = f'{API.BASE_API_URL}/users/{mock_user.object_id}/memberships'
@@ -215,7 +240,9 @@ def test_get_user_avatar(mock_user, mock_box_session, mock_content_response):
 @pytest.mark.parametrize('image_extension', ['jpg', 'jpeg', 'png'])
 def test_upload_avatar(mock_user, mock_box_session, mock_image_path, image_extension):
     expected_url = mock_user.get_url('avatar')
-    upload_avatar_response = {'pic_urls': {'large': 'url1', 'preview': 'url2', 'small': 'url3'}}
+    upload_avatar_response = {
+        'pic_urls': {'large': 'url1', 'preview': 'url2', 'small': 'url3'}
+    }
     mock_box_session.post.return_value.json.return_value = upload_avatar_response
 
     with patch('boxsdk.object.user.open', mock_open()) as mock_image:
@@ -224,23 +251,39 @@ def test_upload_avatar(mock_user, mock_box_session, mock_image_path, image_exten
         assert avatar_urls == upload_avatar_response['pic_urls']
         mock_box_session.post.assert_called_once_with(
             expected_url,
-            files={'pic': (f'avatar.{image_extension}', mock_image.return_value, f'image/{image_extension}')}
+            files={
+                'pic': (
+                    f'avatar.{image_extension}',
+                    mock_image.return_value,
+                    f'image/{image_extension}',
+                )
+            },
         )
 
 
 @pytest.mark.parametrize('image_extension', ['jpg', 'jpeg', 'png'])
 def test_upload_avatar_stream(mock_user, mock_box_session, image_extension):
     expected_url = mock_user.get_url('avatar')
-    upload_avatar_response = {'pic_urls': {'large': 'url1', 'preview': 'url2', 'small': 'url3'}}
+    upload_avatar_response = {
+        'pic_urls': {'large': 'url1', 'preview': 'url2', 'small': 'url3'}
+    }
     mock_box_session.post.return_value.json.return_value = upload_avatar_response
     image_stream = io.BytesIO(b"some image stream")
 
-    avatar_urls = mock_user.upload_avatar_stream(image_stream=image_stream, image_extension=image_extension)
+    avatar_urls = mock_user.upload_avatar_stream(
+        image_stream=image_stream, image_extension=image_extension
+    )
 
     assert avatar_urls == upload_avatar_response['pic_urls']
     mock_box_session.post.assert_called_once_with(
         expected_url,
-        files={'pic': (f'avatar.{image_extension}', image_stream, f'image/{image_extension}')}
+        files={
+            'pic': (
+                f'avatar.{image_extension}',
+                image_stream,
+                f'image/{image_extension}',
+            )
+        },
     )
 
 

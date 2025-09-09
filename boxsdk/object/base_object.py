@@ -12,7 +12,9 @@ if TYPE_CHECKING:
 class BaseObject(BaseEndpoint, BaseAPIJSONObject):
     """A Box API endpoint for interacting with a Box object."""
 
-    def __init__(self, session: 'Session', object_id: str, response_object: dict = None):
+    def __init__(
+        self, session: 'Session', object_id: str, response_object: dict = None
+    ):
         """
         :param session:
             The Box session used to make requests.
@@ -54,7 +56,9 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         return self._object_id
 
     @api_call
-    def get(self, *, fields: Iterable[str] = None, headers: dict = None, **_kwargs) -> Any:
+    def get(
+        self, *, fields: Iterable[str] = None, headers: dict = None, **_kwargs
+    ) -> Any:
         """
         Get information about the object, specified by fields. If fields is None, return the default fields.
 
@@ -75,12 +79,12 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
 
     @api_call
     def update_info(
-            self,
-            *,
-            data: Union[dict, List[dict]],
-            params: Optional[dict] = None,
-            headers: Optional[dict] = None,
-            **kwargs: Any
+        self,
+        *,
+        data: Union[dict, List[dict]],
+        params: Optional[dict] = None,
+        headers: Optional[dict] = None,
+        **kwargs: Any,
     ) -> Any:
         """Update information about this object.
 
@@ -108,7 +112,9 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
             returned from the endpoint.
         """
         url = self.get_url()
-        box_response = self._session.put(url, data=json.dumps(data), params=params, headers=headers, **kwargs)
+        box_response = self._session.put(
+            url, data=json.dumps(data), params=params, headers=headers, **kwargs
+        )
         if 'expect_json_response' in kwargs and not kwargs['expect_json_response']:
             return box_response.ok
 
@@ -118,8 +124,14 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         )
 
     @api_call
-    def delete(self, *, params: Optional[dict] = None, headers: Optional[dict] = None, **_kwargs) -> bool:
-        """ Delete the object.
+    def delete(
+        self,
+        *,
+        params: Optional[dict] = None,
+        headers: Optional[dict] = None,
+        **_kwargs,
+    ) -> bool:
+        """Delete the object.
 
         :param params:
             Additional parameters to send with the request. Can be None
@@ -132,7 +144,9 @@ class BaseObject(BaseEndpoint, BaseAPIJSONObject):
         """
         url = self.get_url()
 
-        box_response = self._session.delete(url, expect_json_response=False, params=params or {}, headers=headers)
+        box_response = self._session.delete(
+            url, expect_json_response=False, params=params or {}, headers=headers
+        )
         return box_response.ok
 
     def __eq__(self, other: Any) -> bool:

@@ -3,7 +3,9 @@ from typing import Optional, Iterable, TYPE_CHECKING
 
 from boxsdk.util.text_enum import TextEnum
 from .base_object import BaseObject
-from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.limit_offset_based_object_collection import (
+    LimitOffsetBasedObjectCollection,
+)
 from ..util.api_call_decorator import api_call
 from ..util.default_arg_value import SDK_VALUE_NOT_SET
 
@@ -15,6 +17,7 @@ if TYPE_CHECKING:
 
 class GroupRole(TextEnum):
     """The role in the group."""
+
     ADMIN = 'admin'
     MEMBER = 'member'
 
@@ -26,10 +29,10 @@ class Group(BaseObject):
 
     @api_call
     def get_memberships(
-            self,
-            limit: Optional[int] = None,
-            offset: Optional[int] = None,
-            fields: Optional[Iterable[str]] = None
+        self,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        fields: Optional[Iterable[str]] = None,
     ) -> Iterable['GroupMembership']:
         """
         Get the membership records for the group, which indicate which users are included in the group.
@@ -54,10 +57,10 @@ class Group(BaseObject):
 
     @api_call
     def add_member(
-            self,
-            user: 'User',
-            role: GroupRole = GroupRole.MEMBER,
-            configurable_permissions: Optional[str] = SDK_VALUE_NOT_SET
+        self,
+        user: 'User',
+        role: GroupRole = GroupRole.MEMBER,
+        configurable_permissions: Optional[str] = SDK_VALUE_NOT_SET,
     ) -> 'GroupMembership':
         """
         Add the given user to this group under the given role
@@ -86,10 +89,10 @@ class Group(BaseObject):
 
     @api_call
     def get_collaborations(
-            self,
-            limit: Optional[int] = None,
-            offset: Optional[int] = None,
-            fields: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get the entries in the collaboration for the group using limit-offset paging.

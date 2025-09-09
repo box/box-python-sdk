@@ -15,14 +15,14 @@ class LimitOffsetBasedObjectCollection(BoxObjectCollection):
     """
 
     def __init__(
-            self,
-            session: 'Session',
-            url: str,
-            limit: Optional[int] = None,
-            fields: Iterator[str] = None,
-            additional_params: Optional[dict] = None,
-            return_full_pages: bool = False,
-            offset: int = 0,
+        self,
+        session: 'Session',
+        url: str,
+        limit: Optional[int] = None,
+        fields: Iterator[str] = None,
+        additional_params: Optional[dict] = None,
+        return_full_pages: bool = False,
+        offset: int = 0,
     ):
         """
         :param session:
@@ -75,7 +75,9 @@ class LimitOffsetBasedObjectCollection(BoxObjectCollection):
             # a runtime error.
             if self._limit <= 0 < old_limit:
                 self._offset = total_count  # Disable additional paging.
-                raise RuntimeError(f'API returned limit={self._limit}, cannot continue paging')
+                raise RuntimeError(
+                    f'API returned limit={self._limit}, cannot continue paging'
+                )
 
         # de-none-ify the _offset value so that the arthimatic below works
         self._offset = self._offset or 0

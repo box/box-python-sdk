@@ -5,7 +5,9 @@ from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCo
 
 from .base_endpoint import BaseEndpoint
 
-from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.limit_offset_based_object_collection import (
+    LimitOffsetBasedObjectCollection,
+)
 from ..util.api_call_decorator import api_call
 
 if TYPE_CHECKING:
@@ -42,11 +44,11 @@ class Trash(BaseEndpoint):
 
     @api_call
     def restore_item(
-            self,
-            item: 'BaseItem',
-            name: Optional[str] = None,
-            parent_folder: Optional['Folder'] = None,
-            fields: Iterable[str] = None
+        self,
+        item: 'BaseItem',
+        name: Optional[str] = None,
+        parent_folder: Optional['Folder'] = None,
+        fields: Iterable[str] = None,
     ) -> 'BaseItem':
         """
         Restores an item from the trash. Could be files, folders, or weblinks.
@@ -71,8 +73,7 @@ class Trash(BaseEndpoint):
         params = {}
         if fields:
             params['fields'] = ','.join(fields)
-        box_response = self._session.post(
-            url, data=json.dumps(body), params=params)
+        box_response = self._session.post(url, data=json.dumps(body), params=params)
         response = box_response.json()
         return self.translator.translate(
             session=self._session,
@@ -102,7 +103,7 @@ class Trash(BaseEndpoint):
         marker: Optional[str] = None,
         use_marker: bool = False,
         sort: Optional[str] = None,
-        direction: Optional[str] = None
+        direction: Optional[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Using limit-offset paging, get the files, folders and web links that are in the user's trash.

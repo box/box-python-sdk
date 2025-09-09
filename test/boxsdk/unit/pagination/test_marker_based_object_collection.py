@@ -27,6 +27,7 @@ class TestMarkerBasedObjectCollection(BoxObjectCollectionTestBase):
     @pytest.fixture()
     def mock_items_response(self, entries, next_marker_value_for_last_page):
         """Baseclass override."""
+
         # pylint:disable=redefined-outer-name,arguments-differ
         def get_response(limit, marker):
             mock_box_response = Mock(BoxResponse)
@@ -39,7 +40,7 @@ class TestMarkerBasedObjectCollection(BoxObjectCollectionTestBase):
             offset = 0
             if marker is not None:
                 offset = int(marker.split('_')[1])
-            mock_json['entries'] = entries[offset:limit + offset]
+            mock_json['entries'] = entries[offset : limit + offset]
 
             # A next_marker is only returned if there are more pages left.
             if (offset + limit) < len(entries):
@@ -52,6 +53,7 @@ class TestMarkerBasedObjectCollection(BoxObjectCollectionTestBase):
             mock_box_response.status_code = 200
             mock_box_response.ok = True
             return mock_box_response
+
         return get_response
 
     @pytest.fixture()
@@ -69,12 +71,12 @@ class TestMarkerBasedObjectCollection(BoxObjectCollectionTestBase):
         return mock_box_session
 
     def _object_collection_instance(  # pylint:disable=arguments-differ
-            self,
-            session,
-            limit,
-            return_full_pages=False,
-            starting_pointer=None,
-            supports_limit_offset_paging=False
+        self,
+        session,
+        limit,
+        return_full_pages=False,
+        starting_pointer=None,
+        supports_limit_offset_paging=False,
     ):
         """Baseclass override."""
         return MarkerBasedObjectCollection(
@@ -87,18 +89,24 @@ class TestMarkerBasedObjectCollection(BoxObjectCollectionTestBase):
         )
 
     @pytest.mark.parametrize('return_full_pages', (True, False))
-    def test_object_collection_sets_next_pointer_correctly(self, mock_session, return_full_pages):
-        object_collection = self._object_collection_instance(mock_session, limit=5, return_full_pages=return_full_pages)
+    def test_object_collection_sets_next_pointer_correctly(
+        self, mock_session, return_full_pages
+    ):
+        object_collection = self._object_collection_instance(
+            mock_session, limit=5, return_full_pages=return_full_pages
+        )
         assert object_collection.next_pointer() is None
         object_collection.next()
         assert object_collection.next_pointer() == 'marker_5'
 
     @pytest.mark.parametrize('supports_limit_offset_paging', (True, False))
-    def test_object_collection_specifies_marker_param(self, mock_session, supports_limit_offset_paging):
+    def test_object_collection_specifies_marker_param(
+        self, mock_session, supports_limit_offset_paging
+    ):
         object_collection = self._object_collection_instance(
             mock_session,
             limit=100,
-            supports_limit_offset_paging=supports_limit_offset_paging
+            supports_limit_offset_paging=supports_limit_offset_paging,
         )
         object_collection.next()
 

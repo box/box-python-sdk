@@ -5,6 +5,7 @@ from . import version
 
 class API:
     """Configuration object containing the URLs for the Box API."""
+
     BASE_API_URL = 'https://api.box.com/2.0'
     UPLOAD_URL = 'https://upload.box.com/api/2.0'
     OAUTH2_API_URL = 'https://api.box.com/oauth2'  # <https://developer.box.com/reference/post-oauth2-token>
@@ -15,10 +16,13 @@ class API:
 
 class Client:
     """Configuration object containing the user agent string."""
+
     VERSION = version.__version__
     USER_AGENT_STRING = f'box-python-sdk-{VERSION}'
-    BOX_UA_STRING = f'agent=box-python-sdk/{VERSION}; ' \
-                    f'env=python/{py_version.major}.{py_version.minor}.{py_version.micro}'
+    BOX_UA_STRING = (
+        f'agent=box-python-sdk/{VERSION}; '
+        f'env=python/{py_version.major}.{py_version.minor}.{py_version.micro}'
+    )
 
 
 class Proxy:

@@ -24,7 +24,9 @@ def _set_content_and_json_from_json(mock_response, json_value):
 
 def _set_content_and_json_from_content(mock_response, content):
     if not isinstance(content, bytes):
-        raise TypeError(f"Expected 'content' to be byte string, got {content.__class__.__name__!r}.")
+        raise TypeError(
+            f"Expected 'content' to be byte string, got {content.__class__.__name__!r}."
+        )
     mock_response.content = content
     mock_response.headers['Content-Length'] = str(len(content))
     try:
@@ -36,7 +38,9 @@ def _set_content_and_json_from_content(mock_response, content):
 @pytest.fixture()
 def generic_successful_request_response():
     mock_request_response = Mock(headers={f'header{i}': f'value{i}' for i in range(4)})
-    _set_content_and_json_from_json(mock_request_response, json_value={f'key{i}': f'value{i}' for i in range(8)})
+    _set_content_and_json_from_json(
+        mock_request_response, json_value={f'key{i}': f'value{i}' for i in range(8)}
+    )
     mock_request_response.status_code = 200
     mock_request_response.ok = True
     mock_request_response.request = Mock()
@@ -56,7 +60,9 @@ def _network_response_mock_from_request_response(request_response):
 
 @pytest.fixture()
 def generic_successful_response(generic_successful_request_response):
-    return _network_response_mock_from_request_response(generic_successful_request_response)
+    return _network_response_mock_from_request_response(
+        generic_successful_request_response
+    )
 
 
 @pytest.fixture(scope='session')
@@ -75,7 +81,9 @@ def successful_token_json_response(access_token, refresh_token):
 def successful_token_request_response(successful_token_json_response):
     # pylint:disable=redefined-outer-name
     successful_token_mock = Mock(headers={})
-    _set_content_and_json_from_json(successful_token_mock, json_value=successful_token_json_response)
+    _set_content_and_json_from_json(
+        successful_token_mock, json_value=successful_token_json_response
+    )
     successful_token_mock.ok = True
     successful_token_mock.status_code = 200
     return successful_token_mock
@@ -83,7 +91,9 @@ def successful_token_request_response(successful_token_json_response):
 
 @pytest.fixture()
 def successful_token_response(successful_token_request_response):
-    return _network_response_mock_from_request_response(successful_token_request_response)
+    return _network_response_mock_from_request_response(
+        successful_token_request_response
+    )
 
 
 @pytest.fixture()
@@ -139,7 +149,9 @@ def retry_after_response(retry_after_response_202, retry_after_response_429, req
 
 def _server_error_request_response(status_code):
     mock_request_response = Mock(headers={f'header{i}': f'value{i}' for i in range(4)})
-    _set_content_and_json_from_json(mock_request_response, json_value={f'key{i}': f'value{i}' for i in range(8)})
+    _set_content_and_json_from_json(
+        mock_request_response, json_value={f'key{i}': f'value{i}' for i in range(8)}
+    )
     mock_request_response.status_code = status_code
     mock_request_response.ok = False
     return mock_request_response
@@ -156,7 +168,9 @@ def server_error_request_response_503():
 
 
 @pytest.fixture(params=[502, 503])
-def server_error_request_response(server_error_request_response_502, server_error_request_response_503, request):
+def server_error_request_response(
+    server_error_request_response_502, server_error_request_response_503, request
+):
     if request.param == 502:
         return server_error_request_response_502
     if request.param == 503:
@@ -173,7 +187,9 @@ def server_error_response(server_error_request_response):
 def bad_network_response():
     mock_network_response = Mock(DefaultNetworkResponse, headers={})
     mock_network_response.status_code = 404
-    _set_content_and_json_from_json(mock_network_response, json_value={'code': 404, 'message': 'Not Found'})
+    _set_content_and_json_from_json(
+        mock_network_response, json_value={'code': 404, 'message': 'Not Found'}
+    )
     mock_network_response.ok = False
     return mock_network_response
 
@@ -182,7 +198,13 @@ def bad_network_response():
 def bad_network_response_400():
     mock_network_response = Mock(DefaultNetworkResponse, headers={})
     mock_network_response.status_code = 400
-    _set_content_and_json_from_json(mock_network_response, json_value={'error': 'Example Error', 'error_description': 'Example Error Description'})
+    _set_content_and_json_from_json(
+        mock_network_response,
+        json_value={
+            'error': 'Example Error',
+            'error_description': 'Example Error Description',
+        },
+    )
     mock_network_response.ok = False
     return mock_network_response
 
@@ -232,11 +254,13 @@ def auth_code():
     return 'fake_auth_code'
 
 
-@pytest.fixture(params=[
-    b'Hello',
-    b'Goodbye',
-    b'42',
-])
+@pytest.fixture(
+    params=[
+        b'Hello',
+        b'Goodbye',
+        b'42',
+    ]
+)
 def test_file_content(request):
     return request.param
 
@@ -279,7 +303,9 @@ def mock_datetime_rfc3339_str():
 
 @pytest.fixture(scope='module')
 def mock_timezone_aware_datetime_obj():
-    return datetime.datetime(2035, 3, 4, 10, 14, 24, microsecond=500, tzinfo=pytz.timezone('US/Alaska'))
+    return datetime.datetime(
+        2035, 3, 4, 10, 14, 24, microsecond=500, tzinfo=pytz.timezone('US/Alaska')
+    )
 
 
 @pytest.fixture(scope='module')

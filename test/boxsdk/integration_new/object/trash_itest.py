@@ -1,7 +1,9 @@
 from datetime import datetime
 
 import pytest
-from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from boxsdk.pagination.limit_offset_based_object_collection import (
+    LimitOffsetBasedObjectCollection,
+)
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 
 from test.boxsdk.integration_new import util
@@ -30,7 +32,9 @@ def test_trash_get_items(parent_folder, small_file_path):
 
 
 def test_trash_restore_item(parent_folder, small_file_path):
-    with BoxTestFile(parent_folder=parent_folder, file_path=small_file_path) as test_file:
+    with BoxTestFile(
+        parent_folder=parent_folder, file_path=small_file_path
+    ) as test_file:
         test_file.delete()
         folder_items = parent_folder.get_items()
         assert test_file.id not in [item.id for item in folder_items]

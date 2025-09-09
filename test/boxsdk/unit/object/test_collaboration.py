@@ -5,19 +5,20 @@ from boxsdk.config import API
 from boxsdk.object.collaboration import CollaborationRole, CollaborationStatus
 
 
-@pytest.mark.parametrize('data', [
-    {},
-    {'role': CollaborationRole.EDITOR},
-    {'role': CollaborationRole.VIEWER},
-    {'status': CollaborationStatus.ACCEPTED},
-    {'status': CollaborationStatus.REJECTED},
-    {'role': CollaborationRole.EDITOR, 'status': CollaborationStatus.ACCEPTED},
-])
+@pytest.mark.parametrize(
+    'data',
+    [
+        {},
+        {'role': CollaborationRole.EDITOR},
+        {'role': CollaborationRole.VIEWER},
+        {'status': CollaborationStatus.ACCEPTED},
+        {'status': CollaborationStatus.REJECTED},
+        {'role': CollaborationRole.EDITOR, 'status': CollaborationStatus.ACCEPTED},
+    ],
+)
 def test_update_info_returns_the_correct_response(
-        test_collaboration,
-        mock_box_session,
-        mock_collab_response,
-        data):
+    test_collaboration, mock_box_session, mock_collab_response, data
+):
     # pylint:disable=protected-access
     expected_url = test_collaboration.get_url()
     mock_box_session.put.return_value = mock_collab_response
@@ -32,18 +33,19 @@ def test_update_info_returns_the_correct_response(
     assert update_response.object_id == test_collaboration.object_id
 
 
-@pytest.mark.parametrize('data', [
-    {},
-    {'role': CollaborationRole.EDITOR, 'status': CollaborationStatus.REJECTED},
-    {'role': CollaborationRole.EDITOR, 'status': CollaborationStatus.ACCEPTED},
-    {'role': CollaborationRole.EDITOR, 'expires_at': '2025-08-29T23:59:00-07:00'},
-    {'role': CollaborationRole.EDITOR, 'can_view_path': True},
-])
+@pytest.mark.parametrize(
+    'data',
+    [
+        {},
+        {'role': CollaborationRole.EDITOR, 'status': CollaborationStatus.REJECTED},
+        {'role': CollaborationRole.EDITOR, 'status': CollaborationStatus.ACCEPTED},
+        {'role': CollaborationRole.EDITOR, 'expires_at': '2025-08-29T23:59:00-07:00'},
+        {'role': CollaborationRole.EDITOR, 'can_view_path': True},
+    ],
+)
 def test_update_info_returns_the_correct_response_with_data_param(
-        test_collaboration,
-        mock_box_session,
-        mock_collab_response,
-        data):
+    test_collaboration, mock_box_session, mock_collab_response, data
+):
     # pylint:disable=protected-access
     expected_url = test_collaboration.get_url()
     mock_box_session.put.return_value = mock_collab_response
@@ -58,9 +60,7 @@ def test_update_info_returns_the_correct_response_with_data_param(
     assert update_response.object_id == test_collaboration.object_id
 
 
-def test_update_info_returns_204(
-        test_collaboration,
-        mock_box_session):
+def test_update_info_returns_204(test_collaboration, mock_box_session):
     # pylint:disable=protected-access
     data = {'role': CollaborationRole.OWNER, 'status': CollaborationStatus.ACCEPTED}
     expected_url = test_collaboration.get_url()
@@ -87,9 +87,7 @@ def test_accept_pending_collaboration(test_collaboration, mock_box_session):
     }
     mock_box_session.put.return_value.json.return_value = mock_collab_response
     response = test_collaboration.accept()
-    update_body = {
-        'status': 'accepted'
-    }
+    update_body = {'status': 'accepted'}
     mock_box_session.put.assert_called_once_with(
         expected_url,
         data=json.dumps(update_body),
@@ -111,9 +109,7 @@ def test_reject_pending_collaboration(test_collaboration, mock_box_session):
     }
     mock_box_session.put.return_value.json.return_value = mock_collab_response
     response = test_collaboration.reject()
-    update_body = {
-        'status': 'rejected'
-    }
+    update_body = {'status': 'rejected'}
     mock_box_session.put.assert_called_once_with(
         expected_url,
         data=json.dumps(update_body),

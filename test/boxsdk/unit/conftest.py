@@ -15,7 +15,7 @@ from boxsdk.util.translator import Translator
 @pytest.fixture(scope='function', autouse=True)
 def original_default_translator():
     """A reference to the default translator, before the reference is changed by `default_translator` below."""
-    return Translator._default_translator   # pylint:disable=protected-access
+    return Translator._default_translator  # pylint:disable=protected-access
 
 
 @pytest.yield_fixture(scope='function', autouse=True)
@@ -28,15 +28,21 @@ def default_translator(original_default_translator):
     we reset the reference.
     """
     try:
-        translator = Translator(dict(copy.deepcopy(original_default_translator)), extend_default_translator=False, new_child=False)
-        Translator._default_translator = translator   # pylint:disable=protected-access
+        translator = Translator(
+            dict(copy.deepcopy(original_default_translator)),
+            extend_default_translator=False,
+            new_child=False,
+        )
+        Translator._default_translator = translator  # pylint:disable=protected-access
         yield translator
     finally:
-        Translator._default_translator = original_default_translator  # pylint:disable=protected-access
+        Translator._default_translator = (
+            original_default_translator  # pylint:disable=protected-access
+        )
 
 
 @pytest.fixture(scope='function')
-def translator(default_translator):   # pylint:disable=unused-argument
+def translator(default_translator):  # pylint:disable=unused-argument
     return Translator(extend_default_translator=True, new_child=True)
 
 
@@ -48,7 +54,9 @@ def mock_box_session(translator):
     mock_session._client_config = mock_session.client_config = Client()
     mock_session._proxy_config = mock_session.proxy_config = Proxy()
     # pylint:enable=protected-access
-    mock_session.get_url.side_effect = lambda *args, **kwargs: Session.get_url(mock_session, *args, **kwargs)
+    mock_session.get_url.side_effect = lambda *args, **kwargs: Session.get_url(
+        mock_session, *args, **kwargs
+    )
     mock_session.translator = translator
     return mock_session
 
@@ -61,7 +69,9 @@ def mock_box_session_2(translator):
     mock_session._client_config = Client()
     mock_session._proxy_config = Proxy()
     # pylint:enable=protected-access
-    mock_session.get_url.side_effect = lambda *args, **kwargs: Session.get_url(mock_session, *args, **kwargs)
+    mock_session.get_url.side_effect = lambda *args, **kwargs: Session.get_url(
+        mock_session, *args, **kwargs
+    )
     mock_session.translator = translator
     return mock_session
 
@@ -109,6 +119,7 @@ def make_mock_box_request():
         else:
             mock_box_response.content = content
         return mock_box_response, mock_network_response
+
     return inner
 
 

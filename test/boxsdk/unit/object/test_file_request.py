@@ -14,10 +14,12 @@ def test_get(test_file_request, mock_box_session):
     mock_box_session.get.return_value.json.return_value = {
         'type': test_file_request.object_type,
         'id': test_file_request.object_id,
-        'title': 'File Request'
+        'title': 'File Request',
     }
     file_request = test_file_request.get()
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params=None
+    )
     assert isinstance(file_request, FileRequest)
     assert file_request['type'] == file_request.object_type
     assert file_request['id'] == file_request.object_id
@@ -39,7 +41,9 @@ def test_update(test_file_request, mock_box_session):
         'status': StatusState.INACTIVE,
     }
     file_request = test_file_request.update_info(data=data)
-    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), headers=None, params=None)
+    mock_box_session.put.assert_called_once_with(
+        expected_url, data=json.dumps(data), headers=None, params=None
+    )
     assert isinstance(file_request, FileRequest)
     assert file_request['type'] == test_file_request.object_type
     assert file_request['id'] == test_file_request.object_id
@@ -47,13 +51,18 @@ def test_update(test_file_request, mock_box_session):
     assert file_request['status'] == StatusState.INACTIVE
 
 
-@pytest.mark.parametrize('expires_at', [
-    '2019-07-01T22:02:24+14:00',
-    datetime(2019, 7, 1, 22, 2, 24, tzinfo=pytz.timezone('US/Alaska'))
-])
+@pytest.mark.parametrize(
+    'expires_at',
+    [
+        '2019-07-01T22:02:24+14:00',
+        datetime(2019, 7, 1, 22, 2, 24, tzinfo=pytz.timezone('US/Alaska')),
+    ],
+)
 def test_copy(test_file_request, mock_box_session, expires_at):
     new_folder_id = '100'
-    expected_url = f'{API.BASE_API_URL}/file_requests/{test_file_request.object_id}/copy'
+    expected_url = (
+        f'{API.BASE_API_URL}/file_requests/{test_file_request.object_id}/copy'
+    )
     expected_expires_at = '2019-07-01T22:02:24+14:00'
     mock_box_session.post.return_value.json.return_value = {
         'type': test_file_request.object_type,
@@ -67,7 +76,9 @@ def test_copy(test_file_request, mock_box_session, expires_at):
     }
     new_title = 'File Request Copied'
     new_folder = Folder(mock_box_session, object_id=new_folder_id)
-    file_request = test_file_request.copy(title=new_title, folder=new_folder, expires_at=expires_at)
+    file_request = test_file_request.copy(
+        title=new_title, folder=new_folder, expires_at=expires_at
+    )
     data = {
         'folder': {
             'id': new_folder_id,
@@ -87,4 +98,6 @@ def test_copy(test_file_request, mock_box_session, expires_at):
 def test_delete(test_file_request, mock_box_session):
     expected_url = f'{API.BASE_API_URL}/file_requests/{test_file_request.object_id}'
     test_file_request.delete()
-    mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=None, params={})
+    mock_box_session.delete.assert_called_once_with(
+        expected_url, expect_json_response=False, headers=None, params={}
+    )

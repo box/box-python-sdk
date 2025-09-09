@@ -6,7 +6,6 @@ from wsgiref.simple_server import WSGIServer, WSGIRequestHandler, make_server
 
 from boxsdk import OAuth2
 
-
 CLIENT_ID = ''  # Insert Box client ID here
 CLIENT_SECRET = ''  # Insert Box client secret here
 
@@ -20,7 +19,9 @@ def authenticate(oauth_class=OAuth2):
         def run(self, app):
             server_cls = self.options.get('server_class', WSGIServer)
             handler_cls = self.options.get('handler_class', WSGIRequestHandler)
-            self._server = make_server(self.host, self.port, app, server_cls, handler_cls)
+            self._server = make_server(
+                self.host, self.port, app, server_cls, handler_cls
+            )
             self._server.serve_forever()
 
         def stop(self):

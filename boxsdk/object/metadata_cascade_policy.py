@@ -39,5 +39,7 @@ class MetadataCascadePolicy(BaseObject):
         body = {
             'conflict_resolution': conflict_resolution,
         }
-        response = self._session.post(url, data=json.dumps(body), expect_json_response=False)
+        response = self._session.post(
+            url, data=json.dumps(body), expect_json_response=False
+        )
         return response.ok

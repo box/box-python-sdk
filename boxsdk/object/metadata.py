@@ -15,6 +15,7 @@ class MetadataUpdate:
     See https://developer.box.com/en/guides/metadata/instances/update/ for more details.
     See http://jsonpatch.com/ for details about JSON patch.
     """
+
     def __init__(self):
         self._ops = []
 
@@ -82,7 +83,9 @@ class MetadataUpdate:
 
 
 class Metadata(BaseEndpoint):
-    def __init__(self, session: 'Session', box_object: 'BaseObject', scope: str, template: str):
+    def __init__(
+        self, session: 'Session', box_object: 'BaseObject', scope: str, template: str
+    ):
         """
         :param session:
             The Box session used to make requests.
@@ -100,7 +103,7 @@ class Metadata(BaseEndpoint):
         self._template = template
 
     def get_url(self, *args: Any) -> str:
-        """ Base class override. """
+        """Base class override."""
         return self._object.get_url('metadata', self._scope, self._template)
 
     @staticmethod
@@ -190,5 +193,7 @@ class Metadata(BaseEndpoint):
         return metadata_value
 
     def clone(self, session: 'Session' = None) -> 'Metadata':
-        """ Base class override. """
-        return self.__class__(session or self._session, self._object, self._scope, self._template)
+        """Base class override."""
+        return self.__class__(
+            session or self._session, self._object, self._scope, self._template
+        )

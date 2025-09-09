@@ -26,13 +26,15 @@ class MetadataTemplateUpdate:
         :param option_key:
             The option to add
         """
-        self.add_operation({
-            'op': 'addEnumOption',
-            'fieldKey': field_key,
-            'data': {
-                'key': option_key,
-            },
-        })
+        self.add_operation(
+            {
+                'op': 'addEnumOption',
+                'fieldKey': field_key,
+                'data': {
+                    'key': option_key,
+                },
+            }
+        )
 
     def add_field(self, field: 'MetadataField') -> None:
         """
@@ -41,10 +43,12 @@ class MetadataTemplateUpdate:
         :param field:
             The new field to add
         """
-        self.add_operation({
-            'op': 'addField',
-            'data': field.json(),
-        })
+        self.add_operation(
+            {
+                'op': 'addField',
+                'data': field.json(),
+            }
+        )
 
     def edit_template(self, data: dict) -> None:
         """
@@ -53,10 +57,12 @@ class MetadataTemplateUpdate:
         :param data:
             The properties to modify
         """
-        self.add_operation({
-            'op': 'editTemplate',
-            'data': data,
-        })
+        self.add_operation(
+            {
+                'op': 'editTemplate',
+                'data': data,
+            }
+        )
 
     def reorder_enum_options(self, field_key: str, option_keys: List[str]) -> None:
         """
@@ -67,11 +73,13 @@ class MetadataTemplateUpdate:
         :param option_keys:
             The option keys in the desired order
         """
-        self.add_operation({
-            'op': 'reorderEnumOptions',
-            'fieldKey': field_key,
-            'enumOptionKeys': option_keys,
-        })
+        self.add_operation(
+            {
+                'op': 'reorderEnumOptions',
+                'fieldKey': field_key,
+                'enumOptionKeys': option_keys,
+            }
+        )
 
     def reorder_fields(self, field_keys: List[str]) -> None:
         """
@@ -80,10 +88,12 @@ class MetadataTemplateUpdate:
         :param field_keys:
             The field keys in the desired order
         """
-        self.add_operation({
-            'op': 'reorderFields',
-            'fieldKeys': field_keys,
-        })
+        self.add_operation(
+            {
+                'op': 'reorderFields',
+                'fieldKeys': field_keys,
+            }
+        )
 
     def edit_field(self, field_key: str, field: 'MetadataField') -> None:
         """
@@ -94,13 +104,17 @@ class MetadataTemplateUpdate:
         :param field:
             The updated field values
         """
-        self.add_operation({
-            'op': 'editField',
-            'fieldKey': field_key,
-            'data': field.json(),
-        })
+        self.add_operation(
+            {
+                'op': 'editField',
+                'fieldKey': field_key,
+                'data': field.json(),
+            }
+        )
 
-    def edit_enum_option_key(self, field_key: str, old_option_key: str, new_option_key: str) -> None:
+    def edit_enum_option_key(
+        self, field_key: str, old_option_key: str, new_option_key: str
+    ) -> None:
         """
         Change the key of an enum field option.
 
@@ -111,14 +125,16 @@ class MetadataTemplateUpdate:
         :param new_option_key:
             The new option key
         """
-        self.add_operation({
-            'op': 'editEnumOption',
-            'fieldKey': field_key,
-            'enumOptionKey': old_option_key,
-            'data': {
-                'key': new_option_key,
-            },
-        })
+        self.add_operation(
+            {
+                'op': 'editEnumOption',
+                'fieldKey': field_key,
+                'enumOptionKey': old_option_key,
+                'data': {
+                    'key': new_option_key,
+                },
+            }
+        )
 
     def remove_enum_option(self, field_key: str, option_key: str) -> None:
         """
@@ -129,11 +145,13 @@ class MetadataTemplateUpdate:
         :param option_key:
             The key of the enum option to remove
         """
-        self.add_operation({
-            'op': 'removeEnumOption',
-            'fieldKey': field_key,
-            'enumOptionKey': option_key,
-        })
+        self.add_operation(
+            {
+                'op': 'removeEnumOption',
+                'fieldKey': field_key,
+                'enumOptionKey': option_key,
+            }
+        )
 
     def remove_field(self, field_key: str) -> None:
         """
@@ -142,10 +160,12 @@ class MetadataTemplateUpdate:
         :param field_key:
             The key of the field to remove
         """
-        self.add_operation({
-            'op': 'removeField',
-            'fieldKey': field_key,
-        })
+        self.add_operation(
+            {
+                'op': 'removeField',
+                'fieldKey': field_key,
+            }
+        )
 
     def add_operation(self, operation: dict) -> None:
         """
@@ -169,13 +189,13 @@ class MetadataField:
     """Represents a metadata field when creating or updating a metadata template."""
 
     def __init__(
-            self,
-            field_type: MetadataFieldType,
-            display_name: str,
-            key: Optional[str] = None,
-            options: Iterable[str] = None,
-            description: Optional[str] = None,
-            hidden: Optional[bool] = None
+        self,
+        field_type: MetadataFieldType,
+        display_name: str,
+        key: Optional[str] = None,
+        options: Iterable[str] = None,
+        description: Optional[str] = None,
+        hidden: Optional[bool] = None,
     ):
         """
         :param field_type:
@@ -234,7 +254,12 @@ class MetadataTemplate(BaseObject):
     _scope = None
     _template_key = None
 
-    def __init__(self, session: 'Session', object_id: Optional[str], response_object: Optional[dict] = None):
+    def __init__(
+        self,
+        session: 'Session',
+        object_id: Optional[str],
+        response_object: Optional[dict] = None,
+    ):
         """
         :param session:
             The Box session used to make requests.
@@ -250,7 +275,9 @@ class MetadataTemplate(BaseObject):
             self._scope = response_object.get('scope', None)
             self._template_key = response_object.get('templateKey', None)
         elif not object_id:
-            raise ValueError('Metadata template must be constructed with an ID or scope and templateKey')
+            raise ValueError(
+                'Metadata template must be constructed with an ID or scope and templateKey'
+            )
 
     @property
     def scope(self) -> Optional[str]:
@@ -265,7 +292,9 @@ class MetadataTemplate(BaseObject):
         Base class override, since metadata templates have a weird compound ID and non-standard URL format
         """
         if self._scope and self._template_key:
-            return self._session.get_url('metadata_templates', self._scope, self._template_key, 'schema', *args)
+            return self._session.get_url(
+                'metadata_templates', self._scope, self._template_key, 'schema', *args
+            )
 
         return super().get_url(*args)
 
@@ -280,7 +309,9 @@ class MetadataTemplate(BaseObject):
         return MetadataTemplateUpdate()
 
     @api_call
-    def update_info(self, *, updates: MetadataTemplateUpdate, **kwargs) -> 'MetadataTemplate':
+    def update_info(
+        self, *, updates: MetadataTemplateUpdate, **kwargs
+    ) -> 'MetadataTemplate':
         # pylint: disable=arguments-differ
         """
         Update a metadata template with a set of update operations.

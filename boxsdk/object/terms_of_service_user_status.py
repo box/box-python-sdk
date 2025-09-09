@@ -9,22 +9,20 @@ class TermsOfServiceUserStatus(BaseObject):
     _item_type = 'terms_of_service_user_status'
 
     def get_url(self, *args: Any) -> str:
-        return self._session.get_url('terms_of_service_user_statuses', self._object_id, *args)
+        return self._session.get_url(
+            'terms_of_service_user_statuses', self._object_id, *args
+        )
 
     def accept(self) -> 'TermsOfServiceUserStatus':
         """
         Accept a term of service.
         """
-        body = {
-            'is_accepted': True
-        }
+        body = {'is_accepted': True}
         return self.update_info(data=body)
 
     def reject(self) -> 'TermsOfServiceUserStatus':
         """
         Reject a term of service.
         """
-        body = {
-            'is_accepted': False
-        }
+        body = {'is_accepted': False}
         return self.update_info(data=body)

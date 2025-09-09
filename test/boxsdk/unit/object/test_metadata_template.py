@@ -1,7 +1,11 @@
 import json
 
 from boxsdk.config import API
-from boxsdk.object.metadata_template import MetadataTemplate, MetadataField, MetadataFieldType
+from boxsdk.object.metadata_template import (
+    MetadataTemplate,
+    MetadataField,
+    MetadataFieldType,
+)
 
 
 def test_get(test_metadata_template, mock_box_session):
@@ -32,7 +36,9 @@ def test_get(test_metadata_template, mock_box_session):
 
     template = test_metadata_template.get()
 
-    mock_box_session.get.assert_called_once_with(expected_url, params=None, headers=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, params=None, headers=None
+    )
     assert isinstance(template, MetadataTemplate)
     assert template.object_id is None
     assert template.displayName == 'Vendor Contract'
@@ -50,7 +56,9 @@ def test_delete(test_metadata_template, mock_box_session):
 
     result = test_metadata_template.delete()
 
-    mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, headers=None, params={})
+    mock_box_session.delete.assert_called_once_with(
+        expected_url, expect_json_response=False, headers=None, params={}
+    )
     assert result is True
 
 
@@ -59,7 +67,12 @@ def test_update_info(test_metadata_template, mock_box_session):
     updates = test_metadata_template.start_update()
     updates.add_enum_option('state', 'WI')
     updates.add_field(
-        MetadataField(field_type=MetadataFieldType.STRING, display_name='Name', description="Description", hidden=False)
+        MetadataField(
+            field_type=MetadataFieldType.STRING,
+            display_name='Name',
+            description="Description",
+            hidden=False,
+        )
     )
     updates.reorder_enum_options('state', ['CA', 'NY', 'TX', 'WI'])
     updates.reorder_fields(['bday', 'name', 'state'])
@@ -81,7 +94,7 @@ def test_update_info(test_metadata_template, mock_box_session):
                 'type': 'string',
                 'displayName': 'Name',
                 "description": "Description",
-                "hidden": False
+                "hidden": False,
             },
         },
         {
@@ -134,7 +147,7 @@ def test_update_info(test_metadata_template, mock_box_session):
                 'key': 'name',
                 'displayName': 'Name',
                 'description': 'Description',
-                'hidden': False
+                'hidden': False,
             },
             {
                 'type': 'enum',
@@ -152,7 +165,9 @@ def test_update_info(test_metadata_template, mock_box_session):
 
     updated_template = test_metadata_template.update_info(updates=updates)
 
-    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(expected_body), headers=None, params=None)
+    mock_box_session.put.assert_called_once_with(
+        expected_url, data=json.dumps(expected_body), headers=None, params=None
+    )
     assert isinstance(updated_template, MetadataTemplate)
     assert updated_template.hidden is False
     assert updated_template.object_id is None

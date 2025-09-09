@@ -21,7 +21,9 @@ class MyBaseException(BaseException):
     pass
 
 
-@pytest.fixture(params=('https://url.com/foo?bar=baz', 'https://ȕŕľ.com/ƒőő?Ƅȁŕ=Ƅȁż', None))
+@pytest.fixture(
+    params=('https://url.com/foo?bar=baz', 'https://ȕŕľ.com/ƒőő?Ƅȁŕ=Ƅȁż', None)
+)
 def redirect_url(request):
     """A value for the `redirect_uri` query string parameter for OAuth2."""
     return request.param
@@ -48,7 +50,9 @@ def test_get_correct_authorization_url(redirect_url):
     assert re.match('^box_csrf_token_[A-Za-z0-9]{16}$', csrf_token)
 
 
-def test_authenticate_send_post_request_with_correct_params(mock_box_session, successful_token_response):
+def test_authenticate_send_post_request_with_correct_params(
+    mock_box_session, successful_token_response
+):
     fake_client_id = 'fake_client_id'
     fake_client_secret = 'fake_client_secret'
     fake_auth_code = 'fake_auth_code'
@@ -83,9 +87,9 @@ def test_authenticate_send_post_request_with_correct_params(mock_box_session, su
 
 @pytest.mark.parametrize('_', range(10))
 def test_refresh_send_post_request_with_correct_params_and_handles_multiple_requests(
-        mock_box_session,
-        successful_token_response,
-        _,
+    mock_box_session,
+    successful_token_response,
+    _,
 ):
     fake_client_id = 'fake_client_id'
     fake_client_secret = 'fake_client_secret'
@@ -130,7 +134,9 @@ def test_refresh_send_post_request_with_correct_params_and_handles_multiple_requ
     )
 
 
-def test_authenticate_stores_tokens_correctly(mock_box_session, successful_token_response):
+def test_authenticate_stores_tokens_correctly(
+    mock_box_session, successful_token_response
+):
     fake_client_id = 'fake_client_id'
     fake_client_secret = 'fake_client_secret'
     fake_auth_code = 'fake_auth_code'
@@ -153,10 +159,10 @@ def test_authenticate_stores_tokens_correctly(mock_box_session, successful_token
 
 @pytest.mark.parametrize('_', range(10))
 def test_refresh_gives_back_the_correct_response_and_handles_multiple_requests(
-        mock_box_session,
-        successful_token_response,
-        network_response_with_missing_tokens,
-        _,
+    mock_box_session,
+    successful_token_response,
+    network_response_with_missing_tokens,
+    _,
 ):
     # pylint:disable=redefined-outer-name
     fake_client_id = 'fake_client_id'
@@ -166,7 +172,10 @@ def test_refresh_gives_back_the_correct_response_and_handles_multiple_requests(
 
     # Setup the network layer so that if oauth makes more than one request, it will get a malformed response and failed
     # the test.
-    mock_box_session.request.side_effect = [successful_token_response, network_response_with_missing_tokens]
+    mock_box_session.request.side_effect = [
+        successful_token_response,
+        network_response_with_missing_tokens,
+    ]
     oauth = OAuth2(
         client_id=fake_client_id,
         client_secret=fake_client_secret,
@@ -194,7 +203,7 @@ def test_refresh_gives_back_the_correct_response_and_handles_multiple_requests(
 
 @pytest.fixture()
 def token_method(request):
-    """ Fixture that returns a partial method based on the method provided in request.param"""
+    """Fixture that returns a partial method based on the method provided in request.param"""
     if request.param == OAuth2.refresh:
         return partial(OAuth2.refresh, access_token_to_refresh='fake_access_token')
     if request.param == OAuth2.authenticate:
@@ -208,9 +217,9 @@ def token_method(request):
     indirect=True,
 )
 def test_token_request_raises_box_oauth_exception_when_getting_bad_network_response(
-        token_method,
-        mock_box_session,
-        bad_network_response,
+    token_method,
+    mock_box_session,
+    bad_network_response,
 ):
     with pytest.raises(BoxOAuthException):
         mock_box_session.request.return_value = bad_network_response
@@ -229,9 +238,9 @@ def test_token_request_raises_box_oauth_exception_when_getting_bad_network_respo
     indirect=True,
 )
 def test_token_request_raises_box_oauth_exception_when_no_json_object_can_be_decoded(
-        token_method,
-        mock_box_session,
-        non_json_response,
+    token_method,
+    mock_box_session,
+    non_json_response,
 ):
     mock_box_session.request.return_value = non_json_response
     oauth = OAuth2(
@@ -244,11 +253,13 @@ def test_token_request_raises_box_oauth_exception_when_no_json_object_can_be_dec
         token_method(oauth)
 
 
-@pytest.fixture(params=[
-    ['access_token'],
-    ['refresh_token'],
-    [],
-])
+@pytest.fixture(
+    params=[
+        ['access_token'],
+        ['refresh_token'],
+        [],
+    ]
+)
 def network_response_with_missing_tokens(request):
     mock_network_response = Mock(DefaultNetworkResponse)
     mock_network_response.ok = True
@@ -259,14 +270,17 @@ def network_response_with_missing_tokens(request):
     return mock_network_response
 
 
-@pytest.mark.parametrize('test_method', [
-    partial(OAuth2.refresh, access_token_to_refresh='fake_access_token'),
-    partial(OAuth2.authenticate, auth_code='fake_code')
-])
+@pytest.mark.parametrize(
+    'test_method',
+    [
+        partial(OAuth2.refresh, access_token_to_refresh='fake_access_token'),
+        partial(OAuth2.authenticate, auth_code='fake_code'),
+    ],
+)
 def test_token_request_raises_box_oauth_exception_when_tokens_are_not_in_the_response(
-        test_method,
-        mock_box_session,
-        network_response_with_missing_tokens,
+    test_method,
+    mock_box_session,
+    network_response_with_missing_tokens,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.request.return_value = network_response_with_missing_tokens
@@ -280,7 +294,9 @@ def test_token_request_raises_box_oauth_exception_when_tokens_are_not_in_the_res
         test_method(oauth)
 
 
-def test_oauth_exception_error_and_error_description(mock_box_session, bad_network_response_400):
+def test_oauth_exception_error_and_error_description(
+    mock_box_session, bad_network_response_400
+):
     mock_box_session.request.return_value = bad_network_response_400
     oauth = OAuth2(
         client_id='',
@@ -325,16 +341,16 @@ def oauth(client_id, client_secret, access_token, refresh_token, mock_box_sessio
     'access_token,refresh_token,expected_token_to_revoke',
     (
         ('fake_access_token', 'fake_refresh_token', 'fake_access_token'),
-        (None, 'fake_refresh_token', 'fake_refresh_token')
-    )
+        (None, 'fake_refresh_token', 'fake_refresh_token'),
+    ),
 )
 def test_revoke_sends_revoke_request(
-        client_id,
-        client_secret,
-        mock_box_session,
-        access_token,
-        oauth,
-        expected_token_to_revoke,
+    client_id,
+    client_secret,
+    mock_box_session,
+    access_token,
+    oauth,
+    expected_token_to_revoke,
 ):
     mock_network_response = Mock()
     mock_network_response.ok = True
@@ -353,7 +369,14 @@ def test_revoke_sends_revoke_request(
     assert oauth.access_token is None
 
 
-def test_tokens_get_updated_after_noop_refresh(client_id, client_secret, access_token, new_access_token, refresh_token, mock_box_session):
+def test_tokens_get_updated_after_noop_refresh(
+    client_id,
+    client_secret,
+    access_token,
+    new_access_token,
+    refresh_token,
+    mock_box_session,
+):
     """`OAuth2` object should update its state with new tokens, after no-op refresh.
 
     If the protected method `_get_tokens()` returns new tokens, refresh is
@@ -392,26 +415,36 @@ def test_tokens_get_updated_after_noop_refresh(client_id, client_secret, access_
 
 
 def test_closed_is_false_after_init(client_id, client_secret, mock_box_session):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
+    auth = OAuth2(
+        client_id=client_id, client_secret=client_secret, session=mock_box_session
+    )
     assert auth.closed is False
 
 
 def test_closed_is_true_after_close(client_id, client_secret, mock_box_session):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
+    auth = OAuth2(
+        client_id=client_id, client_secret=client_secret, session=mock_box_session
+    )
     auth.close()
     assert auth.closed is True
 
 
 def test_token_requests_fail_after_close(client_id, client_secret, mock_box_session):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
+    auth = OAuth2(
+        client_id=client_id, client_secret=client_secret, session=mock_box_session
+    )
     auth.close()
     with pytest.raises(ValueError):
         auth.refresh(auth.access_token)
 
 
 @pytest.mark.parametrize('raise_exception', [False, True])
-def test_context_manager_closes_auth_object(client_id, client_secret, mock_box_session, raise_exception):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
+def test_context_manager_closes_auth_object(
+    client_id, client_secret, mock_box_session, raise_exception
+):
+    auth = OAuth2(
+        client_id=client_id, client_secret=client_secret, session=mock_box_session
+    )
     try:
         with auth.closing():
             if raise_exception:
@@ -422,7 +455,9 @@ def test_context_manager_closes_auth_object(client_id, client_secret, mock_box_s
 
 
 def test_context_manager_fails_after_close(client_id, client_secret, mock_box_session):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
+    auth = OAuth2(
+        client_id=client_id, client_secret=client_secret, session=mock_box_session
+    )
     with auth.closing():
         pass
     with pytest.raises(ValueError):
@@ -430,40 +465,76 @@ def test_context_manager_fails_after_close(client_id, client_secret, mock_box_se
             assert False
 
 
-@pytest.mark.parametrize(('close_args', 'close_kwargs'), [((), {}), ((True,), {}), ((), dict(revoke=True))])
-def test_revoke_on_close(client_id, client_secret, access_token, mock_box_session, close_args, close_kwargs):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, access_token=access_token, session=mock_box_session)
+@pytest.mark.parametrize(
+    ('close_args', 'close_kwargs'), [((), {}), ((True,), {}), ((), dict(revoke=True))]
+)
+def test_revoke_on_close(
+    client_id, client_secret, access_token, mock_box_session, close_args, close_kwargs
+):
+    auth = OAuth2(
+        client_id=client_id,
+        client_secret=client_secret,
+        access_token=access_token,
+        session=mock_box_session,
+    )
     with patch.object(auth, 'revoke') as mock_revoke:
         auth.close(*close_args, **close_kwargs)
     mock_revoke.assert_called_once_with()
 
 
-def test_auth_object_is_closed_even_if_revoke_fails(client_id, client_secret, access_token, mock_box_session):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, access_token=access_token, session=mock_box_session)
+def test_auth_object_is_closed_even_if_revoke_fails(
+    client_id, client_secret, access_token, mock_box_session
+):
+    auth = OAuth2(
+        client_id=client_id,
+        client_secret=client_secret,
+        access_token=access_token,
+        session=mock_box_session,
+    )
     with patch.object(auth, 'revoke', side_effect=BoxOAuthException(status=500)):
         with pytest.raises(BoxOAuthException):
             auth.close(revoke=True)
     assert auth.closed is True
 
 
-@pytest.mark.parametrize(('close_args', 'close_kwargs'), [((False,), {}), ((), dict(revoke=False))])
-def test_revoke_on_close_can_be_skipped(client_id, client_secret, access_token, mock_box_session, close_args, close_kwargs):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, access_token=access_token, session=mock_box_session)
+@pytest.mark.parametrize(
+    ('close_args', 'close_kwargs'), [((False,), {}), ((), dict(revoke=False))]
+)
+def test_revoke_on_close_can_be_skipped(
+    client_id, client_secret, access_token, mock_box_session, close_args, close_kwargs
+):
+    auth = OAuth2(
+        client_id=client_id,
+        client_secret=client_secret,
+        access_token=access_token,
+        session=mock_box_session,
+    )
     with patch.object(auth, 'revoke') as mock_revoke:
         auth.close(*close_args, **close_kwargs)
     mock_revoke.assert_not_called()
 
 
-@pytest.mark.parametrize(('raise_from_block', 'raise_from_close', 'expected_exception'), [
-    (MyError, None, MyError),
-    (None, BoxOAuthException(status=500), BoxOAuthException),
-    (MyError, BoxOAuthException(status=500), MyError),
-])
+@pytest.mark.parametrize(
+    ('raise_from_block', 'raise_from_close', 'expected_exception'),
+    [
+        (MyError, None, MyError),
+        (None, BoxOAuthException(status=500), BoxOAuthException),
+        (MyError, BoxOAuthException(status=500), MyError),
+    ],
+)
 @pytest.mark.parametrize('close_kwargs', [{}, dict(revoke=False), dict(revoke=True)])
 def test_context_manager_reraises_first_exception_after_close(
-        client_id, client_secret, mock_box_session, close_kwargs, raise_from_block, raise_from_close, expected_exception,
+    client_id,
+    client_secret,
+    mock_box_session,
+    close_kwargs,
+    raise_from_block,
+    raise_from_close,
+    expected_exception,
 ):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
+    auth = OAuth2(
+        client_id=client_id, client_secret=client_secret, session=mock_box_session
+    )
     with patch.object(auth, 'close', side_effect=raise_from_close) as mock_close:
         with pytest.raises(expected_exception):
             with auth.closing(**close_kwargs):
@@ -473,8 +544,12 @@ def test_context_manager_reraises_first_exception_after_close(
 
 
 @pytest.mark.parametrize('close_kwargs', [{}, dict(revoke=False), dict(revoke=True)])
-def test_context_manager_skips_revoke_on_base_exception(client_id, client_secret, mock_box_session, close_kwargs):
-    auth = OAuth2(client_id=client_id, client_secret=client_secret, session=mock_box_session)
+def test_context_manager_skips_revoke_on_base_exception(
+    client_id, client_secret, mock_box_session, close_kwargs
+):
+    auth = OAuth2(
+        client_id=client_id, client_secret=client_secret, session=mock_box_session
+    )
     with patch.object(auth, 'close') as mock_close:
         with pytest.raises(MyBaseException):
             with auth.closing(**close_kwargs):

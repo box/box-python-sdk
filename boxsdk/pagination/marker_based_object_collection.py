@@ -15,16 +15,16 @@ class MarkerBasedObjectCollection(BoxObjectCollection):
     """
 
     def __init__(
-            self,
-            session: 'Session',
-            url: str,
-            limit: Optional[int] = None,
-            fields: Iterator[str] = None,
-            additional_params: Optional[dict] = None,
-            return_full_pages: bool = False,
-            marker: Optional[str] = None,
-            supports_limit_offset_paging: bool = False,
-            use_post: bool = False
+        self,
+        session: 'Session',
+        url: str,
+        limit: Optional[int] = None,
+        fields: Iterator[str] = None,
+        additional_params: Optional[dict] = None,
+        return_full_pages: bool = False,
+        marker: Optional[str] = None,
+        supports_limit_offset_paging: bool = False,
+        use_post: bool = False,
     ):
         """
         :param session:
@@ -59,7 +59,7 @@ class MarkerBasedObjectCollection(BoxObjectCollection):
             fields=fields,
             additional_params=additional_params,
             return_full_pages=return_full_pages,
-            use_post=use_post
+            use_post=use_post,
         )
         self._marker = marker
         self._supports_limit_offset_paging = supports_limit_offset_paging

@@ -15,6 +15,7 @@ class Page(Sequence):
 
     The Page makes available detailed response data for page requests.
     """
+
     _item_entries_key_name = "entries"
 
     def __init__(self, session: 'Session', response_object: dict):

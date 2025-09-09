@@ -6,7 +6,9 @@ from typing import TYPE_CHECKING, Any, Tuple, Optional, Iterable, IO, Union
 from boxsdk.object.group import Group
 from boxsdk.object.item import Item
 from boxsdk.object.user import User
-from boxsdk.pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from boxsdk.pagination.limit_offset_based_object_collection import (
+    LimitOffsetBasedObjectCollection,
+)
 from boxsdk.pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from boxsdk.util.api_call_decorator import api_call
 from boxsdk.util.datetime_formatter import normalize_date_to_rfc3339_format
@@ -32,6 +34,7 @@ class FolderSyncState(TextEnum):
     The value of the ``sync_state`` attribute determines whether the folder
     will be synced by sync clients.
     """
+
     IS_SYNCED = 'synced'
     NOT_SYNCED = 'not_synced'
     PARTIALLY_SYNCED = 'partially_synced'
@@ -39,6 +42,7 @@ class FolderSyncState(TextEnum):
 
 class _CollaborationType(TextEnum):
     """The type of a collaboration"""
+
     USER = 'user'
     GROUP = 'group'
 
@@ -56,7 +60,9 @@ class _Collaborator:
         else:
             raise TypeError('Collaborator must be User, Group, or unicode string')
 
-    def _setup(self, user: User = None, group: Group = None, email_address: str = None) -> None:
+    def _setup(
+        self, user: User = None, group: Group = None, email_address: str = None
+    ) -> None:
         """
         :param user:
             The Box user if applicable
@@ -115,7 +121,9 @@ class Folder(Item):
         )
 
     @api_call
-    def create_upload_session(self, file_size: int, file_name: str, use_upload_session_urls: bool = True) -> 'UploadSession':
+    def create_upload_session(
+        self, file_size: int, file_name: str, use_upload_session_urls: bool = True
+    ) -> 'UploadSession':
         """
         Creates a new chunked upload session for upload a new file.
 
@@ -148,7 +156,10 @@ class Folder(Item):
 
     @api_call
     def get_chunked_uploader(
-            self, file_path: str, file_name: Optional[str] = None, use_upload_session_urls: bool = True
+        self,
+        file_path: str,
+        file_name: Optional[str] = None,
+        use_upload_session_urls: bool = True,
     ) -> 'ChunkedUploader':
         # pylint: disable=consider-using-with
         """
@@ -172,8 +183,12 @@ class Folder(Item):
         content_stream = open(file_path, 'rb')
 
         try:
-            upload_session = self.create_upload_session(total_size, upload_file_name, use_upload_session_urls)
-            return upload_session.get_chunked_uploader_for_stream(content_stream, total_size)
+            upload_session = self.create_upload_session(
+                total_size, upload_file_name, use_upload_session_urls
+            )
+            return upload_session.get_chunked_uploader_for_stream(
+                content_stream, total_size
+            )
         except Exception:
             content_stream.close()
             raise
@@ -189,14 +204,14 @@ class Folder(Item):
 
     @api_call
     def get_items(
-            self,
-            limit: Optional[int] = None,
-            offset: int = 0,
-            marker: Optional[str] = None,
-            use_marker: bool = False,
-            sort: Optional[str] = None,
-            direction: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        offset: int = 0,
+        marker: Optional[str] = None,
+        use_marker: bool = False,
+        sort: Optional[str] = None,
+        direction: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> Iterable[Item]:
         """
         Get the items in a folder.
@@ -251,19 +266,19 @@ class Folder(Item):
 
     @api_call
     def upload_stream(
-            self,
-            file_stream: IO[bytes],
-            file_name: str,
-            file_description: Optional[str] = None,
-            preflight_check: bool = False,
-            preflight_expected_size: int = 0,
-            upload_using_accelerator: bool = False,
-            content_created_at: Union[datetime, str] = None,
-            content_modified_at: Union[datetime, str] = None,
-            additional_attributes: Optional[dict] = None,
-            sha1: Optional[str] = None,
-            etag: Optional[str] = None,
-            stream_file_content: bool = True,
+        self,
+        file_stream: IO[bytes],
+        file_name: str,
+        file_description: Optional[str] = None,
+        preflight_check: bool = False,
+        preflight_expected_size: int = 0,
+        upload_using_accelerator: bool = False,
+        content_created_at: Union[datetime, str] = None,
+        content_modified_at: Union[datetime, str] = None,
+        additional_attributes: Optional[dict] = None,
+        sha1: Optional[str] = None,
+        etag: Optional[str] = None,
+        stream_file_content: bool = True,
     ) -> 'File':
         """
         Upload a file to the folder.
@@ -308,7 +323,9 @@ class Folder(Item):
         accelerator_upload_url = None
         if preflight_check:
             # Preflight check does double duty, returning the accelerator URL if one is available in the response.
-            accelerator_upload_url = self.preflight_check(size=preflight_expected_size, name=file_name)
+            accelerator_upload_url = self.preflight_check(
+                size=preflight_expected_size, name=file_name
+            )
         elif upload_using_accelerator:
             accelerator_upload_url = self._get_accelerator_upload_url_fow_new_uploads()
 
@@ -321,7 +338,9 @@ class Folder(Item):
             'parent': {'id': self._object_id},
             'description': file_description,
             'content_created_at': normalize_date_to_rfc3339_format(content_created_at),
-            'content_modified_at': normalize_date_to_rfc3339_format(content_modified_at),
+            'content_modified_at': normalize_date_to_rfc3339_format(
+                content_modified_at
+            ),
         }
         if additional_attributes:
             attributes.update(additional_attributes)
@@ -339,7 +358,12 @@ class Folder(Item):
         if not headers:
             headers = None
         file_response = self._session.post(
-            url, data=data, files=files, expect_json_response=False, headers=headers, stream_file_content=stream_file_content,
+            url,
+            data=data,
+            files=files,
+            expect_json_response=False,
+            headers=headers,
+            stream_file_content=stream_file_content,
         ).json()
         if 'entries' in file_response:
             file_response = file_response['entries'][0]
@@ -350,19 +374,19 @@ class Folder(Item):
 
     @api_call
     def upload(
-            self,
-            file_path: str = None,
-            file_name: str = None,
-            file_description: Optional[str] = None,
-            preflight_check: bool = False,
-            preflight_expected_size: int = 0,
-            upload_using_accelerator: bool = False,
-            content_created_at: Union[datetime, str] = None,
-            content_modified_at: Union[datetime, str] = None,
-            additional_attributes: Optional[dict] = None,
-            sha1: Optional[str] = None,
-            etag: Optional[str] = None,
-            stream_file_content: bool = True,
+        self,
+        file_path: str = None,
+        file_name: str = None,
+        file_description: Optional[str] = None,
+        preflight_check: bool = False,
+        preflight_expected_size: int = 0,
+        upload_using_accelerator: bool = False,
+        content_created_at: Union[datetime, str] = None,
+        content_modified_at: Union[datetime, str] = None,
+        additional_attributes: Optional[dict] = None,
+        sha1: Optional[str] = None,
+        etag: Optional[str] = None,
+        stream_file_content: bool = True,
     ) -> 'File':
         """
         Upload a file to the folder.
@@ -436,7 +460,7 @@ class Folder(Item):
             'name': name,
             'parent': {
                 'id': self._object_id,
-            }
+            },
         }
         box_response = self._session.post(url, data=json.dumps(data))
         response = box_response.json()
@@ -464,16 +488,16 @@ class Folder(Item):
 
     @api_call
     def create_shared_link(
-            self,
-            *,
-            access: Optional[str] = None,
-            etag: Optional[str] = None,
-            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
-            allow_download: Optional[bool] = None,
-            allow_preview: Optional[bool] = None,
-            password: Optional[str] = None,
-            vanity_name: Optional[str] = None,
-            **kwargs: Any
+        self,
+        *,
+        access: Optional[str] = None,
+        etag: Optional[str] = None,
+        unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
+        allow_download: Optional[bool] = None,
+        allow_preview: Optional[bool] = None,
+        password: Optional[str] = None,
+        vanity_name: Optional[str] = None,
+        **kwargs: Any,
     ) -> 'Folder':
         """
         Baseclass override.
@@ -515,21 +539,21 @@ class Folder(Item):
             allow_download=allow_download,
             allow_preview=allow_preview,
             password=password,
-            vanity_name=vanity_name
+            vanity_name=vanity_name,
         )
 
     @api_call
     def get_shared_link(
-            self,
-            *,
-            access: Optional[str] = None,
-            etag: Optional[str] = None,
-            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
-            allow_download: Optional[bool] = None,
-            allow_preview: Optional[bool] = None,
-            password: Optional[str] = None,
-            vanity_name: Optional[str] = None,
-            **kwargs: Any
+        self,
+        *,
+        access: Optional[str] = None,
+        etag: Optional[str] = None,
+        unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
+        allow_download: Optional[bool] = None,
+        allow_preview: Optional[bool] = None,
+        password: Optional[str] = None,
+        vanity_name: Optional[str] = None,
+        **kwargs: Any,
     ) -> 'str':
         """
         Baseclass override.
@@ -570,16 +594,16 @@ class Folder(Item):
             allow_download=allow_download,
             allow_preview=allow_preview,
             password=password,
-            vanity_name=vanity_name
+            vanity_name=vanity_name,
         )
 
     @api_call
     def add_collaborator(
-            self,
-            collaborator: Union[User, Group, str],
-            role: 'CollaborationRole',
-            notify: bool = False,
-            can_view_path: bool = False
+        self,
+        collaborator: Union[User, Group, str],
+        role: 'CollaborationRole',
+        notify: bool = False,
+        can_view_path: bool = False,
     ) -> 'Collaboration':
         """Add a collaborator to the folder
 
@@ -612,7 +636,9 @@ class Folder(Item):
             body_params['can_view_path'] = True
         data = json.dumps(body_params)
         params = {'notify': notify}
-        box_response = self._session.post(url, expect_json_response=True, data=data, params=params)
+        box_response = self._session.post(
+            url, expect_json_response=True, data=data, params=params
+        )
         collaboration_response = box_response.json()
         return self.translator.translate(
             session=self._session,
@@ -621,10 +647,10 @@ class Folder(Item):
 
     @api_call
     def create_web_link(
-            self,
-            target_url: str,
-            name: Optional[str] = None,
-            description: Optional[str] = None
+        self,
+        target_url: str,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
     ) -> 'WebLink':
         """
         Create a WebLink with a given url.
@@ -639,29 +665,19 @@ class Folder(Item):
             A :class:`WebLink` object.
         """
         url = self._session.get_url('web_links')
-        web_link_attributes = {
-            'url': target_url,
-            'parent': {
-                'id': self.object_id
-            }
-        }
+        web_link_attributes = {'url': target_url, 'parent': {'id': self.object_id}}
         if name is not None:
             web_link_attributes['name'] = name
         if description is not None:
             web_link_attributes['description'] = description
         response = self._session.post(url, data=json.dumps(web_link_attributes)).json()
         return self.translator.translate(
-            session=self._session,
-            response_object=response
+            session=self._session, response_object=response
         )
 
     @api_call
     def delete(
-            self,
-            *,
-            recursive: bool = True,
-            etag: Optional[str] = None,
-            **kwargs
+        self, *, recursive: bool = True, etag: Optional[str] = None, **kwargs
     ) -> bool:
         """Base class override. Delete the folder.
 
@@ -678,11 +694,11 @@ class Folder(Item):
 
     @api_call
     def get_metadata_cascade_policies(
-            self,
-            owner_enterprise: 'Enterprise' = None,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        owner_enterprise: 'Enterprise' = None,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get the metadata cascade policies current applied to the folder.
@@ -716,7 +732,9 @@ class Folder(Item):
         )
 
     @api_call
-    def cascade_metadata(self, metadata_template: 'MetadataTemplate') -> 'MetadataCascadePolicy':
+    def cascade_metadata(
+        self, metadata_template: 'MetadataTemplate'
+    ) -> 'MetadataCascadePolicy':
         """
         Create a metadata cascade policy to apply the metadata instance values on the folder for the given metadata
         template to all files within the folder.
@@ -748,14 +766,8 @@ class Folder(Item):
         url = self._session.get_url('folder_locks')
 
         body = {
-            'folder': {
-                'type': 'folder',
-                'id': self.object_id
-            },
-            'locked_operations': {
-                'move': True,
-                'delete': True
-            }
+            'folder': {'type': 'folder', 'id': self.object_id},
+            'locked_operations': {'move': True, 'delete': True},
         }
 
         response = self._session.post(url, data=json.dumps(body)).json()

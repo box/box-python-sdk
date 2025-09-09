@@ -19,10 +19,11 @@ if TYPE_CHECKING:
 
 
 class TokenScope(TextEnum):
-    """ Scopes used for a downscope token request.
+    """Scopes used for a downscope token request.
 
     See https://developer.box.com/en/guides/authentication/access-tokens/downscope/.
     """
+
     ITEM_READ = 'item_read'
     ITEM_READWRITE = 'item_readwrite'
     ITEM_PREVIEW = 'item_preview'
@@ -33,7 +34,7 @@ class TokenScope(TextEnum):
 
 
 class TokenResponse(BaseAPIJSONObject):
-    """ Represents the response for a token request. """
+    """Represents the response for a token request."""
 
 
 class OAuth2:
@@ -47,16 +48,16 @@ class OAuth2:
     """
 
     def __init__(
-            self,
-            client_id: Optional[str],
-            client_secret: Optional[str],
-            store_tokens: Optional[Callable[[str, str], None]] = None,
-            box_device_id: str = '0',
-            box_device_name: str = '',
-            access_token: Optional[str] = None,
-            refresh_token: Optional[str] = None,
-            session: Optional[Session] = None,
-            refresh_lock: Optional[ContextManager] = None,
+        self,
+        client_id: Optional[str],
+        client_secret: Optional[str],
+        store_tokens: Optional[Callable[[str, str], None]] = None,
+        box_device_id: str = '0',
+        box_device_name: str = '',
+        access_token: Optional[str] = None,
+        refresh_token: Optional[str] = None,
+        session: Optional[Session] = None,
+        refresh_lock: Optional[ContextManager] = None,
     ):
         """
         :param client_id:
@@ -138,9 +139,16 @@ class OAuth2:
             params.append(('redirect_uri', redirect_url))
         # `urlencode()` doesn't work with non-ASCII unicode characters, so
         # encode the parameters as ASCII bytes.
-        params = [(key.encode('utf-8'), value.encode('utf-8')) for (key, value) in params]
+        params = [
+            (key.encode('utf-8'), value.encode('utf-8')) for (key, value) in params
+        ]
         query_string = urlencode(params)
-        return urlunsplit(('', '', self._api_config.OAUTH2_AUTHORIZE_URL, query_string, '')), csrf_token
+        return (
+            urlunsplit(
+                ('', '', self._api_config.OAUTH2_AUTHORIZE_URL, query_string, '')
+            ),
+            csrf_token,
+        )
 
     def authenticate(self, auth_code: Optional[str]) -> Tuple[str, str]:
         """
@@ -194,7 +202,9 @@ class OAuth2:
         """
         return self._access_token, self._refresh_token
 
-    def refresh(self, access_token_to_refresh: Optional[str]) -> Tuple[str, Optional[str]]:
+    def refresh(
+        self, access_token_to_refresh: Optional[str]
+    ) -> Tuple[str, Optional[str]]:
         """
         Refresh the access token and the refresh token and return the access_token, refresh_token tuple. The access
         token and refresh token will be stored by calling the `store_tokens` callback if provided in __init__.
@@ -225,7 +235,7 @@ class OAuth2:
 
     @staticmethod
     def _get_state_csrf_token() -> str:
-        """ Generate a random state CSRF token to be used in the authorization url.
+        """Generate a random state CSRF token to be used in the authorization url.
         Example: box_csrf_token_Iijw9aU31sNdgiQu
 
         :return:
@@ -234,9 +244,13 @@ class OAuth2:
         system_random = random.SystemRandom()
         ascii_alphabet = string.ascii_letters + string.digits
         ascii_len = len(ascii_alphabet)
-        return 'box_csrf_token_' + ''.join(ascii_alphabet[int(system_random.random() * ascii_len)] for _ in range(16))
+        return 'box_csrf_token_' + ''.join(
+            ascii_alphabet[int(system_random.random() * ascii_len)] for _ in range(16)
+        )
 
-    def _store_tokens(self, access_token: Optional[str], refresh_token: Optional[str]) -> None:
+    def _store_tokens(
+        self, access_token: Optional[str], refresh_token: Optional[str]
+    ) -> None:
         self._update_current_tokens(access_token, refresh_token)
         if self._store_tokens_callback is not None:
             self._store_tokens_callback(access_token, refresh_token)
@@ -251,7 +265,9 @@ class OAuth2:
         self._update_current_tokens(*tokens)
         return tokens
 
-    def _update_current_tokens(self, access_token: Optional[str], refresh_token: Optional[str]) -> None:
+    def _update_current_tokens(
+        self, access_token: Optional[str], refresh_token: Optional[str]
+    ) -> None:
         """Store the latest tokens in this object's private attributes.
 
         :param access_token:
@@ -265,10 +281,7 @@ class OAuth2:
         self._access_token, self._refresh_token = access_token, refresh_token
 
     def _execute_token_request(
-            self,
-            data: dict,
-            access_token: Optional[str],
-            expect_refresh_token: bool = True
+        self, data: dict, access_token: Optional[str], expect_refresh_token: bool = True
     ) -> TokenResponse:
         """
         Send the request to acquire or refresh an access token.
@@ -292,7 +305,9 @@ class OAuth2:
                 access_token=access_token,
             )
         except BoxAPIException as box_api_exception:
-            raise self._oauth_exception(box_api_exception.network_response, url) from box_api_exception
+            raise self._oauth_exception(
+                box_api_exception.network_response, url
+            ) from box_api_exception
 
         if not network_response.ok:
             raise self._oauth_exception(network_response, url)
@@ -301,13 +316,17 @@ class OAuth2:
         except ValueError as value_exception:
             raise self._oauth_exception(network_response, url) from value_exception
 
-        if ('access_token' not in token_response) or (expect_refresh_token and 'refresh_token' not in token_response):
+        if ('access_token' not in token_response) or (
+            expect_refresh_token and 'refresh_token' not in token_response
+        ):
             raise self._oauth_exception(network_response, url)
 
         return token_response
 
     @staticmethod
-    def _oauth_exception(network_response: Union['NetworkResponse', 'BoxResponse'], url: str) -> BoxOAuthException:
+    def _oauth_exception(
+        network_response: Union['NetworkResponse', 'BoxResponse'], url: str
+    ) -> BoxOAuthException:
         """
         Create a BoxOAuthException instance to raise. If the error response is JSON, parse it and include the
         code and message in the exception.
@@ -320,19 +339,19 @@ class OAuth2:
         )
         if is_json_response(network_response):
             json_response = network_response.json()
-            exception_kwargs.update(dict(
-                code=json_response.get('code') or json_response.get('error'),
-                message=json_response.get('message') or json_response.get('error_description'),
-            ))
+            exception_kwargs.update(
+                dict(
+                    code=json_response.get('code') or json_response.get('error'),
+                    message=json_response.get('message')
+                    or json_response.get('error_description'),
+                )
+            )
         else:
             exception_kwargs['message'] = network_response.content
         return BoxOAuthException(**exception_kwargs)
 
     def send_token_request(
-            self,
-            data: dict,
-            access_token: Optional[str],
-            expect_refresh_token: bool = True
+        self, data: dict, access_token: Optional[str], expect_refresh_token: bool = True
     ) -> Tuple[str, str]:
         """
         Send the request to acquire or refresh an access token, and store the tokens.
@@ -346,9 +365,13 @@ class OAuth2:
         :return:
             The access token and refresh token.
         """
-        token_response = self._execute_token_request(data, access_token, expect_refresh_token)
+        token_response = self._execute_token_request(
+            data, access_token, expect_refresh_token
+        )
         # pylint:disable=no-member
-        refresh_token = token_response.refresh_token if 'refresh_token' in token_response else None
+        refresh_token = (
+            token_response.refresh_token if 'refresh_token' in token_response else None
+        )
         self._store_tokens(token_response.access_token, refresh_token)
         return self._access_token, self._refresh_token
 
@@ -374,7 +397,9 @@ class OAuth2:
                     access_token=access_token,
                 )
             except BoxAPIException as box_api_exception:
-                raise self._oauth_exception(box_api_exception.network_response, url) from box_api_exception
+                raise self._oauth_exception(
+                    box_api_exception.network_response, url
+                ) from box_api_exception
 
             if not network_response.ok:
                 raise BoxOAuthException(

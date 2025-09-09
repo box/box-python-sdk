@@ -3,7 +3,9 @@ import os
 from typing import TYPE_CHECKING, Optional, Iterable, IO
 
 from .base_object import BaseObject
-from ..pagination.limit_offset_based_object_collection import LimitOffsetBasedObjectCollection
+from ..pagination.limit_offset_based_object_collection import (
+    LimitOffsetBasedObjectCollection,
+)
 from ..pagination.marker_based_object_collection import MarkerBasedObjectCollection
 from ..util.api_call_decorator import api_call
 
@@ -40,7 +42,9 @@ class User(BaseObject):
         )
 
     @api_call
-    def get_email_aliases(self, limit: Optional[int] = None, fields: Iterable[str] = None) -> 'BoxObjectCollection':
+    def get_email_aliases(
+        self, limit: Optional[int] = None, fields: Iterable[str] = None
+    ) -> 'BoxObjectCollection':
         """
         Gets an list of email aliases for a user.
 
@@ -76,10 +80,10 @@ class User(BaseObject):
 
     @api_call
     def transfer_content(
-            self,
-            destination_user: 'User',
-            notify: Optional[bool] = None,
-            fields: Iterable[str] = None
+        self,
+        destination_user: 'User',
+        notify: Optional[bool] = None,
+        fields: Iterable[str] = None,
     ) -> 'Folder':
         """
         Move all of the items owned by a user into a new folder in another user's account.
@@ -131,10 +135,10 @@ class User(BaseObject):
 
     @api_call
     def get_group_memberships(
-            self,
-            limit: Optional[int] = None,
-            offset: Optional[int] = None,
-            fields: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get the entries in the user group membership using limit-offset paging.
@@ -183,10 +187,14 @@ class User(BaseObject):
         """
         with open(image_path, 'rb') as image_stream:
             image_extension = os.path.splitext(image_path)[-1][1:]
-            return self.upload_avatar_stream(image_stream=image_stream, image_extension=image_extension)
+            return self.upload_avatar_stream(
+                image_stream=image_stream, image_extension=image_extension
+            )
 
     @api_call
-    def upload_avatar_stream(self, image_stream: IO[bytes], image_extension: str) -> str:
+    def upload_avatar_stream(
+        self, image_stream: IO[bytes], image_extension: str
+    ) -> str:
         """
         Upload avatar image to user account. Supported formats are JPG, JPEG and PNG.
         Maximum allowed file size is 1MB and resolution 1024x1024 pixels.
@@ -196,7 +204,13 @@ class User(BaseObject):
         :return: URLs to existing user avatars that were updated
         """
         url = self.get_url('avatar')
-        files = {'pic': (f'avatar.{image_extension}', image_stream, f'image/{image_extension}')}
+        files = {
+            'pic': (
+                f'avatar.{image_extension}',
+                image_stream,
+                f'image/{image_extension}',
+            )
+        }
         response = self._session.post(url, files=files)
         return response.json()['pic_urls']
 

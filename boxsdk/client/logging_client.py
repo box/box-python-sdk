@@ -8,6 +8,7 @@ class LoggingClient(Client):
     """
     Box client subclass which logs requests and responses.
     """
+
     def __init__(self, *args: Any, **kwargs: Any):
         setup_logging(None)
         super().__init__(*args, **kwargs)
