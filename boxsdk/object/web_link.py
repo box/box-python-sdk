@@ -13,13 +13,13 @@ class WebLink(BaseItem):
 
     @api_call
     def create_shared_link(
-            self,
-            *,
-            access: Optional[str] = None,
-            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
-            password: Optional[str] = None,
-            vanity_name: Optional[str] = None,
-            **kwargs: Any
+        self,
+        *,
+        access: Optional[str] = None,
+        unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
+        password: Optional[str] = None,
+        vanity_name: Optional[str] = None,
+        **kwargs: Any
     ) -> 'WebLink':
         """
         Baseclass override.
@@ -50,18 +50,18 @@ class WebLink(BaseItem):
             access=access,
             unshared_at=unshared_at,
             password=password,
-            vanity_name=vanity_name
+            vanity_name=vanity_name,
         )
 
     @api_call
     def get_shared_link(
-            self,
-            *,
-            access: Optional[str] = None,
-            unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
-            password: Optional[str] = None,
-            vanity_name: Optional[str] = None,
-            **kwargs: Any
+        self,
+        *,
+        access: Optional[str] = None,
+        unshared_at: Union[datetime, str, None] = SDK_VALUE_NOT_SET,
+        password: Optional[str] = None,
+        vanity_name: Optional[str] = None,
+        **kwargs: Any
     ) -> str:
         """
         Baseclass override.
@@ -90,7 +90,7 @@ class WebLink(BaseItem):
             access=access,
             unshared_at=unshared_at,
             password=password,
-            vanity_name=vanity_name
+            vanity_name=vanity_name,
         )
 
     @api_call

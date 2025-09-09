@@ -11,13 +11,22 @@ def test_get_assignment(test_retention_policy_assignment, mock_box_session):
         'id': test_retention_policy_assignment.object_id,
     }
     retention_policy_assignment = test_retention_policy_assignment.get()
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params=None
+    )
     assert isinstance(retention_policy_assignment, RetentionPolicyAssignment)
-    assert retention_policy_assignment['type'] == test_retention_policy_assignment.object_type
-    assert retention_policy_assignment['id'] == test_retention_policy_assignment.object_id
+    assert (
+        retention_policy_assignment['type']
+        == test_retention_policy_assignment.object_type
+    )
+    assert (
+        retention_policy_assignment['id'] == test_retention_policy_assignment.object_id
+    )
 
 
-def test_get_files_under_retention(test_retention_policy_assignment, test_file, mock_box_session):
+def test_get_files_under_retention(
+    test_retention_policy_assignment, test_file, mock_box_session
+):
     # given:
     test_marker = 'test_marker'
     test_limit = 50
@@ -31,8 +40,7 @@ def test_get_files_under_retention(test_retention_policy_assignment, test_file, 
 
     # when:
     files_under_retention = test_retention_policy_assignment.get_files_under_retention(
-        limit=test_limit,
-        marker=test_marker
+        limit=test_limit, marker=test_marker
     )
     file_under_retention = files_under_retention.next()
 
@@ -46,7 +54,9 @@ def test_get_files_under_retention(test_retention_policy_assignment, test_file, 
     assert file_under_retention.object_id == test_file.object_id
 
 
-def test_get_file_versions_under_retention(test_retention_policy_assignment, test_file_version, mock_box_session):
+def test_get_file_versions_under_retention(
+    test_retention_policy_assignment, test_file_version, mock_box_session
+):
     # given:
     test_marker = 'test_marker'
     test_limit = 50
@@ -59,9 +69,10 @@ def test_get_file_versions_under_retention(test_retention_policy_assignment, tes
     }
 
     # when:
-    file_versions_under_retention = test_retention_policy_assignment.get_file_versions_under_retention(
-        limit=test_limit,
-        marker=test_marker
+    file_versions_under_retention = (
+        test_retention_policy_assignment.get_file_versions_under_retention(
+            limit=test_limit, marker=test_marker
+        )
     )
     file_version_under_retention = file_versions_under_retention.next()
 
@@ -80,6 +91,8 @@ def test_delete_assignment(test_retention_policy_assignment, mock_box_session):
     mock_box_session.delete.return_value.ok = True
 
     is_assignment_deleted = test_retention_policy_assignment.delete()
-    mock_box_session.delete.assert_called_once_with(expected_url, expect_json_response=False, params={}, headers=None)
+    mock_box_session.delete.assert_called_once_with(
+        expected_url, expect_json_response=False, params={}, headers=None
+    )
 
     assert is_assignment_deleted

@@ -5,17 +5,23 @@ from boxsdk.object.storage_policy_assignment import StoragePolicyAssignment
 
 
 def test_get(test_storage_policy, mock_box_session):
-    expected_url = f'{API.BASE_API_URL}/storage_policies/{test_storage_policy.object_id}'
+    expected_url = (
+        f'{API.BASE_API_URL}/storage_policies/{test_storage_policy.object_id}'
+    )
     mock_box_session.get.return_value.json.return_value = {
         'type': test_storage_policy.object_type,
         'id': test_storage_policy.object_id,
     }
     storage_policy = test_storage_policy.get()
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params=None
+    )
     assert isinstance(storage_policy, StoragePolicy)
 
 
-def test_assign_with_same_assignment(test_storage_policy, test_storage_policy_assignment, mock_user, mock_box_session):
+def test_assign_with_same_assignment(
+    test_storage_policy, test_storage_policy_assignment, mock_user, mock_box_session
+):
     expected_url = f'{API.BASE_API_URL}/storage_policy_assignments'
     additional_params = {
         'resolved_for_type': mock_user.object_type,
@@ -44,7 +50,9 @@ def test_assign_with_same_assignment(test_storage_policy, test_storage_policy_as
     assert assignment.storage_policy['id'] == test_storage_policy.object_id
 
 
-def test_assign_with_assigned_enterprise(test_storage_policy, test_storage_policy_assignment, mock_user, mock_box_session):
+def test_assign_with_assigned_enterprise(
+    test_storage_policy, test_storage_policy_assignment, mock_user, mock_box_session
+):
     expected_url = f'{API.BASE_API_URL}/storage_policy_assignments'
     additional_params = {
         'resolved_for_type': mock_user.object_type,
@@ -83,12 +91,14 @@ def test_assign_with_assigned_enterprise(test_storage_policy, test_storage_polic
         'id': test_storage_policy_assignment.object_id,
         'storage_policy': {
             'type': test_storage_policy.object_type,
-            'id': test_storage_policy.object_id
-        }
+            'id': test_storage_policy.object_id,
+        },
     }
     assignment = test_storage_policy.assign(mock_user)
     mock_box_session.get.assert_called_once_with(expected_url, params=additional_params)
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    mock_box_session.post.assert_called_once_with(
+        expected_url, data=json.dumps(expected_data)
+    )
     assert isinstance(assignment, StoragePolicyAssignment)
     assert assignment.type == test_storage_policy_assignment.object_type
     assert assignment.id == test_storage_policy_assignment.object_id
@@ -96,7 +106,9 @@ def test_assign_with_assigned_enterprise(test_storage_policy, test_storage_polic
     assert assignment.storage_policy['id'] == test_storage_policy.object_id
 
 
-def test_assign_with_update(test_storage_policy, test_storage_policy_assignment, mock_user, mock_box_session):
+def test_assign_with_update(
+    test_storage_policy, test_storage_policy_assignment, mock_user, mock_box_session
+):
     expected_url = f'{API.BASE_API_URL}/storage_policy_assignments'
     expected_put_url = f'{API.BASE_API_URL}/storage_policy_assignments/11111'
     additional_params = {
@@ -130,14 +142,13 @@ def test_assign_with_update(test_storage_policy, test_storage_policy_assignment,
     mock_box_session.put.return_value.json.return_value = {
         'type': test_storage_policy_assignment.object_type,
         'id': test_storage_policy_assignment.object_id,
-        'storage_policy': {
-            'type': test_storage_policy.object_type,
-            'id': '42'
-        }
+        'storage_policy': {'type': test_storage_policy.object_type, 'id': '42'},
     }
     assignment = test_storage_policy.assign(mock_user)
     mock_box_session.get.assert_called_once_with(expected_url, params=additional_params)
-    mock_box_session.put.assert_called_once_with(expected_put_url, data=json.dumps(expected_data), headers=None, params=None)
+    mock_box_session.put.assert_called_once_with(
+        expected_put_url, data=json.dumps(expected_data), headers=None, params=None
+    )
     assert isinstance(assignment, StoragePolicyAssignment)
     assert assignment.type == test_storage_policy_assignment.object_type
     assert assignment.id == test_storage_policy_assignment.object_id
@@ -167,6 +178,8 @@ def test_create_assignment(test_storage_policy, mock_user, mock_box_session):
     }
     mock_box_session.post.return_value.json.return_value = mock_assignment
     assignment = test_storage_policy.create_assignment(mock_user)
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    mock_box_session.post.assert_called_once_with(
+        expected_url, data=json.dumps(expected_data)
+    )
     assert assignment.id == mock_assignment['id']
     assert assignment.storage_policy['id'] == mock_assignment['storage_policy']['id']

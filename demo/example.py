@@ -26,10 +26,14 @@ def run_collab_examples(client):
     collab_folder = root_folder.create_subfolder('collab folder')
     try:
         print(f'Folder {collab_folder.get()["name"]} created')
-        collaboration = collab_folder.add_collaborator('someone@example.com', CollaborationRole.VIEWER)
+        collaboration = collab_folder.add_collaborator(
+            'someone@example.com', CollaborationRole.VIEWER
+        )
         print('Created a collaboration')
         try:
-            modified_collaboration = collaboration.update_info(role=CollaborationRole.EDITOR)
+            modified_collaboration = collaboration.update_info(
+                role=CollaborationRole.EDITOR
+            )
             print(f'Modified a collaboration: {modified_collaboration.role}')
         finally:
             collaboration.delete()
@@ -76,10 +80,14 @@ def upload_file(client):
 def upload_accelerator(client):
     root_folder = client.folder(folder_id='0')
     file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file.txt')
-    a_file = root_folder.upload(file_path, file_name='i-am-a-file.txt', upload_using_accelerator=True)
+    a_file = root_folder.upload(
+        file_path, file_name='i-am-a-file.txt', upload_using_accelerator=True
+    )
     try:
         print(f'{a_file.get()["name"]} uploaded via Accelerator: ')
-        file_v2_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file_v2.txt')
+        file_v2_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), 'file_v2.txt'
+        )
         a_file = a_file.update_contents(file_v2_path, upload_using_accelerator=True)
         print(f'{a_file.get()["name"]} updated via Accelerator: ')
     finally:
@@ -104,7 +112,9 @@ def update_file(client):
     file_v1 = root_folder.upload(file_path, file_name='file_v1.txt')
     try:
         # print f'File content after upload: {file_v1.content()}'
-        file_v2_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file_v2.txt')
+        file_v2_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), 'file_v2.txt'
+        )
         file_v2 = file_v1.update_contents(file_v2_path)
         # print f'File content after update: {file_v2.content()}'
     finally:
@@ -215,7 +225,9 @@ def run_groups_example(client):
     except BoxAPIException as ex:
         if ex.status != 403:
             raise
-        print('The authenticated user does not have permissions to manage groups. Skipping the test of this demo.')
+        print(
+            'The authenticated user does not have permissions to manage groups. Skipping the test of this demo.'
+        )
         return
 
     print('New group:', new_group.name, new_group.id)
@@ -233,11 +245,16 @@ def run_groups_example(client):
     print('The id of that membership: ', group_membership.object_id)
 
     group_membership.delete()
-    print('After deleting that membership, the group has a membership of: ', len(list(new_group.membership())))
+    print(
+        'After deleting that membership, the group has a membership of: ',
+        len(list(new_group.membership())),
+    )
 
     new_group.delete()
     groups_after_deleting_demo = client.groups()
-    has_been_deleted = not any(g.name == 'renamed_box_sdk_demo_group' for g in groups_after_deleting_demo)
+    has_been_deleted = not any(
+        g.name == 'renamed_box_sdk_demo_group' for g in groups_after_deleting_demo
+    )
     print('The new group has been deleted: ', has_been_deleted)
 
 

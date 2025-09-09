@@ -1,5 +1,4 @@
-AI
-==
+# AI
 
 AI allows to send an intelligence request to supported large language models and returns an answer based on the provided prompt and items.
 
@@ -12,14 +11,12 @@ AI allows to send an intelligence request to supported large language models and
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-Send AI request
-------------------------
+## Send AI request
 
 Calling the [`client.send_ai_question(items, prompt, mode, ai_agent)`][send-ai-question] method will send an AI request to the supported large language models. The `items` parameter is a list of items to be processed by the LLM, often files. The `prompt` provided by the client to be answered by the LLM. The prompt's length is limited to 10000 characters. The `mode` specifies if this request is for a single or multiple items. If you select `single_item_qa` the items array can have one element only. Selecting `multiple_item_qa` allows you to provide up to 25 items. The `ai_agent` specifies the AI agent which will be used to handle queries.
 
-
-
 <!-- sample post_ai_ask -->
+
 ```python
 items = [{
     "id": "1582915952443",
@@ -33,7 +30,7 @@ ai_agent = {
     }
 }
 answer = client.send_ai_question(
-    items=items, 
+    items=items,
     prompt="What is this file?",
     mode="single_item_qa",
     ai_agent=ai_agent
@@ -46,12 +43,12 @@ It usually takes a few seconds for the file to be indexed and available for the 
 
 [send-ai-question]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.send_ai_question
 
-Send AI text generation request
-------------------------
+## Send AI text generation request
 
 Calling the [`client.send_ai_text_gen(dialogue_history, items, prompt, ai_agent)`][send-ai-text-gen] method will send an AI text generation request to the supported large language models. The `dialogue_history` parameter is history of prompts and answers previously passed to the LLM. This provides additional context to the LLM in generating the response. The `items` parameter is a list of items to be processed by the LLM, often files. The `prompt` provided by the client to be answered by the LLM. The prompt's length is limited to 10000 characters. The `ai_agent` specifies the AI agent which will be used for generating text.
 
 <!-- sample post_ai_text_gen -->
+
 ```python
 items = [{
     "id": "1582915952443",
@@ -85,12 +82,12 @@ print(answer)
 
 [send-ai-text-gen]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.send_ai_text_gen
 
-Get AI agent default configuration
-------------------------
+## Get AI agent default configuration
 
 To get an AI agent default configuration call the [`client.get_ai_agent_default_config(mode, language, model)`][get-ai-agent-default] method. The `mode` parameter filters the agent configuration to be returned. It can be either `ask` or `text_gen`. The `language` parameter specifies the ISO language code to return the agent config for. If the language is not supported, the default agent configuration is returned. The `model` parameter specifies the model for which the default agent configuration should be returned.
 
 <!-- sample get_ai_agent_default -->
+
 ```python
 config = client.get_ai_agent_default_config(
     mode='text_gen',

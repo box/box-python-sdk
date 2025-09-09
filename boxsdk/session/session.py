@@ -34,15 +34,16 @@ class Session:
     """
     Box API session. Provides automatic retry of failed requests.
     """
+
     def __init__(
-            self,
-            network_layer: 'Network' = None,
-            default_headers: Optional['dict'] = None,
-            translator: Translator = None,
-            default_network_request_kwargs: Optional['dict'] = None,
-            api_config: API = None,
-            client_config: Client = None,
-            proxy_config: Optional[Proxy] = None,
+        self,
+        network_layer: 'Network' = None,
+        default_headers: Optional['dict'] = None,
+        translator: Translator = None,
+        default_network_request_kwargs: Optional['dict'] = None,
+        api_config: API = None,
+        client_config: Client = None,
+        proxy_config: Optional[Proxy] = None,
     ):
         """
         :param network_layer:
@@ -203,7 +204,9 @@ class Session:
         kwargs['default_headers']['As-User'] = user.object_id
         return self.__class__(**kwargs)
 
-    def with_shared_link(self, shared_link: str, shared_link_password: str = None) -> 'Session':
+    def with_shared_link(
+        self, shared_link: str, shared_link_password: str = None
+    ) -> 'Session':
         """
         Returns a new session object with default headers set up to make requests using the shared link for auth.
 
@@ -213,10 +216,14 @@ class Session:
             The password for the shared link.
         """
         kwargs = self.get_constructor_kwargs()
-        kwargs['default_headers'].update(get_shared_link_header(shared_link, shared_link_password))
+        kwargs['default_headers'].update(
+            get_shared_link_header(shared_link, shared_link_password)
+        )
         return self.__class__(**kwargs)
 
-    def with_default_network_request_kwargs(self, extra_network_parameters: dict) -> 'Session':
+    def with_default_network_request_kwargs(
+        self, extra_network_parameters: dict
+    ) -> 'Session':
         kwargs = self.get_constructor_kwargs()
         kwargs['default_network_request_kwargs'].update(extra_network_parameters)
         return self.__class__(**kwargs)
@@ -224,7 +231,9 @@ class Session:
     # We updated our retry strategy to use exponential backoff instead of the header returned from the API response.
     # This is something we can remove in latter major bumps.
     # pylint: disable=unused-argument
-    def get_retry_after_time(self, attempt_number: int, retry_after_header: Optional[str]) -> Number:
+    def get_retry_after_time(
+        self, attempt_number: int, retry_after_header: Optional[str]
+    ) -> Number:
         """
         Get the amount of time to wait before retrying the API request, using the attempt number that failed to
         calculate the retry time for the next retry attempt.
@@ -245,12 +254,18 @@ class Session:
                 pass
         min_randomization = 1 - self._retry_randomization_factor
         max_randomization = 1 + self._retry_randomization_factor
-        randomization = (random.uniform(0, 1) * (max_randomization - min_randomization)) + min_randomization
+        randomization = (
+            random.uniform(0, 1) * (max_randomization - min_randomization)
+        ) + min_randomization
         exponential = math.pow(2, attempt_number)
         return exponential * self._retry_base_interval * randomization
 
     @staticmethod
-    def _raise_on_unsuccessful_request(network_response: 'NetworkResponse', request: '_BoxRequest', raised_exception: Exception) -> None:
+    def _raise_on_unsuccessful_request(
+        network_response: 'NetworkResponse',
+        request: '_BoxRequest',
+        raised_exception: Exception,
+    ) -> None:
         """
         Raise an exception if the request was unsuccessful.
 
@@ -271,13 +286,15 @@ class Session:
             raise BoxAPIException(
                 status=network_response.status_code,
                 headers=network_response.headers,
-                code=response_json.get('code', None) or response_json.get('error', None),
-                message=response_json.get('message', None) or response_json.get('error_description', None),
+                code=response_json.get('code', None)
+                or response_json.get('error', None),
+                message=response_json.get('message', None)
+                or response_json.get('error_description', None),
                 request_id=response_json.get('request_id', None),
                 url=request.url,
                 method=request.method,
                 context_info=response_json.get('context_info', None),
-                network_response=network_response
+                network_response=network_response,
             )
 
         if not Session._is_json_response_if_expected(network_response, request):
@@ -291,7 +308,9 @@ class Session:
             )
 
     @staticmethod
-    def _is_json_response_if_expected(network_response: 'NetworkResponse', request: '_BoxRequest') -> bool:
+    def _is_json_response_if_expected(
+        network_response: 'NetworkResponse', request: '_BoxRequest'
+    ) -> bool:
         """
         Validate that the response is json if the request expects json response.
 
@@ -303,13 +322,13 @@ class Session:
         return not request.expect_json_response or is_json_response(network_response)
 
     def _prepare_and_send_request(
-            self,
-            method: str,
-            url: str,
-            headers: dict = None,
-            auto_session_renewal: bool = True,
-            expect_json_response: bool = True,
-            **kwargs: Any
+        self,
+        method: str,
+        url: str,
+        headers: dict = None,
+        auto_session_renewal: bool = True,
+        expect_json_response: bool = True,
+        **kwargs: Any,
     ) -> 'NetworkResponse':
         """
         Prepare a request to be sent to the Box API.
@@ -328,7 +347,9 @@ class Session:
         files = kwargs.get('files')
         kwargs['file_stream_positions'] = None
         if files:
-            kwargs['file_stream_positions'] = {name: file_tuple[1].tell() for name, file_tuple in files.items()}
+            kwargs['file_stream_positions'] = {
+                name: file_tuple[1].tell() for name, file_tuple in files.items()
+            }
         attempt_number = 0
         request_headers = self._get_request_headers()
         request_headers.update(headers or {})
@@ -352,16 +373,27 @@ class Session:
             network_response = None
             if 'EOF occurred in violation of protocol' in str(request_exc):
                 reauthentication_needed = True
-            elif any(text in str(request_exc) for text in [
-                'Connection aborted', 'Connection broken', 'Connection reset'
-            ]):
+            elif any(
+                text in str(request_exc)
+                for text in [
+                    'Connection aborted',
+                    'Connection broken',
+                    'Connection reset',
+                ]
+            ):
                 reauthentication_needed = False
             else:
                 raise
 
         while True:
             retry = self._get_retry_request_callable(
-                network_response, attempt_number, request, skip_retry_codes, reauthentication_needed, **kwargs)
+                network_response,
+                attempt_number,
+                request,
+                skip_retry_codes,
+                reauthentication_needed,
+                **kwargs,
+            )
 
             if retry is None or attempt_number >= API.MAX_RETRY_ATTEMPTS:
                 if network_response is None:
@@ -377,13 +409,13 @@ class Session:
         return network_response
 
     def _get_retry_request_callable(
-            self,
-            network_response: Optional['NetworkResponse'],
-            attempt_number: int,
-            request: '_BoxRequest',
-            skip_retry_codes: Set[int],
-            session_renewal_needed: bool = False,
-            **kwargs: Any
+        self,
+        network_response: Optional['NetworkResponse'],
+        attempt_number: int,
+        request: '_BoxRequest',
+        skip_retry_codes: Set[int],
+        session_renewal_needed: bool = False,
+        **kwargs: Any,
     ) -> Optional[Callable]:
         """
         Get a callable that retries a request for certain types of failure.
@@ -405,7 +437,11 @@ class Session:
         """
         # pylint:disable=unused-argument
         # pylint:disable=line-too-long
-        if network_response is None or (network_response.ok and request.method == 'GET' and not self._is_json_response_if_expected(network_response, request)):
+        if network_response is None or (
+            network_response.ok
+            and request.method == 'GET'
+            and not self._is_json_response_if_expected(network_response, request)
+        ):
             return partial(
                 self._network_layer.retry_after,
                 self.get_retry_after_time(attempt_number, None),
@@ -413,10 +449,16 @@ class Session:
             )
         code = network_response.status_code
 
-        if (code in (202, 429) or code >= 500) and code not in skip_retry_codes and not self._is_server_auth_type(kwargs):
+        if (
+            (code in (202, 429) or code >= 500)
+            and code not in skip_retry_codes
+            and not self._is_server_auth_type(kwargs)
+        ):
             return partial(
                 self._network_layer.retry_after,
-                self.get_retry_after_time(attempt_number, network_response.headers.get('Retry-After', None)),
+                self.get_retry_after_time(
+                    attempt_number, network_response.headers.get('Retry-After', None)
+                ),
                 self._send_request,
             )
         return None
@@ -444,16 +486,22 @@ class Session:
         proxy = {}
         if self._proxy_config.URL is None:
             return None
-        if self._proxy_config.AUTH and {'user', 'password'} <= set(self._proxy_config.AUTH):
+        if self._proxy_config.AUTH and {'user', 'password'} <= set(
+            self._proxy_config.AUTH
+        ):
             host = self._proxy_config.URL
             address = host.split('//')[1]
-            proxy_string = f'http://{self._proxy_config.AUTH.get("user", None)}:' \
-                           f'{self._proxy_config.AUTH.get("password", None)}@{address}'
+            proxy_string = (
+                f'http://{self._proxy_config.AUTH.get("user", None)}:'
+                f'{self._proxy_config.AUTH.get("password", None)}@{address}'
+            )
         elif self._proxy_config.AUTH is None:
             proxy_string = self._proxy_config.URL
         else:
-            raise BoxException("The proxy auth dict you provided does not match pattern "
-                               "{'user': 'example_user', 'password': 'example_password'}")
+            raise BoxException(
+                "The proxy auth dict you provided does not match pattern "
+                "{'user': 'example_user', 'password': 'example_password'}"
+            )
         proxy['http'] = proxy_string
         proxy['https'] = proxy['http']
 
@@ -469,7 +517,10 @@ class Session:
         # Reset stream positions to what they were when the request was made so the same data is sent even if this
         # is a retried attempt.
         files, file_stream_positions, stream_file_content = (
-            kwargs.get('files'), kwargs.pop('file_stream_positions'), kwargs.pop('stream_file_content', True))
+            kwargs.get('files'),
+            kwargs.pop('file_stream_positions'),
+            kwargs.pop('stream_file_content', True),
+        )
         request_kwargs = self._default_network_request_kwargs.copy()
         request_kwargs.update(kwargs)
         proxy_dict = self._prepare_proxy()
@@ -493,7 +544,7 @@ class Session:
             access_token=request.access_token,
             headers=request.headers,
             log_response_content=request.expect_json_response,
-            **request_kwargs
+            **request_kwargs,
         )
 
         return network_response
@@ -530,13 +581,13 @@ class AuthorizedSession(Session):
         return new_access_token
 
     def _get_retry_request_callable(
-            self,
-            network_response: Optional['NetworkResponse'],
-            attempt_number: int,
-            request: '_BoxRequest',
-            skip_retry_codes: Set[int],
-            session_renewal_needed: bool = False,
-            **kwargs: Any
+        self,
+        network_response: Optional['NetworkResponse'],
+        attempt_number: int,
+        request: '_BoxRequest',
+        skip_retry_codes: Set[int],
+        session_renewal_needed: bool = False,
+        **kwargs: Any,
     ) -> Callable:
         """
         Get a callable that retries a request for certain types of failure.
@@ -565,7 +616,7 @@ class AuthorizedSession(Session):
             request,
             skip_retry_codes,
             session_renewal_needed,
-            **kwargs
+            **kwargs,
         )
 
     def _send_request(self, request: '_BoxRequest', **kwargs: Any) -> 'NetworkResponse':

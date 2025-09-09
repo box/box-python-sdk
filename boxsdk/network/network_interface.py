@@ -8,7 +8,9 @@ class Network(ABC):
     """
 
     @abstractmethod
-    def request(self, method: str, url: str, access_token: str, **kwargs: Any) -> 'NetworkResponse':
+    def request(
+        self, method: str, url: str, access_token: str, **kwargs: Any
+    ) -> 'NetworkResponse':
         """
         Make a network request to the given url with the given method.
 
@@ -22,7 +24,9 @@ class Network(ABC):
         raise NotImplementedError  # pragma: no cover
 
     @abstractmethod
-    def retry_after(self, delay: float, request_method: Callable, *args: Any, **kwargs: Any) -> 'NetworkResponse':
+    def retry_after(
+        self, delay: float, request_method: Callable, *args: Any, **kwargs: Any
+    ) -> 'NetworkResponse':
         """
         Make a network request after a given delay.
 

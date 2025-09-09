@@ -7,6 +7,7 @@ class SignTemplate(BaseObject):
     """
     Represents a Sign Template used by Box Sign
     """
+
     _item_type = 'sign-template'
 
     def get_url(self, *args: Any) -> str:

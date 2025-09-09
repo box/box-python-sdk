@@ -8,7 +8,11 @@ from boxsdk.exception import BoxAPIException
 
 
 def test_upload_then_delete(box_client, test_file_path, test_file_content, file_name):
-    with patch('boxsdk.object.folder.open', streamable_mock_open(read_data=test_file_content), create=True):
+    with patch(
+        'boxsdk.object.folder.open',
+        streamable_mock_open(read_data=test_file_content),
+        create=True,
+    ):
         file_object = box_client.folder('0').upload(test_file_path, file_name)
     assert file_object.delete()
     folder_items = box_client.folder('0').get_items(1)

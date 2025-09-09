@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 
 class ClassificationType(TextEnum):
     """An enum of possible classification types"""
+
     PUBLIC = 'Public'
     INTERNAL = 'Internal'
     CONFIDENTIAL = 'Confidential'
@@ -30,7 +31,9 @@ class Item(BaseItem):
 
     _classification_template_key = 'securityClassification-6VMVochwUWo'
 
-    def _get_accelerator_upload_url(self, file_id: Optional[str] = None) -> Optional[str]:
+    def _get_accelerator_upload_url(
+        self, file_id: Optional[str] = None
+    ) -> Optional[str]:
         """
         Make an API call to get the Accelerator upload url for either upload a new file or updating an existing file.
 
@@ -53,10 +56,7 @@ class Item(BaseItem):
             return None
 
     def _preflight_check(
-            self, size: int,
-            name: str = None,
-            file_id: str = None,
-            parent_id: str = None
+        self, size: int, name: str = None, file_id: str = None, parent_id: str = None
     ) -> Optional[str]:
         """
         Make an API call to check if certain file can be uploaded to Box or not.
@@ -96,7 +96,9 @@ class Item(BaseItem):
         return response_json.get('upload_url', None)
 
     @api_call
-    def update_info(self, *, data: dict, etag: Optional[str] = None, **kwargs: Any) -> 'Item':
+    def update_info(
+        self, *, data: dict, etag: Optional[str] = None, **kwargs: Any
+    ) -> 'Item':
         """
         Baseclass override.
         :param data:
@@ -120,7 +122,9 @@ class Item(BaseItem):
         return super().update_info(data=data, headers=headers, **kwargs)
 
     @api_call
-    def get(self, *, fields: Iterable[str] = None, etag: Optional[str] = None, **kwargs) -> 'Item':
+    def get(
+        self, *, fields: Iterable[str] = None, etag: Optional[str] = None, **kwargs
+    ) -> 'Item':
         """
         Base class override.
 
@@ -154,7 +158,9 @@ class Item(BaseItem):
         return super().remove_shared_link(etag=etag)
 
     @api_call
-    def delete(self, *, params: dict = None, etag: Optional[str] = None, **kwargs) -> bool:
+    def delete(
+        self, *, params: dict = None, etag: Optional[str] = None, **kwargs
+    ) -> bool:
         """Delete the item.
 
         :param params:
@@ -222,11 +228,7 @@ class Item(BaseItem):
         """
         self.validate_item_id(self._object_id)
         url = self.get_url('watermark')
-        body_attributes = {
-            'watermark': {
-                'imprint': 'default'
-            }
-        }
+        body_attributes = {'watermark': {'imprint': 'default'}}
         box_response = self._session.put(url, data=json.dumps(body_attributes))
         response = box_response.json()
         return self.translator.get('watermark')(response['watermark'])
@@ -246,12 +248,12 @@ class Item(BaseItem):
 
     @api_call
     def collaborate(
-            self,
-            accessible_by: Union['User', 'Group'],
-            role: str,
-            can_view_path: Optional[bool] = None,
-            notify: Optional[bool] = None,
-            fields: Iterable[str] = None
+        self,
+        accessible_by: Union['User', 'Group'],
+        role: str,
+        can_view_path: Optional[bool] = None,
+        notify: Optional[bool] = None,
+        fields: Iterable[str] = None,
     ) -> 'Collaboration':
         """Collaborate user or group onto a Box item.
 
@@ -297,12 +299,12 @@ class Item(BaseItem):
 
     @api_call
     def collaborate_with_login(
-            self,
-            login: str,
-            role: str,
-            can_view_path: Optional[bool] = None,
-            notify: Optional[bool] = None,
-            fields: Iterable[str] = None
+        self,
+        login: str,
+        role: str,
+        can_view_path: Optional[bool] = None,
+        notify: Optional[bool] = None,
+        fields: Iterable[str] = None,
     ) -> 'Collaboration':
         """Collaborate user onto a Box item with the user login.
 
@@ -347,10 +349,10 @@ class Item(BaseItem):
 
     @api_call
     def get_collaborations(
-            self,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get the entries in the collaboration.
@@ -387,8 +389,7 @@ class Item(BaseItem):
             'Box__Security__Classification__Key': classification,
         }
         metadata_classification = self.metadata(
-            scope='enterprise',
-            template=self._classification_template_key
+            scope='enterprise', template=self._classification_template_key
         ).create(classification_metadata)
         return metadata_classification['Box__Security__Classification__Key']
 
@@ -401,7 +402,9 @@ class Item(BaseItem):
         :return:
             The classification updated on the :class:`File` or :class:`Folder.
         """
-        classification_metadata = self.metadata('enterprise', self._classification_template_key)
+        classification_metadata = self.metadata(
+            'enterprise', self._classification_template_key
+        )
         updates = classification_metadata.start_update()
         updates.add('/Box__Security__Classification__Key', classification)
         metadata_classification = classification_metadata.update(updates)
@@ -421,8 +424,7 @@ class Item(BaseItem):
             'Box__Security__Classification__Key': classification,
         }
         return self.metadata(
-            scope='enterprise',
-            template=self._classification_template_key
+            scope='enterprise', template=self._classification_template_key
         ).set(metadata=classification_metadata)['Box__Security__Classification__Key']
 
     def get_classification(self) -> Optional[str]:
@@ -433,7 +435,9 @@ class Item(BaseItem):
             The classification on the :class:`File` or :class:`Folder.
         """
         try:
-            classification = self.metadata('enterprise', self._classification_template_key).get()
+            classification = self.metadata(
+                'enterprise', self._classification_template_key
+            ).get()
         except BoxAPIException as err:
             if err.status == 404 and err.code == "instance_not_found":
                 return None

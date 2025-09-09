@@ -1,5 +1,4 @@
-Authentication
-==============
+# Authentication
 
 The Box API uses OAuth2 for authentication, which can be difficult to implement.
 The SDK makes it easier by providing classes that handle obtaining tokens and
@@ -27,8 +26,7 @@ overview of how the Box API handles authentication.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-Ways to Authenticate
---------------------
+## Ways to Authenticate
 
 ### Developer Token
 
@@ -76,6 +74,7 @@ To create a [`Client`][client_class] non-interactively with a developer token, c
 object with the `access_token` set to the developer token and construct the client with that.
 
 <!-- sample x_auth init_with_dev_token -->
+
 ```python
 from boxsdk import Client, OAuth2
 
@@ -97,14 +96,15 @@ print(f'My user ID is {me.id}')
 ### Server Auth with JWT
 
 Authenticating with a JWT requires some extra dependencies. To get them, simply
+
 ```
 pip install "boxsdk[jwt]"
 ```
 
 Server auth allows your application to authenticate itself with the Box API
-for a given enterprise.  By default, your application has a
+for a given enterprise. By default, your application has a
 [Service Account](https://developer.box.com/en/guides/authentication/user-types/app-users/)
-that represents it and can perform API calls.  The Service Account is separate
+that represents it and can perform API calls. The Service Account is separate
 from the Box accounts of the application developer and the enterprise admin of
 any enterprise that has authorized the app — files stored in that account are
 not accessible in any other account by default, and vice versa.
@@ -115,6 +115,7 @@ to configure your SDK instance and create a client to make calls as the
 Service Account by calling the appropriate static [`JWTAuth`][jwt_auth_class] method:
 
 <!-- sample x_auth init_with_jwt_enterprise -->
+
 ```python
 from boxsdk import JWTAuth, Client
 
@@ -128,6 +129,7 @@ Otherwise, you'll need to provide the necessary configuration fields directly
 to the [`JWTAuth`][jwt_auth_class] constructor:
 
 <!-- sample x_auth init_with_jwt_enterprise_with_config -->
+
 ```python
 from boxsdk import JWTAuth, Client
 
@@ -149,16 +151,17 @@ service_account_client = Client(auth)
 App auth applications also often have associated App Users, which are
 [created and managed directly by the application](https://developer.box.com/en/guides/authentication/user-types/app-users/)
 — they do not have normal login credentials, and can only be accessed through
-the Box API by the application that created them.  You may authenticate as the
+the Box API by the application that created them. You may authenticate as the
 Service Account to provision and manage users, or as an individual app user to
-make calls as that user.  See the [API documentation](https://developer.box.com/)
+make calls as that user. See the [API documentation](https://developer.box.com/)
 for detailed instructions on how to use app auth.
 
 Clients for making calls as an App User can be created with the same [`JWTAuth`][jwt_auth_class]
-constructor as in the above examples, similarly to creating a Service Account client.  Simply pass the
+constructor as in the above examples, similarly to creating a Service Account client. Simply pass the
 [`User`][user_class] object for the app user instead of an `enterprise_id` when constructing the auth instance:
 
 <!-- sample x_auth init_with_jwt_with_user_id -->
+
 ```python
 app_user = service_account_client.user(user_id='APP_USER_ID')
 
@@ -177,7 +180,6 @@ app_user_client = Client(app_user_auth)
 
 [jwt_auth_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.auth.html#boxsdk.auth.jwt_auth.JWTAuth
 [user_class]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.user.User
-
 
 ### Client Credentials Grant
 
@@ -201,13 +203,14 @@ Obtained token is valid for specified amount of time, it will be refreshed autom
 
 #### Obtaining Service Account token
 
-The [Service Account](https://developer.box.com/guides/getting-started/user-types/service-account//) 
+The [Service Account](https://developer.box.com/guides/getting-started/user-types/service-account//)
 is separate from the Box accounts of the application developer and the
 enterprise admin of any enterprise that has authorized the app — files stored in that account
 are not accessible in any other account by default, and vice versa.
 To obtain service account you will have to provide enterprise ID with client id and secret:
 
 <!-- sample x_auth with_client_credentials -->
+
 ```python
 auth = CCGAuth(
   client_id="YOUR_CLIENT_ID",
@@ -230,16 +233,16 @@ auth = CCGAuth(
   user="YOUR_USER_ID"
 )
 ```
+
 In order to enable obtaining user token you have to go to your application configuration that can be found
 [here](https://app.box.com/developers/console). In`Configuration` tab, in section `Advanced Features`
 select `Generate user access tokens`. Do not forget to re-authorize application if it was already authorized.
-
 
 ### Traditional 3-Legged OAuth2
 
 If your application needs to integrate with existing Box users who will provide
 their login credentials to grant your application access to their account, you
-will need to go through the standard OAuth2 login flow.  A detailed guide for
+will need to go through the standard OAuth2 login flow. A detailed guide for
 this process is available in the
 [Authentication with OAuth API documentation](https://developer.box.com/en/guides/authentication/oauth2/).
 
@@ -260,6 +263,7 @@ The first step in the process is to redirect the user to the Box Authorize URL, 
 your application's redirect URL.
 
 <!-- sample get_authorize -->
+
 ```python
 from boxsdk import OAuth2
 
@@ -282,13 +286,14 @@ The SDK will keep the tokens in memory for the duration of the Python script run
 #### Authenticate (Get Token Pair)
 
 If you navigate the user to the auth_url, the user will be redirected to
-`https://YOUR_REDIRECT_URL?code=YOUR_AUTH_CODE&state=CSRF_TOKEN` after they log in to Box.  After getting the auth code,
+`https://YOUR_REDIRECT_URL?code=YOUR_AUTH_CODE&state=CSRF_TOKEN` after they log in to Box. After getting the auth code,
 you will be able to exchange it for an access token and refresh token.
 
 The SDK handles all the work for you; all you need to do is call [`oauth.authenticate(auth_code)`][authenticate] with
 the auth code pulled from the query parameters of the incoming URL:
 
 <!-- sample post_oauth2_token -->
+
 ```python
 from boxsdk import Client
 
@@ -309,6 +314,7 @@ You can also instantiate a client given the access and refresh token. You first 
 oauth object you then pass it into your [Client][client_class] object to instantiate your client. Finally, you can begin making calls with your client.
 
 <!-- sample x_auth init_with_access_and_refresh_token -->
+
 ```python
 from boxsdk import Client, OAuth2
 
@@ -336,19 +342,19 @@ To use the primary or secondary access token generated in the Developer Console,
 simply create a [`Client`][client_class] with that token:
 
 <!-- sample x_auth init_with_app_token -->
+
 ```python
 from boxsdk import Client, OAuth2
 
 auth = OAuth2(
-  client_id='YOUR_CLIENT_ID', 
-  client_secret='', 
+  client_id='YOUR_CLIENT_ID',
+  client_secret='',
   access_token='APP_ACCESS_TOKEN_GOES_HERE'
 )
 client = Client(auth)
 ```
 
-As-User
--------
+## As-User
 
 The As-User header is used by enterprise admins to make API calls on behalf of
 their enterprise's users. This requires the API request to pass an
@@ -360,10 +366,11 @@ access token belonging to an admin-level user or Service Account with appropriat
 privileges to make As-User calls.
 
 Calling the [`client.as_user(user)`][as_user] method with the [`User`][user_class] creates a new client to impersonate
-the provided user.  All calls made with the new client will be made in context of the impersonated user, leaving the
+the provided user. All calls made with the new client will be made in context of the impersonated user, leaving the
 original client unmodified.
 
 <!-- sample x_auth init_with_as_user_header -->
+
 ```python
 user_to_impersonate = client.user(user_id='USER_ID_GOES_HERE')
 user_client = client.as_user(user_to_impersonate)
@@ -371,12 +378,11 @@ user_client = client.as_user(user_to_impersonate)
 
 [as_user]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.object.html#boxsdk.object.cloneable.Cloneable.as_user
 
-Downscoping token
---------------
+## Downscoping token
 
 You can downscope a client's access token for one with a lower scope, in order
 to restrict the permissions for a child client or to pass to a less secure
-location (e.g. a browser-based app).  This is useful if you want to use the
+location (e.g. a browser-based app). This is useful if you want to use the
 [Box UI Elements](https://developer.box.com/en/guides/embed/ui-elements/), since they generally
 do not need full read/write permissions to run.
 
@@ -387,6 +393,7 @@ scope, restricted to a single file, suitable for the
 This method returns a [`TokenResponse`][token_response] object with the downscoped token information.
 
 <!-- sample post_oauth2_token downscope_token -->
+
 ```python
 target_file = client.file(file_id='FILE_ID_HERE')
 token_info = client.downscope_token(['item_preview'], target_file)
@@ -398,18 +405,19 @@ downscoped_client = Client(
   )
 )
 ```
+
 But bear in mind that there is no way of refreshing this token, and you will need to add you own logic to do that.
 
 [downscope_token]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.client.html#boxsdk.client.client.Client.downscope_token
 [token_response]: https://box-python-sdk.readthedocs.io/en/latest/boxsdk.auth.html#boxsdk.auth.oauth2.TokenResponse
 
-Revoking Tokens
----------------
+## Revoking Tokens
 
 To revoke the tokens contained in an [`OAuth2`][oauth2_class] instance, removing the ability to call the Box API,
 call [`oauth.revoke()`][revoke].
 
 <!-- sample post_oauth2_revoke -->
+
 ```python
 oauth.revoke()
 ```

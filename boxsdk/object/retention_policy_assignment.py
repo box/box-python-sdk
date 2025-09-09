@@ -7,13 +7,12 @@ from ..util.api_call_decorator import api_call
 
 class RetentionPolicyAssignment(BaseObject):
     """Represents a Box retention policy assignment."""
+
     _item_type = 'retention_policy_assignment'
 
     @api_call
     def get_files_under_retention(
-            self,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None
+        self, limit: Optional[int] = None, marker: Optional[str] = None
     ) -> 'MarkerBasedObjectCollection':
         """
         Retrieves all files under retention for a retention policy assignment
@@ -26,14 +25,12 @@ class RetentionPolicyAssignment(BaseObject):
             self.session,
             self.get_url('files_under_retention'),
             limit=limit,
-            marker=marker
+            marker=marker,
         )
 
     @api_call
     def get_file_versions_under_retention(
-            self,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None
+        self, limit: Optional[int] = None, marker: Optional[str] = None
     ) -> 'MarkerBasedObjectCollection':
         """
         Retrieves all file versions under retention for a retention policy assignment
@@ -46,5 +43,5 @@ class RetentionPolicyAssignment(BaseObject):
             self.session,
             self.get_url('file_versions_under_retention'),
             limit=limit,
-            marker=marker
+            marker=marker,
         )

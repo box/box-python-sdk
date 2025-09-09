@@ -22,14 +22,24 @@ class OAuth2Behavior:
         self._auth_request = {}
 
     def add_application(self, client_id, client_secret, user_ids):
-        users = self._db_session.query(UserModel).filter(UserModel.user_id.in_(user_ids)).all()
-        app = ApplicationModel(client_id=client_id, client_secret=client_secret, users=users)
+        users = (
+            self._db_session.query(UserModel)
+            .filter(UserModel.user_id.in_(user_ids))
+            .all()
+        )
+        app = ApplicationModel(
+            client_id=client_id, client_secret=client_secret, users=users
+        )
         self._db_session.add(app)
         self._db_session.commit()
 
     def _get_application_by_id(self, client_id):
         try:
-            return self._db_session.query(ApplicationModel).filter_by(client_id=client_id).one()
+            return (
+                self._db_session.query(ApplicationModel)
+                .filter_by(client_id=client_id)
+                .one()
+            )
         except NoResultFound:
             abort(400, f'Invalid client id: {client_id}')
 
@@ -60,23 +70,36 @@ class OAuth2Behavior:
             owned_by_id = user.id
         app = self._get_application_by_id(client_id)
         access_token, refresh_token = uuid4().hex, uuid4().hex
-        access_token_valid_until = datetime.utcnow() + timedelta(seconds=self.ACCESS_TOKEN_DURATION_SECONDS)
-        refresh_token_valid_until = datetime.utcnow() + timedelta(days=self.REFRESH_TOKEN_DURATION_DAYS)
-        self._db_session.add(TokenModel(
-            token=access_token,
-            expires_at=access_token_valid_until,
-            authorized_application_id=app.id,
-            owned_by_id=owned_by_id,
-            token_type='access'
-        ))
-        self._db_session.add(TokenModel(
-            token=refresh_token,
-            expires_at=refresh_token_valid_until,
-            authorized_application_id=app.id,
-            owned_by_id=owned_by_id,
-            token_type='refresh'
-        ))
-        return access_token, access_token_valid_until, refresh_token, refresh_token_valid_until
+        access_token_valid_until = datetime.utcnow() + timedelta(
+            seconds=self.ACCESS_TOKEN_DURATION_SECONDS
+        )
+        refresh_token_valid_until = datetime.utcnow() + timedelta(
+            days=self.REFRESH_TOKEN_DURATION_DAYS
+        )
+        self._db_session.add(
+            TokenModel(
+                token=access_token,
+                expires_at=access_token_valid_until,
+                authorized_application_id=app.id,
+                owned_by_id=owned_by_id,
+                token_type='access',
+            )
+        )
+        self._db_session.add(
+            TokenModel(
+                token=refresh_token,
+                expires_at=refresh_token_valid_until,
+                authorized_application_id=app.id,
+                owned_by_id=owned_by_id,
+                token_type='refresh',
+            )
+        )
+        return (
+            access_token,
+            access_token_valid_until,
+            refresh_token,
+            refresh_token_valid_until,
+        )
 
     def oauth2_authorize(self):
         """
@@ -94,7 +117,10 @@ class OAuth2Behavior:
             'redirect_uri': redirect_uri,
             'state': state,
         }
-        return {'user_login': user_login, 'action': '{}://{}{}'.format(*request.urlparts[:3])}
+        return {
+            'user_login': user_login,
+            'action': '{}://{}{}'.format(*request.urlparts[:3]),
+        }
 
     def oauth2_finish_loop(self):
         user_login = request.forms.get('login')
@@ -114,7 +140,9 @@ class OAuth2Behavior:
         Either exchanges an auth code for an access/refresh token pair, or refreshes a token.
         """
         grant_type = request.forms.get('grant_type')
-        client_id, client_secret = request.forms.get('client_id'), request.forms.get('client_secret')
+        client_id, client_secret = request.forms.get('client_id'), request.forms.get(
+            'client_secret'
+        )
         app = self._get_application_by_id(client_id)
         if client_secret != app.client_secret:
             abort(400, f'Invalid client secret: {client_secret}')
@@ -123,10 +151,15 @@ class OAuth2Behavior:
             code = request.forms.get('code')
             if self._auth_request is None:
                 abort(400, f'Invalid code: {code}')
-            access_token, refresh_token = self._auth_request['access_token'], self._auth_request['refresh_token']
+            access_token, refresh_token = (
+                self._auth_request['access_token'],
+                self._auth_request['refresh_token'],
+            )
         elif grant_type == 'refresh_token':
             refresh_token = request.forms.get('refresh_token')
-            refresh_token_record = get_token_record_by_token(self._db_session, refresh_token)
+            refresh_token_record = get_token_record_by_token(
+                self._db_session, refresh_token
+            )
             if refresh_token_record.token_type == 'refresh':
                 if datetime.utcnow() > refresh_token_record.expires_at:
                     abort(400, f'Token expired: {refresh_token}')
@@ -139,11 +172,13 @@ class OAuth2Behavior:
         else:
             abort(400, f'Invalid grant type: {grant_type}')
 
-        return json.dumps({
-            'access_token': access_token,
-            'refresh_token': refresh_token,
-            'expires_in': self.ACCESS_TOKEN_DURATION_SECONDS,
-        })
+        return json.dumps(
+            {
+                'access_token': access_token,
+                'refresh_token': refresh_token,
+                'expires_in': self.ACCESS_TOKEN_DURATION_SECONDS,
+            }
+        )
 
     def expire_token(self, token):
         token_record = get_token_record_by_token(self._db_session, token)

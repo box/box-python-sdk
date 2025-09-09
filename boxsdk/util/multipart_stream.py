@@ -9,6 +9,7 @@ class MultipartStream(MultipartEncoder):
     is encoded before files. This allows a server to process information in the data before
     receiving the file bytes.
     """
+
     def __init__(self, data, files):
         fields = OrderedDict()
         for k in data:

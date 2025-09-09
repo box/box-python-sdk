@@ -22,9 +22,9 @@ def delete_group_response():
 
 
 def test_delete_group_return_the_correct_response(
-        mock_group,
-        mock_box_session,
-        delete_group_response,
+    mock_group,
+    mock_box_session,
+    delete_group_response,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.delete.return_value = delete_group_response
@@ -33,49 +33,67 @@ def test_delete_group_return_the_correct_response(
     # pylint:disable=protected-access
     expected_url = mock_group.get_url()
     # pylint:enable=protected-access
-    mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
+    mock_box_session.delete.assert_called_once_with(
+        expected_url, params={}, expect_json_response=False, headers=None
+    )
 
     assert response is True
 
 
 @pytest.mark.parametrize('role', ['member', 'admin'])
-def test_add_member(test_group, mock_box_session, mock_add_member_response, mock_user, role):
+def test_add_member(
+    test_group, mock_box_session, mock_add_member_response, mock_user, role
+):
     expected_url = f'{API.BASE_API_URL}/group_memberships'
     mock_box_session.post.return_value = mock_add_member_response
-    new_group_membership = test_group.add_member(mock_user, role, configurable_permissions={'can_run_reports': True})
-    data = json.dumps({
-        'user': {'id': mock_user.object_id},
-        'group': {'id': test_group.object_id},
-        'role': role,
-        'configurable_permissions': {'can_run_reports': True}
-    })
+    new_group_membership = test_group.add_member(
+        mock_user, role, configurable_permissions={'can_run_reports': True}
+    )
+    data = json.dumps(
+        {
+            'user': {'id': mock_user.object_id},
+            'group': {'id': test_group.object_id},
+            'role': role,
+            'configurable_permissions': {'can_run_reports': True},
+        }
+    )
     mock_box_session.post.assert_called_once_with(expected_url, data=data)
     assert isinstance(new_group_membership, GroupMembership)
 
 
-def test_add_member_default_permission(test_group, mock_box_session, mock_add_member_response, mock_user):
+def test_add_member_default_permission(
+    test_group, mock_box_session, mock_add_member_response, mock_user
+):
     expected_url = f'{API.BASE_API_URL}/group_memberships'
     mock_box_session.post.return_value = mock_add_member_response
     new_group_membership = test_group.add_member(mock_user, 'member')
-    data = json.dumps({
-        'user': {'id': mock_user.object_id},
-        'group': {'id': test_group.object_id},
-        'role': 'member',
-    })
+    data = json.dumps(
+        {
+            'user': {'id': mock_user.object_id},
+            'group': {'id': test_group.object_id},
+            'role': 'member',
+        }
+    )
     mock_box_session.post.assert_called_once_with(expected_url, data=data)
     assert isinstance(new_group_membership, GroupMembership)
 
 
-def test_add_member_none_permission(test_group, mock_box_session, mock_add_member_response, mock_user):
+def test_add_member_none_permission(
+    test_group, mock_box_session, mock_add_member_response, mock_user
+):
     expected_url = f'{API.BASE_API_URL}/group_memberships'
     mock_box_session.post.return_value = mock_add_member_response
-    new_group_membership = test_group.add_member(mock_user, 'member', configurable_permissions=None)
-    data = json.dumps({
-        'user': {'id': mock_user.object_id},
-        'group': {'id': test_group.object_id},
-        'role': 'member',
-        'configurable_permissions': None
-    })
+    new_group_membership = test_group.add_member(
+        mock_user, 'member', configurable_permissions=None
+    )
+    data = json.dumps(
+        {
+            'user': {'id': mock_user.object_id},
+            'group': {'id': test_group.object_id},
+            'role': 'member',
+            'configurable_permissions': None,
+        }
+    )
     mock_box_session.post.assert_called_once_with(expected_url, data=data)
     assert isinstance(new_group_membership, GroupMembership)
 
@@ -101,6 +119,7 @@ def mock_membership_responses(mock_membership_dict_stream):
     The generator generates a sequence of 'group membership' mock_box_responses each containing page_size
     items, until 'total' entries have been returned
     """
+
     # pylint:disable=redefined-outer-name
     def number_entries_per_response(total, page_size, hidden_in_batch):
         if not hidden_in_batch:
@@ -114,7 +133,9 @@ def mock_membership_responses(mock_membership_dict_stream):
 
     def membership_responses(total, page_size, hidden_in_batch=None):
         offset = 0
-        for number_entries in number_entries_per_response(total, page_size, hidden_in_batch):
+        for number_entries in number_entries_per_response(
+            total, page_size, hidden_in_batch
+        ):
             entries = take(mock_membership_dict_stream, number_entries)
 
             mock_box_response = Mock(BoxResponse)
@@ -134,14 +155,19 @@ def mock_membership_responses(mock_membership_dict_stream):
     return membership_responses
 
 
-@pytest.mark.parametrize('total, page_size', [
-    (0, 6),
-    (5, 6),
-    (6, 6),
-    (5, 4),
-    (9, 4),
-])
-def test_get_memberships(test_group, mock_box_session, mock_membership_responses, total, page_size):
+@pytest.mark.parametrize(
+    'total, page_size',
+    [
+        (0, 6),
+        (5, 6),
+        (6, 6),
+        (5, 4),
+        (9, 4),
+    ],
+)
+def test_get_memberships(
+    test_group, mock_box_session, mock_membership_responses, total, page_size
+):
     # pylint:disable=redefined-outer-name
     # Each call the 'get' (the GET next page call) will return the next response
     mock_box_session.get.side_effect = mock_membership_responses(total, page_size)
@@ -157,13 +183,18 @@ def test_get_memberships(test_group, mock_box_session, mock_membership_responses
     assert count == total
 
 
-@pytest.mark.parametrize('hidden_in_batch', [
-    (1, 0, 0),
-    (0, 0, 1),
-    (10, 10, 9),
-    (10, 10, 10),
-])
-def test_get_memberships_with_hidden_results(test_group, mock_box_session, mock_membership_responses, hidden_in_batch):
+@pytest.mark.parametrize(
+    'hidden_in_batch',
+    [
+        (1, 0, 0),
+        (0, 0, 1),
+        (10, 10, 9),
+        (10, 10, 10),
+    ],
+)
+def test_get_memberships_with_hidden_results(
+    test_group, mock_box_session, mock_membership_responses, hidden_in_batch
+):
     """
     This test verifies that the SDK properly deals with missing (aka hidden) data potentially present in a paged
     API. The API might indicate that the total_size is X, but in actuality the pages API could return less than X
@@ -176,7 +207,9 @@ def test_get_memberships_with_hidden_results(test_group, mock_box_session, mock_
     total_hidden = sum(hidden_in_batch)
 
     # Each call the 'get' (the GET next page call) will return the next response
-    mock_box_session.get.side_effect = mock_membership_responses(total, page_size, hidden_in_batch=hidden_in_batch)
+    mock_box_session.get.side_effect = mock_membership_responses(
+        total, page_size, hidden_in_batch=hidden_in_batch
+    )
 
     # Get all the members
     all_members = test_group.get_memberships(limit=page_size, offset=0)
@@ -194,40 +227,33 @@ def test_get_group_collaborations(test_group, mock_box_session):
     mock_collaboration = {
         'type': 'collaboration',
         'id': '12345',
-        'created_by': {
-            'type': 'user',
-            'id': '33333'
-        }
+        'created_by': {'type': 'user', 'id': '33333'},
     }
     mock_box_session.get.return_value.json.return_value = {
         'limit': 100,
         'entries': [mock_collaboration],
         'offset': 0,
-        'total_count': 1
+        'total_count': 1,
     }
     collaborations = test_group.get_collaborations(fields=['type', 'id', 'created_by'])
     collaboration = collaborations.next()
-    mock_box_session.get.assert_called_once_with(expected_url, params={'offset': None, 'fields': 'type,id,created_by'})
+    mock_box_session.get.assert_called_once_with(
+        expected_url, params={'offset': None, 'fields': 'type,id,created_by'}
+    )
     assert isinstance(collaboration, Collaboration)
     assert collaboration.id == mock_collaboration['id']
     assert collaboration.created_by['id'] == mock_collaboration['created_by']['id']
 
 
-def test_base_api_json_object_returns_correctly(test_group_membership, mock_box_session):
+def test_base_api_json_object_returns_correctly(
+    test_group_membership, mock_box_session
+):
     expected_data = {
         'type': 'group_membership',
         'id': '12345',
         'test': [
-            {
-                'user': {
-                    'type': 'user'
-                }
-            },
-            {
-                'group': {
-                    'type': 'group'
-                }
-            },
+            {'user': {'type': 'user'}},
+            {'group': {'type': 'group'}},
         ],
         'user': {
             'type': 'user',
@@ -235,11 +261,7 @@ def test_base_api_json_object_returns_correctly(test_group_membership, mock_box_
             'name': 'Test User',
             'login': 'test@example.com',
         },
-        'group': {
-            'type': 'group',
-            'id': '54321',
-            'name': 'Test'
-        },
+        'group': {'type': 'group', 'id': '54321', 'name': 'Test'},
         'role': 'admin',
         'configurable_permissions': {
             'can_run_reports': False,

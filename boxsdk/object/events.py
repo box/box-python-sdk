@@ -35,6 +35,7 @@ class UserEventsStreamType(EventsStreamType):
 
     <https://developer.box.com/en/guides/events/for-user/>
     """
+
     ALL = 'all'
     CHANGES = 'changes'
     SYNC = 'sync'
@@ -51,8 +52,11 @@ class EnterpriseEventsStreamType(EventsStreamType):
 
     <https://developer.box.com/en/guides/events/for-enterprise/>
     """
+
     ADMIN_LOGS = 'admin_logs'
     ADMIN_LOGS_STREAMING = 'admin_logs_streaming'
+
+
 # pylint:enable=too-many-ancestors
 
 
@@ -65,10 +69,10 @@ class Events(BaseEndpoint):
 
     @api_call
     def get_events(
-            self,
-            limit: int = 100,
-            stream_position: Union[str, int] = 0,
-            stream_type: EventsStreamType = UserEventsStreamType.ALL
+        self,
+        limit: int = 100,
+        stream_position: Union[str, int] = 0,
+        stream_type: EventsStreamType = UserEventsStreamType.ALL,
     ) -> dict:
         """
         Get Box events from a given stream position for a given stream type.
@@ -96,12 +100,12 @@ class Events(BaseEndpoint):
 
     @api_call
     def get_admin_events(
-            self,
-            limit: Optional[int] = None,
-            stream_position: Union[str, int] = 0,
-            created_after: Union[datetime, str] = None,
-            created_before: Union[datetime, str] = None,
-            event_types: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        stream_position: Union[str, int] = 0,
+        created_after: Union[datetime, str] = None,
+        created_before: Union[datetime, str] = None,
+        event_types: Iterable[str] = None,
     ) -> dict:
         """
         Get Box Admin events from a datetime, to a datetime, or between datetimes with a given event type for a enterprise
@@ -138,10 +142,10 @@ class Events(BaseEndpoint):
 
     @api_call
     def get_admin_events_streaming(
-            self,
-            limit: Optional[int] = None,
-            stream_position: Union[str, int] = 0,
-            event_types: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        stream_position: Union[str, int] = 0,
+        event_types: Iterable[str] = None,
     ) -> dict:
         """
         Get Box Admin events with a given event type for a enterprise stream type. Used for live monitoring (up to two weeks).
@@ -172,7 +176,9 @@ class Events(BaseEndpoint):
         return self.translator.translate(self._session, response_object=response)
 
     @api_call
-    def get_latest_stream_position(self, stream_type: UserEventsStreamType = UserEventsStreamType.ALL) -> int:
+    def get_latest_stream_position(
+        self, stream_type: UserEventsStreamType = UserEventsStreamType.ALL
+    ) -> int:
         """
         Get the latest stream position. The return value can be used with :meth:`get_events` or
         :meth:`generate_events_with_long_polling`.
@@ -186,12 +192,14 @@ class Events(BaseEndpoint):
         :returns:
             The latest stream position.
         """
-        return self.get_events(limit=0, stream_position='now', stream_type=stream_type)['next_stream_position']
+        return self.get_events(limit=0, stream_position='now', stream_type=stream_type)[
+            'next_stream_position'
+        ]
 
     def _get_all_events_since(
-            self,
-            stream_position: Union[str, int],
-            stream_type: EventsStreamType = UserEventsStreamType.ALL
+        self,
+        stream_position: Union[str, int],
+        stream_type: EventsStreamType = UserEventsStreamType.ALL,
     ) -> Generator[tuple, None, None]:
         """
         :param stream_position:
@@ -202,7 +210,9 @@ class Events(BaseEndpoint):
         """
         next_stream_position = stream_position
         while True:
-            events = self.get_events(stream_position=next_stream_position, limit=100, stream_type=stream_type)
+            events = self.get_events(
+                stream_position=next_stream_position, limit=100, stream_type=stream_type
+            )
             next_stream_position = events['next_stream_position']
             events = events['entries']
             if not events:
@@ -213,7 +223,9 @@ class Events(BaseEndpoint):
                 return
 
     @api_call
-    def long_poll(self, options: dict, stream_position: Union[str, int]) -> 'BoxResponse':
+    def long_poll(
+        self, options: dict, stream_position: Union[str, int]
+    ) -> 'BoxResponse':
         """
         Set up a long poll connection at the specified url.
 
@@ -230,15 +242,15 @@ class Events(BaseEndpoint):
         long_poll_response = self._session.get(
             url,
             timeout=options['retry_timeout'],
-            params={'stream_position': stream_position}
+            params={'stream_position': stream_position},
         )
         return long_poll_response
 
     @api_call
     def generate_events_with_long_polling(
-            self,
-            stream_position: Union[str, int] = None,
-            stream_type: UserEventsStreamType = UserEventsStreamType.ALL
+        self,
+        stream_position: Union[str, int] = None,
+        stream_type: UserEventsStreamType = UserEventsStreamType.ALL,
     ) -> Generator['Event', None, None]:
         """
         Subscribe to events from the given stream position.
@@ -256,7 +268,11 @@ class Events(BaseEndpoint):
             Events corresponding to changes on Box in realtime, as they come in.
         """
         event_ids = LRUCache()
-        stream_position = stream_position if stream_position is not None else self.get_latest_stream_position(stream_type=stream_type)
+        stream_position = (
+            stream_position
+            if stream_position is not None
+            else self.get_latest_stream_position(stream_type=stream_type)
+        )
         while True:
             options = self.get_long_poll_options(stream_type=stream_type)
             while True:
@@ -268,7 +284,9 @@ class Events(BaseEndpoint):
                 message = long_poll_response.json()['message']
                 if message == 'new_change':
                     next_stream_position = stream_position
-                    for event, next_stream_position in self._get_all_events_since(stream_position, stream_type=stream_type):
+                    for event, next_stream_position in self._get_all_events_since(
+                        stream_position, stream_type=stream_type
+                    ):
                         try:
                             event_ids.get(event['event_id'])
                         except KeyError:
@@ -281,7 +299,9 @@ class Events(BaseEndpoint):
                 break
 
     @api_call
-    def get_long_poll_options(self, stream_type: EventsStreamType = UserEventsStreamType.ALL) -> dict:
+    def get_long_poll_options(
+        self, stream_type: EventsStreamType = UserEventsStreamType.ALL
+    ) -> dict:
         """
         Get the url and retry timeout for setting up a long polling connection.
 

@@ -20,18 +20,20 @@ def test_get(test_device_pin, mock_box_session):
     mock_box_session.get.return_value.json.return_value = {
         'type': 'device_pinner',
         'id': test_device_pin.object_id,
-        'created_at': created_at
+        'created_at': created_at,
     }
     device_pin = test_device_pin.get()
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params=None
+    )
     assert isinstance(device_pin, DevicePinner)
     assert device_pin.created_at == created_at
 
 
 def test_delete_device_pin_return_the_correct_response(
-        test_device_pin,
-        mock_box_session,
-        delete_device_pin_response,
+    test_device_pin,
+    mock_box_session,
+    delete_device_pin_response,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.delete.return_value = delete_device_pin_response
@@ -39,5 +41,7 @@ def test_delete_device_pin_return_the_correct_response(
     # pylint:disable=protected-access
     expected_url = test_device_pin.get_url()
     # pylint:enable = protected-access
-    mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
+    mock_box_session.delete.assert_called_once_with(
+        expected_url, params={}, expect_json_response=False, headers=None
+    )
     assert response is True

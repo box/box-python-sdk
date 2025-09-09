@@ -2,7 +2,12 @@ import pytest
 from boxsdk.util.shared_link import get_shared_link_header
 
 
-@pytest.fixture(params=('mock_shared_link', 'https://app.box.com/s/q2i1024dvguiads6mzj2avsq9hmz43du'))
+@pytest.fixture(
+    params=(
+        'mock_shared_link',
+        'https://app.box.com/s/q2i1024dvguiads6mzj2avsq9hmz43du',
+    )
+)
 def shared_link(request):
     return request.param
 

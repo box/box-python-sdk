@@ -17,10 +17,15 @@ def test_get(test_legal_hold_policy_assignment, mock_box_session):
         },
     }
     legal_hold_policy_assignment = test_legal_hold_policy_assignment.get()
-    mock_box_session.get.assert_called_once_with(expected_url, headers=None, params=None)
+    mock_box_session.get.assert_called_once_with(
+        expected_url, headers=None, params=None
+    )
     assert isinstance(legal_hold_policy_assignment, LegalHoldPolicyAssignment)
     assert legal_hold_policy_assignment.type == 'legal_hold_policy_assignment'
-    assert legal_hold_policy_assignment.object_id == test_legal_hold_policy_assignment.object_id
+    assert (
+        legal_hold_policy_assignment.object_id
+        == test_legal_hold_policy_assignment.object_id
+    )
     assert legal_hold_policy_assignment['assigned_to']['type'] == 'user'
     assert legal_hold_policy_assignment['assigned_to']['id'] == '1234'
 
@@ -34,9 +39,9 @@ def delete_assignment_response():
 
 
 def test_delete_policy_return_the_correct_response(
-        test_legal_hold_policy_assignment,
-        mock_box_session,
-        delete_assignment_response,
+    test_legal_hold_policy_assignment,
+    mock_box_session,
+    delete_assignment_response,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_session.delete.return_value = delete_assignment_response
@@ -44,5 +49,7 @@ def test_delete_policy_return_the_correct_response(
     # pylint:disable=protected-access
     expected_url = test_legal_hold_policy_assignment.get_url()
     # pylint:enable = protected-access
-    mock_box_session.delete.assert_called_once_with(expected_url, params={}, expect_json_response=False, headers=None)
+    mock_box_session.delete.assert_called_once_with(
+        expected_url, params={}, expect_json_response=False, headers=None
+    )
     assert response is True

@@ -1,5 +1,4 @@
-Configuration
-=============
+# Configuration
 
 The Python SDK has helpful custom config that you can set for a variety of use cases.
 
@@ -17,8 +16,7 @@ The Python SDK has helpful custom config that you can set for a variety of use c
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-Proxy
------
+## Proxy
 
 ### Unauthenticated Proxy
 
@@ -41,10 +39,10 @@ Proxy.AUTH = {
 }
 ```
 
-URLs configuration
-------------------
+## URLs configuration
 
 ### Base URL
+
 The default base URL used for making API calls to Box can be changed by setting the value of the `API.BASE_API_URL` field.
 
 ```python
@@ -53,7 +51,8 @@ API.BASE_API_URL = 'https://new-base-url.com'
 ```
 
 ### OAUTH2 URLs
-The default URLs used to authorize a user and obtain OAuth2 authorization tokens can be modified by overwriting 
+
+The default URLs used to authorize a user and obtain OAuth2 authorization tokens can be modified by overwriting
 `API.OAUTH2_API_URL` and `API.OAUTH2_AUTHORIZE_URL` constants.
 
 ```python
@@ -63,6 +62,7 @@ API.OAUTH2_AUTHORIZE_URL = 'https://my-company.com/authorize'
 ```
 
 ### Upload URL
+
 The default URL used when uploading files to Box can be changed by assigning a new value to the `API.UPLOAD_URL` field.
 If this variable is ever changed from default value, the SDK will alwayse use this URL to upload files to Box,
 even if `use_upload_session_urls` is set to `True` while creating an upload session for a chunked upload.
@@ -72,11 +72,11 @@ from boxsdk.config import API
 API.UPLOAD_URL = 'https://my-company-upload-url.com'
 ```
 
-Max retry attmepts
-------------------
+## Max retry attmepts
 
 The default maximum number of retries in case of failed API call is 5 (usually 202, 429 and >= 500 response codes are retried).
 To change this number you can set `API.MAX_RETRY_ATTEMPTS` field.
+
 ```python
 from boxsdk.config import API
 API.MAX_RETRY_ATTEMPTS = 6

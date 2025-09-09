@@ -37,7 +37,9 @@ def test_iter(base_api_json_object):
     assert set(all_test_object_keys) == set(all_dictionary_response_keys)
 
 
-def test_meta_registers_new_item_type_in_default_translator(default_translator, original_default_translator):
+def test_meta_registers_new_item_type_in_default_translator(
+    default_translator, original_default_translator
+):
     item_type = 'ƒøø'
 
     class Foo(BaseAPIJSONObject):
@@ -49,9 +51,9 @@ def test_meta_registers_new_item_type_in_default_translator(default_translator, 
 
 @pytest.mark.parametrize('subclass', [BaseAPIJSONObject, BaseObject, Folder])
 def test_meta_does_not_register_new_subclass_in_default_translator_if_item_type_is_not_defined_in_namespace(
-        subclass,
-        default_translator,
-        original_default_translator,
+    subclass,
+    default_translator,
+    original_default_translator,
 ):
 
     class Foo(subclass):
@@ -61,7 +63,9 @@ def test_meta_does_not_register_new_subclass_in_default_translator_if_item_type_
     assert default_translator == original_default_translator
 
 
-def test_meta_overrides_registration_if_subclass_redefines_item_type(default_translator, original_default_translator):
+def test_meta_overrides_registration_if_subclass_redefines_item_type(
+    default_translator, original_default_translator
+):
 
     class FolderSubclass(Folder):
         _item_type = 'folder'
