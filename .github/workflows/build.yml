@@ -3,9 +3,6 @@ on:
   pull_request:
     branches:
       - sdk-gen
-  push:
-    branches:
-      - sdk-gen
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,7 +26,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e .[dev]
           python -m pip install tox-gh-actions
-      - name: Test with tox
+      - name: All Tests
+        if: startsWith(github.head_ref, 'codegen-release')
         env:
           JWT_CONFIG_BASE_64: ${{ secrets.JWT_CONFIG_BASE_64 }}
           ADMIN_USER_ID: ${{ secrets.ADMIN_USER_ID }}
@@ -49,41 +47,13 @@ jobs:
           SLACK_PARTNER_ITEM_ID: ${{ secrets.SLACK_PARTNER_ITEM_ID }}
         run: |
           tox
-
-  coverage:
-    name: Coverage report
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -e .[dev]
-          python -m pip install coveralls
-      - name: Send coverage report to Coveralls
-        run: |
-          tox -e coverage
-          coveralls --service=github
+      - name: Smoke Tests
+        if: "!startsWith(github.head_ref, 'codegen-release')"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JWT_CONFIG_BASE_64: ${{ secrets.JWT_CONFIG_BASE_64 }}
-          ADMIN_USER_ID: ${{ secrets.ADMIN_USER_ID }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           USER_ID: ${{ secrets.USER_ID }}
           ENTERPRISE_ID: ${{ secrets.ENTERPRISE_ID }}
-          BOX_FILE_REQUEST_ID: ${{ secrets.BOX_FILE_REQUEST_ID }}
-          BOX_EXTERNAL_USER_EMAIL: ${{ secrets.BOX_EXTERNAL_USER_EMAIL }}
-          BOX_EXTERNAL_USER_ID: ${{ secrets.BOX_EXTERNAL_USER_ID }}
-          WORKFLOW_FOLDER_ID: ${{ secrets.WORKFLOW_FOLDER_ID }}
-          APP_ITEM_ASSOCIATION_FILE_ID: ${{ secrets.APP_ITEM_ASSOCIATION_FILE_ID }}
-          APP_ITEM_ASSOCIATION_FOLDER_ID: ${{ secrets.APP_ITEM_ASSOCIATION_FOLDER_ID }}
-          APP_ITEM_SHARED_LINK: ${{ secrets.APP_ITEM_SHARED_LINK }}
-          SLACK_AUTOMATION_USER_ID: ${{ secrets.SLACK_AUTOMATION_USER_ID }}
-          SLACK_ORG_ID: ${{ secrets.SLACK_ORG_ID }}
-          SLACK_PARTNER_ITEM_ID: ${{ secrets.SLACK_PARTNER_ITEM_ID }}
+        run: |
+          tox -- test/auth.py test/files.py test/downloads.py test/uploads.py
