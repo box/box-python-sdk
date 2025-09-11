@@ -39,4 +39,4 @@ jobs:
           JWT_CONFIG_BASE_64: ${{ secrets.JWT_CONFIG_BASE_64 }}
           ADMIN_USER_ID: ${{ secrets.ADMIN_USER_ID }}
         run: |
-          tox -- test/boxsdk/integration_new/object/file_itest.py test/boxsdk/integration_new/object/folder_itest.py 
+          tox -e smoke-tests

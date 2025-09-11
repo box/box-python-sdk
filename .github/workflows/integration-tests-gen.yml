@@ -46,7 +46,7 @@ jobs:
           SLACK_ORG_ID: ${{ secrets.SLACK_ORG_ID }}
           SLACK_PARTNER_ITEM_ID: ${{ secrets.SLACK_PARTNER_ITEM_ID }}
         run: |
-          tox
+          tox -e integration-tests-gen
       - name: Smoke Tests
         if: "!startsWith(github.head_ref, 'codegen-release')"
         env:
@@ -56,4 +56,4 @@ jobs:
           USER_ID: ${{ secrets.USER_ID }}
           ENTERPRISE_ID: ${{ secrets.ENTERPRISE_ID }}
         run: |
-          tox -- test/box_sdk_gen/test/auth.py test/box_sdk_gen/test/files.py test/box_sdk_gen/test/downloads.py test/box_sdk_gen/test/uploads.py
+          tox -e smoke-tests-gen

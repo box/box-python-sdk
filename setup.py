@@ -84,7 +84,7 @@ def main():
         'gh': gh_requires + dev_requires,
         'test': test_requires,
     }
-    with open("boxsdk/version.py", encoding="utf-8") as config_py:
+    with open('boxsdk/version.py', encoding='utf-8') as config_py:
         version = re.search(
             r'^\s*__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE
         ).group(1)
@@ -117,5 +117,5 @@ def main():
     )
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
