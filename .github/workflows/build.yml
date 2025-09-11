@@ -1,11 +1,11 @@
-name: Build
+name: Build boxsdk
 on:
   pull_request:
     branches:
-      - main
+      - combined-sdk
   push:
     branches:
-      - main
+      - combined-sdk
 
 jobs:
   build:

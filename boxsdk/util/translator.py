@@ -180,6 +180,5 @@ class Translator(ChainMap):
         return translated_obj
 
 
-Translator._default_translator = Translator(
-    extend_default_translator=False
-)  # pylint:disable=protected-access
+# pylint:disable=protected-access
+Translator._default_translator = Translator(extend_default_translator=False)

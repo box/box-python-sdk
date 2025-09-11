@@ -1336,7 +1336,6 @@ class Client(Cloneable):
         :param args:
             Additional parts of the endpoint URL.
         """
-        # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
 
     def device_pinner(self, device_pin_id: str) -> 'DevicePinner':

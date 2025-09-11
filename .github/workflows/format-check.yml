@@ -1,0 +1,24 @@
+name: Format Check
+
+on:
+  pull_request:
+    branches:
+      - combined-sdk
+
+jobs:
+  black:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+
+      - name: Install Tox
+        run: pip install tox
+
+      - name: Run Format Check
+        run: |
+          tox -e format-check || (echo "Format check failed! Please run 'tox -e format' locally and fix formatting." && exit 1)

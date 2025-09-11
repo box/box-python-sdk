@@ -54,6 +54,7 @@ def main():
     install_requires = [
         'attrs>=17.3.0',
         'urllib3',
+        'dataclasses',
         'requests<3',
         'requests-toolbelt<2',
         'python-dateutil',
@@ -71,6 +72,7 @@ def main():
         'pytest-timeout<3.0.0',
         'pytest-cov<6',
         'pytest-lazy-fixtures<2',
+        'pytest-rerunfailures',
         'pytz',
         'urllib3<2',
     ]
@@ -82,7 +84,7 @@ def main():
         'gh': gh_requires + dev_requires,
         'test': test_requires,
     }
-    with open('boxsdk/version.py', encoding='utf-8') as config_py:
+    with open("boxsdk/version.py", encoding="utf-8") as config_py:
         version = re.search(
             r'^\s*__version__\s*=\s*[\'"]([^\'"]*)[\'"]', config_py.read(), re.MULTILINE
         ).group(1)
@@ -91,6 +93,7 @@ def main():
         version=version,
         description='Official Box Python SDK',
         long_description_content_type="text/markdown",
+        # pylint:disable=consider-using-with
         long_description=open(
             join(base_dir, 'README.md'), encoding='utf-8'
         ).read(),  # pylint:disable=consider-using-with
@@ -114,5 +117,5 @@ def main():
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

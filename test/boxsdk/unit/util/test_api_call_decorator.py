@@ -83,12 +83,14 @@ def test_api_call_decorated_method_must_be_bound_to_an_instance_of_the_owner(
         pass
 
     with pytest.raises(TypeError):
+        # pylint: disable=C2801
         api_call_method.__get__(mock_cloneable, CloneableSubclass2)
 
 
 def test_api_call_decorated_method_returns_itself_when_bound_to_none(
     api_call_method, cloneable_subclass_with_api_call_method
 ):
+    # pylint: disable=C2801
     assert api_call_method.__get__(None, Cloneable) is api_call_method
     assert not hasattr(api_call_method.__get__(None, Cloneable), '__self__')
     assert cloneable_subclass_with_api_call_method.api_call_method is api_call_method
@@ -98,6 +100,7 @@ def test_api_call_decorated_method_returns_itself_when_bound_to_none(
 
 
 def test_api_call_decorated_method_binds_to_instance(mock_cloneable, api_call_method):
+    # pylint: disable=C2801
     assert api_call_method.__get__(mock_cloneable, Cloneable) is not api_call_method
     assert api_call_method.__get__(mock_cloneable, Cloneable).__self__ is mock_cloneable
     assert mock_cloneable.api_call_method is not api_call_method
