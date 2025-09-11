@@ -4,7 +4,7 @@ import pytest
 import hashlib
 import os
 
-from pytest_lazyfixture import lazy_fixture
+from pytest_lazy_fixtures import lf
 
 from boxsdk.exception import BoxAPIException
 from boxsdk.object.collaboration import CollaborationRole
@@ -200,8 +200,8 @@ def test_get_shared_link(parent_folder, other_user, other_client):
 @pytest.mark.parametrize(
     'collaborator',
     [
-        lazy_fixture('user'),
-        lazy_fixture('group'),
+        lf('user'),
+        lf('group'),
     ],
 )
 def test_add_collaborator(parent_folder, collaborator):

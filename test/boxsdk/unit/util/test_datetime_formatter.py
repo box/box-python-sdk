@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import datetime
 import pytest
 
-from pytest_lazyfixture import lazy_fixture
+from pytest_lazy_fixtures import lf
 
 from boxsdk.util import datetime_formatter
 
@@ -13,7 +13,7 @@ from boxsdk.util import datetime_formatter
     (
         "2035-03-04T10:14:24+14:00",
         "2035-03-04T10:14:24-04:00",
-        lazy_fixture("mock_datetime_rfc3339_str"),
+        lf("mock_datetime_rfc3339_str"),
     ),
 )
 def test_leave_datetime_string_unchanged_when_rfc3339_formatted_str_provided(
@@ -33,7 +33,7 @@ def test_leave_datetime_string_unchanged_when_rfc3339_formatted_str_provided(
         "2035/03/04 10:14:24.000+14:00",
         "2035/03/04T10:14:24+14:00",
         "2035/3/4T10:14:24+14:00",
-        lazy_fixture('mock_timezone_aware_datetime_obj'),
+        lf('mock_timezone_aware_datetime_obj'),
     ),
 )
 def test_normalize_date_to_rfc3339_format_timezone_aware_datetime(
@@ -51,7 +51,7 @@ def test_normalize_date_to_rfc3339_format_timezone_aware_datetime(
     (
         "2035-03-04T10:14:24.000",
         "2035-03-04T10:14:24",
-        lazy_fixture('mock_timezone_naive_datetime_obj'),
+        lf('mock_timezone_naive_datetime_obj'),
     ),
 )
 def test_add_timezone_info_when_timezone_naive_datetime_provided(

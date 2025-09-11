@@ -5,7 +5,7 @@ from unittest.mock import mock_open, patch, Mock
 
 import pytest
 import pytz
-from pytest_lazyfixture import lazy_fixture
+from pytest_lazy_fixtures import lf
 
 from boxsdk.config import API
 from boxsdk.exception import BoxAPIException
@@ -1127,10 +1127,10 @@ def test_get_thumbnail_representation_not_available(
 @pytest.mark.parametrize(
     'disposition_at',
     (
-        lazy_fixture('mock_datetime_rfc3339_str'),
+        lf('mock_datetime_rfc3339_str'),
         "2035-03-04T10:14:24.000+14:00",
         "2035/03/04 10:14:24.000+14:00",
-        lazy_fixture('mock_timezone_aware_datetime_obj'),
+        lf('mock_timezone_aware_datetime_obj'),
     ),
 )
 def test_set_diposition_at(

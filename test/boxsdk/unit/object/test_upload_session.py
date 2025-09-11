@@ -4,7 +4,7 @@ import hashlib
 import io
 import json
 import pytest
-from pytest_lazyfixture import lazy_fixture
+from pytest_lazy_fixtures import lf
 
 from boxsdk.exception import BoxAPIException
 from boxsdk.config import API
@@ -69,11 +69,11 @@ def upload_session_not_using_upload_session_urls(mock_box_session):
     'test_upload_session, expected_url',
     [
         (
-            lazy_fixture('upload_session_using_upload_session_urls'),
+            lf('upload_session_using_upload_session_urls'),
             SESSION_ENDPOINTS['list_parts'],
         ),
         (
-            lazy_fixture('upload_session_not_using_upload_session_urls'),
+            lf('upload_session_not_using_upload_session_urls'),
             f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}/parts',
         ),
     ],
@@ -103,12 +103,9 @@ def test_get_parts(mock_box_session, test_upload_session, expected_url):
 @pytest.mark.parametrize(
     'test_upload_session, expected_url',
     [
+        (lf('upload_session_using_upload_session_urls'), SESSION_ENDPOINTS['abort']),
         (
-            lazy_fixture('upload_session_using_upload_session_urls'),
-            SESSION_ENDPOINTS['abort'],
-        ),
-        (
-            lazy_fixture('upload_session_not_using_upload_session_urls'),
+            lf('upload_session_not_using_upload_session_urls'),
             f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}',
         ),
     ],
@@ -126,11 +123,11 @@ def test_abort(mock_box_session, test_upload_session, expected_url):
     'test_upload_session, expected_url',
     [
         (
-            lazy_fixture('upload_session_using_upload_session_urls'),
+            lf('upload_session_using_upload_session_urls'),
             SESSION_ENDPOINTS['upload_part'],
         ),
         (
-            lazy_fixture('upload_session_not_using_upload_session_urls'),
+            lf('upload_session_not_using_upload_session_urls'),
             f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}',
         ),
     ],
@@ -167,12 +164,9 @@ def test_upload_part_bytes(mock_box_session, test_upload_session, expected_url):
 @pytest.mark.parametrize(
     'test_upload_session, expected_url',
     [
+        (lf('upload_session_using_upload_session_urls'), SESSION_ENDPOINTS['commit']),
         (
-            lazy_fixture('upload_session_using_upload_session_urls'),
-            SESSION_ENDPOINTS['commit'],
-        ),
-        (
-            lazy_fixture('upload_session_not_using_upload_session_urls'),
+            lf('upload_session_not_using_upload_session_urls'),
             f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}/commit',
         ),
     ],
@@ -235,12 +229,12 @@ def test_commit(mock_box_session, test_upload_session, expected_url):
     'test_upload_session, expected_get_url, expected_commit_url',
     [
         (
-            lazy_fixture('upload_session_using_upload_session_urls'),
+            lf('upload_session_using_upload_session_urls'),
             SESSION_ENDPOINTS['list_parts'],
             SESSION_ENDPOINTS['commit'],
         ),
         (
-            lazy_fixture('upload_session_not_using_upload_session_urls'),
+            lf('upload_session_not_using_upload_session_urls'),
             f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}/parts',
             f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}/commit',
         ),
@@ -303,12 +297,9 @@ def test_commit_with_missing_params(
 @pytest.mark.parametrize(
     'test_upload_session, expected_url',
     [
+        (lf('upload_session_using_upload_session_urls'), SESSION_ENDPOINTS['commit']),
         (
-            lazy_fixture('upload_session_using_upload_session_urls'),
-            SESSION_ENDPOINTS['commit'],
-        ),
-        (
-            lazy_fixture('upload_session_not_using_upload_session_urls'),
+            lf('upload_session_not_using_upload_session_urls'),
             f'{API.UPLOAD_URL}/files/upload_sessions/{UPLOAD_SESSION_ID}/commit',
         ),
     ],
@@ -361,8 +352,8 @@ def test_commit_returns_none_when_202_is_returned(
 @pytest.mark.parametrize(
     'test_upload_session',
     [
-        lazy_fixture('upload_session_using_upload_session_urls'),
-        lazy_fixture('upload_session_not_using_upload_session_urls'),
+        lf('upload_session_using_upload_session_urls'),
+        lf('upload_session_not_using_upload_session_urls'),
     ],
 )
 def test_get_chunked_uploader_for_stream(test_upload_session):
@@ -378,8 +369,8 @@ def test_get_chunked_uploader_for_stream(test_upload_session):
 @pytest.mark.parametrize(
     'test_upload_session',
     [
-        lazy_fixture('upload_session_using_upload_session_urls'),
-        lazy_fixture('upload_session_not_using_upload_session_urls'),
+        lf('upload_session_using_upload_session_urls'),
+        lf('upload_session_not_using_upload_session_urls'),
     ],
 )
 def test_get_chunked_uploader(

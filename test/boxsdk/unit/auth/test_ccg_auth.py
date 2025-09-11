@@ -6,7 +6,7 @@ from test.unit.object.conftest import mock_user  # pylint:disable=unused-import
 
 import pytz
 import pytest
-from pytest_lazyfixture import lazy_fixture
+from pytest_lazy_fixtures import lf
 
 from boxsdk import BoxOAuthException
 from boxsdk.auth.ccg_auth import CCGAuth
@@ -78,12 +78,12 @@ def box_datetime():
     return datetime.now(tz=pytz.utc) - timedelta(100)
 
 
-@pytest.mark.parametrize('enterprise_id', (lazy_fixture('mock_enterprise_id'), None))
+@pytest.mark.parametrize('enterprise_id', (lf('mock_enterprise_id'), None))
 @pytest.mark.parametrize(
     'user, expected_normalized_user_id',
     [
-        (lazy_fixture('mock_user'), lazy_fixture('mock_user_id')),
-        (lazy_fixture('mock_user_id'), lazy_fixture('mock_user_id')),
+        (lf('mock_user'), lf('mock_user_id')),
+        (lf('mock_user_id'), lf('mock_user_id')),
         (None, None),
     ],
 )
@@ -116,9 +116,9 @@ def test_throw_type_error_when_invalid_user_object_provided(
 @pytest.mark.parametrize(
     'ccg_user_id, ccg_enterprise_id, user',
     [
-        (lazy_fixture('mock_user_id'), None, None),
-        (None, None, lazy_fixture('mock_user_id')),
-        (None, None, lazy_fixture('mock_user')),
+        (lf('mock_user_id'), None, None),
+        (None, None, lf('mock_user_id')),
+        (None, None, lf('mock_user')),
     ],
 )
 def test_authenticate_user_success(ccg_auth, user, mock_user_id):
@@ -142,10 +142,7 @@ def test_authenticate_user_throws_error_when_user_not_provided(ccg_auth):
 
 @pytest.mark.parametrize(
     'ccg_user_id, ccg_enterprise_id, enterprise_id',
-    [
-        (None, lazy_fixture('mock_enterprise_id'), None),
-        (None, None, lazy_fixture('mock_enterprise_id')),
-    ],
+    [(None, lf('mock_enterprise_id'), None), (None, None, lf('mock_enterprise_id'))],
 )
 def test_authenticate_enterprise(ccg_auth, enterprise_id, mock_enterprise_id):
     with mock.patch.object(
@@ -164,10 +161,7 @@ def test_authenticate_enterprise(ccg_auth, enterprise_id, mock_enterprise_id):
 
 @pytest.mark.parametrize(
     'ccg_user_id, ccg_enterprise_id, enterprise_id',
-    [
-        (None, None, None),
-        (None, lazy_fixture('mock_enterprise_id'), 'other_enterprise_300'),
-    ],
+    [(None, None, None), (None, lf('mock_enterprise_id'), 'other_enterprise_300')],
 )
 def test_authenticate_user_throws_error_when_enetrprise_not_provided_or_conflicts(
     ccg_auth, enterprise_id
@@ -176,8 +170,8 @@ def test_authenticate_user_throws_error_when_enetrprise_not_provided_or_conflict
         ccg_auth.authenticate_instance(enterprise_id)
 
 
-@pytest.mark.parametrize('ccg_user_id', (lazy_fixture('mock_user_id'),))
-@pytest.mark.parametrize('ccg_enterprise_id', (lazy_fixture('mock_enterprise_id'),))
+@pytest.mark.parametrize('ccg_user_id', (lf('mock_user_id'),))
+@pytest.mark.parametrize('ccg_enterprise_id', (lf('mock_enterprise_id'),))
 @pytest.mark.parametrize('status_code', (400, 401))
 @pytest.mark.parametrize(
     'error_description',
@@ -223,8 +217,8 @@ def test_auth_retry_for_invalid_exp_claim(
         fetch_access_token_mock.assert_has_calls(expected_calls)
 
 
-@pytest.mark.parametrize('ccg_user_id', (lazy_fixture('mock_user_id'),))
-@pytest.mark.parametrize('ccg_enterprise_id', (lazy_fixture('mock_enterprise_id'),))
+@pytest.mark.parametrize('ccg_user_id', (lf('mock_user_id'),))
+@pytest.mark.parametrize('ccg_enterprise_id', (lf('mock_enterprise_id'),))
 @pytest.mark.parametrize(
     'status_code, error_description, error_code',
     [
@@ -260,8 +254,8 @@ def test_auth_retry_for_rate_limit_and_server_errors(
         fetch_access_token_mock.assert_has_calls(expected_calls)
 
 
-@pytest.mark.parametrize('ccg_user_id', (lazy_fixture('mock_user_id'),))
-@pytest.mark.parametrize('ccg_enterprise_id', (lazy_fixture('mock_enterprise_id'),))
+@pytest.mark.parametrize('ccg_user_id', (lf('mock_user_id'),))
+@pytest.mark.parametrize('ccg_enterprise_id', (lf('mock_enterprise_id'),))
 @pytest.mark.parametrize(
     'status_code, error_description, error_code',
     [
@@ -297,8 +291,8 @@ def test_auth_max_retries_for_rate_limit_and_server_errors(
         fetch_access_token_mock.assert_has_calls(expected_calls)
 
 
-@pytest.mark.parametrize('ccg_user_id', (lazy_fixture('mock_user_id'),))
-@pytest.mark.parametrize('ccg_enterprise_id', (lazy_fixture('mock_enterprise_id'),))
+@pytest.mark.parametrize('ccg_user_id', (lf('mock_user_id'),))
+@pytest.mark.parametrize('ccg_enterprise_id', (lf('mock_enterprise_id'),))
 def test_extract_token_from_success_response(
     successful_token_response,
     successful_token_json_response,
@@ -314,7 +308,7 @@ def test_extract_token_from_success_response(
         assert ccg_auth.access_token == successful_token_json_response['access_token']
 
 
-@pytest.mark.parametrize('ccg_user_id', (lazy_fixture('mock_user_id'),))
+@pytest.mark.parametrize('ccg_user_id', (lf('mock_user_id'),))
 @pytest.mark.parametrize('ccg_enterprise_id', (None,))
 def test_refresh_client_authentication_when_client_id_is_provided(ccg_auth):
     ccg_auth.authenticate_instance = Mock()
@@ -327,7 +321,7 @@ def test_refresh_client_authentication_when_client_id_is_provided(ccg_auth):
 
 
 @pytest.mark.parametrize('ccg_user_id', (None,))
-@pytest.mark.parametrize('ccg_enterprise_id', (lazy_fixture('mock_enterprise_id'),))
+@pytest.mark.parametrize('ccg_enterprise_id', (lf('mock_enterprise_id'),))
 def test_refresh_enterprise_authentication_when_client_id_is_not_provided(ccg_auth):
     ccg_auth.authenticate_instance = Mock()
     ccg_auth.authenticate_user = Mock()
@@ -338,13 +332,13 @@ def test_refresh_enterprise_authentication_when_client_id_is_not_provided(ccg_au
     ccg_auth.authenticate_instance.assert_called_once()
 
 
-@pytest.mark.parametrize('ccg_user_id', (lazy_fixture('mock_user_id'),))
-@pytest.mark.parametrize('ccg_enterprise_id', (lazy_fixture('mock_enterprise_id'),))
+@pytest.mark.parametrize('ccg_user_id', (lf('mock_user_id'),))
+@pytest.mark.parametrize('ccg_enterprise_id', (lf('mock_enterprise_id'),))
 @pytest.mark.parametrize(
     'subject_id, subject_type',
     [
-        (lazy_fixture('mock_user_id'), USER_SUBJECT_TYPE),
-        (lazy_fixture('mock_enterprise_id'), ENTERPRISE_SUBJECT_TYPE),
+        (lf('mock_user_id'), USER_SUBJECT_TYPE),
+        (lf('mock_enterprise_id'), ENTERPRISE_SUBJECT_TYPE),
     ],
 )
 def test_send_authentication_request_with_correct_params(

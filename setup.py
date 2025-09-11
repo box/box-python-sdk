@@ -11,8 +11,6 @@ CLASSIFIERS = [
     'Intended Audience :: Developers',
     'License :: OSI Approved :: Apache Software License',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 3.6',
-    'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
@@ -56,24 +54,23 @@ def main():
     install_requires = [
         'attrs>=17.3.0',
         'urllib3',
-        'requests>=2.4.3,<3',
-        'requests-toolbelt>=0.4.0',
-        'python-dateutil',  # To be removed after dropping Python 3.6
+        'requests<3',
+        'requests-toolbelt<2',
+        'python-dateutil',
     ]
     redis_requires = ['redis>=2.10.3']
-    jwt_requires = ['pyjwt>=1.7.0', 'cryptography>=3']
+    jwt_requires = ['pyjwt>=1.7.0,<2', 'cryptography>=3']
     coveralls_requires = ['coveralls']
-    dev_requires = ['tox<=3.28.0', 'setuptools']
+    dev_requires = ['tox<5', 'setuptools']
     gh_requires = ['tox-gh-actions']
     test_requires = [
         'bottle',
         'jsonpatch>1.14',
         'sqlalchemy<1.4.0',
-        # pytest 8.0.0 is not compatible, so we need to use the latest version of pytest 7.x
-        'pytest<8.0.0',
+        'pytest>=8,<9',
         'pytest-timeout<3.0.0',
-        'pytest-cov<5.0.0',
-        'pytest-lazy-fixture<1.0.0',
+        'pytest-cov<6',
+        'pytest-lazy-fixtures<2',
         'pytz',
         'urllib3<2',
     ]
