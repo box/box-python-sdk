@@ -32,7 +32,9 @@ from boxsdk.object.terms_of_service import TermsOfService
 from boxsdk.object.terms_of_service_user_status import TermsOfServiceUserStatus
 from boxsdk.object.collaboration_allowlist import CollaborationAllowlist
 from boxsdk.object.collaboration_allowlist_entry import CollaborationAllowlistEntry
-from boxsdk.object.collaboration_allowlist_exempt_target import CollaborationAllowlistExemptTarget
+from boxsdk.object.collaboration_allowlist_exempt_target import (
+    CollaborationAllowlistExemptTarget,
+)
 from boxsdk.object.webhook import Webhook
 from boxsdk.object.task import Task
 from boxsdk.object.task_assignment import TaskAssignment
@@ -69,7 +71,9 @@ def mock_image_path(image_extension):
 
 @pytest.fixture(scope='function')
 def mock_content_response(make_mock_box_request):
-    mock_box_response, mock_network_response = make_mock_box_request(content=b'Contents of a text file.')
+    mock_box_response, mock_network_response = make_mock_box_request(
+        content=b'Contents of a text file.'
+    )
     mock_network_response.response_as_stream = raw = Mock()
     raw.stream.return_value = (bytes((b,)) for b in mock_box_response.content)
     return mock_box_response
@@ -86,8 +90,14 @@ def mock_upload_response_contains_entries(request):
 
 
 @pytest.fixture(scope='function')
-def mock_upload_response(mock_object_id, make_mock_box_request, mock_upload_response_contains_entries):
-    response = {'type': 'file', 'id': mock_object_id, 'description': 'Test File Description', }
+def mock_upload_response(
+    mock_object_id, make_mock_box_request, mock_upload_response_contains_entries
+):
+    response = {
+        'type': 'file',
+        'id': mock_object_id,
+        'description': 'Test File Description',
+    }
     if mock_upload_response_contains_entries:
         response = {'entries': [response]}
     mock_box_response, _ = make_mock_box_request(response=response)
@@ -369,7 +379,7 @@ def shared_link_password(request):
         '2018-10-31T00:00:00+14:00',
         None,
         SDK_VALUE_NOT_SET,
-        datetime(2018, 10, 31, 23, 59, 59, tzinfo=pytz.timezone('US/Alaska'))
+        datetime(2018, 10, 31, 23, 59, 59, tzinfo=pytz.timezone('US/Alaska')),
     )
 )
 def shared_link_unshared_at(request):
@@ -381,19 +391,14 @@ def shared_link_vanity_name(request):
     return request.param
 
 
-@pytest.fixture(params=[
-    # Test case for plain message
-    (
-        'message',
-        'Hello there!'
-    ),
-
-    # Test case for tagged message
-    (
-        'tagged_message',
-        '@[22222:Test User] Hi!'
-    )
-])
+@pytest.fixture(
+    params=[
+        # Test case for plain message
+        ('message', 'Hello there!'),
+        # Test case for tagged message
+        ('tagged_message', '@[22222:Test User] Hi!'),
+    ]
+)
 def comment_params(request):
     return request.param
 

@@ -9,7 +9,13 @@ class RemoteOAuth2Mixin(OAuth2):
     Allows for storing auth tokens remotely.
 
     """
-    def __init__(self, retrieve_access_token: Callable[[str], str] = None, *args: Any, **kwargs: Any):
+
+    def __init__(
+        self,
+        retrieve_access_token: Callable[[str], str] = None,
+        *args: Any,
+        **kwargs: Any
+    ):
         """
         :param retrieve_access_token:
             Callback to exchange an existing access token for a new one.

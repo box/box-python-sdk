@@ -54,7 +54,7 @@ class Logging:
         return re.sub(
             '^(.*://)(.*):(.*)(@.*)$',
             lambda repl: f'{repl.group(1)}{"---"}:{"---"}{repl.group(4)}',
-            value
+            value,
         )
 
     def sanitize_dictionary(self, dictionary: Mapping) -> Mapping:
@@ -77,9 +77,9 @@ _logging = Logging()
 
 
 def setup_logging(
-        stream_or_file: Optional[Union[str, IO]] = _no_logger,
-        debug: Optional[bool] = False,
-        name: Optional[str] = None
+    stream_or_file: Optional[Union[str, IO]] = _no_logger,
+    debug: Optional[bool] = False,
+    name: Optional[str] = None,
 ) -> None:
     """
     Create a logger for communicating with the user or writing to log files.

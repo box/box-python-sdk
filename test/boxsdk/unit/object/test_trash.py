@@ -12,13 +12,13 @@ def test_trash(mock_box_session):
 
 @pytest.fixture(params=('file', 'folder', 'web_link'))
 def test_item_and_response(
-        test_file,
-        mock_file_response,
-        test_folder,
-        mock_folder_response,
-        test_web_link,
-        mock_web_link_response,
-        request,
+    test_file,
+    mock_file_response,
+    test_folder,
+    mock_folder_response,
+    test_web_link,
+    mock_web_link_response,
+    request,
 ):
     if request.param == 'file':
         return test_file, mock_file_response
@@ -30,7 +30,9 @@ def test_item_and_response(
 def test_get_from_trash(test_item_and_response, test_trash, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
-    expected_url = f'{API.BASE_API_URL}/{test_item.object_type + "s"}/{test_item.object_id}/trash'
+    expected_url = (
+        f'{API.BASE_API_URL}/{test_item.object_type + "s"}/{test_item.object_id}/trash'
+    )
     mock_box_session.get.return_value.json.return_value = {
         'type': test_item.object_type,
         'id': test_item.object_id,
@@ -42,9 +44,11 @@ def test_get_from_trash(test_item_and_response, test_trash, mock_box_session):
         },
     }
     trashed_item_info = test_trash.get_item(
-        item=test_item, fields=['created_at', 'modified_at'])
+        item=test_item, fields=['created_at', 'modified_at']
+    )
     mock_box_session.get.assert_called_once_with(
-        expected_url, params={'fields': 'created_at,modified_at'})
+        expected_url, params={'fields': 'created_at,modified_at'}
+    )
     assert isinstance(trashed_item_info, test_item.__class__)
     assert trashed_item_info.object_type == test_item.object_type
     assert trashed_item_info.object_id == test_item.object_id
@@ -54,17 +58,23 @@ def test_get_from_trash(test_item_and_response, test_trash, mock_box_session):
     assert trashed_item_info.created_by['id'] == '11111'
 
 
-def test_restore_from_trash(test_item_and_response, test_trash, test_folder, mock_box_session):
+def test_restore_from_trash(
+    test_item_and_response, test_trash, test_folder, mock_box_session
+):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
     new_name = 'New Name'
-    expected_url = f'{API.BASE_API_URL}/{test_item.object_type + "s"}/{test_item.object_id}'
-    value = json.dumps({
-        'name': new_name,
-        'parent': {
-            'id': test_folder.object_id,
-        },
-    })
+    expected_url = (
+        f'{API.BASE_API_URL}/{test_item.object_type + "s"}/{test_item.object_id}'
+    )
+    value = json.dumps(
+        {
+            'name': new_name,
+            'parent': {
+                'id': test_folder.object_id,
+            },
+        }
+    )
     mock_box_session.post.return_value.json.return_value = {
         'type': test_item.object_type,
         'id': test_item.object_id,
@@ -75,10 +85,12 @@ def test_restore_from_trash(test_item_and_response, test_trash, test_folder, moc
             'id': '11111',
         },
     }
-    restored_item = test_trash.restore_item(test_item, new_name, test_folder, [
-                                            'created_at', 'modified_at'])
-    mock_box_session.post.assert_called_once_with(expected_url, data=value, params={
-                                                  'fields': 'created_at,modified_at'})
+    restored_item = test_trash.restore_item(
+        test_item, new_name, test_folder, ['created_at', 'modified_at']
+    )
+    mock_box_session.post.assert_called_once_with(
+        expected_url, data=value, params={'fields': 'created_at,modified_at'}
+    )
     assert isinstance(restored_item, test_item.__class__)
     assert restored_item.object_type == test_item.object_type
     assert restored_item.object_id == test_item.object_id
@@ -91,11 +103,14 @@ def test_restore_from_trash(test_item_and_response, test_trash, test_folder, moc
 def test_permanently_delete(test_item_and_response, test_trash, mock_box_session):
     # pylint:disable=redefined-outer-name, protected-access
     test_item, _ = test_item_and_response
-    expected_url = f'{API.BASE_API_URL}/{test_item.object_type + "s"}/{test_item.object_id}/trash'
+    expected_url = (
+        f'{API.BASE_API_URL}/{test_item.object_type + "s"}/{test_item.object_id}/trash'
+    )
     mock_box_session.delete.return_value.ok = True
     info = test_trash.permanently_delete_item(test_item)
     mock_box_session.delete.assert_called_once_with(
-        expected_url, expect_json_response=False)
+        expected_url, expect_json_response=False
+    )
     assert info is True
 
 
@@ -106,65 +121,75 @@ def test_get_trashed_items(test_item_and_response, test_trash, mock_box_session)
     mock_trash = {
         'type': test_item.object_type,
         'id': test_item.object_id,
-        'name': 'Test Trashed Item'
+        'name': 'Test Trashed Item',
     }
     mock_box_session.get.return_value.json.return_value = {
         'total_count': 5,
         'offset': 0,
         'limit': 100,
-        'entries': [mock_trash]
+        'entries': [mock_trash],
     }
     trashed_items = test_trash.get_items(fields=['name'])
     trashed_item = trashed_items.next()
     mock_box_session.get.assert_called_once_with(
-        expected_url, params={'fields': 'name', 'offset': None})
+        expected_url, params={'fields': 'name', 'offset': None}
+    )
     assert isinstance(trashed_item, test_item.__class__)
     assert trashed_item.type == mock_trash['type']
     assert trashed_item.id == mock_trash['id']
     assert trashed_item.name == item_name
 
 
-def test_get_trashed_items_with_sort(test_item_and_response, test_trash, mock_box_session):
+def test_get_trashed_items_with_sort(
+    test_item_and_response, test_trash, mock_box_session
+):
     test_item, _ = test_item_and_response
     expected_url = f'{API.BASE_API_URL}/folders/trash/items'
     mock_trash = {
         'type': test_item.object_type,
         'id': test_item.object_id,
-        'name': 'Test Trashed Item'
+        'name': 'Test Trashed Item',
     }
     mock_box_session.get.return_value.json.return_value = {
         'total_count': 5,
         'offset': 0,
         'limit': 100,
-        'entries': [mock_trash]
+        'entries': [mock_trash],
     }
     trashed_items = test_trash.get_items(fields=['name'], sort='name', direction='ASC')
     trashed_item = trashed_items.next()
     mock_box_session.get.assert_called_once_with(
-        expected_url, params={'direction': 'ASC', 'sort': 'name', 'offset': None, 'fields': 'name'})
+        expected_url,
+        params={'direction': 'ASC', 'sort': 'name', 'offset': None, 'fields': 'name'},
+    )
     assert isinstance(trashed_item, test_item.__class__)
 
 
-def test_get_trashed_items_with_marker(test_item_and_response, test_trash, mock_box_session):
+def test_get_trashed_items_with_marker(
+    test_item_and_response, test_trash, mock_box_session
+):
     test_item, _ = test_item_and_response
     item_name = 'Test Trashed Item'
     expected_url = f'{API.BASE_API_URL}/folders/trash/items'
     mock_trash = {
         'type': test_item.object_type,
         'id': test_item.object_id,
-        'name': 'Test Trashed Item'
+        'name': 'Test Trashed Item',
     }
     mock_box_session.get.return_value.json.return_value = {
         'limit': 100,
         'next_marker': 2345,
-        'entries': [mock_trash]
+        'entries': [mock_trash],
     }
     trashed_items = test_trash.get_items(
-        fields=['name'], limit=100, marker=1234, use_marker=True)
+        fields=['name'], limit=100, marker=1234, use_marker=True
+    )
     trashed_item = trashed_items.next()
 
-    mock_box_session.get.assert_called_once_with(expected_url, params={
-                                                 'limit': 100, 'usemarker': True, 'marker': 1234, 'fields': 'name'})
+    mock_box_session.get.assert_called_once_with(
+        expected_url,
+        params={'limit': 100, 'usemarker': True, 'marker': 1234, 'fields': 'name'},
+    )
     assert isinstance(trashed_item, test_item.__class__)
     assert trashed_item.type == mock_trash['type']
     assert trashed_item.id == mock_trash['id']

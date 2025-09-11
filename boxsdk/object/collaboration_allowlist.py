@@ -10,13 +10,16 @@ if TYPE_CHECKING:
     from boxsdk.pagination.box_object_collection import BoxObjectCollection
     from boxsdk.object.collaboration_allowlist_entry import CollaborationAllowlistEntry
     from boxsdk.object.user import User
-    from boxsdk.object.collaboration_allowlist_exempt_target import CollaborationAllowlistExemptTarget
+    from boxsdk.object.collaboration_allowlist_exempt_target import (
+        CollaborationAllowlistExemptTarget,
+    )
 
 
 class AllowlistDirection(TextEnum):
     """
     Used to determine the direction of the allowlist.
     """
+
     INBOUND = 'inbound'
     OUTBOUNT = 'outbound'
     BOTH = 'both'
@@ -27,10 +30,10 @@ class CollaborationAllowlist(BaseEndpoint):
 
     @api_call
     def get_entries(
-            self,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get the entries in the collaboration allowlist using limit-offset paging.
@@ -66,10 +69,7 @@ class CollaborationAllowlist(BaseEndpoint):
             The created allowlist entry for the domain.
         """
         url = self.get_url('collaboration_whitelist_entries')
-        data = {
-            'domain': domain,
-            'direction': direction
-        }
+        data = {'domain': domain, 'direction': direction}
         response = self._session.post(url, data=json.dumps(data)).json()
         return self.translator.translate(
             session=self._session,
@@ -78,10 +78,10 @@ class CollaborationAllowlist(BaseEndpoint):
 
     @api_call
     def get_exemptions(
-            self,
-            limit: Optional[int] = None,
-            marker: Optional[str] = None,
-            fields: Iterable[str] = None
+        self,
+        limit: Optional[int] = None,
+        marker: Optional[str] = None,
+        fields: Iterable[str] = None,
     ) -> 'BoxObjectCollection':
         """
         Get the list of exempted users who are not subject to the collaboration allowlist rules.
@@ -115,11 +115,7 @@ class CollaborationAllowlist(BaseEndpoint):
             The created allowlist exemption.
         """
         url = self.get_url('collaboration_whitelist_exempt_targets')
-        data = {
-            'user': {
-                'id': user.object_id  # pylint:disable=protected-access
-            }
-        }
+        data = {'user': {'id': user.object_id}}  # pylint:disable=protected-access
         response = self._session.post(url, data=json.dumps(data)).json()
         return self.translator.translate(
             session=self._session,

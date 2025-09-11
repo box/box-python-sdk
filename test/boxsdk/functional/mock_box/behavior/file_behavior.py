@@ -6,7 +6,11 @@ from sqlalchemy.orm import make_transient
 from test.boxsdk.functional.mock_box.behavior.item_behavior import ItemBehavior
 from test.boxsdk.functional.mock_box.db_model.event_model import EventModel
 from test.boxsdk.functional.mock_box.db_model.file_model import FileModel
-from test.boxsdk.functional.mock_box.util.db_utils import get_file_by_id, get_folder_by_id, get_user_from_header
+from test.boxsdk.functional.mock_box.util.db_utils import (
+    get_file_by_id,
+    get_folder_by_id,
+    get_user_from_header,
+)
 from test.boxsdk.functional.mock_box.util.http_utils import abort
 from test.boxsdk.functional.mock_box.util import json_utils as json
 
@@ -31,7 +35,13 @@ class FileBehavior(ItemBehavior):
         file_object.content = content
         file_object.sha1 = file_hash.hexdigest()
         file_object.size = len(content)
-        self._db_session.add(EventModel(event_type='ITEM_UPLOAD', source_id=file_object.file_id, source_type='file'))
+        self._db_session.add(
+            EventModel(
+                event_type='ITEM_UPLOAD',
+                source_id=file_object.file_id,
+                source_type='file',
+            )
+        )
         self._db_session.commit()
         return json.dumps({'entries': [file_object]})
 
@@ -63,7 +73,13 @@ class FileBehavior(ItemBehavior):
         )
         self._db_session.add(file_object)
         self._db_session.commit()
-        self._db_session.add(EventModel(event_type='ITEM_UPLOAD', source_id=file_object.file_id, source_type='file'))
+        self._db_session.add(
+            EventModel(
+                event_type='ITEM_UPLOAD',
+                source_id=file_object.file_id,
+                source_type='file',
+            )
+        )
         self._db_session.commit()
         return json.dumps({'entries': [file_object]})
 
@@ -87,18 +103,30 @@ class FileBehavior(ItemBehavior):
                 parent_folder = get_folder_by_id(self._db_session, parent_id)
                 file_object.parent_id = parent_folder.id
                 self._db_session.add(
-                    EventModel(event_type='ITEM_MOVE', source_id=file_object.file_id, source_type='file'),
+                    EventModel(
+                        event_type='ITEM_MOVE',
+                        source_id=file_object.file_id,
+                        source_type='file',
+                    ),
                 )
             else:
                 setattr(file_object, key, value)
                 if key == 'name':
                     self._db_session.add(
-                        EventModel(event_type='ITEM_RENAME', source_id=file_object.file_id, source_type='file'),
+                        EventModel(
+                            event_type='ITEM_RENAME',
+                            source_id=file_object.file_id,
+                            source_type='file',
+                        ),
                     )
                 elif key == 'sync_state':
                     event_type = 'ITEM_SYNC' if value == 'synced' else 'ITEM_UNSYNC'
                     self._db_session.add(
-                        EventModel(event_type=event_type, source_id=file_object.file_id, source_type='file'),
+                        EventModel(
+                            event_type=event_type,
+                            source_id=file_object.file_id,
+                            source_type='file',
+                        ),
                     )
         self._db_session.commit()
         return json.dumps(file_object)
@@ -114,7 +142,13 @@ class FileBehavior(ItemBehavior):
         file_object.parent_id = parent_folder.id
         self._db_session.add(file_object)
         self._db_session.commit()
-        self._db_session.add(EventModel(event_type='ITEM_COPY', source_id=file_object.file_id, source_type='file'))
+        self._db_session.add(
+            EventModel(
+                event_type='ITEM_COPY',
+                source_id=file_object.file_id,
+                source_type='file',
+            )
+        )
         self._db_session.commit()
         return json.dumps(file_object)
 
@@ -130,6 +164,12 @@ class FileBehavior(ItemBehavior):
         file_object = get_file_by_id(self._db_session, file_id)
         self._check_file_lock(file_object)
         self._db_session.delete(file_object)
-        self._db_session.add(EventModel(event_type='ITEM_TRASH', source_id=file_object.file_id, source_type='file'))
+        self._db_session.add(
+            EventModel(
+                event_type='ITEM_TRASH',
+                source_id=file_object.file_id,
+                source_type='file',
+            )
+        )
         self._db_session.commit()
         response.status = 204

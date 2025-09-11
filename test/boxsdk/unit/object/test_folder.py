@@ -19,7 +19,6 @@ from boxsdk.object.upload_session import UploadSession
 from boxsdk.session.box_response import BoxResponse
 from boxsdk.util.chunked_uploader import ChunkedUploader
 
-
 # pylint:disable=protected-access
 # pylint:disable=redefined-outer-name
 from boxsdk.util.datetime_formatter import normalize_date_to_rfc3339_format
@@ -32,7 +31,9 @@ def mock_new_upload_accelerator_url():
 
 
 @pytest.fixture(scope='function')
-def mock_accelerator_response_for_new_uploads(make_mock_box_request, mock_new_upload_accelerator_url):
+def mock_accelerator_response_for_new_uploads(
+    make_mock_box_request, mock_new_upload_accelerator_url
+):
     mock_response, _ = make_mock_box_request(
         response={
             'upload_url': mock_new_upload_accelerator_url,
@@ -60,7 +61,7 @@ def mock_items_response(mock_items):
     # pylint:disable=redefined-outer-name
     def get_response(limit, offset):
         items_json, items = mock_items
-        entries = items_json[offset:limit + offset]
+        entries = items_json[offset : limit + offset]
         mock_box_response = Mock(BoxResponse)
         mock_network_response = Mock(DefaultNetworkResponse)
         mock_box_response.network_response = mock_network_response
@@ -73,13 +74,18 @@ def mock_items_response(mock_items):
         mock_box_response.content = json.dumps(mock_json).encode()
         mock_box_response.status_code = 200
         mock_box_response.ok = True
-        return mock_box_response, items[offset:limit + offset]
+        return mock_box_response, items[offset : limit + offset]
+
     return get_response
 
 
 @pytest.mark.parametrize('use_upload_session_urls', [True, False])
 def test_get_chunked_uploader(
-    mock_box_session, mock_content_response, mock_file_path, test_folder, use_upload_session_urls
+    mock_box_session,
+    mock_content_response,
+    mock_file_path,
+    test_folder,
+    use_upload_session_urls,
 ):
     expected_url = f'{API.UPLOAD_URL}/files/upload_sessions'
     mock_file_stream = BytesIO(mock_content_response.content)
@@ -108,7 +114,9 @@ def test_get_chunked_uploader(
             chunked_uploader = test_folder.get_chunked_uploader(
                 mock_file_path, use_upload_session_urls=use_upload_session_urls
             )
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    mock_box_session.post.assert_called_once_with(
+        expected_url, data=json.dumps(expected_data)
+    )
     upload_session = chunked_uploader._upload_session
     assert upload_session.part_size == part_size
     assert upload_session.total_parts == total_parts
@@ -144,7 +152,9 @@ def test_create_upload_session(test_folder, mock_box_session, use_upload_session
     upload_session = test_folder.create_upload_session(
         file_size, file_name, use_upload_session_urls=use_upload_session_urls
     )
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_data))
+    mock_box_session.post.assert_called_once_with(
+        expected_url, data=json.dumps(expected_data)
+    )
     assert isinstance(upload_session, UploadSession)
     assert upload_session.part_size == part_size
     assert upload_session.total_parts == total_parts
@@ -159,7 +169,7 @@ def mock_items_response_with_marker(mock_items):
     # pylint:disable=redefined-outer-name
     def get_response(limit, offset):
         items_json, items = mock_items
-        entries = items_json[offset:limit + offset]
+        entries = items_json[offset : limit + offset]
         mock_box_response = Mock(BoxResponse)
         mock_network_response = Mock(DefaultNetworkResponse)
         mock_box_response.network_response = mock_network_response
@@ -172,24 +182,48 @@ def mock_items_response_with_marker(mock_items):
         mock_box_response.content = json.dumps(mock_json).encode()
         mock_box_response.status_code = 200
         mock_box_response.ok = True
-        return mock_box_response, items[offset:limit + offset]
+        return mock_box_response, items[offset : limit + offset]
+
     return get_response
 
 
-def _assert_collaborator_added(test_folder, collaborator, mock_box_session, mock_collab_response, notify, role, can_view_path, data):
+def _assert_collaborator_added(
+    test_folder,
+    collaborator,
+    mock_box_session,
+    mock_collab_response,
+    notify,
+    role,
+    can_view_path,
+    data,
+):
     mock_box_session.post.return_value = mock_collab_response
-    collaboration = test_folder.add_collaborator(collaborator, role, notify, can_view_path)
+    collaboration = test_folder.add_collaborator(
+        collaborator, role, notify, can_view_path
+    )
     assert isinstance(collaboration, Collaboration)
     expected_url = API.BASE_API_URL + '/collaborations'
     params = {'notify': notify}
-    mock_box_session.post.assert_called_once_with(expected_url, expect_json_response=True, data=data, params=params)
+    mock_box_session.post.assert_called_once_with(
+        expected_url, expect_json_response=True, data=data, params=params
+    )
 
 
 @pytest.mark.parametrize('accessible_by', ['user', 'group', 'email'])
 @pytest.mark.parametrize('notify', [True, False])
 @pytest.mark.parametrize('role', iter(CollaborationRole))
 @pytest.mark.parametrize('can_view_path', [True, False])
-def test_add_collaborator(test_folder, mock_user, mock_group, mock_box_session, mock_collab_response, accessible_by, notify, role, can_view_path):
+def test_add_collaborator(
+    test_folder,
+    mock_user,
+    mock_group,
+    mock_box_session,
+    mock_collab_response,
+    accessible_by,
+    notify,
+    role,
+    can_view_path,
+):
     accessible_dict = {
         'user': (mock_user, {'id': mock_user.object_id, 'type': 'user'}),
         'group': (mock_group, {'id': mock_group.object_id, 'type': 'group'}),
@@ -206,7 +240,16 @@ def test_add_collaborator(test_folder, mock_user, mock_group, mock_box_session, 
     if can_view_path:
         body_params['can_view_path'] = True
     data = json.dumps(body_params)
-    _assert_collaborator_added(test_folder, invitee, mock_box_session, mock_collab_response, notify, role, can_view_path, data)
+    _assert_collaborator_added(
+        test_folder,
+        invitee,
+        mock_box_session,
+        mock_collab_response,
+        notify,
+        role,
+        can_view_path,
+        data,
+    )
 
 
 def test_add_collaborator_raises_for_bad_type(test_folder):
@@ -226,18 +269,34 @@ def test_delete_folder(test_folder, mock_box_session, recursive, etag, if_match_
     )
 
 
-@pytest.mark.parametrize('limit,offset,fields,sort,direction', [
-    (1, 0, None, None, None),
-    (100, 0, ['foo', 'bar'], None, None),
-    (1, 1, None, None, None),
-    (1, 0, None, 'name', 'ASC'),
-    (1, 1, None, 'date', 'DESC')
-])
-def test_get_items(test_folder, mock_box_session, mock_items_response, limit, offset, fields, sort, direction):
+@pytest.mark.parametrize(
+    'limit,offset,fields,sort,direction',
+    [
+        (1, 0, None, None, None),
+        (100, 0, ['foo', 'bar'], None, None),
+        (1, 1, None, None, None),
+        (1, 0, None, 'name', 'ASC'),
+        (1, 1, None, 'date', 'DESC'),
+    ],
+)
+def test_get_items(
+    test_folder,
+    mock_box_session,
+    mock_items_response,
+    limit,
+    offset,
+    fields,
+    sort,
+    direction,
+):
     # pylint:disable=redefined-outer-name
     expected_url = test_folder.get_url('items')
-    mock_box_session.get.return_value, expected_items = mock_items_response(limit, offset)
-    items = test_folder.get_items(limit, offset, fields=fields, sort=sort, direction=direction)
+    mock_box_session.get.return_value, expected_items = mock_items_response(
+        limit, offset
+    )
+    items = test_folder.get_items(
+        limit, offset, fields=fields, sort=sort, direction=direction
+    )
     expected_params = {'limit': limit, 'offset': offset}
     if fields:
         expected_params['fields'] = ','.join(fields)
@@ -251,34 +310,36 @@ def test_get_items(test_folder, mock_box_session, mock_items_response, limit, of
     assert all(i.id == e.object_id for (i, e) in zip(items, expected_items))
 
 
-@pytest.mark.parametrize('content_created_at', [
-    '1970-01-01T00:00:00+00:00',
-    datetime(1970, 1, 1, 0, 0, 0, tzinfo=pytz.UTC),
-    None
-])
-@pytest.mark.parametrize('content_modified_at', [
-    '1970-01-01T11:11:11+00:00',
-    datetime(1970, 1, 1, 11, 11, 11, tzinfo=pytz.UTC),
-    None
-])
+@pytest.mark.parametrize(
+    'content_created_at',
+    ['1970-01-01T00:00:00+00:00', datetime(1970, 1, 1, 0, 0, 0, tzinfo=pytz.UTC), None],
+)
+@pytest.mark.parametrize(
+    'content_modified_at',
+    [
+        '1970-01-01T11:11:11+00:00',
+        datetime(1970, 1, 1, 11, 11, 11, tzinfo=pytz.UTC),
+        None,
+    ],
+)
 @pytest.mark.parametrize('is_stream', (True, False))
 def test_upload(
-        test_folder,
-        mock_box_session,
-        mock_content_response,
-        mock_upload_response,
-        mock_file_path,
-        mock_object_id,
-        upload_using_accelerator,
-        mock_accelerator_response_for_new_uploads,
-        mock_new_upload_accelerator_url,
-        upload_using_accelerator_fails,
-        is_stream,
-        etag,
-        sha1,
-        if_match_sha1_header,
-        content_created_at,
-        content_modified_at
+    test_folder,
+    mock_box_session,
+    mock_content_response,
+    mock_upload_response,
+    mock_file_path,
+    mock_object_id,
+    upload_using_accelerator,
+    mock_accelerator_response_for_new_uploads,
+    mock_new_upload_accelerator_url,
+    upload_using_accelerator_fails,
+    is_stream,
+    etag,
+    sha1,
+    if_match_sha1_header,
+    content_created_at,
+    content_modified_at,
 ):
     # pylint:disable=too-many-locals
     # pylint:disable=too-many-arguments
@@ -289,7 +350,9 @@ def test_upload(
         if upload_using_accelerator_fails:
             mock_box_session.options.side_effect = BoxAPIException(400)
         else:
-            mock_box_session.options.return_value = mock_accelerator_response_for_new_uploads
+            mock_box_session.options.return_value = (
+                mock_accelerator_response_for_new_uploads
+            )
             expected_url = mock_new_upload_accelerator_url
 
     mock_box_session.post.return_value = mock_upload_response
@@ -340,7 +403,7 @@ def test_upload(
         files=mock_files,
         data=data,
         headers=if_match_sha1_header,
-        stream_file_content=True
+        stream_file_content=True,
     )
     assert isinstance(new_file, File)
     assert new_file.object_id == mock_object_id
@@ -353,12 +416,12 @@ def test_upload(
 
 @pytest.mark.parametrize('is_stream', (True, False))
 def test_upload_combines_preflight_and_accelerator_calls_if_both_are_requested(
-        test_folder,
-        mock_box_session,
-        mock_file_path,
-        mock_content_response,
-        mock_accelerator_response_for_new_uploads,
-        is_stream
+    test_folder,
+    mock_box_session,
+    mock_file_path,
+    mock_content_response,
+    mock_accelerator_response_for_new_uploads,
+    is_stream,
 ):
     mock_box_session.options.return_value = mock_accelerator_response_for_new_uploads
 
@@ -383,11 +446,11 @@ def test_upload_combines_preflight_and_accelerator_calls_if_both_are_requested(
 
 
 def test_upload_stream_does_preflight_check_if_specified(
-        mock_box_session,
-        test_folder,
-        preflight_check,
-        preflight_fails,
-        file_size,
+    mock_box_session,
+    test_folder,
+    preflight_check,
+    preflight_fails,
+    file_size,
 ):
     with patch.object(Folder, 'preflight_check', return_value=None):
         kwargs = {'file_stream': BytesIO(b'some bytes'), 'file_name': 'foo.txt'}
@@ -403,7 +466,9 @@ def test_upload_stream_does_preflight_check_if_specified(
             test_folder.upload_stream(**kwargs)
 
         if preflight_check:
-            test_folder.preflight_check.assert_called_once_with(size=file_size, name='foo.txt')
+            test_folder.preflight_check.assert_called_once_with(
+                size=file_size, name='foo.txt'
+            )
             _assert_post_called_correctly(mock_box_session, preflight_fails)
         else:
             assert not test_folder.preflight_check.called
@@ -418,12 +483,12 @@ def _assert_post_called_correctly(mock_box_session, preflight_fails):
 
 @patch('boxsdk.object.folder.open', mock_open(read_data=b'some bytes'), create=True)
 def test_upload_does_preflight_check_if_specified(
-        mock_box_session,
-        test_folder,
-        mock_file_path,
-        preflight_check,
-        preflight_fails,
-        file_size,
+    mock_box_session,
+    test_folder,
+    mock_file_path,
+    preflight_check,
+    preflight_fails,
+    file_size,
 ):
     with patch.object(Folder, 'preflight_check', return_value=None):
         kwargs = {'file_path': mock_file_path, 'file_name': 'foo.txt'}
@@ -439,7 +504,9 @@ def test_upload_does_preflight_check_if_specified(
             test_folder.upload(**kwargs)
 
         if preflight_check:
-            test_folder.preflight_check.assert_called_once_with(size=file_size, name='foo.txt')
+            test_folder.preflight_check.assert_called_once_with(
+                size=file_size, name='foo.txt'
+            )
             _assert_post_called_correctly(mock_box_session, preflight_fails)
         else:
             assert not test_folder.preflight_check.called
@@ -448,13 +515,15 @@ def test_upload_does_preflight_check_if_specified(
 @patch('boxsdk.object.folder.open', mock_open(read_data=b'some bytes'), create=True)
 @pytest.mark.parametrize('stream_file_content', (True, False))
 def test_upload_if_flag_stream_file_content_is_passed_to_session(
-        mock_box_session,
-        test_folder,
-        stream_file_content,
+    mock_box_session,
+    test_folder,
+    stream_file_content,
 ):
     expected_url = f'{API.UPLOAD_URL}/files/content'
 
-    test_folder.upload('foo.txt', file_name='foo.txt', stream_file_content=stream_file_content)
+    test_folder.upload(
+        'foo.txt', file_name='foo.txt', stream_file_content=stream_file_content
+    )
 
     mock_files = {'file': ('unused', ANY)}
     mock_box_session.post.assert_called_once_with(
@@ -463,10 +532,13 @@ def test_upload_if_flag_stream_file_content_is_passed_to_session(
         files=mock_files,
         expect_json_response=False,
         headers=None,
-        stream_file_content=stream_file_content)
+        stream_file_content=stream_file_content,
+    )
 
 
-def test_create_subfolder(test_folder, mock_box_session, mock_object_id, mock_folder_response):
+def test_create_subfolder(
+    test_folder, mock_box_session, mock_object_id, mock_folder_response
+):
     expected_url = test_folder.get_type_url()
     mock_box_session.post.return_value = mock_folder_response
     new_folder = test_folder.create_subfolder('name')
@@ -477,17 +549,17 @@ def test_create_subfolder(test_folder, mock_box_session, mock_object_id, mock_fo
 
 
 def test_get_shared_link(
-        test_folder,
-        mock_box_session,
-        shared_link_access,
-        shared_link_unshared_at,
-        shared_link_password,
-        shared_link_can_download,
-        shared_link_can_preview,
-        shared_link_vanity_name,
-        test_url,
-        etag,
-        if_match_header,
+    test_folder,
+    mock_box_session,
+    shared_link_access,
+    shared_link_unshared_at,
+    shared_link_password,
+    shared_link_can_download,
+    shared_link_can_preview,
+    shared_link_vanity_name,
+    test_url,
+    etag,
+    if_match_header,
 ):
     # pylint:disable=redefined-outer-name, protected-access
     expected_url = test_folder.get_url()
@@ -502,7 +574,9 @@ def test_get_shared_link(
     if shared_link_access is not None:
         expected_data['shared_link']['access'] = shared_link_access
     if shared_link_unshared_at is not SDK_VALUE_NOT_SET:
-        expected_data['shared_link']['unshared_at'] = normalize_date_to_rfc3339_format(shared_link_unshared_at)
+        expected_data['shared_link']['unshared_at'] = normalize_date_to_rfc3339_format(
+            shared_link_unshared_at
+        )
     if shared_link_can_download is not None or shared_link_can_preview is not None:
         expected_data['shared_link']['permissions'] = permissions = {}
         if shared_link_can_download is not None:
@@ -533,27 +607,33 @@ def test_get_shared_link(
 
 
 @pytest.mark.parametrize('sync_state', iter(FolderSyncState))
-def test_update_sync_state(test_folder, mock_folder_response, mock_box_session, sync_state):
+def test_update_sync_state(
+    test_folder, mock_folder_response, mock_box_session, sync_state
+):
     expected_url = test_folder.get_url()
     mock_box_session.put.return_value = mock_folder_response
     data = {'sync_state': sync_state}
     update_response = test_folder.update_sync_state(sync_state)
-    mock_box_session.put.assert_called_once_with(expected_url, data=json.dumps(data), params=None, headers=None)
+    mock_box_session.put.assert_called_once_with(
+        expected_url, data=json.dumps(data), params=None, headers=None
+    )
     assert isinstance(update_response, Folder)
     assert update_response.object_id == test_folder.object_id
 
 
 def test_preflight(
-        test_folder,
-        mock_object_id,
-        mock_box_session,
-        mock_accelerator_response_for_new_uploads,
-        mock_new_upload_accelerator_url,
+    test_folder,
+    mock_object_id,
+    mock_box_session,
+    mock_accelerator_response_for_new_uploads,
+    mock_new_upload_accelerator_url,
 ):
     new_file_size, new_file_name = 100, 'foo.txt'
     mock_box_session.options.return_value = mock_accelerator_response_for_new_uploads
 
-    accelerator_url = test_folder.preflight_check(size=new_file_size, name=new_file_name)
+    accelerator_url = test_folder.preflight_check(
+        size=new_file_size, name=new_file_name
+    )
 
     mock_box_session.options.assert_called_once_with(
         url=f'{API.BASE_API_URL}/files/content',
@@ -569,7 +649,9 @@ def test_preflight(
     assert accelerator_url == mock_new_upload_accelerator_url
 
 
-def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_box_session):
+def test_create_web_link_returns_the_correct_web_link_object(
+    test_folder, mock_box_session
+):
     expected_url = f"{API.BASE_API_URL}/web_links"
     expected_name = 'Test WebLink'
     description = 'Test Description'
@@ -579,9 +661,11 @@ def test_create_web_link_returns_the_correct_web_link_object(test_folder, mock_b
         'id': '42',
         'url': test_web_link_url,
         'name': expected_name,
-        'description': description
+        'description': description,
     }
-    new_web_link = test_folder.create_web_link(test_web_link_url, expected_name, description)
+    new_web_link = test_folder.create_web_link(
+        test_web_link_url, expected_name, description
+    )
     data = {
         'url': test_web_link_url,
         'parent': {
@@ -657,7 +741,9 @@ def test_cascade_metadata(test_folder, mock_box_session, test_metadata_template)
 
     cascade_policy = test_folder.cascade_metadata(test_metadata_template)
 
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
+    mock_box_session.post.assert_called_once_with(
+        expected_url, data=json.dumps(expected_body)
+    )
     assert isinstance(cascade_policy, MetadataCascadePolicy)
     assert cascade_policy.object_id == '84113349-794d-445c-b93c-d8481b223434'
     enterprise = cascade_policy.owner_enterprise
@@ -681,24 +767,18 @@ def test_get_folder_locks(test_folder, mock_box_session):
                     "etag": "1",
                     "type": "folder",
                     "sequence_id": "3",
-                    "name": "Contracts"
+                    "name": "Contracts",
                 },
                 "id": "12345678",
                 "type": "folder_lock",
-                "created_by": {
-                    "id": "11446498",
-                    "type": "user"
-                },
+                "created_by": {"id": "11446498", "type": "user"},
                 "created_at": "2020-09-14T23:12:53Z",
-                "locked_operations": {
-                    "move": True,
-                    "delete": True
-                },
-                "lock_type": "freeze"
+                "locked_operations": {"move": True, "delete": True},
+                "lock_type": "freeze",
             }
         ],
         "limit": 1000,
-        "next_marker": None
+        "next_marker": None,
     }
 
     folder_locks = test_folder.get_locks()
@@ -715,40 +795,30 @@ def test_get_folder_locks(test_folder, mock_box_session):
 def test_create_folder_lock(test_folder, mock_box_session):
     expected_url = f'{API.BASE_API_URL}/folder_locks'
     expected_body = {
-        "folder": {
-            "type": "folder",
-            "id": test_folder.object_id
-        },
-        "locked_operations": {
-            "move": True,
-            "delete": True
-        }
+        "folder": {"type": "folder", "id": test_folder.object_id},
+        "locked_operations": {"move": True, "delete": True},
     }
     mock_box_session.post.return_value.json.return_value = {
         "id": "12345678",
         "type": "folder_lock",
         "created_at": "2020-09-14T23:12:53Z",
-        "created_by": {
-            "id": "11446498",
-            "type": "user"
-        },
+        "created_by": {"id": "11446498", "type": "user"},
         "folder": {
             "id": "12345",
             "type": "folder",
             "etag": "1",
             "name": "Contracts",
-            "sequence_id": "3"
+            "sequence_id": "3",
         },
         "lock_type": "freeze",
-        "locked_operations": {
-            "delete": True,
-            "move": True
-        }
+        "locked_operations": {"delete": True, "move": True},
     }
 
     lock = test_folder.create_lock()
 
-    mock_box_session.post.assert_called_once_with(expected_url, data=json.dumps(expected_body))
+    mock_box_session.post.assert_called_once_with(
+        expected_url, data=json.dumps(expected_body)
+    )
     assert lock.id == '12345678'
     assert lock.folder.id == '12345'
     assert lock.locked_operations['move']
@@ -760,8 +830,5 @@ def test_delete_folder_lock(test_folder_lock, mock_box_session):
     expected_url = f'{API.BASE_API_URL}/folder_locks/{test_folder_lock.object_id}'
     test_folder_lock.delete()
     mock_box_session.delete.assert_called_once_with(
-        expected_url,
-        expect_json_response=False,
-        headers=None,
-        params={}
+        expected_url, expect_json_response=False, headers=None, params={}
     )

@@ -15,11 +15,11 @@ def as_user_headers(mock_user_id, access_token):
 
 
 def test_client_as_user_causes_as_user_header_to_be_added(
-        box_client,
-        mock_box_network,
-        generic_successful_response,
-        mock_user_id,
-        as_user_headers,
+    box_client,
+    mock_box_network,
+    generic_successful_response,
+    mock_user_id,
+    as_user_headers,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [generic_successful_response]
@@ -36,11 +36,11 @@ def test_client_as_user_causes_as_user_header_to_be_added(
 
 
 def test_folder_object_as_user_causes_as_user_header_to_be_added(
-        box_client,
-        mock_box_network,
-        generic_successful_response,
-        mock_user_id,
-        as_user_headers,
+    box_client,
+    mock_box_network,
+    generic_successful_response,
+    mock_user_id,
+    as_user_headers,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
@@ -59,11 +59,11 @@ def test_folder_object_as_user_causes_as_user_header_to_be_added(
 
 
 def test_group_membership_object_as_user_causes_as_user_header_to_be_added(
-        box_client,
-        mock_box_network,
-        generic_successful_response,
-        mock_user_id,
-        as_user_headers,
+    box_client,
+    mock_box_network,
+    generic_successful_response,
+    mock_user_id,
+    as_user_headers,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
@@ -82,11 +82,11 @@ def test_group_membership_object_as_user_causes_as_user_header_to_be_added(
 
 
 def test_events_endpoint_as_user_causes_as_user_header_to_be_added(
-        box_client,
-        mock_box_network,
-        generic_successful_response,
-        mock_user_id,
-        as_user_headers,
+    box_client,
+    mock_box_network,
+    generic_successful_response,
+    mock_user_id,
+    as_user_headers,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [
@@ -94,7 +94,9 @@ def test_events_endpoint_as_user_causes_as_user_header_to_be_added(
     ]
     stream_position = 1348790499819
     options = {'url': f'{API.BASE_API_URL}/events', 'retry_timeout': 60}
-    box_client.events().as_user(User(None, mock_user_id)).long_poll(options, stream_position)
+    box_client.events().as_user(User(None, mock_user_id)).long_poll(
+        options, stream_position
+    )
     assert mock_box_network.session.request.mock_calls == [
         call(
             'GET',
@@ -108,11 +110,11 @@ def test_events_endpoint_as_user_causes_as_user_header_to_be_added(
 
 
 def test_metadata_endpoint_as_user_causes_as_user_header_to_be_added(
-        box_client,
-        mock_box_network,
-        generic_successful_response,
-        mock_user_id,
-        as_user_headers,
+    box_client,
+    mock_box_network,
+    generic_successful_response,
+    mock_user_id,
+    as_user_headers,
 ):
     # pylint:disable=redefined-outer-name
     mock_box_network.session.request.side_effect = [

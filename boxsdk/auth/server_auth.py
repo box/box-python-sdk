@@ -17,12 +17,12 @@ class ServerAuth(ABC, OAuth2):
     ENTERPRISE_SUBJECT_TYPE = 'enterprise'
 
     def __init__(
-            self,
-            client_id: str,
-            client_secret: str,
-            enterprise_id: Optional[str] = None,
-            user: Optional[Union[str, 'User']] = None,
-            **kwargs: Any
+        self,
+        client_id: str,
+        client_secret: str,
+        enterprise_id: Optional[str] = None,
+        user: Optional[Union[str, 'User']] = None,
+        **kwargs: Any,
     ):
         super().__init__(client_id=client_id, client_secret=client_secret, **kwargs)
         self._enterprise_id = enterprise_id
@@ -66,7 +66,9 @@ class ServerAuth(ABC, OAuth2):
         """
         sub = self._normalize_user_id(user) or self._user_id
         if not sub:
-            raise ValueError("authenticate_user: Requires the user ID, but it was not provided.")
+            raise ValueError(
+                "authenticate_user: Requires the user ID, but it was not provided."
+            )
         self._user_id = sub
         return self._authenticate(sub, self.USER_SUBJECT_TYPE)
 
@@ -90,7 +92,9 @@ class ServerAuth(ABC, OAuth2):
         """
         enterprises = [enterprise, self._enterprise_id]
         if not any(enterprises):
-            raise ValueError("authenticate_instance: Requires the enterprise ID, but it was not provided.")
+            raise ValueError(
+                "authenticate_instance: Requires the enterprise ID, but it was not provided."
+            )
         if all(enterprises) and (enterprise != self._enterprise_id):
             raise ValueError(
                 f"authenticate_instance: Given enterprise ID {enterprise!r}, "
@@ -131,21 +135,24 @@ class ServerAuth(ABC, OAuth2):
 
                 if code == 429 or code >= 500:
                     date = None
-                elif box_datetime is not None and self._is_auth_error_retryable(network_response):
+                elif box_datetime is not None and self._is_auth_error_retryable(
+                    network_response
+                ):
                     date = box_datetime
                 else:
                     raise ex
 
                 time_delay = self._session.get_retry_after_time(
-                    attempt_number,
-                    network_response.headers.get('Retry-After', None)
+                    attempt_number, network_response.headers.get('Retry-After', None)
                 )
                 time.sleep(time_delay)
                 attempt_number += 1
                 self._logger.debug('Retrying authentication request')
 
     @abstractmethod
-    def _fetch_access_token(self, subject_id: str, subject_type: str, now_time: Optional[datetime] = None) -> str:
+    def _fetch_access_token(
+        self, subject_id: str, subject_type: str, now_time: Optional[datetime] = None
+    ) -> str:
         pass
 
     @staticmethod
@@ -187,8 +194,11 @@ class ServerAuth(ABC, OAuth2):
             return False
         error_code = json_response.get('error', '')
         error_description = json_response.get('error_description', '')
-        return status_code == 400 and error_code == 'invalid_grant' \
+        return (
+            status_code == 400
+            and error_code == 'invalid_grant'
             and ('exp' in error_description or 'jti' in error_description)
+        )
 
     @classmethod
     def _normalize_user_id(cls, user: Any) -> Optional[str]:

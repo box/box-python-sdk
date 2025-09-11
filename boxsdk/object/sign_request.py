@@ -10,6 +10,7 @@ class SignRequest(BaseObject):
     Sign Requests are used to request e-signatures on documents from signers.
     A Sign Request can refer to one or more Box Files and can be sent to one or more Box Sign Request Signers.
     """
+
     _item_type = 'sign-request'
 
     def get_url(self, *args: Any) -> str:
@@ -44,5 +45,7 @@ class SignRequest(BaseObject):
             Whether the operation succeeded.
         """
         url = self.get_url('resend')
-        response = self._session.post(url, skip_retry_codes={202}, expect_json_response=False)
+        response = self._session.post(
+            url, skip_retry_codes={202}, expect_json_response=False
+        )
         return response.ok

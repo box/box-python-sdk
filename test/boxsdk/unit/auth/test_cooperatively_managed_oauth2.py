@@ -3,7 +3,9 @@ from unittest.mock import Mock
 from boxsdk.auth import cooperatively_managed_oauth2
 
 
-def test_cooperatively_managed_oauth2_calls_retrieve_tokens_during_refresh(access_token, refresh_token):
+def test_cooperatively_managed_oauth2_calls_retrieve_tokens_during_refresh(
+    access_token, refresh_token
+):
     retrieve_tokens = Mock()
     oauth2 = cooperatively_managed_oauth2.CooperativelyManagedOAuth2(
         retrieve_tokens=retrieve_tokens,

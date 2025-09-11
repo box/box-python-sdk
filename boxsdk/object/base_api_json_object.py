@@ -51,10 +51,14 @@ class BaseAPIJSONObjectMeta(type):
         super().__init__(name, bases, attrs)
         item_type = attrs.get('_item_type', None)
         if item_type is not None:
-            Translator._default_translator.register(item_type, cls)   # pylint:disable=protected-access,no-member
+            Translator._default_translator.register(
+                item_type, cls
+            )  # pylint:disable=protected-access,no-member
             # Some types have - in them instead of _ in the API.
             if "-" in item_type:
-                Translator._default_translator.register(item_type.replace("-", "_"), cls)   # pylint:disable=protected-access,no-member
+                Translator._default_translator.register(
+                    item_type.replace("-", "_"), cls
+                )  # pylint:disable=protected-access,no-member
 
 
 class BaseAPIJSONObject(metaclass=BaseAPIJSONObjectMeta):
@@ -119,8 +123,7 @@ class BaseAPIJSONObject(metaclass=BaseAPIJSONObjectMeta):
 
     @property
     def object_type(self) -> str:
-        """Return the Box type for the object.
-        """
+        """Return the Box type for the object."""
         return self._item_type
 
     @classmethod
@@ -141,7 +144,9 @@ class BaseAPIJSONObject(metaclass=BaseAPIJSONObjectMeta):
             A dictionary containing the untranslated object.
         """
         if isinstance(value, BaseAPIJSONObject):
-            return cls._untranslate(value._response_object)  # pylint:disable=protected-access
+            return cls._untranslate(
+                value._response_object
+            )  # pylint:disable=protected-access
         if isinstance(value, dict):
             return {k: cls._untranslate(v) for (k, v) in value.items()}
         if isinstance(value, list):
