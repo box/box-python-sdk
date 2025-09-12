@@ -79,8 +79,10 @@ def test_translator_converts_response_to_correct_type(response_type):
 
 def test_default_translator():
     assert isinstance(
-        Translator._default_translator, Translator
-    )  # pylint:disable=protected-access
+        # pylint:disable=protected-access
+        Translator._default_translator,
+        Translator,
+    )
 
 
 @pytest.mark.parametrize(

@@ -83,10 +83,6 @@ class Client(Cloneable):
             The session object to use. If None is provided then an instance of :class:`AuthorizedSession` will be used.
         """
         super().__init__()
-        warn(
-            'Package \'boxsdk\' is going to be deprecated soon. Please use \'box-sdk-gen\' instead.',
-            DeprecationWarning,
-        )
         self._oauth = oauth
         if session is not None:
             self._session = session
@@ -1336,7 +1332,6 @@ class Client(Cloneable):
         :param args:
             Additional parts of the endpoint URL.
         """
-        # pylint:disable=no-self-use
         return self._session.get_url(endpoint, *args)
 
     def device_pinner(self, device_pin_id: str) -> 'DevicePinner':

@@ -466,7 +466,7 @@ def test_context_manager_fails_after_close(client_id, client_secret, mock_box_se
 
 
 @pytest.mark.parametrize(
-    ('close_args', 'close_kwargs'), [((), {}), ((True,), {}), ((), dict(revoke=True))]
+    ('close_args', 'close_kwargs'), [((), {}), ((True,), {}), ((), {'revoke': True})]
 )
 def test_revoke_on_close(
     client_id, client_secret, access_token, mock_box_session, close_args, close_kwargs
@@ -498,7 +498,7 @@ def test_auth_object_is_closed_even_if_revoke_fails(
 
 
 @pytest.mark.parametrize(
-    ('close_args', 'close_kwargs'), [((False,), {}), ((), dict(revoke=False))]
+    ('close_args', 'close_kwargs'), [((False,), {}), ((), {'revoke': False})]
 )
 def test_revoke_on_close_can_be_skipped(
     client_id, client_secret, access_token, mock_box_session, close_args, close_kwargs
@@ -522,7 +522,7 @@ def test_revoke_on_close_can_be_skipped(
         (MyError, BoxOAuthException(status=500), MyError),
     ],
 )
-@pytest.mark.parametrize('close_kwargs', [{}, dict(revoke=False), dict(revoke=True)])
+@pytest.mark.parametrize('close_kwargs', [{}, {'revoke': False}, {'revoke': True}])
 def test_context_manager_reraises_first_exception_after_close(
     client_id,
     client_secret,
@@ -543,7 +543,7 @@ def test_context_manager_reraises_first_exception_after_close(
     mock_close.assert_called_once_with(**close_kwargs)
 
 
-@pytest.mark.parametrize('close_kwargs', [{}, dict(revoke=False), dict(revoke=True)])
+@pytest.mark.parametrize('close_kwargs', [{}, {'revoke': False}, {'revoke': True}])
 def test_context_manager_skips_revoke_on_base_exception(
     client_id, client_secret, mock_box_session, close_kwargs
 ):

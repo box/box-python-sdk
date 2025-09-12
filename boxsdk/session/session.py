@@ -177,21 +177,20 @@ class Session:
         :param args:
             Additional parts of the endpoint URL.
         """
-        # pylint:disable=no-self-use
         url = [f'{self._api_config.BASE_API_URL}/{endpoint}']
         url.extend([f'/{x}' for x in args])
         return ''.join(url)
 
     def get_constructor_kwargs(self) -> dict:
-        return dict(
-            network_layer=self._network_layer,
-            translator=self._translator,
-            default_network_request_kwargs=self._default_network_request_kwargs.copy(),
-            api_config=self._api_config,
-            client_config=self._client_config,
-            proxy_config=self._proxy_config,
-            default_headers=self._default_headers.copy(),
-        )
+        return {
+            'network_layer': self._network_layer,
+            'translator': self._translator,
+            'default_network_request_kwargs': self._default_network_request_kwargs.copy(),
+            'api_config': self._api_config,
+            'client_config': self._client_config,
+            'proxy_config': self._proxy_config,
+            'default_headers': self._default_headers.copy(),
+        }
 
     def as_user(self, user: 'User') -> 'Session':
         """

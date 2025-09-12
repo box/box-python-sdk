@@ -82,13 +82,13 @@ def successful_token_response(successful_token_mock, successful_token_json_respo
 def test_jwt_auth_init_raises_type_error_unless_exactly_one_of_rsa_private_key_file_or_data_is_given(
     key_file, key_data, rsa_private_key_bytes
 ):
-    kwargs = dict(
-        rsa_private_key_data=rsa_private_key_bytes,
-        client_id=None,
-        client_secret=None,
-        jwt_key_id=None,
-        enterprise_id=None,
-    )
+    kwargs = {
+        'rsa_private_key_data': rsa_private_key_bytes,
+        'client_id': None,
+        'client_secret': None,
+        'jwt_key_id': None,
+        'enterprise_id': None,
+    }
     JWTAuth(**kwargs)
     kwargs.update(rsa_private_key_file_sys_path=key_file, rsa_private_key_data=key_data)
     with pytest.raises(TypeError):
@@ -100,13 +100,13 @@ def test_jwt_auth_init_raises_type_error_unless_exactly_one_of_rsa_private_key_f
 def test_jwt_auth_init_raises_type_error_if_rsa_private_key_data_has_unexpected_type(
     key_data, rsa_private_key_bytes
 ):
-    kwargs = dict(
-        rsa_private_key_data=rsa_private_key_bytes,
-        client_id=None,
-        client_secret=None,
-        jwt_key_id=None,
-        enterprise_id=None,
-    )
+    kwargs = {
+        'rsa_private_key_data': rsa_private_key_bytes,
+        'client_id': None,
+        'client_secret': None,
+        'jwt_key_id': None,
+        'enterprise_id': None,
+    }
     JWTAuth(**kwargs)
     kwargs.update(rsa_private_key_data=key_data)
     with pytest.raises(TypeError):

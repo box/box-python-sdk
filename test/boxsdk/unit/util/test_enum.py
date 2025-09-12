@@ -139,9 +139,8 @@ def test_getitem_raises_key_error_for_non_member_names(
     EnumBaseWithSubclassesDefined, enum_member_value
 ):
     with pytest.raises(KeyError):
-        EnumBaseWithSubclassesDefined[
-            enum_member_value
-        ]  # pylint:disable=pointless-statement
+        # pylint:disable=pointless-statement
+        EnumBaseWithSubclassesDefined[enum_member_value]
 
 
 def test_getattr(EnumBaseWithSubclassesDefined, enum_member_name, enum_instance):

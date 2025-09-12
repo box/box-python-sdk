@@ -198,7 +198,7 @@ def test_network_response_constructor(make_network_request_and_assert_response):
 def test_network_logs_requests(
     make_network_request, http_verb, test_url, network, logger
 ):
-    kwargs = dict(custom_kwarg='foo')
+    kwargs = {'custom_kwarg': 'foo'}
     make_network_request(network, **kwargs)
     logger.info.assert_any_call(
         network.REQUEST_FORMAT,

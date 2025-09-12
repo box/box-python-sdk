@@ -36,8 +36,8 @@ def default_translator(original_default_translator):
         Translator._default_translator = translator  # pylint:disable=protected-access
         yield translator
     finally:
-        Translator._default_translator = (
-            original_default_translator  # pylint:disable=protected-access
+        Translator._default_translator = (  # pylint:disable=protected-access
+            original_default_translator
         )
 
 

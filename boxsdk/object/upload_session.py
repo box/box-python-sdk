@@ -106,8 +106,10 @@ class UploadSession(BaseObject):
             part_content_sha1 = sha1.digest()
 
         range_end = min(
-            offset + self.part_size - 1, total_size - 1
-        )  # pylint:disable=no-member
+            # pylint:disable=no-member
+            offset + self.part_size - 1,
+            total_size - 1,
+        )
         headers = {
             'Content-Type': 'application/octet-stream',
             'Digest': f'SHA={base64.b64encode(part_content_sha1).decode("utf-8")}',

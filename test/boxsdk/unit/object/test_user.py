@@ -159,8 +159,10 @@ def test_add_email_alias_returns_the_correct_email_alias_object(
     mock_box_session.post.assert_called_once_with(expected_url, data=expected_body)
     assert isinstance(new_email_alias, EmailAlias)
     assert (
-        new_email_alias._session == mock_box_session
-    )  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        new_email_alias._session
+        == mock_box_session
+    )
     assert new_email_alias.object_id == '1234'
 
 

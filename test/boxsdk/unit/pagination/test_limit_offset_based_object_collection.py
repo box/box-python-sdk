@@ -53,7 +53,6 @@ class TestLimitOffsetBasedObjectCollection(BoxObjectCollectionTestBase):
     @pytest.fixture()
     def mock_session_with_bogus_limit(self, mock_session, mock_items_response):
         """Baseclass override."""
-        # pylint:disable=no-self-use
 
         def mock_items_side_effect(_, params):
             limit = 0
@@ -121,8 +120,10 @@ class TestLimitOffsetBasedObjectCollection(BoxObjectCollectionTestBase):
         object_collection = self._object_collection_instance(mock_session)
         object_collection.next()
         assert (
-            object_collection._limit == self.DEFAULT_LIMIT
-        )  # pylint:disable=protected-access
+            # pylint:disable=protected-access
+            object_collection._limit
+            == self.DEFAULT_LIMIT
+        )
 
     def test_object_collection_sets_limit_to_returned_value_if_originally_too_high(
         self, mock_session
@@ -132,8 +133,10 @@ class TestLimitOffsetBasedObjectCollection(BoxObjectCollectionTestBase):
         )
         object_collection.next()
         assert (
-            object_collection._limit == self.DEFAULT_LIMIT
-        )  # pylint:disable=protected-access
+            # pylint:disable=protected-access
+            object_collection._limit
+            == self.DEFAULT_LIMIT
+        )
 
     def test_box_returning_bogus_limit_raises_runtime_error(
         self, mock_session_with_bogus_limit, entries

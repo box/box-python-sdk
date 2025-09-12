@@ -331,20 +331,20 @@ class OAuth2:
         Create a BoxOAuthException instance to raise. If the error response is JSON, parse it and include the
         code and message in the exception.
         """
-        exception_kwargs = dict(
-            status=network_response.status_code,
-            url=url,
-            method='POST',
-            network_response=network_response,
-        )
+        exception_kwargs = {
+            'status': network_response.status_code,
+            'url': url,
+            'method': 'POST',
+            'network_response': network_response,
+        }
         if is_json_response(network_response):
             json_response = network_response.json()
             exception_kwargs.update(
-                dict(
-                    code=json_response.get('code') or json_response.get('error'),
-                    message=json_response.get('message')
+                {
+                    'code': json_response.get('code') or json_response.get('error'),
+                    'message': json_response.get('message')
                     or json_response.get('error_description'),
-                )
+                }
             )
         else:
             exception_kwargs['message'] = network_response.content
