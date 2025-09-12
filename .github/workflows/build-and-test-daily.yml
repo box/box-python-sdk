@@ -1,0 +1,108 @@
+name: Build and Test daily (sdk-gen)
+on:
+  schedule:
+    - cron: "20 2 * * 1-5"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        python-version:
+          - "3.8"
+          - "3.11"
+          - "3.13"
+    name: Build with Python ${{ matrix.python-version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: sdk-gen
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev]
+          python -m pip install tox-gh-actions
+      - name: All Tests
+        if: startsWith(github.head_ref, 'codegen-release')
+        env:
+          JWT_CONFIG_BASE_64: ${{ secrets.JWT_CONFIG_BASE_64 }}
+          ADMIN_USER_ID: ${{ secrets.ADMIN_USER_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          USER_ID: ${{ secrets.USER_ID }}
+          ENTERPRISE_ID: ${{ secrets.ENTERPRISE_ID }}
+          BOX_FILE_REQUEST_ID: ${{ secrets.BOX_FILE_REQUEST_ID }}
+          BOX_EXTERNAL_USER_EMAIL: ${{ secrets.BOX_EXTERNAL_USER_EMAIL }}
+          BOX_EXTERNAL_USER_ID: ${{ secrets.BOX_EXTERNAL_USER_ID }}
+          APP_ITEM_ASSOCIATION_FILE_ID: ${{ secrets.APP_ITEM_ASSOCIATION_FILE_ID }}
+          APP_ITEM_ASSOCIATION_FOLDER_ID: ${{ secrets.APP_ITEM_ASSOCIATION_FOLDER_ID }}
+          WORKFLOW_FOLDER_ID: ${{ secrets.WORKFLOW_FOLDER_ID }}
+          APP_ITEM_SHARED_LINK: ${{ secrets.APP_ITEM_SHARED_LINK }}
+          SLACK_AUTOMATION_USER_ID: ${{ secrets.SLACK_AUTOMATION_USER_ID }}
+          SLACK_ORG_ID: ${{ secrets.SLACK_ORG_ID }}
+          SLACK_PARTNER_ITEM_ID: ${{ secrets.SLACK_PARTNER_ITEM_ID }}
+        run: |
+          tox
+  coverage:
+    name: Coverage report
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: sdk-gen
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev]
+          python -m pip install coveralls
+      - name: Send coverage report to Coveralls
+        run: |
+          tox -e coverage
+          coveralls --service=github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JWT_CONFIG_BASE_64: ${{ secrets.JWT_CONFIG_BASE_64 }}
+          ADMIN_USER_ID: ${{ secrets.ADMIN_USER_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          USER_ID: ${{ secrets.USER_ID }}
+          ENTERPRISE_ID: ${{ secrets.ENTERPRISE_ID }}
+          BOX_FILE_REQUEST_ID: ${{ secrets.BOX_FILE_REQUEST_ID }}
+          BOX_EXTERNAL_USER_EMAIL: ${{ secrets.BOX_EXTERNAL_USER_EMAIL }}
+          WORKFLOW_FOLDER_ID: ${{ secrets.WORKFLOW_FOLDER_ID }}
+          APP_ITEM_ASSOCIATION_FILE_ID: ${{ secrets.APP_ITEM_ASSOCIATION_FILE_ID }}
+          APP_ITEM_ASSOCIATION_FOLDER_ID: ${{ secrets.APP_ITEM_ASSOCIATION_FOLDER_ID }}
+          APP_ITEM_SHARED_LINK: ${{ secrets.APP_ITEM_SHARED_LINK }}
+          SLACK_AUTOMATION_USER_ID: ${{ secrets.SLACK_AUTOMATION_USER_ID }}
+          SLACK_ORG_ID: ${{ secrets.SLACK_ORG_ID }}
+          SLACK_PARTNER_ITEM_ID: ${{ secrets.SLACK_PARTNER_ITEM_ID }}
+  notify:
+    name: Send Slack Notification
+    runs-on: ubuntu-latest
+    needs: [build, coverage]
+    if: always()
+    steps:
+      - name: Send Slack Notification
+        env:
+          SLACK_WEBHOOK_TEST_NOTIFICATION_URL: ${{ secrets.SLACK_WEBHOOK_TEST_NOTIFICATION_URL }}
+          BUILD_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "${{ needs.build.result }}" != "success" ] || [ "${{ needs.coverage.result }}" != "success" ]; then
+            STATUS="Failure ❌"
+          else
+            STATUS="Success ✅"
+          fi
+
+          curl -X POST -H "Content-Type: application/json" \
+            --data "{\"text\":\"<${BUILD_URL}|Daily Tests Job> in *${GITHUB_REPOSITORY}* finished with status: ${STATUS}\"}" \
+            "$SLACK_WEBHOOK_TEST_NOTIFICATION_URL
