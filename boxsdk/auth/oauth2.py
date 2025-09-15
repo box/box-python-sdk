@@ -342,8 +342,10 @@ class OAuth2:
             exception_kwargs.update(
                 {
                     'code': json_response.get('code') or json_response.get('error'),
-                    'message': json_response.get('message')
-                    or json_response.get('error_description'),
+                    'message': (
+                        json_response.get('message')
+                        or json_response.get('error_description')
+                    ),
                 }
             )
         else:

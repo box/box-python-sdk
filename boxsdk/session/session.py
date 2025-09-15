@@ -185,7 +185,9 @@ class Session:
         return {
             'network_layer': self._network_layer,
             'translator': self._translator,
-            'default_network_request_kwargs': self._default_network_request_kwargs.copy(),
+            'default_network_request_kwargs': (
+                self._default_network_request_kwargs.copy()
+            ),
             'api_config': self._api_config,
             'client_config': self._client_config,
             'proxy_config': self._proxy_config,
