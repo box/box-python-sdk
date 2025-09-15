@@ -5,7 +5,7 @@ from boxsdk import Client
 from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.session.session import Session, AuthorizedSession
 
-from .mock_network import MockNetwork
+from test.boxsdk.integration.mock_network import MockNetwork
 
 
 @pytest.fixture()

@@ -46,7 +46,9 @@ def box_oauth(client_id, client_secret, user_login, unauthorized_session):
         session=unauthorized_session,
     )
     url, _ = oauth2.get_authorization_url('http://localhost')
-    form = requests.get(url + '&box_login=' + user_login).content.decode('utf-8')
+    form = requests.get(url + '&box_login=' + user_login, timeout=10).content.decode(
+        'utf-8'
+    )
     form_action = re.search('action="([^"]*)"', form).group(1)
     auth_response = requests.post(
         form_action,
@@ -56,6 +58,7 @@ def box_oauth(client_id, client_secret, user_login, unauthorized_session):
             'client_id': client_id,
             'client_secret': client_secret,
         },
+        timeout=10,
     )
     redirect_url = auth_response.headers['Location']
     query_string = parse.urlparse(redirect_url).query

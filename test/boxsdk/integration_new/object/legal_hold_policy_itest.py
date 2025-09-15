@@ -1,6 +1,5 @@
 from test.boxsdk.integration_new import util
 from test.boxsdk.integration_new import CLIENT
-from boxsdk.exception import BoxAPIException
 
 
 def test_create_legal_hold_policy():

@@ -2,7 +2,9 @@ import json
 from datetime import datetime, timedelta
 from unittest import mock
 from unittest.mock import Mock, MagicMock, call
-from test.unit.object.conftest import mock_user  # pylint:disable=unused-import
+
+# pylint:disable=unused-import
+from test.boxsdk.unit.object.conftest import mock_user
 
 import pytz
 import pytest
@@ -57,9 +59,8 @@ def ccg_auth(client_id, client_secret, ccg_user_id, ccg_enterprise_id) -> CCGAut
         user=ccg_user_id,
         enterprise_id=ccg_enterprise_id,
     )
-    auth._session.get_retry_after_time = MagicMock(
-        return_value=0
-    )  # pylint:disable=protected-access
+    # pylint:disable=protected-access
+    auth._session.get_retry_after_time = MagicMock(return_value=0)
     return auth
 
 
@@ -97,8 +98,10 @@ def test_successful_create_ccg_auth_object_and_normalize_user_id(
         user=user,
     )
     assert (
-        auth._user_id == expected_normalized_user_id
-    )  # pylint:disable=protected-access
+        # pylint:disable=protected-access
+        auth._user_id
+        == expected_normalized_user_id
+    )
 
 
 def test_throw_type_error_when_invalid_user_object_provided(
@@ -154,8 +157,10 @@ def test_authenticate_enterprise(ccg_auth, enterprise_id, mock_enterprise_id):
             mock_enterprise_id, ENTERPRISE_SUBJECT_TYPE, None
         )
         assert (
-            ccg_auth._enterprise_id == mock_enterprise_id
-        )  # pylint:disable=protected-access
+            # pylint:disable=protected-access
+            ccg_auth._enterprise_id
+            == mock_enterprise_id
+        )
         assert ccg_auth._user_id is None  # pylint:disable=protected-access
 
 
