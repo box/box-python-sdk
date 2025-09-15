@@ -1,5 +1,7 @@
 from abc import abstractmethod
 
+from typing import Optional
+
 from box_sdk_gen.networking.fetch_options import FetchOptions
 
 from box_sdk_gen.networking.fetch_response import FetchResponse
@@ -57,7 +59,7 @@ class BoxRetryStrategy(RetryStrategy):
         is_successful: bool = (
             fetch_response.status >= 200 and fetch_response.status < 400
         )
-        retry_after_header: str = fetch_response.headers.get('Retry-After')
+        retry_after_header: Optional[str] = fetch_response.headers.get('Retry-After')
         is_accepted_with_retry_after: bool = (
             fetch_response.status == 202 and not retry_after_header == None
         )
@@ -84,7 +86,7 @@ class BoxRetryStrategy(RetryStrategy):
         fetch_response: FetchResponse,
         attempt_number: int,
     ) -> float:
-        retry_after_header: str = fetch_response.headers.get('Retry-After')
+        retry_after_header: Optional[str] = fetch_response.headers.get('Retry-After')
         if not retry_after_header == None:
             return float(retry_after_header)
         randomization: float = random(
