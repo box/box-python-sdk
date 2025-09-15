@@ -104,4 +104,4 @@ jobs:
 
           curl -X POST -H "Content-Type: application/json" \
             --data "{\"text\":\"<${BUILD_URL}|Daily Tests Job> in *${GITHUB_REPOSITORY}* finished with status: ${STATUS}\"}" \
-            "$SLACK_WEBHOOK_TEST_NOTIFICATION_URL
+            "$SLACK_WEBHOOK_TEST_NOTIFICATION_URL"
