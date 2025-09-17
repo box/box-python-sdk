@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0](https://github.com/box/box-python-sdk/compare/v3.14.0...v10.0.0) (2025-09-17)
+
+Introducing **`Box SDK v10`**, a major release designed to elevate your developer experience and streamline integration with Box Content Cloud. Currently available as a separate [`sdk-gen`](https://github.com/box/box-python-sdk/tree/sdk-gen) branch, `v10` will ultimately become the main branch.
+
+### Breaking Changes
+
+- This SDK version is auto-generated and introduces a new interface for all methods. Extensive documentation is available [here](https://github.com/box/box-python-sdk/tree/sdk-gen/docs).
+
+### What's New in `v10`
+
+- **Full API Support** — Complete coverage of the Box API ecosystem, giving you access to all the latest features and functionalities to build feature-rich applications.  
+
+- **Rapid API Updates** — Our new auto-generation approach enables Box API additions within days, ensuring you can leverage the most up-to-date features without delay.  
+
+- **Embedded Documentation** — All objects and parameters are documented directly in the SDK source code, keeping essential information in one place.  
+
+- **Enhanced Convenience Methods** — New methods for authentication, chunk uploads, automatic retries, retry strategy, and more.
+
+### Important Notes
+
+This version includes the Box Next Generation SDK artifact, previously developed in parallel to core Box SDKs. To facilitate migration and provide access to the newest features, we'll soon release an additional major version combining both artifacts. Migration to `v10` includes breaking changes, please review the [migration guide](https://github.com/box/box-python-sdk/blob/sdk-gen/migration-guides/from-v3-to-v10.md) for details.  For more information, see the [SDK versioning strategy document](https://developer.box.com/tooling/sdks/sdk-versioning). Follow developer changelog for future updates.
+
+---
+
+### What’s New Compared to [Python SDK Gen](https://github.com/box/box-python-sdk-gen) `v1.17.0`
+
+#### New Features and Enhancements
+
+* Add External User Deletion API (box/box-openapi[#550](https://github.com/box/box-python-sdk/issues/550)) ([#941](https://github.com/box/box-python-sdk/issues/941)) ([a80ad85](https://github.com/box/box-python-sdk/commit/a80ad856b3193e54272e04f01ddb025b2d9f781f))
+
+* Add missing webhook events (box/box-openapi[#554](https://github.com/box/box-python-sdk/issues/554)) ([#988](https://github.com/box/box-python-sdk/issues/988)) ([575ce0b](https://github.com/box/box-python-sdk/commit/575ce0b6d48f90db90349244414e98afe5fcbb9f))
+
+* Change names of unions (box/box-codegen[#789](https://github.com/box/box-python-sdk/issues/789)) ([#939](https://github.com/box/box-python-sdk/issues/939)) ([cf2b1d5](https://github.com/box/box-python-sdk/commit/cf2b1d5b12be0ff2453867b7d3502437283bf695))
+
+* Remove unused models from schemas (box/box-openapi[#547](https://github.com/box/box-python-sdk/issues/547)) ([#932](https://github.com/box/box-python-sdk/issues/932)) ([6ef6d63](https://github.com/box/box-python-sdk/commit/6ef6d63c37e6eccc3489a9076e0a0b0940a6e0d6)), closes [box/box-openapi#542](https://github.com/box/box-openapi/issues/542) [box/box-openapi#544](https://github.com/box/box-openapi/issues/544) [box/box-codegen#781](https://github.com/box/box-codegen/issues/781) [box/box-openapi#545](https://github.com/box/box-openapi/issues/545)
+
+For more details check [migration guide](https://github.com/box/box-python-sdk/blob/sdk-gen/migration-guides/from-box-python-sdk-gen-v1-to-box-python-sdk-v10.md) from `box-python-sdk-gen` `v1` to `box-python-sdk` `v10`.
+
 ## [3.14.0](https://github.com/box/box-python-sdk/compare/v3.13.0...v3.14.0) (2025-04-09)
 
 
