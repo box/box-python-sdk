@@ -1,10 +1,10 @@
-# Handling null values in Box Python SDK Gen
+# Handling null values in v10 version of Box Python SDK
 
-While using Box Python SDK it's important to understand how null values behave. This document provides a general overview of null value behaviour in Box Python SDK to help developers manage data consistently and predictably.
+While using v10 version of Box Python SDK it's important to understand how null values behave. This document provides a general overview of null value behaviour in Box Python SDK to help developers manage data consistently and predictably.
 
 ## Understanding null behaviour
 
-The Box Python SDK follows a consistent pattern when handling null values in update operations. This behaviour applies to most endpoints that modify resources such as users, files, folders and metadata. The updating field behaves differently depending on weather you omit it, set it to null, or provide a value:
+The v10 of Box Python SDK follows a consistent pattern when handling null values in update operations. This behaviour applies to most endpoints that modify resources such as users, files, folders and metadata. The updating field behaves differently depending on weather you omit it, set it to null, or provide a value:
 
 - Omitting the field: The field won't be included in request and the value will remain unchanged.
 - Setting it to null: Setting a field to null, will cause sending HTTP request with field value set to null, what will result in removing its current value or disassociates it from the resource.
