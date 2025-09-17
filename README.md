@@ -2,15 +2,16 @@
   <img src="https://github.com/box/sdks/blob/master/images/box-dev-logo.png" alt= “box-dev-logo” width="30%" height="50%">
 </p>
 
-# Deprecation notice
+# Migration to v10
 
-This version of the Box Python SDK is under maintenance mode, and will be deprecated soon, only critical security updates and bug fixes will be provided. We recommend using the new version Box Python SDK, which can be found at [box/box-python-sdk-gen](https://github.com/box/box-python-sdk-gen)
+The [sdk-gen](https://github.com/box/box-python-sdk/tree/sdk-gen) branch contains the generated code for the `v10` version of the Box Python SDK. This is intended primarily for developers migrating from [Box Python SDK Gen](https://github.com/box/box-python-sdk-gen) to the v10 version.
+As part of our upcoming major release, we will be introducing a combined SDK that consolidates the previously separate generated SDK into one unified SDK package for improved usability and maintenance.
 
-You can find the migration guide [here](https://github.com/box/box-python-sdk-gen/blob/main/migration-guide.md) for transitioning from Box Python SDK v3.x to the new `box-sdk-gen` package. If you have any questions, please create an issue in the new repository or reach out to [Box Developer Support](https://developer.box.com/support/).
+You can find the migration guide [here](https://github.com/box/box-python-sdk/blob/sdk-gen/migration-guides/from-box-python-sdk-gen-v1-to-box-python-sdk-v10.md) for transitioning from Box Python SDK Gen to Box Python SDK v10. If you have any questions, please create an issue in the repository or reach out to [Box Developer Support](https://developer.box.com/support/).
 
 # Box Python SDK
 
-[![image](http://opensource.box.com/badges/stable.svg)](http://opensource.box.com/badges)
+[![image](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
 [![Documentation Status](https://readthedocs.org/projects/box-python-sdk/badge/?version=latest)](http://box-python-sdk.readthedocs.org/en/latest)
 [![image](https://github.com/box/box-python-sdk/actions/workflows/build.yml/badge.svg)](https://github.com/box/box-python-sdk/actions)
 [![image](https://img.shields.io/pypi/v/boxsdk.svg)](https://pypi.python.org/pypi/boxsdk)
@@ -22,7 +23,7 @@ Getting Started Docs: <https://developer.box.com/guides/tooling/sdks/python/>
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Deprecation notice](#deprecation-notice)
+- [Migration to v10](#migration-to-v10)
 - [Box Python SDK](#box-python-sdk)
 - [Installing](#installing)
 - [Getting Started](#getting-started)
