@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0](https://github.com/box/box-python-sdk/compare/v3.14.0...v10.0.0) (2025-09-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* Change names of unions (box/box-codegen#789) (#939)
+* remove unused models from schemas (box/box-openapi#547) (#932)
+
+### Bug Fixes
+
+* Rename external user deletion method (box/box-codegen[#796](https://github.com/box/box-python-sdk/issues/796)) ([#953](https://github.com/box/box-python-sdk/issues/953)) ([381aec2](https://github.com/box/box-python-sdk/commit/381aec2aa835f043bc083d11a8b00a8f8dd75bf9))
+
+
+### New Features and Enhancements
+
+* Add External User Deletion API (box/box-openapi[#550](https://github.com/box/box-python-sdk/issues/550)) ([#941](https://github.com/box/box-python-sdk/issues/941)) ([a80ad85](https://github.com/box/box-python-sdk/commit/a80ad856b3193e54272e04f01ddb025b2d9f781f))
+* Add missing webhook events (box/box-openapi[#554](https://github.com/box/box-python-sdk/issues/554)) ([#988](https://github.com/box/box-python-sdk/issues/988)) ([575ce0b](https://github.com/box/box-python-sdk/commit/575ce0b6d48f90db90349244414e98afe5fcbb9f))
+* Change names of unions (box/box-codegen[#789](https://github.com/box/box-python-sdk/issues/789)) ([#939](https://github.com/box/box-python-sdk/issues/939)) ([cf2b1d5](https://github.com/box/box-python-sdk/commit/cf2b1d5b12be0ff2453867b7d3502437283bf695))
+* remove unused models from schemas (box/box-openapi[#547](https://github.com/box/box-python-sdk/issues/547)) ([#932](https://github.com/box/box-python-sdk/issues/932)) ([6ef6d63](https://github.com/box/box-python-sdk/commit/6ef6d63c37e6eccc3489a9076e0a0b0940a6e0d6)), closes [box/box-openapi#542](https://github.com/box/box-openapi/issues/542) [box/box-openapi#544](https://github.com/box/box-openapi/issues/544) [box/box-codegen#781](https://github.com/box/box-codegen/issues/781) [box/box-openapi#545](https://github.com/box/box-openapi/issues/545)
+* Support event with long polling (box/box-codegen[#757](https://github.com/box/box-python-sdk/issues/757)) ([#936](https://github.com/box/box-python-sdk/issues/936)) ([4442a84](https://github.com/box/box-python-sdk/commit/4442a848576c9499bced5294cd8b7b6da7d9bf12))
+* Support Python 3.12 and Python 3.13 ([#898](https://github.com/box/box-python-sdk/issues/898)) ([d604ea9](https://github.com/box/box-python-sdk/commit/d604ea98012aed3c2d0212d1b40b71a52efb55ec))
+
 ## [3.14.0](https://github.com/box/box-python-sdk/compare/v3.13.0...v3.14.0) (2025-04-09)
 
 
