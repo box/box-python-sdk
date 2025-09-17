@@ -35,7 +35,7 @@ This version includes the Box Next Generation SDK artifact, previously developed
 * Change names of unions (box/box-codegen[#789](https://github.com/box/box-python-sdk/issues/789)) ([#939](https://github.com/box/box-python-sdk/issues/939)) ([cf2b1d5](https://github.com/box/box-python-sdk/commit/cf2b1d5b12be0ff2453867b7d3502437283bf695))
 * Remove unused models from schemas (box/box-openapi[#547](https://github.com/box/box-python-sdk/issues/547)) ([#932](https://github.com/box/box-python-sdk/issues/932)) ([6ef6d63](https://github.com/box/box-python-sdk/commit/6ef6d63c37e6eccc3489a9076e0a0b0940a6e0d6)), closes [box/box-openapi#542](https://github.com/box/box-openapi/issues/542) [box/box-openapi#544](https://github.com/box/box-openapi/issues/544) [box/box-codegen#781](https://github.com/box/box-codegen/issues/781) [box/box-openapi#545](https://github.com/box/box-openapi/issues/545)
 
-For more details check [migration guide from box-python-sdk-gen v1 to box-python-sdk v10](https://github.com/box/box-python-sdk/blob/sdk-gen/migration-guides/from-box-python-sdk-gen-v1-to-box-python-sdk-v10.md).
+For more details check [migration guide](https://github.com/box/box-python-sdk/blob/sdk-gen/migration-guides/from-box-python-sdk-gen-v1-to-box-python-sdk-v10.md) from `box-python-sdk-gen` `v1` to `box-python-sdk` `v10`.
 
 ## [3.14.0](https://github.com/box/box-python-sdk/compare/v3.13.0...v3.14.0) (2025-04-09)
 
