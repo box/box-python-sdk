@@ -440,7 +440,7 @@ class AiManager:
                 To learn more about creating templates, see [Creating metadata templates in the Admin Console](https://support.box.com/hc/en-us/articles/360044194033-Customizing-Metadata-Templates)
 
 
-                or use the [metadata template API](g://metadata/templates/create).
+                or use the [metadata template API](g://metadata/templates/create). This endpoint also supports [Enhanced Extract Agent](g://box-ai/ai-tutorials/extract-metadata-structured/#enhanced-extract-agent).
 
                 :param items: The items to be processed by the LLM. Currently you can use files only.
                 :type items: List[AiItemBase]
