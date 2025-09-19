@@ -116,7 +116,7 @@ class EventStream:
             info = self._events_manager.get_events_with_long_polling()
 
             server = next(
-                (e for e in (info.entries or []) if e.type == 'realtime_server'), None
+                (e for e in info.entries or [] if e.type == 'realtime_server'), None
             )
             if not server:
                 raise BoxSDKError(message='No realtime server found in the response.')
