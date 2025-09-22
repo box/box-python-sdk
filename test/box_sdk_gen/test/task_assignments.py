@@ -34,9 +34,9 @@ from box_sdk_gen.managers.task_assignments import (
     UpdateTaskAssignmentByIdResolutionState,
 )
 
-from test.commons import upload_new_file
+from test.box_sdk_gen.test.commons import upload_new_file
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
 from box_sdk_gen.internal.utils import date_time_from_string
 

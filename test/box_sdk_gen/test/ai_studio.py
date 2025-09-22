@@ -22,9 +22,9 @@ from box_sdk_gen.box.developer_token_auth import BoxDeveloperTokenAuth
 
 from box_sdk_gen.client import BoxClient
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
-from test.commons import upload_new_file
+from test.box_sdk_gen.test.commons import upload_new_file
 
 from box_sdk_gen.internal.utils import get_uuid
 

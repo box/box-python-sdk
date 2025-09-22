@@ -18,7 +18,7 @@ from box_sdk_gen.internal.utils import DateTime
 
 from box_sdk_gen.box.event_stream import EventStream
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
 from box_sdk_gen.schemas.event_source import EventSource
 

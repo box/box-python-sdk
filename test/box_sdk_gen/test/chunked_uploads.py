@@ -30,7 +30,7 @@ from box_sdk_gen.internal.utils import generate_byte_stream
 
 from box_sdk_gen.internal.utils import ByteStream
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
 from box_sdk_gen.schemas.file import File
 

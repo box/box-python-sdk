@@ -30,13 +30,13 @@ from box_sdk_gen.managers.file_classifications import (
 
 from box_sdk_gen.internal.utils import get_uuid
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
-from test.commons import upload_new_file
+from test.box_sdk_gen.test.commons import upload_new_file
 
-from test.commons import get_or_create_classification_template
+from test.box_sdk_gen.test.commons import get_or_create_classification_template
 
-from test.commons import get_or_create_classification
+from test.box_sdk_gen.test.commons import get_or_create_classification
 
 from box_sdk_gen.schemas.classification_template import ClassificationTemplate
 

@@ -34,7 +34,7 @@ from box_sdk_gen.internal.utils import compare_signatures
 
 from box_sdk_gen.managers.webhooks import WebhooksManager
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
 client: BoxClient = get_default_client()
 

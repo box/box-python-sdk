@@ -8,9 +8,9 @@ from box_sdk_gen.managers.terms_of_services import UpdateTermsOfServiceByIdStatu
 
 from box_sdk_gen.schemas.terms_of_services import TermsOfServices
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
-from test.commons import get_or_create_terms_of_services
+from test.box_sdk_gen.test.commons import get_or_create_terms_of_services
 
 client: BoxClient = get_default_client()
 

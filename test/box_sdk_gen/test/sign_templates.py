@@ -8,7 +8,7 @@ from box_sdk_gen.internal.utils import decode_base_64
 
 from box_sdk_gen.internal.utils import get_env_var
 
-from test.commons import get_default_client_with_user_subject
+from test.box_sdk_gen.test.commons import get_default_client_with_user_subject
 
 
 def testGetSignTemplates():

@@ -32,9 +32,9 @@ from box_sdk_gen.internal.utils import close_file_output_stream
 
 from box_sdk_gen.internal.utils import read_buffer_from_file
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
-from test.commons import upload_new_file
+from test.box_sdk_gen.test.commons import upload_new_file
 
 from box_sdk_gen.networking.fetch_options import FetchOptions
 

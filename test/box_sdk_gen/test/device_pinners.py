@@ -6,7 +6,7 @@ from box_sdk_gen.schemas.device_pinners import DevicePinners
 
 from box_sdk_gen.managers.device_pinners import GetEnterpriseDevicePinnersDirection
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
 from box_sdk_gen.internal.utils import get_env_var
 

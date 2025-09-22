@@ -18,11 +18,11 @@ from box_sdk_gen.managers.zip_downloads import CreateZipDownloadItems
 
 from box_sdk_gen.schemas.zip_download_status import ZipDownloadStatus
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
-from test.commons import upload_new_file
+from test.box_sdk_gen.test.commons import upload_new_file
 
-from test.commons import create_new_folder
+from test.box_sdk_gen.test.commons import create_new_folder
 
 from box_sdk_gen.internal.utils import buffer_equals
 

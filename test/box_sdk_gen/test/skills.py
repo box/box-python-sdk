@@ -28,9 +28,9 @@ from box_sdk_gen.managers.skills import UpdateBoxSkillCardsOnFileRequestBodyOpFi
 
 from box_sdk_gen.internal.utils import get_uuid
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
-from test.commons import upload_new_file
+from test.box_sdk_gen.test.commons import upload_new_file
 
 from box_sdk_gen.schemas.keyword_skill_card import KeywordSkillCard
 
