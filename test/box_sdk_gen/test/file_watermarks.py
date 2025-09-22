@@ -22,7 +22,7 @@ from box_sdk_gen.internal.utils import get_uuid
 
 from box_sdk_gen.internal.utils import generate_byte_stream
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
 client: BoxClient = get_default_client()
 

@@ -16,7 +16,7 @@ from box_sdk_gen.managers.collaboration_allowlist_entries import (
     CreateCollaborationWhitelistEntryDirection,
 )
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
 from box_sdk_gen.internal.utils import get_uuid
 

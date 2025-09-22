@@ -48,7 +48,7 @@ from box_sdk_gen.internal.utils import date_time_from_string
 
 from box_sdk_gen.internal.utils import delay_in_seconds
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
 from box_sdk_gen.schemas.metadata_field_filter_date_range import (
     MetadataFieldFilterDateRange,

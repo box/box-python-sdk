@@ -22,10 +22,12 @@ class AiAgentReference(BaseObject):
         **kwargs
     ):
         """
-        :param type: The type of AI agent used to handle queries., defaults to AiAgentReferenceTypeField.AI_AGENT_ID
-        :type type: AiAgentReferenceTypeField, optional
-        :param id: The ID of an Agent., defaults to None
-        :type id: Optional[str], optional
+                :param type: The type of AI agent used to handle queries., defaults to AiAgentReferenceTypeField.AI_AGENT_ID
+                :type type: AiAgentReferenceTypeField, optional
+                :param id: The ID of an Agent. This can be a numeric ID for custom agents (for example, `14031`)
+        or a unique identifier for pre-built agents (for example, `enhanced_extract_agent`
+        for the [Enhanced Extract Agent](g://box-ai/ai-tutorials/extract-metadata-structured/#enhanced-extract-agent))., defaults to None
+                :type id: Optional[str], optional
         """
         super().__init__(**kwargs)
         self.type = type

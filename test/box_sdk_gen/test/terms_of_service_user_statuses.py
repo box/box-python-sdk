@@ -20,9 +20,9 @@ from box_sdk_gen.schemas.terms_of_service_user_statuses import (
     TermsOfServiceUserStatuses,
 )
 
-from test.commons import get_default_client_with_user_subject
+from test.box_sdk_gen.test.commons import get_default_client_with_user_subject
 
-from test.commons import get_or_create_terms_of_services
+from test.box_sdk_gen.test.commons import get_or_create_terms_of_services
 
 from box_sdk_gen.internal.utils import get_uuid
 

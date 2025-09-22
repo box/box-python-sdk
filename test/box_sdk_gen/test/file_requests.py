@@ -12,7 +12,7 @@ from box_sdk_gen.managers.file_requests import CreateFileRequestCopyFolderTypeFi
 
 from box_sdk_gen.internal.utils import get_env_var
 
-from test.commons import get_default_client_with_user_subject
+from test.box_sdk_gen.test.commons import get_default_client_with_user_subject
 
 
 def testGetCopyUpdateDeleteFileRequest():

@@ -30,9 +30,9 @@ from box_sdk_gen.schemas.collaborations import Collaborations
 
 from box_sdk_gen.internal.utils import get_uuid
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
-from test.commons import create_new_folder
+from test.box_sdk_gen.test.commons import create_new_folder
 
 client: BoxClient = get_default_client()
 

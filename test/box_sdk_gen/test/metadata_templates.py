@@ -40,9 +40,9 @@ from box_sdk_gen.managers.file_metadata import DeleteFileMetadataByIdScope
 
 from box_sdk_gen.internal.utils import get_uuid
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
-from test.commons import upload_new_file
+from test.box_sdk_gen.test.commons import upload_new_file
 
 client: BoxClient = get_default_client()
 

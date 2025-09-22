@@ -16,7 +16,7 @@ from box_sdk_gen.managers.folder_watermarks import (
 
 from box_sdk_gen.internal.utils import get_uuid
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
 client: BoxClient = get_default_client()
 

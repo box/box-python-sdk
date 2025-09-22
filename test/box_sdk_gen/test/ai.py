@@ -58,7 +58,7 @@ from box_sdk_gen.managers.ai import CreateAiExtractStructuredMetadataTemplate
 
 from box_sdk_gen.managers.metadata_templates import DeleteMetadataTemplateScope
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
 from box_sdk_gen.internal.utils import get_uuid
 
@@ -74,7 +74,7 @@ from box_sdk_gen.internal.utils import date_time_to_string
 
 from box_sdk_gen.internal.utils import get_value_from_object_raw_data
 
-from test.commons import upload_new_file
+from test.box_sdk_gen.test.commons import upload_new_file
 
 from box_sdk_gen.schemas.ai_agent_ask import AiAgentAsk
 

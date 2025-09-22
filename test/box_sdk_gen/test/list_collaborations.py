@@ -34,11 +34,11 @@ from box_sdk_gen.internal.utils import get_uuid
 
 from box_sdk_gen.internal.utils import get_env_var
 
-from test.commons import get_default_client
+from test.box_sdk_gen.test.commons import get_default_client
 
-from test.commons import create_new_folder
+from test.box_sdk_gen.test.commons import create_new_folder
 
-from test.commons import upload_new_file
+from test.box_sdk_gen.test.commons import upload_new_file
 
 
 def testListCollaborations():
