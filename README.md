@@ -58,7 +58,7 @@ Getting Started Docs: <https://developer.box.com/guides/tooling/sdks/python/>
 # Installing
 
 ``` console
-pip install boxsdk
+pip install boxsdk~=3.0
 ```
 
 The current version of the SDK is v3.x --- With this release support for
@@ -143,7 +143,7 @@ Authenticating with a JWT requires some extra dependencies. To get them,
 simply
 
 ``` console
-pip install "boxsdk[jwt]"
+pip install "boxsdk[jwt]"~=3.0
 ```
 
 Instead of instantiating your `Client` with an instance of `OAuth2`,
