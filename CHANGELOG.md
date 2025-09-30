@@ -22,7 +22,7 @@ Introducing **`Box SDK v10`**, a major release designed to elevate your develope
 
 ### Important Notes
 
-This version includes the Box Next Generation SDK artifact, previously developed in parallel to core Box SDKs. To facilitate migration and provide access to the newest features, we'll soon release an additional major version combining both artifacts. Migration to `v10` includes breaking changes, please review the [migration guide](https://github.com/box/box-python-sdk/blob/sdk-gen/migration-guides/from-v3-to-v10.md) for details.  For more information, see the [SDK versioning strategy document](https://developer.box.com/tooling/sdks/sdk-versioning). Follow developer changelog for future updates.
+This version includes the Box Next Generation SDK artifact, previously developed in parallel to core Box SDKs. To facilitate migration and provide access to the newest features, we'll soon release an additional major version combining both artifacts. Migration to `v10` includes breaking changes, please review the [migration guide](https://github.com/box/box-python-sdk/blob/sdk-gen/migration-guides/from-v3-to-v10.md) for details.  For more information, see the [SDK versioning strategy document](https://developer.box.com/guides/tooling/sdks/sdk-versioning). Follow developer changelog for future updates.
 
 ---
 
