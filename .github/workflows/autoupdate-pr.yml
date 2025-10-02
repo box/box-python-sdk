@@ -2,7 +2,9 @@ name: Autoupdate PR
 on:
   push:
     branches:
+      - main
       - sdk-gen
+      - combined-sdk
 
 jobs:
   update_pull_requests:
@@ -24,10 +26,10 @@ jobs:
 
       - name: Auto update pull requests
         run: |
-          PR_LIST=$(curl -s -H "Authorization: Bearer ${{ secrets.DISPATCH_ACCESS_TOKEN }}" "https://api.github.com/repos/$GITHUB_REPOSITORY/pulls?state=open" | jq -r '.[] | .head.ref')
+          PR_LIST=$(curl -s -H "Authorization: Bearer ${{ secrets.DISPATCH_ACCESS_TOKEN }}" "https://api.github.com/repos/$GITHUB_REPOSITORY/pulls?state=open&head=${{ github.ref_name }}" | jq -r '.[] | .head.ref')
           for pr_branch in $PR_LIST; do
             git checkout "$pr_branch"
-            if git merge origin/sdk-gen; then
+            if git merge origin/${{ github.ref_name }}; then
               git push
             else
               # Conflict occurred, resolve by keeping our changes
