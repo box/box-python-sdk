@@ -156,8 +156,6 @@ from box_sdk_gen.schemas.access_token import *
 
 from box_sdk_gen.schemas.folder_reference import *
 
-from box_sdk_gen.schemas.generic_source import *
-
 from box_sdk_gen.schemas.group_base import *
 
 from box_sdk_gen.schemas.group_mini import *
