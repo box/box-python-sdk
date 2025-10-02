@@ -2,8 +2,6 @@ name: Autoupdate PR
 on:
   push:
     branches:
-      - main
-      - sdk-gen
       - combined-sdk
 
 jobs:
