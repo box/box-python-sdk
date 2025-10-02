@@ -1,8 +1,8 @@
+from typing import Dict
+
 from typing import Optional
 
 from box_sdk_gen.internal.base_object import BaseObject
-
-from box_sdk_gen.schemas.ai_extract_response import AiExtractResponse
 
 from box_sdk_gen.schemas.ai_agent_info import AiAgentInfo
 
@@ -14,7 +14,7 @@ from box_sdk_gen.internal.utils import DateTime
 class AiExtractStructuredResponse(BaseObject):
     def __init__(
         self,
-        answer: AiExtractResponse,
+        answer: Dict,
         created_at: DateTime,
         *,
         completion_reason: Optional[str] = None,
