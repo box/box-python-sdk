@@ -10,8 +10,6 @@ from box_sdk_gen.schemas.ai_response_full import *
 
 from box_sdk_gen.schemas.ai_dialogue_history import *
 
-from box_sdk_gen.schemas.ai_extract_response import *
-
 from box_sdk_gen.schemas.ai_extract_structured_response import *
 
 from box_sdk_gen.schemas.ai_item_base import *

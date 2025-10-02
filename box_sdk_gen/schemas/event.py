@@ -1,8 +1,10 @@
 from enum import Enum
 
-from box_sdk_gen.internal.base_object import BaseObject
-
 from typing import Optional
+
+from typing import Dict
+
+from box_sdk_gen.internal.base_object import BaseObject
 
 from box_sdk_gen.schemas.user import User
 
@@ -185,11 +187,6 @@ class EventEventTypeField(str, Enum):
     WATERMARK_LABEL_DELETE = 'WATERMARK_LABEL_DELETE'
 
 
-class EventAdditionalDetailsField(BaseObject):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-
 class Event(BaseObject):
     def __init__(
         self,
@@ -202,7 +199,7 @@ class Event(BaseObject):
         event_type: Optional[EventEventTypeField] = None,
         session_id: Optional[str] = None,
         source: Optional[EventSourceResource] = None,
-        additional_details: Optional[EventAdditionalDetailsField] = None,
+        additional_details: Optional[Dict] = None,
         **kwargs
     ):
         """
@@ -223,7 +220,7 @@ class Event(BaseObject):
         information to correlate an event to external KeySafe logs. Not all events
         have an `additional_details` object.  This object is only available in the
         Enterprise Events., defaults to None
-                :type additional_details: Optional[EventAdditionalDetailsField], optional
+                :type additional_details: Optional[Dict], optional
         """
         super().__init__(**kwargs)
         self.type = type
