@@ -17,12 +17,12 @@ For full guidance on SDK versioning, see the [Box SDK Versioning Guide](https://
 
 ## Which Version Should I Use?
 
-| Scenario                                                                                            | Recommended Version                                                | Example `pip install`            |
-|-----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|----------------------------------|
-| Creating a new application                                                                          | Use [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)      | `pip install "box_sdk_gen>=10"` |
-| Existing app using [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) artifact                    | Upgrade to [v10](https://github.com/box/box-python-sdk/tree/sdk-gen) | `pip install "box_sdk_gen>=10"` |
-| Existing app using [boxsdk](https://pypi.org/project/boxsdk/) artifact planning to use new features | Wait for v4 to start migration process                              | TBD                              |
-| Existing app using [boxsdk](https://pypi.org/project/boxsdk/) artifact not planning any changes     | Stay on `boxsdk~=3.0`                                              | `pip install "boxsdk~=3.0"`     |
+| Scenario                                                                                            | Recommended Version                                                | Example `pip install`        |
+|-----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|------------------------------|
+| Creating a new application                                                                          | Use [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)      | `pip install "boxsdk>=10"`   |
+| Existing app using [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) artifact                    | Upgrade to [v10](https://github.com/box/box-python-sdk/tree/sdk-gen) | `pip install "boxsdk>=10"`   |
+| Existing app using [boxsdk](https://pypi.org/project/boxsdk/) artifact planning to use new features | Wait for v4 to start migration process                              | TBD                          |
+| Existing app using [boxsdk](https://pypi.org/project/boxsdk/) artifact not planning any changes     | Stay on `boxsdk~=3.0`                                              | `pip install "boxsdk~=3.0"`  |
 
 # Box Python SDK
 
