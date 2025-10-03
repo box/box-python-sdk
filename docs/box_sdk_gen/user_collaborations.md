@@ -39,7 +39,7 @@ Returns a collaboration object.
 
 Updates a collaboration.
 Can be used to change the owner of an item, or to
-accept collaboration invites.
+accept collaboration invites. In case of accepting collaboration invite, role is not required.
 
 This operation is performed by calling function `update_collaboration_by_id`.
 
@@ -49,14 +49,14 @@ See the endpoint docs at
 <!-- sample put_collaborations_id -->
 
 ```python
-client.user_collaborations.update_collaboration_by_id(collaboration_id, UpdateCollaborationByIdRole.VIEWER)
+client.user_collaborations.update_collaboration_by_id(collaboration_id, role=UpdateCollaborationByIdRole.VIEWER)
 ```
 
 ### Arguments
 
 - collaboration_id `str`
   - The ID of the collaboration. Example: "1234"
-- role `UpdateCollaborationByIdRole`
+- role `Optional[UpdateCollaborationByIdRole]`
   - The level of access granted.
 - status `Optional[UpdateCollaborationByIdStatus]`
   - Set the status of a `pending` collaboration invitation, effectively accepting, or rejecting the invite.
