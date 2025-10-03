@@ -2,12 +2,27 @@
   <img src="https://github.com/box/sdks/blob/master/images/box-dev-logo.png" alt= “box-dev-logo” width="30%" height="50%">
 </p>
 
-# Migration to v10
+# Versioning Strategy
 
-The [sdk-gen](https://github.com/box/box-python-sdk/tree/sdk-gen) branch contains the generated code for the `v10` version of the Box Python SDK. This is intended primarily for developers migrating from [Box Python SDK Gen](https://github.com/box/box-python-sdk-gen) to the v10 version.
-As part of our upcoming major release, we will be introducing a combined SDK that consolidates the previously separate generated SDK into one unified SDK package for improved usability and maintenance.
+Starting with v10 of the SDK, we’ve introduced a new generated codebase designed to enhance your experience with the Box API.  
+It is currently available on the [sdk-gen](https://github.com/box/box-python-sdk/tree/sdk-gen) branch and uses the new `box_sdk_gen` package instead of the old `boxsdk`.
 
-You can find the migration guide [here](https://github.com/box/box-python-sdk/blob/sdk-gen/migration-guides/from-box-python-sdk-gen-v1-to-box-python-sdk-v10.md) for transitioning from Box Python SDK Gen to Box Python SDK v10. If you have any questions, please create an issue in the repository or reach out to [Box Developer Support](https://developer.box.com/support/).
+v10 is targeted at new users of Box Python SDK and users already working with the generated Box Python SDK previously available under the [Box Python SDK Gen repository](https://github.com/box/box-python-sdk-gen).
+
+For users of v3 of the Box Python SDK, no action is required at this time — we’ll be providing an upcoming v4 release that will include both `boxsdk` and `box_sdk_gen` packages for a smooth migration path. To avoid unintentional upgrades, pin your version to `boxsdk~=3.0`.
+
+For full guidance on SDK versioning, see the [Box SDK Versioning Guide](https://developer.box.com/guides/tooling/sdks/sdk-versioning/).
+
+---
+
+## Which Version Should I Use?
+
+| Scenario                                                                                            | Recommended Version                                                | Example `pip install`        |
+|-----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|------------------------------|
+| Creating a new application                                                                          | Use [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)      | `pip install "boxsdk>=10"`   |
+| Existing app using [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) artifact                    | Upgrade to [v10](https://github.com/box/box-python-sdk/tree/sdk-gen) | `pip install "boxsdk>=10"`   |
+| Existing app using [boxsdk](https://pypi.org/project/boxsdk/) artifact planning to use new features | Wait for v4 to start migration process                              | TBD                          |
+| Existing app using [boxsdk](https://pypi.org/project/boxsdk/) artifact not planning any changes     | Stay on `boxsdk~=3.0`                                              | `pip install "boxsdk~=3.0"`  |
 
 # Box Python SDK
 
@@ -23,7 +38,6 @@ Getting Started Docs: <https://developer.box.com/guides/tooling/sdks/python/>
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Migration to v10](#migration-to-v10)
 - [Box Python SDK](#box-python-sdk)
 - [Installing](#installing)
 - [Getting Started](#getting-started)
