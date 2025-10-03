@@ -195,8 +195,8 @@ class UserCollaborationsManager:
     def update_collaboration_by_id(
         self,
         collaboration_id: str,
-        role: UpdateCollaborationByIdRole,
         *,
+        role: Optional[UpdateCollaborationByIdRole] = None,
         status: Optional[UpdateCollaborationByIdStatus] = None,
         expires_at: Optional[DateTime] = None,
         can_view_path: Optional[bool] = None,
@@ -208,13 +208,13 @@ class UserCollaborationsManager:
                 Can be used to change the owner of an item, or to
 
 
-                accept collaboration invites.
+                accept collaboration invites. In case of accepting collaboration invite, role is not required.
 
                 :param collaboration_id: The ID of the collaboration.
         Example: "1234"
                 :type collaboration_id: str
-                :param role: The level of access granted.
-                :type role: UpdateCollaborationByIdRole
+                :param role: The level of access granted., defaults to None
+                :type role: Optional[UpdateCollaborationByIdRole], optional
                 :param status: Set the status of a `pending` collaboration invitation,
         effectively accepting, or rejecting the invite., defaults to None
                 :type status: Optional[UpdateCollaborationByIdStatus], optional
