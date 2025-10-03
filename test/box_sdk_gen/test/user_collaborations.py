@@ -64,7 +64,7 @@ def testUserCollaborations():
     assert collaboration_from_api.invite_email == None
     updated_collaboration: Optional[Collaboration] = (
         client.user_collaborations.update_collaboration_by_id(
-            collaboration_id, UpdateCollaborationByIdRole.VIEWER
+            collaboration_id, role=UpdateCollaborationByIdRole.VIEWER
         )
     )
     assert to_string(updated_collaboration.role) == 'viewer'
@@ -94,7 +94,7 @@ def testConvertingUserCollaborationToOwnership():
     assert to_string(collaboration.role) == 'editor'
     owner_collaboration: Optional[Collaboration] = (
         client.user_collaborations.update_collaboration_by_id(
-            collaboration.id, UpdateCollaborationByIdRole.OWNER
+            collaboration.id, role=UpdateCollaborationByIdRole.OWNER
         )
     )
     assert owner_collaboration == None
@@ -133,7 +133,7 @@ def testExternalUserCollaborations():
     assert collaboration_from_api.invite_email == user_login
     updated_collaboration: Optional[Collaboration] = (
         client.user_collaborations.update_collaboration_by_id(
-            collaboration_id, UpdateCollaborationByIdRole.VIEWER
+            collaboration_id, role=UpdateCollaborationByIdRole.VIEWER
         )
     )
     assert to_string(updated_collaboration.role) == 'viewer'
