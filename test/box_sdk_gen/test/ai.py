@@ -328,21 +328,11 @@ def testAIExtractStructuredWithFields():
         ],
         ai_agent=agent_ignoring_overriding_embeddings_model,
     )
-    assert to_string(
-        get_value_from_object_raw_data(response, 'answer.hobby')
-    ) == to_string(['guitar'])
-    assert (
-        to_string(get_value_from_object_raw_data(response, 'answer.firstName'))
-        == 'John'
-    )
-    assert (
-        to_string(get_value_from_object_raw_data(response, 'answer.lastName')) == 'Doe'
-    )
-    assert (
-        to_string(get_value_from_object_raw_data(response, 'answer.dateOfBirth'))
-        == '1990-07-04'
-    )
-    assert to_string(get_value_from_object_raw_data(response, 'answer.age')) == '34'
+    assert to_string(response.answer.get('hobby')) == to_string(['guitar'])
+    assert to_string(response.answer.get('firstName')) == 'John'
+    assert to_string(response.answer.get('lastName')) == 'Doe'
+    assert to_string(response.answer.get('dateOfBirth')) == '1990-07-04'
+    assert to_string(response.answer.get('age')) == '34'
     assert response.completion_reason == 'done'
     client.files.delete_file_by_id(file.id)
 
@@ -407,21 +397,11 @@ def testAIExtractStructuredWithMetadataTemplate():
             template_key=template_key, scope='enterprise'
         ),
     )
-    assert (
-        to_string(get_value_from_object_raw_data(response, 'answer.firstName'))
-        == 'John'
-    )
-    assert (
-        to_string(get_value_from_object_raw_data(response, 'answer.lastName')) == 'Doe'
-    )
-    assert (
-        to_string(get_value_from_object_raw_data(response, 'answer.dateOfBirth'))
-        == '1990-07-04T00:00:00Z'
-    )
-    assert to_string(get_value_from_object_raw_data(response, 'answer.age')) == '34'
-    assert to_string(
-        get_value_from_object_raw_data(response, 'answer.hobby')
-    ) == to_string(['guitar'])
+    assert to_string(response.answer.get('firstName')) == 'John'
+    assert to_string(response.answer.get('lastName')) == 'Doe'
+    assert to_string(response.answer.get('dateOfBirth')) == '1990-07-04T00:00:00Z'
+    assert to_string(response.answer.get('age')) == '34'
+    assert to_string(response.answer.get('hobby')) == to_string(['guitar'])
     assert response.completion_reason == 'done'
     client.metadata_templates.delete_metadata_template(
         DeleteMetadataTemplateScope.ENTERPRISE, template.template_key

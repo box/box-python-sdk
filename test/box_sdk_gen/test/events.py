@@ -53,6 +53,7 @@ def testEventUpload():
     assert len(events.entries) > 0
     first_event: Event = events.entries[0]
     assert to_string(first_event.event_type) == 'UPLOAD'
+    assert to_string(first_event.additional_details.get('hash_type')) == 'sha1'
     source: EventSource = first_event.source
     assert (
         to_string(source.item_type) == 'file' or to_string(source.item_type) == 'folder'
