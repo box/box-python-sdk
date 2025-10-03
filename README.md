@@ -2,6 +2,28 @@
   <img src="https://github.com/box/sdks/blob/master/images/box-dev-logo.png" alt= “box-dev-logo” width="30%" height="50%">
 </p>
 
+# Versioning Strategy
+
+Starting with v10 of the SDK, we’ve introduced a new generated codebase designed to enhance your experience with the Box API.  
+It is currently available on the [sdk-gen](https://github.com/box/box-python-sdk/tree/sdk-gen) branch and uses the new `box_sdk_gen` package instead of the old `boxsdk`.
+
+v10 is targeted at new users of Box Python SDK and users already working with the generated Box Python SDK previously available under the [Box Python SDK Gen repository](https://github.com/box/box-python-sdk-gen).
+
+For users of v3 of the Box Python SDK, no action is required at this time — we’ll be providing an upcoming v4 release that will include both `boxsdk` and `box_sdk_gen` packages for a smooth migration path. To avoid unintentional upgrades, pin your version to `boxsdk~=3.0`.
+
+For full guidance on SDK versioning, see the [Box SDK Versioning Guide](https://developer.box.com/guides/tooling/sdks/sdk-versioning/).
+
+---
+
+## Which Version Should I Use?
+
+| Scenario                                                                                            | Recommended Version                                                  | Example `pip install`       |
+| --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | --------------------------- |
+| Creating a new application                                                                          | Use [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)        | `pip install "boxsdk>=10"`  |
+| Existing app using [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) artifact                    | Upgrade to [v10](https://github.com/box/box-python-sdk/tree/sdk-gen) | `pip install "boxsdk>=10"`  |
+| Existing app using [boxsdk](https://pypi.org/project/boxsdk/) artifact planning to use new features | Wait for v4 to start migration process                               | TBD                         |
+| Existing app using [boxsdk](https://pypi.org/project/boxsdk/) artifact not planning any changes     | Stay on `boxsdk~=3.0`                                                | `pip install "boxsdk~=3.0"` |
+
 # Box Python SDK
 
 [![Project Status](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
