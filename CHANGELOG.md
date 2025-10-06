@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.0.1](https://github.com/box/box-python-sdk/compare/v10.0.0...v10.0.1) (2025-10-06)
+
+
+### Bug Fixes
+
+* Allow flexible key-value data in `AiExtractResponse.answer` and `Event.additionalDetails` (box/box-openapi[#556](https://github.com/box/box-python-sdk/issues/556)) ([#1084](https://github.com/box/box-python-sdk/issues/1084)) ([f63cffe](https://github.com/box/box-python-sdk/commit/f63cffec92ccf98af21d6227328aab00fa159187))
+* Make `role` parameter of update collaboration optional (box/box-openapi[#557](https://github.com/box/box-python-sdk/issues/557)) ([#1093](https://github.com/box/box-python-sdk/issues/1093)) ([5c21907](https://github.com/box/box-python-sdk/commit/5c21907869d359fdb8fe4c83317a9eca5aeffdc3))
+
 ## [10.0.0](https://github.com/box/box-python-sdk/compare/v3.14.0...v10.0.0) (2025-09-17)
 
 Introducing **`Box SDK v10`**, a major release designed to elevate your developer experience and streamline integration with Box Content Cloud. Currently available as a separate [`sdk-gen`](https://github.com/box/box-python-sdk/tree/sdk-gen) branch, `v10` will ultimately become the main branch.
