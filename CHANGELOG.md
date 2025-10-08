@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/box/box-python-sdk/compare/v3.14.0...v4.0.0) (2025-10-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* Drop support of Python 3.6 and 3.8
+
+### New Features and Enhancements:
+
+* Add `box_sdk_gen` package  (box/box-codegen[#820](https://github.com/box/box-python-sdk/issues/820)) ([#997](https://github.com/box/box-python-sdk/issues/997)) ([5a06de7](https://github.com/box/box-python-sdk/commit/5a06de7d1f79813c62a86c28c33a7960128ae685))
+* Drop support of Python 3.6 and 3.8 ([4692274](https://github.com/box/box-python-sdk/commit/4692274de1c70f196556fb774ce4d0584547069d))
+* Support Python 3.12 and Python 3.13 ([#898](https://github.com/box/box-python-sdk/issues/898)) ([d604ea9](https://github.com/box/box-python-sdk/commit/d604ea98012aed3c2d0212d1b40b71a52efb55ec))
+
+
+### Bug Fixes:
+
+* Allow flexible key-value data in `AiExtractResponse.answer` and `Event.additionalDetails` (box/box-openapi[#556](https://github.com/box/box-python-sdk/issues/556)) ([#1086](https://github.com/box/box-python-sdk/issues/1086)) ([314603c](https://github.com/box/box-python-sdk/commit/314603c1a7f9bb72348007dce52745907f73ef90))
+* Make `role` parameter of update collaboration optional (box/box-openapi[#557](https://github.com/box/box-python-sdk/issues/557)) ([#1092](https://github.com/box/box-python-sdk/issues/1092)) ([5c9cb99](https://github.com/box/box-python-sdk/commit/5c9cb9999041f76a313686c0303792292db64e79))
+
 ## [3.14.0](https://github.com/box/box-python-sdk/compare/v3.13.0...v3.14.0) (2025-04-09)
 
 
