@@ -88,7 +88,7 @@ class Client(Cloneable):
             "It is recommended to use 'box_sdk_gen' package. Please use 'box_sdk_gen.BoxClient' instead. "
             "Example migration: from boxsdk import Client -> from box_sdk_gen import BoxClient. ",
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
         self._oauth = oauth
         if session is not None:
