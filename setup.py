@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
 CLASSIFIERS = [
-    'Development Status :: 6 - Mature',
+    'Development Status :: 7 - Inactive',
     'Intended Audience :: Developers',
     'License :: OSI Approved :: Apache Software License',
     'Programming Language :: Python',
@@ -23,6 +23,7 @@ CLASSIFIERS = [
     'Operating System :: Microsoft :: Windows',
     'Operating System :: MacOS :: MacOS X',
     'Topic :: Software Development :: Libraries :: Python Modules',
+    'Topic :: Software Development :: Libraries :: Deprecated',
 ]
 
 
@@ -91,7 +92,7 @@ def main():
     setup(
         name='boxsdk',
         version=version,
-        description='Official Box Python SDK',
+        description='[DEPRECATED] Official Box Python SDK',
         long_description_content_type="text/markdown",
         # pylint:disable=consider-using-with
         long_description=open(

@@ -83,6 +83,13 @@ class Client(Cloneable):
             The session object to use. If None is provided then an instance of :class:`AuthorizedSession` will be used.
         """
         super().__init__()
+        warn(
+            "The 'boxsdk.Client' class and the entire 'boxsdk' package is deprecated and will be removed in the future version. "
+            "It is recommended to use 'box_sdk_gen' package. Please use 'box_sdk_gen.BoxClient' instead. "
+            "Example migration: from boxsdk import Client -> from box_sdk_gen import BoxClient. ",
+            DeprecationWarning,
+            stacklevel=2
+        )
         self._oauth = oauth
         if session is not None:
             self._session = session
