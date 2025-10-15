@@ -1,4 +1,4 @@
-# Handling null values in Box Python SDK Gen
+# Handling null values in Box Python SDK
 
 While using Box Python SDK it's important to understand how null values behave. This document provides a general overview of null value behaviour in Box Python SDK to help developers manage data consistently and predictably.
 
