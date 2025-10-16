@@ -2,28 +2,21 @@
   <img src="https://github.com/box/sdks/blob/master/images/box-dev-logo.png" alt= “box-dev-logo” width="30%" height="50%">
 </p>
 
-# Deprecation notice
-
-This version of the Box Python SDK is under maintenance mode, and will be deprecated soon, only critical security updates and bug fixes will be provided. We recommend using the new version Box Python SDK, which can be found at [box/box-python-sdk-gen](https://github.com/box/box-python-sdk-gen)
-
-You can find the migration guide [here](https://github.com/box/box-python-sdk-gen/blob/main/migration-guide.md) for transitioning from Box Python SDK v3.x to the new `box-sdk-gen` package. If you have any questions, please create an issue in the new repository or reach out to [Box Developer Support](https://developer.box.com/support/).
-
 # Box Python SDK
 
-[![image](http://opensource.box.com/badges/stable.svg)](http://opensource.box.com/badges)
-[![Documentation Status](https://readthedocs.org/projects/box-python-sdk/badge/?version=latest)](http://box-python-sdk.readthedocs.org/en/latest)
+[![image](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
 [![image](https://github.com/box/box-python-sdk/actions/workflows/build.yml/badge.svg)](https://github.com/box/box-python-sdk/actions)
 [![image](https://img.shields.io/pypi/v/boxsdk.svg)](https://pypi.python.org/pypi/boxsdk)
 [![image](https://img.shields.io/pypi/dm/boxsdk.svg)](https://pypi.python.org/pypi/boxsdk)
 [![image](https://coveralls.io/repos/github/box/box-python-sdk/badge.svg?branch=main)](https://coveralls.io/github/box/box-python-sdk?branch=main)
 
-Getting Started Docs: <https://developer.box.com/guides/tooling/sdks/python/>
-
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Deprecation notice](#deprecation-notice)
-- [Box Python SDK](#box-python-sdk)
+  - [Versioning Strategy](#versioning-strategy)
+    - [Version v4](#version-v4)
+    - [Version v10](#version-v10)
+    - [Which Version Should I Use?](#which-version-should-i-use)
 - [Installing](#installing)
 - [Getting Started](#getting-started)
 - [Authorization](#authorization)
@@ -54,352 +47,176 @@ Getting Started Docs: <https://developer.box.com/guides/tooling/sdks/python/>
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+# Supported versions
+
+To enhance developer experience, provide full Box API coverage, and rapid updates we have introduced the new generated codebase through the `box_sdk_gen` package.
+The `box_sdk_gen` package is available in two major supported versions: v4 and v10.
+
+## Version v4
+
+In v4 of the Box Python SDK, we are introducing a version that consolidates both the manual package (`boxsdk`)
+and the new generated package (`box_sdk_gen`). This allows developers to use both packages simultaneously within a single project.
+Version v4 of the Box Python SDK will be supported until 2027. During this period, the `boxsdk` package will receive only bug fixes and security patches.
+All new features and support for new Box APIs will be provided exclusively in the `box_sdk_gen` package.
+The codebase for v4 of the Box Python SDK is currently available on the [combined-sdk](https://github.com/box/box-python-sdk/tree/combined-sdk) branch.
+Instructions for getting started with `box_sdk_gen` can be found here: (link to be added).
+
+Version v4 is intended for:
+- Existing developers of the Box Python SDK v3 who want to access new API features while keeping their current codebase largely unchanged.
+- Existing developers who are in the process of migrating to `box_sdk_gen`, but do not want to move all their code to the new package immediately.
+
+## Version v10
+
+Starting with v10, the SDK is built entirely on the generated `box_sdk_gen` package, which fully and exclusively replaces the old boxsdk package.
+The codebase for v10 of the Box Python SDK is currently available on the [combined-sdk](https://github.com/box/box-python-sdk/tree/combined-sdk) branch.
+
+Version v10 is intended for:
+- New users of the Box Python SDK.
+- Developers already working with the generated Box Python SDK previously available under the [Box Python SDK Gen repository](https://github.com/box/box-python-sdk-gen).
+
+## Which Version Should I Use?
+
+| Scenario                                                                         | Recommended Version                                                      | Example `pip install`       |
+|----------------------------------------------------------------------------------|--------------------------------------------------------------------------|-----------------------------|
+| Creating a new application                                                       | Use [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)            | `pip install "boxsdk>=10"`  |
+| Existing app using [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) artifact | Migrate to [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)     | `pip install "boxsdk>=10"`  |
+| Existing app using v3 of [boxsdk](https://pypi.org/project/boxsdk/) artifact     | Upgrade to [v4](https://github.com/box/box-python-sdk/tree/combined-sdk) | `pip install "boxsdk~=4.0"` |
+
+For full guidance on SDK versioning, see the [Box SDK Versioning Guide](https://developer.box.com/guides/tooling/sdks/sdk-versioning/).
+
 # Installing
 
+To install Box Python SDK v4 version that consolidates both the manual package (`boxsdk`) 
+and the new generated package (`box_sdk_gen`) run the command:
+
 ``` console
-pip install boxsdk
+pip install boxsdk~=4.0
 ```
 
-The current version of the SDK is v3.x --- With this release support for
-Python 3.5 and earlier (including 2.x) has been dropped. if you're
-looking for the code or documentation for v1.5.x, please see the [1.5
-branch](https://github.com/box/box-python-sdk/tree/1.5).
+To install also extra dependencies required for JWT authentication, use command:
+``` console
+pip install "boxsdk[jwt]~=4.0"
+```
+
+Supported Python versions are Python 3.8 and above.
 
 # Getting Started
 
-To get started with the SDK, get a Developer Token from the
-Configuration page of your app in the [Box Developer
-Console](https://app.box.com/developers/console). You can use this token
-to make test calls for your own Box account.
+To get started with the SDK, get a Developer Token from the Configuration page of your app in the [Box Developer Console](https://app.box.com/developers/console). 
+Developer Tokens are short-lived and expire after 60 minutes, which is good for testing but not for production use.
+To learn about other authentication methods, see the [Authorization](#authorization) section below.
 
-The SDK provides an interactive `DevelopmentClient` that makes it easy
-to test out the SDK in a REPL. This client will automatically prompt for
-a new Developer Token when it requires one, and will log HTTP requests
-and responses to aid in debugging and understanding how the SDK makes
-API calls.
+The examples below demonstrate how to authenticate with Developer Token and print names of all items inside a root folder.
 
-``` pycon
->>> from boxsdk import DevelopmentClient
->>> client = DevelopmentClient()
-Enter developer token: <ENTER DEVELOPER TOKEN HERE>
->>> user = client.user().get()
-GET https://api.box.com/2.0/users/me {'headers': {'Authorization': '---wXyZ',
-            'User-Agent': 'box-python-sdk-2.0.0',
-            'X-Box-UA': 'agent=box-python-sdk/2.0.0; env=python/3.6.5'},
-'params': None}
-"GET https://api.box.com/2.0/users/me" 200 454
-{'Date': 'Thu, 01 Nov 2018 23:32:11 GMT', 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Connection': 'keep-alive', 'Strict-Transport-Security': 'max-age=31536000', 'Cache-Control': 'no-cache, no-store', 'Content-Encoding': 'gzip', 'Vary': 'Accept-Encoding', 'BOX-REQUEST-ID': '0b50luc09ahp56m2jmkla8mgmh2', 'Age': '0'}
-{'address': '',
-'avatar_url': 'https://cloud.app.box.com/api/avatar/large/123456789',
-'created_at': '2012-06-07T11:14:50-07:00',
-'id': '123456789',
-'job_title': '',
-'language': 'en',
-'login': 'user@example.com',
-'max_upload_size': 16106127360,
-'modified_at': '2018-10-30T17:01:27-07:00',
-'name': 'Example User',
-'phone': '',
-'space_amount': 1000000000000000.0,
-'space_used': 14330018065,
-'status': 'active',
-'timezone': 'America/Los_Angeles',
-'type': 'user'}
+## With box_sdk_gen package (recommended)]
 
->>> print(f'The current user ID is {user.id}')
-The current user ID is 123456789
+The SDK provides an `BoxDeveloperTokenAuth` class, which allows you to authenticate using your Developer Token.
+Use instance of `BoxDeveloperTokenAuth` to initialize BoxClient object. Using `BoxClient` object you can access managers,
+which allow you to perform some operations on your Box account.
+
+``` python
+from box_sdk_gen import BoxClient, BoxDeveloperTokenAuth
+
+def main(token: str):
+    auth: BoxDeveloperTokenAuth = BoxDeveloperTokenAuth(token=token)
+    client: BoxClient = BoxClient(auth=auth)
+    for item in client.folders.get_folder_items('0').entries:
+        print(item.name)
+
+if __name__ == '__main__':
+    main('INSERT YOUR DEVELOPER TOKEN HERE')
 ```
 
-Outside of a REPL, you can initialize a new `Client` with just the
-Developer Token to get started.
+## With boxsdk package (deprecated)
 
 ``` python
 from boxsdk import OAuth2, Client
 
-auth = OAuth2(
-    client_id='YOUR_CLIENT_ID',
-    client_secret='YOUR_CLIENT_SECRET',
-    access_token='YOUR_DEVELOPER_TOKEN',
-)
-client = Client(auth)
+def main():
+  oauth = OAuth2(
+      client_id='YOUR_CLIENT_ID',
+      client_secret='YOUR_CLIENT_SECRET',
+      access_token='YOUR_DEVELOPER_TOKEN'
+  )
+  client = Client(oauth)
+  for item in client.folder(folder_id='0').get_items():
+      print(item.name)
 
-user = client.user().get()
-print(f'The current user ID is {user.id}')
+if __name__ == '__main__':
+    main()
 ```
 
-# Authorization
+# Authentication
 
-The Box API uses OAuth2 for auth. The SDK makes it relatively painless
-to work with OAuth2 tokens.
+Both the `box_sdk_gen` and `boxsdk` packages support multiple authentication methods, including 
+Developer Token, OAuth 2.0, Client Credentials Grant, and JSON Web Token (JWT).
 
-## Server-to-Server Auth with JWT
+You can find detailed instructions and example code for each authentication method in the following documentation:
+- [Authentication for `box_sdk_gen` package](https://github.com/box/box-python-sdk/blob/combined-sdk/docs/box_sdk_gen/authentication.md)
+- [Authentication for `boxsdk` package](https://github.com/box/box-python-sdk/blob/combined-sdk/docs/boxsdk/usage/authentication.md)
 
-The Python SDK supports your [JWT
-Authentication](https://developer.box.com/en/guides/authentication/jwt/)
-applications.
+# Using both box_sdk_gen and boxsdk packages simultaneously
 
-Authenticating with a JWT requires some extra dependencies. To get them,
-simply
-
-``` console
-pip install "boxsdk[jwt]"
-```
-
-Instead of instantiating your `Client` with an instance of `OAuth2`,
-instead use an instance of `JWTAuth`.
+With v4 of the Box Python SDK, you can use both the `box_sdk_gen` and `boxsdk` packages in the same project.
+This allows you to gradually migrate your codebase to the new generated package while still using the manual package for existing functionality.
 
 ``` python
-from boxsdk import JWTAuth
-from boxsdk import Client
+from boxsdk import JWTAuth, Client
 
-auth = JWTAuth(
-    client_id='YOUR_CLIENT_ID',
-    client_secret='YOUR_CLIENT_SECRET',
-    enterprise_id='YOUR_ENTERPRISE_ID',
-    jwt_key_id='YOUR_JWT_KEY_ID',
-    rsa_private_key_file_sys_path='CERT.PEM',
-    rsa_private_key_passphrase='PASSPHRASE',
-)
+def main():
+  auth = JWTAuth.from_settings_file('/path/to/settings.json')
+  client = Client(auth)
+  
+  jwt_config = JWTConfig.from_config_file(config_file_path='/path/to/settings.json')
+  auth = BoxJWTAuth(config=jwt_config)
+  client = BoxClient(auth=auth)
+  
+  oauth = OAuth2(
+      client_id='YOUR_CLIENT_ID',
+      client_secret='YOUR_CLIENT_SECRET',
+      access_token='YOUR_DEVELOPER_TOKEN'
+  )
+  client = Client(oauth)
+  for item in client.folder(folder_id='0').get_items():
+      print(item.name)
 
-access_token = auth.authenticate_instance()
-client = Client(auth)
+if __name__ == '__main__':
+    main()
 ```
 
-This client is able to create application users:
+# Documentation
 
-``` python
-ned_stark_user = client.create_user('Ned Stark')
-```
+Full documentation of the available functionality, along with example code for the `box_sdk_gen` package, is available [here](https://github.com/box/box-python-sdk/tree/combined-sdk/docs/boxsdk/usage).
+Full documentation and example code for the `boxsdk` package can be found [here](https://github.com/box/box-python-sdk/blob/combined-sdk/docs/box_sdk_gen/README.md).
+You can also see the [API Reference](https://developer.box.com/reference/) for additional information.
 
-These users can then be authenticated:
+# Migration guides
 
-``` python
-ned_auth = JWTAuth(
-    client_id='YOUR_CLIENT_ID',
-    client_secret='YOUR_CLIENT_SECRET',
-    user=ned_stark_user,
-    jwt_key_id='YOUR_JWT_KEY_ID',
-    rsa_private_key_file_sys_path='CERT.PEM',
-    rsa_private_key_passphrase='PASSPHRASE'
-)
-ned_auth.authenticate_user()
-ned_client = Client(ned_auth)
-```
+Migration guides which help you to migrate to supported major SDK versions can be found [here](https://github.com/box/box-python-sdk/tree/combined-sdk/migration-guides).
 
-Requests made with `ned_client` (or objects returned from
-`ned_client`'s methods) will be performed on behalf of the newly
-created app user.
+# Versioning
 
-## Traditional 3-legged OAuth2
+We use a modified version of [Semantic Versioning](https://semver.org/) for all changes. See [version strategy](VERSIONS.md) for details which is effective from 30 July 2022.
 
-### Get the Authorization URL
+A current release is on the leading edge of our SDK development, and is intended for customers who are in active development and want the latest and greatest features.  
+Instead of stating a release date for a new feature, we set a fixed minor or patch release cadence of maximum 2-3 months (while we may release more often). At the same time, there is no schedule for major or breaking release. 
+Instead, we will communicate one quarter in advance the upcoming breaking change to allow customers to plan for the upgrade. 
+We always recommend that all users run the latest available minor release for whatever major version is in use. 
+We highly recommend upgrading to the latest SDK major release at the earliest convenient time and before the EOL date.
 
-``` python
-from boxsdk import OAuth2
+## Version schedule
 
-oauth = OAuth2(
-    client_id='YOUR_CLIENT_ID',
-    client_secret='YOUR_CLIENT_SECRET',
-    store_tokens=your_store_tokens_callback_method,
-)
+| Version | Supported Environments                                  | State     | First Release | EOL/Terminated |
+|---------|---------------------------------------------------------|-----------|---------------|----------------|
+| 10      | Python 3.8+                                             | Supported | 17 Sep 2025   | TBD            |
+| 4       | Python 3.8+                                             | Supported | 23 Oct 2025   | 2027           |
+| 3       | Python 3.6+                                             | EOL       | 17 Jan 2022   | 23 Oct 2025    |
+| 2       |                                                         | EOL       | 01 Nov 2018   | 17 Jan 2022    |
+| 1       |                                                         | EOL       | 10 Feb 2015   | 01 Nov 2018    |
 
-auth_url, csrf_token = oauth.get_authorization_url('http://YOUR_REDIRECT_URL')
-```
+# Contributing
 
-store_tokens is a callback used to store the access token and refresh
-token. You might want to define something like this:
-
-``` python
-def store_tokens(access_token, refresh_token):
-    # store the tokens at secure storage (e.g. Keychain)
-```
-
-The SDK will keep the tokens in memory for the duration of the Python
-script run, so you don't always need to pass store_tokens.
-
-### Authenticate (Get Access/Refresh Tokens)
-
-If you navigate the user to the auth_url, the user will eventually get
-redirected to <http://YOUR_REDIRECT_URL?code=YOUR_AUTH_CODE>. After
-getting the code, you will be able to use the code to exchange for an
-access token and refresh token.
-
-The SDK handles all the work for you; all you need to do is run:
-
-``` python
-# Make sure that the csrf token you get from the `state` parameter
-# in the final redirect URI is the same token you get from the
-# get_authorization_url method.
-assert 'THE_CSRF_TOKEN_YOU_GOT' == csrf_token
-access_token, refresh_token = oauth.authenticate('YOUR_AUTH_CODE')
-```
-
-### Create an Authenticated Client
-
-``` python
-from boxsdk import Client
-
-client = Client(oauth)
-```
-
-And that's it! You can start using the client to do all kinds of cool
-stuff and the SDK will handle the token refresh for you automatically.
-
-### Instantiate a Client Given an Access and a Refresh Token
-
-Alternatively, you can instantiate an OAuth2 object with the access
-token and refresh token. Once you have an oauth object you can pass that
-into the Client object to instantiate a client and begin making calls.
-
-``` python
-from boxsdk import Client, OAuth2
-
-oauth = OAuth2(
-    client_id='YOUR_CLIENT_ID',
-    client_secret='YOUR_CLIENT_SECRET',
-    access_token='ACCESS_TOKEN',
-    refresh_token='REFRESH_TOKEN',
-)
-
-client = Client(oauth)
-user = client.user().get()
-```
-
-This will retrieve the current user! From here you can use the client
-you created to start making calls.
-
-## Other Auth Options
-
-For advanced uses of the SDK, three additional auth classes are
-provided:
-
--   `CooperativelyManagedOAuth2`: Allows multiple auth instances to
-    share tokens.
--   `RemoteOAuth2`: Allows use of the SDK on clients without access to
-    your application's client secret. Instead, you provide a
-    `retrieve_access_token` callback. That callback should perform the
-    token refresh, perhaps on your server that does have access to the
-    client secret.
--   `RedisManagedOAuth2`: Stores access and refresh tokens in Redis.
-    This allows multiple processes (possibly spanning multiple machines)
-    to share access tokens while synchronizing token refresh. This could
-    be useful for a multiprocess web server, for example.
-
-# Usage Documentation
-
-Full documentation of the available functionality with example code is
-available in the [SDK documentation
-pages](https://github.com/box/box-python-sdk/blob/main/docs/usage), and
-there is also method-level documentation available on
-[ReadTheDocs](https://box-python-sdk.readthedocs.io/en/stable/index.html).
-
-## Making API Calls Manually
-
-The Box API is continually evolving. As such, there are API endpoints
-available that are not specifically supported by the SDK. You can still
-use these endpoints by using the `make_request` method of the `Client`.
-
-``` python
-# https://developer.box.com/en/reference/get-metadata-templates-id/
-# Returns a Python dictionary containing the result of the API request
-json_response = client.make_request(
-    'GET',
-    client.get_url('metadata_templates', 'enterprise', 'customer', 'schema'),
-).json()
-```
-
-`make_request()` takes two parameters:
-
--   `method` - an HTTP verb like `GET` or `POST`
--   `url` - the URL of the requested API endpoint
-
-The `Client` class and Box objects have a `get_url` method. Pass it an
-endpoint to get the correct URL for use with that object and endpoint.
-
-For API calls which require body or query params, you can use `**kwargs`
-to pass extra params:
-
--   `data` - takes a jsonified dictionary of body parameters
--   `params` - takes a dictionary of query parameters
-
-``` python
-# https://developer.box.com/reference/post-folders/
-# Creates a new folder
-
-# JSONify the body
-body = json.dumps({
-        'name': 'test-subfolder',
-        'parent': {
-            'id': '0',
-        }
-})
-
-client.make_request(
-    'POST',
-    client.get_url('folders'),
-    params={'fields': 'name,id'},
-    data=body
-)
-```
-
-# Other Client Options
-
-## Logging Client
-
-For more insight into the network calls the SDK is making, you can use
-the `LoggingClient` class. This class logs information about network
-requests and responses made to the Box API.
-
-``` pycon
->>> from boxsdk import LoggingClient
->>> client = LoggingClient()
->>> client.user().get()
-GET https://api.box.com/2.0/users/me {'headers': {u'Authorization': u'Bearer ---------------------------kBjp',
-             u'User-Agent': u'box-python-sdk-1.5.0'},
- 'params': None}
-{"type":"user","id":"..","name":"Jeffrey Meadows","login":"..",..}
-<boxsdk.object.user.User at 0x10615b8d0>
-```
-
-## Developer Token Client
-
-The Box Developer Console allows for the creation of short-lived
-developer tokens. The SDK makes it easy to use these tokens. Use the
-`get_new_token_callback` parameter to control how the client will get
-new developer tokens as needed. The default is to prompt standard input
-for a token.
-
-## Development Client
-
-For exploring the Box API, or to quickly get going using the SDK, the
-`DevelopmentClient` class combines the `LoggingClient` with the
-`DeveloperTokenClient`.
-
-# Customization
-
-## Custom Subclasses
-
-Custom object subclasses can be defined:
-
-``` pycon
-from boxsdk import Client
-from boxsdk import Folder
-
-class MyFolderSubclass(Folder):
-    pass
-
-client = Client(oauth)
-client.translator.register('folder', MyFolderSubclass)
-folder = client.folder('0')
-
->>> print folder
->>> <Box MyFolderSubclass - 0>
-```
-
-If an object subclass is registered in this way, instances of this
-subclass will be returned from all SDK methods that previously returned
-an instance of the parent. See `BaseAPIJSONObjectMeta` and `Translator`
-to see how the SDK performs dynamic lookups to determine return types.
+See [CONTRIBUTING.md](https://github.com/box/box-python-sdk/blob/main/CONTRIBUTING.md).
 
 # FIPS 140-2 Compliance
 
@@ -416,38 +233,6 @@ which is one of the extra dependencies for JWT, uses OpenSSL 3.0.
 To enable FIPS mode for the `cryptography` library, you need to install a FIPS-compliant version of OpenSSL
 during the installation process of cryptography using the `pip` command.
 
-# Versions
-We use a modified version of [Semantic Versioning](https://semver.org/) for all changes. See [version strategy](VERSIONS.md) for details which is effective from 30 July 2022.
-
-## Supported Version
-
-Only the current MAJOR version of SDK is supported. New features, functionality, bug fixes, and security updates will only be added to the current MAJOR version.
-
-A current release is on the leading edge of our SDK development, and is intended for customers who are in active development and want the latest and greatest features.  Instead of stating a release date for a new feature, we set a fixed minor or patch release cadence of maximum 2-3 months (while we may release more often). At the same time, there is no schedule for major or breaking release. Instead, we will communicate one quarter in advance the upcoming breaking change to allow customers to plan for the upgrade. We always recommend that all users run the latest available minor release for whatever major version is in use. We highly recommend upgrading to the latest SDK major release at the earliest convenient time and before the EOL date.
-
-## Version schedule
-
-| Version | Supported Environments                                  | State     | First Release | EOL/Terminated |
-|---------|---------------------------------------------------------|-----------|---------------|----------------|
-| 4       | Python 3.8+                                             |           |               |                |
-| 3       | Python 3.6+                                             | Supported | 17 Jan 2022   | TBD            |
-| 2       |                                                         | EOL       | 01 Nov 2018   | 17 Jan 2022    |
-| 1       |                                                         | EOL       | 10 Feb 2015   | 01 Nov 2018    |
-
-# Contributing
-
-See
-[CONTRIBUTING.md](https://github.com/box/box-python-sdk/blob/main/CONTRIBUTING.md).
-
-## Developer Setup
-
-Create a virtual environment and install packages -
-
-``` console
-mkvirtualenv boxsdk
-pip install -r requirements-dev.txt
-```
-
 ## Testing
 
 Run all tests using -
@@ -456,19 +241,13 @@ Run all tests using -
 tox
 ```
 
-The tox tests include code style checks via pep8 and pylint.
-
 The tox tests are configured to run on Python 3.8, 3.9, 3.10, 3.11, 3.12, 3.13.
 
 # Questions, Bugs, and Feature Requests?
 
-Need to contact us directly? [Browse the issues
-tickets](https://github.com/box/box-python-sdk/issues)! Or, if that
-doesn't work, [file a new
-one](https://github.com/box/box-python-sdk/issues/new) and we will get
-back to you. If you have general questions about the Box API, you can
-post to the [Box Developer
-Forum](https://community.box.com/t5/Developer-Forum/bd-p/DeveloperForum).
+Need to contact us directly? [Browse the issues tickets](https://github.com/box/box-python-sdk/issues)! Or, if that
+doesn't work, [file a new one](https://github.com/box/box-python-sdk/issues/new) and we will get
+back to you. If you have general questions about the Box API, you can post to the [Box Developer Forum](https://community.box.com/t5/Developer-Forum/bd-p/DeveloperForum).
 
 # Copyright and License
 
