@@ -49,7 +49,7 @@ Create a branch with a descriptive name, such as `add-search`.
 
 We use [semantic-versioning](https://semver.org/) and the [conventional commit message format](https://www.conventionalcommits.org/en/v1.0.0/). Keep a separate feature branch for each issue you want to address. As you develop code, continue to push code to your remote feature branch. 
 
-**Important:** When modifying or adding features for a specific part of the SDK, commits and pull requests should include a scope. The scope must be either `boxsdk` or `boxsdkgen`. For general changes that don't affect a specific part (e.g., documentation updates, build configuration), the scope is optional. Examples:
+**Important:** When editing the manual part of the SDK, commits and pull requests should include the `boxsdk` scope. For general changes that don't affect a specific part (e.g., documentation updates, build configuration), the scope is optional. Examples:
 
 ```
 tag(scope): short description
@@ -60,7 +60,7 @@ longer description here if necessary.
 
 Examples with scope:
 - `feat(boxsdk): add new file upload feature`
-- `fix(boxsdkgen): correct type definitions`
+- `fix(boxsdk): correct type definitions`
 - `feat(boxsdk)!: remove deprecated endpoints`
 
 Examples without scope:
@@ -68,7 +68,7 @@ Examples without scope:
 - `chore: update build configuration`
 - `ci: fix GitHub Actions workflow`
 
-The message summary should be a one-sentence description of the change, and it must be 72 characters in length or shorter. For a list of tags, please [click here](https://github.com/commitizen/conventional-commit-types/blob/master/index.json). Note that you must include the `!` for breaking changes (e.g. `feat(boxsdk)!: removed old apis` or `feat!: breaking change` for general changes).
+The message summary should be a one-sentence description of the change, and it must be 72 characters in length or shorter. For a list of tags, please [click here](https://github.com/commitizen/conventional-commit-types/blob/master/index.json). Note that you must include the `!` for breaking changes (e.g. `feat(boxsdk)!: removed old apis` for changes in manual part of the SDK or `feat!: breaking change` for general changes).
 
 Shown below are examples of the release type that will be done based on a commit message.
 
@@ -90,7 +90,7 @@ In most cases, commits will be a `feat` or `fix`. Make sure to include the `!` i
 | Commit message                                          | Release type       | New version |
 | ------------------------------------------------------- | ------------------ | ----------- |
 | `feat(boxsdk)!: remove old files endpoints`             | Major ("breaking") | `X+1.0.0`   |
-| `feat(boxsdkgen): add new file upload endpoint`         | Minor ("feature")  | `X.Y+1.0`   |
+| `feat(boxsdk): add new file upload endpoint`            | Minor ("feature")  | `X.Y+1.0`   |
 | `fix(boxsdk): file streaming during download`           | Patch ("fix")      | `X.Y.Z+1`   |
 | `docs: update README`                                   | No release         | `X.Y.Z`     |
 | `chore: update build configuration`                     | No release         | `X.Y.Z`     |
