@@ -165,20 +165,15 @@ from boxsdk import JWTAuth, Client
 
 def main():
   auth = JWTAuth.from_settings_file('/path/to/settings.json')
-  client = Client(auth)
+  legacy_client = Client(auth)
   
   jwt_config = JWTConfig.from_config_file(config_file_path='/path/to/settings.json')
   auth = BoxJWTAuth(config=jwt_config)
-  client = BoxClient(auth=auth)
+  new_client = BoxClient(auth=auth)
   
-  oauth = OAuth2(
-      client_id='YOUR_CLIENT_ID',
-      client_secret='YOUR_CLIENT_SECRET',
-      access_token='YOUR_DEVELOPER_TOKEN'
-  )
-  client = Client(oauth)
-  for item in client.folder(folder_id='0').get_items():
-      print(item.name)
+  folder = legacy_client.folder(folder_id='0').create_subfolder('My Subfolder')
+  updated_folder = new_client.folders.update_folder(folder_id=folder.id, name='My Updated Subfolder')
+  print(f'Created folder with ID {folder.id} has been updated to {updated_folder.name}')
 
 if __name__ == '__main__':
     main()
