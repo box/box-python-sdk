@@ -45,11 +45,11 @@ In v4 of the Box Python SDK, we are introducing a version that consolidates both
 and the new generated package (`box_sdk_gen`). This allows developers to use both packages simultaneously within a single project.
 
 Version v4 of the Box Python SDK will be supported until 2027. During this period, 
-the `boxsdk` package will marked as deprecated and will receive only bug fixes and security patches.
+the `boxsdk` package will be marked as deprecated and will receive only bug fixes and security patches.
 All new features and support for new Box APIs will be provided exclusively in the `box_sdk_gen` package.
 
 The codebase for v4 of the Box Python SDK is currently available on the [combined-sdk](https://github.com/box/box-python-sdk/tree/combined-sdk) branch.
-Migration guide which would help with migration from `boxsdk` to `box_sdk_gen` can be found [here](https://github.com/box/box-python-sdk/tree/combined-sdk/migration-guides/from-boxsdk-to-box_sdk_gen.md).
+Migration guide which would help with migration from `boxsdk` to `box_sdk_gen` can be found [here](./migration-guides/from-boxsdk-to-box_sdk_gen.md).
 
 Version v4 is intended for:
 - Existing developers of the Box Python SDK v3 who want to access new API features while keeping their current codebase largely unchanged.
@@ -142,8 +142,8 @@ Both the `box_sdk_gen` and `boxsdk` packages support multiple authentication met
 Developer Token, OAuth 2.0, Client Credentials Grant, and JSON Web Token (JWT).
 
 You can find detailed instructions and example code for each authentication method in the following documentation:
-- [Authentication for the `box_sdk_gen` package](https://github.com/box/box-python-sdk/blob/combined-sdk/docs/box_sdk_gen/authentication.md)
-- [Authentication for the `boxsdk` package](https://github.com/box/box-python-sdk/blob/combined-sdk/docs/boxsdk/usage/authentication.md)
+- [Authentication for the `box_sdk_gen` package](./docs/box_sdk_gen/authentication.md)
+- [Authentication for the `boxsdk` package](./docs/boxsdk/usage/authentication.md)
 
 # Using both box_sdk_gen and boxsdk packages simultaneously
 
@@ -173,14 +173,14 @@ if __name__ == '__main__':
 # Documentation
 
 Full documentation of the available functionality, along with example code can be found:
-- for the `box_sdk_gen` package, is available [here](https://github.com/box/box-python-sdk/tree/combined-sdk/docs/boxsdk/usage).
-- for the `boxsdk` package can be found [here](https://github.com/box/box-python-sdk/blob/combined-sdk/docs/box_sdk_gen/README.md).
+- for the `box_sdk_gen` package, is available [here](./docs/boxsdk/usage).
+- for the `boxsdk` package can be found [here](./docs/box_sdk_gen/README.md).
 
 You can also see the [API Reference](https://developer.box.com/reference/) for additional information.
 
 # Migration guides
 
-Migration guides which help you to migrate to supported major SDK versions can be found [here](https://github.com/box/box-python-sdk/tree/combined-sdk/migration-guides).
+Migration guides which help you to migrate to supported major SDK versions can be found [here](./migration-guides).
 
 # Versioning
 
@@ -205,7 +205,7 @@ We highly recommend upgrading to the latest SDK major release at the earliest co
 
 # Contributing
 
-See [CONTRIBUTING.md](https://github.com/box/box-python-sdk/blob/main/CONTRIBUTING.md).
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 # FIPS 140-2 Compliance
 
