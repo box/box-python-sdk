@@ -19,7 +19,7 @@
   - [Which Version Should I Use?](#which-version-should-i-use)
 - [Installing](#installing)
 - [Getting Started](#getting-started)
-  - [With box_sdk_gen package (recommended)]](#with-box_sdk_gen-package-recommended)
+  - [With box_sdk_gen package (recommended)](#with-box_sdk_gen-package-recommended)
   - [With boxsdk package (deprecated)](#with-boxsdk-package-deprecated)
 - [Authentication](#authentication)
 - [Using both box_sdk_gen and boxsdk packages simultaneously](#using-both-box_sdk_gen-and-boxsdk-packages-simultaneously)
@@ -29,7 +29,6 @@
   - [Version schedule](#version-schedule)
 - [Contributing](#contributing)
 - [FIPS 140-2 Compliance](#fips-140-2-compliance)
-  - [Testing](#testing)
 - [Questions, Bugs, and Feature Requests?](#questions-bugs-and-feature-requests)
 - [Copyright and License](#copyright-and-license)
 
@@ -42,12 +41,15 @@ The `box_sdk_gen` package is available in two major supported versions: v4 and v
 
 ## Version v4
 
-In v4 of the Box Python SDK, we are introducing a version that consolidates both the manual package (`boxsdk`)
+In v4 of the Box Python SDK, we are introducing a version that consolidates both the manually written package (`boxsdk`)
 and the new generated package (`box_sdk_gen`). This allows developers to use both packages simultaneously within a single project.
-Version v4 of the Box Python SDK will be supported until 2027. During this period, the `boxsdk` package will receive only bug fixes and security patches.
+
+Version v4 of the Box Python SDK will be supported until 2027. During this period, 
+the `boxsdk` package will marked as deprecated and will receive only bug fixes and security patches.
 All new features and support for new Box APIs will be provided exclusively in the `box_sdk_gen` package.
+
 The codebase for v4 of the Box Python SDK is currently available on the [combined-sdk](https://github.com/box/box-python-sdk/tree/combined-sdk) branch.
-Instructions for getting started with `box_sdk_gen` can be found here: (link to be added).
+Migration guide which would help with migration from `boxsdk` to `box_sdk_gen` can be found [here](https://github.com/box/box-python-sdk/tree/combined-sdk/migration-guides/from-boxsdk-to-box_sdk_gen.md).
 
 Version v4 is intended for:
 - Existing developers of the Box Python SDK v3 who want to access new API features while keeping their current codebase largely unchanged.
@@ -56,7 +58,7 @@ Version v4 is intended for:
 ## Version v10
 
 Starting with v10, the SDK is built entirely on the generated `box_sdk_gen` package, which fully and exclusively replaces the old boxsdk package.
-The codebase for v10 of the Box Python SDK is currently available on the [combined-sdk](https://github.com/box/box-python-sdk/tree/combined-sdk) branch.
+The codebase for v10 of the Box Python SDK is currently available on the [sdk-gen](https://github.com/box/box-python-sdk/tree/sdk-gen) branch.
 
 Version v10 is intended for:
 - New users of the Box Python SDK.
@@ -96,7 +98,7 @@ To learn about other authentication methods, see the [Authorization](#authorizat
 
 The examples below demonstrate how to authenticate with Developer Token and print names of all items inside a root folder.
 
-## With box_sdk_gen package (recommended)]
+## With box_sdk_gen package (recommended)
 
 The SDK provides an `BoxDeveloperTokenAuth` class, which allows you to authenticate using your Developer Token.
 Use instance of `BoxDeveloperTokenAuth` to initialize BoxClient object. Using `BoxClient` object you can access managers,
@@ -140,8 +142,8 @@ Both the `box_sdk_gen` and `boxsdk` packages support multiple authentication met
 Developer Token, OAuth 2.0, Client Credentials Grant, and JSON Web Token (JWT).
 
 You can find detailed instructions and example code for each authentication method in the following documentation:
-- [Authentication for `box_sdk_gen` package](https://github.com/box/box-python-sdk/blob/combined-sdk/docs/box_sdk_gen/authentication.md)
-- [Authentication for `boxsdk` package](https://github.com/box/box-python-sdk/blob/combined-sdk/docs/boxsdk/usage/authentication.md)
+- [Authentication for the `box_sdk_gen` package](https://github.com/box/box-python-sdk/blob/combined-sdk/docs/box_sdk_gen/authentication.md)
+- [Authentication for the `boxsdk` package](https://github.com/box/box-python-sdk/blob/combined-sdk/docs/boxsdk/usage/authentication.md)
 
 # Using both box_sdk_gen and boxsdk packages simultaneously
 
@@ -150,6 +152,7 @@ This allows you to gradually migrate your codebase to the new generated package 
 
 ``` python
 from boxsdk import JWTAuth, Client
+from box_sdk_gen import BoxJWTAuth, JWTConfig, BoxClient 
 
 def main():
   auth = JWTAuth.from_settings_file('/path/to/settings.json')
@@ -169,8 +172,10 @@ if __name__ == '__main__':
 
 # Documentation
 
-Full documentation of the available functionality, along with example code for the `box_sdk_gen` package, is available [here](https://github.com/box/box-python-sdk/tree/combined-sdk/docs/boxsdk/usage).
-Full documentation and example code for the `boxsdk` package can be found [here](https://github.com/box/box-python-sdk/blob/combined-sdk/docs/box_sdk_gen/README.md).
+Full documentation of the available functionality, along with example code can be found:
+- for the `box_sdk_gen` package, is available [here](https://github.com/box/box-python-sdk/tree/combined-sdk/docs/boxsdk/usage).
+- for the `boxsdk` package can be found [here](https://github.com/box/box-python-sdk/blob/combined-sdk/docs/box_sdk_gen/README.md).
+
 You can also see the [API Reference](https://developer.box.com/reference/) for additional information.
 
 # Migration guides
@@ -182,8 +187,9 @@ Migration guides which help you to migrate to supported major SDK versions can b
 We use a modified version of [Semantic Versioning](https://semver.org/) for all changes. See [version strategy](VERSIONS.md) for details which is effective from 30 July 2022.
 
 A current release is on the leading edge of our SDK development, and is intended for customers who are in active development and want the latest and greatest features.  
-Instead of stating a release date for a new feature, we set a fixed minor or patch release cadence of maximum 2-3 months (while we may release more often). At the same time, there is no schedule for major or breaking release. 
-Instead, we will communicate one quarter in advance the upcoming breaking change to allow customers to plan for the upgrade. 
+Instead of stating a release date for a new feature, we set a fixed minor or patch release cadence of maximum 2-3 months (while we may release more often). 
+At the same time, there is no schedule for major or breaking release. Instead, we will communicate one quarter in advance the upcoming breaking change to allow customers to plan for the upgrade. 
+
 We always recommend that all users run the latest available minor release for whatever major version is in use. 
 We highly recommend upgrading to the latest SDK major release at the earliest convenient time and before the EOL date.
 
@@ -215,16 +221,6 @@ If you are using JWT for authentication, it is also necessary to ensure that the
 which is one of the extra dependencies for JWT, uses OpenSSL 3.0.
 To enable FIPS mode for the `cryptography` library, you need to install a FIPS-compliant version of OpenSSL
 during the installation process of cryptography using the `pip` command.
-
-## Testing
-
-Run all tests using -
-
-``` console
-tox
-```
-
-The tox tests are configured to run on Python 3.8, 3.9, 3.10, 3.11, 3.12, 3.13.
 
 # Questions, Bugs, and Feature Requests?
 
