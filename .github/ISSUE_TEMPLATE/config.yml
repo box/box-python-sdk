@@ -1,13 +1,13 @@
 blank_issues_enabled: false
 contact_links:
   - name: SDK documentation
-    url: https://github.com/box/box-python-sdk/tree/main/docs
+    url: https://github.com/box/box-python-sdk/tree/combined-sdk/docs
     about: Before creating an issue, I have checked that the SDK documentation doesn't solve my issue.
   - name: API documentation
-    url: https://developer.box.com/docs
+    url: https://developer.box.com/guides/
     about: Before creating an issue, I have checked that the API documentation doesn't solve my issue.
   - name: Box Developer Forums
-    url: https://community.box.com/t5/Platform-and-Development-Forum/bd-p/DeveloperForum
+    url: https://community.box.com/box-platform-5
     about: Before creating an issue, I have searched the Box Developer Forums and my issue isn't already reported there.
   - name: Issues in this repo
     url: https://github.com/box/box-python-sdk/search?type=Issues
