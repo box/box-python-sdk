@@ -66,11 +66,12 @@ Version v10 is intended for:
 
 ## Which Version Should I Use?
 
-| Scenario                                                                         | Recommended Version                                                      | Example `pip install`       |
-|----------------------------------------------------------------------------------|--------------------------------------------------------------------------|-----------------------------|
-| Creating a new application                                                       | Use [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)            | `pip install "boxsdk>=10"`  |
-| Existing app using [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) artifact | Migrate to [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)     | `pip install "boxsdk>=10"`  |
-| Existing app using v3 of [boxsdk](https://pypi.org/project/boxsdk/) artifact     | Upgrade to [v4](https://github.com/box/box-python-sdk/tree/combined-sdk) | `pip install "boxsdk~=4.0"` |
+| Scenario                                                                                                                     | Recommended Version                                                      | Example `pip install`       |
+|------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|-----------------------------|
+| Creating a new application                                                                                                   | Use [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)            | `pip install "boxsdk>=10"`  |
+| App using [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) artifact                                                      | Migrate to [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)     | `pip install "boxsdk>=10"`  |
+| App using both [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) and [boxsdk](https://pypi.org/project/boxsdk/) artifacts | Upgrade to [v4](https://github.com/box/box-python-sdk/tree/combined-sdk) | `pip install "boxsdk~=4.0"`  |
+| App using v3 of [boxsdk](https://pypi.org/project/boxsdk/) artifact                                                          | Upgrade to [v4](https://github.com/box/box-python-sdk/tree/combined-sdk) | `pip install "boxsdk~=4.0"` |
 
 For full guidance on SDK versioning, see the [Box SDK Versioning Guide](https://developer.box.com/guides/tooling/sdks/sdk-versioning/).
 
