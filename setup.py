@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
 CLASSIFIERS = [
-    'Development Status :: 6 - Mature',
+    'Development Status :: 5 - Production/Stable',
     'Intended Audience :: Developers',
     'License :: OSI Approved :: Apache Software License',
     'Programming Language :: Python',
