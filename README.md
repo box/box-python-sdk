@@ -57,7 +57,7 @@ Version v4 is intended for:
 
 ## Version v10
 
-Starting with v10, the SDK is built entirely on the generated `box_sdk_gen` package, which fully and exclusively replaces the old boxsdk package.
+Starting with v10, the SDK is built entirely on the generated `box_sdk_gen` package, which fully and exclusively replaces the old `boxsdk` package.
 The codebase for v10 of the Box Python SDK is currently available on the [sdk-gen](https://github.com/box/box-python-sdk/tree/sdk-gen) branch.
 
 Version v10 is intended for:
@@ -95,7 +95,7 @@ Supported Python versions are Python 3.8 and above.
 
 To get started with the SDK, get a Developer Token from the Configuration page of your app in the [Box Developer Console](https://app.box.com/developers/console). 
 Developer Tokens are short-lived and expire after 60 minutes, which is good for testing but not for production use.
-To learn about other authentication methods, see the [Authorization](#authorization) section below.
+To learn about other authentication methods, see the [Authentication](#authentication) section below.
 
 The examples below demonstrate how to authenticate with Developer Token and print names of all items inside a root folder.
 
@@ -227,7 +227,7 @@ during the installation process of cryptography using the `pip` command.
 
 Need to contact us directly? [Browse the issues tickets](https://github.com/box/box-python-sdk/issues)! Or, if that
 doesn't work, [file a new one](https://github.com/box/box-python-sdk/issues/new) and we will get
-back to you. If you have general questions about the Box API, you can post to the [Box Developer Forum](https://community.box.com/t5/Developer-Forum/bd-p/DeveloperForum).
+back to you. If you have general questions about the Box API, you can post to the [Box Developer Forum](https://community.box.com/box-platform-5).
 
 # Copyright and License
 
