@@ -4,7 +4,7 @@ contact_links:
     url: https://github.com/box/box-python-sdk/tree/combined-sdk/docs
     about: Before creating an issue, I have checked that the SDK documentation doesn't solve my issue.
   - name: API documentation
-    url: https://developer.box.com/guides/
+    url: https://developer.box.com/guides
     about: Before creating an issue, I have checked that the API documentation doesn't solve my issue.
   - name: Box Developer Forums
     url: https://community.box.com/box-platform-5

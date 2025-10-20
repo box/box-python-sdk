@@ -43,6 +43,6 @@ Python SDK: <!-- Replace with the version of the Python SDK you're using. -->
 Python: <!-- Replace with the version of Python your application is running on. -->
 
 [sdk-docs]: ./docs
-[api-docs]: https://developer.box.com/guides/
+[api-docs]: https://developer.box.com/guides
 [dev-forums]: https://community.box.com/box-platform-5
 [github-repo]: https://github.com/box/box-python-sdk/search?type=Issues
