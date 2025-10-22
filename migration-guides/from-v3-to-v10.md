@@ -5,6 +5,7 @@
 
 - [Introduction](#introduction)
 - [Installation](#installation)
+- [Supported Environments](#supported-environments)
 - [Highlighting the Key Differences](#highlighting-the-key-differences)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -33,6 +34,13 @@ If you would like to use a feature available only in the new SDK, you won't need
 to use generated SDK at once. You will be able to use a new feature from the `box_sdk_gen` package,
 while keeping the rest of your code unchanged. However, we recommend to fully migrate to the v10 of the SDK eventually.
 More information about v4 version can be found in the [migration guide from v3 to v4](./from-v3-to-v4.md).
+
+## Supported Environments
+
+Version v10 of the Box Python SDK no longer supports Python 3.6 or 3.7.
+The SDK now requires Python 3.8 or higher.
+
+If your application currently targets an older Python version, update your deployment environment to meet these minimum requirements.
 
 ## Highlighting the Key Differences
 
