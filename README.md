@@ -38,7 +38,7 @@
 
 # Introduction
 
-We are excited to introduce the v5 major release of the Box Python SDK,
+We are excited to introduce the v4 major release of the Box Python SDK,
 designed to elevate the developer experience and streamline your integration with the Box Content Cloud.
 
 With this SDK, we provide the `box_sdk_gen` package, which gives you access to:
