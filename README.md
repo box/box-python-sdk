@@ -16,6 +16,7 @@
 - [Supported versions](#supported-versions)
   - [Version v4](#version-v4)
   - [Version v10](#version-v10)
+  - [Deprecation of `boxsdk` package](#deprecation-of-boxsdk-package)
   - [Which Version Should I Use?](#which-version-should-i-use)
 - [Installing](#installing)
 - [Getting Started](#getting-started)
@@ -44,10 +45,6 @@ The `box_sdk_gen` package is available in two major supported versions: v4 and v
 In v4 of the Box Python SDK, we are introducing a version that consolidates both the manually written package (`boxsdk`)
 and the new generated package (`box_sdk_gen`). This allows developers to use both packages simultaneously within a single project.
 
-Version v4 of the Box Python SDK will be supported until 2027. During this period, 
-the `boxsdk` package will be marked as deprecated and will receive only bug fixes and security patches.
-All new features and support for new Box APIs will be provided exclusively in the `box_sdk_gen` package.
-
 The codebase for v4 of the Box Python SDK is currently available on the [combined-sdk](https://github.com/box/box-python-sdk/tree/combined-sdk) branch.
 Migration guide which would help with migration from `boxsdk` to `box_sdk_gen` can be found [here](./migration-guides/from-boxsdk-to-box_sdk_gen.md).
 
@@ -64,6 +61,11 @@ Version v10 is intended for:
 - New users of the Box Python SDK.
 - Developers already working with the generated Box Python SDK previously available under the [Box Python SDK Gen repository](https://github.com/box/box-python-sdk-gen).
 
+## Deprecation of `boxsdk` package
+
+The `boxsdk` package will be marked as deprecated, will receive only bug fixes and security patches, and reach end of support in 2027.
+All new features and support for new Box APIs will be provided exclusively in the `box_sdk_gen` package.
+
 ## Which Version Should I Use?
 
 | Scenario                                                                                                                     | Recommended Version                                                      | Example `pip install`       |
@@ -77,7 +79,7 @@ For full guidance on SDK versioning, see the [Box SDK Versioning Guide](https://
 
 # Installing
 
-To install Box Python SDK v4 version that consolidates both the manual package (`boxsdk`) 
+To install Box Python SDK v4 version that consolidates both the manual package (`boxsdk`)
 and the new generated package (`box_sdk_gen`) run the command:
 
 ``` console
@@ -93,7 +95,7 @@ Supported Python versions are Python 3.8 and above.
 
 # Getting Started
 
-To get started with the SDK, get a Developer Token from the Configuration page of your app in the [Box Developer Console](https://app.box.com/developers/console). 
+To get started with the SDK, get a Developer Token from the Configuration page of your app in the [Box Developer Console](https://app.box.com/developers/console).
 Developer Tokens are short-lived and expire after 60 minutes, which is good for testing but not for production use.
 To learn about other authentication methods, see the [Authentication](#authentication) section below.
 
@@ -139,7 +141,7 @@ if __name__ == '__main__':
 
 # Authentication
 
-Both the `box_sdk_gen` and `boxsdk` packages support multiple authentication methods, including 
+Both the `box_sdk_gen` and `boxsdk` packages support multiple authentication methods, including
 Developer Token, OAuth 2.0, Client Credentials Grant, and JSON Web Token (JWT).
 
 You can find detailed instructions and example code for each authentication method in the following documentation:
@@ -188,21 +190,21 @@ Migration guides which help you to migrate to supported major SDK versions can b
 We use a modified version of [Semantic Versioning](https://semver.org/) for all changes. See [version strategy](VERSIONS.md) for details which is effective from 30 July 2022.
 
 A current release is on the leading edge of our SDK development, and is intended for customers who are in active development and want the latest and greatest features.  
-Instead of stating a release date for a new feature, we set a fixed minor or patch release cadence of maximum 2-3 months (while we may release more often). 
-At the same time, there is no schedule for major or breaking release. Instead, we will communicate one quarter in advance the upcoming breaking change to allow customers to plan for the upgrade. 
+Instead of stating a release date for a new feature, we set a fixed minor or patch release cadence of maximum 2-3 months (while we may release more often).
+At the same time, there is no schedule for major or breaking release. Instead, we will communicate one quarter in advance the upcoming breaking change to allow customers to plan for the upgrade.
 
-We always recommend that all users run the latest available minor release for whatever major version is in use. 
+We always recommend that all users run the latest available minor release for whatever major version is in use.
 We highly recommend upgrading to the latest SDK major release at the earliest convenient time and before the EOL date.
 
 ## Version schedule
 
-| Version | Supported Environments                                  | State     | First Release | EOL/Terminated |
-|---------|---------------------------------------------------------|-----------|---------------|----------------|
-| 10      | Python 3.8+                                             | Supported | 17 Sep 2025   | TBD            |
-| 4       | Python 3.8+                                             | Supported | 23 Oct 2025   | 2027           |
-| 3       | Python 3.6+                                             | EOL       | 17 Jan 2022   | 23 Oct 2025    |
-| 2       |                                                         | EOL       | 01 Nov 2018   | 17 Jan 2022    |
-| 1       |                                                         | EOL       | 10 Feb 2015   | 01 Nov 2018    |
+| Version | Supported Environments | State     | First Release | EOL/Terminated         |
+|---------|------------------------|-----------|---------------|------------------------|
+| 10      | Python 3.8+            | Supported | 17 Sep 2025   | TBD                    |
+| 4       | Python 3.8+            | Supported | 23 Oct 2025   | 2027 or v5 is released |
+| 3       | Python 3.6+            | EOL       | 17 Jan 2022   | 23 Oct 2025            |
+| 2       |                        | EOL       | 01 Nov 2018   | 17 Jan 2022            |
+| 1       |                        | EOL       | 10 Feb 2015   | 01 Nov 2018            |
 
 # Contributing
 
