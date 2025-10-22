@@ -50,8 +50,8 @@ If your application currently targets an older Python version, update your deplo
 
 ## Highlighting the Key Differences
 
-The `box_sdk_gen` package usage in v4 remains the same as in v3 and is not covered in this document.
-If you are migrating code from `BoxSDK` to `boxsdk`, which we recommend,
+The `boxsdk` package usage in v4 remains the same as in v3 and is not covered in this document.
+If you are migrating code from `boxsdk` to `box_sdk_gen` package, which we recommend,
 the key differences between the packages are documented in:
 
 - [Migration guide: boxsdk → box_sdk_gen](./from-boxsdk-to-box_sdk_gen.md)

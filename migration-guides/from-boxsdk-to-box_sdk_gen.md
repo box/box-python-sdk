@@ -5,7 +5,6 @@
 
 - [Introduction](#introduction)
   - [Who is this for?](#who-is-this-for)
-- [Installation](#installation)
 - [Key differences](#key-differences)
   - [Manager approach](#manager-approach)
   - [Explicitly defined schemas](#explicitly-defined-schemas)
