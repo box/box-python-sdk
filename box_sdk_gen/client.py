@@ -172,6 +172,10 @@ from box_sdk_gen.managers.docgen_template import DocgenTemplateManager
 
 from box_sdk_gen.managers.docgen import DocgenManager
 
+from box_sdk_gen.managers.enterprise_configurations import (
+    EnterpriseConfigurationsManager,
+)
+
 from box_sdk_gen.managers.hubs import HubsManager
 
 from box_sdk_gen.managers.hub_collaborations import HubCollaborationsManager
@@ -427,6 +431,9 @@ class BoxClient:
             auth=self.auth, network_session=self.network_session
         )
         self.docgen = DocgenManager(
+            auth=self.auth, network_session=self.network_session
+        )
+        self.enterprise_configurations = EnterpriseConfigurationsManager(
             auth=self.auth, network_session=self.network_session
         )
         self.hubs = HubsManager(auth=self.auth, network_session=self.network_session)
