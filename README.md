@@ -41,7 +41,7 @@
 We are excited to introduce the v4 major release of the Box Python SDK,
 designed to elevate the developer experience and streamline your integration with the Box Content Cloud.
 
-With this SDK, we provide the `box_sdk_gen` package, which gives you access to:
+With this SDK, alongside the existing `boxsdk` package, we’re introducing a new `box_sdk_gen` package, which gives you access to:
 
 1. Full API Support: The new generation of Box SDKs empowers developers with complete coverage of the Box API ecosystem. You can now access all the latest features and functionalities offered by Box, allowing you to build even more sophisticated and feature-rich applications.
 2. Rapid API Updates: Say goodbye to waiting for new Box APIs to be incorporated into the SDK. With our new auto-generation development approach, we can now add new Box APIs to the SDK at a much faster pace (in a matter of days). This means you can leverage the most up-to-date features in your applications without delay.
