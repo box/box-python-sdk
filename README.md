@@ -59,7 +59,7 @@ In v4 of the Box Python SDK, we are introducing a version that consolidates both
 and the new generated package (`box_sdk_gen`). This allows developers to use both packages simultaneously within a single project.
 
 The codebase for v4 of the Box Python SDK is currently available on the [combined-sdk](https://github.com/box/box-python-sdk/tree/combined-sdk) branch.
-Migration guide which would help with migration from `boxsdk` to `box_sdk_gen` can be found [here](https://github.com/box/box-python-sdk/tree/combined-sdk/migration-guides/from-boxsdk-to-box_sdk_gen.md).
+Migration guide which would help with migration from `boxsdk` to `box_sdk_gen` can be found [here](https://github.com/box/box-python-sdk/tree/sdk-gen/migration-guides/from-boxsdk-to-box_sdk_gen.md).
 
 Version v4 is intended for:
 
@@ -133,19 +133,19 @@ Box Python SDK v10 supports multiple authentication methods including Developer 
 Client Credentials Grant, and JSON Web Token (JWT).
 
 You can find detailed instructions and example code for each authentication method in
-[Authentication](https://github.com/box/box-python-sdk/tree/combined-sdk/docs/authentication.md) document.
+[Authentication](https://github.com/box/box-python-sdk/tree/sdk-gen/docs/authentication.md) document.
 
 # Documentation
 
-Browse the [docs](https://github.com/box/box-python-sdk/tree/combined-sdk/docs/README.md) or see [API Reference](https://developer.box.com/reference/) for more information.
+Browse the [docs](https://github.com/box/box-python-sdk/tree/sdk-gen/docs/README.md) or see [API Reference](https://developer.box.com/reference/) for more information.
 
 # Migration guides
 
-Migration guides which help you to migrate to supported major SDK versions can be found [here](https://github.com/box/box-python-sdk/tree/combined-sdk/migration-guides).
+Migration guides which help you to migrate to supported major SDK versions can be found [here](https://github.com/box/box-python-sdk/tree/sdk-gen/migration-guides).
 
 # Versioning
 
-We use a modified version of [Semantic Versioning](https://semver.org/) for all changes. See [version strategy](https://github.com/box/box-python-sdk/tree/combined-sdk/VERSIONS.md) for details which is effective from 30 July 2022.
+We use a modified version of [Semantic Versioning](https://semver.org/) for all changes. See [version strategy](https://github.com/box/box-python-sdk/tree/sdk-gen/VERSIONS.md) for details which is effective from 30 July 2022.
 
 A current release is on the leading edge of our SDK development, and is intended for customers who are in active development and want the latest and greatest features.  
 Instead of stating a release date for a new feature, we set a fixed minor or patch release cadence of maximum 2-3 months (while we may release more often).
@@ -166,7 +166,7 @@ We highly recommend upgrading to the latest SDK major release at the earliest co
 
 # Contributing
 
-See [CONTRIBUTING.md](https://github.com/box/box-python-sdk/tree/combined-sdk/CONTRIBUTING.md).
+See [CONTRIBUTING.md](https://github.com/box/box-python-sdk/tree/sdk-gen/CONTRIBUTING.md).
 
 # FIPS 140-2 Compliance
 
