@@ -182,7 +182,7 @@ def main():
   new_client = BoxClient(auth=auth)
   
   folder = legacy_client.folder(folder_id='0').create_subfolder('My Subfolder')
-  updated_folder = new_client.folders.update_folder(folder_id=folder.id, name='My Updated Subfolder')
+  updated_folder = new_client.folders.update_folder_by_id(folder_id=folder.id, name='My Updated Subfolder')
   print(f'Created folder with ID {folder.id} has been updated to {updated_folder.name}')
 
 if __name__ == '__main__':
