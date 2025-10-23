@@ -101,7 +101,7 @@ def main():
     folder: FolderOld = legacy_client.folder(folder_id="0").create_subfolder(
         "My Subfolder"
     )
-    updated_folder: Folder = new_client.folders.update_folder(
+    updated_folder: Folder = new_client.folders.update_folder_by_id(
         folder_id=folder.id, name="My Updated Subfolder"
     )
     print(

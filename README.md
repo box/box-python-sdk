@@ -2,29 +2,7 @@
   <img src="https://github.com/box/sdks/blob/master/images/box-dev-logo.png" alt= “box-dev-logo” width="30%" height="50%">
 </p>
 
-# Versioning Strategy
-
-Starting with v10 of the SDK, we’ve introduced a new generated codebase designed to enhance your experience with the Box API.  
-It is currently available on the [sdk-gen](https://github.com/box/box-python-sdk/tree/sdk-gen) branch and uses the new `box_sdk_gen` package instead of the old `boxsdk`.
-
-v10 is targeted at new users of Box Python SDK and users already working with the generated Box Python SDK previously available under the [Box Python SDK Gen repository](https://github.com/box/box-python-sdk-gen).
-
-For users of v3 of the Box Python SDK, no action is required at this time — we’ll be providing an upcoming v4 release that will include both `boxsdk` and `box_sdk_gen` packages for a smooth migration path. To avoid unintentional upgrades, pin your version to `boxsdk~=3.0`.
-
-For full guidance on SDK versioning, see the [Box SDK Versioning Guide](https://developer.box.com/guides/tooling/sdks/sdk-versioning/).
-
----
-
-## Which Version Should I Use?
-
-| Scenario                                                                                            | Recommended Version                                                  | Example `pip install`       |
-| --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | --------------------------- |
-| Creating a new application                                                                          | Use [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)        | `pip install "boxsdk>=10"`  |
-| Existing app using [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) artifact                    | Upgrade to [v10](https://github.com/box/box-python-sdk/tree/sdk-gen) | `pip install "boxsdk>=10"`  |
-| Existing app using [boxsdk](https://pypi.org/project/boxsdk/) artifact planning to use new features | Wait for v4 to start migration process                               | TBD                         |
-| Existing app using [boxsdk](https://pypi.org/project/boxsdk/) artifact not planning any changes     | Stay on `boxsdk~=3.0`                                                | `pip install "boxsdk~=3.0"` |
-
-# Box Python SDK
+# Box Python SDK v10
 
 [![Project Status](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
 ![build](https://github.com/box/box-python-sdk/actions/workflows/build.yml/badge.svg?branch=sdk-gen)
@@ -33,10 +11,34 @@ For full guidance on SDK versioning, see the [Box SDK Versioning Guide](https://
 ![Platform](https://img.shields.io/badge/python-3.8+-blue)
 [![Coverage](https://coveralls.io/repos/github/box/box-python-sdk/badge.svg?branch=sdk-gen)](https://coveralls.io/github/box/box-python-sdk?branch=sdk-gen)
 
-We are excited to introduce the stable release of the latest generation of Box Python SDK,
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Introduction](#introduction)
+- [Supported versions](#supported-versions)
+  - [Version v4](#version-v4)
+  - [Version v10](#version-v10)
+  - [Which Version Should I Use?](#which-version-should-i-use)
+- [Installing](#installing)
+- [Getting Started](#getting-started)
+- [Authentication](#authentication)
+- [Documentation](#documentation)
+- [Migration guides](#migration-guides)
+- [Versioning](#versioning)
+  - [Version schedule](#version-schedule)
+- [Contributing](#contributing)
+- [FIPS 140-2 Compliance](#fips-140-2-compliance)
+- [Questions, Bugs, and Feature Requests?](#questions-bugs-and-feature-requests)
+- [Copyright and License](#copyright-and-license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+# Introduction
+
+We are excited to introduce the v10 major release of the Box Python SDK,
 designed to elevate the developer experience and streamline your integration with the Box Content Cloud.
 
-With this SDK, you’ll have access to:
+With this SDK version, we provide the `box_sdk_gen` package, which gives you access to:
 
 1. Full API Support: The new generation of Box SDKs empowers developers with complete coverage of the Box API ecosystem. You can now access all the latest features and functionalities offered by Box, allowing you to build even more sophisticated and feature-rich applications.
 2. Rapid API Updates: Say goodbye to waiting for new Box APIs to be incorporated into the SDK. With our new auto-generation development approach, we can now add new Box APIs to the SDK at a much faster pace (in a matter of days). This means you can leverage the most up-to-date features in your applications without delay.
@@ -46,26 +48,44 @@ With this SDK, you’ll have access to:
 
 Embrace the new generation of Box SDKs and unlock the full potential of the Box Content Cloud.
 
-# Table of contents
+# Supported versions
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+To enhance developer experience, we have introduced the new generated codebase through the `box_sdk_gen` package.
+The `box_sdk_gen` package is available in two major supported versions: v4 and v10.
 
-- [Box Python SDK](#box-python-sdk)
-- [Table of contents](#table-of-contents)
-- [Installing](#installing)
-- [Getting Started](#getting-started)
-- [Documentation](#documentation)
-- [Upgrades](#upgrades)
-- [Integration Tests](#integration-tests)
-  - [Running integration tests locally](#running-integration-tests-locally)
-    - [Create Platform Application](#create-platform-application)
-    - [Export configuration](#export-configuration)
-    - [Running tests](#running-tests)
-- [Questions, Bugs, and Feature Requests?](#questions-bugs-and-feature-requests)
-- [Copyright and License](#copyright-and-license)
+## Version v4
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+In v4 of the Box Python SDK, we are introducing a version that consolidates both the manually written package (`boxsdk`)
+and the new generated package (`box_sdk_gen`). This allows developers to use both packages simultaneously within a single project.
+
+The codebase for v4 of the Box Python SDK is currently available on the [combined-sdk](https://github.com/box/box-python-sdk/tree/combined-sdk) branch.
+Migration guide which would help with migration from `boxsdk` to `box_sdk_gen` can be found [here](./migration-guides/from-boxsdk-to-box_sdk_gen.md).
+
+Version v4 is intended for:
+
+- Existing developers of the Box Python SDK v3 who want to access new API features while keeping their current codebase largely unchanged.
+- Existing developers who are in the process of migrating to `box_sdk_gen`, but do not want to move all their code to the new package immediately.
+
+## Version v10
+
+Starting with v10, the SDK is built entirely on the generated `box_sdk_gen` package, which fully and exclusively replaces the old `boxsdk` package.
+The codebase for v10 of the Box Python SDK is currently available on the [sdk-gen](https://github.com/box/box-python-sdk/tree/sdk-gen) branch.
+
+Version v10 is intended for:
+
+- New users of the Box Python SDK.
+- Developers already working with the generated Box Python SDK previously available under the [Box Python SDK Gen repository](https://github.com/box/box-python-sdk-gen).
+
+## Which Version Should I Use?
+
+| Scenario                                                                                                                     | Recommended Version                                                      | Example `pip install`       |
+| ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | --------------------------- |
+| Creating a new application                                                                                                   | Use [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)            | `pip install "boxsdk>=10"`  |
+| App using [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) artifact                                                      | Migrate to [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)     | `pip install "boxsdk>=10"`  |
+| App using both [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) and [boxsdk](https://pypi.org/project/boxsdk/) artifacts | Upgrade to [v4](https://github.com/box/box-python-sdk/tree/combined-sdk) | `pip install "boxsdk~=4.0"` |
+| App using v3 of [boxsdk](https://pypi.org/project/boxsdk/) artifact                                                          | Upgrade to [v4](https://github.com/box/box-python-sdk/tree/combined-sdk) | `pip install "boxsdk~=4.0"` |
+
+For full guidance on SDK versioning, see the [Box SDK Versioning Guide](https://developer.box.com/guides/tooling/sdks/sdk-versioning/).
 
 # Installing
 
@@ -107,62 +127,71 @@ if __name__ == '__main__':
     main('INSERT YOUR DEVELOPER TOKEN HERE')
 ```
 
+# Authentication
+
+Box Python SDK v10 supports multiple authentication methods including Developer Token, OAuth 2.0,
+Client Credentials Grant, and JSON Web Token (JWT).
+
+You can find detailed instructions and example code for each authentication method in
+[Authentication](./docs/authentication.md) document.
+
 # Documentation
 
 Browse the [docs](docs/README.md) or see [API Reference](https://developer.box.com/reference/) for more information.
 
-# Upgrades
+# Migration guides
 
-The SDK is updated regularly to include new features, enhancements, and bug fixes.
-If you are upgrading from manual v3 SDK version to this new generated v10, checkout the [migration guide](migration-guides/from-v3-to-v10.md) and [changelog](CHANGELOG.md) for more information.
+Migration guides which help you to migrate to supported major SDK versions can be found [here](./migration-guides).
 
-# Integration Tests
+# Versioning
 
-## Running integration tests locally
+We use a modified version of [Semantic Versioning](https://semver.org/) for all changes. See [version strategy](VERSIONS.md) for details which is effective from 30 July 2022.
 
-### Create Platform Application
+A current release is on the leading edge of our SDK development, and is intended for customers who are in active development and want the latest and greatest features.  
+Instead of stating a release date for a new feature, we set a fixed minor or patch release cadence of maximum 2-3 months (while we may release more often).
+At the same time, there is no schedule for major or breaking release. Instead, we will communicate one quarter in advance the upcoming breaking change to allow customers to plan for the upgrade.
 
-To run integration tests locally you will need a `Custom App` created in the [Box Developer
-Console](https://app.box.com/developers/console)
-with `Server Authentication (with JWT)` selected as authentication method.
-Once created you can edit properties of the application:
+We always recommend that all users run the latest available minor release for whatever major version is in use.
+We highly recommend upgrading to the latest SDK major release at the earliest convenient time and before the EOL date.
 
-- In section `App Access Level` select `App + Enterprise Access`. You can enable all `Application Scopes`.
-- In section `Advanced Features` enable `Make API calls using the as-user header` and `Generate user access tokens`.
+## Version schedule
 
-Now select `Authorization` and submit application to be reviewed by account admin.
+| Version | Supported Environments | State     | First Release | EOL/Terminated         |
+| ------- | ---------------------- | --------- | ------------- | ---------------------- |
+| 10      | Python 3.8+            | Supported | 17 Sep 2025   | TBD                    |
+| 4       | Python 3.8+            | Supported | 23 Oct 2025   | 2027 or v5 is released |
+| 3       | Python 3.6+            | EOL       | 17 Jan 2022   | 23 Oct 2025            |
+| 2       |                        | EOL       | 01 Nov 2018   | 17 Jan 2022            |
+| 1       |                        | EOL       | 10 Feb 2015   | 01 Nov 2018            |
 
-### Export configuration
+# Contributing
 
-1. Select `Configuration` tab and in the bottom in the section `App Settings`
-   download your app configuration settings as JSON.
-2. Encode configuration file to Base64, e.g. using command: `base64 -i path_to_json_file`
-3. Set environment variable: `JWT_CONFIG_BASE_64` with base64 encoded jwt configuration file
-4. Set environment variable: `BOX_FILE_REQUEST_ID` with ID of file request already created in the user account, `BOX_EXTERNAL_USER_EMAIL` with email of free external user which not belongs to any enterprise and `BOX_EXTERNAL_USER_ID` with its ID.
-5. Set environment variable: `WORKFLOW_FOLDER_ID` with the ID of the Relay workflow that deletes the file that triggered the workflow. The workflow should have a manual start to be able to start it from the API.
-6. Set environment variable: `APP_ITEM_ASSOCIATION_FILE_ID` to the ID of the file with associated app item and `APP_ITEM_ASSOCIATION_FOLDER_ID` to the ID of the folder with associated app item.
-7. Set environment variable: `APP_ITEM_SHARED_LINK` to the shared link associated with app item.
-8. Set environment variable: `SLACK_AUTOMATION_USER_ID` to the ID of the user responsible for the Slack automation, `SLACK_ORG_ID` to the ID of the Slack organization and `SLACK_PARTNER_ITEM_ID` to the ID of the Slack partner item.
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
-### Running tests
+# FIPS 140-2 Compliance
 
-To run integration tests locally:
+The Python SDK allows the use of FIPS 140-2 validated SSL libraries, such as OpenSSL 3.0.
+However, some actions are required to enable this functionality.
 
-1. `pip install -r requirements-test.txt`
-2. `pytest`
+Currently, the latest distributions of Python default to OpenSSL v1.1.1, which is not FIPS compliant.
+Therefore, if you want to use OpenSSL 3.0 in your network communication,
+you need to ensure that Python uses a custom SSL library.
+One way to achieve this is by creating a custom Python distribution with the ssl module replaced.
+
+If you are using JWT for authentication, it is also necessary to ensure that the cryptography library,
+which is one of the extra dependencies for JWT, uses OpenSSL 3.0.
+To enable FIPS mode for the `cryptography` library, you need to install a FIPS-compliant version of OpenSSL
+during the installation process of cryptography using the `pip` command.
 
 # Questions, Bugs, and Feature Requests?
 
-Need to contact us directly? [Browse the issues
-tickets](https://github.com/box/box-python-sdk/issues)! Or, if that
-doesn't work, [file a new
-one](https://github.com/box/box-python-sdk/issues/new) and we will get
-back to you. If you have general questions about the Box API, you can
-post to the [Box Developer Forum](https://forum.box.com/).
+Need to contact us directly? [Browse the issues tickets](https://github.com/box/box-python-sdk/issues)! Or, if that
+doesn't work, [file a new one](https://github.com/box/box-python-sdk/issues/new) and we will get
+back to you. If you have general questions about the Box API, you can post to the [Box Developer Forum](https://community.box.com/box-platform-5).
 
 # Copyright and License
 
-Copyright 2023 Box, Inc. All rights reserved.
+Copyright 2025 Box, Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
