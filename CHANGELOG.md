@@ -4,22 +4,33 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [4.0.0](https://github.com/box/box-python-sdk/compare/v3.14.0...v4.0.0) (2025-10-23)
 
+Introducing a new major version of Box Python SDK `v4` that includes two packages — the manually maintained `boxsdk` package and the generated `box_sdk_gen` package. The coexisting packages provide easier access to the latest Box API features and support gradual migration to the standalone generated namespace.
 
-### ⚠ BREAKING CHANGES
+### Breaking Changes
 
-* Drop support of Python 3.6 and 3.8
+- `v4` of Box Python SDK  supports Python versions: 3.8+. Compared to `v3`, Python 3.6 and 3.7 are no longer supported.
 
-### New Features and Enhancements:
+For more information about migrating to v4 visit [v3 to v4 migration guide](https://github.com/box/box-python-sdk/blob/combined-sdk/migration-guides/from-v3-to-v4.md)
 
-* Add `box_sdk_gen` package  (box/box-codegen[#820](https://github.com/box/box-python-sdk/issues/820)) ([#997](https://github.com/box/box-python-sdk/issues/997)) ([5a06de7](https://github.com/box/box-python-sdk/commit/5a06de7d1f79813c62a86c28c33a7960128ae685))
-* Drop support of Python 3.6 and 3.8 ([4692274](https://github.com/box/box-python-sdk/commit/4692274de1c70f196556fb774ce4d0584547069d))
-* Support Python 3.12 and Python 3.13 ([#898](https://github.com/box/box-python-sdk/issues/898)) ([d604ea9](https://github.com/box/box-python-sdk/commit/d604ea98012aed3c2d0212d1b40b71a52efb55ec))
+### What's New in `v4`
 
+With this SDK version, alongside the existing `boxsdk` package, we’re introducing a new `box_sdk_gen` package, which gives you access to:
 
-### Bug Fixes:
+- **Full API Support** — Complete coverage of the Box API ecosystem, giving you access to all the latest features and functionalities to build feature-rich applications.  
 
-* Allow flexible key-value data in `AiExtractResponse.answer` and `Event.additionalDetails` (box/box-openapi[#556](https://github.com/box/box-python-sdk/issues/556)) ([#1086](https://github.com/box/box-python-sdk/issues/1086)) ([314603c](https://github.com/box/box-python-sdk/commit/314603c1a7f9bb72348007dce52745907f73ef90))
-* Make `role` parameter of update collaboration optional (box/box-openapi[#557](https://github.com/box/box-python-sdk/issues/557)) ([#1092](https://github.com/box/box-python-sdk/issues/1092)) ([5c9cb99](https://github.com/box/box-python-sdk/commit/5c9cb9999041f76a313686c0303792292db64e79))
+- **Rapid API Updates** — Our new auto-generation approach enables Box API additions within days, ensuring you can leverage the most up-to-date features without delay.  
+
+- **Embedded Documentation** — All objects and parameters are documented directly in the SDK source code, keeping essential information in one place.  
+
+- **Enhanced Convenience Methods** — New methods for authentication, chunk uploads, automatic retries, retry strategy, and more.
+
+### Important Notes
+
+This version allows you to gradually migrate your codebase to the `box_sdk_gen` package. The key differences between the packages are documented in the [package migration guide](https://github.com/box/box-python-sdk/blob/combined-sdk/migration-guides/from-boxsdk-to-box_sdk_gen.md).
+
+Ultimately, we recommend to migrate to `v10` which includes only the generated `box_sdk_gen` package. To migrate from `v4` to `v10` follow this [migration guide](https://github.com/box/box-python-sdk/blob/combined-sdk/migration-guides/from-v4-to-v10.md). 
+
+For more information, see the [SDK versioning strategy document](https://developer.box.com/guides/tooling/sdks/sdk-versioning/). Follow developer changelog for future updates.
 
 ## [3.14.0](https://github.com/box/box-python-sdk/compare/v3.13.0...v3.14.0) (2025-04-09)
 
