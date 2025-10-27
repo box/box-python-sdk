@@ -59,7 +59,11 @@ class BoxRetryStrategy(RetryStrategy):
         is_successful: bool = (
             fetch_response.status >= 200 and fetch_response.status < 400
         )
-        retry_after_header: Optional[str] = fetch_response.headers.get('Retry-After')
+        retry_after_header: Optional[str] = (
+            fetch_response.headers.get('Retry-After')
+            if 'Retry-After' in fetch_response.headers
+            else None
+        )
         is_accepted_with_retry_after: bool = (
             fetch_response.status == 202 and not retry_after_header == None
         )
