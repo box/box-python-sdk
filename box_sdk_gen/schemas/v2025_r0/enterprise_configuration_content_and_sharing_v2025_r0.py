@@ -2,8 +2,6 @@ from typing import Optional
 
 from typing import List
 
-from enum import Enum
-
 from box_sdk_gen.internal.base_object import BaseObject
 
 from box_sdk_gen.schemas.v2025_r0.enterprise_feature_settings_item_v2025_r0 import (
@@ -28,10 +26,6 @@ from box_sdk_gen.schemas.v2025_r0.enterprise_configuration_item_boolean_v2025_r0
 
 from box_sdk_gen.schemas.v2025_r0.collaboration_permissions_v2025_r0 import (
     CollaborationPermissionsV2025R0,
-)
-
-from box_sdk_gen.schemas.v2025_r0.collaboration_restriction_v2025_r0 import (
-    CollaborationRestrictionV2025R0,
 )
 
 from box_sdk_gen.schemas.v2025_r0.list_user_v2025_r0 import ListUserV2025R0
@@ -85,7 +79,7 @@ class EnterpriseConfigurationContentAndSharingV2025R0CollaborationRestrictionsFi
     def __init__(
         self,
         *,
-        value: Optional[List[CollaborationRestrictionV2025R0]] = None,
+        value: Optional[List[str]] = None,
         is_used: Optional[bool] = None,
         **kwargs
     ):
@@ -97,30 +91,15 @@ class EnterpriseConfigurationContentAndSharingV2025R0CollaborationRestrictionsFi
         self.value = value
 
 
-class EnterpriseConfigurationContentAndSharingV2025R0ExternalCollaborationStatusFieldValueField(
-    str, Enum
-):
-    ENABLE_EXTERNAL_COLLABORATION = 'enable_external_collaboration'
-    LIMIT_COLLABORATION_TO_ALLOWLISTED_DOMAINS = (
-        'limit_collaboration_to_allowlisted_domains'
-    )
-
-
 class EnterpriseConfigurationContentAndSharingV2025R0ExternalCollaborationStatusField(
     EnterpriseConfigurationItemV2025R0
 ):
     def __init__(
-        self,
-        *,
-        value: Optional[
-            EnterpriseConfigurationContentAndSharingV2025R0ExternalCollaborationStatusFieldValueField
-        ] = None,
-        is_used: Optional[bool] = None,
-        **kwargs
+        self, *, value: Optional[str] = None, is_used: Optional[bool] = None, **kwargs
     ):
         """
         :param value: The external collaboration status., defaults to None
-        :type value: Optional[EnterpriseConfigurationContentAndSharingV2025R0ExternalCollaborationStatusFieldValueField], optional
+        :type value: Optional[str], optional
         :param is_used: Indicates whether a configuration is used for a given enterprise., defaults to None
         :type is_used: Optional[bool], optional
         """
