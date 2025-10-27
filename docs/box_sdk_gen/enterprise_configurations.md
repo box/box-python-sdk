@@ -17,8 +17,8 @@ _Currently we don't have an example for calling `get_enterprise_configuration_by
 
 - enterprise_id `str`
   - The ID of the enterprise. Example: "3442311"
-- categories `str`
-  - The comma-delimited list of the enterprise configuration categories. Allowed values: `security`, `content_and_sharing`, `user_settings`, `shield`.
+- categories `List[str]`
+  - A comma-separated list of the enterprise configuration categories. Allowed values: `security`, `content_and_sharing`, `user_settings`, `shield`.
 - box_version `BoxVersionHeaderV2025R0`
   - Version header.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
