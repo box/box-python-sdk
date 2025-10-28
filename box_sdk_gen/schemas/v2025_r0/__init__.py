@@ -6,8 +6,6 @@ from box_sdk_gen.schemas.v2025_r0.client_error_v2025_r0 import *
 
 from box_sdk_gen.schemas.v2025_r0.collaboration_permissions_v2025_r0 import *
 
-from box_sdk_gen.schemas.v2025_r0.collaboration_restriction_v2025_r0 import *
-
 from box_sdk_gen.schemas.v2025_r0.custom_session_duration_group_item_v2025_r0 import *
 
 from box_sdk_gen.schemas.v2025_r0.doc_gen_batch_base_v2025_r0 import *
