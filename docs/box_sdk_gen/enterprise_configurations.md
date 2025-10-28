@@ -1,0 +1,31 @@
+# EnterpriseConfigurationsManager
+
+- [Get enterprise configuration](#get-enterprise-configuration)
+
+## Get enterprise configuration
+
+Retrieves the configuration for an enterprise.
+
+This operation is performed by calling function `get_enterprise_configuration_by_id_v2025_r0`.
+
+See the endpoint docs at
+[API Reference](https://developer.box.com/reference/v2025.0/get-enterprise-configurations-id/).
+
+_Currently we don't have an example for calling `get_enterprise_configuration_by_id_v2025_r0` in integration tests_
+
+### Arguments
+
+- enterprise_id `str`
+  - The ID of the enterprise. Example: "3442311"
+- categories `str`
+  - The comma-delimited list of the enterprise configuration categories. Allowed values: `security`, `content_and_sharing`, `user_settings`, `shield`.
+- box_version `BoxVersionHeaderV2025R0`
+  - Version header.
+- extra_headers `Optional[Dict[str, Optional[str]]]`
+  - Extra headers that will be included in the HTTP request.
+
+### Returns
+
+This function returns a value of type `EnterpriseConfigurationV2025R0`.
+
+Returns the enterprise configuration.
