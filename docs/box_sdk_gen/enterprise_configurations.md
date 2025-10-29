@@ -11,7 +11,11 @@ This operation is performed by calling function `get_enterprise_configuration_by
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2025.0/get-enterprise-configurations-id/).
 
-_Currently we don't have an example for calling `get_enterprise_configuration_by_id_v2025_r0` in integration tests_
+<!-- sample get_enterprise_configurations_id_v2025.0 -->
+
+```python
+admin_client.enterprise_configurations.get_enterprise_configuration_by_id_v2025_r0(enterprise_id, ['user_settings', 'content_and_sharing', 'security', 'shield'])
+```
 
 ### Arguments
 
