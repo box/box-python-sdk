@@ -1,5 +1,7 @@
 from typing import Optional
 
+from typing import List
+
 from typing import Dict
 
 from box_sdk_gen.internal.utils import to_string
@@ -54,7 +56,7 @@ class EnterpriseConfigurationsManager:
     def get_enterprise_configuration_by_id_v2025_r0(
         self,
         enterprise_id: str,
-        categories: str,
+        categories: List[str],
         *,
         box_version: BoxVersionHeaderV2025R0 = BoxVersionHeaderV2025R0._2025_0,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
@@ -64,9 +66,9 @@ class EnterpriseConfigurationsManager:
                 :param enterprise_id: The ID of the enterprise.
         Example: "3442311"
                 :type enterprise_id: str
-                :param categories: The comma-delimited list of the enterprise configuration categories.
+                :param categories: A comma-separated list of the enterprise configuration categories.
         Allowed values: `security`, `content_and_sharing`, `user_settings`, `shield`.
-                :type categories: str
+                :type categories: List[str]
                 :param box_version: Version header., defaults to BoxVersionHeaderV2025R0._2025_0
                 :type box_version: BoxVersionHeaderV2025R0, optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
