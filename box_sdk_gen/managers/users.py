@@ -653,12 +653,12 @@ class UsersManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> None:
         """
-                Deletes a user. By default this will fail if the user
+                Deletes a user. By default, this operation fails if the user
 
-                still owns any content. Move their owned content first
+                still owns any content, was recently active, or recently joined the enterprise from a free account.
 
 
-                before proceeding, or use the `force` field to delete
+                To proceed, move their owned content first, or use the `force` parameter to delete
 
 
                 the user and their files.
@@ -669,8 +669,8 @@ class UsersManager:
                 :param notify: Whether the user will receive email notification of
         the deletion., defaults to None
                 :type notify: Optional[bool], optional
-                :param force: Whether the user should be deleted even if this user
-        still own files., defaults to None
+                :param force: Specifies whether to delete the user even if they still own files,
+        were recently active, or recently joined the enterprise from a free account., defaults to None
                 :type force: Optional[bool], optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
                 :type extra_headers: Optional[Dict[str, Optional[str]]], optional
