@@ -7,6 +7,7 @@ on:
 jobs:
   update_pull_requests:
     runs-on: ubuntu-latest
+    permissions: {}
 
     steps:
       - name: Checkout repository
