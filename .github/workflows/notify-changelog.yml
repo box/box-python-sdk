@@ -10,6 +10,9 @@ on:
     types:
       - released
 
+permissions:
+  contents: read
+
 jobs:
   notify:
     # This job can run on the latest Ubuntu
