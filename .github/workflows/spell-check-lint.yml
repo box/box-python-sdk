@@ -5,7 +5,7 @@ on:
     branches:
       - sdk-gen
 jobs:
-  spellcheck-request:
+  spellcheck-request-title:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current repository
