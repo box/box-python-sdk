@@ -10,8 +10,7 @@ on:
     types:
       - released
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   notify:
