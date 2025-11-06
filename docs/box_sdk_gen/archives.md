@@ -3,6 +3,7 @@
 - [List archives](#list-archives)
 - [Create archive](#create-archive)
 - [Delete archive](#delete-archive)
+- [Update archive](#update-archive)
 
 ## List archives
 
@@ -59,6 +60,10 @@ client.archives.create_archive_v2025_r0(archive_name)
 
 - name `str`
   - The name of the archive.
+- description `Optional[str]`
+  - The description of the archive.
+- storage_policy_id `Optional[str]`
+  - The ID of the storage policy that the archive is assigned to.
 - box_version `BoxVersionHeaderV2025R0`
   - Version header.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
@@ -101,3 +106,35 @@ client.archives.delete_archive_by_id_v2025_r0(archive.id)
 This function returns a value of type `None`.
 
 Returns an empty response when the archive has been deleted.
+
+## Update archive
+
+Updates an archive.
+
+To learn more about the archive APIs, see the [Archive API Guide](g://archives).
+
+This operation is performed by calling function `update_archive_by_id_v2025_r0`.
+
+See the endpoint docs at
+[API Reference](https://developer.box.com/reference/v2025.0/put-archives-id/).
+
+_Currently we don't have an example for calling `update_archive_by_id_v2025_r0` in integration tests_
+
+### Arguments
+
+- archive_id `str`
+  - The ID of the archive. Example: "982312"
+- name `Optional[str]`
+  - The name of the archive.
+- description `Optional[str]`
+  - The description of the archive.
+- box_version `BoxVersionHeaderV2025R0`
+  - Version header.
+- extra_headers `Optional[Dict[str, Optional[str]]]`
+  - Extra headers that will be included in the HTTP request.
+
+### Returns
+
+This function returns a value of type `ArchiveV2025R0`.
+
+Returns the updated archive object.
