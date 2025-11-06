@@ -278,9 +278,9 @@ Returns the updated user object.
 
 ## Delete user
 
-Deletes a user. By default this will fail if the user
-still owns any content. Move their owned content first
-before proceeding, or use the `force` field to delete
+Deletes a user. By default, this operation fails if the user
+still owns any content, was recently active, or recently joined the enterprise from a free account.
+To proceed, move their owned content first, or use the `force` parameter to delete
 the user and their files.
 
 This operation is performed by calling function `delete_user_by_id`.
@@ -301,7 +301,7 @@ client.users.delete_user_by_id(user.id)
 - notify `Optional[bool]`
   - Whether the user will receive email notification of the deletion.
 - force `Optional[bool]`
-  - Whether the user should be deleted even if this user still own files.
+  - Specifies whether to delete the user even if they still own files, were recently active, or recently joined the enterprise from a free account.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
