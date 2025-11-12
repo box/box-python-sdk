@@ -32,9 +32,7 @@ def test_box_api_exception():
     assert box_exception.url == url
     assert box_exception.method == method
     assert box_exception.context_info == context_info
-    assert (
-        str(box_exception)
-        == f'''Message: {message}
+    assert str(box_exception) == f'''Message: {message}
 Status: {status}
 Code: {code}
 Request ID: {request_id}
@@ -42,7 +40,6 @@ Headers: {headers}
 URL: {url}
 Method: {method}
 Context Info: {context_info}'''
-    )
 
 
 @pytest.mark.parametrize('has_network_response', [True, False])
@@ -62,13 +59,10 @@ def test_box_oauth_exception(has_network_response):
         method=method,
         network_response=network_response,
     )
-    assert (
-        str(box_exception)
-        == f'''
+    assert str(box_exception) == f'''
 Message: {message}
 Status: {status}
 URL: {url}
 Method: {method}
 Headers: {headers if has_network_response else 'N/A'}'''
-    )
     assert box_exception.network_response is network_response
