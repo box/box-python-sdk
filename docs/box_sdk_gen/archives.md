@@ -53,7 +53,7 @@ See the endpoint docs at
 <!-- sample post_archives_v2025.0 -->
 
 ```python
-client.archives.create_archive_v2025_r0(archive_name)
+client.archives.create_archive_v2025_r0(archive_name, description=archive_description)
 ```
 
 ### Arguments
@@ -118,7 +118,11 @@ This operation is performed by calling function `update_archive_by_id_v2025_r0`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2025.0/put-archives-id/).
 
-_Currently we don't have an example for calling `update_archive_by_id_v2025_r0` in integration tests_
+<!-- sample put_archives_id_v2025.0 -->
+
+```python
+client.archives.update_archive_by_id_v2025_r0(archive.id, name=new_archive_name, description=new_archive_description)
+```
 
 ### Arguments
 
