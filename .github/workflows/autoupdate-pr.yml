@@ -5,6 +5,8 @@ on:
       - main
       - sdk-gen
 
+permissions: {}
+
 jobs:
   update_pull_requests:
     runs-on: ubuntu-latest

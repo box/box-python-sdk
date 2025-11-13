@@ -4,6 +4,10 @@ on:
     types: [opened, synchronize, edited]
     branches:
       - sdk-gen
+
+permissions:
+  contents: read
+
 jobs:
   spellcheck-request-title:
     runs-on: ubuntu-latest
