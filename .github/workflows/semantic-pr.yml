@@ -9,6 +9,9 @@ on:
     branches:
       - sdk-gen
 
+permissions:
+  contents: read
+
 jobs:
   main:
     name: Validate semantic PR title
