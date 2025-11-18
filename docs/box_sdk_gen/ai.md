@@ -18,7 +18,7 @@ See the endpoint docs at
 <!-- sample post_ai_ask -->
 
 ```python
-client.ai.create_ai_ask(CreateAiAskMode.SINGLE_ITEM_QA, 'which direction sun rises', [AiItemAsk(id=file_to_ask.id, type=AiItemAskTypeField.FILE, content='Sun rises in the East')], ai_agent=ai_ask_agent_config)
+client.ai.create_ai_ask(CreateAiAskMode.SINGLE_ITEM_QA, 'Which direction does the Sun rise?', [AiItemAsk(id=file_to_ask.id, type=AiItemAskTypeField.FILE, content='The Sun rises in the east')], ai_agent=ai_ask_agent_basic_text_config)
 ```
 
 ### Arguments
@@ -55,7 +55,7 @@ See the endpoint docs at
 <!-- sample post_ai_text_gen -->
 
 ```python
-client.ai.create_ai_text_gen('Parapharse the document.s', [CreateAiTextGenItems(id=file_to_ask.id, type=CreateAiTextGenItemsTypeField.FILE, content='The Earth goes around the sun. Sun rises in the East in the morning.')], dialogue_history=[AiDialogueHistory(prompt='What does the earth go around?', answer='The sun', created_at=date_time_from_string('2021-01-01T00:00:00Z')), AiDialogueHistory(prompt='On Earth, where does the sun rise?', answer='East', created_at=date_time_from_string('2021-01-01T00:00:00Z'))], ai_agent=ai_text_gen_agent_config)
+client.ai.create_ai_text_gen('Paraphrase the documents', [CreateAiTextGenItems(id=file_to_ask.id, type=CreateAiTextGenItemsTypeField.FILE, content='The Earth goes around the Sun. The Sun rises in the east in the morning.')], dialogue_history=[AiDialogueHistory(prompt='What does the earth go around?', answer='The Sun', created_at=date_time_from_string('2021-01-01T00:00:00Z')), AiDialogueHistory(prompt='On Earth, where does the Sun rise?', answer='east', created_at=date_time_from_string('2021-01-01T00:00:00Z'))])
 ```
 
 ### Arguments
@@ -129,7 +129,7 @@ See the endpoint docs at
 <!-- sample post_ai_extract -->
 
 ```python
-client.ai.create_ai_extract('firstName, lastName, location, yearOfBirth, company', [AiItemBase(id=file.id)], ai_agent=agent_ignoring_overriding_embeddings_model)
+client.ai.create_ai_extract('firstName, lastName, location, yearOfBirth, company', [AiItemBase(id=file.id)], ai_agent=ai_extract_agent_basic_text_config)
 ```
 
 ### Arguments
@@ -167,7 +167,7 @@ See the endpoint docs at
 <!-- sample post_ai_extract_structured -->
 
 ```python
-client.ai.create_ai_extract_structured([AiItemBase(id=file.id)], fields=[CreateAiExtractStructuredFields(key='firstName', display_name='First name', description='Person first name', prompt='What is the your first name?', type='string'), CreateAiExtractStructuredFields(key='lastName', display_name='Last name', description='Person last name', prompt='What is the your last name?', type='string'), CreateAiExtractStructuredFields(key='dateOfBirth', display_name='Birth date', description='Person date of birth', prompt='What is the date of your birth?', type='date'), CreateAiExtractStructuredFields(key='age', display_name='Age', description='Person age', prompt='How old are you?', type='float'), CreateAiExtractStructuredFields(key='hobby', display_name='Hobby', description='Person hobby', prompt='What is your hobby?', type='multiSelect', options=[CreateAiExtractStructuredFieldsOptionsField(key='guitar'), CreateAiExtractStructuredFieldsOptionsField(key='books')])], ai_agent=agent_ignoring_overriding_embeddings_model)
+client.ai.create_ai_extract_structured([AiItemBase(id=file.id)], fields=[CreateAiExtractStructuredFields(key='firstName', display_name='First name', description='Person first name', prompt='What is the your first name?', type='string'), CreateAiExtractStructuredFields(key='lastName', display_name='Last name', description='Person last name', prompt='What is the your last name?', type='string'), CreateAiExtractStructuredFields(key='dateOfBirth', display_name='Birth date', description='Person date of birth', prompt='What is the date of your birth?', type='date'), CreateAiExtractStructuredFields(key='age', display_name='Age', description='Person age', prompt='How old are you?', type='float'), CreateAiExtractStructuredFields(key='hobby', display_name='Hobby', description='Person hobby', prompt='What is your hobby?', type='multiSelect', options=[CreateAiExtractStructuredFieldsOptionsField(key='guitar'), CreateAiExtractStructuredFieldsOptionsField(key='books')])], ai_agent=ai_extract_structured_agent_basic_text_config)
 ```
 
 ### Arguments

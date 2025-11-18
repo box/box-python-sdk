@@ -66,13 +66,7 @@ from box_sdk_gen.internal.utils import string_to_byte_stream
 
 from box_sdk_gen.internal.utils import delay_in_seconds
 
-from box_sdk_gen.internal.utils import generate_byte_stream
-
 from box_sdk_gen.internal.utils import date_time_from_string
-
-from box_sdk_gen.internal.utils import date_time_to_string
-
-from box_sdk_gen.internal.utils import get_value_from_object_raw_data
 
 from test.box_sdk_gen.test.commons import upload_new_file
 
@@ -84,8 +78,6 @@ from box_sdk_gen.schemas.ai_agent_extract import AiAgentExtract
 
 from box_sdk_gen.schemas.ai_agent_extract_structured import AiAgentExtractStructured
 
-from box_sdk_gen.schemas.ai_agent_long_text_tool import AiAgentLongTextTool
-
 client: BoxClient = get_default_client()
 
 
@@ -94,20 +86,23 @@ def testAskAISingleItem():
         GetAiAgentDefaultConfigMode.ASK, language='en-US'
     )
     ai_ask_agent_config: AiAgentAsk = ai_agent_config
+    ai_ask_agent_basic_text_config: AiAgentAsk = AiAgentAsk(
+        basic_text=ai_ask_agent_config.basic_text
+    )
     file_to_ask: FileFull = upload_new_file()
     response: Optional[AiResponseFull] = client.ai.create_ai_ask(
         CreateAiAskMode.SINGLE_ITEM_QA,
-        'which direction sun rises',
+        'Which direction does the Sun rise?',
         [
             AiItemAsk(
                 id=file_to_ask.id,
                 type=AiItemAskTypeField.FILE,
-                content='Sun rises in the East',
+                content='The Sun rises in the east',
             )
         ],
-        ai_agent=ai_ask_agent_config,
+        ai_agent=ai_ask_agent_basic_text_config,
     )
-    assert 'East' in response.answer
+    assert 'east' in response.answer
     assert response.completion_reason == 'done'
     client.files.delete_file_by_id(file_to_ask.id)
 
@@ -117,21 +112,21 @@ def testAskAIMultipleItems():
     file_to_ask_2: FileFull = upload_new_file()
     response: Optional[AiResponseFull] = client.ai.create_ai_ask(
         CreateAiAskMode.MULTIPLE_ITEM_QA,
-        'Which direction sun rises?',
+        'Which direction does the Sun rise?',
         [
             AiItemAsk(
                 id=file_to_ask_1.id,
                 type=AiItemAskTypeField.FILE,
-                content='Earth goes around the sun',
+                content='Earth goes around the Sun',
             ),
             AiItemAsk(
                 id=file_to_ask_2.id,
                 type=AiItemAskTypeField.FILE,
-                content='Sun rises in the East in the morning',
+                content='The Sun rises in the east in the morning',
             ),
         ],
     )
-    assert 'East' in response.answer
+    assert 'east' in response.answer
     assert response.completion_reason == 'done'
     client.files.delete_file_by_id(file_to_ask_1.id)
     client.files.delete_file_by_id(file_to_ask_2.id)
@@ -139,34 +134,29 @@ def testAskAIMultipleItems():
 
 def testAITextGenWithDialogueHistory():
     file_to_ask: FileFull = upload_new_file()
-    ai_agent_config: AiAgent = client.ai.get_ai_agent_default_config(
-        GetAiAgentDefaultConfigMode.TEXT_GEN, language='en-US'
-    )
-    ai_text_gen_agent_config: AiAgentTextGen = ai_agent_config
     response: AiResponse = client.ai.create_ai_text_gen(
-        'Parapharse the document.s',
+        'Paraphrase the documents',
         [
             CreateAiTextGenItems(
                 id=file_to_ask.id,
                 type=CreateAiTextGenItemsTypeField.FILE,
-                content='The Earth goes around the sun. Sun rises in the East in the morning.',
+                content='The Earth goes around the Sun. The Sun rises in the east in the morning.',
             )
         ],
         dialogue_history=[
             AiDialogueHistory(
                 prompt='What does the earth go around?',
-                answer='The sun',
+                answer='The Sun',
                 created_at=date_time_from_string('2021-01-01T00:00:00Z'),
             ),
             AiDialogueHistory(
-                prompt='On Earth, where does the sun rise?',
-                answer='East',
+                prompt='On Earth, where does the Sun rise?',
+                answer='east',
                 created_at=date_time_from_string('2021-01-01T00:00:00Z'),
             ),
         ],
-        ai_agent=ai_text_gen_agent_config,
     )
-    assert 'sun' in response.answer
+    assert 'Sun' in response.answer
     assert response.completion_reason == 'done'
     client.files.delete_file_by_id(file_to_ask.id)
 
@@ -219,16 +209,8 @@ def testAIExtract():
         GetAiAgentDefaultConfigMode.EXTRACT, language='en-US'
     )
     ai_extract_agent_config: AiAgentExtract = ai_agent_config
-    long_text_config_with_no_embeddings: AiAgentLongTextTool = AiAgentLongTextTool(
-        system_message=ai_extract_agent_config.long_text.system_message,
-        prompt_template=ai_extract_agent_config.long_text.prompt_template,
-        model=ai_extract_agent_config.long_text.model,
-        num_tokens_for_completion=ai_extract_agent_config.long_text.num_tokens_for_completion,
-        llm_endpoint_params=ai_extract_agent_config.long_text.llm_endpoint_params,
-    )
-    agent_ignoring_overriding_embeddings_model: AiAgentExtract = AiAgentExtract(
-        basic_text=ai_extract_agent_config.basic_text,
-        long_text=long_text_config_with_no_embeddings,
+    ai_extract_agent_basic_text_config: AiAgentExtract = AiAgentExtract(
+        basic_text=ai_extract_agent_config.basic_text
     )
     uploaded_files: Files = client.uploads.upload_file(
         UploadFileAttributes(
@@ -244,7 +226,7 @@ def testAIExtract():
     response: AiResponse = client.ai.create_ai_extract(
         'firstName, lastName, location, yearOfBirth, company',
         [AiItemBase(id=file.id)],
-        ai_agent=agent_ignoring_overriding_embeddings_model,
+        ai_agent=ai_extract_agent_basic_text_config,
     )
     expected_response: str = (
         '{"firstName": "John", "lastName": "Doe", "location": "San Francisco", "yearOfBirth": "1990", "company": "Box"}'
@@ -259,17 +241,9 @@ def testAIExtractStructuredWithFields():
         GetAiAgentDefaultConfigMode.EXTRACT_STRUCTURED, language='en-US'
     )
     ai_extract_structured_agent_config: AiAgentExtractStructured = ai_agent_config
-    long_text_config_with_no_embeddings: AiAgentLongTextTool = AiAgentLongTextTool(
-        system_message=ai_extract_structured_agent_config.long_text.system_message,
-        prompt_template=ai_extract_structured_agent_config.long_text.prompt_template,
-        model=ai_extract_structured_agent_config.long_text.model,
-        num_tokens_for_completion=ai_extract_structured_agent_config.long_text.num_tokens_for_completion,
-        llm_endpoint_params=ai_extract_structured_agent_config.long_text.llm_endpoint_params,
-    )
-    agent_ignoring_overriding_embeddings_model: AiAgentExtractStructured = (
+    ai_extract_structured_agent_basic_text_config: AiAgentExtractStructured = (
         AiAgentExtractStructured(
-            basic_text=ai_extract_structured_agent_config.basic_text,
-            long_text=long_text_config_with_no_embeddings,
+            basic_text=ai_extract_structured_agent_config.basic_text
         )
     )
     uploaded_files: Files = client.uploads.upload_file(
@@ -326,7 +300,7 @@ def testAIExtractStructuredWithFields():
                 ],
             ),
         ],
-        ai_agent=agent_ignoring_overriding_embeddings_model,
+        ai_agent=ai_extract_structured_agent_basic_text_config,
     )
     assert to_string(response.answer.get('hobby')) == to_string(['guitar'])
     assert to_string(response.answer.get('firstName')) == 'John'
