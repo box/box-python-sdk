@@ -75,17 +75,17 @@ def testUseAIAgentReferenceInAIAsk():
     file_to_ask: FileFull = upload_new_file()
     response: Optional[AiResponseFull] = client.ai.create_ai_ask(
         CreateAiAskMode.SINGLE_ITEM_QA,
-        'which direction sun rises',
+        'Which direction does the Sun rise?',
         [
             AiItemAsk(
                 id=file_to_ask.id,
                 type=AiItemAskTypeField.FILE,
-                content='Sun rises in the East',
+                content='The Sun rises in the east.',
             )
         ],
         ai_agent=AiAgentReference(id=created_agent.id),
     )
-    assert 'East' in response.answer
+    assert 'east' in response.answer
     assert response.completion_reason == 'done'
     assert len(response.ai_agent_info.models) > 0
     client.files.delete_file_by_id(file_to_ask.id)
