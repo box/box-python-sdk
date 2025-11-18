@@ -20,15 +20,15 @@ See the endpoint docs at
 ```python
 client.ai.create_ai_ask(
     CreateAiAskMode.SINGLE_ITEM_QA,
-    "which direction sun rises",
+    "Which direction does the Sun rise?",
     [
         AiItemAsk(
             id=file_to_ask.id,
             type=AiItemAskTypeField.FILE,
-            content="Sun rises in the East",
+            content="The Sun rises in the east",
         )
     ],
-    ai_agent=ai_ask_agent_config,
+    ai_agent=ai_ask_agent_basic_text_config,
 )
 ```
 
@@ -67,27 +67,26 @@ See the endpoint docs at
 
 ```python
 client.ai.create_ai_text_gen(
-    "Parapharse the document.s",
+    "Paraphrase the documents",
     [
         CreateAiTextGenItems(
             id=file_to_ask.id,
             type=CreateAiTextGenItemsTypeField.FILE,
-            content="The Earth goes around the sun. Sun rises in the East in the morning.",
+            content="The Earth goes around the Sun. The Sun rises in the east in the morning.",
         )
     ],
     dialogue_history=[
         AiDialogueHistory(
             prompt="What does the earth go around?",
-            answer="The sun",
+            answer="The Sun",
             created_at=date_time_from_string("2021-01-01T00:00:00Z"),
         ),
         AiDialogueHistory(
-            prompt="On Earth, where does the sun rise?",
-            answer="East",
+            prompt="On Earth, where does the Sun rise?",
+            answer="east",
             created_at=date_time_from_string("2021-01-01T00:00:00Z"),
         ),
     ],
-    ai_agent=ai_text_gen_agent_config,
 )
 ```
 
@@ -165,7 +164,7 @@ See the endpoint docs at
 client.ai.create_ai_extract(
     "firstName, lastName, location, yearOfBirth, company",
     [AiItemBase(id=file.id)],
-    ai_agent=agent_ignoring_overriding_embeddings_model,
+    ai_agent=ai_extract_agent_basic_text_config,
 )
 ```
 
@@ -247,7 +246,7 @@ client.ai.create_ai_extract_structured(
             ],
         ),
     ],
-    ai_agent=agent_ignoring_overriding_embeddings_model,
+    ai_agent=ai_extract_structured_agent_basic_text_config,
 )
 ```
 
