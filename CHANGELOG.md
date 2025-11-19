@@ -5,16 +5,10 @@ All notable changes to this project will be documented in this file. See [standa
 ## [10.1.0](https://github.com/box/box-python-sdk/compare/v10.0.1...v10.1.0) (2025-11-19)
 
 
-### Bug Fixes
-
-* Remove enum types from GET enterprise configuration endpoint (box/box-openapi[#560](https://github.com/box/box-python-sdk/issues/560)) ([#1151](https://github.com/box/box-python-sdk/issues/1151)) ([25e90d1](https://github.com/box/box-python-sdk/commit/25e90d117e7bbf03f9f5dc84ed09bc9bd49b2727))
-* update descriptions of the user deletion endpoint (box/box-openapi[#562](https://github.com/box/box-python-sdk/issues/562)) ([#1171](https://github.com/box/box-python-sdk/issues/1171)) ([44c1767](https://github.com/box/box-python-sdk/commit/44c1767049810de0163fd0636f96f8810d82e315))
-
-
 ### New Features and Enhancements
 
-* Add GET enterprise configuration endpoint (box/box-openapi[#559](https://github.com/box/box-python-sdk/issues/559)) ([#1134](https://github.com/box/box-python-sdk/issues/1134)) ([1106d32](https://github.com/box/box-python-sdk/commit/1106d325973df9704f5102538ac0130bda6e9c38))
-* Support update Archive API (box/box-openapi[#563](https://github.com/box/box-python-sdk/issues/563)) ([#1174](https://github.com/box/box-python-sdk/issues/1174)) ([d21ec4d](https://github.com/box/box-python-sdk/commit/d21ec4df82ab43539ff07d306cf304f86bbb0593))
+* Support GET enterprise configuration API (box/box-openapi[#559](https://github.com/box/box-python-sdk/issues/559)) ([#1134](https://github.com/box/box-python-sdk/issues/1134)) ([1106d32](https://github.com/box/box-python-sdk/commit/1106d325973df9704f5102538ac0130bda6e9c38))
+* Support Archive API (box/box-openapi[#563](https://github.com/box/box-python-sdk/issues/563)) ([#1174](https://github.com/box/box-python-sdk/issues/1174)) ([d21ec4d](https://github.com/box/box-python-sdk/commit/d21ec4df82ab43539ff07d306cf304f86bbb0593))
 
 ### [10.0.1](https://github.com/box/box-python-sdk/compare/v10.0.0...v10.0.1) (2025-10-06)
 
