@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.1.0](https://github.com/box/box-python-sdk/compare/v4.0.0...v4.1.0) (2025-11-19)
+
+### New Features and Enhancements:
+
+* **boxsdkgen:** Support GET enterprise configuration API (box/box-openapi[#559](https://github.com/box/box-python-sdk/issues/559)) ([#1144](https://github.com/box/box-python-sdk/issues/1144)) ([355ad8f](https://github.com/box/box-python-sdk/commit/355ad8f396f1de6898ac4d0529fea3f88c45ab24))
+* **boxsdkgen:** Support Archive API (box/box-openapi[#563](https://github.com/box/box-python-sdk/issues/563)) ([#1173](https://github.com/box/box-python-sdk/issues/1173)) ([5560ee6](https://github.com/box/box-python-sdk/commit/5560ee64392297424c8954f84610560251c8174e))
+
 ## [4.0.0](https://github.com/box/box-python-sdk/compare/v3.14.0...v4.0.0) (2025-10-23)
 
 Introducing a new major version of Box Python SDK `v4` that includes two packages — the manually maintained `boxsdk` package and the generated `box_sdk_gen` package. The coexisting packages provide easier access to the latest Box API features and support gradual migration to the standalone generated namespace.
