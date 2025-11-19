@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.1.0](https://github.com/box/box-python-sdk/compare/v10.0.1...v10.1.0) (2025-11-19)
+
+
+### New Features and Enhancements
+
+* Support GET enterprise configuration API (box/box-openapi[#559](https://github.com/box/box-python-sdk/issues/559)) ([#1134](https://github.com/box/box-python-sdk/issues/1134)) ([1106d32](https://github.com/box/box-python-sdk/commit/1106d325973df9704f5102538ac0130bda6e9c38))
+* Support Archive API (box/box-openapi[#563](https://github.com/box/box-python-sdk/issues/563)) ([#1174](https://github.com/box/box-python-sdk/issues/1174)) ([d21ec4d](https://github.com/box/box-python-sdk/commit/d21ec4df82ab43539ff07d306cf304f86bbb0593))
+
 ### [10.0.1](https://github.com/box/box-python-sdk/compare/v10.0.0...v10.0.1) (2025-10-06)
 
 
