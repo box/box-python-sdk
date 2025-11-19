@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.1.0](https://github.com/box/box-python-sdk/compare/v4.0.0...v4.1.0) (2025-11-19)
+
+
+### Bug Fixes:
+
+* **boxsdkgen:** Remove enum types from GET enterprise configuration endpoint (box/box-openapi[#560](https://github.com/box/box-python-sdk/issues/560)) ([#1150](https://github.com/box/box-python-sdk/issues/1150)) ([c6ca316](https://github.com/box/box-python-sdk/commit/c6ca316701a3b0df233e09fa9a776e39c4030c96)), closes [box/box-openapi#559](https://github.com/box/box-openapi/issues/559) [box/box-codegen#872](https://github.com/box/box-codegen/issues/872)
+* **boxsdkgen:** update descriptions of the user deletion endpoint (box/box-openapi[#562](https://github.com/box/box-python-sdk/issues/562)) ([#1170](https://github.com/box/box-python-sdk/issues/1170)) ([4be73a9](https://github.com/box/box-python-sdk/commit/4be73a91cd0a3932ce0663cab8b600bc9da333f3))
+
+
+### New Features and Enhancements:
+
+* Add GET enterprise configuration endpoint (box/box-openapi[#559](https://github.com/box/box-python-sdk/issues/559)) ([#1144](https://github.com/box/box-python-sdk/issues/1144)) ([355ad8f](https://github.com/box/box-python-sdk/commit/355ad8f396f1de6898ac4d0529fea3f88c45ab24))
+* **boxsdkgen:** support update Archive API (box/box-openapi[#563](https://github.com/box/box-python-sdk/issues/563)) ([#1173](https://github.com/box/box-python-sdk/issues/1173)) ([5560ee6](https://github.com/box/box-python-sdk/commit/5560ee64392297424c8954f84610560251c8174e))
+
 ## [4.0.0](https://github.com/box/box-python-sdk/compare/v3.14.0...v4.0.0) (2025-10-23)
 
 Introducing a new major version of Box Python SDK `v4` that includes two packages — the manually maintained `boxsdk` package and the generated `box_sdk_gen` package. The coexisting packages provide easier access to the latest Box API features and support gradual migration to the standalone generated namespace.
