@@ -73,6 +73,7 @@ def main():
         'pytest-cov<6',
         'pytest-lazy-fixtures<2',
         'pytest-rerunfailures',
+        'pytest-xdist',
         'pytz',
         'urllib3<2',
     ]
