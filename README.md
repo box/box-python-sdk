@@ -5,11 +5,11 @@
 # Box Python SDK v10
 
 [![Project Status](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
-![build](https://github.com/box/box-python-sdk/actions/workflows/build.yml/badge.svg?branch=sdk-gen)
+![build](https://github.com/box/box-python-sdk/actions/workflows/build.yml/badge.svg?branch=main)
 [![PyPI version](https://badge.fury.io/py/boxsdk.svg)](https://badge.fury.io/py/boxsdk)
 [![image](https://img.shields.io/pypi/dm/boxsdk.svg)](https://pypi.python.org/pypi/boxsdk)
 ![Platform](https://img.shields.io/badge/python-3.8+-blue)
-[![Coverage](https://coveralls.io/repos/github/box/box-python-sdk/badge.svg?branch=sdk-gen)](https://coveralls.io/github/box/box-python-sdk?branch=sdk-gen)
+[![Coverage](https://coveralls.io/repos/github/box/box-python-sdk/badge.svg?branch=main)](https://coveralls.io/github/box/box-python-sdk?branch=main)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -69,7 +69,7 @@ Version v4 is intended for:
 ## Version v10
 
 Starting with v10, the SDK is built entirely on the generated `box_sdk_gen` package, which fully and exclusively replaces the old `boxsdk` package.
-The codebase for v10 of the Box Python SDK is currently available on the [sdk-gen](https://github.com/box/box-python-sdk/tree/sdk-gen) branch.
+The codebase for v10 of the Box Python SDK is currently available on the [main](https://github.com/box/box-python-sdk/tree/main) branch.
 
 Version v10 is intended for:
 
@@ -80,8 +80,8 @@ Version v10 is intended for:
 
 | Scenario                                                                                                                     | Recommended Version                                                      | Example `pip install`       |
 | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | --------------------------- |
-| Creating a new application                                                                                                   | Use [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)            | `pip install "boxsdk>=10"`  |
-| App using [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) artifact                                                      | Migrate to [v10](https://github.com/box/box-python-sdk/tree/sdk-gen)     | `pip install "boxsdk>=10"`  |
+| Creating a new application                                                                                                   | Use [v10](https://github.com/box/box-python-sdk/tree/main)               | `pip install "boxsdk>=10"`  |
+| App using [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) artifact                                                      | Migrate to [v10](https://github.com/box/box-python-sdk/tree/main)        | `pip install "boxsdk>=10"`  |
 | App using both [box-sdk-gen](https://pypi.org/project/box-sdk-gen/) and [boxsdk](https://pypi.org/project/boxsdk/) artifacts | Upgrade to [v4](https://github.com/box/box-python-sdk/tree/combined-sdk) | `pip install "boxsdk~=4.0"` |
 | App using v3 of [boxsdk](https://pypi.org/project/boxsdk/) artifact                                                          | Upgrade to [v4](https://github.com/box/box-python-sdk/tree/combined-sdk) | `pip install "boxsdk~=4.0"` |
 
