@@ -7,7 +7,13 @@ import re
 
 def main():
     install_requires = ['requests', 'requests-toolbelt']
-    tests_require = ['pytest', 'pytest-timeout', 'pytest-cov', 'pytest-rerunfailures']
+    tests_require = [
+        'pytest',
+        'pytest-timeout',
+        'pytest-cov',
+        'pytest-rerunfailures',
+        'pytest-xdist',
+    ]
     dev_requires = ['tox']
     jwt_requires = ['pyjwt>=1.7.0', 'cryptography>=3']
     version_file = open(join(dirname(__file__), 'box_sdk_gen/networking/version.py'))
