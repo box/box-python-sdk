@@ -78,9 +78,10 @@ jobs:
           ENTERPRISE_ID: ${{ secrets.ENTERPRISE_ID }}
           BOX_FILE_REQUEST_ID: ${{ secrets.BOX_FILE_REQUEST_ID }}
           BOX_EXTERNAL_USER_EMAIL: ${{ secrets.BOX_EXTERNAL_USER_EMAIL }}
-          WORKFLOW_FOLDER_ID: ${{ secrets.WORKFLOW_FOLDER_ID }}
+          BOX_EXTERNAL_USER_ID: ${{ secrets.BOX_EXTERNAL_USER_ID }}
           APP_ITEM_ASSOCIATION_FILE_ID: ${{ secrets.APP_ITEM_ASSOCIATION_FILE_ID }}
           APP_ITEM_ASSOCIATION_FOLDER_ID: ${{ secrets.APP_ITEM_ASSOCIATION_FOLDER_ID }}
+          WORKFLOW_FOLDER_ID: ${{ secrets.WORKFLOW_FOLDER_ID }}
           APP_ITEM_SHARED_LINK: ${{ secrets.APP_ITEM_SHARED_LINK }}
           SLACK_AUTOMATION_USER_ID: ${{ secrets.SLACK_AUTOMATION_USER_ID }}
           SLACK_ORG_ID: ${{ secrets.SLACK_ORG_ID }}
