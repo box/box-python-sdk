@@ -14,6 +14,10 @@ from box_sdk_gen.schemas.sign_request_create_signer import SignRequestCreateSign
 
 from box_sdk_gen.schemas.sign_request_signer_input import SignRequestSignerInput
 
+from box_sdk_gen.schemas.sign_request_signer_attachment import (
+    SignRequestSignerAttachment,
+)
+
 from box_sdk_gen.box.errors import BoxSDKError
 
 from box_sdk_gen.internal.utils import DateTime
@@ -58,6 +62,7 @@ class SignRequestSigner(SignRequestCreateSigner):
         inputs: Optional[List[SignRequestSignerInput]] = None,
         embed_url: Optional[str] = None,
         iframeable_embed_url: Optional[str] = None,
+        attachments: Optional[List[SignRequestSignerAttachment]] = None,
         email: Optional[str] = None,
         role: Optional[SignRequestCreateSignerRoleField] = None,
         is_in_person: Optional[bool] = None,
@@ -86,6 +91,8 @@ class SignRequestSigner(SignRequestCreateSigner):
         parameter was passed in the
         `create Box Sign request` call., defaults to None
                 :type iframeable_embed_url: Optional[str], optional
+                :param attachments: Attachments that the signer uploaded., defaults to None
+                :type attachments: Optional[List[SignRequestSignerAttachment]], optional
                 :param email: Email address of the signer.
         The email address of the signer is required when making signature requests, except when using templates that are configured to include emails., defaults to None
                 :type email: Optional[str], optional
@@ -157,3 +164,4 @@ class SignRequestSigner(SignRequestCreateSigner):
         self.inputs = inputs
         self.embed_url = embed_url
         self.iframeable_embed_url = iframeable_embed_url
+        self.attachments = attachments
