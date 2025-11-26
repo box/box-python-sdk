@@ -274,11 +274,13 @@ from box_sdk_gen.schemas.sign_templates import *
 
 from box_sdk_gen.schemas.sign_request_signer_input import *
 
-from box_sdk_gen.schemas.sign_request_signer import *
-
 from box_sdk_gen.schemas.sign_request_base import *
 
 from box_sdk_gen.schemas.sign_request_create_request import *
+
+from box_sdk_gen.schemas.sign_request_signer_attachment import *
+
+from box_sdk_gen.schemas.sign_request_signer import *
 
 from box_sdk_gen.schemas.sign_request import *
 
