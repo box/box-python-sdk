@@ -79,6 +79,9 @@ class SignRequest(SignRequestBase):
         auto_expire_at: Optional[DateTime] = None,
         parent_folder: Optional[FolderMini] = None,
         collaborator_level: Optional[str] = None,
+        short_id: Optional[str] = None,
+        created_at: Optional[DateTime] = None,
+        finished_at: Optional[DateTime] = None,
         sender_email: Optional[str] = None,
         sender_id: Optional[int] = None,
         is_document_preparation_needed: Optional[bool] = None,
@@ -124,6 +127,12 @@ class SignRequest(SignRequestBase):
                 :type auto_expire_at: Optional[DateTime], optional
                 :param collaborator_level: The collaborator level of the user to the sign request. Values can include "owner", "editor", and "viewer"., defaults to None
                 :type collaborator_level: Optional[str], optional
+                :param short_id: Short identifier for the sign request., defaults to None
+                :type short_id: Optional[str], optional
+                :param created_at: Timestamp marking when the sign request was created., defaults to None
+                :type created_at: Optional[DateTime], optional
+                :param finished_at: Timestamp indicating when all signing actions completed., defaults to None
+                :type finished_at: Optional[DateTime], optional
                 :param sender_email: The email address of the sender of the sign request., defaults to None
                 :type sender_email: Optional[str], optional
                 :param sender_id: The user ID of the sender of the sign request., defaults to None
@@ -183,5 +192,8 @@ class SignRequest(SignRequestBase):
         self.auto_expire_at = auto_expire_at
         self.parent_folder = parent_folder
         self.collaborator_level = collaborator_level
+        self.short_id = short_id
+        self.created_at = created_at
+        self.finished_at = finished_at
         self.sender_email = sender_email
         self.sender_id = sender_id
