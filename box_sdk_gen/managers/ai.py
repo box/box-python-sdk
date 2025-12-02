@@ -425,6 +425,7 @@ class AiManager:
         *,
         metadata_template: Optional[CreateAiExtractStructuredMetadataTemplate] = None,
         fields: Optional[List[CreateAiExtractStructuredFields]] = None,
+        include_confidence_score: Optional[bool] = None,
         ai_agent: Optional[AiExtractStructuredAgent] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> AiExtractStructuredResponse:
@@ -450,6 +451,8 @@ class AiManager:
                 :param fields: The fields to be extracted from the provided items.
         For your request to work, you must provide either `metadata_template` or `fields`, but not both., defaults to None
                 :type fields: Optional[List[CreateAiExtractStructuredFields]], optional
+                :param include_confidence_score: A flag to indicate whether confidence scores for every extracted field should be returned., defaults to None
+                :type include_confidence_score: Optional[bool], optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
                 :type extra_headers: Optional[Dict[str, Optional[str]]], optional
         """
@@ -459,6 +462,7 @@ class AiManager:
             'items': items,
             'metadata_template': metadata_template,
             'fields': fields,
+            'include_confidence_score': include_confidence_score,
             'ai_agent': ai_agent,
         }
         headers_map: Dict[str, str] = prepare_params({**extra_headers})
