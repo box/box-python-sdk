@@ -178,6 +178,8 @@ client.ai.create_ai_extract_structured([AiItemBase(id=file.id)], fields=[CreateA
   - The metadata template containing the fields to extract. For your request to work, you must provide either `metadata_template` or `fields`, but not both.
 - fields `Optional[List[CreateAiExtractStructuredFields]]`
   - The fields to be extracted from the provided items. For your request to work, you must provide either `metadata_template` or `fields`, but not both.
+- include_confidence_score `Optional[bool]`
+  - A flag to indicate whether confidence scores for every extracted field should be returned.
 - ai_agent `Optional[AiExtractStructuredAgent]`
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
