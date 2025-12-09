@@ -788,7 +788,7 @@ def test_get_comments(test_file, mock_box_session):
 def test_add_comment(test_file, mock_box_session, comment_params):
     expected_url = 'https://api.box.com/2.0/comments'
     comment_id = '12345'
-    (message_type, message) = comment_params
+    message_type, message = comment_params
     expected_data = {
         message_type: message,
         'item': {'type': 'file', 'id': test_file.object_id},

@@ -63,7 +63,7 @@ class EnterpriseConfigurationSecurityV2025R0ExternalCollabMultiFactorAuthSetting
     def __init__(
         self,
         *,
-        value: Optional[Optional[ExternalCollabSecuritySettingsV2025R0]] = None,
+        value: Optional[ExternalCollabSecuritySettingsV2025R0] = None,
         is_used: Optional[bool] = None,
         **kwargs
     ):
@@ -81,7 +81,7 @@ class EnterpriseConfigurationSecurityV2025R0KeysafeField(
     def __init__(
         self,
         *,
-        value: Optional[Optional[KeysafeSettingsV2025R0]] = None,
+        value: Optional[KeysafeSettingsV2025R0] = None,
         is_used: Optional[bool] = None,
         **kwargs
     ):

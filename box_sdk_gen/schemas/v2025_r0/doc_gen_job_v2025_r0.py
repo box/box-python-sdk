@@ -39,8 +39,8 @@ class DocGenJobV2025R0(DocGenJobBaseV2025R0):
         output_type: str,
         id: str,
         *,
-        output_file: Optional[Optional[FileReferenceV2025R0]] = None,
-        output_file_version: Optional[Optional[FileVersionBaseV2025R0]] = None,
+        output_file: Optional[FileReferenceV2025R0] = None,
+        output_file_version: Optional[FileVersionBaseV2025R0] = None,
         type: DocGenJobBaseV2025R0TypeField = DocGenJobBaseV2025R0TypeField.DOCGEN_JOB,
         **kwargs
     ):
