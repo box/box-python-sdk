@@ -45,8 +45,8 @@ class DocGenJobFullV2025R0(DocGenJobV2025R0):
         id: str,
         *,
         created_at: Optional[str] = None,
-        output_file: Optional[Optional[FileReferenceV2025R0]] = None,
-        output_file_version: Optional[Optional[FileVersionBaseV2025R0]] = None,
+        output_file: Optional[FileReferenceV2025R0] = None,
+        output_file_version: Optional[FileVersionBaseV2025R0] = None,
         type: DocGenJobBaseV2025R0TypeField = DocGenJobBaseV2025R0TypeField.DOCGEN_JOB,
         **kwargs
     ):

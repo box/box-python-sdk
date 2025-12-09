@@ -35,14 +35,12 @@ class EnterpriseConfigurationV2025R0(BaseObject):
         *,
         id: Optional[str] = None,
         type: Optional[EnterpriseConfigurationV2025R0TypeField] = None,
-        security: Optional[Optional[EnterpriseConfigurationSecurityV2025R0]] = None,
+        security: Optional[EnterpriseConfigurationSecurityV2025R0] = None,
         content_and_sharing: Optional[
-            Optional[EnterpriseConfigurationContentAndSharingV2025R0]
+            EnterpriseConfigurationContentAndSharingV2025R0
         ] = None,
-        user_settings: Optional[
-            Optional[EnterpriseConfigurationUserSettingsV2025R0]
-        ] = None,
-        shield: Optional[Optional[EnterpriseConfigurationShieldV2025R0]] = None,
+        user_settings: Optional[EnterpriseConfigurationUserSettingsV2025R0] = None,
+        shield: Optional[EnterpriseConfigurationShieldV2025R0] = None,
         **kwargs
     ):
         """
