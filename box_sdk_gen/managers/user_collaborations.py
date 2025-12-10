@@ -244,7 +244,11 @@ class UserCollaborationsManager:
         Only an owner or co-owners can invite collaborators with a `can_view_path` of
         `true`. Only an owner can update `can_view_path` on existing collaborations.
 
-        `can_view_path` can only be used for folder collaborations., defaults to None
+        `can_view_path` can only be used for folder collaborations.
+
+        When you delete a folder with `can_view_path=true`, collaborators may still see the parent path.
+        For instructions on how to remove this, see
+        [Even though a folder invited via can_view_path is deleted, the path remains displayed](https://support.box.com/hc/en-us/articles/37472814319891-Even-though-a-folder-invited-via-can-view-path-is-deleted-the-path-remains-displayed)., defaults to None
                 :type can_view_path: Optional[bool], optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
                 :type extra_headers: Optional[Dict[str, Optional[str]]], optional
@@ -384,7 +388,11 @@ class UserCollaborationsManager:
         Only an owner or co-owners can invite collaborators with a `can_view_path` of
         `true`. Only an owner can update `can_view_path` on existing collaborations.
 
-        `can_view_path` can only be used for folder collaborations., defaults to None
+        `can_view_path` can only be used for folder collaborations.
+
+        When you delete a folder with `can_view_path=true`, collaborators may still see the parent path.
+        For instructions on how to remove this, see
+        [Even though a folder invited via can_view_path is deleted, the path remains displayed](https://support.box.com/hc/en-us/articles/37472814319891-Even-though-a-folder-invited-via-can-view-path-is-deleted-the-path-remains-displayed)., defaults to None
                 :type can_view_path: Optional[bool], optional
                 :param expires_at: Set the expiration date for the collaboration. At this date, the
         collaboration will be automatically removed from the item.
