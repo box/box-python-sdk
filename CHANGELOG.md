@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.2.0](https://github.com/box/box-python-sdk/compare/v10.1.0...v10.2.0) (2025-12-10)
+
+
+### New Features and Enhancements
+
+* Remove `confidence_score` and `include_confidence_score` from AI extract (box/box-openapi[#567](https://github.com/box/box-python-sdk/issues/567)) ([#1238](https://github.com/box/box-python-sdk/issues/1238)) ([66267ba](https://github.com/box/box-python-sdk/commit/66267bae7395ce2886cc4cd7504a51d22394b738))
+* Support new sign request metadata (box/box-openapi[#565](https://github.com/box/box-python-sdk/issues/565)) ([#1222](https://github.com/box/box-python-sdk/issues/1222)) ([6c3d332](https://github.com/box/box-python-sdk/commit/6c3d3325a19b3217225a80c2cd5d15c7bb068494))
+
 ## [10.1.0](https://github.com/box/box-python-sdk/compare/v10.0.1...v10.1.0) (2025-11-19)
 
 
