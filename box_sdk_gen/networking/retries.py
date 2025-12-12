@@ -90,7 +90,11 @@ class BoxRetryStrategy(RetryStrategy):
         fetch_response: FetchResponse,
         attempt_number: int,
     ) -> float:
-        retry_after_header: Optional[str] = fetch_response.headers.get('Retry-After')
+        retry_after_header: Optional[str] = (
+            fetch_response.headers.get('Retry-After')
+            if 'Retry-After' in fetch_response.headers
+            else None
+        )
         if not retry_after_header == None:
             return float(retry_after_header)
         randomization: float = random(
