@@ -216,6 +216,20 @@ from box_sdk_gen.schemas.metadata_instance_value import *
 
 from box_sdk_gen.schemas.metadata_query import *
 
+from box_sdk_gen.schemas.metadata_taxonomy_ancestor import *
+
+from box_sdk_gen.schemas.metadata_taxonomy_node import *
+
+from box_sdk_gen.schemas.metadata_taxonomy_nodes import *
+
+from box_sdk_gen.schemas.metadata_taxonomy_level import *
+
+from box_sdk_gen.schemas.metadata_taxonomy_levels import *
+
+from box_sdk_gen.schemas.metadata_taxonomy import *
+
+from box_sdk_gen.schemas.metadata_taxonomies import *
+
 from box_sdk_gen.schemas.metadata_template import *
 
 from box_sdk_gen.schemas.metadata_templates import *
