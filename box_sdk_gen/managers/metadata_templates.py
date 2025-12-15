@@ -150,6 +150,7 @@ class CreateMetadataTemplateFieldsTypeField(str, Enum):
     DATE = 'date'
     ENUM = 'enum'
     MULTISELECT = 'multiSelect'
+    TAXONOMY = 'taxonomy'
 
 
 class CreateMetadataTemplateFieldsOptionsField(BaseObject):
@@ -163,16 +164,58 @@ class CreateMetadataTemplateFieldsOptionsField(BaseObject):
         self.key = key
 
 
+class CreateMetadataTemplateFieldsOptionsRulesField(BaseObject):
+    _fields_to_json_mapping: Dict[str, str] = {
+        'multi_select': 'multiSelect',
+        'selectable_levels': 'selectableLevels',
+        **BaseObject._fields_to_json_mapping,
+    }
+    _json_to_fields_mapping: Dict[str, str] = {
+        'multiSelect': 'multi_select',
+        'selectableLevels': 'selectable_levels',
+        **BaseObject._json_to_fields_mapping,
+    }
+
+    def __init__(
+        self,
+        *,
+        multi_select: Optional[bool] = None,
+        selectable_levels: Optional[List[int]] = None,
+        **kwargs
+    ):
+        """
+                :param multi_select: Whether to allow users to select multiple values., defaults to None
+                :type multi_select: Optional[bool], optional
+                :param selectable_levels: An array of integers defining which levels of the taxonomy are
+        selectable by users., defaults to None
+                :type selectable_levels: Optional[List[int]], optional
+        """
+        super().__init__(**kwargs)
+        self.multi_select = multi_select
+        self.selectable_levels = selectable_levels
+
+
 class CreateMetadataTemplateFields(BaseObject):
     _fields_to_json_mapping: Dict[str, str] = {
         'display_name': 'displayName',
+        'taxonomy_key': 'taxonomyKey',
+        'options_rules': 'optionsRules',
         **BaseObject._fields_to_json_mapping,
     }
     _json_to_fields_mapping: Dict[str, str] = {
         'displayName': 'display_name',
+        'taxonomyKey': 'taxonomy_key',
+        'optionsRules': 'options_rules',
         **BaseObject._json_to_fields_mapping,
     }
-    _discriminator = 'type', {'string', 'float', 'date', 'enum', 'multiSelect'}
+    _discriminator = 'type', {
+        'string',
+        'float',
+        'date',
+        'enum',
+        'multiSelect',
+        'taxonomy',
+    }
 
     def __init__(
         self,
@@ -183,16 +226,22 @@ class CreateMetadataTemplateFields(BaseObject):
         description: Optional[str] = None,
         hidden: Optional[bool] = None,
         options: Optional[List[CreateMetadataTemplateFieldsOptionsField]] = None,
+        taxonomy_key: Optional[str] = None,
+        namespace: Optional[str] = None,
+        options_rules: Optional[CreateMetadataTemplateFieldsOptionsRulesField] = None,
         **kwargs
     ):
         """
                 :param type: The type of field. The basic fields are a `string` field for text, a
-        `float` field for numbers, and a `date` fields to present the user with a
+        `float` field for numbers, and a `date` field to present the user with a
         date-time picker.
 
         Additionally, metadata templates support an `enum` field for a basic list
         of items, and ` multiSelect` field for a similar list of items where the
         user can select more than one value.
+
+        Metadata taxonomies are also supported as a `taxonomy` field type
+        with a specific set of additional properties, which describe its structure.
                 :type type: CreateMetadataTemplateFieldsTypeField
                 :param key: A unique identifier for the field. The identifier must
         be unique within the template to which it belongs.
@@ -208,6 +257,15 @@ class CreateMetadataTemplateFields(BaseObject):
                 :param options: A list of options for this field. This is used in combination with the
         `enum` and `multiSelect` field types., defaults to None
                 :type options: Optional[List[CreateMetadataTemplateFieldsOptionsField]], optional
+                :param taxonomy_key: The unique key of the metadata taxonomy to use for this taxonomy field.
+        This property is required when the field `type` is set to `taxonomy`., defaults to None
+                :type taxonomy_key: Optional[str], optional
+                :param namespace: The namespace of the metadata taxonomy to use for this taxonomy field.
+        This property is required when the field `type` is set to `taxonomy`., defaults to None
+                :type namespace: Optional[str], optional
+                :param options_rules: An object defining additional rules for the options of the taxonomy field.
+        This property is required when the field `type` is set to `taxonomy`., defaults to None
+                :type options_rules: Optional[CreateMetadataTemplateFieldsOptionsRulesField], optional
         """
         super().__init__(**kwargs)
         self.type = type
@@ -216,6 +274,9 @@ class CreateMetadataTemplateFields(BaseObject):
         self.description = description
         self.hidden = hidden
         self.options = options
+        self.taxonomy_key = taxonomy_key
+        self.namespace = namespace
+        self.options_rules = options_rules
 
 
 class MetadataTemplatesManager:

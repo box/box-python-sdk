@@ -26,6 +26,8 @@ client.folder_metadata.get_folder_metadata(folder.id)
 
 - folder_id `str`
   - The unique identifier that represent a folder. The ID for any folder can be determined by visiting this folder in the web application and copying the ID from the URL. For example, for the URL `https://*.app.box.com/folder/123` the `folder_id` is `123`. The root folder of a Box account is always represented by the ID `0`. Example: "12345"
+- view `Optional[str]`
+  - Taxonomy field values are returned in `API view` by default, meaning the value is represented with a taxonomy node identifier. To retrieve the `Hydrated view`, where taxonomy values are represented with the full taxonomy node information, set this parameter to `hydrated`. This is the only supported value for this parameter.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
