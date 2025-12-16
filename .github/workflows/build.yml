@@ -30,7 +30,7 @@ jobs:
           python -m pip install -e .[dev]
           python -m pip install tox-gh-actions
       - name: All Tests
-        if: startsWith(github.head_ref, 'codegen-release')
+        if: ${{ startsWith(github.head_ref, 'codegen-release') && github.actor != 'dependabot[bot]' }}
         env:
           JWT_CONFIG_BASE_64: ${{ secrets.JWT_CONFIG_BASE_64 }}
           ADMIN_USER_ID: ${{ secrets.ADMIN_USER_ID }}
@@ -51,7 +51,7 @@ jobs:
         run: |
           tox
       - name: Smoke Tests
-        if: "!startsWith(github.head_ref, 'codegen-release')"
+        if: ${{ !startsWith(github.head_ref, 'codegen-release') && github.actor != 'dependabot[bot]' }}
         env:
           JWT_CONFIG_BASE_64: ${{ secrets.JWT_CONFIG_BASE_64 }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
