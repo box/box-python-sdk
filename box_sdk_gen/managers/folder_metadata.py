@@ -135,6 +135,7 @@ class FolderMetadataManager:
         self,
         folder_id: str,
         *,
+        view: Optional[str] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> Metadatas:
         """
@@ -154,11 +155,18 @@ class FolderMetadataManager:
         always represented by the ID `0`.
         Example: "12345"
                 :type folder_id: str
+                :param view: Taxonomy field values are returned in `API view` by default, meaning
+        the value is represented with a taxonomy node identifier.
+        To retrieve the `Hydrated view`, where taxonomy values are represented
+        with the full taxonomy node information, set this parameter to `hydrated`.
+        This is the only supported value for this parameter., defaults to None
+                :type view: Optional[str], optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
                 :type extra_headers: Optional[Dict[str, Optional[str]]], optional
         """
         if extra_headers is None:
             extra_headers = {}
+        query_params_map: Dict[str, str] = prepare_params({'view': to_string(view)})
         headers_map: Dict[str, str] = prepare_params({**extra_headers})
         response: FetchResponse = self.network_session.network_client.fetch(
             FetchOptions(
@@ -171,6 +179,7 @@ class FolderMetadataManager:
                     ]
                 ),
                 method='GET',
+                params=query_params_map,
                 headers=headers_map,
                 response_format=ResponseFormat.JSON,
                 auth=self.auth,

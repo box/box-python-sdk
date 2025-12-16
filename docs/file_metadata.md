@@ -25,6 +25,8 @@ client.file_metadata.get_file_metadata(file.id)
 
 - file_id `str`
   - The unique identifier that represents a file. The ID for any file can be determined by visiting a file in the web application and copying the ID from the URL. For example, for the URL `https://*.app.box.com/files/123` the `file_id` is `123`. Example: "12345"
+- view `Optional[str]`
+  - Taxonomy field values are returned in `API view` by default, meaning the value is represented with a taxonomy node identifier. To retrieve the `Hydrated view`, where taxonomy values are represented with the full taxonomy node information, set this parameter to `hydrated`. This is the only supported value for this parameter.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
@@ -63,6 +65,8 @@ client.file_metadata.get_file_metadata_by_id(
   - The scope of the metadata template. Example: "global"
 - template_key `str`
   - The name of the metadata template. Example: "properties"
+- view `Optional[str]`
+  - Taxonomy field values are returned in `API view` by default, meaning the value is represented with a taxonomy node identifier. To retrieve the `Hydrated view`, where taxonomy values are represented with the full taxonomy node information, set this parameter to `hydrated`. This is the only supported value for this parameter.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
