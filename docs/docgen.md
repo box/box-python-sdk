@@ -114,7 +114,7 @@ See the endpoint docs at
 
 ```python
 client.docgen.create_docgen_batch_v2025_r0(
-    FileReferenceV2025R0(id=uploaded_file.id),
+    FileReferenceV2025R0(id=uploaded_file_docx.id),
     "api",
     CreateDocgenBatchV2025R0DestinationFolder(id=folder.id),
     "pdf",
