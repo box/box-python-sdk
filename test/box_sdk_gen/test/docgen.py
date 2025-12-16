@@ -42,15 +42,18 @@ client: BoxClient = get_default_client()
 
 
 def testDocgenBatchAndJobs():
-    uploaded_file: FileFull = upload_new_file()
+    uploaded_file_pdf: FileFull = upload_new_file()
+    uploaded_file_docx: FileFull = client.files.update_file_by_id(
+        uploaded_file_pdf.id, name=''.join([uploaded_file_pdf.name, '.docx'])
+    )
     folder: FolderFull = create_new_folder()
     created_docgen_template: DocGenTemplateBaseV2025R0 = (
         client.docgen_template.create_docgen_template_v2025_r0(
-            FileReferenceV2025R0(id=uploaded_file.id)
+            FileReferenceV2025R0(id=uploaded_file_docx.id)
         )
     )
     docgen_batch: DocGenBatchBaseV2025R0 = client.docgen.create_docgen_batch_v2025_r0(
-        FileReferenceV2025R0(id=uploaded_file.id),
+        FileReferenceV2025R0(id=uploaded_file_docx.id),
         'api',
         CreateDocgenBatchV2025R0DestinationFolder(id=folder.id),
         'pdf',
@@ -70,7 +73,7 @@ def testDocgenBatchAndJobs():
     assert to_string(docgen_batch_jobs.entries[0].type) == 'docgen_job'
     assert docgen_batch_jobs.entries[0].output_type == 'pdf'
     assert not to_string(docgen_batch_jobs.entries[0].status) == ''
-    assert docgen_batch_jobs.entries[0].template_file.id == uploaded_file.id
+    assert docgen_batch_jobs.entries[0].template_file.id == uploaded_file_docx.id
     assert docgen_batch_jobs.entries[0].batch.id == docgen_batch.id
     docgen_jobs: DocGenJobsFullV2025R0 = client.docgen.get_docgen_jobs_v2025_r0(
         limit=10000
@@ -105,4 +108,4 @@ def testDocgenBatchAndJobs():
     assert not docgen_job.template_file_version.id == ''
     assert to_string(docgen_job.type) == 'docgen_job'
     client.folders.delete_folder_by_id(folder.id)
-    client.files.delete_file_by_id(uploaded_file.id)
+    client.files.delete_file_by_id(uploaded_file_docx.id)

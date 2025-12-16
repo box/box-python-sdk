@@ -113,7 +113,7 @@ See the endpoint docs at
 <!-- sample post_docgen_batches_v2025.0 -->
 
 ```python
-client.docgen.create_docgen_batch_v2025_r0(FileReferenceV2025R0(id=uploaded_file.id), 'api', CreateDocgenBatchV2025R0DestinationFolder(id=folder.id), 'pdf', [DocGenDocumentGenerationDataV2025R0(generated_file_name='test', user_input={'abc': 'xyz'})])
+client.docgen.create_docgen_batch_v2025_r0(FileReferenceV2025R0(id=uploaded_file_docx.id), 'api', CreateDocgenBatchV2025R0DestinationFolder(id=folder.id), 'pdf', [DocGenDocumentGenerationDataV2025R0(generated_file_name='test', user_input={'abc': 'xyz'})])
 ```
 
 ### Arguments
