@@ -132,7 +132,11 @@ class FileMetadataManager:
         self.network_session = network_session
 
     def get_file_metadata(
-        self, file_id: str, *, extra_headers: Optional[Dict[str, Optional[str]]] = None
+        self,
+        file_id: str,
+        *,
+        view: Optional[str] = None,
+        extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> Metadatas:
         """
                 Retrieves all metadata for a given file.
@@ -145,11 +149,18 @@ class FileMetadataManager:
         the `file_id` is `123`.
         Example: "12345"
                 :type file_id: str
+                :param view: Taxonomy field values are returned in `API view` by default, meaning
+        the value is represented with a taxonomy node identifier.
+        To retrieve the `Hydrated view`, where taxonomy values are represented
+        with the full taxonomy node information, set this parameter to `hydrated`.
+        This is the only supported value for this parameter., defaults to None
+                :type view: Optional[str], optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
                 :type extra_headers: Optional[Dict[str, Optional[str]]], optional
         """
         if extra_headers is None:
             extra_headers = {}
+        query_params_map: Dict[str, str] = prepare_params({'view': to_string(view)})
         headers_map: Dict[str, str] = prepare_params({**extra_headers})
         response: FetchResponse = self.network_session.network_client.fetch(
             FetchOptions(
@@ -162,6 +173,7 @@ class FileMetadataManager:
                     ]
                 ),
                 method='GET',
+                params=query_params_map,
                 headers=headers_map,
                 response_format=ResponseFormat.JSON,
                 auth=self.auth,
@@ -176,6 +188,7 @@ class FileMetadataManager:
         scope: GetFileMetadataByIdScope,
         template_key: str,
         *,
+        view: Optional[str] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> MetadataFull:
         """
@@ -198,11 +211,18 @@ class FileMetadataManager:
                 :param template_key: The name of the metadata template.
         Example: "properties"
                 :type template_key: str
+                :param view: Taxonomy field values are returned in `API view` by default, meaning
+        the value is represented with a taxonomy node identifier.
+        To retrieve the `Hydrated view`, where taxonomy values are represented
+        with the full taxonomy node information, set this parameter to `hydrated`.
+        This is the only supported value for this parameter., defaults to None
+                :type view: Optional[str], optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
                 :type extra_headers: Optional[Dict[str, Optional[str]]], optional
         """
         if extra_headers is None:
             extra_headers = {}
+        query_params_map: Dict[str, str] = prepare_params({'view': to_string(view)})
         headers_map: Dict[str, str] = prepare_params({**extra_headers})
         response: FetchResponse = self.network_session.network_client.fetch(
             FetchOptions(
@@ -218,6 +238,7 @@ class FileMetadataManager:
                     ]
                 ),
                 method='GET',
+                params=query_params_map,
                 headers=headers_map,
                 response_format=ResponseFormat.JSON,
                 auth=self.auth,
