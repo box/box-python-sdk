@@ -204,7 +204,7 @@ class ZipDownloadsManager:
                The URL of this endpoint should not be considered as fixed. Instead, use
 
 
-               the [Create zip download](e://post_zip_downloads) API to request to create a
+               the [Create zip download](https://developer.box.com/reference/post-zip-downloads) API to request to create a
 
 
                `zip` archive, and then follow the `download_url` field in the response to
@@ -260,7 +260,7 @@ class ZipDownloadsManager:
                The URL of this endpoint should not be considered as fixed. Instead, use
 
 
-               the [Create zip download](e://post_zip_downloads) API to request to create a
+               the [Create zip download](https://developer.box.com/reference/post-zip-downloads) API to request to create a
 
 
                `zip` archive, and then follow the `status_url` field in the response to

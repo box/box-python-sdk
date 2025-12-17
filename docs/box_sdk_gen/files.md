@@ -80,7 +80,7 @@ client.files.update_file_by_id(file_to_update.id, name=updated_name, description
 - permissions `Optional[UpdateFileByIdPermissions]`
   - Defines who can download a file.
 - collections `Optional[List[UpdateFileByIdCollections]]`
-  - An array of collections to make this file a member of. Currently we only support the `favorites` collection. To get the ID for a collection, use the [List all collections][1] endpoint. Passing an empty array `[]` or `null` will remove the file from all collections. [1]: e://get-collections
+  - An array of collections to make this file a member of. Currently we only support the `favorites` collection. To get the ID for a collection, use the [List all collections][1] endpoint. Passing an empty array `[]` or `null` will remove the file from all collections. [1]: https://developer.box.com/reference/get-collections
 - tags `Optional[List[str]]`
   - The tags for this item. These tags are shown in the Box web app and mobile apps next to an item. To add or remove a tag, retrieve the item's current tags, modify them, and then update this field. There is a limit of 100 tags per item, and 10,000 unique tags per enterprise.
 - fields `Optional[List[str]]`

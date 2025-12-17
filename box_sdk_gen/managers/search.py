@@ -462,7 +462,7 @@ class SearchManager:
         When this parameter has been set to true,
         the format of the response of this API changes to return
         a list of [Search Results with
-        Shared Links](r://search_results_with_shared_links)., defaults to None
+        Shared Links](https://developer.box.com/reference/resources/search-results-with-shared-links)., defaults to None
                 :type include_recent_shared_links: Optional[bool], optional
                 :param fields: A comma-separated list of attributes to include in the
         response. This can be used to request fields that are

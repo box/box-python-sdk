@@ -78,7 +78,7 @@ class AiAgentLongTextToolTextGen(AiAgentBasicTextToolTextGen):
         When using the `prompt_template` parameter, you **must include** input for `{user_question}`.
         Inputs for `{current_date}` and `{content}` are optional, depending on the use., defaults to None
                 :type prompt_template: Optional[str], optional
-                :param model: The model used for the AI agent for basic text. For specific model values, see the [available models list](g://box-ai/supported-models)., defaults to None
+                :param model: The model used for the AI agent for basic text. For specific model values, see the [available models list](https://developer.box.com/guides/box-ai/supported-models)., defaults to None
                 :type model: Optional[str], optional
                 :param num_tokens_for_completion: The number of tokens for completion., defaults to None
                 :type num_tokens_for_completion: Optional[int], optional
