@@ -22,6 +22,7 @@ class MetadataTemplateFieldsTypeField(str, Enum):
     ENUM = 'enum'
     MULTISELECT = 'multiSelect'
     INTEGER = 'integer'
+    TAXONOMY = 'taxonomy'
 
 
 class MetadataTemplateFieldsOptionsField(BaseObject):
@@ -54,6 +55,7 @@ class MetadataTemplateFieldsField(BaseObject):
         'enum',
         'multiSelect',
         'integer',
+        'taxonomy',
     }
 
     def __init__(
