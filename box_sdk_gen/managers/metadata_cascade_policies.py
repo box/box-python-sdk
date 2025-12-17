@@ -171,9 +171,9 @@ class MetadataCascadePoliciesManager:
         get all instances on a [file][file] or [folder][folder]
         to inspect a template's key.
 
-        [list]: e://get-metadata-templates-enterprise
-        [file]: e://get-files-id-metadata
-        [folder]: e://get-folders-id-metadata
+        [list]: https://developer.box.com/reference/get-metadata-templates-enterprise
+        [file]: https://developer.box.com/reference/get-files-id-metadata
+        [folder]: https://developer.box.com/reference/get-folders-id-metadata
                 :type template_key: str
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
                 :type extra_headers: Optional[Dict[str, Optional[str]]], optional

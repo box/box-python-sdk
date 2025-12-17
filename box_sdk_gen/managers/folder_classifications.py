@@ -63,7 +63,7 @@ class UpdateClassificationOnFolderRequestBody(BaseObject):
 
         To list the available classifications in an enterprise,
         use the classification API to retrieve the
-        [classification template](e://get_metadata_templates_enterprise_securityClassification-6VMVochwUWo_schema)
+        [classification template](https://developer.box.com/reference/get-metadata-templates-enterprise-securityClassification-6VMVochwUWo-schema)
         which lists all available classification keys.
                 :type value: str
                 :param op: The value will always be `replace`., defaults to UpdateClassificationOnFolderRequestBodyOpField.REPLACE
@@ -184,7 +184,7 @@ class FolderClassificationsManager:
 
         To list the available classifications in an enterprise,
         use the classification API to retrieve the
-        [classification template](e://get_metadata_templates_enterprise_securityClassification-6VMVochwUWo_schema)
+        [classification template](https://developer.box.com/reference/get-metadata-templates-enterprise-securityClassification-6VMVochwUWo-schema)
         which lists all available classification keys., defaults to None
                 :type box_security_classification_key: Optional[str], optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None

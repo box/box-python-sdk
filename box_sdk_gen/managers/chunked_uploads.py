@@ -204,7 +204,7 @@ class ChunkedUploadsManager:
          Return information about an upload session.
 
 
-        The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions) endpoint.
+        The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions) endpoint.
 
         :param url: URL of getFileUploadSessionById method
         :type url: str
@@ -235,7 +235,7 @@ class ChunkedUploadsManager:
         """
                 Return information about an upload session.
 
-                The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions) endpoint.
+                The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions) endpoint.
 
                 :param upload_session_id: The ID of the upload session.
         Example: "D5E3F7A"
@@ -282,10 +282,10 @@ class ChunkedUploadsManager:
                  Uploads a chunk of a file for an upload session.
 
 
-                The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+                The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions)
 
 
-                and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+                and [`Get upload session`](https://developer.box.com/reference/get-files-upload-sessions-id) endpoints.
 
                 :param url: URL of uploadFilePart method
                 :type url: str
@@ -355,10 +355,10 @@ class ChunkedUploadsManager:
         """
                 Uploads a chunk of a file for an upload session.
 
-                The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+                The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions)
 
 
-                and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+                and [`Get upload session`](https://developer.box.com/reference/get-files-upload-sessions-id) endpoints.
 
                 :param upload_session_id: The ID of the upload session.
         Example: "D5E3F7A"
@@ -438,10 +438,10 @@ class ChunkedUploadsManager:
         This cannot be reversed.
 
 
-        The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+        The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions)
 
 
-        and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+        and [`Get upload session`](https://developer.box.com/reference/get-files-upload-sessions-id) endpoints.
 
         :param url: URL of deleteFileUploadSessionById method
         :type url: str
@@ -475,10 +475,10 @@ class ChunkedUploadsManager:
                 This cannot be reversed.
 
 
-                The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+                The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions)
 
 
-                and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+                and [`Get upload session`](https://developer.box.com/reference/get-files-upload-sessions-id) endpoints.
 
                 :param upload_session_id: The ID of the upload session.
         Example: "D5E3F7A"
@@ -524,10 +524,10 @@ class ChunkedUploadsManager:
                  Return a list of the chunks uploaded to the upload session so far.
 
 
-                The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+                The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions)
 
 
-                and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+                and [`Get upload session`](https://developer.box.com/reference/get-files-upload-sessions-id) endpoints.
 
                 :param url: URL of getFileUploadSessionParts method
                 :type url: str
@@ -572,10 +572,10 @@ class ChunkedUploadsManager:
         """
                 Return a list of the chunks uploaded to the upload session so far.
 
-                The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+                The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions)
 
 
-                and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+                and [`Get upload session`](https://developer.box.com/reference/get-files-upload-sessions-id) endpoints.
 
                 :param upload_session_id: The ID of the upload session.
         Example: "D5E3F7A"
@@ -636,10 +636,10 @@ class ChunkedUploadsManager:
                  Close an upload session and create a file from the uploaded chunks.
 
 
-                The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+                The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions)
 
 
-                and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+                and [`Get upload session`](https://developer.box.com/reference/get-files-upload-sessions-id) endpoints.
 
                 :param url: URL of createFileUploadSessionCommit method
                 :type url: str
@@ -711,10 +711,10 @@ class ChunkedUploadsManager:
         """
                 Close an upload session and create a file from the uploaded chunks.
 
-                The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+                The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions)
 
 
-                and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+                and [`Get upload session`](https://developer.box.com/reference/get-files-upload-sessions-id) endpoints.
 
                 :param upload_session_id: The ID of the upload session.
         Example: "D5E3F7A"

@@ -402,7 +402,7 @@ class FilesManager:
         Passing an empty array `[]` or `null` will remove
         the file from all collections.
 
-        [1]: e://get-collections, defaults to None
+        [1]: https://developer.box.com/reference/get-collections, defaults to None
                 :type collections: Union[Optional[List[UpdateFileByIdCollections]], NullValue], optional
                 :param tags: The tags for this item. These tags are shown in
         the Box web app and mobile apps next to an item.
