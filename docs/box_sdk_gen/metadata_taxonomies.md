@@ -26,7 +26,11 @@ This operation is performed by calling function `create_metadata_taxonomy`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/post-metadata-taxonomies/).
 
-_Currently we don't have an example for calling `create_metadata_taxonomy` in integration tests_
+<!-- sample post_metadata_taxonomies -->
+
+```python
+client.metadata_taxonomies.create_metadata_taxonomy(display_name, namespace, key=taxonomy_key)
+```
 
 ### Arguments
 
@@ -54,7 +58,11 @@ This operation is performed by calling function `get_metadata_taxonomies`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/get-metadata-taxonomies-id/).
 
-_Currently we don't have an example for calling `get_metadata_taxonomies` in integration tests_
+<!-- sample get_metadata_taxonomies_id -->
+
+```python
+client.metadata_taxonomies.get_metadata_taxonomies(namespace)
+```
 
 ### Arguments
 
@@ -83,7 +91,11 @@ This operation is performed by calling function `get_metadata_taxonomy_by_key`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/get-metadata-taxonomies-id-id/).
 
-_Currently we don't have an example for calling `get_metadata_taxonomy_by_key` in integration tests_
+<!-- sample get_metadata_taxonomies_id_id -->
+
+```python
+client.metadata_taxonomies.get_metadata_taxonomy_by_key(namespace, taxonomy_key)
+```
 
 ### Arguments
 
@@ -109,7 +121,11 @@ This operation is performed by calling function `update_metadata_taxonomy`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/patch-metadata-taxonomies-id-id/).
 
-_Currently we don't have an example for calling `update_metadata_taxonomy` in integration tests_
+<!-- sample patch_metadata_taxonomies_id_id -->
+
+```python
+client.metadata_taxonomies.update_metadata_taxonomy(namespace, taxonomy_key, updated_display_name)
+```
 
 ### Arguments
 
@@ -138,7 +154,11 @@ This operation is performed by calling function `delete_metadata_taxonomy`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/delete-metadata-taxonomies-id-id/).
 
-_Currently we don't have an example for calling `delete_metadata_taxonomy` in integration tests_
+<!-- sample delete_metadata_taxonomies_id_id -->
+
+```python
+client.metadata_taxonomies.delete_metadata_taxonomy(namespace, taxonomy_key)
+```
 
 ### Arguments
 
@@ -164,7 +184,11 @@ This operation is performed by calling function `create_metadata_taxonomy_level`
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/post-metadata-taxonomies-id-id-levels/).
 
-_Currently we don't have an example for calling `create_metadata_taxonomy_level` in integration tests_
+<!-- sample post_metadata_taxonomies_id_id_levels -->
+
+```python
+client.metadata_taxonomies.create_metadata_taxonomy_level(namespace, taxonomy_key, [MetadataTaxonomyLevel(display_name='Continent', description='Continent Level'), MetadataTaxonomyLevel(display_name='Country', description='Country Level')])
+```
 
 ### Arguments
 
@@ -225,7 +249,11 @@ This operation is performed by calling function `add_metadata_taxonomy_level`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/post-metadata-taxonomies-id-id-levels:append/).
 
-_Currently we don't have an example for calling `add_metadata_taxonomy_level` in integration tests_
+<!-- sample post_metadata_taxonomies_id_id_levels:append -->
+
+```python
+client.metadata_taxonomies.add_metadata_taxonomy_level(namespace, taxonomy_key, 'Region', description='Region Description')
+```
 
 ### Arguments
 
@@ -255,7 +283,11 @@ This operation is performed by calling function `delete_metadata_taxonomy_level`
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/post-metadata-taxonomies-id-id-levels:trim/).
 
-_Currently we don't have an example for calling `delete_metadata_taxonomy_level` in integration tests_
+<!-- sample post_metadata_taxonomies_id_id_levels:trim -->
+
+```python
+client.metadata_taxonomies.delete_metadata_taxonomy_level(namespace, taxonomy_key)
+```
 
 ### Arguments
 
@@ -283,7 +315,11 @@ This operation is performed by calling function `get_metadata_taxonomy_nodes`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/get-metadata-taxonomies-id-id-nodes/).
 
-_Currently we don't have an example for calling `get_metadata_taxonomy_nodes` in integration tests_
+<!-- sample get_metadata_taxonomies_id_id_nodes -->
+
+```python
+client.metadata_taxonomies.get_metadata_taxonomy_nodes(namespace, taxonomy_key)
+```
 
 ### Arguments
 
@@ -323,7 +359,11 @@ This operation is performed by calling function `create_metadata_taxonomy_node`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/post-metadata-taxonomies-id-id-nodes/).
 
-_Currently we don't have an example for calling `create_metadata_taxonomy_node` in integration tests_
+<!-- sample post_metadata_taxonomies_id_id_nodes -->
+
+```python
+client.metadata_taxonomies.create_metadata_taxonomy_node(namespace, taxonomy_key, 'Europe', 1)
+```
 
 ### Arguments
 
@@ -355,7 +395,11 @@ This operation is performed by calling function `get_metadata_taxonomy_node_by_i
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/get-metadata-taxonomies-id-id-nodes-id/).
 
-_Currently we don't have an example for calling `get_metadata_taxonomy_node_by_id` in integration tests_
+<!-- sample get_metadata_taxonomies_id_id_nodes_id -->
+
+```python
+client.metadata_taxonomies.get_metadata_taxonomy_node_by_id(namespace, taxonomy_key, country_node.id)
+```
 
 ### Arguments
 
@@ -383,7 +427,11 @@ This operation is performed by calling function `update_metadata_taxonomy_node`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/patch-metadata-taxonomies-id-id-nodes-id/).
 
-_Currently we don't have an example for calling `update_metadata_taxonomy_node` in integration tests_
+<!-- sample patch_metadata_taxonomies_id_id_nodes_id -->
+
+```python
+client.metadata_taxonomies.update_metadata_taxonomy_node(namespace, taxonomy_key, country_node.id, display_name='Poland UPDATED')
+```
 
 ### Arguments
 
@@ -415,7 +463,11 @@ This operation is performed by calling function `delete_metadata_taxonomy_node`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/delete-metadata-taxonomies-id-id-nodes-id/).
 
-_Currently we don't have an example for calling `delete_metadata_taxonomy_node` in integration tests_
+<!-- sample delete_metadata_taxonomies_id_id_nodes_id -->
+
+```python
+client.metadata_taxonomies.delete_metadata_taxonomy_node(namespace, taxonomy_key, country_node.id)
+```
 
 ### Arguments
 
