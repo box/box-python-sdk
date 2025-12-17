@@ -308,13 +308,13 @@ class FoldersManager:
                 list of returned
 
 
-                [folder items](r://folder--full#param-item-collection).
+                [folder items](https://developer.box.com/reference/resources/folder--full#param-item-collection).
 
 
                 To fetch more items within the folder, use the
 
 
-                [Get items in a folder](e://get-folders-id-items) endpoint.
+                [Get items in a folder](https://developer.box.com/reference/get-folders-id-items) endpoint.
 
                 :param folder_id: The unique identifier that represent a folder.
 
@@ -524,7 +524,7 @@ class FoldersManager:
         Passing an empty array `[]` or `null` will remove
         the folder from all collections.
 
-        [1]: e://get-collections, defaults to None
+        [1]: https://developer.box.com/reference/get-collections, defaults to None
                 :type collections: Union[Optional[List[UpdateFolderByIdCollections]], NullValue], optional
                 :param can_non_owners_view_collaborators: Restricts collaborators who are not the owner of
         this folder from viewing other collaborations on

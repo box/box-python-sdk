@@ -71,7 +71,7 @@ stopped and resumed, instead a new request for a zip archive would need to
 be created.
 
 The URL of this endpoint should not be considered as fixed. Instead, use
-the [Create zip download](e://post_zip_downloads) API to request to create a
+the [Create zip download](https://developer.box.com/reference/post-zip-downloads) API to request to create a
 `zip` archive, and then follow the `download_url` field in the response to
 this endpoint.
 
@@ -111,7 +111,7 @@ Subsequently this endpoint is valid for 12 hours from the start of the
 download.
 
 The URL of this endpoint should not be considered as fixed. Instead, use
-the [Create zip download](e://post_zip_downloads) API to request to create a
+the [Create zip download](https://developer.box.com/reference/post-zip-downloads) API to request to create a
 `zip` archive, and then follow the `status_url` field in the response to
 this endpoint.
 

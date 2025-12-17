@@ -68,7 +68,7 @@ client.file_classifications.add_classification_to_file(
 - file_id `str`
   - The unique identifier that represents a file. The ID for any file can be determined by visiting a file in the web application and copying the ID from the URL. For example, for the URL `https://*.app.box.com/files/123` the `file_id` is `123`. Example: "12345"
 - box_security_classification_key `Optional[str]`
-  - The name of the classification to apply to this file. To list the available classifications in an enterprise, use the classification API to retrieve the [classification template](e://get_metadata_templates_enterprise_securityClassification-6VMVochwUWo_schema) which lists all available classification keys.
+  - The name of the classification to apply to this file. To list the available classifications in an enterprise, use the classification API to retrieve the [classification template](https://developer.box.com/reference/get-metadata-templates-enterprise-securityClassification-6VMVochwUWo-schema) which lists all available classification keys.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 

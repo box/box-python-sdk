@@ -64,7 +64,7 @@ class ArchivesManager:
         """
                 Retrieves archives for an enterprise.
 
-                To learn more about the archive APIs, see the [Archive API Guide](g://archives).
+                To learn more about the archive APIs, see the [Archive API Guide](https://developer.box.com/guides/archives).
 
                 :param limit: The maximum number of items to return per page., defaults to None
                 :type limit: Optional[int], optional
@@ -109,7 +109,7 @@ class ArchivesManager:
         """
         Creates an archive.
 
-        To learn more about the archive APIs, see the [Archive API Guide](g://archives).
+        To learn more about the archive APIs, see the [Archive API Guide](https://developer.box.com/guides/archives).
 
         :param name: The name of the archive.
         :type name: str
@@ -156,7 +156,7 @@ class ArchivesManager:
         """
                 Permanently deletes an archive.
 
-                To learn more about the archive APIs, see the [Archive API Guide](g://archives).
+                To learn more about the archive APIs, see the [Archive API Guide](https://developer.box.com/guides/archives).
 
                 :param archive_id: The ID of the archive.
         Example: "982312"
@@ -201,7 +201,7 @@ class ArchivesManager:
         """
                 Updates an archive.
 
-                To learn more about the archive APIs, see the [Archive API Guide](g://archives).
+                To learn more about the archive APIs, see the [Archive API Guide](https://developer.box.com/guides/archives).
 
                 :param archive_id: The ID of the archive.
         Example: "982312"

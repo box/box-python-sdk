@@ -79,7 +79,7 @@ class FileVersionRetentionsManager:
                 To get information about files and file versions under retention,
 
 
-                see [files under retention](e://get-retention-policy-assignments-id-files-under-retention) or [file versions under retention](e://get-retention-policy-assignments-id-file-versions-under-retention) endpoints.
+                see [files under retention](https://developer.box.com/reference/get-retention-policy-assignments-id-files-under-retention) or [file versions under retention](https://developer.box.com/reference/get-retention-policy-assignments-id-file-versions-under-retention) endpoints.
 
                 :param file_id: Filters results by files with this ID., defaults to None
                 :type file_id: Optional[str], optional
@@ -157,7 +157,7 @@ class FileVersionRetentionsManager:
                 To get information about files and file versions under retention,
 
 
-                see [files under retention](e://get-retention-policy-assignments-id-files-under-retention) or [file versions under retention](e://get-retention-policy-assignments-id-file-versions-under-retention) endpoints.
+                see [files under retention](https://developer.box.com/reference/get-retention-policy-assignments-id-files-under-retention) or [file versions under retention](https://developer.box.com/reference/get-retention-policy-assignments-id-file-versions-under-retention) endpoints.
 
                 :param file_version_retention_id: The ID of the file version retention.
         Example: "3424234"
