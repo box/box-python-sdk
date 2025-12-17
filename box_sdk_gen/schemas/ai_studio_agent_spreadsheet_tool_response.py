@@ -34,7 +34,7 @@ class AiStudioAgentSpreadsheetToolResponse(AiStudioAgentSpreadsheetTool):
         """
         :param warnings: Warnings concerning tool., defaults to None
         :type warnings: Optional[List[str]], optional
-        :param model: The model used for the AI agent for spreadsheets. For specific model values, see the [available models list](g://box-ai/supported-models)., defaults to None
+        :param model: The model used for the AI agent for spreadsheets. For specific model values, see the [available models list](https://developer.box.com/guides/box-ai/supported-models)., defaults to None
         :type model: Optional[str], optional
         :param num_tokens_for_completion: The number of tokens for completion., defaults to None
         :type num_tokens_for_completion: Optional[int], optional

@@ -61,9 +61,9 @@ class MetadataFilter(BaseObject):
         get all instances on a [file][file] or [folder][folder]
         to inspect a template's key.
 
-        [list]: e://get-metadata-templates-enterprise
-        [file]: e://get-files-id-metadata
-        [folder]: e://get-folders-id-metadata, defaults to None
+        [list]: https://developer.box.com/reference/get-metadata-templates-enterprise
+        [file]: https://developer.box.com/reference/get-files-id-metadata
+        [folder]: https://developer.box.com/reference/get-folders-id-metadata, defaults to None
                 :type template_key: Optional[str], optional
                 :param filters: Specifies which fields on the template to filter the search
         results by. When more than one field is specified, the query

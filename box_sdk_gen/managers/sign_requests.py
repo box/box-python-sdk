@@ -270,7 +270,7 @@ class SignRequestsManager:
                 :param signers: Array of signers for the signature request. 35 is the
         max number of signers permitted.
 
-        **Note**: It may happen that some signers belong to conflicting [segments](r://shield-information-barrier-segment-member) (user groups).
+        **Note**: It may happen that some signers belong to conflicting [segments](https://developer.box.com/reference/resources/shield-information-barrier-segment-member) (user groups).
         This means that due to the security policies, users are assigned to segments to prevent exchanges or communication that could lead to ethical conflicts.
         In such a case, an attempt to send the sign request will result in an error.
 

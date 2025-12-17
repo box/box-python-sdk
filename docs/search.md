@@ -121,7 +121,7 @@ client.search.search_for_content(
 - limit `Optional[int]`
   - Defines the maximum number of items to return as part of a page of results.
 - include_recent_shared_links `Optional[bool]`
-  - Defines whether the search results should include any items that the user recently accessed through a shared link. When this parameter has been set to true, the format of the response of this API changes to return a list of [Search Results with Shared Links](r://search_results_with_shared_links).
+  - Defines whether the search results should include any items that the user recently accessed through a shared link. When this parameter has been set to true, the format of the response of this API changes to return a list of [Search Results with Shared Links](https://developer.box.com/reference/resources/search-results-with-shared-links).
 - fields `Optional[List[str]]`
   - A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response. Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
 - offset `Optional[int]`
