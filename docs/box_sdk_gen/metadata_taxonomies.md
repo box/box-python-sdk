@@ -502,8 +502,8 @@ _Currently we don't have an example for calling `get_metadata_template_field_opt
 
 ### Arguments
 
-- scope `GetMetadataTemplateFieldOptionsScope`
-  - The scope of the metadata template. Example: "global"
+- namespace `str`
+  - The namespace of the metadata taxonomy. Example: "enterprise_123456"
 - template_key `str`
   - The name of the metadata template. Example: "properties"
 - field_key `str`
