@@ -338,7 +338,7 @@ class MetadataTaxonomiesManager:
         )
         return deserialize(response.data, MetadataTaxonomyLevels)
 
-    def patch_metadata_taxonomies_id_id_levels_id(
+    def update_metadata_taxonomy_level_by_id(
         self,
         namespace: str,
         taxonomy_key: str,

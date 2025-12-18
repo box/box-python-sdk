@@ -211,12 +211,16 @@ Returns an array of all taxonomy levels.
 
 Updates an existing metadata taxonomy level.
 
-This operation is performed by calling function `patch_metadata_taxonomies_id_id_levels_id`.
+This operation is performed by calling function `update_metadata_taxonomy_level_by_id`.
 
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/patch-metadata-taxonomies-id-id-levels-id/).
 
-_Currently we don't have an example for calling `patch_metadata_taxonomies_id_id_levels_id` in integration tests_
+<!-- sample patch_metadata_taxonomies_id_id_levels_id -->
+
+```python
+client.metadata_taxonomies.update_metadata_taxonomy_level_by_id(namespace, taxonomy_key, 1, 'Continent UPDATED', description='Continent Level UPDATED')
+```
 
 ### Arguments
 
@@ -498,7 +502,11 @@ This operation is performed by calling function `get_metadata_template_field_opt
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/get-metadata-templates-id-id-fields-id-options/).
 
-_Currently we don't have an example for calling `get_metadata_template_field_options` in integration tests_
+<!-- sample get_metadata_templates_id_id_fields_id_options -->
+
+```python
+client.metadata_taxonomies.get_metadata_template_field_options(namespace, metadata_template_key, 'taxonomy')
+```
 
 ### Arguments
 

@@ -1,5 +1,7 @@
 import pytest
 
+from box_sdk_gen.internal.utils import to_string
+
 from box_sdk_gen.client import BoxClient
 
 from box_sdk_gen.schemas.metadata_taxonomy import MetadataTaxonomy
@@ -13,6 +15,20 @@ from box_sdk_gen.schemas.metadata_taxonomy_level import MetadataTaxonomyLevel
 from box_sdk_gen.schemas.metadata_taxonomy_node import MetadataTaxonomyNode
 
 from box_sdk_gen.schemas.metadata_taxonomy_nodes import MetadataTaxonomyNodes
+
+from box_sdk_gen.schemas.metadata_template import MetadataTemplate
+
+from box_sdk_gen.managers.metadata_templates import CreateMetadataTemplateFields
+
+from box_sdk_gen.managers.metadata_templates import (
+    CreateMetadataTemplateFieldsTypeField,
+)
+
+from box_sdk_gen.managers.metadata_templates import (
+    CreateMetadataTemplateFieldsOptionsRulesField,
+)
+
+from box_sdk_gen.managers.metadata_templates import DeleteMetadataTemplateScope
 
 from box_sdk_gen.internal.utils import get_uuid
 
@@ -91,6 +107,18 @@ def testMetadataTaxonomiesNodes():
     assert len(taxonomy_levels.entries) == 2
     assert taxonomy_levels.entries[0].display_name == 'Continent'
     assert taxonomy_levels.entries[1].display_name == 'Country'
+    updated_taxonomy_levels: MetadataTaxonomyLevel = (
+        client.metadata_taxonomies.update_metadata_taxonomy_level_by_id(
+            namespace,
+            taxonomy_key,
+            1,
+            'Continent UPDATED',
+            description='Continent Level UPDATED',
+        )
+    )
+    assert updated_taxonomy_levels.display_name == 'Continent UPDATED'
+    assert updated_taxonomy_levels.description == 'Continent Level UPDATED'
+    assert updated_taxonomy_levels.level == taxonomy_levels.entries[0].level
     taxonomy_levels_after_addition: MetadataTaxonomyLevels = (
         client.metadata_taxonomies.add_metadata_taxonomy_level(
             namespace, taxonomy_key, 'Region', description='Region Description'
@@ -104,7 +132,7 @@ def testMetadataTaxonomiesNodes():
         )
     )
     assert len(taxonomy_levels_after_deletion.entries) == 2
-    assert taxonomy_levels_after_deletion.entries[0].display_name == 'Continent'
+    assert taxonomy_levels_after_deletion.entries[0].display_name == 'Continent UPDATED'
     assert taxonomy_levels_after_deletion.entries[1].display_name == 'Country'
     continent_node: MetadataTaxonomyNode = (
         client.metadata_taxonomies.create_metadata_taxonomy_node(
@@ -142,6 +170,39 @@ def testMetadataTaxonomiesNodes():
     )
     assert get_country_node.display_name == 'Poland UPDATED'
     assert get_country_node.id == country_node.id
+    metadata_template_key: str = ''.join(['templateKey', get_uuid()])
+    metadata_template: MetadataTemplate = (
+        client.metadata_templates.create_metadata_template(
+            'enterprise',
+            metadata_template_key,
+            template_key=metadata_template_key,
+            fields=[
+                CreateMetadataTemplateFields(
+                    type=CreateMetadataTemplateFieldsTypeField.TAXONOMY,
+                    key='taxonomy',
+                    display_name='taxonomy',
+                    taxonomy_key=taxonomy_key,
+                    namespace=namespace,
+                    options_rules=CreateMetadataTemplateFieldsOptionsRulesField(
+                        multi_select=True, selectable_levels=[1]
+                    ),
+                )
+            ],
+        )
+    )
+    assert metadata_template.template_key == metadata_template_key
+    assert metadata_template.display_name == metadata_template_key
+    assert len(metadata_template.fields) == 1
+    assert to_string(metadata_template.fields[0].type) == 'taxonomy'
+    options: MetadataTaxonomyNodes = (
+        client.metadata_taxonomies.get_metadata_template_field_options(
+            namespace, metadata_template_key, 'taxonomy'
+        )
+    )
+    assert len(options.entries) == 1
+    client.metadata_templates.delete_metadata_template(
+        DeleteMetadataTemplateScope.ENTERPRISE, metadata_template_key
+    )
     client.metadata_taxonomies.delete_metadata_taxonomy_node(
         namespace, taxonomy_key, country_node.id
     )
