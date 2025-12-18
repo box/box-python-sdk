@@ -1,5 +1,3 @@
-from enum import Enum
-
 from typing import Optional
 
 from typing import Dict
@@ -47,11 +45,6 @@ from box_sdk_gen.internal.utils import ByteStream
 from box_sdk_gen.serialization.json import SerializedData
 
 from box_sdk_gen.serialization.json import sd_to_json
-
-
-class GetMetadataTemplateFieldOptionsScope(str, Enum):
-    GLOBAL = 'global'
-    ENTERPRISE = 'enterprise'
 
 
 class MetadataTaxonomiesManager:
@@ -345,7 +338,7 @@ class MetadataTaxonomiesManager:
         )
         return deserialize(response.data, MetadataTaxonomyLevels)
 
-    def patch_metadata_taxonomies_id_id_levels_id(
+    def update_metadata_taxonomy_level_by_id(
         self,
         namespace: str,
         taxonomy_key: str,
@@ -799,7 +792,7 @@ class MetadataTaxonomiesManager:
 
     def get_metadata_template_field_options(
         self,
-        scope: GetMetadataTemplateFieldOptionsScope,
+        namespace: str,
         template_key: str,
         field_key: str,
         *,
@@ -824,9 +817,9 @@ class MetadataTaxonomiesManager:
 
                 With a `query` parameter specified, results are sorted in order of relevance.
 
-                :param scope: The scope of the metadata template.
-        Example: "global"
-                :type scope: GetMetadataTemplateFieldOptionsScope
+                :param namespace: The namespace of the metadata taxonomy.
+        Example: "enterprise_123456"
+                :type namespace: str
                 :param template_key: The name of the metadata template.
         Example: "properties"
                 :type template_key: str
@@ -882,7 +875,7 @@ class MetadataTaxonomiesManager:
                     [
                         self.network_session.base_urls.base_url,
                         '/2.0/metadata_templates/',
-                        to_string(scope),
+                        to_string(namespace),
                         '/',
                         to_string(template_key),
                         '/fields/',
