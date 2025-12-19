@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.3.0](https://github.com/box/box-python-sdk/compare/v10.2.0...v10.3.0) (2025-12-19)
+
+
+### Bug Fixes
+
+* add taxonomy to Metadata Field (read) definition (box/box-openapi[#572](https://github.com/box/box-python-sdk/issues/572)) ([#1269](https://github.com/box/box-python-sdk/issues/1269)) ([7bb9bdc](https://github.com/box/box-python-sdk/commit/7bb9bdc894cb6d765a09ecbedda58b6edb9181d0))
+* fix `RetryAfter` function when there's no `Retry-After` header (box/box-codegen[#903](https://github.com/box/box-python-sdk/issues/903)) ([#1244](https://github.com/box/box-python-sdk/issues/1244)) ([d7cc019](https://github.com/box/box-python-sdk/commit/d7cc019dd186ef3cdb6214a6cf1625ec49c1fd37))
+
+
+### New Features and Enhancements
+
+* add Metadata Taxonomies api (box/box-openapi[#569](https://github.com/box/box-python-sdk/issues/569)) ([#1252](https://github.com/box/box-python-sdk/issues/1252)) ([7850463](https://github.com/box/box-python-sdk/commit/7850463204ef9f7802a759ef69a3b7f4b6dd328b))
+* text input validation for Box Sign (box/box-openapi[#568](https://github.com/box/box-python-sdk/issues/568)) ([#1246](https://github.com/box/box-python-sdk/issues/1246)) ([f99512f](https://github.com/box/box-python-sdk/commit/f99512fcfca75edae48bb5a1b6a1897d330f5dd3))
+* Treat `nullable` fields as Optional (box/box-codegen[#906](https://github.com/box/box-python-sdk/issues/906)) ([#1256](https://github.com/box/box-python-sdk/issues/1256)) ([12c05dc](https://github.com/box/box-python-sdk/commit/12c05dcebae13a696956288f41ec55fed8a4011e))
+
 ## [10.2.0](https://github.com/box/box-python-sdk/compare/v10.1.0...v10.2.0) (2025-12-10)
 
 
