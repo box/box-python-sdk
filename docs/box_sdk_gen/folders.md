@@ -15,10 +15,10 @@ in the folder.
 Passing `sort`, `direction`, `offset`, and `limit`
 parameters in query allows you to manage the
 list of returned
-[folder items](r://folder--full#param-item-collection).
+[folder items](https://developer.box.com/reference/resources/folder--full#param-item-collection).
 
 To fetch more items within the folder, use the
-[Get items in a folder](e://get-folders-id-items) endpoint.
+[Get items in a folder](https://developer.box.com/reference/get-folders-id-items) endpoint.
 
 This operation is performed by calling function `get_folder_by_id`.
 
@@ -62,7 +62,7 @@ If you used query parameters like
 the _folder items list_ will be affected accordingly.
 
 To fetch more items within the folder, use the
-[Get items in a folder](e://get-folders-id-items)) endpoint.
+[Get items in a folder](https://developer.box.com/reference/get-folders-id-items)) endpoint.
 
 Not all available fields are returned by default. Use the
 [fields](#param-fields) query parameter to explicitly request
@@ -104,7 +104,7 @@ client.folders.update_folder_by_id(folder_to_update.id, name=updated_name, descr
 - is_collaboration_restricted_to_enterprise `Optional[bool]`
   - Specifies if new invites to this folder are restricted to users within the enterprise. This does not affect existing collaborations.
 - collections `Optional[List[UpdateFolderByIdCollections]]`
-  - An array of collections to make this folder a member of. Currently we only support the `favorites` collection. To get the ID for a collection, use the [List all collections][1] endpoint. Passing an empty array `[]` or `null` will remove the folder from all collections. [1]: e://get-collections
+  - An array of collections to make this folder a member of. Currently we only support the `favorites` collection. To get the ID for a collection, use the [List all collections][1] endpoint. Passing an empty array `[]` or `null` will remove the folder from all collections. [1]: https://developer.box.com/reference/get-collections
 - can_non_owners_view_collaborators `Optional[bool]`
   - Restricts collaborators who are not the owner of this folder from viewing other collaborations on this folder. It also restricts non-owners from inviting new collaborators. When setting this field to `false`, it is required to also set `can_non_owners_invite_collaborators` to `false` if it has not already been set.
 - fields `Optional[List[str]]`

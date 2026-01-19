@@ -208,7 +208,7 @@ class SignTemplate(BaseObject):
                 :type are_files_locked: Optional[bool], optional
                 :param signers: Array of signers for the template.
 
-        **Note**: It may happen that some signers specified in the template belong to conflicting [segments](r://shield-information-barrier-segment-member) (user groups).
+        **Note**: It may happen that some signers specified in the template belong to conflicting [segments](https://developer.box.com/reference/resources/shield-information-barrier-segment-member) (user groups).
         This means that due to the security policies, users are assigned to segments to prevent exchanges or communication that could lead to ethical conflicts.
         In such a case, an attempt to send a sign request based on a template that lists signers in conflicting segments will result in an error.
 

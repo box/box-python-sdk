@@ -216,6 +216,20 @@ from box_sdk_gen.schemas.metadata_instance_value import *
 
 from box_sdk_gen.schemas.metadata_query import *
 
+from box_sdk_gen.schemas.metadata_taxonomy_ancestor import *
+
+from box_sdk_gen.schemas.metadata_taxonomy_node import *
+
+from box_sdk_gen.schemas.metadata_taxonomy_nodes import *
+
+from box_sdk_gen.schemas.metadata_taxonomy_level import *
+
+from box_sdk_gen.schemas.metadata_taxonomy_levels import *
+
+from box_sdk_gen.schemas.metadata_taxonomy import *
+
+from box_sdk_gen.schemas.metadata_taxonomies import *
+
 from box_sdk_gen.schemas.metadata_template import *
 
 from box_sdk_gen.schemas.metadata_templates import *
@@ -264,6 +278,36 @@ from box_sdk_gen.schemas.sign_request_create_signer import *
 
 from box_sdk_gen.schemas.sign_request_prefill_tag import *
 
+from box_sdk_gen.schemas.sign_request_base import *
+
+from box_sdk_gen.schemas.sign_request_create_request import *
+
+from box_sdk_gen.schemas.sign_request_signer_attachment import *
+
+from box_sdk_gen.schemas.sign_request_signer_input_custom_validation import *
+
+from box_sdk_gen.schemas.sign_request_signer_input_date_asia_validation import *
+
+from box_sdk_gen.schemas.sign_request_signer_input_date_eu_validation import *
+
+from box_sdk_gen.schemas.sign_request_signer_input_date_iso_validation import *
+
+from box_sdk_gen.schemas.sign_request_signer_input_date_us_validation import *
+
+from box_sdk_gen.schemas.sign_request_signer_input_email_validation import *
+
+from box_sdk_gen.schemas.sign_request_signer_input_number_with_comma_validation import *
+
+from box_sdk_gen.schemas.sign_request_signer_input_number_with_period_validation import *
+
+from box_sdk_gen.schemas.sign_request_signer_input_ssn_validation import *
+
+from box_sdk_gen.schemas.sign_request_signer_input_zip_4_validation import *
+
+from box_sdk_gen.schemas.sign_request_signer_input_zip_validation import *
+
+from box_sdk_gen.schemas.sign_request_signer_input_validation import *
+
 from box_sdk_gen.schemas.template_signer_input import *
 
 from box_sdk_gen.schemas.template_signer import *
@@ -273,12 +317,6 @@ from box_sdk_gen.schemas.sign_template import *
 from box_sdk_gen.schemas.sign_templates import *
 
 from box_sdk_gen.schemas.sign_request_signer_input import *
-
-from box_sdk_gen.schemas.sign_request_base import *
-
-from box_sdk_gen.schemas.sign_request_create_request import *
-
-from box_sdk_gen.schemas.sign_request_signer_attachment import *
 
 from box_sdk_gen.schemas.sign_request_signer import *
 

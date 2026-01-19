@@ -26,7 +26,7 @@ class AiAgentReference(BaseObject):
                 :type type: AiAgentReferenceTypeField, optional
                 :param id: The ID of an Agent. This can be a numeric ID for custom agents (for example, `14031`)
         or a unique identifier for pre-built agents (for example, `enhanced_extract_agent`
-        for the [Enhanced Extract Agent](g://box-ai/ai-tutorials/extract-metadata-structured/#enhanced-extract-agent))., defaults to None
+        for the [Enhanced Extract Agent](https://developer.box.com/guides/box-ai/ai-tutorials/extract-metadata-structured#enhanced-extract-agent))., defaults to None
                 :type id: Optional[str], optional
         """
         super().__init__(**kwargs)
