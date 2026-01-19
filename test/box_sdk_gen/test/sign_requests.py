@@ -38,7 +38,7 @@ client: BoxClient = get_default_client()
 
 
 def testCreateGetCancelAndListSignRequest():
-    signer_email: str = ''.join([get_uuid(), '@box.com'])
+    signer_email: str = ''.join([get_uuid(), '@boxdemo.com'])
     file_to_sign: FileFull = upload_new_file()
     destination_folder: FolderFull = create_new_folder()
     created_sign_request: SignRequest = client.sign_requests.create_sign_request(
@@ -115,8 +115,8 @@ def testCreateGetCancelAndListSignRequest():
 
 
 def testCreateSignRequestWithSignerGroupId():
-    signer_1_email: str = ''.join([get_uuid(), '@box.com'])
-    signer_2_email: str = ''.join([get_uuid(), '@box.com'])
+    signer_1_email: str = ''.join([get_uuid(), '@boxdemo.com'])
+    signer_2_email: str = ''.join([get_uuid(), '@boxdemo.com'])
     file_to_sign: FileFull = upload_new_file()
     destination_folder: FolderFull = create_new_folder()
     created_sign_request: SignRequest = client.sign_requests.create_sign_request(
