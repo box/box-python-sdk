@@ -2029,13 +2029,13 @@ class Client(Cloneable):
         """
         Extract authentication configuration from this legacy client and convert it
         to a generated SDK Authentication object.
-        
+
         This method supports the following legacy authentication types:
         - DeveloperTokenAuth -> BoxDeveloperTokenAuth
         - OAuth2 -> BoxOAuth
         - JWTAuth -> BoxJWTAuth
         - CCGAuth -> BoxCCGAuth
-        
+
         :param token_storage:
             Optional TokenStorage instance for the generated SDK.
             If not provided, an adapter will be created to bridge legacy token storage.
@@ -2047,44 +2047,45 @@ class Client(Cloneable):
             If the authentication type is not supported or required credentials are missing.
         """
         oauth = self._oauth
-        
+
         # Developer Token Authentication
         if isinstance(oauth, DeveloperTokenAuth):
             token = oauth.access_token
             if not token:
                 raise ValueError("Developer token is not available")
             return BoxDeveloperTokenAuth(token=token)
-        
+
         # OAuth 2.0 Authentication
         # Check if it's OAuth2 (but not DeveloperTokenAuth, JWTAuth, or CCGAuth)
-        if isinstance(oauth, LegacyOAuth2) and not isinstance(oauth, (DeveloperTokenAuth, JWTAuth, CCGAuth)):
+        if isinstance(oauth, LegacyOAuth2) and not isinstance(
+            oauth, (DeveloperTokenAuth, JWTAuth, CCGAuth)
+        ):
             # It's OAuth2
             client_id = getattr(oauth, '_client_id', None)
             client_secret = getattr(oauth, '_client_secret', None)
-            
+
             if not client_id or not client_secret:
                 raise ValueError("OAuth2 client_id and client_secret are required")
-            
+
             # Create token storage adapter if not provided
             if token_storage is None:
                 # Create adapter from legacy OAuth2's token storage
                 def get_tokens():
                     return oauth._get_tokens()
-                
+
                 def store_tokens(access_token, refresh_token):
                     oauth._store_tokens(access_token, refresh_token)
-                
+
                 token_storage = LegacyTokenStorageAdapter(
-                    get_tokens=get_tokens,
-                    store_tokens=store_tokens
+                    get_tokens=get_tokens, store_tokens=store_tokens
                 )
-            
+
             config = OAuthConfig(
                 client_id=client_id,
                 client_secret=client_secret,
-                token_storage=token_storage
+                token_storage=token_storage,
             )
-            
+
             # Pre-populate with existing tokens if available
             auth = BoxOAuth(config=config)
             access_token, refresh_token = oauth._get_tokens()
@@ -2093,12 +2094,12 @@ class Client(Cloneable):
                     access_token=access_token,
                     refresh_token=refresh_token,
                     expires_in=3600,  # Default, actual expiry not available
-                    token_type='bearer'
+                    token_type='bearer',
                 )
                 token_storage.store(existing_token)
-            
+
             return auth
-        
+
         # JWT Authentication
         if isinstance(oauth, JWTAuth):
             client_id = getattr(oauth, '_client_id', None)
@@ -2107,14 +2108,17 @@ class Client(Cloneable):
             rsa_private_key = getattr(oauth, '_rsa_private_key', None)
             enterprise_id = getattr(oauth, '_enterprise_id', None)
             user_id = getattr(oauth, '_user_id', None)
-            
+
             if not all([client_id, client_secret, jwt_key_id, rsa_private_key]):
-                raise ValueError("JWT authentication requires client_id, client_secret, jwt_key_id, and private key")
-            
+                raise ValueError(
+                    "JWT authentication requires client_id, client_secret, jwt_key_id, and private key"
+                )
+
             # Convert RSA private key to string format
             # Note: If the key was originally encrypted, we can't extract the passphrase
             # from the normalized RSAPrivateKey object. We'll serialize it unencrypted.
             from cryptography.hazmat.primitives import serialization
+
             try:
                 # Serialize the key to PEM format (unencrypted)
                 # This works even if the original key was encrypted, as the
@@ -2122,7 +2126,7 @@ class Client(Cloneable):
                 private_key_pem = rsa_private_key.private_bytes(
                     encoding=serialization.Encoding.PEM,
                     format=serialization.PrivateFormat.PKCS8,
-                    encryption_algorithm=serialization.NoEncryption()
+                    encryption_algorithm=serialization.NoEncryption(),
                 ).decode('utf-8')
                 # Passphrase is not needed since we're serializing unencrypted
                 # The generated SDK will handle encryption if needed
@@ -2132,12 +2136,13 @@ class Client(Cloneable):
                     f"Cannot serialize private key: {e}. "
                     "Please ensure the private key is valid."
                 ) from e
-            
+
             # Create token storage adapter if not provided
             if token_storage is None:
                 from box_sdk_gen.box.token_storage import InMemoryTokenStorage
+
                 token_storage = InMemoryTokenStorage()
-            
+
             config = JWTConfig(
                 client_id=client_id,
                 client_secret=client_secret,
@@ -2146,48 +2151,51 @@ class Client(Cloneable):
                 private_key_passphrase=passphrase,
                 enterprise_id=enterprise_id,
                 user_id=user_id,
-                token_storage=token_storage
+                token_storage=token_storage,
             )
-            
+
             auth = BoxJWTAuth(config=config)
-            
+
             # Handle user vs enterprise scope
             if user_id:
                 auth = auth.with_user_subject(user_id, token_storage=token_storage)
-            
+
             return auth
-        
+
         # CCG (Client Credentials Grant) Authentication
         if isinstance(oauth, CCGAuth):
             client_id = getattr(oauth, '_client_id', None)
             client_secret = getattr(oauth, '_client_secret', None)
             enterprise_id = getattr(oauth, '_enterprise_id', None)
             user_id = getattr(oauth, '_user_id', None)
-            
+
             if not client_id or not client_secret:
-                raise ValueError("CCG authentication requires client_id and client_secret")
-            
+                raise ValueError(
+                    "CCG authentication requires client_id and client_secret"
+                )
+
             # Create token storage adapter if not provided
             if token_storage is None:
                 from box_sdk_gen.box.token_storage import InMemoryTokenStorage
+
                 token_storage = InMemoryTokenStorage()
-            
+
             config = CCGConfig(
                 client_id=client_id,
                 client_secret=client_secret,
                 enterprise_id=enterprise_id,
                 user_id=user_id,
-                token_storage=token_storage
+                token_storage=token_storage,
             )
-            
+
             auth = BoxCCGAuth(config=config)
-            
+
             # Handle user vs enterprise scope
             if user_id:
                 auth = auth.with_user_subject(user_id, token_storage=token_storage)
-            
+
             return auth
-        
+
         raise ValueError(
             f"Unsupported authentication type: {type(oauth).__name__}. "
             "Supported types: DeveloperTokenAuth, OAuth2, JWTAuth, CCGAuth"
@@ -2200,12 +2208,12 @@ class Client(Cloneable):
         retry_strategy=None,
         data_sanitizer=None,
         interceptors=None,
-        additional_headers=None
+        additional_headers=None,
     ):
         """
         Extract network configuration from this legacy client and convert it
         to a generated SDK NetworkSession object.
-        
+
         :param network_client:
             Optional NetworkClient instance for the generated SDK.
             If not provided, a default will be created with proxy support if configured.
@@ -2224,7 +2232,7 @@ class Client(Cloneable):
         session = self._session
         api_config = session.api_config
         proxy_config = session.proxy_config
-        
+
         # Extract base URLs
         base_url = getattr(api_config, 'BASE_API_URL', 'https://api.box.com/2.0')
         # Remove version suffix if present
@@ -2232,34 +2240,33 @@ class Client(Cloneable):
             base_url = base_url[:-4]
         elif base_url.endswith('/2'):
             base_url = base_url[:-2]
-        
+
         upload_url = getattr(api_config, 'UPLOAD_URL', 'https://upload.box.com/api/2.0')
         # Remove version suffix if present
         if upload_url.endswith('/2.0'):
             upload_url = upload_url[:-4]
         elif upload_url.endswith('/2'):
             upload_url = upload_url[:-2]
-        
-        oauth2_url = getattr(api_config, 'OAUTH2_AUTHORIZE_URL', 'https://account.box.com/api/oauth2')
+
+        oauth2_url = getattr(
+            api_config, 'OAUTH2_AUTHORIZE_URL', 'https://account.box.com/api/oauth2'
+        )
         # Extract base OAuth URL
         if '/authorize' in oauth2_url:
-            oauth2_url = oauth2_url[:oauth2_url.rindex('/authorize')]
-        
+            oauth2_url = oauth2_url[: oauth2_url.rindex('/authorize')]
+
         base_urls = BaseUrls(
-            base_url=base_url,
-            upload_url=upload_url,
-            oauth_2_url=oauth2_url
+            base_url=base_url, upload_url=upload_url, oauth_2_url=oauth2_url
         )
-        
+
         # Extract or create retry strategy
         if retry_strategy is None:
             max_retries = getattr(api_config, 'MAX_RETRY_ATTEMPTS', 5)
             retry_base_interval = getattr(session, '_retry_base_interval', 1.0)
             retry_strategy = BoxRetryStrategy(
-                max_attempts=max_retries,
-                retry_base_interval=retry_base_interval
+                max_attempts=max_retries, retry_base_interval=retry_base_interval
             )
-        
+
         # Handle proxy configuration
         proxy_url = None
         if proxy_config and hasattr(proxy_config, 'URL') and proxy_config.URL:
@@ -2271,14 +2278,14 @@ class Client(Cloneable):
                     # Extract host from URL
                     host = proxy_url.split('//')[1] if '//' in proxy_url else proxy_url
                     proxy_url = f"http://{auth['user']}:{auth['password']}@{host}"
-        
+
         # Merge custom headers
         headers = {}
         if hasattr(session, '_default_headers'):
             headers.update(session._default_headers.copy())
         if additional_headers:
             headers.update(additional_headers)
-        
+
         # Create network session
         network_session = NetworkSession(
             base_urls=base_urls,
@@ -2286,24 +2293,19 @@ class Client(Cloneable):
             retry_strategy=retry_strategy,
             additional_headers=headers if headers else None,
             proxy_url=proxy_url,
-            data_sanitizer=data_sanitizer
+            data_sanitizer=data_sanitizer,
         )
-        
+
         return network_session
 
-    def get_sdk_gen_client(
-        self,
-        *,
-        auth_options=None,
-        network_options=None
-    ):
+    def get_sdk_gen_client(self, *, auth_options=None, network_options=None):
         """
         Create a fully configured generated SDK client from this legacy client.
-        
+
         This method combines get_authentication() and get_network_session() to create
         a BoxClient instance that shares authentication and network configuration
         with this legacy client.
-        
+
         :param auth_options:
             Optional dictionary with authentication options:
             - token_storage: Custom TokenStorage instance
@@ -2321,9 +2323,9 @@ class Client(Cloneable):
         token_storage = None
         if auth_options and 'token_storage' in auth_options:
             token_storage = auth_options['token_storage']
-        
+
         auth = self.get_authentication(token_storage=token_storage)
-        
+
         # Extract network session
         network_kwargs = {}
         if network_options:
@@ -2332,10 +2334,10 @@ class Client(Cloneable):
                 'retry_strategy': network_options.get('retry_strategy'),
                 'data_sanitizer': network_options.get('data_sanitizer'),
                 'interceptors': network_options.get('interceptors'),
-                'additional_headers': network_options.get('additional_headers')
+                'additional_headers': network_options.get('additional_headers'),
             }
-        
+
         network_session = self.get_network_session(**network_kwargs)
-        
+
         # Create and return fully configured client
         return BoxClient(auth=auth, network_session=network_session)
