@@ -19,11 +19,11 @@ from ..pagination.marker_based_object_collection import MarkerBasedObjectCollect
 from ..util.datetime_formatter import normalize_date_to_rfc3339_format
 from ..util.shared_link import get_shared_link_header
 from ..util.deprecation_decorator import deprecated
-from ...auth.developer_token_auth import DeveloperTokenAuth
-from ...auth.jwt_auth import JWTAuth
-from ...auth.ccg_auth import CCGAuth
-from ...auth.oauth2 import OAuth2 as LegacyOAuth2
-from ...util.token_storage_adapter import LegacyTokenStorageAdapter
+from ..auth.developer_token_auth import DeveloperTokenAuth
+from ..auth.jwt_auth import JWTAuth
+from ..auth.ccg_auth import CCGAuth
+from ..auth.oauth2 import OAuth2 as LegacyOAuth2
+from ..util.token_storage_adapter import LegacyTokenStorageAdapter
 
 from box_sdk_gen.box.developer_token_auth import BoxDeveloperTokenAuth
 from box_sdk_gen.box.oauth import BoxOAuth, OAuthConfig
