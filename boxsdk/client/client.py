@@ -2275,9 +2275,7 @@ class Client(Cloneable):
                     )
                     # Extract host from URL
                     host = proxy_url.split('//')[1] if '//' in proxy_url else proxy_url
-                    proxy_url = (
-                        f"{scheme}://{auth['user']}:{auth['password']}@{host}"
-                    )
+                    proxy_url = f"{scheme}://{auth['user']}:{auth['password']}@{host}"
 
         # Merge custom headers
         headers = {}
