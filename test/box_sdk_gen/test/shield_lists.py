@@ -84,7 +84,7 @@ def testCreateGetUpdateDeleteShieldList():
             shield_list_content_email_name,
             ShieldListContentEmailV2025R0(
                 type=ShieldListContentEmailV2025R0TypeField.EMAIL,
-                email_addresses=['test@box.com', 'test@example.com'],
+                email_addresses=['test@boxdemo.com', 'test@example.com'],
             ),
             description='A list of things that are shielded',
         )
