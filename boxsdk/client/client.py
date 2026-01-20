@@ -2043,8 +2043,6 @@ class Client(Cloneable):
             Authentication object compatible with the generated SDK (box_sdk_gen).
         :raises ValueError:
             If the authentication type is not supported or required credentials are missing.
-        :raises ValueError:
-            If the authentication type is not supported or required credentials are missing.
         """
         oauth = self._oauth
 
@@ -2207,7 +2205,6 @@ class Client(Cloneable):
         network_client=None,
         retry_strategy=None,
         data_sanitizer=None,
-        interceptors=None,
         additional_headers=None,
     ):
         """
@@ -2222,8 +2219,6 @@ class Client(Cloneable):
             If not provided, one will be created from legacy retry settings.
         :param data_sanitizer:
             Optional DataSanitizer instance for the generated SDK.
-        :param interceptors:
-            Optional list of request/response interceptors.
         :param additional_headers:
             Optional dictionary of additional HTTP headers to merge with legacy headers.
         :return:
@@ -2275,9 +2270,14 @@ class Client(Cloneable):
             if hasattr(proxy_config, 'AUTH') and proxy_config.AUTH:
                 auth = proxy_config.AUTH
                 if isinstance(auth, dict) and 'user' in auth and 'password' in auth:
+                    scheme = (
+                        proxy_url.split('://', 1)[0] if '://' in proxy_url else 'http'
+                    )
                     # Extract host from URL
                     host = proxy_url.split('//')[1] if '//' in proxy_url else proxy_url
-                    proxy_url = f"http://{auth['user']}:{auth['password']}@{host}"
+                    proxy_url = (
+                        f"{scheme}://{auth['user']}:{auth['password']}@{host}"
+                    )
 
         # Merge custom headers
         headers = {}
@@ -2314,7 +2314,6 @@ class Client(Cloneable):
             - network_client: Custom NetworkClient instance
             - retry_strategy: Custom RetryStrategy instance
             - data_sanitizer: Custom DataSanitizer instance
-            - interceptors: List of request/response interceptors
             - additional_headers: Dictionary of additional HTTP headers
         :return:
             BoxClient instance from box_sdk_gen, fully configured with shared settings.
@@ -2333,7 +2332,6 @@ class Client(Cloneable):
                 'network_client': network_options.get('network_client'),
                 'retry_strategy': network_options.get('retry_strategy'),
                 'data_sanitizer': network_options.get('data_sanitizer'),
-                'interceptors': network_options.get('interceptors'),
                 'additional_headers': network_options.get('additional_headers'),
             }
 

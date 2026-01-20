@@ -58,7 +58,6 @@ Extracts network configuration from the legacy client and converts it to a gener
 - `network_client` (optional): Custom `NetworkClient` instance
 - `retry_strategy` (optional): Custom `RetryStrategy` instance
 - `data_sanitizer` (optional): Custom `DataSanitizer` instance
-- `interceptors` (optional): List of request/response interceptors
 - `additional_headers` (optional): Dictionary of additional HTTP headers
 
 **Returns:**
@@ -88,7 +87,6 @@ Creates a fully configured generated SDK client from the legacy client. This is 
   - `network_client`: Custom `NetworkClient` instance
   - `retry_strategy`: Custom `RetryStrategy` instance
   - `data_sanitizer`: Custom `DataSanitizer` instance
-  - `interceptors`: List of request/response interceptors
   - `additional_headers`: Dictionary of additional HTTP headers
 
 **Returns:**
@@ -250,10 +248,9 @@ Network settings are extracted from:
 
 ## Error Handling
 
-The implementation includes comprehensive error handling:
+The implementation raises:
 
-- `ValueError`: Raised for unsupported auth types or missing credentials
-- `TypeError`: Raised for invalid parameter types
+- `ValueError`: for unsupported auth types or missing credentials
 
 Note: Since `boxsdk` and `box_sdk_gen` are always installed together, import errors for `box_sdk_gen` should not occur in practice.
 

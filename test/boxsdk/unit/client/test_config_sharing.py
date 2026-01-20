@@ -4,10 +4,7 @@ Unit tests for configuration sharing methods in Client class.
 Tests get_authentication(), get_network_session(), and get_sdk_gen_client() methods.
 """
 
-from unittest.mock import Mock, MagicMock, patch
-import pytest
-
-from unittest.mock import Mock, MagicMock, patch
+from unittest.mock import Mock
 import pytest
 
 from boxsdk.client import Client
