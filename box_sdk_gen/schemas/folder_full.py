@@ -1,8 +1,8 @@
 from enum import Enum
 
-from box_sdk_gen.internal.base_object import BaseObject
-
 from typing import Optional
+
+from box_sdk_gen.internal.base_object import BaseObject
 
 from typing import List
 
@@ -49,6 +49,8 @@ class FolderFullPermissionsField(BaseObject):
         can_set_share_access: bool,
         can_share: bool,
         can_upload: bool,
+        *,
+        can_apply_watermark: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -70,6 +72,8 @@ class FolderFullPermissionsField(BaseObject):
                 :type can_share: bool
                 :param can_upload: Specifies if the user can upload into this folder.
                 :type can_upload: bool
+                :param can_apply_watermark: Specifies if the user can apply a watermark to this folder and its contents., defaults to None
+                :type can_apply_watermark: Optional[bool], optional
         """
         super().__init__(**kwargs)
         self.can_delete = can_delete
@@ -79,6 +83,7 @@ class FolderFullPermissionsField(BaseObject):
         self.can_set_share_access = can_set_share_access
         self.can_share = can_share
         self.can_upload = can_upload
+        self.can_apply_watermark = can_apply_watermark
 
 
 class FolderFullMetadataField(BaseObject):
@@ -104,13 +109,26 @@ class FolderFullAllowedInviteeRolesField(str, Enum):
 
 
 class FolderFullWatermarkInfoField(BaseObject):
-    def __init__(self, *, is_watermarked: Optional[bool] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        is_watermarked: Optional[bool] = None,
+        is_watermark_inherited: Optional[bool] = None,
+        is_watermarked_by_access_policy: Optional[bool] = None,
+        **kwargs
+    ):
         """
         :param is_watermarked: Specifies if this item has a watermark applied., defaults to None
         :type is_watermarked: Optional[bool], optional
+        :param is_watermark_inherited: Specifies if the watermark is inherited from any parent folder in the hierarchy., defaults to None
+        :type is_watermark_inherited: Optional[bool], optional
+        :param is_watermarked_by_access_policy: Specifies if the watermark is enforced by an access policy., defaults to None
+        :type is_watermarked_by_access_policy: Optional[bool], optional
         """
         super().__init__(**kwargs)
         self.is_watermarked = is_watermarked
+        self.is_watermark_inherited = is_watermark_inherited
+        self.is_watermarked_by_access_policy = is_watermarked_by_access_policy
 
 
 class FolderFullClassificationField(BaseObject):
