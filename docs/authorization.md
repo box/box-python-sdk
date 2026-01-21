@@ -51,7 +51,7 @@ authorization code or a server-side JWT assertion.
 An Access Token is a string that enables Box to verify that a
 request belongs to an authorized session. In the normal order of
 operations you will begin by requesting authentication from the
-[authorize](#get-authorize) endpoint and Box will send you an
+[authorize](https://developer.box.com/reference/get-authorize) endpoint and Box will send you an
 authorization code.
 
 You will then send this code to this endpoint to exchange it for

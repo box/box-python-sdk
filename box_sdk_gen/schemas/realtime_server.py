@@ -25,7 +25,7 @@ class RealtimeServer(BaseObject):
                 :type ttl: Optional[str], optional
                 :param max_retries: The maximum number of retries this server will
         allow before a new long poll should be started by
-        getting a [new list of server](#options-events)., defaults to None
+        getting a [new list of server](https://developer.box.com/reference/options-events)., defaults to None
                 :type max_retries: Optional[str], optional
                 :param retry_timeout: The maximum number of seconds without a response
         after which you should retry the long poll connection.
