@@ -48,7 +48,7 @@ Returns a list of legal hold policy assignments.
 
 ## Assign legal hold policy
 
-Assign a legal hold to a file, file version, folder, or user.
+Assign a legal hold to an item type of: file, file version, folder, user, ownership, or interactions.
 
 This operation is performed by calling function `create_legal_hold_policy_assignment`.
 
