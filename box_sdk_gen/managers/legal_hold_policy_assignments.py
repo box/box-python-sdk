@@ -60,7 +60,7 @@ class CreateLegalHoldPolicyAssignmentAssignToTypeField(str, Enum):
     FOLDER = 'folder'
     USER = 'user'
     OWNERSHIP = 'ownership'
-    INTERACTION = 'interaction'
+    INTERACTIONS = 'interactions'
 
 
 class CreateLegalHoldPolicyAssignmentAssignTo(BaseObject):
@@ -70,7 +70,7 @@ class CreateLegalHoldPolicyAssignmentAssignTo(BaseObject):
         'folder',
         'user',
         'ownership',
-        'interaction',
+        'interactions',
     }
 
     def __init__(
@@ -179,7 +179,7 @@ class LegalHoldPolicyAssignmentsManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> LegalHoldPolicyAssignment:
         """
-        Assign a legal hold to a file, file version, folder, or user.
+        Assign a legal hold to an item type of: file, file version, folder, user, ownership, or interactions.
         :param policy_id: The ID of the policy to assign.
         :type policy_id: str
         :param assign_to: The item to assign the policy to.
