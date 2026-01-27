@@ -30,10 +30,12 @@ class LegalHoldPolicyAssignmentCountsField(BaseObject):
         folder: Optional[int] = None,
         file: Optional[int] = None,
         file_version: Optional[int] = None,
+        ownership: Optional[int] = None,
+        interactions: Optional[int] = None,
         **kwargs
     ):
         """
-        :param user: The number of users this policy is applied to., defaults to None
+        :param user: The number of users this policy is applied to with the `access` type assignment., defaults to None
         :type user: Optional[int], optional
         :param folder: The number of folders this policy is applied to., defaults to None
         :type folder: Optional[int], optional
@@ -41,12 +43,18 @@ class LegalHoldPolicyAssignmentCountsField(BaseObject):
         :type file: Optional[int], optional
         :param file_version: The number of file versions this policy is applied to., defaults to None
         :type file_version: Optional[int], optional
+        :param ownership: The number of users this policy is applied to with the `ownership` type assignment., defaults to None
+        :type ownership: Optional[int], optional
+        :param interactions: The number of users this policy is applied to with the `interactions` type assignment., defaults to None
+        :type interactions: Optional[int], optional
         """
         super().__init__(**kwargs)
         self.user = user
         self.folder = folder
         self.file = file
         self.file_version = file_version
+        self.ownership = ownership
+        self.interactions = interactions
 
 
 class LegalHoldPolicy(LegalHoldPolicyMini):
@@ -84,7 +92,7 @@ class LegalHoldPolicy(LegalHoldPolicyMini):
           of being released.
         * 'released' - the policy is no longer active., defaults to None
                 :type status: Optional[LegalHoldPolicyStatusField], optional
-                :param assignment_counts: Counts of assignments within this a legal hold policy by item type., defaults to None
+                :param assignment_counts: Counts of assignments within a legal hold policy by item type., defaults to None
                 :type assignment_counts: Optional[LegalHoldPolicyAssignmentCountsField], optional
                 :param created_at: When the legal hold policy object was created., defaults to None
                 :type created_at: Optional[DateTime], optional
