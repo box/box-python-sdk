@@ -168,5 +168,5 @@ This function returns a value of type `CommentFull`.
 Returns the newly created comment object.
 
 Not all available fields are returned by default. Use the
-[fields](#param-fields) query parameter to explicitly request
+[fields](#parameter-fields) query parameter to explicitly request
 any specific fields.

@@ -218,7 +218,7 @@ class AuthorizationManager:
                 operations you will begin by requesting authentication from the
 
 
-                [authorize](#get-authorize) endpoint and Box will send you an
+                [authorize](https://developer.box.com/reference/get-authorize) endpoint and Box will send you an
 
 
                 authorization code.

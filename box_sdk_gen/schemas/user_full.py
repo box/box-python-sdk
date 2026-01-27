@@ -133,7 +133,7 @@ class UserFull(User):
                 :param modified_at: When the user object was last modified., defaults to None
                 :type modified_at: Optional[DateTime], optional
                 :param language: The language of the user, formatted in modified version of the
-        [ISO 639-1](/guides/api-calls/language-codes) format., defaults to None
+        [ISO 639-1](https://developer.box.com/guides/api-calls/language-codes) format., defaults to None
                 :type language: Optional[str], optional
                 :param timezone: The user's timezone., defaults to None
                 :type timezone: Optional[str], optional
