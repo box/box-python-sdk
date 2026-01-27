@@ -7,7 +7,7 @@
 ## Get events long poll endpoint
 
 Returns a list of real-time servers that can be used for long-polling updates
-to the [event stream](#get-events).
+to the [event stream](https://developer.box.com/reference/get-events).
 
 Long polling is the concept where a HTTP request is kept open until the
 server sends a response, then repeating the process over and over to receive
@@ -22,7 +22,7 @@ URLs. Next, make a long poll request to any of the provided URLs.
 When an event occurs in monitored account a response with the value
 `new_change` will be sent. The response contains no other details as
 it only serves as a prompt to take further action such as sending a
-request to the [events endpoint](#get-events) with the last known
+request to the [events endpoint](https://developer.box.com/reference/get-events) with the last known
 `stream_position`.
 
 After the server sends this response it closes the connection. You must now

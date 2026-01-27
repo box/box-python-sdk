@@ -420,7 +420,7 @@ class EventsManager:
         """
         Returns a list of real-time servers that can be used for long-polling updates
 
-        to the [event stream](#get-events).
+        to the [event stream](https://developer.box.com/reference/get-events).
 
 
         Long polling is the concept where a HTTP request is kept open until the
@@ -453,7 +453,7 @@ class EventsManager:
         it only serves as a prompt to take further action such as sending a
 
 
-        request to the [events endpoint](#get-events) with the last known
+        request to the [events endpoint](https://developer.box.com/reference/get-events) with the last known
 
 
         `stream_position`.

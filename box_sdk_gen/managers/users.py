@@ -262,7 +262,7 @@ class UsersManager:
                 :param role: The user’s enterprise role., defaults to None
                 :type role: Optional[CreateUserRole], optional
                 :param language: The language of the user, formatted in modified version of the
-        [ISO 639-1](/guides/api-calls/language-codes) format., defaults to None
+        [ISO 639-1](https://developer.box.com/guides/api-calls/language-codes) format., defaults to None
                 :type language: Optional[str], optional
                 :param is_sync_enabled: Whether the user can use Box Sync., defaults to None
                 :type is_sync_enabled: Optional[bool], optional
@@ -535,7 +535,7 @@ class UsersManager:
                 :param role: The user’s enterprise role., defaults to None
                 :type role: Optional[UpdateUserByIdRole], optional
                 :param language: The language of the user, formatted in modified version of the
-        [ISO 639-1](/guides/api-calls/language-codes) format., defaults to None
+        [ISO 639-1](https://developer.box.com/guides/api-calls/language-codes) format., defaults to None
                 :type language: Optional[str], optional
                 :param is_sync_enabled: Whether the user can use Box Sync., defaults to None
                 :type is_sync_enabled: Optional[bool], optional
