@@ -114,6 +114,7 @@ class AiExtractStructured(BaseObject):
         *,
         metadata_template: Optional[AiExtractStructuredMetadataTemplateField] = None,
         fields: Optional[List[AiExtractStructuredFieldsField]] = None,
+        include_confidence_score: Optional[bool] = None,
         ai_agent: Optional[AiExtractStructuredAgent] = None,
         **kwargs
     ):
@@ -126,9 +127,12 @@ class AiExtractStructured(BaseObject):
                 :param fields: The fields to be extracted from the provided items.
         For your request to work, you must provide either `metadata_template` or `fields`, but not both., defaults to None
                 :type fields: Optional[List[AiExtractStructuredFieldsField]], optional
+                :param include_confidence_score: A flag to indicate whether confidence scores for every extracted field should be returned., defaults to None
+                :type include_confidence_score: Optional[bool], optional
         """
         super().__init__(**kwargs)
         self.items = items
         self.metadata_template = metadata_template
         self.fields = fields
+        self.include_confidence_score = include_confidence_score
         self.ai_agent = ai_agent
