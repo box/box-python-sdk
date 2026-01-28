@@ -5,8 +5,7 @@ These tests verify that configuration sharing works end-to-end with real
 authentication and network configurations.
 """
 
-from unittest.mock import Mock, MagicMock, patch
-import pytest
+from unittest.mock import Mock
 
 from boxsdk import Client
 from boxsdk.auth.developer_token_auth import DeveloperTokenAuth

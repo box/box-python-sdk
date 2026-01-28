@@ -246,8 +246,6 @@ def _get_authentication_for_jwt(
     )
 
     auth = BoxJWTAuth(config=config)
-    if user_id:
-        auth = auth.with_user_subject(user_id, token_storage=token_storage)
     return auth
 
 
@@ -274,6 +272,4 @@ def _get_authentication_for_ccg(
     )
 
     auth = BoxCCGAuth(config=config)
-    if user_id:
-        auth = auth.with_user_subject(user_id, token_storage=token_storage)
     return auth

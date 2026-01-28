@@ -13,7 +13,6 @@ from boxsdk.auth.oauth2 import OAuth2
 from boxsdk.auth.jwt_auth import JWTAuth
 from boxsdk.auth.ccg_auth import CCGAuth
 from boxsdk.config import API, Proxy
-from boxsdk.session.session import Session, AuthorizedSession
 from box_sdk_gen.box.developer_token_auth import BoxDeveloperTokenAuth
 from box_sdk_gen.box.oauth import BoxOAuth
 from box_sdk_gen.box.jwt_auth import BoxJWTAuth

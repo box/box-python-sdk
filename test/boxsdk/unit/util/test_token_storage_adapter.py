@@ -5,9 +5,6 @@ Tests the LegacyTokenStorageAdapter that bridges legacy OAuth2 token storage
 to generated SDK TokenStorage interface.
 """
 
-from unittest.mock import Mock, MagicMock
-import pytest
-
 from boxsdk.util.token_storage_adapter import LegacyTokenStorageAdapter
 from box_sdk_gen.schemas.access_token import AccessToken
 

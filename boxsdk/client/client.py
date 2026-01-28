@@ -2045,7 +2045,7 @@ class Client(Cloneable):
         retry_strategy=None,
         data_sanitizer=None,
         additional_headers=None,
-    ):
+    ) -> NetworkSession:
         """
         Extract network configuration from this legacy client and convert it
         to a generated SDK NetworkSession object.
