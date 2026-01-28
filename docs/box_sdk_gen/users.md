@@ -82,7 +82,7 @@ client.users.create_user(user_name, login=user_login, is_platform_access_only=Tr
 - role `Optional[CreateUserRole]`
   - The user’s enterprise role.
 - language `Optional[str]`
-  - The language of the user, formatted in modified version of the [ISO 639-1](/guides/api-calls/language-codes) format.
+  - The language of the user, formatted in modified version of the [ISO 639-1](https://developer.box.com/guides/api-calls/language-codes) format.
 - is_sync_enabled `Optional[bool]`
   - Whether the user can use Box Sync.
 - job_title `Optional[str]`
@@ -198,8 +198,8 @@ This function returns a value of type `UserFull`.
 Returns a single user object.
 
 Not all available fields are returned by default. Use the
-[fields](#param-fields) query parameter to explicitly request
-any specific fields using the [fields](#get-users-id--request--fields)
+[fields](#parameter-fields) query parameter to explicitly request
+any specific fields using the [fields](#parameter-fields)
 parameter.
 
 ## Update user
@@ -234,7 +234,7 @@ client.users.update_user_by_id(user.id, name=updated_user_name)
 - role `Optional[UpdateUserByIdRole]`
   - The user’s enterprise role.
 - language `Optional[str]`
-  - The language of the user, formatted in modified version of the [ISO 639-1](/guides/api-calls/language-codes) format.
+  - The language of the user, formatted in modified version of the [ISO 639-1](https://developer.box.com/guides/api-calls/language-codes) format.
 - is_sync_enabled `Optional[bool]`
   - Whether the user can use Box Sync.
 - job_title `Optional[str]`

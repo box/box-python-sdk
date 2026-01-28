@@ -65,7 +65,7 @@ To fetch more items within the folder, use the
 [Get items in a folder](https://developer.box.com/reference/get-folders-id-items)) endpoint.
 
 Not all available fields are returned by default. Use the
-[fields](#param-fields) query parameter to explicitly request
+[fields](#parameter-fields) query parameter to explicitly request
 any specific fields.
 
 ## Update folder
@@ -121,7 +121,7 @@ This function returns a value of type `FolderFull`.
 Returns a folder object for the updated folder
 
 Not all available fields are returned by default. Use the
-[fields](#param-fields) query parameter to explicitly request
+[fields](#parameter-fields) query parameter to explicitly request
 any specific fields.
 
 If the user is moving folders with a large number of items in all of
@@ -169,7 +169,7 @@ Retrieves a page of items in a folder. These items can be files,
 folders, and web links.
 
 To request more information about the folder itself, like its size,
-use the [Get a folder](#get-folders-id) endpoint instead.
+use the [Get a folder](https://developer.box.com/reference/get-folders-id) endpoint instead.
 
 This operation is performed by calling function `get_folder_items`.
 
@@ -247,7 +247,7 @@ This function returns a value of type `FolderFull`.
 Returns a folder object.
 
 Not all available fields are returned by default. Use the
-[fields](#param-fields) query parameter to explicitly request
+[fields](#parameter-fields) query parameter to explicitly request
 any specific fields.
 
 ## Copy folder
@@ -287,5 +287,5 @@ This function returns a value of type `FolderFull`.
 Returns a new folder object representing the copied folder.
 
 Not all available fields are returned by default. Use the
-[fields](#param-fields) query parameter to explicitly request
+[fields](#parameter-fields) query parameter to explicitly request
 any specific fields.

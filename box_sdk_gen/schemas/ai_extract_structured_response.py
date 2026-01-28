@@ -18,6 +18,7 @@ class AiExtractStructuredResponse(BaseObject):
         created_at: DateTime,
         *,
         completion_reason: Optional[str] = None,
+        confidence_score: Optional[Dict] = None,
         ai_agent_info: Optional[AiAgentInfo] = None,
         **kwargs
     ):
@@ -26,9 +27,12 @@ class AiExtractStructuredResponse(BaseObject):
         :type created_at: DateTime
         :param completion_reason: The reason the response finishes., defaults to None
         :type completion_reason: Optional[str], optional
+        :param confidence_score: The confidence score numeric values for each extracted field as a JSON dictionary. This can be empty if no field could be extracted., defaults to None
+        :type confidence_score: Optional[Dict], optional
         """
         super().__init__(**kwargs)
         self.answer = answer
         self.created_at = created_at
         self.completion_reason = completion_reason
+        self.confidence_score = confidence_score
         self.ai_agent_info = ai_agent_info
