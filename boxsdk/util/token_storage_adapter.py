@@ -21,7 +21,7 @@ class LegacyTokenStorageAdapter(TokenStorage):
     def __init__(
         self,
         get_tokens: Callable[[], Tuple[Optional[str], Optional[str]]],
-        store_tokens: Optional[Callable[[str, Optional[str]], None]] = None,
+        store_tokens: Optional[Callable[[Optional[str], Optional[str]], None]] = None,
     ):
         """
         Initialize the adapter with legacy token storage callbacks.
