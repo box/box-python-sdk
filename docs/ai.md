@@ -246,6 +246,7 @@ client.ai.create_ai_extract_structured(
             ],
         ),
     ],
+    include_confidence_score=True,
     ai_agent=ai_extract_structured_agent_basic_text_config,
 )
 ```

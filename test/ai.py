@@ -252,7 +252,12 @@ def testAIExtractStructuredWithFields():
             parent=UploadFileAttributesParentField(id='0'),
         ),
         string_to_byte_stream(
-            'My name is John Doe. I was born in 4th July 1990. I am 34 years old. My hobby is guitar.'
+            ''.join(
+                [
+                    'My name is John Doe. I was born in 4th July 1990. I am 34 years old. My hobby is guitar. My UUID is ',
+                    get_uuid(),
+                ]
+            )
         ),
     )
     file: FileFull = uploaded_files.entries[0]
@@ -300,8 +305,10 @@ def testAIExtractStructuredWithFields():
                 ],
             ),
         ],
+        include_confidence_score=True,
         ai_agent=ai_extract_structured_agent_basic_text_config,
     )
+    assert not response.confidence_score == None
     assert to_string(response.answer.get('hobby')) == to_string(['guitar'])
     assert to_string(response.answer.get('firstName')) == 'John'
     assert to_string(response.answer.get('lastName')) == 'Doe'
@@ -318,7 +325,12 @@ def testAIExtractStructuredWithMetadataTemplate():
             parent=UploadFileAttributesParentField(id='0'),
         ),
         string_to_byte_stream(
-            'My name is John Doe. I was born in 4th July 1990. I am 34 years old. My hobby is guitar.'
+            ''.join(
+                [
+                    'My name is John Doe. I was born in 4th July 1990. I am 34 years old. My hobby is guitar. My UUID is ',
+                    get_uuid(),
+                ]
+            )
         ),
     )
     file: FileFull = uploaded_files.entries[0]
