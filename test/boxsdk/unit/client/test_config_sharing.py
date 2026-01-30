@@ -269,7 +269,9 @@ class TestGetSdkGenNetworkSession:
         client = Client(auth, session=mock_box_session)
 
         custom_retry = BoxRetryStrategy(max_attempts=10, retry_base_interval=2.0)
-        network_session = client.get_sdk_gen_network_session(retry_strategy=custom_retry)
+        network_session = client.get_sdk_gen_network_session(
+            retry_strategy=custom_retry
+        )
 
         assert network_session.retry_strategy is custom_retry
         assert network_session.retry_strategy.max_attempts == 10

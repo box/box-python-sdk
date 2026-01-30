@@ -282,7 +282,9 @@ class TestConfigSharingIntegration:
 
         custom_storage = InMemoryTokenStorage()
         legacy_client = Client(legacy_auth, session=mock_box_session)
-        gen_auth = legacy_client.get_sdk_gen_authentication(token_storage=custom_storage)
+        gen_auth = legacy_client.get_sdk_gen_authentication(
+            token_storage=custom_storage
+        )
 
         assert isinstance(gen_auth, BoxOAuth)
         assert gen_auth.config.token_storage is custom_storage

@@ -2,13 +2,38 @@
 
 This document describes the implementation of configuration sharing between the legacy `boxsdk` package and the new auto-generated `box_sdk_gen` package.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Configuration Sharing Implementation](#configuration-sharing-implementation)
+  - [Overview](#overview)
+  - [Implementation Components](#implementation-components)
+    - [Token Storage Adapter (`boxsdk/util/token_storage_adapter.py`)](#token-storage-adapter-boxsdkutiltoken_storage_adapterpy)
+    - [Client Methods](#client-methods)
+      - [`get_sdk_gen_client(auth_options=None, network_options=None)`](#get_sdk_gen_clientauth_optionsnone-network_optionsnone)
+      - [`get_sdk_gen_authentication(token_storage=None)`](#get_sdk_gen_authenticationtoken_storagenone)
+      - [`get_sdk_gen_network_session(**options)`](#get_sdk_gen_network_sessionoptions)
+  - [Usage Examples](#usage-examples)
+    - [Developer Token](#developer-token)
+    - [OAuth 2.0 with Token Refresh](#oauth-20-with-token-refresh)
+    - [JWT Authentication](#jwt-authentication)
+    - [CCG Authentication](#ccg-authentication)
+    - [Custom Network Configuration](#custom-network-configuration)
+  - [Implementation Details](#implementation-details)
+    - [Token Storage Adapter](#token-storage-adapter)
+    - [Authentication Conversion](#authentication-conversion)
+    - [Network Configuration Conversion](#network-configuration-conversion)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
 ## Overview
 
 The configuration sharing feature allows developers to seamlessly migrate from the legacy SDK to the generated SDK by automatically extracting and converting authentication and network configuration from a legacy client to a generated client.
 
 ## Implementation Components
 
-### 1. Token Storage Adapter (`boxsdk/util/token_storage_adapter.py`)
+### Token Storage Adapter (`boxsdk/util/token_storage_adapter.py`)
 
 The `LegacyTokenStorageAdapter` class bridges the gap between legacy OAuth2 token storage mechanisms (callbacks) and the generated SDK's `TokenStorage` interface.
 
@@ -17,64 +42,44 @@ The `LegacyTokenStorageAdapter` class bridges the gap between legacy OAuth2 toke
 - Supports both read and write operations
 - Handles token storage callbacks from legacy OAuth2 implementations
 
-### 2. Client Methods
-
-Three new methods have been added to the `Client` class in `boxsdk/client/client.py`:
-
-#### `get_sdk_gen_authentication(token_storage=None)`
-
-Extracts authentication configuration from the legacy client and converts it to a generated SDK `Authentication` object.
-
-**Supported Authentication Types:**
-- `DeveloperTokenAuth` → `BoxDeveloperTokenAuth`
-- `OAuth2` → `BoxOAuth`
-- `JWTAuth` → `BoxJWTAuth`
-- `CCGAuth` → `BoxCCGAuth`
-
-**Parameters:**
-- `token_storage` (optional): Custom `TokenStorage` instance. If not provided, an adapter will be created to bridge legacy token storage.
-
-**Returns:**
-- `Authentication` object compatible with `box_sdk_gen`
-
 **Example:**
 ```python
-from boxsdk import Client
-from boxsdk.auth import OAuth2
+from boxsdk.auth.oauth2 import OAuth2
+from boxsdk.util.token_storage_adapter import LegacyTokenStorageAdapter
 
-# Legacy client
-legacy_auth = OAuth2(client_id="...", client_secret="...")
-legacy_client = Client(legacy_auth)
+from box_sdk_gen.box.oauth import BoxOAuth, OAuthConfig
 
-# Get generated SDK authentication
-gen_auth = legacy_client.get_sdk_gen_authentication()
-```
+# Legacy OAuth2 with a token persistence callback
+stored_tokens = {"access": None, "refresh": None}
 
-#### `get_sdk_gen_network_session(**options)`
 
-Extracts network configuration from the legacy client and converts it to a generated SDK `NetworkSession` object.
+def store_tokens(access_token, refresh_token):
+    stored_tokens["access"] = access_token
+    stored_tokens["refresh"] = refresh_token
 
-**Parameters:**
-- `network_client` (optional): Custom `NetworkClient` instance
-- `retry_strategy` (optional): Custom `RetryStrategy` instance
-- `data_sanitizer` (optional): Custom `DataSanitizer` instance
-- `additional_headers` (optional): Dictionary of additional HTTP headers
 
-**Returns:**
-- `NetworkSession` object compatible with `box_sdk_gen`
+legacy_auth = OAuth2(client_id="...", client_secret="...", store_tokens=store_tokens)
 
-**Configuration Mapping:**
-- Base URLs: Extracted from `API` config
-- Proxy settings: Extracted from `Proxy` config
-- Retry strategy: Extracted from `API.MAX_RETRY_ATTEMPTS` and session retry settings
-- Custom headers: Merged from session default headers and additional headers
+# Bridge legacy token storage to the generated SDK TokenStorage interface
+token_storage = LegacyTokenStorageAdapter(
+    get_tokens=lambda: legacy_auth._get_tokens(),
+    store_tokens=lambda access_token, refresh_token: legacy_auth._store_tokens(
+        access_token, refresh_token
+    ),
+)
 
-**Example:**
-```python
-network_session = legacy_client.get_sdk_gen_network_session(
-    additional_headers={"X-Custom-Header": "value"}
+gen_auth = BoxOAuth(
+    config=OAuthConfig(
+        client_id="...",
+        client_secret="...",
+        token_storage=token_storage,
+    )
 )
 ```
+
+### Client Methods
+
+Three new methods have been added to the `Client` class in `boxsdk/client/client.py`:
 
 #### `get_sdk_gen_client(auth_options=None, network_options=None)`
 
@@ -110,6 +115,72 @@ folders = gen_client.folders.get_folder_items("0")
 
 # Legacy client still works for existing code
 legacy_user = legacy_client.user().get()
+```
+
+#### `get_sdk_gen_authentication(token_storage=None)`
+
+Extracts authentication configuration from the legacy client and converts it to a generated SDK `Authentication` object.
+
+**Supported Authentication Types:**
+- `DeveloperTokenAuth` → `BoxDeveloperTokenAuth`
+- `OAuth2` → `BoxOAuth`
+- `JWTAuth` → `BoxJWTAuth`
+- `CCGAuth` → `BoxCCGAuth`
+
+**Parameters:**
+- `token_storage` (optional): Custom `TokenStorage` instance. If not provided, an adapter will be created to bridge legacy token storage.
+
+**Returns:**
+- `Authentication` object compatible with `box_sdk_gen`
+
+**Example:**
+```python
+from boxsdk import Client
+from boxsdk.auth import OAuth2
+from box_sdk_gen.client import BoxClient
+
+# Legacy client
+legacy_auth = OAuth2(client_id="...", client_secret="...")
+legacy_client = Client(legacy_auth)
+
+# Get generated SDK authentication
+gen_auth = legacy_client.get_sdk_gen_authentication()
+gen_client = BoxClient(auth=gen_auth)
+```
+
+#### `get_sdk_gen_network_session(**options)`
+
+Extracts network configuration from the legacy client and converts it to a generated SDK `NetworkSession` object.
+
+**Parameters:**
+- `network_client` (optional): Custom `NetworkClient` instance
+- `retry_strategy` (optional): Custom `RetryStrategy` instance
+- `data_sanitizer` (optional): Custom `DataSanitizer` instance
+- `additional_headers` (optional): Dictionary of additional HTTP headers
+
+**Returns:**
+- `NetworkSession` object compatible with `box_sdk_gen`
+
+**Configuration Mapping:**
+- Base URLs: Extracted from `API` config
+- Proxy settings: Extracted from `Proxy` config
+- Retry strategy: Extracted from `API.MAX_RETRY_ATTEMPTS` and session retry settings
+- Custom headers: Merged from session default headers and additional headers
+
+**Example:**
+```python
+from boxsdk import Client
+from box_sdk_gen.client import BoxClient
+from box_sdk_gen.box.developer_token_auth import BoxDeveloperTokenAuth
+
+legacy_client = Client(legacy_auth)
+
+network_session = legacy_client.get_sdk_gen_network_session(
+    additional_headers={"X-Custom-Header": "value"}
+)
+
+gen_auth = BoxDeveloperTokenAuth(token="...")
+gen_client = BoxClient(auth=gen_auth, network_session=network_session)
 ```
 
 ## Usage Examples
