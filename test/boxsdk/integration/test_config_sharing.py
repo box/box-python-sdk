@@ -270,7 +270,7 @@ class TestConfigSharingIntegration:
         assert gen_client.network_session is not None
 
     def test_get_authentication_with_custom_token_storage(self, mock_box_session):
-        """Test get_authentication() with custom token storage."""
+        """Test get_sdk_gen_authentication() with custom token storage."""
         from box_sdk_gen.box.token_storage import InMemoryTokenStorage
 
         legacy_auth = OAuth2(
@@ -282,13 +282,13 @@ class TestConfigSharingIntegration:
 
         custom_storage = InMemoryTokenStorage()
         legacy_client = Client(legacy_auth, session=mock_box_session)
-        gen_auth = legacy_client.get_authentication(token_storage=custom_storage)
+        gen_auth = legacy_client.get_sdk_gen_authentication(token_storage=custom_storage)
 
         assert isinstance(gen_auth, BoxOAuth)
         assert gen_auth.config.token_storage is custom_storage
 
     def test_get_network_session_with_custom_options(self, mock_box_session):
-        """Test get_network_session() with custom options."""
+        """Test get_sdk_gen_network_session() with custom options."""
         from box_sdk_gen.networking.retries import BoxRetryStrategy
 
         legacy_auth = DeveloperTokenAuth(get_new_token_callback=lambda: 'token')
@@ -297,7 +297,7 @@ class TestConfigSharingIntegration:
         custom_retry = BoxRetryStrategy(max_attempts=20, retry_base_interval=2.5)
         custom_headers = {'X-Custom': 'value'}
 
-        network_session = legacy_client.get_network_session(
+        network_session = legacy_client.get_sdk_gen_network_session(
             retry_strategy=custom_retry, additional_headers=custom_headers
         )
 

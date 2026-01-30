@@ -2015,7 +2015,7 @@ class Client(Cloneable):
             response_object=box_response.json(),
         )
 
-    def get_authentication(
+    def get_sdk_gen_authentication(
         self, *, token_storage: Optional[TokenStorage] = None
     ) -> Authentication:
         """
@@ -2038,7 +2038,7 @@ class Client(Cloneable):
         """
         return config_adapter.get_authentication(self, token_storage=token_storage)
 
-    def get_network_session(
+    def get_sdk_gen_network_session(
         self,
         *,
         network_client=None,
@@ -2065,6 +2065,32 @@ class Client(Cloneable):
         """
         return config_adapter.get_network_session(
             self,
+            network_client=network_client,
+            retry_strategy=retry_strategy,
+            data_sanitizer=data_sanitizer,
+            additional_headers=additional_headers,
+        )
+
+    def get_authentication(
+        self, *, token_storage: Optional[TokenStorage] = None
+    ) -> Authentication:
+        """
+        Backward-compatible alias for `get_sdk_gen_authentication()`.
+        """
+        return self.get_sdk_gen_authentication(token_storage=token_storage)
+
+    def get_network_session(
+        self,
+        *,
+        network_client=None,
+        retry_strategy=None,
+        data_sanitizer=None,
+        additional_headers=None,
+    ) -> NetworkSession:
+        """
+        Backward-compatible alias for `get_sdk_gen_network_session()`.
+        """
+        return self.get_sdk_gen_network_session(
             network_client=network_client,
             retry_strategy=retry_strategy,
             data_sanitizer=data_sanitizer,

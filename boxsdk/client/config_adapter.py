@@ -25,7 +25,6 @@ from box_sdk_gen.networking.auth import Authentication
 from box_sdk_gen.networking.base_urls import BaseUrls
 from box_sdk_gen.networking.network import NetworkSession
 from box_sdk_gen.networking.retries import BoxRetryStrategy
-from box_sdk_gen.schemas.access_token import AccessToken
 
 
 def get_authentication(

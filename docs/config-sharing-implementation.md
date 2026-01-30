@@ -21,7 +21,7 @@ The `LegacyTokenStorageAdapter` class bridges the gap between legacy OAuth2 toke
 
 Three new methods have been added to the `Client` class in `boxsdk/client/client.py`:
 
-#### `get_authentication(token_storage=None)`
+#### `get_sdk_gen_authentication(token_storage=None)`
 
 Extracts authentication configuration from the legacy client and converts it to a generated SDK `Authentication` object.
 
@@ -47,10 +47,10 @@ legacy_auth = OAuth2(client_id="...", client_secret="...")
 legacy_client = Client(legacy_auth)
 
 # Get generated SDK authentication
-gen_auth = legacy_client.get_authentication()
+gen_auth = legacy_client.get_sdk_gen_authentication()
 ```
 
-#### `get_network_session(**options)`
+#### `get_sdk_gen_network_session(**options)`
 
 Extracts network configuration from the legacy client and converts it to a generated SDK `NetworkSession` object.
 
@@ -71,14 +71,14 @@ Extracts network configuration from the legacy client and converts it to a gener
 
 **Example:**
 ```python
-network_session = legacy_client.get_network_session(
+network_session = legacy_client.get_sdk_gen_network_session(
     additional_headers={"X-Custom-Header": "value"}
 )
 ```
 
 #### `get_sdk_gen_client(auth_options=None, network_options=None)`
 
-Creates a fully configured generated SDK client from the legacy client. This is the main convenience method that combines `get_authentication()` and `get_network_session()`.
+Creates a fully configured generated SDK client from the legacy client. This is the main convenience method that combines `get_sdk_gen_authentication()` and `get_sdk_gen_network_session()`.
 
 **Parameters:**
 - `auth_options` (optional): Dictionary with authentication options
@@ -237,37 +237,3 @@ Network settings are extracted from:
 - `Session.proxy_config`: Proxy settings
 - `Session._default_headers`: Custom headers
 - `API.MAX_RETRY_ATTEMPTS`: Retry configuration
-
-## Limitations
-
-1. **JWT Private Key**: If the JWT private key was originally encrypted, the passphrase cannot be extracted from the normalized `RSAPrivateKey` object. The key will be serialized unencrypted.
-
-2. **Token Expiry**: The legacy SDK doesn't always track token expiry times, so the adapter uses a default value (3600 seconds) when converting to `AccessToken`.
-
-3. **Custom Token Storage**: If using custom token storage callbacks in the legacy SDK, ensure they're thread-safe if both clients will be used concurrently.
-
-## Error Handling
-
-The implementation raises:
-
-- `ValueError`: for unsupported auth types or missing credentials
-
-Note: Since `boxsdk` and `box_sdk_gen` are always installed together, import errors for `box_sdk_gen` should not occur in practice.
-
-## Testing
-
-Unit tests should cover:
-- Token storage adapter conversion
-- Each authentication type conversion
-- Network configuration extraction
-- Error cases (missing credentials, unsupported types)
-- Integration tests for `get_sdk_gen_client()`
-
-## Future Enhancements
-
-Potential improvements:
-1. Support for additional authentication types
-2. Better token expiry tracking
-3. Support for encrypted JWT keys with passphrase extraction
-4. More comprehensive network configuration mapping
-

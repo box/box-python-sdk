@@ -1,7 +1,7 @@
 """
 Unit tests for configuration sharing methods in Client class.
 
-Tests get_authentication(), get_network_session(), and get_sdk_gen_client() methods.
+Tests get_sdk_gen_authentication(), get_sdk_gen_network_session(), and get_sdk_gen_client() methods.
 """
 
 from unittest.mock import Mock
@@ -22,8 +22,8 @@ from box_sdk_gen.networking.base_urls import BaseUrls
 from box_sdk_gen.client import BoxClient
 
 
-class TestGetAuthentication:
-    """Test cases for get_authentication() method."""
+class TestGetSdkGenAuthentication:
+    """Test cases for get_sdk_gen_authentication() method."""
 
     def test_get_authentication_developer_token(self, mock_box_session):
         """Test converting DeveloperTokenAuth to BoxDeveloperTokenAuth."""
@@ -31,7 +31,7 @@ class TestGetAuthentication:
         auth = DeveloperTokenAuth(get_new_token_callback=lambda: token)
 
         client = Client(auth, session=mock_box_session)
-        gen_auth = client.get_authentication()
+        gen_auth = client.get_sdk_gen_authentication()
 
         assert isinstance(gen_auth, BoxDeveloperTokenAuth)
         assert gen_auth.token == token
@@ -45,7 +45,7 @@ class TestGetAuthentication:
         client = Client(auth, session=mock_box_session)
 
         with pytest.raises(ValueError, match="Developer token is not available"):
-            client.get_authentication()
+            client.get_sdk_gen_authentication()
 
     def test_get_authentication_oauth2(self, mock_box_session):
         """Test converting OAuth2 to BoxOAuth."""
@@ -62,7 +62,7 @@ class TestGetAuthentication:
         )
 
         client = Client(auth, session=mock_box_session)
-        gen_auth = client.get_authentication()
+        gen_auth = client.get_sdk_gen_authentication()
 
         assert isinstance(gen_auth, BoxOAuth)
         assert gen_auth.config.client_id == client_id
@@ -77,7 +77,7 @@ class TestGetAuthentication:
         with pytest.raises(
             ValueError, match="OAuth2 client_id and client_secret are required"
         ):
-            client.get_authentication()
+            client.get_sdk_gen_authentication()
 
     def test_get_authentication_oauth2_with_custom_token_storage(
         self, mock_box_session
@@ -94,7 +94,7 @@ class TestGetAuthentication:
 
         custom_storage = InMemoryTokenStorage()
         client = Client(auth, session=mock_box_session)
-        gen_auth = client.get_authentication(token_storage=custom_storage)
+        gen_auth = client.get_sdk_gen_authentication(token_storage=custom_storage)
 
         assert isinstance(gen_auth, BoxOAuth)
         assert gen_auth.config.token_storage is custom_storage
@@ -124,7 +124,7 @@ class TestGetAuthentication:
         )
 
         client = Client(auth, session=mock_box_session)
-        gen_auth = client.get_authentication()
+        gen_auth = client.get_sdk_gen_authentication()
 
         assert isinstance(gen_auth, BoxJWTAuth)
         assert gen_auth.config.client_id == client_id
@@ -154,7 +154,7 @@ class TestGetAuthentication:
         client = Client(auth, session=mock_box_session)
 
         with pytest.raises(ValueError, match="JWT authentication requires"):
-            client.get_authentication()
+            client.get_sdk_gen_authentication()
 
     def test_get_authentication_ccg(self, mock_box_session):
         """Test converting CCGAuth to BoxCCGAuth."""
@@ -169,7 +169,7 @@ class TestGetAuthentication:
         )
 
         client = Client(auth, session=mock_box_session)
-        gen_auth = client.get_authentication()
+        gen_auth = client.get_sdk_gen_authentication()
 
         assert isinstance(gen_auth, BoxCCGAuth)
         assert gen_auth.config.client_id == client_id
@@ -183,7 +183,7 @@ class TestGetAuthentication:
         client = Client(auth, session=mock_box_session)
 
         with pytest.raises(ValueError, match="CCG authentication requires"):
-            client.get_authentication()
+            client.get_sdk_gen_authentication()
 
     def test_get_authentication_unsupported_type(self, mock_box_session):
         """Test that unsupported auth type raises ValueError."""
@@ -194,18 +194,18 @@ class TestGetAuthentication:
         client = Client(mock_auth, session=mock_box_session)
 
         with pytest.raises(ValueError, match="Unsupported authentication type"):
-            client.get_authentication()
+            client.get_sdk_gen_authentication()
 
 
-class TestGetNetworkSession:
-    """Test cases for get_network_session() method."""
+class TestGetSdkGenNetworkSession:
+    """Test cases for get_sdk_gen_network_session() method."""
 
     def test_get_network_session_default(self, mock_box_session):
         """Test extracting network session with default settings."""
         auth = Mock(OAuth2)
         client = Client(auth, session=mock_box_session)
 
-        network_session = client.get_network_session()
+        network_session = client.get_sdk_gen_network_session()
 
         assert isinstance(network_session, NetworkSession)
         assert isinstance(network_session.base_urls, BaseUrls)
@@ -216,7 +216,7 @@ class TestGetNetworkSession:
         client = Client(auth, session=mock_box_session)
 
         additional_headers = {'X-Custom-Header': 'custom_value'}
-        network_session = client.get_network_session(
+        network_session = client.get_sdk_gen_network_session(
             additional_headers=additional_headers
         )
 
@@ -232,7 +232,7 @@ class TestGetNetworkSession:
         auth = Mock(OAuth2)
         client = Client(auth, session=mock_box_session)
 
-        network_session = client.get_network_session()
+        network_session = client.get_sdk_gen_network_session()
 
         # Proxy URL should be set
         assert network_session.proxy_url is not None
@@ -250,7 +250,7 @@ class TestGetNetworkSession:
         auth = Mock(OAuth2)
         client = Client(auth, session=mock_box_session)
 
-        network_session = client.get_network_session()
+        network_session = client.get_sdk_gen_network_session()
 
         # Proxy URL should include authentication
         assert network_session.proxy_url is not None
@@ -269,7 +269,7 @@ class TestGetNetworkSession:
         client = Client(auth, session=mock_box_session)
 
         custom_retry = BoxRetryStrategy(max_attempts=10, retry_base_interval=2.0)
-        network_session = client.get_network_session(retry_strategy=custom_retry)
+        network_session = client.get_sdk_gen_network_session(retry_strategy=custom_retry)
 
         assert network_session.retry_strategy is custom_retry
         assert network_session.retry_strategy.max_attempts == 10
@@ -286,7 +286,7 @@ class TestGetNetworkSession:
         auth = Mock(OAuth2)
         client = Client(auth, session=mock_box_session)
 
-        network_session = client.get_network_session()
+        network_session = client.get_sdk_gen_network_session()
 
         # URLs should have version suffix removed
         assert 'custom.api.box.com' in network_session.base_urls.base_url
