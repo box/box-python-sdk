@@ -1,7 +1,7 @@
 # pylint: disable=too-many-lines
 import json
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, Iterable, Union, Any, IO
+from typing import TYPE_CHECKING, Optional, Iterable, Union, Any, IO, Dict
 from warnings import warn
 
 from ..auth.oauth2 import TokenResponse
@@ -26,6 +26,9 @@ from box_sdk_gen.networking.network import NetworkSession
 from . import config_adapter
 
 if TYPE_CHECKING:
+    from box_sdk_gen.internal.logging import DataSanitizer
+    from box_sdk_gen.networking.network_client import NetworkClient
+    from box_sdk_gen.networking.retries import RetryStrategy
     from boxsdk import OAuth2
     from boxsdk.util.translator import Translator
     from boxsdk.object.folder import Folder
@@ -2041,10 +2044,10 @@ class Client(Cloneable):
     def get_sdk_gen_network_session(
         self,
         *,
-        network_client=None,
-        retry_strategy=None,
-        data_sanitizer=None,
-        additional_headers=None,
+        network_client: Optional[NetworkClient] = None,
+        retry_strategy: Optional[RetryStrategy] = None,
+        data_sanitizer: Optional[DataSanitizer] = None,
+        additional_headers: Optional[Dict[str, str]] = None,
     ) -> NetworkSession:
         """
         Extract network configuration from this legacy client and convert it
@@ -2065,32 +2068,6 @@ class Client(Cloneable):
         """
         return config_adapter.get_network_session(
             self,
-            network_client=network_client,
-            retry_strategy=retry_strategy,
-            data_sanitizer=data_sanitizer,
-            additional_headers=additional_headers,
-        )
-
-    def get_authentication(
-        self, *, token_storage: Optional[TokenStorage] = None
-    ) -> Authentication:
-        """
-        Backward-compatible alias for `get_sdk_gen_authentication()`.
-        """
-        return self.get_sdk_gen_authentication(token_storage=token_storage)
-
-    def get_network_session(
-        self,
-        *,
-        network_client=None,
-        retry_strategy=None,
-        data_sanitizer=None,
-        additional_headers=None,
-    ) -> NetworkSession:
-        """
-        Backward-compatible alias for `get_sdk_gen_network_session()`.
-        """
-        return self.get_sdk_gen_network_session(
             network_client=network_client,
             retry_strategy=retry_strategy,
             data_sanitizer=data_sanitizer,
