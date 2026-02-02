@@ -4,9 +4,9 @@
 
 This section covers the documentation required to get up and running with the SDK, including configuration, authentication, and client initialization for making API calls.
 
-- [Configuration](Configuration.md)
-- [Authentication](Authentication.md)
-- [Client](Client.md)
+- [Configuration](configuration.md)
+- [Authentication](authentication.md)
+- [Client](client.md)
 
 ## Box API Usage
 
