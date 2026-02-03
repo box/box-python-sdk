@@ -23,12 +23,12 @@ from box_sdk_gen.box.token_storage import TokenStorage
 from box_sdk_gen.client import BoxClient
 from box_sdk_gen.networking.auth import Authentication
 from box_sdk_gen.networking.network import NetworkSession
+from box_sdk_gen.networking.network_client import NetworkClient
+from box_sdk_gen.networking.retries import RetryStrategy
+from box_sdk_gen.internal.logging import DataSanitizer
 from . import config_adapter
 
 if TYPE_CHECKING:
-    from box_sdk_gen.internal.logging import DataSanitizer
-    from box_sdk_gen.networking.network_client import NetworkClient
-    from box_sdk_gen.networking.retries import RetryStrategy
     from boxsdk import OAuth2
     from boxsdk.util.translator import Translator
     from boxsdk.object.folder import Folder
