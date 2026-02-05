@@ -1,7 +1,7 @@
 # pylint: disable=too-many-lines
 import json
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, Iterable, Union, Any, IO
+from typing import TYPE_CHECKING, Optional, Iterable, Union, Any, IO, Dict
 from warnings import warn
 
 from ..auth.oauth2 import TokenResponse
@@ -19,6 +19,14 @@ from ..pagination.marker_based_object_collection import MarkerBasedObjectCollect
 from ..util.datetime_formatter import normalize_date_to_rfc3339_format
 from ..util.shared_link import get_shared_link_header
 from ..util.deprecation_decorator import deprecated
+from box_sdk_gen.box.token_storage import TokenStorage
+from box_sdk_gen.client import BoxClient
+from box_sdk_gen.networking.auth import Authentication
+from box_sdk_gen.networking.network import NetworkSession
+from box_sdk_gen.networking.network_client import NetworkClient
+from box_sdk_gen.networking.retries import RetryStrategy
+from box_sdk_gen.internal.logging import DataSanitizer
+from . import config_adapter
 
 if TYPE_CHECKING:
     from boxsdk import OAuth2
@@ -2008,4 +2016,89 @@ class Client(Cloneable):
         return self.translator.translate(
             session=self._session,
             response_object=box_response.json(),
+        )
+
+    def get_sdk_gen_authentication(
+        self, *, token_storage: Optional[TokenStorage] = None
+    ) -> Authentication:
+        """
+        Extract authentication configuration from this legacy client and convert it
+        to a generated SDK Authentication object.
+
+        This method supports the following legacy authentication types:
+        - boxsdk.auth.developer_token_auth.DeveloperTokenAuth -> box_sdk_gen.box.developer_token_auth.BoxDeveloperTokenAuth
+        - boxsdk.auth.oauth2.OAuth2 -> box_sdk_gen.box.oauth.BoxOAuth
+        - boxsdk.auth.jwt_auth.JWTAuth -> box_sdk_gen.box.jwt_auth.BoxJWTAuth
+        - boxsdk.auth.ccg_auth.CCGAuth -> box_sdk_gen.box.ccg_auth.BoxCCGAuth
+
+        :param token_storage:
+            Optional TokenStorage instance for the generated SDK.
+            If not provided, an adapter will be created to bridge legacy token storage.
+        :return:
+            Authentication object compatible with the generated SDK (box_sdk_gen).
+        :raises ValueError:
+            If the authentication type is not supported or required credentials are missing.
+        """
+        return config_adapter.get_authentication(self, token_storage=token_storage)
+
+    def get_sdk_gen_network_session(
+        self,
+        *,
+        network_client: Optional[NetworkClient] = None,
+        retry_strategy: Optional[RetryStrategy] = None,
+        data_sanitizer: Optional[DataSanitizer] = None,
+        additional_headers: Optional[Dict[str, str]] = None,
+    ) -> NetworkSession:
+        """
+        Extract network configuration from this legacy client and convert it
+        to a generated SDK NetworkSession object.
+
+        :param network_client:
+            Optional NetworkClient instance for the generated SDK.
+            If not provided, a default will be created with proxy support if configured.
+        :param retry_strategy:
+            Optional RetryStrategy instance for the generated SDK.
+            If not provided, one will be created from legacy retry settings.
+        :param data_sanitizer:
+            Optional DataSanitizer instance for the generated SDK.
+        :param additional_headers:
+            Optional dictionary of additional HTTP headers to merge with legacy headers.
+        :return:
+            NetworkSession object compatible with the generated SDK (box_sdk_gen).
+        """
+        return config_adapter.get_network_session(
+            self,
+            network_client=network_client,
+            retry_strategy=retry_strategy,
+            data_sanitizer=data_sanitizer,
+            additional_headers=additional_headers,
+        )
+
+    def get_sdk_gen_client(
+        self,
+        *,
+        auth_options: Optional[dict] = None,
+        network_options: Optional[dict] = None,
+    ) -> BoxClient:
+        """
+        Create a fully configured generated SDK client from this legacy client.
+
+        This method combines get_authentication() and get_network_session() to create
+        a BoxClient instance that shares authentication and network configuration
+        with this legacy client.
+
+        :param auth_options:
+            Optional dictionary with authentication options:
+            - token_storage: Custom TokenStorage instance
+        :param network_options:
+            Optional dictionary with network options:
+            - network_client: Custom NetworkClient instance
+            - retry_strategy: Custom RetryStrategy instance
+            - data_sanitizer: Custom DataSanitizer instance
+            - additional_headers: Dictionary of additional HTTP headers
+        :return:
+            BoxClient instance from box_sdk_gen, fully configured with shared settings.
+        """
+        return config_adapter.get_sdk_gen_client(
+            self, auth_options=auth_options, network_options=network_options
         )
