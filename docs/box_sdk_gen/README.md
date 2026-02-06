@@ -1,6 +1,14 @@
 # Documentation
 
-## High-level Documentation
+## Configuration
+
+This section covers the documentation required to get up and running with the SDK, including configuration, authentication, and client initialization for making API calls.
+
+- [Configuration](configuration.md)
+- [Authentication](authentication.md)
+- [Client](client.md)
+
+## Box API Usage
 
 General explanations of the available functionality and examples of how to use
 the SDK are available by topic:
