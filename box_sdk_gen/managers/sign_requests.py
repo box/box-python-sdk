@@ -6,6 +6,8 @@ from typing import Dict
 
 from box_sdk_gen.internal.utils import to_string
 
+from box_sdk_gen.serialization.json import serialize
+
 from box_sdk_gen.serialization.json import deserialize
 
 from typing import List
@@ -13,8 +15,6 @@ from typing import List
 from box_sdk_gen.internal.null_value import NullValue
 
 from typing import Union
-
-from box_sdk_gen.serialization.json import serialize
 
 from box_sdk_gen.networking.fetch_options import ResponseFormat
 
@@ -29,6 +29,8 @@ from box_sdk_gen.schemas.sign_request_prefill_tag import SignRequestPrefillTag
 from box_sdk_gen.schemas.sign_request import SignRequest
 
 from box_sdk_gen.schemas.client_error import ClientError
+
+from box_sdk_gen.schemas.sign_request_cancel_request import SignRequestCancelRequest
 
 from box_sdk_gen.schemas.sign_requests import SignRequests
 
@@ -77,6 +79,7 @@ class SignRequestsManager:
         self,
         sign_request_id: str,
         *,
+        reason: Optional[str] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> SignRequest:
         """
@@ -84,11 +87,14 @@ class SignRequestsManager:
                 :param sign_request_id: The ID of the signature request.
         Example: "33243242"
                 :type sign_request_id: str
+                :param reason: An optional reason for cancelling the sign request., defaults to None
+                :type reason: Optional[str], optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
                 :type extra_headers: Optional[Dict[str, Optional[str]]], optional
         """
         if extra_headers is None:
             extra_headers = {}
+        request_body: Dict = {'reason': reason}
         headers_map: Dict[str, str] = prepare_params({**extra_headers})
         response: FetchResponse = self.network_session.network_client.fetch(
             FetchOptions(
@@ -102,6 +108,8 @@ class SignRequestsManager:
                 ),
                 method='POST',
                 headers=headers_map,
+                data=serialize(request_body) if not request_body == None else None,
+                content_type='application/json',
                 response_format=ResponseFormat.JSON,
                 auth=self.auth,
                 network_session=self.network_session,
