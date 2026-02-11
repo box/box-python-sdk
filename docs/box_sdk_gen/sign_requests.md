@@ -25,6 +25,8 @@ client.sign_requests.cancel_sign_request(created_sign_request.id)
 
 - sign_request_id `str`
   - The ID of the signature request. Example: "33243242"
+- reason `Optional[str]`
+  - An optional reason for cancelling the sign request.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 

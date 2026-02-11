@@ -29,6 +29,7 @@ class SignRequestCreateSigner(BaseObject):
         password: Optional[str] = None,
         signer_group_id: Optional[str] = None,
         suppress_notifications: Optional[bool] = None,
+        language: Optional[str] = None,
         **kwargs
     ):
         """
@@ -82,6 +83,9 @@ class SignRequestCreateSigner(BaseObject):
                 :type signer_group_id: Optional[str], optional
                 :param suppress_notifications: If true, no emails about the sign request will be sent., defaults to None
                 :type suppress_notifications: Optional[bool], optional
+                :param language: The language of the user, formatted in modified version of the
+        [ISO 639-1](https://developer.box.com/guides/api-calls/language-codes) format., defaults to None
+                :type language: Optional[str], optional
         """
         super().__init__(**kwargs)
         self.email = email
@@ -96,3 +100,4 @@ class SignRequestCreateSigner(BaseObject):
         self.password = password
         self.signer_group_id = signer_group_id
         self.suppress_notifications = suppress_notifications
+        self.language = language
