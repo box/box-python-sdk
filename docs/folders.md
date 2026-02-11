@@ -42,7 +42,7 @@ client.folders.get_folder_by_id("0")
 - direction `Optional[GetFolderByIdDirection]`
   - The direction to sort results in. This can be either in alphabetical ascending (`ASC`) or descending (`DESC`) order.
 - offset `Optional[int]`
-  - The offset of the item at which to begin the response. Queries with offset parameter value exceeding 10000 will be rejected with a 400 response.
+  - The offset of the item at which to begin the response. Offset-based pagination is not guaranteed to work reliably for high offset values and may fail for large datasets. In those cases, reduce the number of items in the folder (for example, by restructuring the folder into smaller subfolders) before retrying the request.
 - limit `Optional[int]`
   - The maximum number of items to return per page.
 - if_none_match `Optional[str]`
@@ -195,7 +195,7 @@ client.folders.get_folder_items(folder_origin.id)
 - marker `Optional[str]`
   - Defines the position marker at which to begin returning results. This is used when paginating using marker-based pagination. This requires `usemarker` to be set to `true`.
 - offset `Optional[int]`
-  - The offset of the item at which to begin the response. Queries with offset parameter value exceeding 10000 will be rejected with a 400 response.
+  - The offset of the item at which to begin the response. Offset-based pagination is not guaranteed to work reliably for high offset values and may fail for large datasets. In those cases, use marker-based pagination by setting `usemarker` to `true`.
 - limit `Optional[int]`
   - The maximum number of items to return per page.
 - sort `Optional[GetFolderItemsSort]`
