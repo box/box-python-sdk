@@ -274,6 +274,8 @@ from box_sdk_gen.schemas.shield_information_barrier_segment_restriction_base imp
 
 from box_sdk_gen.schemas.shield_information_barrier_segment_restriction_mini import *
 
+from box_sdk_gen.schemas.sign_request_cancel_request import *
+
 from box_sdk_gen.schemas.sign_request_create_signer import *
 
 from box_sdk_gen.schemas.sign_request_prefill_tag import *
