@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.4.0](https://github.com/box/box-python-sdk/compare/v10.3.0...v10.4.0) (2026-02-11)
+
+
+### Bug Fixes
+
+* Correct enum value for legal hold policy changes (box/box-openapi[#581](https://github.com/box/box-python-sdk/issues/581)) ([#1304](https://github.com/box/box-python-sdk/issues/1304)) ([d51b4ea](https://github.com/box/box-python-sdk/commit/d51b4eac0a0e2cbb593871bd35e48f0e4cbe6693))
+
+
+### New Features and Enhancements
+
+* add confidence scores for structured extract (box/box-openapi[#582](https://github.com/box/box-python-sdk/issues/582)) ([#1311](https://github.com/box/box-python-sdk/issues/1311)) ([9db7a80](https://github.com/box/box-python-sdk/commit/9db7a80514e4d0c45baf05cd6823c88e6666b395))
+* add signer language, cancel sign request reason (box/box-openapi[#584](https://github.com/box/box-python-sdk/issues/584)) ([#1331](https://github.com/box/box-python-sdk/issues/1331)) ([fcca2a4](https://github.com/box/box-python-sdk/commit/fcca2a47439189c2f4986596cdfd7d3c303c9ec2))
+* Add watermarking permissions and sources information (box/box-openapi[#579](https://github.com/box/box-python-sdk/issues/579)) ([#1300](https://github.com/box/box-python-sdk/issues/1300)) ([7a2c7e3](https://github.com/box/box-python-sdk/commit/7a2c7e3596c352a3f4d1f73f57c8032bd02f8cdf))
+
 ## [10.3.0](https://github.com/box/box-python-sdk/compare/v10.2.0...v10.3.0) (2025-12-19)
 
 
