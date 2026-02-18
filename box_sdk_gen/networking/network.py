@@ -6,6 +6,7 @@ from .box_network_client import BoxNetworkClient
 from .proxy_config import ProxyConfig
 from .base_urls import BaseUrls
 from .retries import RetryStrategy, BoxRetryStrategy
+from .timeout_config import TimeoutConfig
 
 
 class NetworkSession:
@@ -18,6 +19,7 @@ class NetworkSession:
         base_urls: BaseUrls = None,
         proxy_url: str = None,
         data_sanitizer: DataSanitizer = None,
+        timeout_config: TimeoutConfig = None,
     ):
         if additional_headers is None:
             additional_headers = {}
@@ -38,12 +40,18 @@ class NetworkSession:
             }
         if data_sanitizer is None:
             data_sanitizer = DataSanitizer()
+        if timeout_config is None:
+            timeout_config = TimeoutConfig(
+                connection_timeout_ms=5000,
+                read_timeout_ms=60000,
+            )
         self.additional_headers = additional_headers
         self.base_urls = base_urls
         self.proxy_url = proxy_url
         self.network_client = network_client
         self.retry_strategy = retry_strategy
         self.data_sanitizer = data_sanitizer
+        self.timeout_config = timeout_config
 
     def with_additional_headers(
         self, additional_headers: Dict[str, str] = None
@@ -61,6 +69,7 @@ class NetworkSession:
             proxy_url=self.proxy_url,
             retry_strategy=self.retry_strategy,
             data_sanitizer=self.data_sanitizer,
+            timeout_config=self.timeout_config,
         )
 
     def with_custom_base_urls(self, base_urls: BaseUrls) -> 'NetworkSession':
@@ -77,6 +86,7 @@ class NetworkSession:
             proxy_url=self.proxy_url,
             retry_strategy=self.retry_strategy,
             data_sanitizer=self.data_sanitizer,
+            timeout_config=self.timeout_config,
         )
 
     def with_proxy(self, config: ProxyConfig) -> 'NetworkSession':
@@ -103,6 +113,7 @@ class NetworkSession:
             proxy_url=proxy_url,
             retry_strategy=self.retry_strategy,
             data_sanitizer=self.data_sanitizer,
+            timeout_config=self.timeout_config,
         )
 
     def with_network_client(self, network_client: NetworkClient) -> 'NetworkSession':
@@ -119,6 +130,7 @@ class NetworkSession:
             proxy_url=self.proxy_url,
             retry_strategy=self.retry_strategy,
             data_sanitizer=self.data_sanitizer,
+            timeout_config=self.timeout_config,
         )
 
     def with_retry_strategy(self, retry_strategy: RetryStrategy) -> 'NetworkSession':
@@ -135,6 +147,7 @@ class NetworkSession:
             proxy_url=self.proxy_url,
             retry_strategy=retry_strategy,
             data_sanitizer=self.data_sanitizer,
+            timeout_config=self.timeout_config,
         )
 
     def with_data_sanitizer(self, data_sanitizer: DataSanitizer) -> 'NetworkSession':
@@ -151,4 +164,22 @@ class NetworkSession:
             proxy_url=self.proxy_url,
             retry_strategy=self.retry_strategy,
             data_sanitizer=data_sanitizer,
+            timeout_config=self.timeout_config,
+        )
+
+    def with_timeout_config(self, timeout_config: TimeoutConfig) -> 'NetworkSession':
+        """
+        Generate a fresh network session by duplicating the existing configuration and network parameters,
+        while also including timeout config to be used for every API call.
+        :param timeout_config: TimeoutConfig object, which contains the timeout config
+        :return: a new instance of NetworkSession
+        """
+        return NetworkSession(
+            network_client=self.network_client,
+            additional_headers=self.additional_headers,
+            base_urls=self.base_urls,
+            proxy_url=self.proxy_url,
+            retry_strategy=self.retry_strategy,
+            data_sanitizer=self.data_sanitizer,
+            timeout_config=timeout_config,
         )
