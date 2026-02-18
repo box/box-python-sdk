@@ -1,5 +1,7 @@
 from box_sdk_gen.networking.box_network_client import *
 
+from box_sdk_gen.networking.timeout_config import *
+
 from box_sdk_gen.networking.proxy_config import *
 
 from box_sdk_gen.networking.network import *
