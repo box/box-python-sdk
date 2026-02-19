@@ -358,9 +358,9 @@ from box_sdk_gen.schemas.upload_part_mini import *
 
 from box_sdk_gen.schemas.upload_part import *
 
-from box_sdk_gen.schemas.uploaded_part import *
-
 from box_sdk_gen.schemas.upload_parts import *
+
+from box_sdk_gen.schemas.uploaded_part import *
 
 from box_sdk_gen.schemas.upload_session import *
 
@@ -500,6 +500,12 @@ from box_sdk_gen.schemas.user_avatar import *
 
 from box_sdk_gen.schemas.watermark import *
 
+from box_sdk_gen.schemas.webhook_mini import *
+
+from box_sdk_gen.schemas.webhooks import *
+
+from box_sdk_gen.schemas.webhook import *
+
 from box_sdk_gen.schemas.web_link_base import *
 
 from box_sdk_gen.schemas.web_link_mini import *
@@ -567,12 +573,6 @@ from box_sdk_gen.schemas.app_item_associated_item import *
 from box_sdk_gen.schemas.app_item_association import *
 
 from box_sdk_gen.schemas.app_item_associations import *
-
-from box_sdk_gen.schemas.webhook_mini import *
-
-from box_sdk_gen.schemas.webhooks import *
-
-from box_sdk_gen.schemas.webhook import *
 
 from box_sdk_gen.schemas.workflow_mini import *
 
