@@ -158,6 +158,15 @@ class ArchivesManager:
 
                 To learn more about the archive APIs, see the [Archive API Guide](https://developer.box.com/guides/archives).
 
+
+                <Danger>
+
+
+                This endpoint is currently unavailable. Please contact support for assistance.
+
+
+                </Danger>
+
                 :param archive_id: The ID of the archive.
         Example: "982312"
                 :type archive_id: str
