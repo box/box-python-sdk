@@ -13,6 +13,7 @@
   - [Network Exception Handling](#network-exception-handling)
   - [Customizing Retry Parameters](#customizing-retry-parameters)
   - [Custom Retry Strategy](#custom-retry-strategy)
+- [Timeouts](#timeouts)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -189,3 +190,30 @@ auth = BoxDeveloperTokenAuth(token="DEVELOPER_TOKEN_GOES_HERE")
 network_session = NetworkSession(retry_strategy=CustomRetryStrategy())
 client = BoxClient(auth=auth, network_session=network_session)
 ```
+
+## Timeouts
+
+You can configure network timeouts with `TimeoutConfig` on `NetworkSession`.
+Python SDK supports separate connection and read timeout values in milliseconds.
+
+```python
+from box_sdk_gen import BoxClient, BoxDeveloperTokenAuth, NetworkSession, TimeoutConfig
+
+auth = BoxDeveloperTokenAuth(token="DEVELOPER_TOKEN_GOES_HERE")
+timeout_config = TimeoutConfig(
+    connection_timeout_ms=10000,
+    read_timeout_ms=30000,
+)
+network_session = NetworkSession(timeout_config=timeout_config)
+client = BoxClient(auth=auth, network_session=network_session)
+```
+
+How timeout handling works:
+
+- Timeout values are configured in milliseconds and converted to seconds internally for HTTP requests.
+- The SDK uses default timeouts when timeout config is not provided: `connection_timeout_ms=5000` and `read_timeout_ms=60000`.
+- To disable all SDK timeouts, pass `TimeoutConfig(connection_timeout_ms=None, read_timeout_ms=None)` explicitly to `NetworkSession`.
+- You can also disable only one timeout by setting one value to `None` (for example, `connection_timeout_ms=None` or `read_timeout_ms=None`). If you provide only the other value (for example, `read_timeout_ms=30000`) and leave one unspecified, the unspecified field remains `None` and that timeout stays disabled.
+- Timeout failures are treated as network exceptions, and retry behavior is controlled by the configured retry strategy.
+- Timeout applies to a single HTTP request attempt to the Box API (not the total time across all retries).
+- If retries are exhausted, the SDK raises `BoxSDKError` with the underlying request exception.
