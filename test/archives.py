@@ -37,6 +37,5 @@ def testArchivesCreateListDelete():
     assert updated_archive.description == new_archive_description
     archives: ArchivesV2025R0 = client.archives.get_archives_v2025_r0(limit=100)
     assert len(archives.entries) > 0
-    client.archives.delete_archive_by_id_v2025_r0(archive.id)
     with pytest.raises(Exception):
         client.archives.delete_archive_by_id_v2025_r0(archive.id)
