@@ -26,6 +26,8 @@ from box_sdk_gen.networking.fetch_options import ResponseFormat
 
 from box_sdk_gen.schemas.user_full import UserFull
 
+from box_sdk_gen.networking.timeout_config import TimeoutConfig
+
 from box_sdk_gen.internal.utils import get_uuid
 
 from box_sdk_gen.internal.utils import generate_byte_stream
@@ -218,3 +220,20 @@ def testWithCustomBaseUrls():
     custom_base_client: BoxClient = client.with_custom_base_urls(new_base_urls)
     with pytest.raises(Exception):
         custom_base_client.users.get_user_me()
+
+
+def testWithTimeoutWhenTimeoutOccurs():
+    read_timeout_ms: int = 1
+    client_with_timeout: BoxClient = client.with_timeouts(
+        TimeoutConfig(read_timeout_ms=read_timeout_ms)
+    )
+    with pytest.raises(Exception):
+        client_with_timeout.users.get_user_me()
+
+
+def testWithTimeoutWhenTimeoutDoesNotOccur():
+    read_timeout_ms: int = 10000
+    client_with_timeout: BoxClient = client.with_timeouts(
+        TimeoutConfig(read_timeout_ms=read_timeout_ms)
+    )
+    client_with_timeout.users.get_user_me()

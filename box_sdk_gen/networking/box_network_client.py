@@ -3,7 +3,7 @@ import io
 import time
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Optional, Dict, Union
+from typing import Optional, Dict, Union, Tuple
 from sys import version_info as py_version
 
 import requests
@@ -17,6 +17,7 @@ from ..networking.fetch_response import FetchResponse
 from ..box.errors import BoxAPIError, BoxSDKError, RequestInfo, ResponseInfo
 from ..internal.utils import ByteStream, ResponseByteStream
 from ..networking.network_client import NetworkClient
+from ..networking.timeout_config import TimeoutConfig
 from ..serialization.json import (
     sd_to_json,
     sd_to_url_params,
@@ -40,6 +41,7 @@ class APIRequest:
     params: Dict[str, str]
     data: Optional[Union[str, ByteStream, MultipartEncoder]]
     allow_redirects: bool = True
+    timeout: Optional[Tuple[Optional[float], Optional[float]]] = None
 
 
 @dataclass
@@ -151,6 +153,7 @@ class BoxNetworkClient(NetworkClient):
             options.content_type, options.file_stream or options.data
         )
         allow_redirects = options.follow_redirects
+        timeout = self._get_request_timeout(options)
 
         if options.content_type:
             if options.content_type == 'multipart/form-data':
@@ -178,7 +181,42 @@ class BoxNetworkClient(NetworkClient):
             params=params,
             data=data,
             allow_redirects=allow_redirects,
+            timeout=timeout,
         )
+
+    @staticmethod
+    def _get_request_timeout(
+        options: 'FetchOptions',
+    ) -> Optional[Tuple[Optional[float], Optional[float]]]:
+        """
+        Derive requests timeout tuple (connect, read) in seconds.
+
+        Uses `options.network_session.timeout_config` when present.
+        The timeout config values are expected to be in milliseconds.
+        """
+        network_session = options.network_session
+        timeout_config = network_session.timeout_config if network_session else None
+        if timeout_config is None:
+            return None
+
+        connection_timeout_ms, read_timeout_ms = (
+            timeout_config.connection_timeout_ms,
+            timeout_config.read_timeout_ms,
+        )
+
+        if connection_timeout_ms is None and read_timeout_ms is None:
+            return None
+
+        connection_timeout_sec = (
+            connection_timeout_ms / 1000.0
+            if connection_timeout_ms is not None
+            else None
+        )
+        read_timeout_sec = (
+            read_timeout_ms / 1000.0 if read_timeout_ms is not None else None
+        )
+
+        return (connection_timeout_sec, read_timeout_sec)
 
     @staticmethod
     def _prepare_headers(
@@ -216,12 +254,12 @@ class BoxNetworkClient(NetworkClient):
             or content_type == 'application/octet-stream'
         ):
             return data
-        raise
+        raise ValueError(f'Unsupported content type: {content_type}')
 
     def _make_request(self, request: APIRequest) -> APIResponse:
         raised_exception = None
         reauthentication_needed = False
-        default_timeout = (5, 60)  # connect, read timeout
+        timeout = request.timeout
         try:
             network_response = self.requests_session.request(
                 method=request.method,
@@ -231,7 +269,7 @@ class BoxNetworkClient(NetworkClient):
                 params=request.params,
                 allow_redirects=request.allow_redirects,
                 stream=True,
-                timeout=default_timeout,
+                timeout=timeout,
             )
         except RequestException as request_exc:
             raised_exception = request_exc

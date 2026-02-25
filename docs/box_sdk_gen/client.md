@@ -15,6 +15,7 @@ divided across resource managers.
   - [Suppress notifications](#suppress-notifications)
   - [Custom headers](#custom-headers)
 - [Custom Base URLs](#custom-base-urls)
+- [Use Timeouts for API calls](#use-timeouts-for-api-calls)
 - [Use Proxy for API calls](#use-proxy-for-api-calls)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -149,6 +150,18 @@ new_client = client.with_custom_base_urls(base_urls=BaseUrls(
   upload_url='https://upload.box.com/api',
   oauth_2_url='https://account.box.com/api/oauth2',
 ))
+```
+
+# Use Timeouts for API calls
+
+In order to configure timeout for API calls, calling the `client.with_timeouts(config)` method creates a new client with timeout settings, leaving the original client unmodified.
+
+```python
+timeout_config = TimeoutConfig(
+  connection_timeout_ms=10000,
+  read_timeout_ms=30000
+)
+new_client = client.with_timeouts(timeout_config)
 ```
 
 # Use Proxy for API calls
