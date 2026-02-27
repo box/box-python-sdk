@@ -202,6 +202,8 @@ from box_sdk_gen.networking.fetch_response import FetchResponse
 
 from box_sdk_gen.networking.base_urls import BaseUrls
 
+from box_sdk_gen.networking.timeout_config import TimeoutConfig
+
 from box_sdk_gen.networking.proxy_config import ProxyConfig
 
 
@@ -544,4 +546,15 @@ class BoxClient:
         """
         return BoxClient(
             auth=self.auth, network_session=self.network_session.with_proxy(config)
+        )
+
+    def with_timeouts(self, config: TimeoutConfig) -> 'BoxClient':
+        """
+        Create a new client with custom timeouts that will be used for every API call
+        :param config: Timeout configuration.
+        :type config: TimeoutConfig
+        """
+        return BoxClient(
+            auth=self.auth,
+            network_session=self.network_session.with_timeout_config(config),
         )
