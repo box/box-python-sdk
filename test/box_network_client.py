@@ -175,6 +175,25 @@ def network_session_mock():
     return NetworkSession()
 
 
+def test_network_session_uses_default_timeout_config_values():
+    network_session = NetworkSession()
+
+    assert network_session.timeout_config.connection_timeout_ms == 5000
+    assert network_session.timeout_config.read_timeout_ms == 60000
+
+
+def test_prepare_request_uses_default_network_session_timeouts(network_client):
+    options = FetchOptions(
+        url="https://example.com",
+        method="GET",
+        network_session=NetworkSession(),
+    )
+
+    api_request = network_client._prepare_request(options=options)
+
+    assert api_request.timeout == (5, 60)
+
+
 @pytest.fixture
 def network_client(mock_requests_session):
     return BoxNetworkClient(mock_requests_session)
@@ -295,7 +314,7 @@ def test_prepare_body_invalid_content_type(network_client):
         network_client._prepare_body("invalid_content_type", {})
 
 
-def test_prepare_json_request(network_client):
+def test_prepare_json_request(network_client, network_session_mock):
     options = FetchOptions(
         url="https://example.com",
         method="POST",
@@ -303,6 +322,7 @@ def test_prepare_json_request(network_client):
         headers={"header": "test"},
         params={"param": "value"},
         content_type="application/json",
+        network_session=network_session_mock,
     )
 
     api_request = network_client._prepare_request(options=options)
@@ -318,6 +338,7 @@ def test_prepare_json_request(network_client):
         },
         params={"param": "value"},
         data='{"key": "value"}',
+        timeout=(5, 60),
     )
 
 
@@ -379,7 +400,7 @@ def test_make_request(network_client, mock_requests_session, response_200):
     )
     assert mock_requests_session.request.call_count == 1
     mock_requests_session.request.assert_called_once_with(
-        **request_params, stream=True, timeout=(5, 60)
+        **request_params, stream=True, timeout=None
     )
 
 
