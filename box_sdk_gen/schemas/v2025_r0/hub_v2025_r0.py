@@ -27,6 +27,7 @@ class HubV2025R0(HubBaseV2025R0):
         is_collaboration_restricted_to_enterprise: Optional[bool] = None,
         can_non_owners_invite: Optional[bool] = None,
         can_shared_link_be_created: Optional[bool] = None,
+        can_public_shared_link_be_created: Optional[bool] = None,
         type: HubBaseV2025R0TypeField = HubBaseV2025R0TypeField.HUBS,
         **kwargs
     ):
@@ -59,6 +60,8 @@ class HubV2025R0(HubBaseV2025R0):
                 :type can_non_owners_invite: Optional[bool], optional
                 :param can_shared_link_be_created: Indicates if a shared link can be created for the Box Hub., defaults to None
                 :type can_shared_link_be_created: Optional[bool], optional
+                :param can_public_shared_link_be_created: Indicates if a public shared link can be created for the Box Hub., defaults to None
+                :type can_public_shared_link_be_created: Optional[bool], optional
                 :param type: The value will always be `hubs`., defaults to HubBaseV2025R0TypeField.HUBS
                 :type type: HubBaseV2025R0TypeField, optional
         """
@@ -76,3 +79,4 @@ class HubV2025R0(HubBaseV2025R0):
         )
         self.can_non_owners_invite = can_non_owners_invite
         self.can_shared_link_be_created = can_shared_link_be_created
+        self.can_public_shared_link_be_created = can_public_shared_link_be_created

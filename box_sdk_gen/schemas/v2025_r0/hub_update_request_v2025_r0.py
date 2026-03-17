@@ -15,6 +15,7 @@ class HubUpdateRequestV2025R0(BaseObject):
         is_collaboration_restricted_to_enterprise: Optional[bool] = None,
         can_non_owners_invite: Optional[bool] = None,
         can_shared_link_be_created: Optional[bool] = None,
+        can_public_shared_link_be_created: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -30,6 +31,8 @@ class HubUpdateRequestV2025R0(BaseObject):
         :type can_non_owners_invite: Optional[bool], optional
         :param can_shared_link_be_created: Indicates if a shared link can be created for the Box Hub., defaults to None
         :type can_shared_link_be_created: Optional[bool], optional
+        :param can_public_shared_link_be_created: Indicates if a public shared link can be created for the Box Hub., defaults to None
+        :type can_public_shared_link_be_created: Optional[bool], optional
         """
         super().__init__(**kwargs)
         self.title = title
@@ -40,3 +43,4 @@ class HubUpdateRequestV2025R0(BaseObject):
         )
         self.can_non_owners_invite = can_non_owners_invite
         self.can_shared_link_be_created = can_shared_link_be_created
+        self.can_public_shared_link_be_created = can_public_shared_link_be_created

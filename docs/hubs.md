@@ -188,6 +188,8 @@ client.hubs.update_hub_by_id_v2025_r0(
   - Indicates if non-owners can invite others to the Box Hub.
 - can_shared_link_be_created `Optional[bool]`
   - Indicates if a shared link can be created for the Box Hub.
+- can_public_shared_link_be_created `Optional[bool]`
+  - Indicates if a public shared link can be created for the Box Hub.
 - box_version `BoxVersionHeaderV2025R0`
   - Version header.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
