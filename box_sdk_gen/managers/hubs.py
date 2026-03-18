@@ -303,6 +303,7 @@ class HubsManager:
         is_collaboration_restricted_to_enterprise: Optional[bool] = None,
         can_non_owners_invite: Optional[bool] = None,
         can_shared_link_be_created: Optional[bool] = None,
+        can_public_shared_link_be_created: Optional[bool] = None,
         box_version: BoxVersionHeaderV2025R0 = BoxVersionHeaderV2025R0._2025_0,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubV2025R0:
@@ -329,6 +330,8 @@ class HubsManager:
                 :type can_non_owners_invite: Optional[bool], optional
                 :param can_shared_link_be_created: Indicates if a shared link can be created for the Box Hub., defaults to None
                 :type can_shared_link_be_created: Optional[bool], optional
+                :param can_public_shared_link_be_created: Indicates if a public shared link can be created for the Box Hub., defaults to None
+                :type can_public_shared_link_be_created: Optional[bool], optional
                 :param box_version: Version header., defaults to BoxVersionHeaderV2025R0._2025_0
                 :type box_version: BoxVersionHeaderV2025R0, optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
@@ -345,6 +348,7 @@ class HubsManager:
             ),
             'can_non_owners_invite': can_non_owners_invite,
             'can_shared_link_be_created': can_shared_link_be_created,
+            'can_public_shared_link_be_created': can_public_shared_link_be_created,
         }
         headers_map: Dict[str, str] = prepare_params(
             {'box-version': to_string(box_version), **extra_headers}
