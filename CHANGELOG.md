@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.5.0](https://github.com/box/box-python-sdk/compare/v10.4.0...v10.5.0) (2026-03-18)
+
+
+### New Features and Enhancements
+
+* add `canPublicSharedLinkBeCreated` to `Hubs` (box/box-codegen[#928](https://github.com/box/box-python-sdk/issues/928)) ([#1356](https://github.com/box/box-python-sdk/issues/1356)) ([6af2956](https://github.com/box/box-python-sdk/commit/6af2956c1cccf864a16b1b854b49c9058ebb9102))
+* Add configurable timeouts for SDKs (box/box-codegen[#924](https://github.com/box/box-python-sdk/issues/924)) ([#1349](https://github.com/box/box-python-sdk/issues/1349)) ([6c556cc](https://github.com/box/box-python-sdk/commit/6c556ccf4ce097b503209c055c9871c39944cdbd))
+
 ## [10.4.0](https://github.com/box/box-python-sdk/compare/v10.3.0...v10.4.0) (2026-02-11)
 
 
