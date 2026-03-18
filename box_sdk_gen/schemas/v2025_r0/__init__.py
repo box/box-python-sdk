@@ -70,26 +70,6 @@ from box_sdk_gen.schemas.v2025_r0.hub_copy_request_v2025_r0 import *
 
 from box_sdk_gen.schemas.v2025_r0.hub_create_request_v2025_r0 import *
 
-from box_sdk_gen.schemas.v2025_r0.hub_document_block_v2025_r0 import *
-
-from box_sdk_gen.schemas.v2025_r0.hub_section_title_text_block_v2025_r0 import *
-
-from box_sdk_gen.schemas.v2025_r0.hub_paragraph_text_block_v2025_r0 import *
-
-from box_sdk_gen.schemas.v2025_r0.hub_item_list_block_v2025_r0 import *
-
-from box_sdk_gen.schemas.v2025_r0.hub_divider_block_v2025_r0 import *
-
-from box_sdk_gen.schemas.v2025_r0.hub_callout_box_text_block_v2025_r0 import *
-
-from box_sdk_gen.schemas.v2025_r0.hub_document_block_entry_v2025_r0 import *
-
-from box_sdk_gen.schemas.v2025_r0.hub_document_blocks_v2025_r0 import *
-
-from box_sdk_gen.schemas.v2025_r0.hub_document_page_v2025_r0 import *
-
-from box_sdk_gen.schemas.v2025_r0.hub_document_pages_v2025_r0 import *
-
 from box_sdk_gen.schemas.v2025_r0.hub_item_v2025_r0 import *
 
 from box_sdk_gen.schemas.v2025_r0.hub_items_v2025_r0 import *

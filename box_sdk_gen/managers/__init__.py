@@ -156,8 +156,6 @@ from box_sdk_gen.managers.hub_collaborations import *
 
 from box_sdk_gen.managers.hub_items import *
 
-from box_sdk_gen.managers.hub_document import *
-
 from box_sdk_gen.managers.shield_lists import *
 
 from box_sdk_gen.managers.archives import *
