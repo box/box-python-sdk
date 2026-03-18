@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.5.0](https://github.com/box/box-python-sdk/compare/v4.4.0...v4.5.0) (2026-03-18)
+
+
+### New Features and Enhancements:
+
+* **boxsdkgen:** add `canPublicSharedLinkBeCreated` to `Hubs` (box/box-codegen[#928](https://github.com/box/box-python-sdk/issues/928)) ([#1355](https://github.com/box/box-python-sdk/issues/1355)) ([6bc7d44](https://github.com/box/box-python-sdk/commit/6bc7d446457968afa994b8914f9a6437069a5677))
+* **boxsdkgen:** Add configurable for SDKs (box/box-codegen[#924](https://github.com/box/box-python-sdk/issues/924)) ([#1348](https://github.com/box/box-python-sdk/issues/1348)) ([ce35a52](https://github.com/box/box-python-sdk/commit/ce35a526eecadf70a9bd14f1ab4ad65131c8a926))
+
 ## [4.4.0](https://github.com/box/box-python-sdk/compare/v4.3.0...v4.4.0) (2026-02-11)
 
 
