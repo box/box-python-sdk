@@ -22,6 +22,8 @@ client.hub_items.get_hub_items_v2025_r0(created_hub.id)
 
 - hub_id `str`
   - The unique identifier that represent a hub. The ID for any hub can be determined by visiting this hub in the web application and copying the ID from the URL. For example, for the URL `https://*.app.box.com/hubs/123` the `hub_id` is `123`.
+- parent_id `Optional[str]`
+  - The unique identifier of an item list block within the Box Hub. When provided, the response will only include items that belong to the specified item list, allowing you to filter results to items on a specific page or section.
 - marker `Optional[str]`
   - Defines the position marker at which to begin returning results. This is used when paginating using marker-based pagination. This requires `usemarker` to be set to `true`.
 - limit `Optional[int]`
