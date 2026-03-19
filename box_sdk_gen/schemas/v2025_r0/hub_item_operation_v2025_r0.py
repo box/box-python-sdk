@@ -1,5 +1,7 @@
 from enum import Enum
 
+from typing import Optional
+
 from box_sdk_gen.internal.base_object import BaseObject
 
 from box_sdk_gen.schemas.v2025_r0.file_reference_v2025_r0 import FileReferenceV2025R0
@@ -29,12 +31,17 @@ class HubItemOperationV2025R0(BaseObject):
         self,
         action: HubItemOperationV2025R0ActionField,
         item: HubItemReferenceV2025R0,
+        *,
+        parent_id: Optional[str] = None,
         **kwargs
     ):
         """
         :param action: The action to perform on a Box Hub item.
         :type action: HubItemOperationV2025R0ActionField
+        :param parent_id: The ID of the parent block to add the item to. Must be an Item List block. If not provided, the item will be added to the first page's first Item List block., defaults to None
+        :type parent_id: Optional[str], optional
         """
         super().__init__(**kwargs)
         self.action = action
         self.item = item
+        self.parent_id = parent_id
