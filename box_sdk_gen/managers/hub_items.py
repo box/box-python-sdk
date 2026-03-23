@@ -69,6 +69,7 @@ class HubItemsManager:
         self,
         hub_id: str,
         *,
+        parent_id: Optional[str] = None,
         marker: Optional[str] = None,
         limit: Optional[int] = None,
         box_version: BoxVersionHeaderV2025R0 = BoxVersionHeaderV2025R0._2025_0,
@@ -84,6 +85,12 @@ class HubItemsManager:
         for the URL `https://*.app.box.com/hubs/123`
         the `hub_id` is `123`.
                 :type hub_id: str
+                :param parent_id: The unique identifier of an item list block within the Box Hub.
+
+        When provided, the response will only include items that belong
+        to the specified item list, allowing you to filter results to
+        items on a specific page or section., defaults to None
+                :type parent_id: Optional[str], optional
                 :param marker: Defines the position marker at which to begin returning results. This is
         used when paginating using marker-based pagination.
 
@@ -101,6 +108,7 @@ class HubItemsManager:
         query_params_map: Dict[str, str] = prepare_params(
             {
                 'hub_id': to_string(hub_id),
+                'parent_id': to_string(parent_id),
                 'marker': to_string(marker),
                 'limit': to_string(limit),
             }
