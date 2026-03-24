@@ -92,6 +92,9 @@ class TrashedItemsManager:
 
                 marker-based pagination using the `marker` parameter.
 
+
+                The number of entries returned may be less than `total_count`. For example, if a user deletes items from a shared folder and is later removed as a collaborator, those deleted items will no longer appear in this endpoint’s results, even though they are still included in `total_count`.
+
                 :param fields: A comma-separated list of attributes to include in the
         response. This can be used to request fields that are
         not normally returned in a standard response.
