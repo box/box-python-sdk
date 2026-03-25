@@ -85,6 +85,15 @@ class SignRequestSignerInputContentTypeField(str, Enum):
 
 
 class SignRequestSignerInput(SignRequestPrefillTag):
+    _discriminator = 'type', {
+        'signature',
+        'date',
+        'text',
+        'checkbox',
+        'radio',
+        'dropdown',
+    }
+
     def __init__(
         self,
         page_index: int,

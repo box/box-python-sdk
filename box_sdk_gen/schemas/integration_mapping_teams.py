@@ -22,6 +22,8 @@ class IntegrationMappingTeamsIntegrationTypeField(str, Enum):
 
 
 class IntegrationMappingTeams(IntegrationMappingBase):
+    _discriminator = 'type', {'integration_mapping'}
+
     def __init__(
         self,
         partner_item: IntegrationMappingPartnerItemTeams,

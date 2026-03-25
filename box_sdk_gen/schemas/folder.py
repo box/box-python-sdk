@@ -209,6 +209,8 @@ class FolderItemStatusField(str, Enum):
 
 
 class Folder(FolderMini):
+    _discriminator = 'type', {'folder'}
+
     def __init__(
         self,
         id: str,

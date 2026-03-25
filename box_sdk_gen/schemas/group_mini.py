@@ -15,6 +15,8 @@ class GroupMiniGroupTypeField(str, Enum):
 
 
 class GroupMini(GroupBase):
+    _discriminator = 'type', {'group'}
+
     def __init__(
         self,
         id: str,

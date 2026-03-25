@@ -16,6 +16,8 @@ from box_sdk_gen.box.errors import BoxSDKError
 
 
 class CommentFull(Comment):
+    _discriminator = 'type', {'comment'}
+
     def __init__(
         self,
         *,

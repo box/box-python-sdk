@@ -16,6 +16,8 @@ from box_sdk_gen.box.errors import BoxSDKError
 
 
 class FileVersionFull(FileVersion):
+    _discriminator = 'type', {'file_version'}
+
     def __init__(
         self,
         id: str,

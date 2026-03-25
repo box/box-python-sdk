@@ -12,6 +12,8 @@ from box_sdk_gen.box.errors import BoxSDKError
 
 
 class FileConflict(FileMini):
+    _discriminator = 'type', {'file'}
+
     def __init__(
         self,
         id: str,

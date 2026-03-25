@@ -14,6 +14,8 @@ from box_sdk_gen.internal.utils import DateTime
 
 
 class FileVersion(FileVersionMini):
+    _discriminator = 'type', {'file_version'}
+
     def __init__(
         self,
         id: str,

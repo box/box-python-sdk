@@ -15,6 +15,8 @@ class GroupMiniV2025R0GroupTypeField(str, Enum):
 
 
 class GroupMiniV2025R0(GroupBaseV2025R0):
+    _discriminator = 'type', {'group'}
+
     def __init__(
         self,
         id: str,

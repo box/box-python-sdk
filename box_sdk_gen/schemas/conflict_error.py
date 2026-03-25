@@ -28,6 +28,8 @@ class ConflictErrorContextInfoField(BaseObject):
 
 
 class ConflictError(ClientError):
+    _discriminator = 'type', {'error'}
+
     def __init__(
         self,
         *,

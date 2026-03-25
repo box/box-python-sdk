@@ -28,6 +28,8 @@ class IntegrationMappingIntegrationTypeField(str, Enum):
 
 
 class IntegrationMapping(IntegrationMappingBase):
+    _discriminator = 'type', {'integration_mapping'}
+
     def __init__(
         self,
         partner_item: IntegrationMappingPartnerItemSlack,

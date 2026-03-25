@@ -28,6 +28,8 @@ from box_sdk_gen.box.errors import BoxSDKError
 
 
 class AiSingleAgentResponseFull(AiSingleAgentResponse):
+    _discriminator = 'type', {'ai_agent'}
+
     def __init__(
         self,
         id: str,
