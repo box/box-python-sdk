@@ -64,6 +64,8 @@ class WebhookTriggersField(str, Enum):
 
 
 class Webhook(WebhookMini):
+    _discriminator = 'type', {'webhook'}
+
     def __init__(
         self,
         *,

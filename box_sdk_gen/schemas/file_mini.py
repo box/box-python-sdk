@@ -20,6 +20,7 @@ class FileMini(FileBase):
         'sha1': 'sha_1',
         **FileBase._json_to_fields_mapping,
     }
+    _discriminator = 'type', {'file'}
 
     def __init__(
         self,

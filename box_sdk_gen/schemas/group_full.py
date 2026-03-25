@@ -42,6 +42,8 @@ class GroupFullPermissionsField(BaseObject):
 
 
 class GroupFull(Group):
+    _discriminator = 'type', {'group'}
+
     def __init__(
         self,
         id: str,

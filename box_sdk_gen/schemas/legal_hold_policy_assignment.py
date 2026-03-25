@@ -22,6 +22,8 @@ from box_sdk_gen.internal.utils import DateTime
 
 
 class LegalHoldPolicyAssignment(LegalHoldPolicyAssignmentBase):
+    _discriminator = 'type', {'legal_hold_policy_assignment'}
+
     def __init__(
         self,
         *,

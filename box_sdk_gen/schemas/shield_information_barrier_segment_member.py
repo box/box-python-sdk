@@ -60,6 +60,8 @@ class ShieldInformationBarrierSegmentMemberShieldInformationBarrierSegmentField(
 
 
 class ShieldInformationBarrierSegmentMember(ShieldInformationBarrierSegmentMemberMini):
+    _discriminator = 'type', {'shield_information_barrier_segment_member'}
+
     def __init__(
         self,
         *,
