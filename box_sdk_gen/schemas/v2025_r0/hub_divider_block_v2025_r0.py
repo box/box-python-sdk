@@ -1,0 +1,36 @@
+from enum import Enum
+
+from typing import Optional
+
+from box_sdk_gen.schemas.v2025_r0.hub_document_block_v2025_r0 import (
+    HubDocumentBlockV2025R0,
+)
+
+from box_sdk_gen.box.errors import BoxSDKError
+
+
+class HubDividerBlockV2025R0TypeField(str, Enum):
+    DIVIDER = 'divider'
+
+
+class HubDividerBlockV2025R0(HubDocumentBlockV2025R0):
+    _discriminator = 'type', {'divider'}
+
+    def __init__(
+        self,
+        id: str,
+        *,
+        type: HubDividerBlockV2025R0TypeField = HubDividerBlockV2025R0TypeField.DIVIDER,
+        parent_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :param id: The unique identifier for this block.
+        :type id: str
+        :param type: The type of this block. The value is always `divider`., defaults to HubDividerBlockV2025R0TypeField.DIVIDER
+        :type type: HubDividerBlockV2025R0TypeField, optional
+        :param parent_id: The unique identifier of the parent block. Null for direct children of the page., defaults to None
+        :type parent_id: Optional[str], optional
+        """
+        super().__init__(id=id, parent_id=parent_id, **kwargs)
+        self.type = type
