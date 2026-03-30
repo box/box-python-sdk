@@ -58,6 +58,8 @@ class LegalHoldPolicyAssignmentCountsField(BaseObject):
 
 
 class LegalHoldPolicy(LegalHoldPolicyMini):
+    _discriminator = 'type', {'legal_hold_policy'}
+
     def __init__(
         self,
         id: str,

@@ -120,6 +120,16 @@ class TemplateSignerInputDimensionsField(BaseObject):
 
 
 class TemplateSignerInput(SignRequestPrefillTag):
+    _discriminator = 'type', {
+        'signature',
+        'date',
+        'text',
+        'checkbox',
+        'attachment',
+        'radio',
+        'dropdown',
+    }
+
     def __init__(
         self,
         page_index: int,

@@ -53,6 +53,8 @@ class TermsOfServiceTosTypeField(str, Enum):
 
 
 class TermsOfService(TermsOfServiceBase):
+    _discriminator = 'type', {'terms_of_service'}
+
     def __init__(
         self,
         id: str,

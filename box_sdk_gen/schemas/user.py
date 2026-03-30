@@ -42,6 +42,8 @@ class UserNotificationEmailField(BaseObject):
 
 
 class User(UserMini):
+    _discriminator = 'type', {'user'}
+
     def __init__(
         self,
         id: str,

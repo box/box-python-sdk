@@ -64,6 +64,8 @@ class SignRequestSignFilesField(BaseObject):
 
 
 class SignRequest(SignRequestBase):
+    _discriminator = 'type', {'sign-request'}
+
     def __init__(
         self,
         *,

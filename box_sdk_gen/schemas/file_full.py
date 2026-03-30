@@ -414,6 +414,8 @@ class FileFullSharedLinkPermissionOptionsField(str, Enum):
 
 
 class FileFull(File):
+    _discriminator = 'type', {'file'}
+
     def __init__(
         self,
         id: str,

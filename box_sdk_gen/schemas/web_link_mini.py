@@ -8,6 +8,8 @@ from box_sdk_gen.box.errors import BoxSDKError
 
 
 class WebLinkMini(WebLinkBase):
+    _discriminator = 'type', {'web_link'}
+
     def __init__(
         self,
         id: str,
