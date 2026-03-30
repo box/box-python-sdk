@@ -93,7 +93,7 @@ class SearchForContentContentTypes(str, Enum):
     DESCRIPTION = 'description'
     FILE_CONTENT = 'file_content'
     COMMENTS = 'comments'
-    TAG = 'tag'
+    TAGS = 'tags'
 
 
 class SearchForContentType(str, Enum):

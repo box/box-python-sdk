@@ -25,6 +25,7 @@ class HubItemOperationResultV2025R0(BaseObject):
         *,
         action: Optional[str] = None,
         item: Optional[HubItemReferenceV2025R0] = None,
+        parent_id: Optional[str] = None,
         status: Optional[int] = None,
         error: Optional[str] = None,
         **kwargs
@@ -32,6 +33,8 @@ class HubItemOperationResultV2025R0(BaseObject):
         """
         :param action: The action performed on the item., defaults to None
         :type action: Optional[str], optional
+        :param parent_id: The ID of the parent block the item was added to., defaults to None
+        :type parent_id: Optional[str], optional
         :param status: The HTTP status code of the operation., defaults to None
         :type status: Optional[int], optional
         :param error: Error message if the operation failed., defaults to None
@@ -40,5 +43,6 @@ class HubItemOperationResultV2025R0(BaseObject):
         super().__init__(**kwargs)
         self.action = action
         self.item = item
+        self.parent_id = parent_id
         self.status = status
         self.error = error
