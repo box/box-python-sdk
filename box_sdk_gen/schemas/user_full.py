@@ -61,6 +61,8 @@ class UserFullEnterpriseField(BaseObject):
 
 
 class UserFull(User):
+    _discriminator = 'type', {'user'}
+
     def __init__(
         self,
         id: str,

@@ -14,6 +14,8 @@ from box_sdk_gen.internal.utils import DateTime
 
 
 class Group(GroupMini):
+    _discriminator = 'type', {'group'}
+
     def __init__(
         self,
         id: str,

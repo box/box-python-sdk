@@ -30,6 +30,8 @@ class DocGenJobV2025R0StatusField(str, Enum):
 
 
 class DocGenJobV2025R0(DocGenJobBaseV2025R0):
+    _discriminator = 'type', {'docgen_job'}
+
     def __init__(
         self,
         batch: DocGenBatchBaseV2025R0,

@@ -8,6 +8,8 @@ from box_sdk_gen.box.errors import BoxSDKError
 
 
 class FolderMini(FolderBase):
+    _discriminator = 'type', {'folder'}
+
     def __init__(
         self,
         id: str,

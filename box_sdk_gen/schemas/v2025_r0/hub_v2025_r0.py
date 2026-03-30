@@ -12,6 +12,8 @@ from box_sdk_gen.internal.utils import DateTime
 
 
 class HubV2025R0(HubBaseV2025R0):
+    _discriminator = 'type', {'hubs'}
+
     def __init__(
         self,
         id: str,

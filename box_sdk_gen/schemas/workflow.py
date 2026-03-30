@@ -259,6 +259,8 @@ class WorkflowFlowsField(BaseObject):
 
 
 class Workflow(WorkflowMini):
+    _discriminator = 'type', {'workflow'}
+
     def __init__(
         self,
         *,

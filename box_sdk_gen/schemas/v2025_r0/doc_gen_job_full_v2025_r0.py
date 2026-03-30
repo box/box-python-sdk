@@ -32,6 +32,8 @@ from box_sdk_gen.box.errors import BoxSDKError
 
 
 class DocGenJobFullV2025R0(DocGenJobV2025R0):
+    _discriminator = 'type', {'docgen_job'}
+
     def __init__(
         self,
         created_by: UserBaseV2025R0,

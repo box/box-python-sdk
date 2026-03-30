@@ -8,6 +8,8 @@ from box_sdk_gen.box.errors import BoxSDKError
 
 
 class StoragePolicy(StoragePolicyMini):
+    _discriminator = 'type', {'storage_policy'}
+
     def __init__(
         self,
         id: str,

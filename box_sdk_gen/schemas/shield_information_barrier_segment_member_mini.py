@@ -16,6 +16,8 @@ from box_sdk_gen.box.errors import BoxSDKError
 class ShieldInformationBarrierSegmentMemberMini(
     ShieldInformationBarrierSegmentMemberBase
 ):
+    _discriminator = 'type', {'shield_information_barrier_segment_member'}
+
     def __init__(
         self,
         *,

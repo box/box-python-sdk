@@ -173,6 +173,8 @@ class WebLinkItemStatusField(str, Enum):
 
 
 class WebLink(WebLinkMini):
+    _discriminator = 'type', {'web_link'}
+
     def __init__(
         self,
         id: str,

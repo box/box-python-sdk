@@ -80,6 +80,8 @@ class ShieldInformationBarrierSegmentRestrictionMiniRestrictedSegmentField(BaseO
 class ShieldInformationBarrierSegmentRestrictionMini(
     ShieldInformationBarrierSegmentRestrictionBase
 ):
+    _discriminator = 'type', {'shield_information_barrier_segment_restriction'}
+
     def __init__(
         self,
         shield_information_barrier_segment: ShieldInformationBarrierSegmentRestrictionMiniShieldInformationBarrierSegmentField,

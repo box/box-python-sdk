@@ -8,6 +8,8 @@ from box_sdk_gen.box.errors import BoxSDKError
 
 
 class HubCollaborationUserV2025R0(UserBaseV2025R0):
+    _discriminator = 'type', {'user'}
+
     def __init__(
         self,
         id: str,

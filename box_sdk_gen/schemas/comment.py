@@ -29,6 +29,8 @@ class CommentItemField(BaseObject):
 
 
 class Comment(CommentBase):
+    _discriminator = 'type', {'comment'}
+
     def __init__(
         self,
         *,

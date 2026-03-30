@@ -8,6 +8,8 @@ from box_sdk_gen.box.errors import BoxSDKError
 
 
 class UserCollaborations(UserBase):
+    _discriminator = 'type', {'user'}
+
     def __init__(
         self,
         id: str,

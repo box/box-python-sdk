@@ -18,6 +18,7 @@ class FileVersionMini(FileVersionBase):
         'sha1': 'sha_1',
         **FileVersionBase._json_to_fields_mapping,
     }
+    _discriminator = 'type', {'file_version'}
 
     def __init__(
         self,

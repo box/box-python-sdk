@@ -33,6 +33,8 @@ class ShieldInformationBarrierReportStatusField(str, Enum):
 
 
 class ShieldInformationBarrierReport(ShieldInformationBarrierReportBase):
+    _discriminator = 'type', {'shield_information_barrier_report'}
+
     def __init__(
         self,
         *,

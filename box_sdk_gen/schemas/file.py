@@ -175,6 +175,8 @@ class FileItemStatusField(str, Enum):
 
 
 class File(FileMini):
+    _discriminator = 'type', {'file'}
+
     def __init__(
         self,
         id: str,

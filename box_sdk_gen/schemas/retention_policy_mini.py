@@ -15,6 +15,8 @@ class RetentionPolicyMiniDispositionActionField(str, Enum):
 
 
 class RetentionPolicyMini(RetentionPolicyBase):
+    _discriminator = 'type', {'retention_policy'}
+
     def __init__(
         self,
         id: str,

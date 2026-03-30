@@ -157,6 +157,8 @@ class FolderFullClassificationField(BaseObject):
 
 
 class FolderFull(Folder):
+    _discriminator = 'type', {'folder'}
+
     def __init__(
         self,
         id: str,

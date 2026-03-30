@@ -62,6 +62,8 @@ class RetentionPolicyAssignmentCountsField(BaseObject):
 
 
 class RetentionPolicy(RetentionPolicyMini):
+    _discriminator = 'type', {'retention_policy'}
+
     def __init__(
         self,
         id: str,
