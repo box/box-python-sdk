@@ -188,6 +188,8 @@ from box_sdk_gen.schemas.keyword_skill_card import *
 
 from box_sdk_gen.schemas.legal_hold_policy_mini import *
 
+from box_sdk_gen.schemas.legal_hold_policy_assigned_item import *
+
 from box_sdk_gen.schemas.legal_hold_policy_assignment_base import *
 
 from box_sdk_gen.schemas.metadata_base import *
@@ -414,6 +416,14 @@ from box_sdk_gen.schemas.retention_policy import *
 
 from box_sdk_gen.schemas.retention_policies import *
 
+from box_sdk_gen.schemas.legal_hold_policy_assignment import *
+
+from box_sdk_gen.schemas.legal_hold_policy_assignments import *
+
+from box_sdk_gen.schemas.file_version_legal_hold import *
+
+from box_sdk_gen.schemas.file_version_legal_holds import *
+
 from box_sdk_gen.schemas.legal_hold_policy import *
 
 from box_sdk_gen.schemas.legal_hold_policies import *
@@ -519,16 +529,6 @@ from box_sdk_gen.schemas.items_offset_paginated import *
 from box_sdk_gen.schemas.items import *
 
 from box_sdk_gen.schemas.folder import *
-
-from box_sdk_gen.schemas.legal_hold_policy_assigned_item import *
-
-from box_sdk_gen.schemas.legal_hold_policy_assignment import *
-
-from box_sdk_gen.schemas.legal_hold_policy_assignments import *
-
-from box_sdk_gen.schemas.file_version_legal_hold import *
-
-from box_sdk_gen.schemas.file_version_legal_holds import *
 
 from box_sdk_gen.schemas.folder_full import *
 
