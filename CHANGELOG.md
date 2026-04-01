@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.6.0](https://github.com/box/box-python-sdk/compare/v4.5.0...v4.6.0) (2026-04-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* **boxsdkgen:** Correct search content type 'tags' to match API (box/box-openapi#591) (#1370)
+
+### Bug Fixes:
+
+* **boxsdkgen:** Add missing discriminators for schema types (box/box-codegen[#931](https://github.com/box/box-python-sdk/issues/931)) ([#1367](https://github.com/box/box-python-sdk/issues/1367)) ([113faa3](https://github.com/box/box-python-sdk/commit/113faa396043e1e82cf9c73ec43034d7e6be62a6))
+* **boxsdkgen:** Align `LegalHoldPolicyAssignedItem` with API (box/box-openapi[#1554](https://github.com/box/box-python-sdk/issues/1554)) (box/box-openapi[#590](https://github.com/box/box-python-sdk/issues/590)) ([#1366](https://github.com/box/box-python-sdk/issues/1366)) ([6df014e](https://github.com/box/box-python-sdk/commit/6df014e00d3467e85004e5d0a1f38cbe7847bcea))
+* **boxsdkgen:** Correct search content type 'tags' to match API (box/box-openapi[#591](https://github.com/box/box-python-sdk/issues/591)) ([#1370](https://github.com/box/box-python-sdk/issues/1370)) ([213960d](https://github.com/box/box-python-sdk/commit/213960dfd1a09bfce82bdc0e5b52297265607e57))
+
+
+### New Features and Enhancements:
+
+* **boxsdkgen:** Add `include_reference` to `AI` and `parent_id` to `HubsItems` (box/box-openapi[#588](https://github.com/box/box-python-sdk/issues/588)) ([#1359](https://github.com/box/box-python-sdk/issues/1359)) ([94cfd09](https://github.com/box/box-python-sdk/commit/94cfd09a89b3b9649656dd38cea3e088f3916d6c))
+* **boxsdkgen:** Support Hub Document API (box/box-codegen[#930](https://github.com/box/box-python-sdk/issues/930)) ([#1372](https://github.com/box/box-python-sdk/issues/1372)) ([f346676](https://github.com/box/box-python-sdk/commit/f34667680ed70f952fa85a41aa5281f16ff40d70))
+
 ## [4.5.0](https://github.com/box/box-python-sdk/compare/v4.4.0...v4.5.0) (2026-03-18)
 
 
