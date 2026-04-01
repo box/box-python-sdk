@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.6.0](https://github.com/box/box-python-sdk/compare/v10.5.0...v10.6.0) (2026-04-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* Correct search content type 'tags' to match API (box/box-openapi#591) (#1369)
+
+### Bug Fixes
+
+* Add missing discriminators for schema types (box/box-codegen[#931](https://github.com/box/box-python-sdk/issues/931)) ([#1368](https://github.com/box/box-python-sdk/issues/1368)) ([fe0a3b8](https://github.com/box/box-python-sdk/commit/fe0a3b86b292d7304c244e4b6933612bbce5f332))
+* Align `LegalHoldPolicyAssignedItem` with API (box/box-openapi[#1554](https://github.com/box/box-python-sdk/issues/1554)) (box/box-openapi[#590](https://github.com/box/box-python-sdk/issues/590)) ([#1365](https://github.com/box/box-python-sdk/issues/1365)) ([feb2010](https://github.com/box/box-python-sdk/commit/feb201068f851701ecd6f2dfea522182a33a6846))
+* Correct search content type 'tags' to match API (box/box-openapi[#591](https://github.com/box/box-python-sdk/issues/591)) ([#1369](https://github.com/box/box-python-sdk/issues/1369)) ([39fbc7c](https://github.com/box/box-python-sdk/commit/39fbc7cd88a3e0a6a002cd2aa202d10730c6d91a))
+
+
+### New Features and Enhancements
+
+* Add `include_reference` to `AI` and `parent_id` to `HubsItems` (box/box-openapi[#588](https://github.com/box/box-python-sdk/issues/588)) ([#1360](https://github.com/box/box-python-sdk/issues/1360)) ([59c1d3c](https://github.com/box/box-python-sdk/commit/59c1d3c156cc079aa1ad66f7bb2476d48c67a57c))
+* Support Hub Document API (box/box-codegen[#930](https://github.com/box/box-python-sdk/issues/930)) ([#1371](https://github.com/box/box-python-sdk/issues/1371)) ([720b948](https://github.com/box/box-python-sdk/commit/720b94835b1b5308d8c1b8b3a7bc176766d98a04))
+
 ## [10.5.0](https://github.com/box/box-python-sdk/compare/v10.4.0...v10.5.0) (2026-03-18)
 
 
