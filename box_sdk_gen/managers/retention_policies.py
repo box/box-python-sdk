@@ -10,11 +10,11 @@ from box_sdk_gen.internal.utils import to_string
 
 from box_sdk_gen.serialization.json import deserialize
 
+from typing import Union
+
 from box_sdk_gen.serialization.json import serialize
 
 from box_sdk_gen.internal.null_value import NullValue
-
-from typing import Union
 
 from box_sdk_gen.networking.fetch_options import ResponseFormat
 
@@ -154,7 +154,7 @@ class RetentionPoliciesManager:
         disposition_action: CreateRetentionPolicyDispositionAction,
         *,
         description: Optional[str] = None,
-        retention_length: Optional[str] = None,
+        retention_length: Optional[Union[str, int]] = None,
         retention_type: Optional[CreateRetentionPolicyRetentionType] = None,
         can_owner_extend_retention: Optional[bool] = None,
         are_owners_notified: Optional[bool] = None,
@@ -186,7 +186,7 @@ class RetentionPoliciesManager:
         content.  If the policy has a `policy_type` of
         `indefinite`, the `retention_length` will also be
         `indefinite`., defaults to None
-                :type retention_length: Optional[str], optional
+                :type retention_length: Optional[Union[str, int]], optional
                 :param retention_type: Specifies the retention type:
 
         * `modifiable`: You can modify the retention policy. For example,
@@ -301,7 +301,7 @@ class RetentionPoliciesManager:
         description: Union[Optional[str], NullValue] = None,
         disposition_action: Optional[str] = None,
         retention_type: Union[Optional[str], NullValue] = None,
-        retention_length: Optional[str] = None,
+        retention_length: Optional[Union[str, int]] = None,
         status: Union[Optional[str], NullValue] = None,
         can_owner_extend_retention: Union[Optional[bool], NullValue] = None,
         are_owners_notified: Union[Optional[bool], NullValue] = None,
@@ -354,7 +354,7 @@ class RetentionPoliciesManager:
         content.  If the policy has a `policy_type` of
         `indefinite`, the `retention_length` will also be
         `indefinite`., defaults to None
-                :type retention_length: Optional[str], optional
+                :type retention_length: Optional[Union[str, int]], optional
                 :param status: Used to retire a retention policy.
 
         If not retiring a policy, do not include this parameter
