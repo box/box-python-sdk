@@ -167,7 +167,7 @@ See the endpoint docs at
 <!-- sample post_ai_extract_structured -->
 
 ```python
-client.ai.create_ai_extract_structured([AiItemBase(id=file.id)], fields=[CreateAiExtractStructuredFields(key='firstName', display_name='First name', description='Person first name', prompt='What is the your first name?', type='string'), CreateAiExtractStructuredFields(key='lastName', display_name='Last name', description='Person last name', prompt='What is the your last name?', type='string'), CreateAiExtractStructuredFields(key='dateOfBirth', display_name='Birth date', description='Person date of birth', prompt='What is the date of your birth?', type='date'), CreateAiExtractStructuredFields(key='age', display_name='Age', description='Person age', prompt='How old are you?', type='float'), CreateAiExtractStructuredFields(key='hobby', display_name='Hobby', description='Person hobby', prompt='What is your hobby?', type='multiSelect', options=[CreateAiExtractStructuredFieldsOptionsField(key='guitar'), CreateAiExtractStructuredFieldsOptionsField(key='books')])], include_confidence_score=True, ai_agent=ai_extract_structured_agent_basic_text_config)
+client.ai.create_ai_extract_structured([AiItemBase(id=file.id)], fields=[CreateAiExtractStructuredFields(key='firstName', display_name='First name', description='Person first name', prompt='What is the your first name?', type='string'), CreateAiExtractStructuredFields(key='lastName', display_name='Last name', description='Person last name', prompt='What is the your last name?', type='string'), CreateAiExtractStructuredFields(key='dateOfBirth', display_name='Birth date', description='Person date of birth', prompt='What is the date of your birth?', type='date'), CreateAiExtractStructuredFields(key='age', display_name='Age', description='Person age', prompt='How old are you?', type='float'), CreateAiExtractStructuredFields(key='hobby', display_name='Hobby', description='Person hobby', prompt='What is your hobby?', type='multiSelect', options=[CreateAiExtractStructuredFieldsOptionsField(key='guitar'), CreateAiExtractStructuredFieldsOptionsField(key='books')])], ai_agent=ai_extract_structured_agent_basic_text_config, include_confidence_score=True)
 ```
 
 ### Arguments
@@ -178,11 +178,11 @@ client.ai.create_ai_extract_structured([AiItemBase(id=file.id)], fields=[CreateA
   - The metadata template containing the fields to extract. For your request to work, you must provide either `metadata_template` or `fields`, but not both.
 - fields `Optional[List[CreateAiExtractStructuredFields]]`
   - The fields to be extracted from the provided items. For your request to work, you must provide either `metadata_template` or `fields`, but not both.
+- ai_agent `Optional[AiExtractStructuredAgent]`
 - include_confidence_score `Optional[bool]`
   - A flag to indicate whether confidence scores for every extracted field should be returned.
 - include_reference `Optional[bool]`
   - A flag to indicate whether references for every extracted field should be returned.
-- ai_agent `Optional[AiExtractStructuredAgent]`
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 

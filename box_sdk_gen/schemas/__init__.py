@@ -250,6 +250,10 @@ from box_sdk_gen.schemas.realtime_servers import *
 
 from box_sdk_gen.schemas.retention_policy_base import *
 
+from box_sdk_gen.schemas.retention_policy_max_extension_length_request import *
+
+from box_sdk_gen.schemas.retention_policy_max_extension_length_response import *
+
 from box_sdk_gen.schemas.retention_policy_mini import *
 
 from box_sdk_gen.schemas.file_version_retention import *

@@ -655,7 +655,7 @@ class UsersManager:
         """
                 Deletes a user. By default, this operation fails if the user
 
-                still owns any content, was recently active, or recently joined the enterprise from a free account.
+                still owns any content.
 
 
                 To proceed, move their owned content first, or use the `force` parameter to delete
@@ -669,8 +669,7 @@ class UsersManager:
                 :param notify: Whether the user will receive email notification of
         the deletion., defaults to None
                 :type notify: Optional[bool], optional
-                :param force: Specifies whether to delete the user even if they still own files,
-        were recently active, or recently joined the enterprise from a free account., defaults to None
+                :param force: Specifies whether to delete the user even if they still own files., defaults to None
                 :type force: Optional[bool], optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
                 :type extra_headers: Optional[Dict[str, Optional[str]]], optional

@@ -75,6 +75,7 @@ client.retention_policies.create_retention_policy(retention_policy_name, CreateR
   - Specifies the retention type: _ `modifiable`: You can modify the retention policy. For example, you can add or remove folders, shorten or lengthen the policy duration, or delete the assignment. Use this type if your retention policy is not related to any regulatory purposes. _ `non_modifiable`: You can modify the retention policy only in a limited way: add a folder, lengthen the duration, retire the policy, change the disposition action or notification settings. You cannot perform other actions, such as deleting the assignment or shortening the policy duration. Use this type to ensure compliance with regulatory retention policies.
 - can_owner_extend_retention `Optional[bool]`
   - Whether the owner of a file will be allowed to extend the retention.
+- max_extension_length `Optional[RetentionPolicyMaxExtensionLengthRequest]`
 - are_owners_notified `Optional[bool]`
   - Whether owner and co-owners of a file are notified when the policy nears expiration.
 - custom_notification_recipients `Optional[List[UserMini]]`
@@ -151,6 +152,7 @@ client.retention_policies.update_retention_policy_by_id(retention_policy.id, pol
   - Used to retire a retention policy. If not retiring a policy, do not include this parameter or set it to `null`.
 - can_owner_extend_retention `Optional[bool]`
   - Determines if the owner of items under the policy can extend the retention when the original retention duration is about to end.
+- max_extension_length `Optional[RetentionPolicyMaxExtensionLengthRequest]`
 - are_owners_notified `Optional[bool]`
   - Determines if owners and co-owners of items under the policy are notified when the retention duration is about to end.
 - custom_notification_recipients `Optional[List[UserBase]]`

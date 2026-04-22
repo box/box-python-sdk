@@ -56,7 +56,7 @@ class AiExtractStructuredMetadataTemplateField(BaseObject):
 class AiExtractStructuredFieldsOptionsField(BaseObject):
     def __init__(self, key: str, **kwargs):
         """
-        :param key: A unique identifier for the field.
+        :param key: A unique identifier for the option.
         :type key: str
         """
         super().__init__(**kwargs)
@@ -93,9 +93,9 @@ class AiExtractStructuredFieldsField(BaseObject):
         :type display_name: Optional[str], optional
         :param prompt: The context about the key that may include how to find and format it., defaults to None
         :type prompt: Optional[str], optional
-        :param type: The type of the field. It include but is not limited to string, float, date, enum, and multiSelect., defaults to None
+        :param type: The type of the field. It can include but is not limited to `string`, `float`, `date`, `enum`, and `multiSelect`., defaults to None
         :type type: Optional[str], optional
-        :param options: A list of options for this field. This is most often used in combination with the enum and multiSelect field types., defaults to None
+        :param options: A list of options for this field. This is most often used in combination with the `enum` and `multiSelect` field types., defaults to None
         :type options: Optional[List[AiExtractStructuredFieldsOptionsField]], optional
         """
         super().__init__(**kwargs)
@@ -114,9 +114,9 @@ class AiExtractStructured(BaseObject):
         *,
         metadata_template: Optional[AiExtractStructuredMetadataTemplateField] = None,
         fields: Optional[List[AiExtractStructuredFieldsField]] = None,
+        ai_agent: Optional[AiExtractStructuredAgent] = None,
         include_confidence_score: Optional[bool] = None,
         include_reference: Optional[bool] = None,
-        ai_agent: Optional[AiExtractStructuredAgent] = None,
         **kwargs
     ):
         """
@@ -137,6 +137,6 @@ class AiExtractStructured(BaseObject):
         self.items = items
         self.metadata_template = metadata_template
         self.fields = fields
+        self.ai_agent = ai_agent
         self.include_confidence_score = include_confidence_score
         self.include_reference = include_reference
-        self.ai_agent = ai_agent

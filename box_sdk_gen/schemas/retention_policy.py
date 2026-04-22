@@ -14,6 +14,14 @@ from box_sdk_gen.schemas.retention_policy_mini import (
     RetentionPolicyMiniDispositionActionField,
 )
 
+from box_sdk_gen.schemas.retention_policy_max_extension_length_response import (
+    RetentionPolicyMaxExtensionLengthResponseEnum,
+)
+
+from box_sdk_gen.schemas.retention_policy_max_extension_length_response import (
+    RetentionPolicyMaxExtensionLengthResponse,
+)
+
 from box_sdk_gen.schemas.retention_policy_mini import RetentionPolicyMini
 
 from box_sdk_gen.schemas.user_mini import UserMini
@@ -82,6 +90,9 @@ class RetentionPolicy(RetentionPolicyMini):
         policy_name: Optional[str] = None,
         retention_length: Optional[str] = None,
         disposition_action: Optional[RetentionPolicyMiniDispositionActionField] = None,
+        max_extension_length: Optional[
+            RetentionPolicyMaxExtensionLengthResponse
+        ] = None,
         type: RetentionPolicyBaseTypeField = RetentionPolicyBaseTypeField.RETENTION_POLICY,
         **kwargs
     ):
@@ -159,6 +170,7 @@ class RetentionPolicy(RetentionPolicyMini):
             policy_name=policy_name,
             retention_length=retention_length,
             disposition_action=disposition_action,
+            max_extension_length=max_extension_length,
             type=type,
             **kwargs
         )
