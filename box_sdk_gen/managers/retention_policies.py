@@ -18,11 +18,19 @@ from box_sdk_gen.internal.null_value import NullValue
 
 from box_sdk_gen.networking.fetch_options import ResponseFormat
 
+from box_sdk_gen.schemas.retention_policy_max_extension_length_request import (
+    RetentionPolicyMaxExtensionLengthRequestEnum,
+)
+
 from box_sdk_gen.schemas.retention_policies import RetentionPolicies
 
 from box_sdk_gen.schemas.client_error import ClientError
 
 from box_sdk_gen.schemas.retention_policy import RetentionPolicy
+
+from box_sdk_gen.schemas.retention_policy_max_extension_length_request import (
+    RetentionPolicyMaxExtensionLengthRequest,
+)
 
 from box_sdk_gen.schemas.user_mini import UserMini
 
@@ -157,6 +165,7 @@ class RetentionPoliciesManager:
         retention_length: Optional[Union[str, int]] = None,
         retention_type: Optional[CreateRetentionPolicyRetentionType] = None,
         can_owner_extend_retention: Optional[bool] = None,
+        max_extension_length: Optional[RetentionPolicyMaxExtensionLengthRequest] = None,
         are_owners_notified: Optional[bool] = None,
         custom_notification_recipients: Optional[List[UserMini]] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
@@ -225,6 +234,7 @@ class RetentionPoliciesManager:
             'retention_length': retention_length,
             'retention_type': retention_type,
             'can_owner_extend_retention': can_owner_extend_retention,
+            'max_extension_length': max_extension_length,
             'are_owners_notified': are_owners_notified,
             'custom_notification_recipients': custom_notification_recipients,
         }
@@ -304,6 +314,7 @@ class RetentionPoliciesManager:
         retention_length: Optional[Union[str, int]] = None,
         status: Union[Optional[str], NullValue] = None,
         can_owner_extend_retention: Union[Optional[bool], NullValue] = None,
+        max_extension_length: Optional[RetentionPolicyMaxExtensionLengthRequest] = None,
         are_owners_notified: Union[Optional[bool], NullValue] = None,
         custom_notification_recipients: Union[
             Optional[List[UserBase]], NullValue
@@ -383,6 +394,7 @@ class RetentionPoliciesManager:
             'retention_length': retention_length,
             'status': status,
             'can_owner_extend_retention': can_owner_extend_retention,
+            'max_extension_length': max_extension_length,
             'are_owners_notified': are_owners_notified,
             'custom_notification_recipients': custom_notification_recipients,
         }

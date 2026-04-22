@@ -305,8 +305,8 @@ def testAIExtractStructuredWithFields():
                 ],
             ),
         ],
-        include_confidence_score=True,
         ai_agent=ai_extract_structured_agent_basic_text_config,
+        include_confidence_score=True,
     )
     assert not response.confidence_score == None
     assert to_string(response.answer.get('hobby')) == to_string(['guitar'])

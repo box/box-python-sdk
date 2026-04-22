@@ -159,7 +159,7 @@ class CreateAiExtractStructuredMetadataTemplate(BaseObject):
 class CreateAiExtractStructuredFieldsOptionsField(BaseObject):
     def __init__(self, key: str, **kwargs):
         """
-        :param key: A unique identifier for the field.
+        :param key: A unique identifier for the option.
         :type key: str
         """
         super().__init__(**kwargs)
@@ -196,9 +196,9 @@ class CreateAiExtractStructuredFields(BaseObject):
         :type display_name: Optional[str], optional
         :param prompt: The context about the key that may include how to find and format it., defaults to None
         :type prompt: Optional[str], optional
-        :param type: The type of the field. It include but is not limited to string, float, date, enum, and multiSelect., defaults to None
+        :param type: The type of the field. It can include but is not limited to `string`, `float`, `date`, `enum`, and `multiSelect`., defaults to None
         :type type: Optional[str], optional
-        :param options: A list of options for this field. This is most often used in combination with the enum and multiSelect field types., defaults to None
+        :param options: A list of options for this field. This is most often used in combination with the `enum` and `multiSelect` field types., defaults to None
         :type options: Optional[List[CreateAiExtractStructuredFieldsOptionsField]], optional
         """
         super().__init__(**kwargs)
@@ -425,9 +425,9 @@ class AiManager:
         *,
         metadata_template: Optional[CreateAiExtractStructuredMetadataTemplate] = None,
         fields: Optional[List[CreateAiExtractStructuredFields]] = None,
+        ai_agent: Optional[AiExtractStructuredAgent] = None,
         include_confidence_score: Optional[bool] = None,
         include_reference: Optional[bool] = None,
-        ai_agent: Optional[AiExtractStructuredAgent] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> AiExtractStructuredResponse:
         """
@@ -465,9 +465,9 @@ class AiManager:
             'items': items,
             'metadata_template': metadata_template,
             'fields': fields,
+            'ai_agent': ai_agent,
             'include_confidence_score': include_confidence_score,
             'include_reference': include_reference,
-            'ai_agent': ai_agent,
         }
         headers_map: Dict[str, str] = prepare_params({**extra_headers})
         response: FetchResponse = self.network_session.network_client.fetch(
