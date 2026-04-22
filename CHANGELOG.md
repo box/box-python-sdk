@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.7.0](https://github.com/box/box-python-sdk/compare/v10.6.0...v10.7.0) (2026-04-22)
+
+
+### Bug Fixes
+
+* Correct `retention_length` type hint to accept both integer and string (box/box-codegen[#932](https://github.com/box/box-python-sdk/issues/932)) ([#1382](https://github.com/box/box-python-sdk/issues/1382)) ([e8f93ce](https://github.com/box/box-python-sdk/commit/e8f93ce4da1d2c68d809e4af38741ebf91bc6fe2))
+
+
+### New Features and Enhancements
+
+* Add `max_extension_length` field to Retention Policies (box/box-openapi[#593](https://github.com/box/box-python-sdk/issues/593)) ([#1394](https://github.com/box/box-python-sdk/issues/1394)) ([acbb3c6](https://github.com/box/box-python-sdk/commit/acbb3c629be44d0fd6d507f9b164f87439d6083d))
+
 ## [10.6.0](https://github.com/box/box-python-sdk/compare/v10.5.0...v10.6.0) (2026-04-01)
 
 
