@@ -4,7 +4,15 @@ from typing import Optional
 
 from box_sdk_gen.schemas.retention_policy_base import RetentionPolicyBaseTypeField
 
+from box_sdk_gen.schemas.retention_policy_max_extension_length_response import (
+    RetentionPolicyMaxExtensionLengthResponseEnum,
+)
+
 from box_sdk_gen.schemas.retention_policy_base import RetentionPolicyBase
+
+from box_sdk_gen.schemas.retention_policy_max_extension_length_response import (
+    RetentionPolicyMaxExtensionLengthResponse,
+)
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -24,6 +32,9 @@ class RetentionPolicyMini(RetentionPolicyBase):
         policy_name: Optional[str] = None,
         retention_length: Optional[str] = None,
         disposition_action: Optional[RetentionPolicyMiniDispositionActionField] = None,
+        max_extension_length: Optional[
+            RetentionPolicyMaxExtensionLengthResponse
+        ] = None,
         type: RetentionPolicyBaseTypeField = RetentionPolicyBaseTypeField.RETENTION_POLICY,
         **kwargs
     ):
@@ -54,3 +65,4 @@ class RetentionPolicyMini(RetentionPolicyBase):
         self.policy_name = policy_name
         self.retention_length = retention_length
         self.disposition_action = disposition_action
+        self.max_extension_length = max_extension_length
