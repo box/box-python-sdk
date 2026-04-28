@@ -200,7 +200,7 @@ client = BoxClient(auth=auth, network_session=network_session)
 How timeout handling works:
 
 - Timeout values are configured in milliseconds and converted to seconds internally for HTTP requests.
-- The SDK uses default timeouts when timeout config is not provided: `connection_timeout_ms=5000` and `read_timeout_ms=60000`.
+- If timeout config is not provided, the SDK uses default timeouts: `connection_timeout_ms=5000` (5 seconds) and `read_timeout_ms=60000` (60 seconds).
 - To disable all SDK timeouts, pass `TimeoutConfig(connection_timeout_ms=None, read_timeout_ms=None)` explicitly to `NetworkSession`.
 - You can also disable only one timeout by setting one value to `None` (for example, `connection_timeout_ms=None` or `read_timeout_ms=None`). If you provide only the other value (for example, `read_timeout_ms=30000`) and leave one unspecified, the unspecified field remains `None` and that timeout stays disabled.
 - Timeout failures are treated as network exceptions, and retry behavior is controlled by the configured retry strategy.
