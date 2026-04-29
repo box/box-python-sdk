@@ -13,7 +13,11 @@ This operation is performed by calling function `get_automate_workflows_v2026_r0
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-automate-workflows/).
 
-_Currently we don't have an example for calling `get_automate_workflows_v2026_r0` in integration tests_
+<!-- sample get_automate_workflows_v2026.0 -->
+
+```python
+admin_client.automate_workflows.get_automate_workflows_v2026_r0(workflow_folder_id)
+```
 
 ### Arguments
 
@@ -43,7 +47,13 @@ This operation is performed by calling function `create_automate_workflow_start_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-automate-workflows-id-start/).
 
-_Currently we don't have an example for calling `create_automate_workflow_start_v2026_r0` in integration tests_
+<!-- sample post_automate_workflows_id_start_v2026.0 -->
+
+```python
+admin_client.automate_workflows.create_automate_workflow_start_v2026_r0(
+    workflow_action.workflow.id, workflow_action.id, [workflow_file_id]
+)
+```
 
 ### Arguments
 
