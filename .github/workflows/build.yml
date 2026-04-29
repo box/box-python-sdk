@@ -48,6 +48,7 @@ jobs:
           SLACK_AUTOMATION_USER_ID: ${{ secrets.SLACK_AUTOMATION_USER_ID }}
           SLACK_ORG_ID: ${{ secrets.SLACK_ORG_ID }}
           SLACK_PARTNER_ITEM_ID: ${{ secrets.SLACK_PARTNER_ITEM_ID }}
+          AUTOMATE_WORKFLOW_FOLDER_ID: ${{ secrets.AUTOMATE_WORKFLOW_FOLDER_ID }}
         run: |
           tox
       - name: Smoke Tests
