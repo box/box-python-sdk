@@ -591,3 +591,5 @@ from box_sdk_gen.schemas.zip_download_request import *
 from box_sdk_gen.schemas.zip_download_status import *
 
 from box_sdk_gen.schemas.v2025_r0 import *
+
+from box_sdk_gen.schemas.v2026_r0 import *
