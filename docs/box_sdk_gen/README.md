@@ -18,6 +18,7 @@ the SDK are available by topic:
 - [App item associations](app_item_associations.md)
 - [Archives](archives.md)
 - [Authorization](authorization.md)
+- [Automate workflows](automate_workflows.md)
 - [Avatars](avatars.md)
 - [Chunked uploads](chunked_uploads.md)
 - [Classifications](classifications.md)
