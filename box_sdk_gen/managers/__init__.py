@@ -163,3 +163,5 @@ from box_sdk_gen.managers.shield_lists import *
 from box_sdk_gen.managers.archives import *
 
 from box_sdk_gen.managers.external_users import *
+
+from box_sdk_gen.managers.automate_workflows import *
