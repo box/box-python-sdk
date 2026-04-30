@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.8.0](https://github.com/box/box-python-sdk/compare/v4.7.0...v4.8.0) (2026-04-30)
+
+
+### New Features and Enhancements:
+
+* **boxsdkgen:** Automate Public API (box/box-openapi[#594](https://github.com/box/box-python-sdk/issues/594)) ([#1412](https://github.com/box/box-python-sdk/issues/1412)) ([4a39dcc](https://github.com/box/box-python-sdk/commit/4a39dccd6ea375d364687eb9d17f60233e98f37f))
+
 ## [4.7.0](https://github.com/box/box-python-sdk/compare/v4.6.0...v4.7.0) (2026-04-22)
 
 
