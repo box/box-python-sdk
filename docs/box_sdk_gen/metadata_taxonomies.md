@@ -505,7 +505,7 @@ See the endpoint docs at
 <!-- sample get_metadata_templates_id_id_fields_id_options -->
 
 ```python
-client.metadata_taxonomies.get_metadata_template_field_options(namespace, metadata_template_key, 'taxonomy')
+client.metadata_taxonomies.get_metadata_template_field_options(namespace, metadata_template_key, field_key)
 ```
 
 ### Arguments
