@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.9.0](https://github.com/box/box-python-sdk/compare/v10.8.0...v10.9.0) (2026-05-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* Mark `id` field of `AIAgentReference` required (box/box-openapi#1629) (box/box-openapi#595) (#1422)
+
+### Bug Fixes
+
+* Fix metadata template schema (box/box-openapi[#596](https://github.com/box/box-python-sdk/issues/596)) ([#1423](https://github.com/box/box-python-sdk/issues/1423)) ([3ef0ffe](https://github.com/box/box-python-sdk/commit/3ef0ffe6288161d0f0216ddb0b07024307094fe9))
+* Mark `id` field of `AIAgentReference` required (box/box-openapi[#1629](https://github.com/box/box-python-sdk/issues/1629)) (box/box-openapi[#595](https://github.com/box/box-python-sdk/issues/595)) ([#1422](https://github.com/box/box-python-sdk/issues/1422)) ([d31bca4](https://github.com/box/box-python-sdk/commit/d31bca44f67decd8e2a65eab8d95f45971bba591))
+
 ## [10.8.0](https://github.com/box/box-python-sdk/compare/v10.7.0...v10.8.0) (2026-04-30)
 
 
