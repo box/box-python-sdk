@@ -199,12 +199,14 @@ class CreateMetadataTemplateFields(BaseObject):
     _fields_to_json_mapping: Dict[str, str] = {
         'display_name': 'displayName',
         'taxonomy_key': 'taxonomyKey',
+        'taxonomy_id': 'taxonomyId',
         'options_rules': 'optionsRules',
         **BaseObject._fields_to_json_mapping,
     }
     _json_to_fields_mapping: Dict[str, str] = {
         'displayName': 'display_name',
         'taxonomyKey': 'taxonomy_key',
+        'taxonomyId': 'taxonomy_id',
         'optionsRules': 'options_rules',
         **BaseObject._json_to_fields_mapping,
     }
@@ -227,6 +229,7 @@ class CreateMetadataTemplateFields(BaseObject):
         hidden: Optional[bool] = None,
         options: Optional[List[CreateMetadataTemplateFieldsOptionsField]] = None,
         taxonomy_key: Optional[str] = None,
+        taxonomy_id: Optional[str] = None,
         namespace: Optional[str] = None,
         options_rules: Optional[CreateMetadataTemplateFieldsOptionsRulesField] = None,
         **kwargs
@@ -237,7 +240,7 @@ class CreateMetadataTemplateFields(BaseObject):
         date-time picker.
 
         Additionally, metadata templates support an `enum` field for a basic list
-        of items, and ` multiSelect` field for a similar list of items where the
+        of items, and `multiSelect` field for a similar list of items where the
         user can select more than one value.
 
         Metadata taxonomies are also supported as a `taxonomy` field type
@@ -260,6 +263,9 @@ class CreateMetadataTemplateFields(BaseObject):
                 :param taxonomy_key: The unique key of the metadata taxonomy to use for this taxonomy field.
         This property is required when the field `type` is set to `taxonomy`., defaults to None
                 :type taxonomy_key: Optional[str], optional
+                :param taxonomy_id: The unique ID of the metadata taxonomy to use for this taxonomy field.
+        This property is required when the field `type` is set to `taxonomy`., defaults to None
+                :type taxonomy_id: Optional[str], optional
                 :param namespace: The namespace of the metadata taxonomy to use for this taxonomy field.
         This property is required when the field `type` is set to `taxonomy`., defaults to None
                 :type namespace: Optional[str], optional
@@ -275,6 +281,7 @@ class CreateMetadataTemplateFields(BaseObject):
         self.hidden = hidden
         self.options = options
         self.taxonomy_key = taxonomy_key
+        self.taxonomy_id = taxonomy_id
         self.namespace = namespace
         self.options_rules = options_rules
 

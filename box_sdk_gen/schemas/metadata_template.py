@@ -21,8 +21,8 @@ class MetadataTemplateFieldsTypeField(str, Enum):
     DATE = 'date'
     ENUM = 'enum'
     MULTISELECT = 'multiSelect'
-    INTEGER = 'integer'
     TAXONOMY = 'taxonomy'
+    INTEGER = 'integer'
 
 
 class MetadataTemplateFieldsOptionsField(BaseObject):
@@ -39,13 +39,50 @@ class MetadataTemplateFieldsOptionsField(BaseObject):
         self.id = id
 
 
+class MetadataTemplateFieldsOptionsRulesField(BaseObject):
+    _fields_to_json_mapping: Dict[str, str] = {
+        'multi_select': 'multiSelect',
+        'selectable_levels': 'selectableLevels',
+        **BaseObject._fields_to_json_mapping,
+    }
+    _json_to_fields_mapping: Dict[str, str] = {
+        'multiSelect': 'multi_select',
+        'selectableLevels': 'selectable_levels',
+        **BaseObject._json_to_fields_mapping,
+    }
+
+    def __init__(
+        self,
+        *,
+        multi_select: Optional[bool] = None,
+        selectable_levels: Optional[List[int]] = None,
+        **kwargs
+    ):
+        """
+                :param multi_select: Whether to allow users to select multiple values., defaults to None
+                :type multi_select: Optional[bool], optional
+                :param selectable_levels: An array of integers defining which levels of the taxonomy are
+        selectable by users., defaults to None
+                :type selectable_levels: Optional[List[int]], optional
+        """
+        super().__init__(**kwargs)
+        self.multi_select = multi_select
+        self.selectable_levels = selectable_levels
+
+
 class MetadataTemplateFieldsField(BaseObject):
     _fields_to_json_mapping: Dict[str, str] = {
         'display_name': 'displayName',
+        'taxonomy_key': 'taxonomyKey',
+        'taxonomy_id': 'taxonomyId',
+        'options_rules': 'optionsRules',
         **BaseObject._fields_to_json_mapping,
     }
     _json_to_fields_mapping: Dict[str, str] = {
         'displayName': 'display_name',
+        'taxonomyKey': 'taxonomy_key',
+        'taxonomyId': 'taxonomy_id',
+        'optionsRules': 'options_rules',
         **BaseObject._json_to_fields_mapping,
     }
     _discriminator = 'type', {
@@ -54,8 +91,8 @@ class MetadataTemplateFieldsField(BaseObject):
         'date',
         'enum',
         'multiSelect',
-        'integer',
         'taxonomy',
+        'integer',
     }
 
     def __init__(
@@ -67,6 +104,10 @@ class MetadataTemplateFieldsField(BaseObject):
         description: Optional[str] = None,
         hidden: Optional[bool] = None,
         options: Optional[List[MetadataTemplateFieldsOptionsField]] = None,
+        taxonomy_key: Optional[str] = None,
+        taxonomy_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        options_rules: Optional[MetadataTemplateFieldsOptionsRulesField] = None,
         id: Optional[str] = None,
         **kwargs
     ):
@@ -76,8 +117,11 @@ class MetadataTemplateFieldsField(BaseObject):
         date-time picker.
 
         Additionally, metadata templates support an `enum` field for a basic list
-        of items, and ` multiSelect` field for a similar list of items where the
+        of items, and `multiSelect` field for a similar list of items where the
         user can select more than one value.
+
+        Metadata taxonomies are also supported as a `taxonomy` field type
+        with a specific set of additional properties, which describe its structure.
 
         **Note**: The `integer` value is deprecated.
         It is still present in the response,
@@ -97,6 +141,18 @@ class MetadataTemplateFieldsField(BaseObject):
                 :param options: A list of options for this field. This is used in combination
         with the `enum` and `multiSelect` field types., defaults to None
                 :type options: Optional[List[MetadataTemplateFieldsOptionsField]], optional
+                :param taxonomy_key: The unique key of the metadata taxonomy to use for this taxonomy field.
+        This property is required when the field `type` is set to `taxonomy`., defaults to None
+                :type taxonomy_key: Optional[str], optional
+                :param taxonomy_id: The unique ID of the metadata taxonomy to use for this taxonomy field.
+        This property is required when the field `type` is set to `taxonomy`., defaults to None
+                :type taxonomy_id: Optional[str], optional
+                :param namespace: The namespace of the metadata taxonomy to use for this taxonomy field.
+        This property is required when the field `type` is set to `taxonomy`., defaults to None
+                :type namespace: Optional[str], optional
+                :param options_rules: An object defining additional rules for the options of the taxonomy field.
+        This property is required when the field `type` is set to `taxonomy`., defaults to None
+                :type options_rules: Optional[MetadataTemplateFieldsOptionsRulesField], optional
                 :param id: The unique ID of the metadata template field., defaults to None
                 :type id: Optional[str], optional
         """
@@ -107,6 +163,10 @@ class MetadataTemplateFieldsField(BaseObject):
         self.description = description
         self.hidden = hidden
         self.options = options
+        self.taxonomy_key = taxonomy_key
+        self.taxonomy_id = taxonomy_id
+        self.namespace = namespace
+        self.options_rules = options_rules
         self.id = id
 
 
