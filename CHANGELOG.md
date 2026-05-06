@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### ⚠ BREAKING CHANGES
 
-* Mark `id` field of `AIAgentReference` required (box/box-openapi#1629) (box/box-openapi#595) (#1422)
+* Mark `id` field of `AIAgentReference` required (box/box-openapi[#1629](https://github.com/box/box-python-sdk/issues/1629)) (box/box-openapi[#595](https://github.com/box/box-python-sdk/issues/595)) ([#1422](https://github.com/box/box-python-sdk/issues/1422)) ([d31bca4](https://github.com/box/box-python-sdk/commit/d31bca44f67decd8e2a65eab8d95f45971bba591))
 
 ### Bug Fixes
 
