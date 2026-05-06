@@ -171,6 +171,8 @@ def testMetadataTaxonomiesNodes():
     assert get_country_node.display_name == 'Poland UPDATED'
     assert get_country_node.id == country_node.id
     metadata_template_key: str = ''.join(['templateKey', get_uuid()])
+    field_display_name: str = 'testTaxonomy123'
+    field_key: str = 'testTaxonomy321'
     metadata_template: MetadataTemplate = (
         client.metadata_templates.create_metadata_template(
             'enterprise',
@@ -179,8 +181,8 @@ def testMetadataTaxonomiesNodes():
             fields=[
                 CreateMetadataTemplateFields(
                     type=CreateMetadataTemplateFieldsTypeField.TAXONOMY,
-                    key='taxonomy',
-                    display_name='taxonomy',
+                    key=field_key,
+                    display_name=field_display_name,
                     taxonomy_key=taxonomy_key,
                     namespace=namespace,
                     options_rules=CreateMetadataTemplateFieldsOptionsRulesField(
@@ -193,10 +195,19 @@ def testMetadataTaxonomiesNodes():
     assert metadata_template.template_key == metadata_template_key
     assert metadata_template.display_name == metadata_template_key
     assert len(metadata_template.fields) == 1
+    assert metadata_template.fields[0].display_name == field_display_name
+    assert metadata_template.fields[0].hidden == False
+    assert not metadata_template.fields[0].id == ''
+    assert metadata_template.fields[0].key == field_key
+    assert metadata_template.fields[0].namespace == namespace
+    assert metadata_template.fields[0].options_rules.multi_select == True
+    assert metadata_template.fields[0].options_rules.selectable_levels[0] == 1
+    assert not metadata_template.fields[0].taxonomy_id == ''
+    assert metadata_template.fields[0].taxonomy_key == taxonomy_key
     assert to_string(metadata_template.fields[0].type) == 'taxonomy'
     options: MetadataTaxonomyNodes = (
         client.metadata_taxonomies.get_metadata_template_field_options(
-            namespace, metadata_template_key, 'taxonomy'
+            namespace, metadata_template_key, field_key
         )
     )
     assert len(options.entries) == 1

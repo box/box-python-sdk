@@ -533,7 +533,7 @@ See the endpoint docs at
 
 ```python
 client.metadata_taxonomies.get_metadata_template_field_options(
-    namespace, metadata_template_key, "taxonomy"
+    namespace, metadata_template_key, field_key
 )
 ```
 
