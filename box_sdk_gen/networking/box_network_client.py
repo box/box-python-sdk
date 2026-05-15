@@ -40,6 +40,7 @@ class APIRequest:
     headers: Dict[str, str]
     params: Dict[str, str]
     data: Optional[Union[str, ByteStream, MultipartEncoder]]
+    content_type: Optional[str] = None
     allow_redirects: bool = True
     timeout: Optional[Tuple[Optional[float], Optional[float]]] = None
 
@@ -180,6 +181,7 @@ class BoxNetworkClient(NetworkClient):
             headers=headers,
             params=params,
             data=data,
+            content_type=options.content_type,
             allow_redirects=allow_redirects,
             timeout=timeout,
         )
@@ -304,6 +306,7 @@ class BoxNetworkClient(NetworkClient):
                 query_params=request.params,
                 headers=request.headers,
                 body=request.data,
+                content_type=request.content_type,
             ),
             response_info=ResponseInfo(
                 status_code=network_response.status_code,

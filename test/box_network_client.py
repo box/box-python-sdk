@@ -338,6 +338,7 @@ def test_prepare_json_request(network_client, network_session_mock):
         },
         params={"param": "value"},
         data='{"key": "value"}',
+        content_type="application/json",
         timeout=(5, 60),
     )
 
