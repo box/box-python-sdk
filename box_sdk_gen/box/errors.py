@@ -37,15 +37,24 @@ class RequestInfo:
         url: str,
         query_params: Dict[str, str],
         headers: Dict[str, str],
-        body: Optional[str] = None,
+        body: Optional[Any] = None,
+        content_type: Optional[str] = None,
     ):
         self.method = method
         self.url = url
         self.query_params = query_params
         self.headers = headers
         self.body = body
+        self.content_type = content_type
 
     def print(self, data_sanitizer: DataSanitizer):
+        sanitized_body = (
+            data_sanitizer.sanitize_string_body(
+                self.body, content_type=self.content_type
+            )
+            if isinstance(self.body, str)
+            else self.body
+        )
         return ''.join(
             (
                 f'\n\tMethod: {self.method}',
@@ -55,8 +64,8 @@ class RequestInfo:
                 ''.join(
                     [
                         '\n\tBody: ',
-                        '\n' if self.body else '',
-                        pprint.pformat(self.body, indent=8),
+                        '\n' if sanitized_body else '',
+                        pprint.pformat(sanitized_body, indent=8),
                     ]
                 ),
             )
