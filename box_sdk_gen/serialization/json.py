@@ -48,6 +48,32 @@ def sanitized_value() -> str:
     return '---[redacted]---'
 
 
+def sanitize_form_encoded_body_from_string(
+    body: str, keys_to_sanitize: Dict[str, str]
+) -> str:
+    return '&'.join(
+        [
+            _sanitize_form_encoded_parameter(parameter, keys_to_sanitize)
+            for parameter in body.split('&')
+        ]
+    )
+
+
+def _sanitize_form_encoded_parameter(
+    parameter: str, keys_to_sanitize: Dict[str, str]
+) -> str:
+    separator_index = parameter.find('=')
+    if separator_index < 0:
+        return parameter
+
+    key = parameter[:separator_index]
+    value = parameter[separator_index + 1 :]
+    sanitized_parameter_value = (
+        sanitized_value() if key.lower() in keys_to_sanitize else value
+    )
+    return f'{key}={sanitized_parameter_value}'
+
+
 def sanitize_serialized_data(
     sd: SerializedData, keys_to_sanitize: Dict[str, str]
 ) -> SerializedData:
