@@ -155,6 +155,10 @@ if __name__ == '__main__':
     main()
 ```
 
+> **Important:** The legacy **`boxsdk`** package does **not** apply default connection or read timeouts. Unless you configure them, Requests uses `timeout=None`, which means the client does not enforce a limit while establishing a connection or while reading the response body.
+>
+> To set connect and read timeouts, follow the instructions in [configuration.md](./docs/boxsdk/usage/configuration.md#network-timeouts).
+
 # Authentication
 
 Both the `box_sdk_gen` and `boxsdk` packages support multiple authentication methods, including
