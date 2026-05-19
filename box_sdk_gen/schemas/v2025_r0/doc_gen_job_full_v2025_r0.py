@@ -20,6 +20,10 @@ from box_sdk_gen.schemas.v2025_r0.doc_gen_job_v2025_r0 import (
     DocGenJobV2025R0StatusField,
 )
 
+from box_sdk_gen.schemas.v2025_r0.doc_gen_job_v2025_r0 import (
+    DocGenJobV2025R0FailuresField,
+)
+
 from box_sdk_gen.schemas.v2025_r0.doc_gen_job_v2025_r0 import DocGenJobV2025R0
 
 from box_sdk_gen.schemas.v2025_r0.user_base_v2025_r0 import UserBaseV2025R0
@@ -49,6 +53,7 @@ class DocGenJobFullV2025R0(DocGenJobV2025R0):
         created_at: Optional[str] = None,
         output_file: Optional[FileReferenceV2025R0] = None,
         output_file_version: Optional[FileVersionBaseV2025R0] = None,
+        failures: Optional[DocGenJobV2025R0FailuresField] = None,
         type: DocGenJobBaseV2025R0TypeField = DocGenJobBaseV2025R0TypeField.DOCGEN_JOB,
         **kwargs
     ):
@@ -63,6 +68,8 @@ class DocGenJobFullV2025R0(DocGenJobV2025R0):
         :type id: str
         :param created_at: Time of job creation., defaults to None
         :type created_at: Optional[str], optional
+        :param failures: Errors and warnings that occurred during document generation., defaults to None
+        :type failures: Optional[DocGenJobV2025R0FailuresField], optional
         :param type: The value will always be `docgen_job`., defaults to DocGenJobBaseV2025R0TypeField.DOCGEN_JOB
         :type type: DocGenJobBaseV2025R0TypeField, optional
         """
@@ -75,6 +82,7 @@ class DocGenJobFullV2025R0(DocGenJobV2025R0):
             id=id,
             output_file=output_file,
             output_file_version=output_file_version,
+            failures=failures,
             type=type,
             **kwargs
         )
