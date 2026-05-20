@@ -165,3 +165,5 @@ from box_sdk_gen.managers.archives import *
 from box_sdk_gen.managers.external_users import *
 
 from box_sdk_gen.managers.automate_workflows import *
+
+from box_sdk_gen.managers.convert_markdown_to_box_note import *
