@@ -1,5 +1,9 @@
 from enum import Enum
 
+from typing import List
+
+from box_sdk_gen.internal.base_object import BaseObject
+
 from typing import Optional
 
 from box_sdk_gen.schemas.v2025_r0.doc_gen_job_base_v2025_r0 import (
@@ -29,6 +33,19 @@ class DocGenJobV2025R0StatusField(str, Enum):
     PENDING = 'pending'
 
 
+class DocGenJobV2025R0FailuresField(BaseObject):
+    def __init__(self, errors: List[str], warnings: List[str], **kwargs):
+        """
+        :param errors: A list of errors that occurred during document generation.
+        :type errors: List[str]
+        :param warnings: A list of warnings that occurred during document generation.
+        :type warnings: List[str]
+        """
+        super().__init__(**kwargs)
+        self.errors = errors
+        self.warnings = warnings
+
+
 class DocGenJobV2025R0(DocGenJobBaseV2025R0):
     _discriminator = 'type', {'docgen_job'}
 
@@ -43,6 +60,7 @@ class DocGenJobV2025R0(DocGenJobBaseV2025R0):
         *,
         output_file: Optional[FileReferenceV2025R0] = None,
         output_file_version: Optional[FileVersionBaseV2025R0] = None,
+        failures: Optional[DocGenJobV2025R0FailuresField] = None,
         type: DocGenJobBaseV2025R0TypeField = DocGenJobBaseV2025R0TypeField.DOCGEN_JOB,
         **kwargs
     ):
@@ -53,6 +71,8 @@ class DocGenJobV2025R0(DocGenJobBaseV2025R0):
         :type output_type: str
         :param id: The unique identifier that represent a Box Doc Gen job.
         :type id: str
+        :param failures: Errors and warnings that occurred during document generation., defaults to None
+        :type failures: Optional[DocGenJobV2025R0FailuresField], optional
         :param type: The value will always be `docgen_job`., defaults to DocGenJobBaseV2025R0TypeField.DOCGEN_JOB
         :type type: DocGenJobBaseV2025R0TypeField, optional
         """
@@ -64,3 +84,4 @@ class DocGenJobV2025R0(DocGenJobBaseV2025R0):
         self.output_type = output_type
         self.output_file = output_file
         self.output_file_version = output_file_version
+        self.failures = failures
