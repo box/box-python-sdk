@@ -4,6 +4,12 @@ from box_sdk_gen.schemas.v2026_r0.automate_workflow_start_request_v2026_r0 impor
 
 from box_sdk_gen.schemas.v2026_r0.client_error_v2026_r0 import *
 
+from box_sdk_gen.schemas.v2026_r0.folder_reference_v2026_r0 import *
+
+from box_sdk_gen.schemas.v2026_r0.notes_convert_request_body_v2026_r0 import *
+
+from box_sdk_gen.schemas.v2026_r0.notes_convert_response_v2026_r0 import *
+
 from box_sdk_gen.schemas.v2026_r0.user_base_v2026_r0 import *
 
 from box_sdk_gen.schemas.v2026_r0.user_mini_v2026_r0 import *
