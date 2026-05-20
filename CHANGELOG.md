@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.10.0](https://github.com/box/box-python-sdk/compare/v4.9.0...v4.10.0) (2026-05-20)
+
+
+### New Features and Enhancements:
+
+* **boxsdkgen:** add failure related fields to `DocGenJob` (box/box-openapi[#598](https://github.com/box/box-python-sdk/issues/598)) ([#1446](https://github.com/box/box-python-sdk/issues/1446)) ([a2b59df](https://github.com/box/box-python-sdk/commit/a2b59df2a309f80bc059046626ae92d3ffd9cbd9))
+* **boxsdkgen:** Add new event types (box/box-openapi[#597](https://github.com/box/box-python-sdk/issues/597)) ([#1434](https://github.com/box/box-python-sdk/issues/1434)) ([c700173](https://github.com/box/box-python-sdk/commit/c7001734fdfc9ccda04272fa6f5655d12cc0cf89))
+* **boxsdkgen:** Sanitize request body in `BoxAPIError` (box/box-codegen[#948](https://github.com/box/box-python-sdk/issues/948)) ([#1441](https://github.com/box/box-python-sdk/issues/1441)) ([8f08bcc](https://github.com/box/box-python-sdk/commit/8f08bcc3394a8ba6c04afce561af0612786d561e))
+
 ## [4.9.0](https://github.com/box/box-python-sdk/compare/v4.8.0...v4.9.0) (2026-05-06)
 
 
