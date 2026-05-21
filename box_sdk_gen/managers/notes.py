@@ -55,7 +55,7 @@ class CreateNoteConvertV2026R0ContentFormat(str, Enum):
     MARKDOWN = 'markdown'
 
 
-class ConvertMarkdownToBoxNoteManager:
+class NotesManager:
     def __init__(
         self,
         *,

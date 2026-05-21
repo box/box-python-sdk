@@ -1,4 +1,4 @@
-# ConvertMarkdownToBoxNoteManager
+# NotesManager
 
 - [Convert content to Box Note](#convert-content-to-box-note)
 

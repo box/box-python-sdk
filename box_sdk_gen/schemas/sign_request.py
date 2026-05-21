@@ -35,6 +35,7 @@ class SignRequestStatusField(str, Enum):
     SIGNED = 'signed'
     CANCELLED = 'cancelled'
     DECLINED = 'declined'
+    ERROR = 'error'
     ERROR_CONVERTING = 'error_converting'
     ERROR_SENDING = 'error_sending'
     EXPIRED = 'expired'
