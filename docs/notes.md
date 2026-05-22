@@ -11,7 +11,16 @@ This operation is performed by calling function `create_note_convert_v2026_r0`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-notes-convert/).
 
-_Currently we don't have an example for calling `create_note_convert_v2026_r0` in integration tests_
+<!-- sample post_notes_convert_v2026.0 -->
+
+```python
+downscoped_client.notes.create_note_convert_v2026_r0(
+    markdown_content,
+    FolderReferenceV2026R0(id="0"),
+    note_name,
+    content_format=CreateNoteConvertV2026R0ContentFormat.MARKDOWN,
+)
+```
 
 ### Arguments
 
