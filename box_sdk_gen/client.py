@@ -194,6 +194,8 @@ from box_sdk_gen.managers.external_users import ExternalUsersManager
 
 from box_sdk_gen.managers.automate_workflows import AutomateWorkflowsManager
 
+from box_sdk_gen.managers.notes import NotesManager
+
 from box_sdk_gen.networking.auth import Authentication
 
 from box_sdk_gen.networking.network import NetworkSession
@@ -469,6 +471,7 @@ class BoxClient:
         self.automate_workflows = AutomateWorkflowsManager(
             auth=self.auth, network_session=self.network_session
         )
+        self.notes = NotesManager(auth=self.auth, network_session=self.network_session)
 
     def make_request(self, fetch_options: FetchOptions) -> FetchResponse:
         """
