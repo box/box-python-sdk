@@ -14,7 +14,7 @@ See the endpoint docs at
 <!-- sample post_notes_convert_v2026.0 -->
 
 ```python
-downscoped_client.notes.create_note_convert_v2026_r0(markdown_content, FolderReferenceV2026R0(id='0'), note_name, content_format=CreateNoteConvertV2026R0ContentFormat.MARKDOWN)
+client.notes.create_note_convert_v2026_r0(markdown_content, FolderReferenceV2026R0(id='0'), note_name, content_format=CreateNoteConvertV2026R0ContentFormat.MARKDOWN)
 ```
 
 ### Arguments
