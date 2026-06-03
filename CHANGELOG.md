@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.11.0](https://github.com/box/box-python-sdk/compare/v10.10.0...v10.11.0) (2026-06-03)
+
+
+### New Features and Enhancements
+
+* Add Convert Note API (box/box-codegen[#955](https://github.com/box/box-python-sdk/issues/955)) ([#1458](https://github.com/box/box-python-sdk/issues/1458)) ([1215d52](https://github.com/box/box-python-sdk/commit/1215d52b80e4ab833c6d51615cfa2e60114f9326))
+
 ## [10.10.0](https://github.com/box/box-python-sdk/compare/v10.9.0...v10.10.0) (2026-05-20)
 
 
