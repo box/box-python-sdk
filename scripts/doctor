@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Doctor launcher (read-only audit). See scripts/setup for why the
+# package is named dev_setup/ rather than setup/.
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+exec python3 -m dev_setup.doctor "$@"

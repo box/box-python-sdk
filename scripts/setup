@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Setup wizard launcher.
+#
+# The wizard package is named `dev_setup/` (not `setup/`) to avoid
+# colliding with the SDK's own `setup.py` and `find_packages()`
+# discovery. `dev_setup/` is intentionally NOT installed by pip — it's
+# a developer-only onboarding helper and stays in the source tree.
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+exec python3 -m dev_setup.wizard "$@"

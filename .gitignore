@@ -121,6 +121,10 @@ celerybeat.pid
 
 # Environments
 .env
+!.env.example
+
+# setup wizard outputs
+box-jwt-config.json
 .venv
 env/
 venv/

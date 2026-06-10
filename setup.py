@@ -59,7 +59,7 @@ def main():
         install_requires=install_requires,
         tests_require=tests_require,
         extras_require=extras_require,
-        packages=find_packages(exclude=['docs', '*test*']),
+        packages=find_packages(exclude=['docs', '*test*', 'dev_setup', 'dev_setup.*']),
     )
 
 
