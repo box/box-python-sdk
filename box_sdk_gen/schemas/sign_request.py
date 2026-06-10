@@ -85,6 +85,7 @@ class SignRequest(SignRequestBase):
         short_id: Optional[str] = None,
         created_at: Optional[DateTime] = None,
         finished_at: Optional[DateTime] = None,
+        error_code: Optional[str] = None,
         sender_email: Optional[str] = None,
         sender_id: Optional[int] = None,
         is_document_preparation_needed: Optional[bool] = None,
@@ -136,6 +137,9 @@ class SignRequest(SignRequestBase):
                 :type created_at: Optional[DateTime], optional
                 :param finished_at: Timestamp indicating when all signing actions completed., defaults to None
                 :type finished_at: Optional[DateTime], optional
+                :param error_code: When the sign request is in an error state, identifies the specific
+        reason. Null when no error code applies., defaults to None
+                :type error_code: Optional[str], optional
                 :param sender_email: The email address of the sender of the sign request., defaults to None
                 :type sender_email: Optional[str], optional
                 :param sender_id: The user ID of the sender of the sign request., defaults to None
@@ -198,5 +202,6 @@ class SignRequest(SignRequestBase):
         self.short_id = short_id
         self.created_at = created_at
         self.finished_at = finished_at
+        self.error_code = error_code
         self.sender_email = sender_email
         self.sender_id = sender_id
