@@ -12,9 +12,19 @@ from box_sdk_gen.schemas.ai_agent_reference import AiAgentReference
 
 from box_sdk_gen.schemas.ai_agent_extract_structured import AiAgentExtractStructured
 
+from box_sdk_gen.schemas.ai_taxonomy_reference import AiTaxonomyReference
+
+from box_sdk_gen.schemas.ai_taxonomy_file_reference import AiTaxonomyFileReference
+
 from box_sdk_gen.schemas.ai_item_base import AiItemBase
 
+from box_sdk_gen.schemas.ai_extract_sub_field import AiExtractSubField
+
+from box_sdk_gen.schemas.ai_options_rules import AiOptionsRules
+
 from box_sdk_gen.schemas.ai_extract_structured_agent import AiExtractStructuredAgent
+
+from box_sdk_gen.schemas.ai_taxonomy_source import AiTaxonomySource
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -82,6 +92,10 @@ class AiExtractStructuredFieldsField(BaseObject):
         prompt: Optional[str] = None,
         type: Optional[str] = None,
         options: Optional[List[AiExtractStructuredFieldsOptionsField]] = None,
+        fields: Optional[List[AiExtractSubField]] = None,
+        taxonomy_key: Optional[str] = None,
+        namespace: Optional[str] = None,
+        options_rules: Optional[AiOptionsRules] = None,
         **kwargs
     ):
         """
@@ -93,10 +107,16 @@ class AiExtractStructuredFieldsField(BaseObject):
         :type display_name: Optional[str], optional
         :param prompt: The context about the key that may include how to find and format it., defaults to None
         :type prompt: Optional[str], optional
-        :param type: The type of the field. It can include but is not limited to `string`, `float`, `date`, `enum`, and `multiSelect`., defaults to None
+        :param type: The type of the field. It can include but is not limited to `string`, `float`, `date`, `enum`, `multiSelect`,`taxonomy`, `struct`, and `table`., defaults to None
         :type type: Optional[str], optional
         :param options: A list of options for this field. This is most often used in combination with the `enum` and `multiSelect` field types., defaults to None
         :type options: Optional[List[AiExtractStructuredFieldsOptionsField]], optional
+        :param fields: The nested fields for this field. Used with `struct` and `table` field types to define the nested structure., defaults to None
+        :type fields: Optional[List[AiExtractSubField]], optional
+        :param taxonomy_key: The identifier for a taxonomy, which corresponds to the `key` of the taxonomy source. Required if using `taxonomy` type field., defaults to None
+        :type taxonomy_key: Optional[str], optional
+        :param namespace: The namespace of the taxonomy source. Required if using `taxonomy` type field from an existing taxonomy., defaults to None
+        :type namespace: Optional[str], optional
         """
         super().__init__(**kwargs)
         self.key = key
@@ -105,6 +125,10 @@ class AiExtractStructuredFieldsField(BaseObject):
         self.prompt = prompt
         self.type = type
         self.options = options
+        self.fields = fields
+        self.taxonomy_key = taxonomy_key
+        self.namespace = namespace
+        self.options_rules = options_rules
 
 
 class AiExtractStructured(BaseObject):
@@ -117,6 +141,7 @@ class AiExtractStructured(BaseObject):
         ai_agent: Optional[AiExtractStructuredAgent] = None,
         include_confidence_score: Optional[bool] = None,
         include_reference: Optional[bool] = None,
+        taxonomy_sources: Optional[List[AiTaxonomySource]] = None,
         **kwargs
     ):
         """
@@ -132,6 +157,9 @@ class AiExtractStructured(BaseObject):
                 :type include_confidence_score: Optional[bool], optional
                 :param include_reference: A flag to indicate whether references for every extracted field should be returned., defaults to None
                 :type include_reference: Optional[bool], optional
+                :param taxonomy_sources: The taxonomy sources to be used for the structured extraction. They can either be an existing file or a taxonomy.
+        For your request to work, `fields` must also be provided. `taxonomy_sources` is not supported with `metadata_template`., defaults to None
+                :type taxonomy_sources: Optional[List[AiTaxonomySource]], optional
         """
         super().__init__(**kwargs)
         self.items = items
@@ -140,3 +168,4 @@ class AiExtractStructured(BaseObject):
         self.ai_agent = ai_agent
         self.include_confidence_score = include_confidence_score
         self.include_reference = include_reference
+        self.taxonomy_sources = taxonomy_sources

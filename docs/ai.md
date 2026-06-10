@@ -264,6 +264,8 @@ client.ai.create_ai_extract_structured(
   - A flag to indicate whether confidence scores for every extracted field should be returned.
 - include_reference `Optional[bool]`
   - A flag to indicate whether references for every extracted field should be returned.
+- taxonomy_sources `Optional[List[AiTaxonomySource]]`
+  - The taxonomy sources to be used for the structured extraction. They can either be an existing file or a taxonomy. For your request to work, `fields` must also be provided. `taxonomy_sources` is not supported with `metadata_template`.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 

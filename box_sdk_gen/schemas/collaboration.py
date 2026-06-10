@@ -194,7 +194,7 @@ class Collaboration(BaseObject):
         shared item., defaults to None
                 :type is_access_only: Optional[bool], optional
                 :param status: The status of the collaboration invitation. If the status
-        is `pending`, `login` and `name` return an empty string., defaults to None
+        is `pending`, `name` returns an empty string., defaults to None
                 :type status: Optional[CollaborationStatusField], optional
                 :param acknowledged_at: When the `status` of the collaboration object changed to
         `accepted` or `rejected`., defaults to None
