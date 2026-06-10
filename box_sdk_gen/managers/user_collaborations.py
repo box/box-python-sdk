@@ -350,19 +350,13 @@ class UserCollaborationsManager:
                 this endpoint is dependent on the group's ability to be invited.
 
 
-                If collaboration is in `pending` status, the following fields
+                If collaboration is in `pending` status, field `name` is redacted when:
 
 
-                are redacted:
+                - a collaboration was created using `user_id`,
 
 
-                - `login` and `name` are hidden if a collaboration was created
-
-
-                using `user_id`,
-
-
-                -  `name` is hidden if a collaboration was created using `login`.
+                - a collaboration was created using `login`.
 
                 :param item: The item to attach the comment to.
                 :type item: CreateCollaborationItem
