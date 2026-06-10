@@ -37,8 +37,8 @@ class AiAsk(BaseObject):
         **kwargs
     ):
         """
-                :param mode: Box AI handles text documents with text representations up to 1MB in size, or a maximum of 25 files,
-        whichever comes first. If the text file size exceeds 1MB, the first 1MB of text representation will be processed.
+                :param mode: Box AI handles text documents with text representations up to 2MB in size, or a maximum of 25 files,
+        whichever comes first. If the text file size exceeds 2MB, the first 2MB of text representation will be processed.
         Box AI handles image documents with a resolution of 1024 x 1024 pixels, with a maximum of 5 images or 5 pages
         for multi-page images. If the number of image or image pages exceeds 5, the first 5 images or pages will
         be processed. If you set mode parameter to `single_item_qa`, the items array can have one element only.
