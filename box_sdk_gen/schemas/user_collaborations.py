@@ -25,7 +25,7 @@ class UserCollaborations(UserBase):
         :type id: str
         :param name: The display name of this user. If the collaboration status is `pending`, an empty string is returned., defaults to None
         :type name: Optional[str], optional
-        :param login: The primary email address of this user. If the collaboration status is `pending`, an empty string is returned., defaults to None
+        :param login: The primary email address of this user. If the collaboration status is `pending`, a login value is returned., defaults to None
         :type login: Optional[str], optional
         :param is_active: If set to `false`, the user is either deactivated or deleted., defaults to None
         :type is_active: Optional[bool], optional

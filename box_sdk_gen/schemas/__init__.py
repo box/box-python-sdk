@@ -10,6 +10,10 @@ from box_sdk_gen.schemas.ai_response_full import *
 
 from box_sdk_gen.schemas.ai_dialogue_history import *
 
+from box_sdk_gen.schemas.ai_extract_field_option import *
+
+from box_sdk_gen.schemas.ai_extract_sub_field import *
+
 from box_sdk_gen.schemas.ai_extract_structured_response import *
 
 from box_sdk_gen.schemas.ai_item_base import *
@@ -78,8 +82,6 @@ from box_sdk_gen.schemas.ai_agent_extract_structured import *
 
 from box_sdk_gen.schemas.ai_extract_structured_agent import *
 
-from box_sdk_gen.schemas.ai_extract_structured import *
-
 from box_sdk_gen.schemas.ai_agent_extract import *
 
 from box_sdk_gen.schemas.ai_extract_agent import *
@@ -93,6 +95,16 @@ from box_sdk_gen.schemas.ai_ask_agent import *
 from box_sdk_gen.schemas.ai_ask import *
 
 from box_sdk_gen.schemas.ai_agent import *
+
+from box_sdk_gen.schemas.ai_options_rules import *
+
+from box_sdk_gen.schemas.ai_taxonomy_file_reference import *
+
+from box_sdk_gen.schemas.ai_taxonomy_reference import *
+
+from box_sdk_gen.schemas.ai_taxonomy_source import *
+
+from box_sdk_gen.schemas.ai_extract_structured import *
 
 from box_sdk_gen.schemas.app_item import *
 
