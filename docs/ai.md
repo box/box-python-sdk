@@ -245,9 +245,43 @@ client.ai.create_ai_extract_structured(
                 CreateAiExtractStructuredFieldsOptionsField(key="books"),
             ],
         ),
+        CreateAiExtractStructuredFields(
+            key="address",
+            display_name="Address",
+            description="Person address",
+            type="struct",
+            prompt="Extract the full mailing address.",
+            fields=[
+                AiExtractSubField(key="street", display_name="Street", type="string"),
+                AiExtractSubField(key="city", display_name="City", type="string"),
+                AiExtractSubField(key="state", display_name="State", type="string"),
+                AiExtractSubField(key="zip", display_name="Zip", type="string"),
+                AiExtractSubField(key="country", display_name="Country", type="string"),
+            ],
+        ),
+        CreateAiExtractStructuredFields(
+            key="work_history",
+            display_name="Work history",
+            description="Person work history",
+            type="table",
+            prompt="Extract each job as a row.",
+            fields=[
+                AiExtractSubField(
+                    key="job_title", display_name="Job title", type="string"
+                ),
+                AiExtractSubField(key="company", display_name="Company", type="string"),
+                AiExtractSubField(
+                    key="start_year", display_name="Start year", type="string"
+                ),
+                AiExtractSubField(
+                    key="end_year", display_name="End year", type="string"
+                ),
+            ],
+        ),
     ],
     ai_agent=ai_extract_structured_agent_basic_text_config,
     include_confidence_score=True,
+    include_reference=True,
 )
 ```
 
