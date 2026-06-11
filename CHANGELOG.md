@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.12.0](https://github.com/box/box-python-sdk/compare/v10.11.0...v10.12.0) (2026-06-11)
+
+
+### New Features and Enhancements
+
+* Add new event types (box/box-openapi[#1703](https://github.com/box/box-python-sdk/issues/1703)) (box/box-openapi[#605](https://github.com/box/box-python-sdk/issues/605)) ([#1486](https://github.com/box/box-python-sdk/issues/1486)) ([fa0bef9](https://github.com/box/box-python-sdk/commit/fa0bef9ba2ecd43a6490f9f176c45888e1ee03a5))
+* Add new parameters to ai extract structured method (box/box-openapi[#604](https://github.com/box/box-python-sdk/issues/604)) ([#1485](https://github.com/box/box-python-sdk/issues/1485)) ([ba4f5ab](https://github.com/box/box-python-sdk/commit/ba4f5ab5f0b9ad9d5a72fdd9f069fe4c35807986))
+* Expose `errorCode` in sign request schemas (box/box-openapi[#601](https://github.com/box/box-python-sdk/issues/601)) ([#1484](https://github.com/box/box-python-sdk/issues/1484)) ([d2ff760](https://github.com/box/box-python-sdk/commit/d2ff760a62fd1e4df31312d12af891e9e4862728))
+
 ## [10.11.0](https://github.com/box/box-python-sdk/compare/v10.10.0...v10.11.0) (2026-06-03)
 
 
