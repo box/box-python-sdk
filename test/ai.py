@@ -78,6 +78,8 @@ from box_sdk_gen.schemas.ai_agent_extract import AiAgentExtract
 
 from box_sdk_gen.schemas.ai_agent_extract_structured import AiAgentExtractStructured
 
+from box_sdk_gen.schemas.ai_extract_sub_field import AiExtractSubField
+
 client: BoxClient = get_default_client()
 
 
@@ -254,7 +256,7 @@ def testAIExtractStructuredWithFields():
         string_to_byte_stream(
             ''.join(
                 [
-                    'My name is John Doe. I was born in 4th July 1990. I am 34 years old. My hobby is guitar. My UUID is ',
+                    'My name is John Doe. I was born in 4th July 1990. I am 34 years old. My hobby is guitar. I live at 900 Jefferson Ave, Redwood City, CA 94063, US. My work history: Software Engineer at Box from 2020 to 2024. My UUID is ',
                     get_uuid(),
                 ]
             )
@@ -304,16 +306,62 @@ def testAIExtractStructuredWithFields():
                     CreateAiExtractStructuredFieldsOptionsField(key='books'),
                 ],
             ),
+            CreateAiExtractStructuredFields(
+                key='address',
+                display_name='Address',
+                description='Person address',
+                type='struct',
+                prompt='Extract the full mailing address.',
+                fields=[
+                    AiExtractSubField(
+                        key='street', display_name='Street', type='string'
+                    ),
+                    AiExtractSubField(key='city', display_name='City', type='string'),
+                    AiExtractSubField(key='state', display_name='State', type='string'),
+                    AiExtractSubField(key='zip', display_name='Zip', type='string'),
+                    AiExtractSubField(
+                        key='country', display_name='Country', type='string'
+                    ),
+                ],
+            ),
+            CreateAiExtractStructuredFields(
+                key='work_history',
+                display_name='Work history',
+                description='Person work history',
+                type='table',
+                prompt='Extract each job as a row.',
+                fields=[
+                    AiExtractSubField(
+                        key='job_title', display_name='Job title', type='string'
+                    ),
+                    AiExtractSubField(
+                        key='company', display_name='Company', type='string'
+                    ),
+                    AiExtractSubField(
+                        key='start_year', display_name='Start year', type='string'
+                    ),
+                    AiExtractSubField(
+                        key='end_year', display_name='End year', type='string'
+                    ),
+                ],
+            ),
         ],
         ai_agent=ai_extract_structured_agent_basic_text_config,
         include_confidence_score=True,
+        include_reference=True,
     )
     assert not response.confidence_score == None
+    assert not response.reference == None
+    assert not response.ai_agent_info == None
     assert to_string(response.answer.get('hobby')) == to_string(['guitar'])
     assert to_string(response.answer.get('firstName')) == 'John'
     assert to_string(response.answer.get('lastName')) == 'Doe'
     assert to_string(response.answer.get('dateOfBirth')) == '1990-07-04'
     assert to_string(response.answer.get('age')) == '34'
+    assert 'Redwood City' in to_string(response.answer.get('address'))
+    assert 'CA' in to_string(response.answer.get('address'))
+    assert '94063' in to_string(response.answer.get('address'))
+    assert 'Box' in to_string(response.answer.get('work_history'))
     assert response.completion_reason == 'done'
     client.files.delete_file_by_id(file.id)
 
