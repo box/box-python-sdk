@@ -1,0 +1,22 @@
+name: FOSSA Scan
+
+on:
+  push:
+    branches: [main, combined-sdk]
+  pull_request:
+    branches: [main, combined-sdk]
+
+permissions:
+  contents: read
+
+jobs:
+  fossa:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: fossas/fossa-action@main
+        with:
+          api-key: ${{ secrets.FOSSA_API_KEY }}
+          branch: ${{ github.head_ref || github.ref_name }}
