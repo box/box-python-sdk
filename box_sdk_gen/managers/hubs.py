@@ -63,6 +63,12 @@ class GetEnterpriseHubsV2025R0Direction(str, Enum):
     DESC = 'DESC'
 
 
+class UpdateHubByIdV2025R0CopyHubAccess(str, Enum):
+    ALL = 'all'
+    COMPANY = 'company'
+    NONE = 'none'
+
+
 class HubsManager:
     def __init__(
         self,
@@ -304,6 +310,7 @@ class HubsManager:
         can_non_owners_invite: Optional[bool] = None,
         can_shared_link_be_created: Optional[bool] = None,
         can_public_shared_link_be_created: Optional[bool] = None,
+        copy_hub_access: Optional[UpdateHubByIdV2025R0CopyHubAccess] = None,
         box_version: BoxVersionHeaderV2025R0 = BoxVersionHeaderV2025R0._2025_0,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubV2025R0:
@@ -332,6 +339,12 @@ class HubsManager:
                 :type can_shared_link_be_created: Optional[bool], optional
                 :param can_public_shared_link_be_created: Indicates if a public shared link can be created for the Box Hub., defaults to None
                 :type can_public_shared_link_be_created: Optional[bool], optional
+                :param copy_hub_access: Specifies who is allowed to copy the Box Hub.
+
+        * `all` - Any user with access to the Hub can copy it.
+        * `company` - Only users within the same enterprise as the Hub can copy it.
+        * `none` - No one can copy the Hub., defaults to None
+                :type copy_hub_access: Optional[UpdateHubByIdV2025R0CopyHubAccess], optional
                 :param box_version: Version header., defaults to BoxVersionHeaderV2025R0._2025_0
                 :type box_version: BoxVersionHeaderV2025R0, optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
@@ -349,6 +362,7 @@ class HubsManager:
             'can_non_owners_invite': can_non_owners_invite,
             'can_shared_link_be_created': can_shared_link_be_created,
             'can_public_shared_link_be_created': can_public_shared_link_be_created,
+            'copy_hub_access': copy_hub_access,
         }
         headers_map: Dict[str, str] = prepare_params(
             {'box-version': to_string(box_version), **extra_headers}
@@ -425,6 +439,7 @@ class HubsManager:
         *,
         title: Optional[str] = None,
         description: Optional[str] = None,
+        include_items: Optional[bool] = None,
         box_version: BoxVersionHeaderV2025R0 = BoxVersionHeaderV2025R0._2025_0,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> HubV2025R0:
@@ -446,6 +461,9 @@ class HubsManager:
                 :type title: Optional[str], optional
                 :param description: Description of the Box Hub., defaults to None
                 :type description: Optional[str], optional
+                :param include_items: If true, the items which the user has Editor or Owner access to in the original Box Hub will be copied to the new Box Hub.
+        Defaults to false., defaults to None
+                :type include_items: Optional[bool], optional
                 :param box_version: Version header., defaults to BoxVersionHeaderV2025R0._2025_0
                 :type box_version: BoxVersionHeaderV2025R0, optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
@@ -453,7 +471,11 @@ class HubsManager:
         """
         if extra_headers is None:
             extra_headers = {}
-        request_body: Dict = {'title': title, 'description': description}
+        request_body: Dict = {
+            'title': title,
+            'description': description,
+            'include_items': include_items,
+        }
         headers_map: Dict[str, str] = prepare_params(
             {'box-version': to_string(box_version), **extra_headers}
         )

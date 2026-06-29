@@ -158,6 +158,7 @@ class SignTemplate(BaseObject):
         additional_info: Optional[SignTemplateAdditionalInfoField] = None,
         ready_sign_link: Optional[SignTemplateReadySignLinkField] = None,
         custom_branding: Optional[SignTemplateCustomBrandingField] = None,
+        request_flow: Optional[str] = None,
         **kwargs
     ):
         """
@@ -230,6 +231,8 @@ class SignTemplate(BaseObject):
                 :param custom_branding: Custom branding applied to notifications
         and signature requests., defaults to None
                 :type custom_branding: Optional[SignTemplateCustomBrandingField], optional
+                :param request_flow: The sign flow of sign requests created from the template. Values can include `standard` or `cfr11`., defaults to None
+                :type request_flow: Optional[str], optional
         """
         super().__init__(**kwargs)
         self.type = type
@@ -249,3 +252,4 @@ class SignTemplate(BaseObject):
         self.additional_info = additional_info
         self.ready_sign_link = ready_sign_link
         self.custom_branding = custom_branding
+        self.request_flow = request_flow

@@ -71,7 +71,7 @@ client.groups.create_group(group_name, description=group_description)
 - invitability_level `Optional[CreateGroupInvitabilityLevel]`
   - Specifies who can invite the group to collaborate on folders. When set to `admins_only` the enterprise admin, co-admins, and the group's admin can invite the group. When set to `admins_and_members` all the admins listed above and group members can invite the group. When set to `all_managed_users` all managed users in the enterprise can invite the group.
 - member_viewability_level `Optional[CreateGroupMemberViewabilityLevel]`
-  - Specifies who can see the members of the group. _ `admins_only` - the enterprise admin, co-admins, group's group admin. _ `admins_and_members` - all admins and group members. \* `all_managed_users` - all managed users in the enterprise.
+  - Specifies who can see the members of the group. * `admins_only` - the enterprise admin, co-admins, group's group admin. * `admins_and_members` - all admins and group members. * `all_managed_users` - all managed users in the enterprise.
 - fields `Optional[List[str]]`
   - A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response. Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
@@ -149,7 +149,7 @@ client.groups.update_group_by_id(group.id, name=updated_group_name)
 - invitability_level `Optional[UpdateGroupByIdInvitabilityLevel]`
   - Specifies who can invite the group to collaborate on folders. When set to `admins_only` the enterprise admin, co-admins, and the group's admin can invite the group. When set to `admins_and_members` all the admins listed above and group members can invite the group. When set to `all_managed_users` all managed users in the enterprise can invite the group.
 - member_viewability_level `Optional[UpdateGroupByIdMemberViewabilityLevel]`
-  - Specifies who can see the members of the group. _ `admins_only` - the enterprise admin, co-admins, group's group admin. _ `admins_and_members` - all admins and group members. \* `all_managed_users` - all managed users in the enterprise.
+  - Specifies who can see the members of the group. * `admins_only` - the enterprise admin, co-admins, group's group admin. * `admins_and_members` - all admins and group members. * `all_managed_users` - all managed users in the enterprise.
 - fields `Optional[List[str]]`
   - A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response. Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
 - extra_headers `Optional[Dict[str, Optional[str]]]`

@@ -127,7 +127,7 @@ client.task_assignments.update_task_assignment_by_id(
 - message `Optional[str]`
   - An optional message by the assignee that can be added to the task.
 - resolution_state `Optional[UpdateTaskAssignmentByIdResolutionState]`
-  - The state of the task assigned to the user. _ For a task with an `action` value of `complete` this can be `incomplete` or `completed`. _ For a task with an `action` of `review` this can be `incomplete`, `approved`, or `rejected`.
+  - The state of the task assigned to the user. * For a task with an `action` value of `complete` this can be `incomplete` or `completed`. * For a task with an `action` of `review` this can be `incomplete`, `approved`, or `rejected`.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 

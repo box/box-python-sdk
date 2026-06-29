@@ -163,7 +163,7 @@ client.metadata_cascade_policies.apply_metadata_cascade_policy(
 - metadata_cascade_policy_id `str`
   - The ID of the cascade policy to force-apply. Example: "6fd4ff89-8fc1-42cf-8b29-1890dedd26d7"
 - conflict_resolution `ApplyMetadataCascadePolicyConflictResolution`
-  - Describes the desired behavior when dealing with the conflict where a metadata template already has an instance applied to a child. _ `none` will preserve the existing value on the file _ `overwrite` will force-apply the templates values over any existing values.
+  - Describes the desired behavior when dealing with the conflict where a metadata template already has an instance applied to a child. * `none` will preserve the existing value on the file * `overwrite` will force-apply the templates values over any existing values.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 

@@ -129,13 +129,17 @@ client.docgen.create_docgen_batch_v2025_r0(
 ### Arguments
 
 - file `FileReferenceV2025R0`
+
 - file_version `Optional[FileVersionBaseV2025R0]`
+
 - input_source `str`
   - Source of input. The value has to be `api` for all the API-based document generation requests.
 - destination_folder `CreateDocgenBatchV2025R0DestinationFolder`
+
 - output_type `str`
   - Type of the output file.
 - document_generation_data `List[DocGenDocumentGenerationDataV2025R0]`
+
 - box_version `BoxVersionHeaderV2025R0`
   - Version header.
 - extra_headers `Optional[Dict[str, Optional[str]]]`

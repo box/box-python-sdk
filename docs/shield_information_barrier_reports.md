@@ -61,6 +61,7 @@ client.shield_information_barrier_reports.create_shield_information_barrier_repo
 ### Arguments
 
 - shield_information_barrier `Optional[ShieldInformationBarrierBase]`
+
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 

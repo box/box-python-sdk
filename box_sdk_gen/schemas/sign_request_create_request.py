@@ -44,6 +44,7 @@ class SignRequestCreateRequest(SignRequestBase):
         external_id: Optional[str] = None,
         template_id: Optional[str] = None,
         external_system_name: Optional[str] = None,
+        request_flow: Optional[str] = None,
         **kwargs
     ):
         """
@@ -86,6 +87,9 @@ class SignRequestCreateRequest(SignRequestBase):
                 :type template_id: Optional[str], optional
                 :param external_system_name: Used as an optional system name to appear in the signature log next to the signers who have been assigned the `embed_url_external_id`., defaults to None
                 :type external_system_name: Optional[str], optional
+                :param request_flow: The flow type of the sign request. Values can include `standard` or `cfr11`.
+        When not specified during creation, a default is chosen based on admin settings., defaults to None
+                :type request_flow: Optional[str], optional
         """
         super().__init__(
             is_document_preparation_needed=is_document_preparation_needed,
@@ -101,6 +105,7 @@ class SignRequestCreateRequest(SignRequestBase):
             external_id=external_id,
             template_id=template_id,
             external_system_name=external_system_name,
+            request_flow=request_flow,
             **kwargs
         )
         self.signers = signers
