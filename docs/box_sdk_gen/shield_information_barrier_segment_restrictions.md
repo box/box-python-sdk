@@ -119,6 +119,7 @@ client.shield_information_barrier_segment_restrictions.create_shield_information
 - type `CreateShieldInformationBarrierSegmentRestrictionType`
   - The type of the shield barrier segment restriction for this member.
 - shield_information_barrier `Optional[ShieldInformationBarrierBase]`
+
 - shield_information_barrier_segment `CreateShieldInformationBarrierSegmentRestrictionShieldInformationBarrierSegment`
   - The `type` and `id` of the requested shield information barrier segment.
 - restricted_segment `CreateShieldInformationBarrierSegmentRestrictionRestrictedSegment`

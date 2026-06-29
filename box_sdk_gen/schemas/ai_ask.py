@@ -49,6 +49,9 @@ class AiAsk(BaseObject):
         The prompt's length is limited to 10000 characters.
                 :type prompt: str
                 :param items: The items to be processed by the LLM, often files.
+        To search across and ask questions about the contents of a Box Hub,
+        pass a single item with `type` set to `hubs`. See the item `type`
+        property for details.
                 :type items: List[AiItemAsk]
                 :param dialogue_history: The history of prompts and answers previously passed to the LLM. This provides additional context to the LLM in generating the response., defaults to None
                 :type dialogue_history: Optional[List[AiDialogueHistory]], optional

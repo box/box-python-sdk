@@ -72,7 +72,9 @@ client.files.update_file_by_id(file_to_update.id, name=updated_name, description
 - description `Optional[str]`
   - The description for a file. This can be seen in the right-hand sidebar panel when viewing a file in the Box web app. Additionally, this index is used in the search index of the file, allowing users to find the file by the content in the description.
 - parent `Optional[UpdateFileByIdParent]`
+
 - shared_link `Optional[UpdateFileByIdSharedLink]`
+
 - lock `Optional[UpdateFileByIdLock]`
   - Defines a lock on an item. This prevents the item from being moved, renamed, or otherwise changed by anyone other than the user who created the lock. Set this to `null` to remove the lock.
 - disposition_at `Optional[DateTime]`

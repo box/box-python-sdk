@@ -268,6 +268,7 @@ class SignRequestsManager:
         external_id: Union[Optional[str], NullValue] = None,
         template_id: Union[Optional[str], NullValue] = None,
         external_system_name: Union[Optional[str], NullValue] = None,
+        request_flow: Union[Optional[str], NullValue] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> SignRequest:
         """
@@ -314,6 +315,9 @@ class SignRequestsManager:
                 :type template_id: Union[Optional[str], NullValue], optional
                 :param external_system_name: Used as an optional system name to appear in the signature log next to the signers who have been assigned the `embed_url_external_id`., defaults to None
                 :type external_system_name: Union[Optional[str], NullValue], optional
+                :param request_flow: The flow type of the sign request. Values can include `standard` or `cfr11`.
+        When not specified during creation, a default is chosen based on admin settings., defaults to None
+                :type request_flow: Union[Optional[str], NullValue], optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
                 :type extra_headers: Optional[Dict[str, Optional[str]]], optional
         """
@@ -337,6 +341,7 @@ class SignRequestsManager:
             'external_id': external_id,
             'template_id': template_id,
             'external_system_name': external_system_name,
+            'request_flow': request_flow,
         }
         headers_map: Dict[str, str] = prepare_params({**extra_headers})
         response: FetchResponse = self.network_session.network_client.fetch(

@@ -24,6 +24,7 @@ client.notes.create_note_convert_v2026_r0(markdown_content, FolderReferenceV2026
 - content_format `CreateNoteConvertV2026R0ContentFormat`
   - Format of the content to convert.
 - parent `FolderReferenceV2026R0`
+
 - name `str`
   - The name for the created note. The `.boxnote` extension is appended automatically.
 - box_version `BoxVersionHeaderV2026R0`
