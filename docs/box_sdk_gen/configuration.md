@@ -183,14 +183,19 @@ client = BoxClient(auth=auth, network_session=network_session)
 ## Timeouts
 
 You can configure network timeouts with `TimeoutConfig` on `NetworkSession`.
-Python SDK supports separate connection and read timeout values in milliseconds.
+The SDK supports two timeout values, both in milliseconds:
+
+| Parameter               | Description                                                        |
+| ----------------------- | ------------------------------------------------------------------ |
+| `connection_timeout_ms` | Maximum time to wait for the TCP connection to be established.     |
+| `read_timeout_ms`       | Maximum idle time between data packets while reading the response. |
 
 ```python
 from box_sdk_gen import BoxClient, BoxDeveloperTokenAuth, NetworkSession, TimeoutConfig
 
 auth = BoxDeveloperTokenAuth(token='DEVELOPER_TOKEN_GOES_HERE')
 timeout_config = TimeoutConfig(
-    connection_timeout_ms=10000,
+    connection_timeout_ms=5000,
     read_timeout_ms=30000,
 )
 network_session = NetworkSession(timeout_config=timeout_config)
@@ -200,9 +205,10 @@ client = BoxClient(auth=auth, network_session=network_session)
 How timeout handling works:
 
 - Timeout values are configured in milliseconds and converted to seconds internally for HTTP requests.
-- If timeout config is not provided, the SDK uses default timeouts: `connection_timeout_ms=5000` (5 seconds) and `read_timeout_ms=60000` (60 seconds).
+- If timeout config is not provided, the SDK uses default timeouts: `connection_timeout_ms=10000` (10 seconds) and `read_timeout_ms=60000` (60 seconds).
+- When both `connection_timeout_ms` and `read_timeout_ms` are set, the SDK passes them as a `(connect, read)` tuple to the underlying `requests` library.
+- When only one timeout is set, it applies as a single timeout value for the request.
 - To disable all SDK timeouts, pass `TimeoutConfig(connection_timeout_ms=None, read_timeout_ms=None)` explicitly to `NetworkSession`.
-- You can also disable only one timeout by setting one value to `None` (for example, `connection_timeout_ms=None` or `read_timeout_ms=None`). If you provide only the other value (for example, `read_timeout_ms=30000`) and leave one unspecified, the unspecified field remains `None` and that timeout stays disabled.
 - Timeout failures are treated as network exceptions, and retry behavior is controlled by the configured retry strategy.
 - Timeout applies to a single HTTP request attempt to the Box API (not the total time across all retries).
 - If retries are exhausted, the SDK raises `BoxSDKError` with the underlying request exception.
