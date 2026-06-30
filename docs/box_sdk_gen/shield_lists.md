@@ -56,6 +56,7 @@ client.shield_lists.create_shield_list_v2025_r0(shield_list_country_name, Shield
 - description `Optional[str]`
   - Optional description of Shield List.
 - content `ShieldListContentRequestV2025R0`
+
 - box_version `BoxVersionHeaderV2025R0`
   - Version header.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
@@ -151,6 +152,7 @@ client.shield_lists.update_shield_list_by_id_v2025_r0(shield_list_country.id, sh
 - description `Optional[str]`
   - Optional description of Shield List.
 - content `ShieldListContentRequestV2025R0`
+
 - box_version `BoxVersionHeaderV2025R0`
   - Version header.
 - extra_headers `Optional[Dict[str, Optional[str]]]`

@@ -25,6 +25,7 @@ client.docgen_template.create_docgen_template_v2025_r0(FileReferenceV2025R0(id=f
 ### Arguments
 
 - file `FileReferenceV2025R0`
+
 - box_version `BoxVersionHeaderV2025R0`
   - Version header.
 - extra_headers `Optional[Dict[str, Optional[str]]]`

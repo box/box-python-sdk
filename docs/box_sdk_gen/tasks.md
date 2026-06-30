@@ -59,13 +59,13 @@ client.tasks.create_task(CreateTaskItem(type=CreateTaskItemTypeField.FILE, id=fi
 - item `CreateTaskItem`
   - The file to attach the task to.
 - action `Optional[CreateTaskAction]`
-  - The action the task assignee will be prompted to do. Must be _ `review` defines an approval task that can be approved or, rejected _ `complete` defines a general task which can be completed.
+  - The action the task assignee will be prompted to do. Must be * `review` defines an approval task that can be approved or, rejected * `complete` defines a general task which can be completed.
 - message `Optional[str]`
   - An optional message to include with the task.
 - due_at `Optional[DateTime]`
   - Defines when the task is due. Defaults to `null` if not provided.
 - completion_rule `Optional[CreateTaskCompletionRule]`
-  - Defines which assignees need to complete this task before the task is considered completed. _ `all_assignees` (default) requires all assignees to review or approve the task in order for it to be considered completed. _ `any_assignee` accepts any one assignee to review or approve the task in order for it to be considered completed.
+  - Defines which assignees need to complete this task before the task is considered completed. * `all_assignees` (default) requires all assignees to review or approve the task in order for it to be considered completed. * `any_assignee` accepts any one assignee to review or approve the task in order for it to be considered completed.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
@@ -124,13 +124,13 @@ client.tasks.update_task_by_id(task.id, message='updated message')
 - task_id `str`
   - The ID of the task. Example: "12345"
 - action `Optional[UpdateTaskByIdAction]`
-  - The action the task assignee will be prompted to do. Must be _ `review` defines an approval task that can be approved or rejected, _ `complete` defines a general task which can be completed.
+  - The action the task assignee will be prompted to do. Must be * `review` defines an approval task that can be approved or rejected, * `complete` defines a general task which can be completed.
 - message `Optional[str]`
   - The message included with the task.
 - due_at `Optional[DateTime]`
   - When the task is due at.
 - completion_rule `Optional[UpdateTaskByIdCompletionRule]`
-  - Defines which assignees need to complete this task before the task is considered completed. _ `all_assignees` (default) requires all assignees to review or approve the task in order for it to be considered completed. _ `any_assignee` accepts any one assignee to review or approve the task in order for it to be considered completed.
+  - Defines which assignees need to complete this task before the task is considered completed. * `all_assignees` (default) requires all assignees to review or approve the task in order for it to be considered completed. * `any_assignee` accepts any one assignee to review or approve the task in order for it to be considered completed.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 

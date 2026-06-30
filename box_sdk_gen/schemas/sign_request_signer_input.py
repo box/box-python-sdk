@@ -102,6 +102,8 @@ class SignRequestSignerInput(SignRequestPrefillTag):
         content_type: Optional[SignRequestSignerInputContentTypeField] = None,
         read_only: Optional[bool] = None,
         validation: Optional[SignRequestSignerInputValidation] = None,
+        reason: Optional[str] = None,
+        is_validated: Optional[bool] = None,
         document_tag_id: Optional[str] = None,
         text_value: Optional[str] = None,
         checkbox_value: Optional[bool] = None,
@@ -120,6 +122,13 @@ class SignRequestSignerInput(SignRequestPrefillTag):
                 :param validation: Specifies the formatting rules that signers must follow for text field inputs.
         If set, this validation is mandatory., defaults to None
                 :type validation: Optional[SignRequestSignerInputValidation], optional
+                :param reason: The reason for the signer's input, applicable to signature or initial content types
+        in a `cfr11` request flow. The value is `null` when not applicable., defaults to None
+                :type reason: Optional[str], optional
+                :param is_validated: Indicates whether the signer's input has been validated through re-authentication.
+        Applicable only for signature or initial content types in a `cfr11` request flow.
+        The value is `null` for standard request flows or non-applicable input types., defaults to None
+                :type is_validated: Optional[bool], optional
                 :param document_tag_id: This references the ID of a specific tag contained in a file of the signature request., defaults to None
                 :type document_tag_id: Optional[str], optional
                 :param text_value: Text prefill value., defaults to None
@@ -141,3 +150,5 @@ class SignRequestSignerInput(SignRequestPrefillTag):
         self.content_type = content_type
         self.read_only = read_only
         self.validation = validation
+        self.reason = reason
+        self.is_validated = is_validated

@@ -32,7 +32,7 @@ client.users.get_users()
 - filter_term `Optional[str]`
   - Limits the results to only users who's `name` or `login` start with the search term. For externally managed users, the search term needs to completely match the in order to find the user, and it will only return one user at a time.
 - user_type `Optional[GetUsersUserType]`
-  - Limits the results to the kind of user specified. _ `all` returns every kind of user for whom the `login` or `name` partially matches the `filter_term`. It will only return an external user if the login matches the `filter_term` completely, and in that case it will only return that user. _ `managed` returns all managed and app users for whom the `login` or `name` partially matches the `filter_term`. \* `external` returns all external users for whom the `login` matches the `filter_term` exactly.
+  - Limits the results to the kind of user specified. * `all` returns every kind of user for whom the `login` or `name` partially matches the `filter_term`. It will only return an external user if the login matches the `filter_term` completely, and in that case it will only return that user. * `managed` returns all managed and app users for whom the `login` or `name` partially matches the `filter_term`. * `external` returns all external users for whom the `login` matches the `filter_term` exactly.
 - external_app_user_id `Optional[str]`
   - Limits the results to app users with the given `external_app_user_id` value. When creating an app user, an `external_app_user_id` value can be set. This value can then be used in this endpoint to find any users that match that `external_app_user_id` value.
 - fields `Optional[List[str]]`
