@@ -1,3 +1,5 @@
+from enum import Enum
+
 from typing import Optional
 
 from box_sdk_gen.schemas.v2025_r0.hub_base_v2025_r0 import HubBaseV2025R0TypeField
@@ -9,6 +11,12 @@ from box_sdk_gen.schemas.v2025_r0.user_mini_v2025_r0 import UserMiniV2025R0
 from box_sdk_gen.box.errors import BoxSDKError
 
 from box_sdk_gen.internal.utils import DateTime
+
+
+class HubV2025R0CopyHubAccessField(str, Enum):
+    ALL = 'all'
+    COMPANY = 'company'
+    NONE = 'none'
 
 
 class HubV2025R0(HubBaseV2025R0):
@@ -30,6 +38,7 @@ class HubV2025R0(HubBaseV2025R0):
         can_non_owners_invite: Optional[bool] = None,
         can_shared_link_be_created: Optional[bool] = None,
         can_public_shared_link_be_created: Optional[bool] = None,
+        copy_hub_access: Optional[HubV2025R0CopyHubAccessField] = None,
         type: HubBaseV2025R0TypeField = HubBaseV2025R0TypeField.HUBS,
         **kwargs
     ):
@@ -64,6 +73,12 @@ class HubV2025R0(HubBaseV2025R0):
                 :type can_shared_link_be_created: Optional[bool], optional
                 :param can_public_shared_link_be_created: Indicates if a public shared link can be created for the Box Hub., defaults to None
                 :type can_public_shared_link_be_created: Optional[bool], optional
+                :param copy_hub_access: Specifies who is allowed to copy the Box Hub.
+
+        * `all` - Any user with access to the Hub can copy it.
+        * `company` - Only users within the same enterprise as the Hub can copy it.
+        * `none` - No one can copy the Hub., defaults to None
+                :type copy_hub_access: Optional[HubV2025R0CopyHubAccessField], optional
                 :param type: The value will always be `hubs`., defaults to HubBaseV2025R0TypeField.HUBS
                 :type type: HubBaseV2025R0TypeField, optional
         """
@@ -82,3 +97,4 @@ class HubV2025R0(HubBaseV2025R0):
         self.can_non_owners_invite = can_non_owners_invite
         self.can_shared_link_be_created = can_shared_link_be_created
         self.can_public_shared_link_be_created = can_public_shared_link_be_created
+        self.copy_hub_access = copy_hub_access

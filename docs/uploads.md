@@ -39,7 +39,9 @@ client.uploads.upload_file_version(
 - file `ByteStream`
   - The content of the file to upload to Box. <Message warning> The `attributes` part of the body must come **before** the `file` part. Requests that do not follow this format when uploading the file will receive a HTTP `400` error with a `metadata_after_file_contents` error code. </Message>
 - file_file_name `Optional[str]`
+
 - file_content_type `Optional[str]`
+
 - fields `Optional[List[str]]`
   - A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response. Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
 - if_match `Optional[str]`
@@ -80,6 +82,7 @@ client.uploads.preflight_file_upload_check(
 - size `Optional[int]`
   - The size of the file in bytes.
 - parent `Optional[PreflightFileUploadCheckParent]`
+
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
@@ -123,7 +126,9 @@ client.uploads.upload_file(
 - file `ByteStream`
   - The content of the file to upload to Box. <Message warning> The `attributes` part of the body must come **before** the `file` part. Requests that do not follow this format when uploading the file will receive a HTTP `400` error with a `metadata_after_file_contents` error code. </Message>
 - file_file_name `Optional[str]`
+
 - file_content_type `Optional[str]`
+
 - fields `Optional[List[str]]`
   - A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response. Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
 - content_md_5 `Optional[str]`
@@ -157,10 +162,13 @@ client.uploads.upload_with_preflight_check(
 ### Arguments
 
 - attributes `UploadWithPreflightCheckAttributes`
+
 - file `ByteStream`
   - The content of the file to upload to Box. <Message warning> The `attributes` part of the body must come **before** the `file` part. Requests that do not follow this format when uploading the file will receive a HTTP `400` error with a `metadata_after_file_contents` error code. </Message>
 - file_file_name `Optional[str]`
+
 - file_content_type `Optional[str]`
+
 - fields `Optional[List[str]]`
   - A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response. Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
 - content_md_5 `Optional[str]`

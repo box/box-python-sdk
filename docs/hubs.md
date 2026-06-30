@@ -190,6 +190,8 @@ client.hubs.update_hub_by_id_v2025_r0(
   - Indicates if a shared link can be created for the Box Hub.
 - can_public_shared_link_be_created `Optional[bool]`
   - Indicates if a public shared link can be created for the Box Hub.
+- copy_hub_access `Optional[UpdateHubByIdV2025R0CopyHubAccess]`
+  - Specifies who is allowed to copy the Box Hub. * `all` - Any user with access to the Hub can copy it. * `company` - Only users within the same enterprise as the Hub can copy it. * `none` - No one can copy the Hub.
 - box_version `BoxVersionHeaderV2025R0`
   - Version header.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
@@ -259,6 +261,8 @@ client.hubs.copy_hub_v2025_r0(
   - Title of the Box Hub. It cannot be empty and should be less than 50 characters.
 - description `Optional[str]`
   - Description of the Box Hub.
+- include_items `Optional[bool]`
+  - If true, the items which the user has Editor or Owner access to in the original Box Hub will be copied to the new Box Hub. Defaults to false.
 - box_version `BoxVersionHeaderV2025R0`
   - Version header.
 - extra_headers `Optional[Dict[str, Optional[str]]]`

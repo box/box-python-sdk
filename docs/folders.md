@@ -38,7 +38,7 @@ client.folders.get_folder_by_id("0")
 - fields `Optional[List[str]]`
   - A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response. Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested. Additionally this field can be used to query any metadata applied to the file by specifying the `metadata` field as well as the scope and key of the template to retrieve, for example `?fields=metadata.enterprise_12345.contractTemplate`.
 - sort `Optional[GetFolderByIdSort]`
-  - Defines the **second** attribute by which items are sorted. The folder type affects the way the items are sorted: _ **Standard folder**: Items are always sorted by their `type` first, with folders listed before files, and files listed before web links. _ **Root folder**: This parameter is not supported for marker-based pagination on the root folder (the folder with an `id` of `0`). \* **Shared folder with parent path to the associated folder visible to the collaborator**: Items are always sorted by their `type` first, with folders listed before files, and files listed before web links.
+  - Defines the **second** attribute by which items are sorted. The folder type affects the way the items are sorted: * **Standard folder**: Items are always sorted by their `type` first, with folders listed before files, and files listed before web links. * **Root folder**: This parameter is not supported for marker-based pagination on the root folder (the folder with an `id` of `0`). * **Shared folder with parent path to the associated folder visible to the collaborator**: Items are always sorted by their `type` first, with folders listed before files, and files listed before web links.
 - direction `Optional[GetFolderByIdDirection]`
   - The direction to sort results in. This can be either in alphabetical ascending (`ASC`) or descending (`DESC`) order.
 - offset `Optional[int]`
@@ -99,8 +99,11 @@ client.folders.update_folder_by_id(
 - can_non_owners_invite `Optional[bool]`
   - Specifies if users who are not the owner of the folder can invite new collaborators to the folder.
 - parent `Optional[UpdateFolderByIdParent]`
+
 - shared_link `Optional[UpdateFolderByIdSharedLink]`
+
 - folder_upload_email `Optional[UpdateFolderByIdFolderUploadEmail]`
+
 - tags `Optional[List[str]]`
   - The tags for this item. These tags are shown in the Box web app and mobile apps next to an item. To add or remove a tag, retrieve the item's current tags, modify them, and then update this field. There is a limit of 100 tags per item, and 10,000 unique tags per enterprise.
 - is_collaboration_restricted_to_enterprise `Optional[bool]`
@@ -199,7 +202,7 @@ client.folders.get_folder_items(folder_origin.id)
 - limit `Optional[int]`
   - The maximum number of items to return per page.
 - sort `Optional[GetFolderItemsSort]`
-  - Defines the **second** attribute by which items are sorted. The folder type affects the way the items are sorted: _ **Standard folder**: Items are always sorted by their `type` first, with folders listed before files, and files listed before web links. _ **Root folder**: This parameter is not supported for marker-based pagination on the root folder (the folder with an `id` of `0`). \* **Shared folder with parent path to the associated folder visible to the collaborator**: Items are always sorted by their `type` first, with folders listed before files, and files listed before web links.
+  - Defines the **second** attribute by which items are sorted. The folder type affects the way the items are sorted: * **Standard folder**: Items are always sorted by their `type` first, with folders listed before files, and files listed before web links. * **Root folder**: This parameter is not supported for marker-based pagination on the root folder (the folder with an `id` of `0`). * **Shared folder with parent path to the associated folder visible to the collaborator**: Items are always sorted by their `type` first, with folders listed before files, and files listed before web links.
 - direction `Optional[GetFolderItemsDirection]`
   - The direction to sort results in. This can be either in alphabetical ascending (`ASC`) or descending (`DESC`) order.
 - boxapi `Optional[str]`
@@ -235,6 +238,7 @@ client.folders.create_folder(new_folder_name, CreateFolderParent(id="0"))
 - parent `CreateFolderParent`
   - The parent folder to create the new folder within.
 - folder_upload_email `Optional[CreateFolderFolderUploadEmail]`
+
 - sync_state `Optional[CreateFolderSyncState]`
   - Specifies whether a folder should be synced to a user's device or not. This is used by Box Sync (discontinued) and is not used by Box Drive.
 - fields `Optional[List[str]]`

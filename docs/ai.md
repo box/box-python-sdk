@@ -10,6 +10,10 @@
 
 Sends an AI request to supported LLMs and returns an answer specifically focused on the user's question given the provided context.
 
+You can ask a question about a single file, several files, or the entire contents of a Box Hub. To search across and ask questions about everything in a Box Hub, send a single item with `type` set to `hubs` and the Hub's ID as the `id`. Box AI answers the question using the indexed content of all files in that Hub.
+
+Asking questions about a Box Hub requires Box AI for Hubs to be enabled in the Admin Console before the Hub is created, so that its content is indexed.
+
 This operation is performed by calling function `create_ai_ask`.
 
 See the endpoint docs at
@@ -39,12 +43,13 @@ client.ai.create_ai_ask(
 - prompt `str`
   - The prompt provided by the client to be answered by the LLM. The prompt's length is limited to 10000 characters.
 - items `List[AiItemAsk]`
-  - The items to be processed by the LLM, often files.
+  - The items to be processed by the LLM, often files. To search across and ask questions about the contents of a Box Hub, pass a single item with `type` set to `hubs`. See the item `type` property for details.
 - dialogue_history `Optional[List[AiDialogueHistory]]`
   - The history of prompts and answers previously passed to the LLM. This provides additional context to the LLM in generating the response.
 - include_citations `Optional[bool]`
   - A flag to indicate whether citations should be returned.
 - ai_agent `Optional[AiAskAgent]`
+
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
@@ -99,6 +104,7 @@ client.ai.create_ai_text_gen(
 - dialogue_history `Optional[List[AiDialogueHistory]]`
   - The history of prompts and answers previously passed to the LLM. This parameter provides the additional context to the LLM when generating the response.
 - ai_agent `Optional[AiTextGenAgent]`
+
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
@@ -175,6 +181,7 @@ client.ai.create_ai_extract(
 - items `List[AiItemBase]`
   - The items that LLM will process. Currently, you can use files only.
 - ai_agent `Optional[AiExtractAgent]`
+
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
@@ -294,6 +301,7 @@ client.ai.create_ai_extract_structured(
 - fields `Optional[List[CreateAiExtractStructuredFields]]`
   - The fields to be extracted from the provided items. For your request to work, you must provide either `metadata_template` or `fields`, but not both.
 - ai_agent `Optional[AiExtractStructuredAgent]`
+
 - include_confidence_score `Optional[bool]`
   - A flag to indicate whether confidence scores for every extracted field should be returned.
 - include_reference `Optional[bool]`

@@ -180,6 +180,7 @@ client.sign_requests.create_sign_request(
 - signers `List[SignRequestCreateSigner]`
   - Array of signers for the signature request. 35 is the max number of signers permitted. **Note**: It may happen that some signers belong to conflicting [segments](https://developer.box.com/reference/resources/shield-information-barrier-segment-member) (user groups). This means that due to the security policies, users are assigned to segments to prevent exchanges or communication that could lead to ethical conflicts. In such a case, an attempt to send the sign request will result in an error. Read more about [segments and ethical walls](https://support.box.com/hc/en-us/articles/9920431507603-Understanding-Information-Barriers#h_01GFVJEHQA06N7XEZ4GCZ9GFAQ).
 - parent_folder `Optional[FolderMini]`
+
 - is_document_preparation_needed `Optional[bool]`
   - Indicates if the sender should receive a `prepare_url` in the response to complete document preparation using the UI.
 - redirect_url `Optional[str]`
@@ -206,6 +207,8 @@ client.sign_requests.create_sign_request(
   - When a signature request is created from a template this field will indicate the id of that template.
 - external_system_name `Optional[str]`
   - Used as an optional system name to appear in the signature log next to the signers who have been assigned the `embed_url_external_id`.
+- request_flow `Optional[str]`
+  - The flow type of the sign request. Values can include `standard` or `cfr11`. When not specified during creation, a default is chosen based on admin settings.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 

@@ -79,8 +79,11 @@ user_client.integration_mappings.create_slack_integration_mapping(
 ### Arguments
 
 - partner_item `IntegrationMappingPartnerItemSlack`
+
 - box_item `IntegrationMappingBoxItemSlack`
+
 - options `Optional[IntegrationMappingSlackOptions]`
+
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
@@ -116,7 +119,9 @@ user_client.integration_mappings.update_slack_integration_mapping_by_id(
 - integration_mapping_id `str`
   - An ID of an integration mapping. Example: "11235432"
 - box_item `Optional[IntegrationMappingBoxItemSlack]`
+
 - options `Optional[IntegrationMappingSlackOptions]`
+
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
@@ -224,7 +229,9 @@ user_client.integration_mappings.create_teams_integration_mapping(
 ### Arguments
 
 - partner_item `IntegrationMappingPartnerItemTeamsCreateRequest`
+
 - box_item `FolderReference`
+
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
@@ -259,6 +266,7 @@ user_client.integration_mappings.update_teams_integration_mapping_by_id(
 - integration_mapping_id `str`
   - An ID of an integration mapping. Example: "11235432"
 - box_item `Optional[FolderReference]`
+
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 

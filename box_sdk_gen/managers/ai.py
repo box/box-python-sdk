@@ -259,6 +259,12 @@ class AiManager:
     ) -> Optional[AiResponseFull]:
         """
                 Sends an AI request to supported LLMs and returns an answer specifically focused on the user's question given the provided context.
+
+                You can ask a question about a single file, several files, or the entire contents of a Box Hub. To search across and ask questions about everything in a Box Hub, send a single item with `type` set to `hubs` and the Hub's ID as the `id`. Box AI answers the question using the indexed content of all files in that Hub.
+
+
+                Asking questions about a Box Hub requires Box AI for Hubs to be enabled in the Admin Console before the Hub is created, so that its content is indexed.
+
                 :param mode: Box AI handles text documents with text representations up to 2MB in size, or a maximum of 25 files,
         whichever comes first. If the text file size exceeds 2MB, the first 2MB of text representation will be processed.
         Box AI handles image documents with a resolution of 1024 x 1024 pixels, with a maximum of 5 images or 5 pages
@@ -271,6 +277,9 @@ class AiManager:
         The prompt's length is limited to 10000 characters.
                 :type prompt: str
                 :param items: The items to be processed by the LLM, often files.
+        To search across and ask questions about the contents of a Box Hub,
+        pass a single item with `type` set to `hubs`. See the item `type`
+        property for details.
                 :type items: List[AiItemAsk]
                 :param dialogue_history: The history of prompts and answers previously passed to the LLM. This provides additional context to the LLM in generating the response., defaults to None
                 :type dialogue_history: Optional[List[AiDialogueHistory]], optional

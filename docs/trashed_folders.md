@@ -36,6 +36,7 @@ client.trashed_folders.restore_folder_from_trash(folder.id)
 - name `Optional[str]`
   - An optional new name for the folder.
 - parent `Optional[RestoreFolderFromTrashParent]`
+
 - fields `Optional[List[str]]`
   - A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response. Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
 - extra_headers `Optional[Dict[str, Optional[str]]]`

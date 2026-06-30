@@ -102,6 +102,7 @@ client.web_links.update_web_link_by_id(
 - url `Optional[str]`
   - The new URL that the web link links to. Must start with `"http://"` or `"https://"`.
 - parent `Optional[UpdateWebLinkByIdParent]`
+
 - name `Optional[str]`
   - A new name for the web link. Defaults to the URL if not set.
 - description `Optional[str]`
