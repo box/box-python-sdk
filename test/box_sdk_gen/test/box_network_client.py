@@ -178,7 +178,7 @@ def network_session_mock():
 def test_network_session_uses_default_timeout_config_values():
     network_session = NetworkSession()
 
-    assert network_session.timeout_config.connection_timeout_ms == 5000
+    assert network_session.timeout_config.connection_timeout_ms == 10000
     assert network_session.timeout_config.read_timeout_ms == 60000
 
 
@@ -191,7 +191,7 @@ def test_prepare_request_uses_default_network_session_timeouts(network_client):
 
     api_request = network_client._prepare_request(options=options)
 
-    assert api_request.timeout == (5, 60)
+    assert api_request.timeout == (10, 60)
 
 
 @pytest.fixture
@@ -339,7 +339,7 @@ def test_prepare_json_request(network_client, network_session_mock):
         params={"param": "value"},
         data='{"key": "value"}',
         content_type="application/json",
-        timeout=(5, 60),
+        timeout=(10, 60),
     )
 
 
@@ -727,7 +727,7 @@ def test_retrying_401_response_with_new_token_and_auth_provided(
                 data=None,
                 stream=True,
                 allow_redirects=True,
-                timeout=(5, 60),
+                timeout=(10, 60),
             ),
             mock.call(
                 method="GET",
@@ -742,7 +742,7 @@ def test_retrying_401_response_with_new_token_and_auth_provided(
                 data=None,
                 stream=True,
                 allow_redirects=True,
-                timeout=(5, 60),
+                timeout=(10, 60),
             ),
         ],
     )
@@ -782,7 +782,7 @@ def test_not_retrying_401_when_auth_not_provided(
         data=None,
         stream=True,
         allow_redirects=True,
-        timeout=(5, 60),
+        timeout=(10, 60),
     )
 
 
@@ -1244,5 +1244,5 @@ def test_disable_follow_redirects(
         data=None,
         stream=True,
         allow_redirects=False,
-        timeout=(5, 60),
+        timeout=(10, 60),
     )

@@ -42,7 +42,7 @@ class NetworkSession:
             data_sanitizer = DataSanitizer()
         if timeout_config is None:
             timeout_config = TimeoutConfig(
-                connection_timeout_ms=5000,
+                connection_timeout_ms=10000,
                 read_timeout_ms=60000,
             )
         self.additional_headers = additional_headers
