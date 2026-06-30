@@ -158,8 +158,13 @@ new_client = client.with_custom_base_urls(
 
 In order to configure timeout for API calls, calling the `client.with_timeouts(config)` method creates a new client with timeout settings, leaving the original client unmodified.
 
+All timeout values are in milliseconds.
+
 ```python
-timeout_config = TimeoutConfig(connection_timeout_ms=10000, read_timeout_ms=30000)
+timeout_config = TimeoutConfig(
+    connection_timeout_ms=5000,
+    read_timeout_ms=30000,
+)
 new_client = client.with_timeouts(timeout_config)
 ```
 
