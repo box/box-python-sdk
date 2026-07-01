@@ -42,7 +42,7 @@ class APIRequest:
     data: Optional[Union[str, ByteStream, MultipartEncoder]]
     content_type: Optional[str] = None
     allow_redirects: bool = True
-    timeout: Optional[Tuple[Optional[float], Optional[float]]] = None
+    timeout: Optional[Union[float, Tuple[Optional[float], Optional[float]]]] = None
 
 
 @dataclass
@@ -189,36 +189,34 @@ class BoxNetworkClient(NetworkClient):
     @staticmethod
     def _get_request_timeout(
         options: 'FetchOptions',
-    ) -> Optional[Tuple[Optional[float], Optional[float]]]:
+    ) -> Optional[Union[float, Tuple[Optional[float], Optional[float]]]]:
         """
-        Derive requests timeout tuple (connect, read) in seconds.
+        Derive requests timeout in seconds.
 
         Uses `options.network_session.timeout_config` when present.
         The timeout config values are expected to be in milliseconds.
+
+        Returns a tuple (connect, read) when both timeouts are specified,
+        a single float when only one is set, or None to use no timeout.
         """
         network_session = options.network_session
         timeout_config = network_session.timeout_config if network_session else None
         if timeout_config is None:
             return None
 
-        connection_timeout_ms, read_timeout_ms = (
-            timeout_config.connection_timeout_ms,
-            timeout_config.read_timeout_ms,
-        )
+        connection_timeout_ms = timeout_config.connection_timeout_ms
+        read_timeout_ms = timeout_config.read_timeout_ms
 
         if connection_timeout_ms is None and read_timeout_ms is None:
             return None
 
-        connection_timeout_sec = (
-            connection_timeout_ms / 1000.0
-            if connection_timeout_ms is not None
-            else None
-        )
-        read_timeout_sec = (
-            read_timeout_ms / 1000.0 if read_timeout_ms is not None else None
-        )
+        if connection_timeout_ms is not None and read_timeout_ms is not None:
+            return (connection_timeout_ms / 1000.0, read_timeout_ms / 1000.0)
 
-        return (connection_timeout_sec, read_timeout_sec)
+        if connection_timeout_ms is not None:
+            return connection_timeout_ms / 1000.0
+
+        return read_timeout_ms / 1000.0
 
     @staticmethod
     def _prepare_headers(
