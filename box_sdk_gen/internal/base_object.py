@@ -81,6 +81,8 @@ class BaseObject:
 
         if get_origin(annotation) == list:
             return cls._deserialize_list(key, value, annotation)
+        elif get_origin(annotation) == dict:
+            return cls._deserialize_dict(key, value, annotation)
         elif get_origin(annotation) == Union:
             return cls._deserialize_union(key, value, annotation)
         elif isinstance(annotation, EnumMeta):
@@ -101,6 +103,17 @@ class BaseObject:
             return [
                 cls._deserialize(key, list_entry, list_type) for list_entry in value
             ]
+        except Exception:
+            return value
+
+    @classmethod
+    def _deserialize_dict(cls, key, value, annotation):
+        try:
+            args = get_args(annotation)
+            if len(args) < 2:
+                return value
+            value_type = args[1]
+            return {k: cls._deserialize(key, v, value_type) for k, v in value.items()}
         except Exception:
             return value
 
