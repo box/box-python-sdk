@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.13.0](https://github.com/box/box-python-sdk/compare/v4.12.0...v4.13.0) (2026-07-09)
+
+
+### New Features and Enhancements:
+
+* **boxsdkgen:** Add new fields to Hubs (box/box-openapi[#606](https://github.com/box/box-python-sdk/issues/606)) ([#1498](https://github.com/box/box-python-sdk/issues/1498)) ([b02f154](https://github.com/box/box-python-sdk/commit/b02f154eb7644f2746dc49e3e43bdc12e8b77209))
+* **boxsdkgen:** Setup common default timeout (box/box-codegen[#965](https://github.com/box/box-python-sdk/issues/965)) ([#1505](https://github.com/box/box-python-sdk/issues/1505)) ([ec8d510](https://github.com/box/box-python-sdk/commit/ec8d5107a8b3c91d24d73d6bd3a77084184c3dcf))
+
+
+### Bug Fixes:
+
+* **boxsdkgen:** Fix dictionary values deserialization (box/box-codegen[#966](https://github.com/box/box-python-sdk/issues/966)) ([#1510](https://github.com/box/box-python-sdk/issues/1510)) ([b18be5a](https://github.com/box/box-python-sdk/commit/b18be5a916180c6861eef76f39dd4e53ce11f217))
+
 ## [4.12.0](https://github.com/box/box-python-sdk/compare/v4.11.0...v4.12.0) (2026-06-11)
 
 
