@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.13.0](https://github.com/box/box-python-sdk/compare/v10.12.0...v10.13.0) (2026-07-10)
+
+
+### Bug Fixes
+
+* Fix dictionary values deserialization (box/box-codegen[#966](https://github.com/box/box-python-sdk/issues/966)) ([#1511](https://github.com/box/box-python-sdk/issues/1511)) ([7352ce9](https://github.com/box/box-python-sdk/commit/7352ce921211dc9c68f7af4344067361ecb0ebf0))
+
+
+### New Features and Enhancements
+
+* Add new fields to Hubs (box/box-openapi[#606](https://github.com/box/box-python-sdk/issues/606)) ([#1499](https://github.com/box/box-python-sdk/issues/1499)) ([c083ad0](https://github.com/box/box-python-sdk/commit/c083ad0af00b962a7224795bbf56ab04d3deffc5))
+* Setup common default timeout (box/box-codegen[#965](https://github.com/box/box-python-sdk/issues/965)) ([#1507](https://github.com/box/box-python-sdk/issues/1507)) ([b502193](https://github.com/box/box-python-sdk/commit/b502193e66b56796ba9ea9967ad13c2f6f9edfca))
+
 ## [10.12.0](https://github.com/box/box-python-sdk/compare/v10.11.0...v10.12.0) (2026-06-11)
 
 
