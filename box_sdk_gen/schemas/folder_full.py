@@ -30,6 +30,8 @@ from box_sdk_gen.schemas.folder import Folder
 
 from box_sdk_gen.schemas.metadata_full import MetadataFull
 
+from box_sdk_gen.schemas.collection import Collection
+
 from box_sdk_gen.box.errors import BoxSDKError
 
 
@@ -182,6 +184,7 @@ class FolderFull(Folder):
         can_non_owners_view_collaborators: Optional[bool] = None,
         classification: Optional[FolderFullClassificationField] = None,
         is_associated_with_app_item: Optional[bool] = None,
+        collections: Optional[List[Collection]] = None,
         created_at: Optional[DateTime] = None,
         modified_at: Optional[DateTime] = None,
         description: Optional[str] = None,
@@ -219,11 +222,12 @@ class FolderFull(Folder):
                 :param is_externally_owned: Specifies if this folder is owned by a user outside of the
         authenticated enterprise., defaults to None
                 :type is_externally_owned: Optional[bool], optional
-                :param allowed_shared_link_access_levels: A list of access levels that are available
-        for this folder.
+                :param allowed_shared_link_access_levels: The shared link access levels the authenticated user is allowed to
+        use when creating or updating a shared link for this folder.
 
-        For some folders, like the root folder, this will always
-        be an empty list as sharing is not allowed at that level., defaults to None
+        The list depends on item policy and user authorization. For some
+        folders, like the root folder, this is always empty as sharing is
+        not allowed at that level., defaults to None
                 :type allowed_shared_link_access_levels: Optional[List[FolderFullAllowedSharedLinkAccessLevelsField]], optional
                 :param allowed_invitee_roles: A list of the types of roles that user can be invited at
         when sharing this folder., defaults to None
@@ -244,6 +248,11 @@ class FolderFull(Folder):
         return true even if the context user does not have access to the
         app item(s) associated with the folder., defaults to None
                 :type is_associated_with_app_item: Optional[bool], optional
+                :param collections: The collections that this folder belongs to.
+
+        For more information, see the
+        [collections guide](https://developer.box.com/guides/collections)., defaults to None
+                :type collections: Optional[List[Collection]], optional
                 :param created_at: The date and time when the folder was created. This value may
         be `null` for some folders such as the root folder or the trash
         folder., defaults to None
@@ -332,3 +341,4 @@ class FolderFull(Folder):
         self.can_non_owners_view_collaborators = can_non_owners_view_collaborators
         self.classification = classification
         self.is_associated_with_app_item = is_associated_with_app_item
+        self.collections = collections
