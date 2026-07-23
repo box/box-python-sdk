@@ -30,6 +30,8 @@ from box_sdk_gen.schemas.resource_scope import ResourceScope
 
 from box_sdk_gen.schemas.metadata_full import MetadataFull
 
+from box_sdk_gen.schemas.collection import Collection
+
 from box_sdk_gen.box.errors import BoxSDKError
 
 from box_sdk_gen.internal.utils import DateTime
@@ -413,6 +415,12 @@ class FileFullSharedLinkPermissionOptionsField(str, Enum):
     CAN_EDIT = 'can_edit'
 
 
+class FileFullAllowedSharedLinkAccessLevelsField(str, Enum):
+    OPEN = 'open'
+    COMPANY = 'company'
+    COLLABORATORS = 'collaborators'
+
+
 class FileFull(File):
     _discriminator = 'type', {'file'}
 
@@ -443,6 +451,13 @@ class FileFull(File):
             List[FileFullSharedLinkPermissionOptionsField]
         ] = None,
         is_associated_with_app_item: Optional[bool] = None,
+        collections: Optional[List[Collection]] = None,
+        is_download_available: Optional[bool] = None,
+        download_url: Optional[str] = None,
+        authenticated_download_url: Optional[str] = None,
+        allowed_shared_link_access_levels: Optional[
+            List[FileFullAllowedSharedLinkAccessLevelsField]
+        ] = None,
         description: Optional[str] = None,
         size: Optional[int] = None,
         path_collection: Optional[FilePathCollectionField] = None,
@@ -509,6 +524,36 @@ class FileFull(File):
         true even if the context user does not have access to the app item(s)
         associated with the file., defaults to None
                 :type is_associated_with_app_item: Optional[bool], optional
+                :param collections: The collections that this file belongs to.
+
+        For more information, see the
+        [collections guide](https://developer.box.com/guides/collections)., defaults to None
+                :type collections: Optional[List[Collection]], optional
+                :param is_download_available: Whether the file's binary content is eligible to be downloaded.
+
+        This is a content-level flag and does not reflect whether the
+        current user is authorized to download the file. Use
+        `permissions.can_download`, when available, for that., defaults to None
+                :type is_download_available: Optional[bool], optional
+                :param download_url: A pre-authorized, expiring URL for directly downloading the file's
+        content. Requires authentication and is valid only for the current
+        session.
+
+        This field is only returned for files, not folders or web links., defaults to None
+                :type download_url: Optional[str], optional
+                :param authenticated_download_url: A stable API URL for the file content endpoint,
+        `/2.0/files/{id}/content`. Unlike `download_url`, authorization is
+        evaluated when the URL is requested with a valid access token.
+
+        This field is only returned for files, not folders or web links., defaults to None
+                :type authenticated_download_url: Optional[str], optional
+                :param allowed_shared_link_access_levels: The shared link access levels the authenticated user is allowed to
+        use when creating or updating a shared link for this file.
+
+        The list depends on item policy and user authorization, so it may be
+        narrower than the levels available to the owner. An empty array means
+        no access level is available to this user., defaults to None
+                :type allowed_shared_link_access_levels: Optional[List[FileFullAllowedSharedLinkAccessLevelsField]], optional
                 :param description: The optional description of this file.
         If the description exceeds 255 characters, the first 255 characters
         are set as a file description and the rest of it is ignored., defaults to None
@@ -595,3 +640,8 @@ class FileFull(File):
         self.disposition_at = disposition_at
         self.shared_link_permission_options = shared_link_permission_options
         self.is_associated_with_app_item = is_associated_with_app_item
+        self.collections = collections
+        self.is_download_available = is_download_available
+        self.download_url = download_url
+        self.authenticated_download_url = authenticated_download_url
+        self.allowed_shared_link_access_levels = allowed_shared_link_access_levels
