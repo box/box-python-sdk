@@ -16,6 +16,8 @@ from box_sdk_gen.schemas.folder_mini import FolderMini
 
 from box_sdk_gen.schemas.user_mini import UserMini
 
+from box_sdk_gen.schemas.collection import Collection
+
 from box_sdk_gen.box.errors import BoxSDKError
 
 from box_sdk_gen.internal.utils import DateTime
@@ -172,6 +174,12 @@ class WebLinkItemStatusField(str, Enum):
     DELETED = 'deleted'
 
 
+class WebLinkAllowedSharedLinkAccessLevelsField(str, Enum):
+    OPEN = 'open'
+    COMPANY = 'company'
+    COLLABORATORS = 'collaborators'
+
+
 class WebLink(WebLinkMini):
     _discriminator = 'type', {'web_link'}
 
@@ -191,6 +199,10 @@ class WebLink(WebLinkMini):
         owned_by: Optional[UserMini] = None,
         shared_link: Optional[WebLinkSharedLinkField] = None,
         item_status: Optional[WebLinkItemStatusField] = None,
+        collections: Optional[List[Collection]] = None,
+        allowed_shared_link_access_levels: Optional[
+            List[WebLinkAllowedSharedLinkAccessLevelsField]
+        ] = None,
         url: Optional[str] = None,
         sequence_id: Optional[str] = None,
         name: Optional[str] = None,
@@ -217,6 +229,18 @@ class WebLink(WebLinkMini):
         `trashed` if the file has been moved to the trash, and `deleted` if
         the file has been permanently deleted., defaults to None
                 :type item_status: Optional[WebLinkItemStatusField], optional
+                :param collections: The collections that this web link belongs to.
+
+        For more information, see the
+        [collections guide](https://developer.box.com/guides/collections)., defaults to None
+                :type collections: Optional[List[Collection]], optional
+                :param allowed_shared_link_access_levels: The shared link access levels the authenticated user is allowed to
+        use when creating or updating a shared link for this web link.
+
+        The list depends on item policy and user authorization, so it may be
+        narrower than the levels available to the owner. An empty array means
+        no access level is available to this user., defaults to None
+                :type allowed_shared_link_access_levels: Optional[List[WebLinkAllowedSharedLinkAccessLevelsField]], optional
                 :param url: The URL this web link points to., defaults to None
                 :type url: Optional[str], optional
                 :param name: The name of the web link., defaults to None
@@ -248,3 +272,5 @@ class WebLink(WebLinkMini):
         self.owned_by = owned_by
         self.shared_link = shared_link
         self.item_status = item_status
+        self.collections = collections
+        self.allowed_shared_link_access_levels = allowed_shared_link_access_levels
