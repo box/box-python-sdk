@@ -257,6 +257,8 @@ client.users.update_user_by_id(user.id, name=updated_user_name)
   - Whether the user must use two-factor authentication.
 - is_password_reset_required `Optional[bool]`
   - Whether the user is required to reset their password.
+- is_collaborated_content_available_when_owner_inactive `Optional[bool]`
+  - Whether collaborators can access content owned by the user when the user is inactive. This setting preserves existing collaborator access and does not grant new permissions.
 - status `Optional[UpdateUserByIdStatus]`
   - The user's account status.
 - space_amount `Optional[int]`
