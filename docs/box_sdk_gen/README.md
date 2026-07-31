@@ -62,6 +62,7 @@ the SDK are available by topic:
 - [Metadata taxonomies](metadata_taxonomies.md)
 - [Metadata templates](metadata_templates.md)
 - [Notes](notes.md)
+- [Query](query.md)
 - [Recent items](recent_items.md)
 - [Retention policies](retention_policies.md)
 - [Retention policy assignments](retention_policy_assignments.md)
