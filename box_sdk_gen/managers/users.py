@@ -499,6 +499,7 @@ class UsersManager:
         is_exempt_from_device_limits: Optional[bool] = None,
         is_exempt_from_login_verification: Optional[bool] = None,
         is_password_reset_required: Optional[bool] = None,
+        is_collaborated_content_available_when_owner_inactive: Optional[bool] = None,
         status: Optional[UpdateUserByIdStatus] = None,
         space_amount: Optional[int] = None,
         notification_email: Union[
@@ -564,6 +565,10 @@ class UsersManager:
                 :type is_exempt_from_login_verification: Optional[bool], optional
                 :param is_password_reset_required: Whether the user is required to reset their password., defaults to None
                 :type is_password_reset_required: Optional[bool], optional
+                :param is_collaborated_content_available_when_owner_inactive: Whether collaborators can access content owned by the user when
+        the user is inactive. This setting preserves existing
+        collaborator access and does not grant new permissions., defaults to None
+                :type is_collaborated_content_available_when_owner_inactive: Optional[bool], optional
                 :param status: The user's account status., defaults to None
                 :type status: Optional[UpdateUserByIdStatus], optional
                 :param space_amount: The user’s total available space in bytes. Set this to `-1` to
@@ -616,6 +621,9 @@ class UsersManager:
             'is_exempt_from_device_limits': is_exempt_from_device_limits,
             'is_exempt_from_login_verification': is_exempt_from_login_verification,
             'is_password_reset_required': is_password_reset_required,
+            'is_collaborated_content_available_when_owner_inactive': (
+                is_collaborated_content_available_when_owner_inactive
+            ),
             'status': status,
             'space_amount': space_amount,
             'notification_email': notification_email,
