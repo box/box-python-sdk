@@ -74,6 +74,7 @@ class UserFull(User):
         is_external_collab_restricted: Optional[bool] = None,
         is_exempt_from_device_limits: Optional[bool] = None,
         is_exempt_from_login_verification: Optional[bool] = None,
+        is_collaborated_content_available_when_owner_inactive: Optional[bool] = None,
         enterprise: Optional[UserFullEnterpriseField] = None,
         my_tags: Optional[List[str]] = None,
         hostname: Optional[str] = None,
@@ -118,6 +119,10 @@ class UserFull(User):
                 :type is_exempt_from_device_limits: Optional[bool], optional
                 :param is_exempt_from_login_verification: Whether the user must use two-factor authentication., defaults to None
                 :type is_exempt_from_login_verification: Optional[bool], optional
+                :param is_collaborated_content_available_when_owner_inactive: Whether collaborators can access content owned by the user when the
+        user is inactive. This setting preserves existing collaborator access
+        and does not grant new permissions., defaults to None
+                :type is_collaborated_content_available_when_owner_inactive: Optional[bool], optional
                 :param my_tags: Tags for all files and folders owned by the user. Values returned
         will only contain tags that were set by the requester., defaults to None
                 :type my_tags: Optional[List[str]], optional
@@ -194,6 +199,9 @@ class UserFull(User):
         self.is_external_collab_restricted = is_external_collab_restricted
         self.is_exempt_from_device_limits = is_exempt_from_device_limits
         self.is_exempt_from_login_verification = is_exempt_from_login_verification
+        self.is_collaborated_content_available_when_owner_inactive = (
+            is_collaborated_content_available_when_owner_inactive
+        )
         self.enterprise = enterprise
         self.my_tags = my_tags
         self.hostname = hostname
