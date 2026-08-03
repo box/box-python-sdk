@@ -14,7 +14,11 @@ This operation is performed by calling function `create_query_v2026_r0`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-query/).
 
-_Currently we don't have an example for calling `create_query_v2026_r0` in integration tests_
+<!-- sample post_query_v2026.0 -->
+
+```python
+client.query.create_query_v2026_r0(CreateQueryV2026R0Query(predicate=predicate, params={'name': 'John', 'age': 50}, ancestors=[QueryAncestorReferenceV2026R0(id='0', type='folder')]), limit=10, fields=['box:item:name', search_from])
+```
 
 ### Arguments
 
@@ -51,7 +55,11 @@ This operation is performed by calling function `create_query_insight_v2026_r0`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-query-insights/).
 
-_Currently we don't have an example for calling `create_query_insight_v2026_r0` in integration tests_
+<!-- sample post_query_insights_v2026.0 -->
+
+```python
+client.query.create_query_insight_v2026_r0(CreateQueryInsightV2026R0Query(predicate=predicate, params={'minAmount': 0}, ancestors=[QueryAncestorReferenceV2026R0(id='0', type='folder')], group_by=[QueryInsightsGroupByV2026R0(field=''.join([md_prefix, '.category']), bucket_limit=5)]), metrics)
+```
 
 ### Arguments
 
