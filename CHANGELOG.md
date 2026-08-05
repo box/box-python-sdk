@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.14.0](https://github.com/box/box-python-sdk/compare/v10.13.0...v10.14.0) (2026-08-05)
+
+
+### New Features and Enhancements
+
+* add `is_collaborated_content_available_when_owner_inactive` property (box/box-openapi[#613](https://github.com/box/box-python-sdk/issues/613)) ([#1537](https://github.com/box/box-python-sdk/issues/1537)) ([9d4542f](https://github.com/box/box-python-sdk/commit/9d4542f1ca9ef8da5b273705e670c19e89d5ea8b))
+* Added two missing event types (box/box-openapi[#611](https://github.com/box/box-python-sdk/issues/611)) ([#1531](https://github.com/box/box-python-sdk/issues/1531)) ([94120f3](https://github.com/box/box-python-sdk/commit/94120f3fa866c2521db42d62dc7471030c023871))
+* Support query APIs (box/box-openapi[#610](https://github.com/box/box-python-sdk/issues/610)) ([#1529](https://github.com/box/box-python-sdk/issues/1529)) ([1f18e93](https://github.com/box/box-python-sdk/commit/1f18e931e8fcc5b13429acb9a2669e7bd9610c10))
+
 ## [10.13.0](https://github.com/box/box-python-sdk/compare/v10.12.0...v10.13.0) (2026-07-10)
 
 
