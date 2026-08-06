@@ -11,7 +11,6 @@ The MAJOR version is used to indicate the family of technology represented by th
 
 New MAJOR versions will be communicated in advance via:
 
-* An email announcement is sent to affected accounts, announcing our plans to end support for the specific SDK version. The email will outline the path to end-of-support, specify the campaign timelines, and provide upgrade guidance.
 * Box SDK documentation, such as API reference documentation, user guides, SDK product marketing pages, and GitHub readme(s) are updated to indicate the campaign timeline and provide guidance on upgrading affected applications.
 * Deprecation warnings are added to the SDKs, outlining the path to end-of-support and linking to the SDK documentation.
 
