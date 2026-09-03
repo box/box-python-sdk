@@ -24,6 +24,10 @@ from box_sdk_gen.schemas.sign_request_signer_input_zip_4_validation import (
     SignRequestSignerInputZip4Validation,
 )
 
+from box_sdk_gen.schemas.sign_request_signer_input_zipjp_validation import (
+    SignRequestSignerInputZipjpValidation,
+)
+
 from box_sdk_gen.schemas.sign_request_signer_input_ssn_validation import (
     SignRequestSignerInputSsnValidation,
 )
