@@ -324,6 +324,8 @@ from box_sdk_gen.schemas.sign_request_signer_input_ssn_validation import *
 
 from box_sdk_gen.schemas.sign_request_signer_input_zip_4_validation import *
 
+from box_sdk_gen.schemas.sign_request_signer_input_zipjp_validation import *
+
 from box_sdk_gen.schemas.sign_request_signer_input_zip_validation import *
 
 from box_sdk_gen.schemas.sign_request_signer_input_validation import *
