@@ -12,6 +12,8 @@ This is a manager for chunked uploads (allowed for files at least 20MB).
 - [Remove upload session](#remove-upload-session)
 - [List parts by URL](#list-parts-by-url)
 - [List parts](#list-parts)
+- [Plan upload session by URL](#plan-upload-session-by-url)
+- [Plan upload session](#plan-upload-session)
 - [Commit upload session by URL](#commit-upload-session-by-url)
 - [Commit upload session](#commit-upload-session)
 - [Upload big file](#upload-big-file)
@@ -347,6 +349,70 @@ client.chunked_uploads.get_file_upload_session_parts(upload_session_id)
 This function returns a value of type `UploadParts`.
 
 Returns a list of parts that have been uploaded.
+
+## Plan upload session by URL
+
+Plan an upload session by checking which parts already exist on the server.
+This endpoint allows clients to optimize uploads by skipping parts that
+have already been uploaded (cache hits) and only uploading missing parts.
+
+The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+
+This operation is performed by calling function `create_file_upload_session_plan_by_url`.
+
+See the endpoint docs at
+[API Reference](https://developer.box.com/reference/post-files-upload-sessions-id-plan/).
+
+_Currently we don't have an example for calling `create_file_upload_session_plan_by_url` in integration tests_
+
+### Arguments
+
+- url `str`
+  - URL of createFileUploadSessionPlan method
+- parts `List[UploadPartPlan]`
+  - The list of parts to check for existence.
+- extra_headers `Optional[Dict[str, Optional[str]]]`
+  - Extra headers that will be included in the HTTP request.
+
+### Returns
+
+This function returns a value of type `UploadSessionPlanResponse`.
+
+Returns information about which parts already exist (hits)
+and which parts need to be uploaded (misses).
+
+## Plan upload session
+
+Plan an upload session by checking which parts already exist on the server.
+This endpoint allows clients to optimize uploads by skipping parts that
+have already been uploaded (cache hits) and only uploading missing parts.
+
+The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+
+This operation is performed by calling function `create_file_upload_session_plan`.
+
+See the endpoint docs at
+[API Reference](https://developer.box.com/reference/post-files-upload-sessions-id-plan/).
+
+_Currently we don't have an example for calling `create_file_upload_session_plan` in integration tests_
+
+### Arguments
+
+- upload_session_id `str`
+  - The ID of the upload session. Example: "D5E3F7A"
+- parts `List[UploadPartPlan]`
+  - The list of parts to check for existence.
+- extra_headers `Optional[Dict[str, Optional[str]]]`
+  - Extra headers that will be included in the HTTP request.
+
+### Returns
+
+This function returns a value of type `UploadSessionPlanResponse`.
+
+Returns information about which parts already exist (hits)
+and which parts need to be uploaded (misses).
 
 ## Commit upload session by URL
 
