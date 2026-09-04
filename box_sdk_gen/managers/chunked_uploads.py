@@ -12,6 +12,8 @@ from box_sdk_gen.internal.utils import to_string
 
 from box_sdk_gen.networking.fetch_options import ResponseFormat
 
+from box_sdk_gen.schemas.upload_part_plan import UploadPartPlan
+
 from box_sdk_gen.internal.utils import Buffer
 
 from box_sdk_gen.internal.utils import HashName
@@ -25,6 +27,10 @@ from box_sdk_gen.schemas.client_error import ClientError
 from box_sdk_gen.schemas.uploaded_part import UploadedPart
 
 from box_sdk_gen.schemas.upload_parts import UploadParts
+
+from box_sdk_gen.schemas.upload_session_plan_response import UploadSessionPlanResponse
+
+from box_sdk_gen.schemas.upload_session_plan_request import UploadSessionPlanRequest
 
 from box_sdk_gen.schemas.files import Files
 
@@ -616,6 +622,112 @@ class ChunkedUploadsManager:
             )
         )
         return deserialize(response.data, UploadParts)
+
+    def create_file_upload_session_plan_by_url(
+        self,
+        url: str,
+        parts: List[UploadPartPlan],
+        *,
+        extra_headers: Optional[Dict[str, Optional[str]]] = None
+    ) -> UploadSessionPlanResponse:
+        """
+        Using this method with urls provided in response when creating a new upload session is preferred to use over CreateFileUploadSessionPlan method.
+
+        This allows to always upload your content to the closest Box data center and can significantly improve upload speed.
+
+
+         Plan an upload session by checking which parts already exist on the server.
+
+
+        This endpoint allows clients to optimize uploads by skipping parts that
+
+
+        have already been uploaded (cache hits) and only uploading missing parts.
+
+
+        The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+
+
+        and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+
+        :param url: URL of createFileUploadSessionPlan method
+        :type url: str
+        :param parts: The list of parts to check for existence.
+        :type parts: List[UploadPartPlan]
+        :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
+        :type extra_headers: Optional[Dict[str, Optional[str]]], optional
+        """
+        if extra_headers is None:
+            extra_headers = {}
+        request_body: Dict = {'parts': parts}
+        headers_map: Dict[str, str] = prepare_params({**extra_headers})
+        response: FetchResponse = self.network_session.network_client.fetch(
+            FetchOptions(
+                url=url,
+                method='POST',
+                headers=headers_map,
+                data=serialize(request_body),
+                content_type='application/json',
+                response_format=ResponseFormat.JSON,
+                auth=self.auth,
+                network_session=self.network_session,
+            )
+        )
+        return deserialize(response.data, UploadSessionPlanResponse)
+
+    def create_file_upload_session_plan(
+        self,
+        upload_session_id: str,
+        parts: List[UploadPartPlan],
+        *,
+        extra_headers: Optional[Dict[str, Optional[str]]] = None
+    ) -> UploadSessionPlanResponse:
+        """
+                Plan an upload session by checking which parts already exist on the server.
+
+                This endpoint allows clients to optimize uploads by skipping parts that
+
+
+                have already been uploaded (cache hits) and only uploading missing parts.
+
+
+                The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+
+
+                and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+
+                :param upload_session_id: The ID of the upload session.
+        Example: "D5E3F7A"
+                :type upload_session_id: str
+                :param parts: The list of parts to check for existence.
+                :type parts: List[UploadPartPlan]
+                :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
+                :type extra_headers: Optional[Dict[str, Optional[str]]], optional
+        """
+        if extra_headers is None:
+            extra_headers = {}
+        request_body: Dict = {'parts': parts}
+        headers_map: Dict[str, str] = prepare_params({**extra_headers})
+        response: FetchResponse = self.network_session.network_client.fetch(
+            FetchOptions(
+                url=''.join(
+                    [
+                        self.network_session.base_urls.upload_url,
+                        '/2.0/files/upload_sessions/',
+                        to_string(upload_session_id),
+                        '/plan',
+                    ]
+                ),
+                method='POST',
+                headers=headers_map,
+                data=serialize(request_body),
+                content_type='application/json',
+                response_format=ResponseFormat.JSON,
+                auth=self.auth,
+                network_session=self.network_session,
+            )
+        )
+        return deserialize(response.data, UploadSessionPlanResponse)
 
     def create_file_upload_session_commit_by_url(
         self,

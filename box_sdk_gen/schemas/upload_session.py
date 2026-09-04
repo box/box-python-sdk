@@ -17,6 +17,7 @@ class UploadSessionSessionEndpointsField(BaseObject):
     def __init__(
         self,
         *,
+        plan: Optional[str] = None,
         upload_part: Optional[str] = None,
         commit: Optional[str] = None,
         abort: Optional[str] = None,
@@ -26,20 +27,24 @@ class UploadSessionSessionEndpointsField(BaseObject):
         **kwargs
     ):
         """
-        :param upload_part: The URL to upload parts to., defaults to None
-        :type upload_part: Optional[str], optional
-        :param commit: The URL used to commit the file., defaults to None
-        :type commit: Optional[str], optional
-        :param abort: The URL for used to abort the session., defaults to None
-        :type abort: Optional[str], optional
-        :param list_parts: The URL users to list all parts., defaults to None
-        :type list_parts: Optional[str], optional
-        :param status: The URL used to get the status of the upload., defaults to None
-        :type status: Optional[str], optional
-        :param log_event: The URL used to get the upload log from., defaults to None
-        :type log_event: Optional[str], optional
+                :param plan: The URL used to plan the upload session by checking which parts
+        already exist on the server., defaults to None
+                :type plan: Optional[str], optional
+                :param upload_part: The URL to upload parts to., defaults to None
+                :type upload_part: Optional[str], optional
+                :param commit: The URL used to commit the file., defaults to None
+                :type commit: Optional[str], optional
+                :param abort: The URL for used to abort the session., defaults to None
+                :type abort: Optional[str], optional
+                :param list_parts: The URL users to list all parts., defaults to None
+                :type list_parts: Optional[str], optional
+                :param status: The URL used to get the status of the upload., defaults to None
+                :type status: Optional[str], optional
+                :param log_event: The URL used to get the upload log from., defaults to None
+                :type log_event: Optional[str], optional
         """
         super().__init__(**kwargs)
+        self.plan = plan
         self.upload_part = upload_part
         self.commit = commit
         self.abort = abort

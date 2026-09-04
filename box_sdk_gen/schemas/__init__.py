@@ -382,6 +382,14 @@ from box_sdk_gen.schemas.upload_parts import *
 
 from box_sdk_gen.schemas.uploaded_part import *
 
+from box_sdk_gen.schemas.upload_part_plan import *
+
+from box_sdk_gen.schemas.upload_session_plan_request import *
+
+from box_sdk_gen.schemas.upload_part_plan_hit import *
+
+from box_sdk_gen.schemas.upload_session_plan_response import *
+
 from box_sdk_gen.schemas.upload_session import *
 
 from box_sdk_gen.schemas.upload_url import *
