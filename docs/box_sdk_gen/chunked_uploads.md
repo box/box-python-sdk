@@ -59,7 +59,11 @@ This operation is performed by calling function `create_file_upload_session_for_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/post-files-id-upload-sessions/).
 
-_Currently we don't have an example for calling `create_file_upload_session_for_existing_file` in integration tests_
+<!-- sample post_files_id_upload_sessions -->
+
+```python
+client.chunked_uploads.create_file_upload_session_for_existing_file(uploaded_file.id, file_size)
+```
 
 ### Arguments
 
@@ -364,7 +368,11 @@ This operation is performed by calling function `create_file_upload_session_plan
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/post-files-upload-sessions-id-plan/).
 
-_Currently we don't have an example for calling `create_file_upload_session_plan_by_url` in integration tests_
+<!-- sample post_files_upload_sessions_id_plan -->
+
+```python
+client.chunked_uploads.create_file_upload_session_plan_by_url(plan_url, parts)
+```
 
 ### Arguments
 
@@ -507,7 +515,7 @@ Starts the process of chunk uploading a big file. Should return a File object re
 This operation is performed by calling function `upload_big_file`.
 
 ```python
-client.chunked_uploads.upload_big_file(file_byte_stream, file_name, file_size, parent_folder_id)
+client.chunked_uploads.upload_big_file(generate_byte_stream_from_buffer(file_buffer), file_name, file_size, parent_folder_id)
 ```
 
 ### Arguments
