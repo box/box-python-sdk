@@ -154,13 +154,13 @@ We highly recommend upgrading to the latest SDK major release at the earliest co
 
 ## Version schedule
 
-| Version | Supported Environments | State     | First Release | EOL/Terminated         |
-| ------- | ---------------------- | --------- | ------------- | ---------------------- |
-| 10      | Python 3.8+            | Supported | 17 Sep 2025   | TBD                    |
-| 4       | Python 3.8+            | Supported | 23 Oct 2025   | 2027 or v5 is released |
-| 3       | Python 3.6+            | EOL       | 17 Jan 2022   | 23 Oct 2025            |
-| 2       |                        | EOL       | 01 Nov 2018   | 17 Jan 2022            |
-| 1       |                        | EOL       | 10 Feb 2015   | 01 Nov 2018            |
+| Version | Supported Environments | State     | First Release | EOL/Terminated |
+| ------- | ---------------------- | --------- | ------------- | -------------- |
+| 10      | Python 3.8+            | Supported | 17 Sep 2025   | TBD            |
+| 4       | Python 3.8+            | Supported | 23 Oct 2025   | TBD            |
+| 3       | Python 3.6+            | EOL       | 17 Jan 2022   | 23 Oct 2025    |
+| 2       |                        | EOL       | 01 Nov 2018   | 17 Jan 2022    |
+| 1       |                        | EOL       | 10 Feb 2015   | 01 Nov 2018    |
 
 # Contributing
 
