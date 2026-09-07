@@ -10,6 +10,8 @@ from box_sdk_gen.internal.utils import HashName
 
 from box_sdk_gen.internal.utils import Iterator
 
+from box_sdk_gen.schemas.upload_part_plan_hit import UploadPartPlanHit
+
 from box_sdk_gen.internal.utils import generate_byte_stream_from_buffer
 
 from box_sdk_gen.internal.utils import hex_to_base_64
@@ -30,6 +32,8 @@ from box_sdk_gen.internal.utils import generate_byte_stream
 
 from box_sdk_gen.internal.utils import ByteStream
 
+from box_sdk_gen.internal.utils import delay_in_seconds
+
 from test.commons import get_default_client
 
 from box_sdk_gen.schemas.file import File
@@ -38,9 +42,13 @@ from box_sdk_gen.schemas.upload_session import UploadSession
 
 from box_sdk_gen.schemas.upload_part import UploadPart
 
+from box_sdk_gen.schemas.upload_part_plan import UploadPartPlan
+
 from box_sdk_gen.schemas.upload_parts import UploadParts
 
 from box_sdk_gen.schemas.uploaded_part import UploadedPart
+
+from box_sdk_gen.schemas.upload_session_plan_response import UploadSessionPlanResponse
 
 from box_sdk_gen.schemas.files import Files
 
@@ -251,6 +259,80 @@ def testChunkedManualProcessByUrl():
     )
     assert committed_session.entries[0].name == file_name
     client.chunked_uploads.delete_file_upload_session_by_url(abort_url)
+
+
+class _TestPartPlanAccumulator:
+    def __init__(self, last_index: int, parts: List[UploadPartPlan], file_size: int):
+        self.last_index = last_index
+        self.parts = parts
+        self.file_size = file_size
+
+
+def _reducer_for_upload_session_plan(
+    acc: _TestPartPlanAccumulator, chunk: ByteStream
+) -> _TestPartPlanAccumulator:
+    last_index: int = acc.last_index
+    parts: List[UploadPartPlan] = acc.parts
+    chunk_buffer: Buffer = read_byte_stream(chunk)
+    hash: Hash = Hash(algorithm=HashName.SHA512)
+    hash.update_hash(chunk_buffer)
+    sha_512: str = hash.digest_hash('hex')
+    chunk_size: int = buffer_length(chunk_buffer)
+    bytes_start: int = last_index + 1
+    bytes_end: int = last_index + chunk_size
+    part: UploadPartPlan = UploadPartPlan(
+        offset=bytes_start, size=chunk_size, sha_512=sha_512
+    )
+    return _TestPartPlanAccumulator(
+        last_index=bytes_end, parts=parts + [part], file_size=acc.file_size
+    )
+
+
+def testUploadSessionPlan():
+    file_size: int = (20 * 1024) * 1024
+    file_name: str = get_uuid()
+    parent_folder_id: str = '0'
+    file_content_stream: ByteStream = generate_byte_stream(file_size)
+    file_buffer: Buffer = read_byte_stream(file_content_stream)
+    uploaded_file: File = client.chunked_uploads.upload_big_file(
+        generate_byte_stream_from_buffer(file_buffer),
+        file_name,
+        file_size,
+        parent_folder_id,
+    )
+    delay_in_seconds(5)
+    upload_session: UploadSession = (
+        client.chunked_uploads.create_file_upload_session_for_existing_file(
+            uploaded_file.id, file_size
+        )
+    )
+    upload_session_id: str = upload_session.id
+    plan_url: str = upload_session.session_endpoints.plan
+    part_size: int = upload_session.part_size
+    total_parts: int = upload_session.total_parts
+    chunks_iterator: Iterator = iterate_chunks(
+        generate_byte_stream_from_buffer(file_buffer), part_size, file_size
+    )
+    results: _TestPartPlanAccumulator = reduce_iterator(
+        chunks_iterator,
+        _reducer_for_upload_session_plan,
+        _TestPartPlanAccumulator(last_index=-1, parts=[], file_size=file_size),
+    )
+    parts: List[UploadPartPlan] = results.parts
+    plan: UploadSessionPlanResponse = (
+        client.chunked_uploads.create_file_upload_session_plan_by_url(plan_url, parts)
+    )
+    assert plan.upload_session_id == upload_session_id
+    assert len(plan.hits) == total_parts
+    assert len(plan.misses) == 0
+    first_part: UploadPartPlan = parts[0]
+    first_hit: UploadPartPlanHit = plan.hits[0]
+    assert first_hit.offset == first_part.offset
+    assert first_hit.size == first_part.size
+    assert first_hit.sha_512 == first_part.sha_512
+    assert not first_hit.part_id == ''
+    client.chunked_uploads.delete_file_upload_session_by_id(upload_session_id)
+    client.files.delete_file_by_id(uploaded_file.id)
 
 
 def testChunkedUploadConvenienceMethod():
