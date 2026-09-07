@@ -193,17 +193,20 @@ def to_string(value: Any) -> Optional[str]:
 
 class HashName(str, Enum):
     SHA1 = 'sha1'
+    SHA512 = 'sha512'
 
 
 class Hash:
     def __init__(self, algorithm: HashName):
         self.algorithm = algorithm
-        self.hash = hashlib.sha1()
+        self.hash = hashlib.new(algorithm.value)
 
     def update_hash(self, data: Buffer):
         self.hash.update(data)
 
     def digest_hash(self, encoding):
+        if encoding == 'hex':
+            return self.hash.hexdigest()
         return base64.b64encode(self.hash.digest()).decode("utf-8")
 
 
