@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.15.0](https://github.com/box/box-python-sdk/compare/v4.14.0...v4.15.0) (2026-09-09)
+
+
+### New Features and Enhancements:
+
+* **boxsdkgen:** add Japanese ZIP code validation to sign request (box/box-openapi[#615](https://github.com/box/box-python-sdk/issues/615)) ([#1558](https://github.com/box/box-python-sdk/issues/1558)) ([6aa5cda](https://github.com/box/box-python-sdk/commit/6aa5cda955b9bbf6dc1cb1223a11d49575940ab8))
+* **boxsdkgen:** Support chunk upload session plan API (box/box-openapi[#616](https://github.com/box/box-python-sdk/issues/616)) ([#1560](https://github.com/box/box-python-sdk/issues/1560)) ([d660d35](https://github.com/box/box-python-sdk/commit/d660d3589cc46707b81615adde55d99d2fcb5375))
+
 ## [4.14.0](https://github.com/box/box-python-sdk/compare/v4.13.0...v4.14.0) (2026-08-05)
 
 
