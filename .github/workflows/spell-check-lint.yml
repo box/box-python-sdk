@@ -4,6 +4,7 @@ on:
     types: [opened, synchronize, edited]
     branches:
       - main
+      - combined-sdk
 
 permissions:
   contents: read
