@@ -20,6 +20,8 @@ from box_sdk_gen.internal.utils import HashName
 
 from box_sdk_gen.internal.utils import Iterator
 
+from box_sdk_gen.schemas.upload_part_plan_hit import UploadPartPlanHit
+
 from box_sdk_gen.schemas.upload_session import UploadSession
 
 from box_sdk_gen.schemas.client_error import ClientError
@@ -81,12 +83,15 @@ class _PartAccumulator:
         file_size: int,
         upload_part_url: str,
         file_hash: Hash,
+        *,
+        plan_url: str = ''
     ):
         self.last_index = last_index
         self.parts = parts
         self.file_size = file_size
         self.upload_part_url = upload_part_url
         self.file_hash = file_hash
+        self.plan_url = plan_url
 
 
 class ChunkedUploadsManager:
@@ -932,6 +937,7 @@ class ChunkedUploadsManager:
             file_size=acc.file_size,
             upload_part_url=acc.upload_part_url,
             file_hash=acc.file_hash,
+            plan_url=acc.plan_url,
         )
 
     def upload_big_file(
@@ -981,4 +987,130 @@ class ChunkedUploadsManager:
         committed_session: Optional[Files] = (
             self.create_file_upload_session_commit_by_url(commit_url, parts, digest)
         )
+        return committed_session.entries[0]
+
+    def _get_cached_upload_part(
+        self, plan_url: str, offset: int, size: int, sha_512: str
+    ) -> Optional[UploadPart]:
+        plan: UploadSessionPlanResponse = self.create_file_upload_session_plan_by_url(
+            plan_url, [UploadPartPlan(offset=offset, size=size, sha_512=sha_512)]
+        )
+        if len(plan.hits) > 0:
+            hit: UploadPartPlanHit = plan.hits[0]
+            return UploadPart(part_id=hit.part_id, offset=hit.offset, size=hit.size)
+        return None
+
+    def _reducer_for_file_version(
+        self, acc: _PartAccumulator, chunk: ByteStream
+    ) -> _PartAccumulator:
+        last_index: int = acc.last_index
+        parts: List[UploadPart] = acc.parts
+        chunk_buffer: Buffer = read_byte_stream(chunk)
+        hash: Hash = Hash(algorithm=HashName.SHA1)
+        hash.update_hash(chunk_buffer)
+        sha_1: str = hash.digest_hash('base64')
+        digest: str = ''.join(['sha=', sha_1])
+        chunk_size: int = buffer_length(chunk_buffer)
+        bytes_start: int = last_index + 1
+        bytes_end: int = last_index + chunk_size
+        content_range: str = ''.join(
+            [
+                'bytes ',
+                to_string(bytes_start),
+                '-',
+                to_string(bytes_end),
+                '/',
+                to_string(acc.file_size),
+            ]
+        )
+        sha_512_hash: Hash = Hash(algorithm=HashName.SHA512)
+        sha_512_hash.update_hash(chunk_buffer)
+        sha_512: str = sha_512_hash.digest_hash('hex')
+        cached_part: Optional[UploadPart] = self._get_cached_upload_part(
+            acc.plan_url, bytes_start, chunk_size, sha_512
+        )
+        if not cached_part == None:
+            acc.file_hash.update_hash(chunk_buffer)
+            return _PartAccumulator(
+                last_index=bytes_end,
+                parts=parts + [cached_part],
+                file_size=acc.file_size,
+                upload_part_url=acc.upload_part_url,
+                file_hash=acc.file_hash,
+                plan_url=acc.plan_url,
+            )
+        uploaded_part: UploadedPart = self.upload_file_part_by_url(
+            acc.upload_part_url,
+            generate_byte_stream_from_buffer(chunk_buffer),
+            digest,
+            content_range,
+        )
+        part: UploadPart = uploaded_part.part
+        part_sha_1: str = hex_to_base_64(part.sha_1)
+        assert part_sha_1 == sha_1
+        assert part.size == chunk_size
+        assert part.offset == bytes_start
+        acc.file_hash.update_hash(chunk_buffer)
+        return _PartAccumulator(
+            last_index=bytes_end,
+            parts=parts + [part],
+            file_size=acc.file_size,
+            upload_part_url=acc.upload_part_url,
+            file_hash=acc.file_hash,
+            plan_url=acc.plan_url,
+        )
+
+    def upload_big_file_version(
+        self,
+        file_id: str,
+        file: ByteStream,
+        file_size: int,
+        *,
+        file_name: Optional[str] = None
+    ) -> Optional[FileFull]:
+        """
+        Starts the process of chunk uploading a new version of a big file. Should return a File object representing the uploaded file version. Returns nothing when commit responds with 202 because the file did not change.
+        :param file_id: The ID of the file to upload a new version of.
+        :type file_id: str
+        :param file: The stream of the file to upload.
+        :type file: ByteStream
+        :param file_size: The total size of the file for the chunked upload in bytes.
+        :type file_size: int
+        :param file_name: The optional new name of the file., defaults to None
+        :type file_name: Optional[str], optional
+        """
+        upload_session: UploadSession = (
+            self.create_file_upload_session_for_existing_file(
+                file_id, file_size, file_name=file_name
+            )
+        )
+        upload_part_url: str = upload_session.session_endpoints.upload_part
+        commit_url: str = upload_session.session_endpoints.commit
+        plan_url: str = upload_session.session_endpoints.plan
+        part_size: int = upload_session.part_size
+        total_parts: int = upload_session.total_parts
+        assert part_size * total_parts >= file_size
+        assert upload_session.num_parts_processed == 0
+        file_hash: Hash = Hash(algorithm=HashName.SHA1)
+        chunks_iterator: Iterator = iterate_chunks(file, part_size, file_size)
+        results: _PartAccumulator = reduce_iterator(
+            chunks_iterator,
+            self._reducer_for_file_version,
+            _PartAccumulator(
+                last_index=-1,
+                parts=[],
+                file_size=file_size,
+                upload_part_url=upload_part_url,
+                file_hash=file_hash,
+                plan_url=plan_url,
+            ),
+        )
+        parts: List[UploadPart] = results.parts
+        sha_1: str = file_hash.digest_hash('base64')
+        digest: str = ''.join(['sha=', sha_1])
+        committed_session: Optional[Files] = (
+            self.create_file_upload_session_commit_by_url(commit_url, parts, digest)
+        )
+        if committed_session == None:
+            return None
         return committed_session.entries[0]
