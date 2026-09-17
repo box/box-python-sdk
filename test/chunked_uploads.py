@@ -12,6 +12,8 @@ from box_sdk_gen.internal.utils import Iterator
 
 from box_sdk_gen.schemas.upload_part_plan_hit import UploadPartPlanHit
 
+from box_sdk_gen.schemas.file_full import FileFull
+
 from box_sdk_gen.internal.utils import generate_byte_stream_from_buffer
 
 from box_sdk_gen.internal.utils import hex_to_base_64
@@ -346,4 +348,32 @@ def testChunkedUploadConvenienceMethod():
     assert uploaded_file.name == file_name
     assert uploaded_file.size == file_size
     assert uploaded_file.parent.id == parent_folder_id
+    client.files.delete_file_by_id(uploaded_file.id)
+
+
+def testChunkedUploadFileVersionConvenienceMethod():
+    file_name: str = get_uuid()
+    file_size: int = (20 * 1024) * 1024
+    parent_folder_id: str = '0'
+    uploaded_file: File = client.chunked_uploads.upload_big_file(
+        generate_byte_stream(file_size), file_name, file_size, parent_folder_id
+    )
+    assert uploaded_file.name == file_name
+    assert uploaded_file.size == file_size
+    version_file_size: int = (21 * 1024) * 1024
+    version_name: str = get_uuid()
+    uploaded_file_version: Optional[FileFull] = (
+        client.chunked_uploads.upload_big_file_version(
+            uploaded_file.id,
+            generate_byte_stream(version_file_size),
+            version_file_size,
+            file_name=version_name,
+        )
+    )
+    assert not uploaded_file_version == None
+    assert uploaded_file_version.id == uploaded_file.id
+    assert uploaded_file_version.name == version_name
+    assert uploaded_file_version.size == version_file_size
+    assert not uploaded_file_version.name == file_name
+    assert not uploaded_file_version.size == uploaded_file.size
     client.files.delete_file_by_id(uploaded_file.id)

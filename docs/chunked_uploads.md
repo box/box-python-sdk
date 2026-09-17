@@ -17,6 +17,7 @@ This is a manager for chunked uploads (allowed for files at least 20MB).
 - [Commit upload session by URL](#commit-upload-session-by-url)
 - [Commit upload session](#commit-upload-session)
 - [Upload big file](#upload-big-file)
+- [Upload big file version](#upload-big-file-version)
 
 ## Create upload session
 
@@ -555,3 +556,33 @@ client.chunked_uploads.upload_big_file(
 ### Returns
 
 This function returns a value of type `FileFull`.
+
+## Upload big file version
+
+Starts the process of chunk uploading a new version of a big file. Should return a File object representing the uploaded file version. Returns nothing when commit responds with 202 because the file did not change.
+
+This operation is performed by calling function `upload_big_file_version`.
+
+```python
+client.chunked_uploads.upload_big_file_version(
+    uploaded_file.id,
+    generate_byte_stream(version_file_size),
+    version_file_size,
+    file_name=version_name,
+)
+```
+
+### Arguments
+
+- file_id `str`
+  - The ID of the file to upload a new version of.
+- file `ByteStream`
+  - The stream of the file to upload.
+- file_size `int`
+  - The total size of the file for the chunked upload in bytes.
+- file_name `Optional[str]`
+  - The optional new name of the file.
+
+### Returns
+
+This function returns a value of type `Optional[FileFull]`.
