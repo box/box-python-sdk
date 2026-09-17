@@ -30,6 +30,13 @@ from box_sdk_gen.networking import (
 )
 from box_sdk_gen.networking.proxy_config import ProxyConfig
 
+RETRY_AFTER_HEADER_CASES = [
+    "retry-after",
+    "Retry-After",
+    "rEtRy-AfTeR",
+    "RETRY-AFTER",
+]
+
 
 @pytest.fixture
 def mock_requests_session():
@@ -609,13 +616,16 @@ def test_status_code_202_with_no_retry_after_header(
     assert fetch_response.data == {}
 
 
-def test_retryable_status_code_202(
+@pytest.mark.parametrize("retry_after_header", RETRY_AFTER_HEADER_CASES)
+def test_retryable_status_code_202_with_case_insensitive_retry_after_header(
     network_client,
     mock_requests_session,
     network_session_mock,
     response_202_with_retry_after,
     response_200,
+    retry_after_header,
 ):
+    response_202_with_retry_after.headers = {retry_after_header: "0"}
     response_200.text = '{"id": "123456"}'
     response_200.headers = {"Retry-After": "0"}
     mock_requests_session.request.side_effect = [
@@ -847,14 +857,16 @@ def test_get_retry_after_time_use_exponential_backoff(network_session_mock):
         assert sleep_time > 0
 
 
-def test_pass_retry_after_header_to_get_retry_after_time_method(
+@pytest.mark.parametrize("retry_after_header", RETRY_AFTER_HEADER_CASES)
+def test_pass_case_insensitive_retry_after_header_to_get_retry_after_time_method(
     network_client,
     mock_requests_session,
     network_session_mock,
     response_429,
     response_200,
+    retry_after_header,
 ):
-    response_429.headers = {"Retry-After": "123"}
+    response_429.headers = {retry_after_header: "123"}
     mock_requests_session.request.side_effect = [response_429, response_200]
 
     with patch("time.sleep") as sleep_mock:
