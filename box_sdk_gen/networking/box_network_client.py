@@ -8,6 +8,7 @@ from sys import version_info as py_version
 
 import requests
 from requests import RequestException, Session, Response
+from requests.structures import CaseInsensitiveDict
 from requests_toolbelt import MultipartEncoder
 
 from ..internal.logging import DataSanitizer
@@ -92,12 +93,13 @@ class BoxNetworkClient(NetworkClient):
             if response.network_response is not None:
                 attempt_for_retry = attempt_nr
                 network_response = response.network_response
+                response_headers = CaseInsensitiveDict(network_response.headers)
 
                 if options.response_format == 'binary':
                     fetch_response = FetchResponse(
                         url=network_response.url,
                         status=network_response.status_code,
-                        headers=dict(response.network_response.headers),
+                        headers=response_headers,
                         content=ResponseByteStream(
                             response.network_response.iter_content(chunk_size=1024)
                         ),
@@ -106,7 +108,7 @@ class BoxNetworkClient(NetworkClient):
                     fetch_response = FetchResponse(
                         url=network_response.url,
                         status=network_response.status_code,
-                        headers=dict(response.network_response.headers),
+                        headers=response_headers,
                         data=(self._read_json_body(network_response.text)),
                         content=io.BytesIO(network_response.content),
                     )
