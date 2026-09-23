@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.16.0](https://github.com/box/box-python-sdk/compare/v10.15.0...v10.16.0) (2026-09-23)
+
+
+### Bug Fixes
+
+* preserve case-insensitive response headers (box/box-codegen[#991](https://github.com/box/box-python-sdk/issues/991)) ([#1593](https://github.com/box/box-python-sdk/issues/1593)) ([d92e036](https://github.com/box/box-python-sdk/commit/d92e03608fbfb269ce533064488fe4efd02da34e))
+
+
+### New Features and Enhancements
+
+* Support upload big file version convenience method (box/box-codegen[#988](https://github.com/box/box-python-sdk/issues/988)) ([c89f097](https://github.com/box/box-python-sdk/commit/c89f0970266d033a93a2010e67ff495a4f77b5d4))
+
 ## [10.15.0](https://github.com/box/box-python-sdk/compare/v10.14.0...v10.15.0) (2026-09-09)
 
 
