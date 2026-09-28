@@ -380,6 +380,17 @@ def test_prepare_multipart_request(network_client, mock_byte_stream):
     assert isinstance(api_request.data, MultipartStream)
     assert mock_byte_stream.tell() == 0
 
+    boundary = api_request.data.boundary
+    assert api_request.data.read() == (
+        f"--{boundary}\r\n"
+        'Content-Disposition: form-data; name="attributes"\r\n\r\n'
+        '{"name": "file.pdf"}\r\n'
+        f"--{boundary}\r\n"
+        'Content-Disposition: form-data; name="file"; filename="file.pdf"\r\n\r\n'
+        "123\r\n"
+        f"--{boundary}--\r\n"
+    ).encode()
+
 
 def test_make_request(network_client, mock_requests_session, response_200):
     request_params = {
