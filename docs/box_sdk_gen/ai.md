@@ -188,9 +188,9 @@ client.ai.create_ai_extract_structured([AiItemBase(id=file.id)], fields=[CreateA
 - ai_agent `Optional[AiExtractStructuredAgent]`
 
 - include_confidence_score `Optional[bool]`
-  - A flag to indicate whether confidence scores for every extracted field should be returned.
+  - A flag to indicate whether confidence scores for every extracted field should be returned. Estimates the likelihood that an extracted metadata field value is accurate and correct. Displays a numerical and categorical confidence score to help users and automated systems quickly determine extraction reliability.
 - include_reference `Optional[bool]`
-  - A flag to indicate whether references for every extracted field should be returned.
+  - A flag to indicate whether references for every extracted field should be returned. References and bounding boxes show where the agent extracted the metadata from. They help you check for accuracy and fix any mistakes. References are short, exact quotes from the original document used to verify results. Bounding boxes highlight the specific areas on the page where that text is found.
 - taxonomy_sources `Optional[List[AiTaxonomySource]]`
   - The taxonomy sources to be used for the structured extraction. They can either be an existing file or a taxonomy. For your request to work, `fields` must also be provided. `taxonomy_sources` is not supported with `metadata_template`.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
