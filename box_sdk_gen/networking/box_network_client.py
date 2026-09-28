@@ -1,18 +1,17 @@
 import io
 
 import time
-from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Optional, Dict, Union, Tuple
+from typing import Optional, Dict, Union, Tuple, List
 from sys import version_info as py_version
 
 import requests
 from requests import RequestException, Session, Response
 from requests.structures import CaseInsensitiveDict
-from requests_toolbelt import MultipartEncoder
 
 from ..internal.logging import DataSanitizer
 from .retries import BoxRetryStrategy
+from .multipart_stream import MultipartField, MultipartStream
 from ..networking.fetch_options import FetchOptions
 from ..networking.fetch_response import FetchResponse
 from ..box.errors import BoxAPIError, BoxSDKError, RequestInfo, ResponseInfo
@@ -40,7 +39,7 @@ class APIRequest:
     url: str
     headers: Dict[str, str]
     params: Dict[str, str]
-    data: Optional[Union[str, ByteStream, MultipartEncoder]]
+    data: Optional[Union[str, ByteStream, MultipartStream]]
     content_type: Optional[str] = None
     allow_redirects: bool = True
     timeout: Optional[Union[float, Tuple[Optional[float], Optional[float]]]] = None
@@ -160,19 +159,16 @@ class BoxNetworkClient(NetworkClient):
 
         if options.content_type:
             if options.content_type == 'multipart/form-data':
-                fields = OrderedDict()
-                for part in options.multipart_data:
-                    if part.data:
-                        fields[part.part_name] = sd_to_json(part.data)
-                    else:
-                        fields[part.part_name] = (
-                            part.file_name or '',
-                            part.file_stream,
-                            part.content_type,
-                        )
-
-                multipart_stream = MultipartEncoder(fields)
+                multipart_stream = MultipartStream(
+                    self._prepare_multipart_fields(options)
+                )
                 data = multipart_stream
+                # replace any caller-provided Content-Type, it must carry the boundary
+                headers = {
+                    name: value
+                    for name, value in headers.items()
+                    if name.lower() != 'content-type'
+                }
                 headers['Content-Type'] = multipart_stream.content_type
             else:
                 headers['Content-Type'] = options.content_type
@@ -187,6 +183,29 @@ class BoxNetworkClient(NetworkClient):
             allow_redirects=allow_redirects,
             timeout=timeout,
         )
+
+    @staticmethod
+    def _prepare_multipart_fields(
+        options: 'FetchOptions',
+    ) -> List[MultipartField]:
+        fields = []
+        for part in options.multipart_data:
+            if part.data is not None:
+                fields.append((part.part_name, None, sd_to_json(part.data), None))
+            elif part.file_stream is not None:
+                fields.append(
+                    (
+                        part.part_name,
+                        part.file_name or '',
+                        part.file_stream,
+                        part.content_type,
+                    )
+                )
+            else:
+                raise BoxSDKError(
+                    message=f'Multipart part "{part.part_name}" has neither data nor file_stream'
+                )
+        return fields
 
     @staticmethod
     def _get_request_timeout(

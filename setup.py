@@ -6,7 +6,7 @@ import re
 
 
 def main():
-    install_requires = ['requests', 'requests-toolbelt']
+    install_requires = ['requests']
     tests_require = [
         'pytest',
         'pytest-timeout',
