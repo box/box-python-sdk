@@ -13,7 +13,7 @@ from box_sdk_gen.managers.uploads import (
 )
 from box_sdk_gen.schemas.file_full import FileFull
 
-from test.commons import get_default_client
+from .commons import get_default_client
 
 client: BoxClient = get_default_client()
 
