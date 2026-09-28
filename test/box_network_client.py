@@ -1459,3 +1459,43 @@ def test_multipart_stream_sends_declared_size_when_stream_grows():
 
     assert len(body) == multipart_stream.len
     assert b"EXTRA" not in body
+
+
+def test_multipart_upload_short_stream_fails_without_retry(multipart_server):
+    url, _, _ = multipart_server
+
+    class Truncated(BytesIO):
+        def read(self, size=-1):
+            return super().read(max(0, min(size, 5 - self.tell())))
+
+    with patch("time.sleep") as sleep:
+        with pytest.raises(BoxSDKError, match="ended 5 bytes before its declared size"):
+            BoxNetworkClient().fetch(_upload_options(url, Truncated(b"0123456789")))
+
+    sleep.assert_not_called()
+
+
+def test_multipart_stream_positioned_past_end_sends_empty_part():
+    stream = BytesIO(b"0123456789")
+    stream.seek(20)
+    multipart_stream = MultipartStream([("file", "f", stream, None)])
+
+    body = multipart_stream.read()
+
+    assert len(body) == multipart_stream.len
+    assert body.count(b"\r\n\r\n\r\n") == 1
+
+
+def test_multipart_stream_handles_seek_returning_none():
+    class LegacySeek(BytesIO):
+        def seek(self, *args):
+            super().seek(*args)
+
+    stream = LegacySeek(b"0123456789")
+    stream.read(2)
+    multipart_stream = MultipartStream([("file", "f", stream, None)])
+
+    body = multipart_stream.read()
+
+    assert len(body) == multipart_stream.len
+    assert b"\r\n\r\n23456789\r\n" in body

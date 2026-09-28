@@ -37,6 +37,8 @@ class MultipartStream:
         self._segments.append(f'--{self.boundary}--\r\n'.encode('utf-8'))
         self._index = 0
         self._offset = 0
+        # set when a part stream ends before its declared size; retrying won't help
+        self.size_error: Optional[IOError] = None
         # bytes still to send per stream segment, None when the size is unknown
         self._remaining: List[Optional[int]] = [
             None if isinstance(segment, bytes) else self._stream_size(segment)
@@ -52,10 +54,12 @@ class MultipartStream:
             if not stream.seekable():
                 return None
             position = stream.tell()
-            size = stream.seek(0, SEEK_END) - position
+            stream.seek(0, SEEK_END)
+            end = stream.tell()
             stream.seek(position)
-            return size
-        except (OSError, AttributeError):
+            # a stream positioned past its end has nothing left to send
+            return max(0, end - position)
+        except (OSError, AttributeError, TypeError):
             return None
 
     def _compute_length(self) -> Optional[int]:
@@ -93,9 +97,10 @@ class MultipartStream:
                 )
                 if not chunk:
                     if remaining is not None:
-                        raise IOError(
+                        self.size_error = IOError(
                             f'Multipart stream ended {remaining} bytes before its declared size'
                         )
+                        raise self.size_error
                     self._index += 1
                     continue
                 if remaining is not None:

@@ -6,7 +6,7 @@ import re
 
 
 def main():
-    install_requires = ['requests']
+    install_requires = ['requests', 'urllib3']
     tests_require = [
         'pytest',
         'pytest-timeout',

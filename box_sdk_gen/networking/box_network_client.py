@@ -293,6 +293,13 @@ class BoxNetworkClient(NetworkClient):
                 timeout=timeout,
             )
         except RequestException as request_exc:
+            if (
+                isinstance(request.data, MultipartStream)
+                and request.data.size_error is not None
+            ):
+                raise BoxSDKError(
+                    message=str(request.data.size_error), error=request_exc
+                ) from request_exc
             raised_exception = request_exc
             network_response = None
 
