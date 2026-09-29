@@ -486,9 +486,9 @@ class AiManager:
                 :param fields: The fields to be extracted from the provided items.
         For your request to work, you must provide either `metadata_template` or `fields`, but not both., defaults to None
                 :type fields: Optional[List[CreateAiExtractStructuredFields]], optional
-                :param include_confidence_score: A flag to indicate whether confidence scores for every extracted field should be returned., defaults to None
+                :param include_confidence_score: A flag to indicate whether confidence scores for every extracted field should be returned. Estimates the likelihood that an extracted metadata field value is accurate and correct. Displays a numerical and categorical confidence score to help users and automated systems quickly determine extraction reliability., defaults to None
                 :type include_confidence_score: Optional[bool], optional
-                :param include_reference: A flag to indicate whether references for every extracted field should be returned., defaults to None
+                :param include_reference: A flag to indicate whether references for every extracted field should be returned. References and bounding boxes show where the agent extracted the metadata from. They help you check for accuracy and fix any mistakes. References are short, exact quotes from the original document used to verify results. Bounding boxes highlight the specific areas on the page where that text is found., defaults to None
                 :type include_reference: Optional[bool], optional
                 :param taxonomy_sources: The taxonomy sources to be used for the structured extraction. They can either be an existing file or a taxonomy.
         For your request to work, `fields` must also be provided. `taxonomy_sources` is not supported with `metadata_template`., defaults to None
