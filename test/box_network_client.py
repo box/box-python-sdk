@@ -1,10 +1,12 @@
 import pytest
 import json
-from collections import OrderedDict
-from io import BytesIO, RawIOBase, UnsupportedOperation, SEEK_SET
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from io import BytesIO, RawIOBase, UnsupportedOperation, SEEK_END, SEEK_SET
 from unittest import mock
 from unittest.mock import Mock, patch
 from requests import Session, Response, RequestException
+from urllib3.filepost import encode_multipart_formdata
 
 from box_sdk_gen import (
     NetworkSession,
@@ -29,6 +31,7 @@ from box_sdk_gen.networking import (
     BoxRetryStrategy,
 )
 from box_sdk_gen.networking.proxy_config import ProxyConfig
+from box_sdk_gen.networking.multipart_stream import MultipartStream
 
 RETRY_AFTER_HEADER_CASES = [
     "retry-after",
@@ -370,15 +373,25 @@ def test_prepare_multipart_request(network_client, mock_byte_stream):
     assert api_request.url == "https://example.com"
     assert api_request.headers["User-Agent"] == USER_AGENT_HEADER
     assert api_request.headers["X-Box-UA"] == X_BOX_UA_HEADER
-    assert api_request.headers["Content-Type"].startswith(
-        "multipart/form-data; boundary="
+    assert api_request.headers["Content-Type"] == (
+        f"multipart/form-data; boundary={api_request.data.boundary}"
     )
     assert api_request.params == {}
-    assert api_request.data.fields == OrderedDict(
-        [
-            ("attributes", '{"name": "file.pdf"}'),
-            ("file", ("file.pdf", mock_byte_stream, None)),
-        ]
+    assert isinstance(api_request.data, MultipartStream)
+    assert mock_byte_stream.tell() == 0
+
+    boundary = api_request.data.boundary
+    assert (
+        api_request.data.read()
+        == (
+            f"--{boundary}\r\n"
+            'Content-Disposition: form-data; name="attributes"\r\n\r\n'
+            '{"name": "file.pdf"}\r\n'
+            f"--{boundary}\r\n"
+            'Content-Disposition: form-data; name="file"; filename="file.pdf"\r\n\r\n'
+            "123\r\n"
+            f"--{boundary}--\r\n"
+        ).encode()
     )
 
 
@@ -1258,3 +1271,245 @@ def test_disable_follow_redirects(
         allow_redirects=False,
         timeout=(10, 60),
     )
+
+
+def test_prepare_multipart_request_drops_custom_content_type_header(
+    network_client, mock_byte_stream
+):
+    options = FetchOptions(
+        url="https://example.com",
+        method="POST",
+        headers={"content-type": "multipart/form-data"},
+        content_type="multipart/form-data",
+        multipart_data=[
+            MultipartItem(
+                part_name="file", file_stream=mock_byte_stream, file_name="file.pdf"
+            ),
+        ],
+    )
+
+    api_request = network_client._prepare_request(options=options)
+
+    content_type_headers = [
+        value
+        for name, value in api_request.headers.items()
+        if name.lower() == "content-type"
+    ]
+    assert content_type_headers == [
+        f"multipart/form-data; boundary={api_request.data.boundary}"
+    ]
+
+
+def test_prepare_multipart_request_raises_on_part_without_content(network_client):
+    options = FetchOptions(
+        url="https://example.com",
+        method="POST",
+        content_type="multipart/form-data",
+        multipart_data=[MultipartItem(part_name="file", file_name="file.pdf")],
+    )
+
+    with pytest.raises(BoxSDKError, match='"file" has neither data nor file_stream'):
+        network_client._prepare_request(options=options)
+
+
+def _read_request_body(handler):
+    if handler.headers.get("Transfer-Encoding") == "chunked":
+        body = b""
+        while True:
+            size = int(handler.rfile.readline().strip(), 16)
+            chunk = handler.rfile.read(size + 2)[:-2]
+            if size == 0:
+                return body
+            body += chunk
+    return handler.rfile.read(int(handler.headers["Content-Length"]))
+
+
+@pytest.fixture
+def multipart_server():
+    received = []
+    statuses = []
+
+    class Handler(BaseHTTPRequestHandler):
+        protocol_version = "HTTP/1.1"
+
+        def do_POST(self):
+            received.append((dict(self.headers), _read_request_body(self)))
+            self.send_response(statuses.pop(0) if statuses else 200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", "2")
+            self.end_headers()
+            self.wfile.write(b"{}")
+
+        def log_message(self, *args):
+            pass
+
+    server = HTTPServer(("127.0.0.1", 0), Handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    yield f"http://127.0.0.1:{server.server_port}", received, statuses
+    server.shutdown()
+    server.server_close()
+
+
+def _upload_options(url, file_stream, network_session=None):
+    return FetchOptions(
+        url=url,
+        method="POST",
+        content_type="multipart/form-data",
+        multipart_data=[
+            MultipartItem(part_name="attributes", data={"name": 'fi"le.txt'}),
+            MultipartItem(
+                part_name="file",
+                file_stream=file_stream,
+                file_name='fi"le.txt',
+                content_type="text/plain",
+            ),
+        ],
+        network_session=network_session,
+    )
+
+
+def _assert_multipart_body(headers, body):
+    content_type = headers["Content-Type"]
+    assert content_type.startswith("multipart/form-data; boundary=")
+    boundary = content_type.split("boundary=")[1]
+    assert body.endswith(f"--{boundary}--\r\n".encode())
+    assert body.index(b'name="attributes"') < body.index(b'name="file"')
+    assert b'filename="fi%22le.txt"' in body
+    assert b"Content-Type: text/plain\r\n\r\nfile content\r\n" in body
+
+
+def test_multipart_upload_round_trip_with_retry(multipart_server, network_session_mock):
+    url, received, statuses = multipart_server
+    statuses.append(500)
+
+    with patch("time.sleep"):
+        BoxNetworkClient().fetch(
+            _upload_options(url, BytesIO(b"file content"), network_session_mock)
+        )
+
+    assert len(received) == 2
+    for headers, body in received:
+        assert int(headers["Content-Length"]) == len(body)
+        assert "Transfer-Encoding" not in headers
+        _assert_multipart_body(headers, body)
+
+
+def test_multipart_upload_non_seekable_stream_uses_chunked_encoding(
+    multipart_server,
+):
+    url, received, _ = multipart_server
+
+    BoxNetworkClient().fetch(_upload_options(url, NonSeekableStream(b"file content")))
+
+    assert len(received) == 1
+    headers, body = received[0]
+    assert headers["Transfer-Encoding"] == "chunked"
+    assert "Content-Length" not in headers
+    _assert_multipart_body(headers, body)
+
+
+def test_multipart_stream_matches_urllib3_encoding():
+    content = bytes(range(256)) * 1000
+    stream = BytesIO(b"skipped" + content)
+    stream.seek(len(b"skipped"))
+    multipart_stream = MultipartStream(
+        [
+            ("attributes", None, '{"name": "f\u00e9.bin"}', None),
+            ("file", "f\u00e9.bin", stream, "application/octet-stream"),
+        ]
+    )
+
+    expected, _ = encode_multipart_formdata(
+        [
+            ("attributes", '{"name": "f\u00e9.bin"}'),
+            ("file", ("f\u00e9.bin", content, "application/octet-stream")),
+        ],
+        boundary=multipart_stream.boundary,
+    )
+    assert multipart_stream.len == len(expected)
+    assert b"".join(iter(lambda: multipart_stream.read(7), b"")) == expected
+
+
+def test_multipart_stream_reads_file_lazily():
+    stream = BytesIO(b"x" * (10 * 1024 * 1024))
+    multipart_stream = MultipartStream([("file", "big.bin", stream, None)])
+
+    assert stream.tell() == 0
+    first_chunk = next(iter(multipart_stream))
+    assert len(first_chunk) <= 64 * 1024
+    assert stream.tell() < 64 * 1024
+
+
+def test_multipart_stream_length_unknown_for_non_seekable_stream():
+    multipart_stream = MultipartStream(
+        [("file", "file.bin", NonSeekableStream(b"123"), None)]
+    )
+
+    assert multipart_stream.len is None
+    assert multipart_stream.read().endswith(
+        f"123\r\n--{multipart_stream.boundary}--\r\n".encode()
+    )
+
+
+def test_multipart_stream_fails_fast_when_stream_shrinks():
+    class Truncated(BytesIO):
+        def read(self, size=-1):
+            return super().read(max(0, min(size, 5 - self.tell())))
+
+    multipart_stream = MultipartStream([("file", "f", Truncated(b"0123456789"), None)])
+
+    with pytest.raises(IOError, match="ended 5 bytes before its declared size"):
+        multipart_stream.read()
+
+
+def test_multipart_stream_sends_declared_size_when_stream_grows():
+    stream = BytesIO(b"0123456789")
+    multipart_stream = MultipartStream([("file", "f", stream, None)])
+    stream.seek(0, SEEK_END)
+    stream.write(b"EXTRA")
+    stream.seek(0)
+
+    body = multipart_stream.read()
+
+    assert len(body) == multipart_stream.len
+    assert b"EXTRA" not in body
+
+
+def test_multipart_upload_short_stream_fails_without_retry(multipart_server):
+    url, _, _ = multipart_server
+
+    class Truncated(BytesIO):
+        def read(self, size=-1):
+            return super().read(max(0, min(size, 5 - self.tell())))
+
+    with patch("time.sleep") as sleep:
+        with pytest.raises(BoxSDKError, match="ended 5 bytes before its declared size"):
+            BoxNetworkClient().fetch(_upload_options(url, Truncated(b"0123456789")))
+
+    sleep.assert_not_called()
+
+
+def test_multipart_stream_positioned_past_end_sends_empty_part():
+    stream = BytesIO(b"0123456789")
+    stream.seek(20)
+    multipart_stream = MultipartStream([("file", "f", stream, None)])
+
+    body = multipart_stream.read()
+
+    assert len(body) == multipart_stream.len
+    assert body.count(b"\r\n\r\n\r\n") == 1
+
+
+def test_multipart_stream_handles_seek_returning_none():
+    class LegacySeek(BytesIO):
+        def seek(self, *args):
+            super().seek(*args)
+
+    stream = LegacySeek(b"0123456789")
+    stream.read(2)
+    multipart_stream = MultipartStream([("file", "f", stream, None)])
+
+    body = multipart_stream.read()
+
+    assert len(body) == multipart_stream.len
+    assert b"\r\n\r\n23456789\r\n" in body

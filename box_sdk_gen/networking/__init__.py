@@ -16,6 +16,8 @@ from box_sdk_gen.networking.network_client import *
 
 from box_sdk_gen.networking.retries import *
 
+from box_sdk_gen.networking.multipart_stream import *
+
 from box_sdk_gen.networking.base_urls import *
 
 from box_sdk_gen.networking.version import *
