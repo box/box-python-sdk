@@ -4,11 +4,11 @@ from typing import Optional
 
 from box_sdk_gen.internal.base_object import BaseObject
 
-from box_sdk_gen.schemas.file import File
+from box_sdk_gen.schemas.file_mini import FileMini
 
-from box_sdk_gen.schemas.folder import Folder
+from box_sdk_gen.schemas.folder_mini import FolderMini
 
-from box_sdk_gen.schemas.web_link import WebLink
+from box_sdk_gen.schemas.web_link_mini import WebLinkMini
 
 from box_sdk_gen.schemas.group_mini import GroupMini
 
