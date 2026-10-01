@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.17.0](https://github.com/box/box-python-sdk/compare/v10.16.0...v10.17.0) (2026-10-01)
+
+### ⚠ BREAKING CHANGES
+
+* use `FileMini`/`FolderMini`/`WebLinkMini` in `CollaborationItem` (box/box-openapi[#619](https://github.com/box/box-openapi/pull/619)) ([89e7d0b](https://github.com/box/box-python-sdk/commit/89e7d0bff99da4c54b6cd59cbedd3897caf91327))
+
+### New Features and Enhancements
+
+* replace `MultipartEncoder` with streaming `MultipartStream` for uploads (box/box-codegen[#994](https://github.com/box/box-python-sdk/issues/994)) ([8a5d896](https://github.com/box/box-python-sdk/commit/8a5d8963888aeb500a9f03826c85c1681950e4dd))
+
+### Bug Fixes
+
+* use `FileMini`/`FolderMini`/`WebLinkMini` in `CollaborationItem` (box/box-openapi[#619](https://github.com/box/box-openapi/pull/619)) ([89e7d0b](https://github.com/box/box-python-sdk/commit/89e7d0bff99da4c54b6cd59cbedd3897caf91327))
+
 ## [10.16.0](https://github.com/box/box-python-sdk/compare/v10.15.0...v10.16.0) (2026-09-23)
 
 
