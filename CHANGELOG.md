@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.17.0](https://github.com/box/box-python-sdk/compare/v10.16.0...v10.17.0) (2026-10-01)
+
+
+### New Features and Enhancements
+
+* replace `MultipartEncoder` with streaming `MultipartStream` for uploads (box/box-codegen[#994](https://github.com/box/box-python-sdk/issues/994)) ([8a5d896](https://github.com/box/box-python-sdk/commit/8a5d8963888aeb500a9f03826c85c1681950e4dd))
+
 ## [10.16.0](https://github.com/box/box-python-sdk/compare/v10.15.0...v10.16.0) (2026-09-23)
 
 
