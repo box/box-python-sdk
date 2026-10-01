@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [4.17.0](https://github.com/box/box-python-sdk/compare/v4.16.0...v4.17.0) (2026-10-01)
 
+### ⚠ BREAKING CHANGES
+
+* **boxsdkgen:** use `FileMini`/`FolderMini`/`WebLinkMini` in `CollaborationItem` (box/box-openapi#619) (#1601)
 
 ### New Features and Enhancements:
 
