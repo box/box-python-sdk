@@ -1,5 +1,5 @@
 from functools import partial
-from io import IOBase, BytesIO
+from io import IOBase, BytesIO, SEEK_END
 from numbers import Number
 import os
 from unittest.mock import MagicMock, Mock, PropertyMock, call, patch, ANY
@@ -8,8 +8,6 @@ from requests.exceptions import (
     SSLError,
     ConnectionError as RequestsConnectionError,
 )
-from requests_toolbelt import MultipartEncoder
-
 import pytest
 
 from boxsdk import CCGAuth
@@ -19,6 +17,7 @@ from boxsdk.exception import BoxAPIException, BoxException
 from boxsdk.network.default_network import DefaultNetwork, DefaultNetworkResponse
 from boxsdk.session.box_response import BoxResponse
 from boxsdk.session.session import Session, Translator, AuthorizedSession
+from boxsdk.util.multipart_stream import MultipartStream
 
 
 @pytest.fixture(scope='function', params=[False, True])
@@ -271,12 +270,10 @@ def test_box_session_seeks_file_after_retry(
     assert box_response.ok == generic_successful_response.ok
     mock_file_1.tell.assert_called_with()
     mock_file_2.tell.assert_called_with()
-    mock_file_1.seek.assert_called_with(0)
-    assert mock_file_1.seek.call_count == 2
-    mock_file_1.seek.assert_has_calls([call(0), call(0)])
-    mock_file_2.seek.assert_called_with(3)
-    assert mock_file_2.seek.call_count == 2
-    mock_file_2.seek.assert_has_calls([call(3), call(3)])
+    # before each attempt the session rewinds the stream, then the multipart
+    # encoder measures its size and restores the position
+    assert mock_file_1.seek.call_args_list == [call(0), call(0, SEEK_END), call(0)] * 2
+    assert mock_file_2.seek.call_args_list == [call(3), call(0, SEEK_END), call(3)] * 2
 
 
 def test_box_session_raises_for_non_json_response(
@@ -645,7 +642,14 @@ def test_multipart_request_with_enabled_streaming_file_content(
     assert call_args[1] == test_url
     assert call_kwargs['access_token'] == 'fake_access_token'
     assert call_kwargs['log_response_content'] is True
-    assert isinstance(call_kwargs['data'], MultipartEncoder)
-    assert call_kwargs['data'].fields['attributes'] == '{"name": "test_file"}'
-    assert call_kwargs['data'].fields['file'][0] == 'unused'
-    assert isinstance(call_kwargs['data'].fields['file'][1], BytesIO)
+    multipart_stream = call_kwargs['data']
+    assert isinstance(multipart_stream, MultipartStream)
+    assert call_kwargs['headers']['Content-Type'] == multipart_stream.content_type
+    body = multipart_stream.read()
+    assert (
+        b'name="attributes"\r\n\r\n{"name": "test_file"}\r\n'
+        + f'--{multipart_stream.boundary}\r\n'.encode()
+        + b'Content-Disposition: form-data; name="file"; filename="unused"\r\n\r\n'
+        + file_bytes
+        + b'\r\n'
+    ) in body

@@ -56,7 +56,6 @@ def main():
         'urllib3',
         'dataclasses',
         'requests<3',
-        'requests-toolbelt<2',
         'python-dateutil',
     ]
     redis_requires = ['redis>=2.10.3']
