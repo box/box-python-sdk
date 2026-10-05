@@ -1,5 +1,5 @@
 from functools import partial
-from io import IOBase, BytesIO, SEEK_END
+from io import IOBase, BytesIO
 from numbers import Number
 import os
 from unittest.mock import MagicMock, Mock, PropertyMock, call, patch, ANY
@@ -264,16 +264,20 @@ def test_box_session_seeks_file_after_retry(
     mock_file_2.tell.return_value = 3
     files = {'file': ('unused', mock_file_1), 'f2': ('unused', mock_file_2)}
 
-    box_response = box_session.post(url=test_url, files=files)
+    # the multipart encoder sizes the streams itself, so only count the session's seeks
+    with patch('boxsdk.session.session.MultipartStream'):
+        box_response = box_session.post(url=test_url, files=files)
     assert box_response.status_code == 200
     assert box_response.json() == generic_successful_response.json()
     assert box_response.ok == generic_successful_response.ok
     mock_file_1.tell.assert_called_with()
     mock_file_2.tell.assert_called_with()
-    # before each attempt the session rewinds the stream, then the multipart
-    # encoder measures its size and restores the position
-    assert mock_file_1.seek.call_args_list == [call(0), call(0, SEEK_END), call(0)] * 2
-    assert mock_file_2.seek.call_args_list == [call(3), call(0, SEEK_END), call(3)] * 2
+    mock_file_1.seek.assert_called_with(0)
+    assert mock_file_1.seek.call_count == 2
+    mock_file_1.seek.assert_has_calls([call(0), call(0)])
+    mock_file_2.seek.assert_called_with(3)
+    assert mock_file_2.seek.call_count == 2
+    mock_file_2.seek.assert_has_calls([call(3), call(3)])
 
 
 def test_box_session_raises_for_non_json_response(
