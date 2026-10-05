@@ -1,4 +1,4 @@
-from io import SEEK_END
+from io import SEEK_END, TextIOBase
 from typing import Iterator, List, Optional, Tuple, Union
 
 from urllib3.fields import RequestField
@@ -17,7 +17,8 @@ class MultipartStream:
     so uploads are sent without buffering whole files in memory.
 
     Fields are (name, file_name, value, content_type) tuples, where value is
-    either a string or a binary stream read from its current position.
+    either a string or a stream read from its current position. Text streams
+    are encoded as UTF-8.
     """
 
     def __init__(self, fields: List[MultipartField]):
@@ -51,12 +52,19 @@ class MultipartStream:
     @staticmethod
     def _stream_size(stream: ByteStream) -> Optional[int]:
         try:
-            if not stream.seekable():
+            # text stream positions count characters, not encoded bytes
+            if isinstance(stream, TextIOBase) or not stream.seekable():
                 return None
             position = stream.tell()
-            stream.seek(0, SEEK_END)
-            end = stream.tell()
-            stream.seek(position)
+            # like requests and requests-toolbelt, prefer a length the stream reports
+            if hasattr(stream, '__len__'):
+                end = len(stream)
+            elif getattr(stream, 'len', None) is not None:
+                end = stream.len
+            else:
+                stream.seek(0, SEEK_END)
+                end = stream.tell()
+                stream.seek(position)
             # a stream positioned past its end has nothing left to send
             return max(0, end - position)
         except (OSError, AttributeError, TypeError):
@@ -103,6 +111,8 @@ class MultipartStream:
                         raise self.size_error
                     self._index += 1
                     continue
+                if isinstance(chunk, str):
+                    chunk = chunk.encode('utf-8')
                 if remaining is not None:
                     self._remaining[self._index] = remaining - len(chunk)
             chunks.append(chunk)
