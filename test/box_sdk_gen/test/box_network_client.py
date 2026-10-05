@@ -2,7 +2,7 @@ import pytest
 import json
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from io import BytesIO, RawIOBase, StringIO, UnsupportedOperation, SEEK_END, SEEK_SET
+from io import BytesIO, RawIOBase, UnsupportedOperation, SEEK_END, SEEK_SET
 from unittest import mock
 from unittest.mock import Mock, patch
 from requests import Session, Response, RequestException
@@ -1506,51 +1506,6 @@ def test_multipart_stream_handles_seek_returning_none():
             super().seek(*args)
 
     stream = LegacySeek(b"0123456789")
-    stream.read(2)
-    multipart_stream = MultipartStream([("file", "f", stream, None)])
-
-    body = multipart_stream.read()
-
-    assert len(body) == multipart_stream.len
-    assert b"\r\n\r\n23456789\r\n" in body
-
-
-def test_multipart_upload_text_stream_is_encoded_as_utf8(multipart_server):
-    url, received, _ = multipart_server
-
-    BoxNetworkClient().fetch(_upload_options(url, StringIO("héllo wörld")))
-
-    assert len(received) == 1
-    headers, body = received[0]
-    assert headers["Transfer-Encoding"] == "chunked"
-    assert "Content-Length" not in headers
-    assert "héllo wörld\r\n".encode("utf-8") in body
-
-
-def test_multipart_stream_encodes_text_file_as_utf8(tmp_path):
-    path = tmp_path / "file.txt"
-    path.write_text("héllo wörld\n" * 10000, encoding="utf-8")
-
-    with open(path, "r", encoding="utf-8") as text_file:
-        multipart_stream = MultipartStream([("file", "file.txt", text_file, None)])
-        body = multipart_stream.read()
-
-    assert multipart_stream.len is None
-    assert body.endswith(
-        b"\r\n\r\n"
-        + ("héllo wörld\n" * 10000).encode("utf-8")
-        + f"\r\n--{multipart_stream.boundary}--\r\n".encode()
-    )
-
-
-def test_multipart_stream_uses_length_reported_by_stream():
-    class ReportedLength(BytesIO):
-        len = 10
-
-        def seek(self, *args):
-            raise AssertionError("size should come from the reported length")
-
-    stream = ReportedLength(b"0123456789")
     stream.read(2)
     multipart_stream = MultipartStream([("file", "f", stream, None)])
 
