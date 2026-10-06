@@ -34,10 +34,12 @@ class DeveloperTokenConfig:
 
 
 class BoxDeveloperTokenAuth(Authentication):
-    def __init__(self, token: str, *, config: DeveloperTokenConfig = None, **kwargs):
+    def __init__(
+        self, token: str, *, config: Optional[DeveloperTokenConfig] = None, **kwargs
+    ):
         """
         :param config: Configuration object of DeveloperTokenAuth., defaults to None
-        :type config: DeveloperTokenConfig, optional
+        :type config: Optional[DeveloperTokenConfig], optional
         """
         super().__init__(**kwargs)
         self.token = token

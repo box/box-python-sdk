@@ -71,7 +71,7 @@ class MultipartStream:
             if hasattr(stream, '__len__'):
                 end = len(stream)
             elif getattr(stream, 'len', None) is not None:
-                end = stream.len
+                end = stream.len  # type: ignore[attr-defined]
             else:
                 stream.seek(0, SEEK_END)
                 end = stream.tell()
@@ -97,6 +97,7 @@ class MultipartStream:
             return b''.join(iter(lambda: self.read(CHUNK_SIZE), b''))
 
         chunks = []
+        chunk: Union[bytes, str]
         while size > 0 and self._index < len(self._segments):
             segment = self._segments[self._index]
             if self._pending:

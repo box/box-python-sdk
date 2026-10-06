@@ -1,10 +1,26 @@
 import json
-from typing import Dict, get_origin, Union, Type
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    List,
+    get_origin,
+    Optional,
+    Union,
+    Type,
+    TypeVar,
+    overload,
+)
 from urllib.parse import urlencode
 
 from ..internal.base_object import BaseObject
 
-SerializedData = Dict
+if TYPE_CHECKING:
+    # JSON request bodies can also be lists; the runtime alias stays Dict
+    SerializedData = Union[Dict, List]
+    _T = TypeVar('_T', bound=BaseObject)
+else:
+    SerializedData = Dict
 
 
 def json_to_serialized_data(data: str) -> SerializedData:
@@ -19,7 +35,7 @@ def sd_to_url_params(data: SerializedData) -> str:
     return urlencode(data)
 
 
-def get_sd_value_by_key(data: SerializedData, key: str):
+def get_sd_value_by_key(data: Dict, key: str):
     return data.get(key)
 
 
@@ -36,12 +52,27 @@ def serialize(obj: Union[BaseObject, dict, list]) -> SerializedData:
     return obj
 
 
-def deserialize(value: SerializedData, type: Type[BaseObject]):
-    if get_origin(type) == Union:
-        type = BaseObject._deserialize_union('', value, type)
-    obj = type.from_dict(value)
-    obj._raw_data = value
-    return obj
+# Builds an instance of `type` (a BaseObject subclass, or a Union of them to pick the
+# matching member from) from serialized data and keeps the input as its raw data.
+# Overloads exist for type checkers only, so the runtime function stays unchanged.
+if TYPE_CHECKING:
+
+    @overload
+    def deserialize(value: Optional[SerializedData], type: Type[_T]) -> _T: ...
+
+    @overload
+    def deserialize(value: Optional[SerializedData], type: Any) -> Any: ...
+
+    def deserialize(value: Optional[SerializedData], type: Any) -> Any: ...
+
+else:
+
+    def deserialize(value: SerializedData, type: Type[BaseObject]):
+        if get_origin(type) == Union:
+            type = BaseObject._deserialize_union('', value, type)
+        obj = type.from_dict(value)
+        obj._raw_data = value
+        return obj
 
 
 def sanitized_value() -> str:
@@ -79,7 +110,7 @@ def sanitize_serialized_data(
 ) -> SerializedData:
     if not isinstance(sd, Dict):
         return sd
-    sanitized_dictionary = {}
+    sanitized_dictionary: Dict = {}
     for key, value in sd.items():
         if key.lower() in keys_to_sanitize and isinstance(value, str):
             sanitized_dictionary[key] = sanitized_value()

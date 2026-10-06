@@ -77,7 +77,7 @@ class ResponseInfo:
         self,
         status_code: int,
         headers: Dict[str, str],
-        body: Dict = None,
+        body: Optional[Dict] = None,
         raw_body: Optional[str] = None,
         code: Optional[str] = None,
         context_info: Optional[Dict[str, Any]] = None,
@@ -122,9 +122,9 @@ class BoxAPIError(BoxSDKError):
         response_info: ResponseInfo,
         message: str,
         timestamp: Optional[datetime] = None,
-        error: Optional[str] = None,
+        error: Optional[Exception] = None,
         *,
-        data_sanitizer: DataSanitizer = None,
+        data_sanitizer: Optional[DataSanitizer] = None,
         **kwargs,
     ):
         super().__init__(message=message, timestamp=timestamp, error=error, **kwargs)

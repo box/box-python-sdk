@@ -10,7 +10,17 @@ import hmac
 from random import uniform
 from enum import Enum
 from io import SEEK_CUR, SEEK_END, SEEK_SET, BufferedIOBase, BytesIO
-from typing import Any, Callable, Dict, Iterable, Optional, TypeVar, BinaryIO
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    Optional,
+    TypeVar,
+    BinaryIO,
+    overload,
+)
 
 from abc import abstractmethod
 from typing import Any
@@ -103,7 +113,7 @@ class ResponseByteStream(ByteStream):
         return self._position
 
 
-def get_env_var(name: str) -> str:
+def get_env_var(name: str) -> Optional[str]:
     return os.getenv(name)
 
 
@@ -170,25 +180,38 @@ def prepare_params(map: Dict[str, Optional[str]]) -> Dict[str, str]:
     return {k: v for k, v in map.items() if v is not None}
 
 
-def to_string(value: Any) -> Optional[str]:
-    if value is None:
-        return None
-    if isinstance(value, datetime.datetime):
-        return date_time_to_string(value)
-    if isinstance(value, datetime.date):
-        return date_to_string(value)
-    if (
-        isinstance(value, BaseObject)
-        or isinstance(value, list)
-        and len(value) >= 1
-        and isinstance(value[0], BaseObject)
-    ):
-        return ''.join(sd_to_json(serialize(value)).split())
-    if isinstance(value, list):
-        return ','.join(map(to_string, value))
-    if isinstance(value, Enum):
-        return value.value
-    return str(value)
+# Overloads exist for type checkers only, so the runtime function stays unchanged
+if TYPE_CHECKING:
+
+    @overload
+    def to_string(value: None) -> None: ...
+
+    @overload
+    def to_string(value: Any) -> str: ...
+
+    def to_string(value: Any) -> Optional[str]: ...
+
+else:
+
+    def to_string(value: Any) -> Optional[str]:
+        if value is None:
+            return None
+        if isinstance(value, datetime.datetime):
+            return date_time_to_string(value)
+        if isinstance(value, datetime.date):
+            return date_to_string(value)
+        if (
+            isinstance(value, BaseObject)
+            or isinstance(value, list)
+            and len(value) >= 1
+            and isinstance(value[0], BaseObject)
+        ):
+            return ''.join(sd_to_json(serialize(value)).split())
+        if isinstance(value, list):
+            return ','.join(map(to_string, value))
+        if isinstance(value, Enum):
+            return value.value
+        return str(value)
 
 
 class HashName(str, Enum):
@@ -210,7 +233,7 @@ class Hash:
         return base64.b64encode(self.hash.digest()).decode("utf-8")
 
 
-def hex_to_base_64(data: hex):
+def hex_to_base_64(data: str) -> str:
     return base64.b64encode(bytes.fromhex(data)).decode()
 
 
@@ -321,7 +344,7 @@ class JwtSignOptions(BaseObject):
     def __init__(
         self,
         algorithm: JwtAlgorithm,
-        headers: Dict[str, str] = None,
+        headers: Optional[Dict[str, str]] = None,
         audience: Optional[str] = None,
         issuer: Optional[str] = None,
         subject: Optional[str] = None,

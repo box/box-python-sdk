@@ -149,7 +149,8 @@ class EventStream:
         try:
             self._long_polling_retries += 1
 
-            long_poll_url = self._long_polling_info.url
+            # _get_long_poll_info always runs before the first poll
+            long_poll_url: str = self._long_polling_info.url  # type: ignore[union-attr, assignment]
             separator = '&' if '?' in long_poll_url else '?'
             long_poll_with_stream_position = (
                 f"{long_poll_url}{separator}stream_position={self._stream_position}"

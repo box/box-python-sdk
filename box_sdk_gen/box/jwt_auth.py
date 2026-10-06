@@ -165,8 +165,8 @@ class JWTConfig:
         enterprise_id: Optional[str] = None,
         user_id: Optional[str] = None,
         algorithm: Optional[JwtAlgorithm] = JwtAlgorithm.RS256,
-        token_storage: TokenStorage = None,
-        private_key_decryptor: PrivateKeyDecryptor = None
+        token_storage: Optional[TokenStorage] = None,
+        private_key_decryptor: Optional[PrivateKeyDecryptor] = None
     ):
         """
         :param client_id: App client ID
@@ -356,7 +356,7 @@ class BoxJWTAuth(Authentication):
         return ''.join(['Bearer ', token.access_token])
 
     def with_user_subject(
-        self, user_id: str, *, token_storage: TokenStorage = None
+        self, user_id: str, *, token_storage: Optional[TokenStorage] = None
     ) -> 'BoxJWTAuth':
         """
         Create a new BoxJWTAuth instance that uses the provided user ID as the subject of the JWT assertion.
@@ -372,7 +372,7 @@ class BoxJWTAuth(Authentication):
         :param user_id: The id of the user to authenticate
         :type user_id: str
         :param token_storage: Object responsible for storing token in newly created BoxJWTAuth. If no custom implementation provided, the token will be stored in memory., defaults to None
-        :type token_storage: TokenStorage, optional
+        :type token_storage: Optional[TokenStorage], optional
         """
         if token_storage is None:
             token_storage = InMemoryTokenStorage()
@@ -390,14 +390,14 @@ class BoxJWTAuth(Authentication):
         return new_auth
 
     def with_enterprise_subject(
-        self, enterprise_id: str, *, token_storage: TokenStorage = None
+        self, enterprise_id: str, *, token_storage: Optional[TokenStorage] = None
     ) -> 'BoxJWTAuth':
         """
         Create a new BoxJWTAuth instance that uses the provided enterprise ID as the subject of the JWT assertion.
         :param enterprise_id: The id of the enterprise to authenticate
         :type enterprise_id: str
         :param token_storage: Object responsible for storing token in newly created BoxJWTAuth. If no custom implementation provided, the token will be stored in memory., defaults to None
-        :type token_storage: TokenStorage, optional
+        :type token_storage: Optional[TokenStorage], optional
         """
         if token_storage is None:
             token_storage = InMemoryTokenStorage()
