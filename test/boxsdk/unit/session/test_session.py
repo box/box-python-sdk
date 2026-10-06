@@ -8,8 +8,6 @@ from requests.exceptions import (
     SSLError,
     ConnectionError as RequestsConnectionError,
 )
-from requests_toolbelt import MultipartEncoder
-
 import pytest
 
 from boxsdk import CCGAuth
@@ -19,6 +17,7 @@ from boxsdk.exception import BoxAPIException, BoxException
 from boxsdk.network.default_network import DefaultNetwork, DefaultNetworkResponse
 from boxsdk.session.box_response import BoxResponse
 from boxsdk.session.session import Session, Translator, AuthorizedSession
+from boxsdk.util.multipart_stream import MultipartStream
 
 
 @pytest.fixture(scope='function', params=[False, True])
@@ -265,7 +264,9 @@ def test_box_session_seeks_file_after_retry(
     mock_file_2.tell.return_value = 3
     files = {'file': ('unused', mock_file_1), 'f2': ('unused', mock_file_2)}
 
-    box_response = box_session.post(url=test_url, files=files)
+    # the multipart encoder sizes the streams itself, so only count the session's seeks
+    with patch('boxsdk.session.session.MultipartStream'):
+        box_response = box_session.post(url=test_url, files=files)
     assert box_response.status_code == 200
     assert box_response.json() == generic_successful_response.json()
     assert box_response.ok == generic_successful_response.ok
@@ -645,7 +646,14 @@ def test_multipart_request_with_enabled_streaming_file_content(
     assert call_args[1] == test_url
     assert call_kwargs['access_token'] == 'fake_access_token'
     assert call_kwargs['log_response_content'] is True
-    assert isinstance(call_kwargs['data'], MultipartEncoder)
-    assert call_kwargs['data'].fields['attributes'] == '{"name": "test_file"}'
-    assert call_kwargs['data'].fields['file'][0] == 'unused'
-    assert isinstance(call_kwargs['data'].fields['file'][1], BytesIO)
+    multipart_stream = call_kwargs['data']
+    assert isinstance(multipart_stream, MultipartStream)
+    assert call_kwargs['headers']['Content-Type'] == multipart_stream.content_type
+    body = multipart_stream.read()
+    assert (
+        b'name="attributes"\r\n\r\n{"name": "test_file"}\r\n'
+        + f'--{multipart_stream.boundary}\r\n'.encode()
+        + b'Content-Disposition: form-data; name="file"; filename="unused"\r\n\r\n'
+        + file_bytes
+        + b'\r\n'
+    ) in body

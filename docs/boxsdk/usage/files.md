@@ -197,7 +197,7 @@ which controls how the file content is uploaded.
 If you are uploading a large file, you may want to stream the request to avoid excessive memory usage.
 According to `requests'` library [docs][request_docs], by default, the `requests` library does not support streaming uploads,
 and all the data must be read into memory before being sent to the server.
-However, the `requests-toolbelt` package includes a `MultipartEncoder` class, which enables file uploads without
+However, the Box Python SDK includes a streaming multipart encoder, which enables file uploads without
 loading the entire file into memory. This approach is the default in the Box Python SDK.
 
 That said, handling 307 Temporary Redirects presents a challenge with streamed file uploads.
