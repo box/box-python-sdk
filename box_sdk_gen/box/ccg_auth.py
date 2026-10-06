@@ -35,7 +35,7 @@ class CCGConfig:
         *,
         enterprise_id: Optional[str] = None,
         user_id: Optional[str] = None,
-        token_storage: TokenStorage = None
+        token_storage: Optional[TokenStorage] = None
     ):
         """
         :param client_id: Box API key used for identifying the application the user is authenticating with
@@ -47,7 +47,7 @@ class CCGConfig:
         :param user_id: The user id to authenticate. This value is not required. But if it is provided, then the user will be auto-authenticated at the time of the first API call., defaults to None
         :type user_id: Optional[str], optional
         :param token_storage: Object responsible for storing token. If no custom implementation provided,the token will be stored in memory., defaults to None
-        :type token_storage: TokenStorage, optional
+        :type token_storage: Optional[TokenStorage], optional
         """
         if token_storage is None:
             token_storage = InMemoryTokenStorage()
@@ -122,7 +122,7 @@ class BoxCCGAuth(Authentication):
         return ''.join(['Bearer ', token.access_token])
 
     def with_user_subject(
-        self, user_id: str, *, token_storage: TokenStorage = None
+        self, user_id: str, *, token_storage: Optional[TokenStorage] = None
     ) -> 'BoxCCGAuth':
         """
         Create a new BoxCCGAuth instance that uses the provided user ID as the subject ID.
@@ -138,7 +138,7 @@ class BoxCCGAuth(Authentication):
         :param user_id: The id of the user to authenticate
         :type user_id: str
         :param token_storage: Object responsible for storing token in newly created BoxCCGAuth. If no custom implementation provided, the token will be stored in memory., defaults to None
-        :type token_storage: TokenStorage, optional
+        :type token_storage: Optional[TokenStorage], optional
         """
         if token_storage is None:
             token_storage = InMemoryTokenStorage()
@@ -152,14 +152,14 @@ class BoxCCGAuth(Authentication):
         return BoxCCGAuth(config=new_config)
 
     def with_enterprise_subject(
-        self, enterprise_id: str, *, token_storage: TokenStorage = None
+        self, enterprise_id: str, *, token_storage: Optional[TokenStorage] = None
     ) -> 'BoxCCGAuth':
         """
         Create a new BoxCCGAuth instance that uses the provided enterprise ID as the subject ID.
         :param enterprise_id: The id of the enterprise to authenticate
         :type enterprise_id: str
         :param token_storage: Object responsible for storing token in newly created BoxCCGAuth. If no custom implementation provided, the token will be stored in memory., defaults to None
-        :type token_storage: TokenStorage, optional
+        :type token_storage: Optional[TokenStorage], optional
         """
         if token_storage is None:
             token_storage = InMemoryTokenStorage()
