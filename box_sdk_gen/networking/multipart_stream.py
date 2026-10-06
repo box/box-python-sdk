@@ -1,4 +1,4 @@
-from io import SEEK_END
+from io import SEEK_END, TextIOBase
 from typing import Iterator, List, Optional, Tuple, Union
 
 from urllib3.fields import RequestField
@@ -8,7 +8,9 @@ from ..internal.utils import ByteStream
 
 CHUNK_SIZE = 64 * 1024
 
-MultipartField = Tuple[str, Optional[str], Union[str, ByteStream], Optional[str]]
+PartStream = Union[ByteStream, TextIOBase]
+
+MultipartField = Tuple[str, Optional[str], Union[str, PartStream], Optional[str]]
 
 
 class MultipartStream:
@@ -17,13 +19,14 @@ class MultipartStream:
     so uploads are sent without buffering whole files in memory.
 
     Fields are (name, file_name, value, content_type) tuples, where value is
-    either a string or a binary stream read from its current position.
+    either a string or a stream read from its current position. Text streams
+    are encoded as UTF-8.
     """
 
     def __init__(self, fields: List[MultipartField]):
         self.boundary = choose_boundary()
         self.content_type = f'multipart/form-data; boundary={self.boundary}'
-        self._segments: List[Union[bytes, ByteStream]] = []
+        self._segments: List[Union[bytes, PartStream]] = []
         for name, file_name, value, content_type in fields:
             field = RequestField(name=name, data=b'', filename=file_name)
             field.make_multipart(content_type=content_type)
@@ -37,6 +40,8 @@ class MultipartStream:
         self._segments.append(f'--{self.boundary}--\r\n'.encode('utf-8'))
         self._index = 0
         self._offset = 0
+        # encoded text stream bytes that didn't fit in the last read
+        self._pending = b''
         # set when a part stream ends before its declared size; retrying won't help
         self.size_error: Optional[IOError] = None
         # bytes still to send per stream segment, None when the size is unknown
@@ -49,17 +54,31 @@ class MultipartStream:
         self.len = self._compute_length()
 
     @staticmethod
-    def _stream_size(stream: ByteStream) -> Optional[int]:
+    def _stream_size(stream: PartStream) -> Optional[int]:
         try:
-            if not stream.seekable():
+            # text stream positions count characters, not encoded bytes
+            if isinstance(stream, TextIOBase) or not stream.seekable():
                 return None
             position = stream.tell()
-            stream.seek(0, SEEK_END)
-            end = stream.tell()
-            stream.seek(position)
+            # read(0) also catches text-like streams that aren't a TextIOBase
+            is_text = isinstance(stream.read(0), str)
+            if stream.tell() != position:
+                # read(0) shouldn't move a stream, but don't skip data if it does
+                stream.seek(position)
+            if is_text:
+                return None
+            # like requests and requests-toolbelt, prefer a length the stream reports
+            if hasattr(stream, '__len__'):
+                end = len(stream)
+            elif getattr(stream, 'len', None) is not None:
+                end = stream.len
+            else:
+                stream.seek(0, SEEK_END)
+                end = stream.tell()
+                stream.seek(position)
             # a stream positioned past its end has nothing left to send
             return max(0, end - position)
-        except (OSError, AttributeError, TypeError):
+        except (OSError, AttributeError, TypeError, ValueError):
             return None
 
     def _compute_length(self) -> Optional[int]:
@@ -80,7 +99,9 @@ class MultipartStream:
         chunks = []
         while size > 0 and self._index < len(self._segments):
             segment = self._segments[self._index]
-            if isinstance(segment, bytes):
+            if self._pending:
+                chunk, self._pending = self._pending[:size], self._pending[size:]
+            elif isinstance(segment, bytes):
                 chunk = segment[self._offset : self._offset + size]
                 self._offset += len(chunk)
                 if self._offset >= len(segment):
@@ -103,8 +124,12 @@ class MultipartStream:
                         raise self.size_error
                     self._index += 1
                     continue
+                if isinstance(chunk, str):
+                    chunk = chunk.encode('utf-8')
                 if remaining is not None:
                     self._remaining[self._index] = remaining - len(chunk)
+                # a character can encode to several bytes, so keep what doesn't fit
+                chunk, self._pending = chunk[:size], chunk[size:]
             chunks.append(chunk)
             size -= len(chunk)
         return b''.join(chunks)
