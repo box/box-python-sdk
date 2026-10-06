@@ -208,7 +208,12 @@ def jwt_auth_init_mocks(
                     backend=default_backend(),
                 )
 
-                yield oauth, assertion, fake_client_id, load_pem_private_key.return_value
+                yield (
+                    oauth,
+                    assertion,
+                    fake_client_id,
+                    load_pem_private_key.return_value,
+                )
 
         if assert_authed:
             mock_box_session.request.assert_called_once_with(
