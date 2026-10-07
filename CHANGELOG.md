@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.18.0](https://github.com/box/box-python-sdk/compare/v4.17.0...v4.18.0) (2026-10-07)
+
+
+### Bug Fixes:
+
+* **boxsdkgen:** encode text streams as UTF-8 in `MultipartStream` uploads (box/box-codegen[#995](https://github.com/box/box-python-sdk/issues/995)) ([#1608](https://github.com/box/box-python-sdk/issues/1608)) ([1e34853](https://github.com/box/box-python-sdk/commit/1e34853fdb48a1133e615e94ca975e263ab9ded7))
+
+
+### New Features and Enhancements:
+
+* **boxsdk:** Replace `requests-toolbelt` with streaming `MultipartStream` encoder ([#1606](https://github.com/box/box-python-sdk/issues/1606)) ([685e9fc](https://github.com/box/box-python-sdk/commit/685e9fc63ebf4b06ce99bed179af758d2160dda0))
+
 ## [4.17.0](https://github.com/box/box-python-sdk/compare/v4.16.0...v4.17.0) (2026-10-01)
 
 ### ⚠ BREAKING CHANGES
