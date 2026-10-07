@@ -449,7 +449,7 @@ class EventsManager:
         self,
         *,
         auth: Optional[Authentication] = None,
-        network_session: NetworkSession = None
+        network_session: Optional[NetworkSession] = None
     ):
         if network_session is None:
             network_session = NetworkSession()
@@ -664,15 +664,15 @@ class EventsManager:
     def get_event_stream(
         self,
         *,
-        query_params: GetEventStreamQueryParams = None,
-        headers: GetEventStreamHeaders = None
+        query_params: Optional[GetEventStreamQueryParams] = None,
+        headers: Optional[GetEventStreamHeaders] = None
     ) -> EventStream:
         """
         Get an event stream for the Box API
         :param query_params: Query parameters of getEvents method, defaults to None
-        :type query_params: GetEventStreamQueryParams, optional
+        :type query_params: Optional[GetEventStreamQueryParams], optional
         :param headers: Headers of getEvents method, defaults to None
-        :type headers: GetEventStreamHeaders, optional
+        :type headers: Optional[GetEventStreamHeaders], optional
         """
         if query_params is None:
             query_params = GetEventStreamQueryParams()

@@ -37,7 +37,11 @@ from box_sdk_gen.serialization.json import SerializedData
 
 class OAuthConfig:
     def __init__(
-        self, client_id: str, client_secret: str, *, token_storage: TokenStorage = None
+        self,
+        client_id: str,
+        client_secret: str,
+        *,
+        token_storage: Optional[TokenStorage] = None
     ):
         if token_storage is None:
             token_storage = InMemoryTokenStorage()
@@ -85,7 +89,9 @@ class BoxOAuth(Authentication):
         self.config = config
         self.token_storage = self.config.token_storage
 
-    def get_authorize_url(self, *, options: GetAuthorizeUrlOptions = None) -> str:
+    def get_authorize_url(
+        self, *, options: Optional[GetAuthorizeUrlOptions] = None
+    ) -> str:
         """
         Get the authorization URL for the app user.
         """

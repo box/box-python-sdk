@@ -124,7 +124,7 @@ class FileMetadataManager:
         self,
         *,
         auth: Optional[Authentication] = None,
-        network_session: NetworkSession = None
+        network_session: Optional[NetworkSession] = None
     ):
         if network_session is None:
             network_session = NetworkSession()
