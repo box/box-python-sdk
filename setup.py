@@ -60,6 +60,8 @@ def main():
         tests_require=tests_require,
         extras_require=extras_require,
         packages=find_packages(exclude=['docs', '*test*']),
+        package_data={'box_sdk_gen': ['py.typed']},
+        zip_safe=False,
     )
 
 

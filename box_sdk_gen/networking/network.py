@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 from ..internal.logging import DataSanitizer
 from .network_client import NetworkClient
@@ -13,13 +13,13 @@ class NetworkSession:
     def __init__(
         self,
         *,
-        network_client: NetworkClient = None,
-        retry_strategy: RetryStrategy = None,
-        additional_headers: Dict[str, str] = None,
-        base_urls: BaseUrls = None,
-        proxy_url: str = None,
-        data_sanitizer: DataSanitizer = None,
-        timeout_config: TimeoutConfig = None,
+        network_client: Optional[NetworkClient] = None,
+        retry_strategy: Optional[RetryStrategy] = None,
+        additional_headers: Optional[Dict[str, str]] = None,
+        base_urls: Optional[BaseUrls] = None,
+        proxy_url: Optional[str] = None,
+        data_sanitizer: Optional[DataSanitizer] = None,
+        timeout_config: Optional[TimeoutConfig] = None,
     ):
         if additional_headers is None:
             additional_headers = {}
@@ -54,7 +54,7 @@ class NetworkSession:
         self.timeout_config = timeout_config
 
     def with_additional_headers(
-        self, additional_headers: Dict[str, str] = None
+        self, additional_headers: Optional[Dict[str, str]] = None
     ) -> 'NetworkSession':
         """
         Generate a fresh network session by duplicating the existing configuration and network parameters,

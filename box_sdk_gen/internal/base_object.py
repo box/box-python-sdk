@@ -1,13 +1,18 @@
 from datetime import datetime, date
 from enum import EnumMeta, Enum
+import typing as _typing
 from typing import get_args, get_origin, Union, Optional
 from .null_value import NullValue
 
 
 class BaseObject:
-    _discriminator = (None, {})
-    _json_to_fields_mapping = {}
-    _fields_to_json_mapping = {}
+    # typing is aliased because this module is star-exported and Collection is also a schema name
+    _discriminator = (
+        None,
+        {},
+    )  # type: _typing.Tuple[Optional[str], _typing.Collection[str]]
+    _json_to_fields_mapping = {}  # type: _typing.Dict[str, str]
+    _fields_to_json_mapping = {}  # type: _typing.Dict[str, str]
 
     def __init__(self, **kwargs):
         self._raw_data: dict = {}
@@ -40,6 +45,7 @@ class BaseObject:
                 continue
             if v is None:
                 continue
+            value: _typing.Any
             if isinstance(v, NullValue):
                 value = None
             elif type(v) is list:

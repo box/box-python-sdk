@@ -2,7 +2,7 @@ import io
 
 import time
 from dataclasses import dataclass
-from typing import Optional, Dict, Union, Tuple, List
+from typing import TYPE_CHECKING, NoReturn, Optional, Dict, Union, Tuple, List
 from sys import version_info as py_version
 
 import requests
@@ -25,6 +25,9 @@ from ..serialization.json import (
 )
 from ..networking.version import __version__
 
+if TYPE_CHECKING:
+    from ..serialization.json import SerializedData
+
 SDK_VERSION = __version__
 USER_AGENT_HEADER = f'box-python-generated-sdk-{SDK_VERSION}'
 X_BOX_UA_HEADER = (
@@ -41,21 +44,22 @@ class APIRequest:
     params: Dict[str, str]
     data: Optional[Union[str, ByteStream, MultipartStream]]
     content_type: Optional[str] = None
-    allow_redirects: bool = True
+    allow_redirects: Optional[bool] = True
     timeout: Optional[Union[float, Tuple[Optional[float], Optional[float]]]] = None
 
 
 @dataclass
 class APIResponse:
     network_response: Optional[Response] = None
-    reauthentication_needed: Optional[bool] = False
+    reauthentication_needed: bool = False
     raised_exception: Optional[Exception] = None
 
     def get_header(
         self, header_name: str, default_value: Optional[str] = None
     ) -> Optional[str]:
         try:
-            return self.network_response.headers[header_name]
+            # a missing response surfaces as AttributeError and falls back to the default
+            return self.network_response.headers[header_name]  # type: ignore[union-attr]
         except (ValueError, KeyError, AttributeError):
             return default_value
 
@@ -79,7 +83,7 @@ class BoxNetworkClient(NetworkClient):
 
         attempt_nr = 1
         number_of_retries_on_exception = 0
-        response = APIResponse()
+        response: APIResponse = APIResponse()
 
         options_stream_position = self._get_options_stream_position(options)
         multipart_streams_positions = self._get_multipart_stream_positions(options)
@@ -88,7 +92,7 @@ class BoxNetworkClient(NetworkClient):
             request: APIRequest = self._prepare_request(
                 options=options, reauthenticate=response.reauthentication_needed
             )
-            response: APIResponse = self._make_request(request=request)
+            response = self._make_request(request=request)
             if response.network_response is not None:
                 attempt_for_retry = attempt_nr
                 network_response = response.network_response
@@ -98,7 +102,7 @@ class BoxNetworkClient(NetworkClient):
                     fetch_response = FetchResponse(
                         url=network_response.url,
                         status=network_response.status_code,
-                        headers=response_headers,
+                        headers=response_headers,  # type: ignore[arg-type]
                         content=ResponseByteStream(
                             response.network_response.iter_content(chunk_size=1024)
                         ),
@@ -107,7 +111,7 @@ class BoxNetworkClient(NetworkClient):
                     fetch_response = FetchResponse(
                         url=network_response.url,
                         status=network_response.status_code,
-                        headers=response_headers,
+                        headers=response_headers,  # type: ignore[arg-type]
                         data=(self._read_json_body(network_response.text)),
                         content=io.BytesIO(network_response.content),
                     )
@@ -151,7 +155,7 @@ class BoxNetworkClient(NetworkClient):
     ) -> APIRequest:
         headers = self._prepare_headers(options, reauthenticate)
         params = options.params or {}
-        data = self._prepare_body(
+        data: Optional[Union[str, ByteStream, MultipartStream]] = self._prepare_body(
             options.content_type, options.file_stream or options.data
         )
         allow_redirects = options.follow_redirects
@@ -188,8 +192,9 @@ class BoxNetworkClient(NetworkClient):
     def _prepare_multipart_fields(
         options: 'FetchOptions',
     ) -> List[MultipartField]:
-        fields = []
-        for part in options.multipart_data:
+        fields: List[MultipartField] = []
+        # only called for multipart requests, which always carry multipart_data
+        for part in options.multipart_data:  # type: ignore[union-attr]
             if part.data is not None:
                 fields.append((part.part_name, None, sd_to_json(part.data), None))
             elif part.file_stream is not None:
@@ -237,7 +242,7 @@ class BoxNetworkClient(NetworkClient):
         if connection_timeout_ms is not None:
             return connection_timeout_ms / 1000.0
 
-        return read_timeout_ms / 1000.0
+        return read_timeout_ms / 1000.0  # type: ignore[operator]
 
     @staticmethod
     def _prepare_headers(
@@ -261,20 +266,20 @@ class BoxNetworkClient(NetworkClient):
 
     @staticmethod
     def _prepare_body(
-        content_type: str, data: Union[dict, ByteStream]
+        content_type: str, data: 'Optional[Union[SerializedData, ByteStream]]'
     ) -> Optional[Union[str, ByteStream]]:
         if (
             content_type == 'application/json'
             or content_type == 'application/json-patch+json'
         ):
-            return sd_to_json(data) if data else None
+            return sd_to_json(data) if data else None  # type: ignore[arg-type]
         if content_type == 'application/x-www-form-urlencoded':
-            return sd_to_url_params(data)
+            return sd_to_url_params(data)  # type: ignore[arg-type]
         if (
             content_type == 'multipart/form-data'
             or content_type == 'application/octet-stream'
         ):
-            return data
+            return data  # type: ignore[return-value]
         raise ValueError(f'Unsupported content type: {content_type}')
 
     def _make_request(self, request: APIRequest) -> APIResponse:
@@ -288,7 +293,8 @@ class BoxNetworkClient(NetworkClient):
                 headers=request.headers,
                 data=request.data,
                 params=request.params,
-                allow_redirects=request.allow_redirects,
+                # requests treats None like False, its stubs just only declare bool
+                allow_redirects=request.allow_redirects,  # type: ignore[arg-type]
                 stream=True,
                 timeout=timeout,
             )
@@ -315,13 +321,14 @@ class BoxNetworkClient(NetworkClient):
     @staticmethod
     def _raise_on_unsuccessful_request(
         request: APIRequest, response: APIResponse, data_sanitizer: DataSanitizer
-    ) -> None:
+    ) -> NoReturn:
         if response.raised_exception:
             raise BoxSDKError(
                 message=str(response.raised_exception), error=response.raised_exception
             )
 
-        network_response = response.network_response
+        # without a raised exception the request always produced a response
+        network_response: Response = response.network_response  # type: ignore[assignment]
         response_json = BoxNetworkClient._read_json_body(network_response.text)
 
         raise BoxAPIError(
@@ -378,7 +385,8 @@ class BoxNetworkClient(NetworkClient):
         if not response_body:
             return {}
         try:
-            return json_to_serialized_data(response_body)
+            # Box API response bodies are JSON objects
+            return json_to_serialized_data(response_body)  # type: ignore[return-value]
         except (ValueError, TypeError):
             return {}
 
