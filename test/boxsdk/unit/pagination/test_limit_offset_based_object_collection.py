@@ -121,8 +121,7 @@ class TestLimitOffsetBasedObjectCollection(BoxObjectCollectionTestBase):
         object_collection.next()
         assert (
             # pylint:disable=protected-access
-            object_collection._limit
-            == self.DEFAULT_LIMIT
+            object_collection._limit == self.DEFAULT_LIMIT
         )
 
     def test_object_collection_sets_limit_to_returned_value_if_originally_too_high(
@@ -134,8 +133,7 @@ class TestLimitOffsetBasedObjectCollection(BoxObjectCollectionTestBase):
         object_collection.next()
         assert (
             # pylint:disable=protected-access
-            object_collection._limit
-            == self.DEFAULT_LIMIT
+            object_collection._limit == self.DEFAULT_LIMIT
         )
 
     def test_box_returning_bogus_limit_raises_runtime_error(

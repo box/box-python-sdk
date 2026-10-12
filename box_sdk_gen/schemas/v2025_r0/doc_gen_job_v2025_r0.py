@@ -58,6 +58,7 @@ class DocGenJobV2025R0(DocGenJobBaseV2025R0):
         output_type: str,
         id: str,
         *,
+        external_id: Optional[str] = None,
         output_file: Optional[FileReferenceV2025R0] = None,
         output_file_version: Optional[FileVersionBaseV2025R0] = None,
         failures: Optional[DocGenJobV2025R0FailuresField] = None,
@@ -65,16 +66,21 @@ class DocGenJobV2025R0(DocGenJobBaseV2025R0):
         **kwargs
     ):
         """
-        :param status: Status of the job.
-        :type status: DocGenJobV2025R0StatusField
-        :param output_type: Type of the generated file.
-        :type output_type: str
-        :param id: The unique identifier that represent a Box Doc Gen job.
-        :type id: str
-        :param failures: Errors and warnings that occurred during document generation., defaults to None
-        :type failures: Optional[DocGenJobV2025R0FailuresField], optional
-        :param type: The value will always be `docgen_job`., defaults to DocGenJobBaseV2025R0TypeField.DOCGEN_JOB
-        :type type: DocGenJobBaseV2025R0TypeField, optional
+                :param status: Status of the job.
+                :type status: DocGenJobV2025R0StatusField
+                :param output_type: Type of the generated file.
+                :type output_type: str
+                :param id: The unique identifier that represent a Box Doc Gen job.
+                :type id: str
+                :param external_id: An optional identifier supplied by the caller when the Box Doc Gen
+        job was created. Returned for correlation only. It is not a Box
+        resource ID, is not required to be unique, and cannot be used to
+        look up the job., defaults to None
+                :type external_id: Optional[str], optional
+                :param failures: Errors and warnings that occurred during document generation., defaults to None
+                :type failures: Optional[DocGenJobV2025R0FailuresField], optional
+                :param type: The value will always be `docgen_job`., defaults to DocGenJobBaseV2025R0TypeField.DOCGEN_JOB
+                :type type: DocGenJobBaseV2025R0TypeField, optional
         """
         super().__init__(id=id, type=type, **kwargs)
         self.batch = batch
@@ -82,6 +88,7 @@ class DocGenJobV2025R0(DocGenJobBaseV2025R0):
         self.template_file_version = template_file_version
         self.status = status
         self.output_type = output_type
+        self.external_id = external_id
         self.output_file = output_file
         self.output_file_version = output_file_version
         self.failures = failures

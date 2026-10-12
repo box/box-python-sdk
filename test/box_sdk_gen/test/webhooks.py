@@ -73,24 +73,12 @@ def testWebhookValidation():
     primary_key: str = 'SamplePrimaryKey'
     secondary_key: str = 'SampleSecondaryKey'
     incorrect_key: str = 'IncorrectKey'
-    body: str = (
-        '{"type":"webhook_event","webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"Test.txt"}}'
-    )
-    body_with_japanese: str = (
-        '{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"スクリーンショット 2020-08-05.txt"}}'
-    )
-    body_with_emoji: str = (
-        '{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"😀 2020-08-05.txt"}}'
-    )
-    body_with_carriage_return: str = (
-        '{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"test \r"}}'
-    )
-    body_with_forward_slash: str = (
-        '{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"\/"}}'
-    )
-    body_with_back_slash: str = (
-        '{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"\\"}}'
-    )
+    body: str = '{"type":"webhook_event","webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"Test.txt"}}'
+    body_with_japanese: str = '{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"スクリーンショット 2020-08-05.txt"}}'
+    body_with_emoji: str = '{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"😀 2020-08-05.txt"}}'
+    body_with_carriage_return: str = '{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"test \r"}}'
+    body_with_forward_slash: str = '{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"\/"}}'
+    body_with_back_slash: str = '{"webhook":{"id":"1234567890"},"trigger":"FILE.UPLOADED","source":{"id":"1234567890","type":"file","name":"\\"}}'
     headers: Dict[str, str] = {
         'box-delivery-id': 'f96bb54b-ee16-4fc5-aa65-8c2d9e5b546f',
         'box-delivery-timestamp': '2020-01-01T00:00:00-07:00',

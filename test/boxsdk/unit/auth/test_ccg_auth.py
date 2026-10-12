@@ -99,8 +99,7 @@ def test_successful_create_ccg_auth_object_and_normalize_user_id(
     )
     assert (
         # pylint:disable=protected-access
-        auth._user_id
-        == expected_normalized_user_id
+        auth._user_id == expected_normalized_user_id
     )
 
 
@@ -158,8 +157,7 @@ def test_authenticate_enterprise(ccg_auth, enterprise_id, mock_enterprise_id):
         )
         assert (
             # pylint:disable=protected-access
-            ccg_auth._enterprise_id
-            == mock_enterprise_id
+            ccg_auth._enterprise_id == mock_enterprise_id
         )
         assert ccg_auth._user_id is None  # pylint:disable=protected-access
 
