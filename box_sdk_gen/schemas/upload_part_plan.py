@@ -23,7 +23,8 @@ class UploadPartPlan(BaseObject):
                 :type offset: int
                 :param size: The size of the chunk in bytes.
                 :type size: int
-                :param sha_512: The `SHA-512` hash of the chunk.
+                :param sha_512: The `SHA-512` hash of the chunk, as a hex string
+        of 128 lower case characters.
                 :type sha_512: str
         """
         super().__init__(**kwargs)

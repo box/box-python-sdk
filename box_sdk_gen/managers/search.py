@@ -144,7 +144,16 @@ class SearchManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> MetadataQueryResults:
         """
+                For new integrations, use the [v2026.0 Query API](https://developer.box.com/reference/v2026.0/query-resources).
+
+                This is the latest version of the Query API, with advanced capabilities including multi-template queries and
+
+
+                Query Insights, and is the API we will continue to enhance with new Query capabilities.
+
+
                 Create a search using SQL-like syntax to return items that match specific
+
 
                 metadata.
 

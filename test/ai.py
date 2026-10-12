@@ -230,9 +230,7 @@ def testAIExtract():
         [AiItemBase(id=file.id)],
         ai_agent=ai_extract_agent_basic_text_config,
     )
-    expected_response: str = (
-        '{"firstName": "John", "lastName": "Doe", "location": "San Francisco", "yearOfBirth": "1990", "company": "Box"}'
-    )
+    expected_response: str = '{"firstName": "John", "lastName": "Doe", "location": "San Francisco", "yearOfBirth": "1990", "company": "Box"}'
     assert response.answer == expected_response
     assert response.completion_reason == 'done'
     client.files.delete_file_by_id(file.id)

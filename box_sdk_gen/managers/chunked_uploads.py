@@ -304,15 +304,18 @@ class ChunkedUploadsManager:
                 :type request_body: ByteStream
                 :param digest: The [RFC3230][1] message digest of the chunk uploaded.
 
-        Only SHA1 is supported. The SHA1 digest must be base64
+        `SHA-1` and `SHA-512` ([RFC5843][2]) are supported. The digest must be base64
         encoded. The format of this header is as
-        `sha=BASE64_ENCODED_DIGEST`.
+        `sha=BASE64_ENCODED_DIGEST` for `SHA-1`, or
+        `sha-512=BASE64_ENCODED_DIGEST` for `SHA-512`.
 
-        To get the value for the `SHA` digest, use the
+        To get the value for the digest, use the
         openSSL command to encode the file part:
-        `openssl sha1 -binary <FILE_PART_NAME> | base64`.
+        `openssl sha1 -binary <FILE_PART_NAME> | base64` for `SHA-1`, or
+        `openssl sha512 -binary <FILE_PART_NAME> | base64` for `SHA-512`.
 
         [1]: https://tools.ietf.org/html/rfc3230
+        [2]: https://tools.ietf.org/html/rfc5843
                 :type digest: str
                 :param content_range: The byte range of the chunk.
 
@@ -378,15 +381,18 @@ class ChunkedUploadsManager:
                 :type request_body: ByteStream
                 :param digest: The [RFC3230][1] message digest of the chunk uploaded.
 
-        Only SHA1 is supported. The SHA1 digest must be base64
+        `SHA-1` and `SHA-512` ([RFC5843][2]) are supported. The digest must be base64
         encoded. The format of this header is as
-        `sha=BASE64_ENCODED_DIGEST`.
+        `sha=BASE64_ENCODED_DIGEST` for `SHA-1`, or
+        `sha-512=BASE64_ENCODED_DIGEST` for `SHA-512`.
 
-        To get the value for the `SHA` digest, use the
+        To get the value for the digest, use the
         openSSL command to encode the file part:
-        `openssl sha1 -binary <FILE_PART_NAME> | base64`.
+        `openssl sha1 -binary <FILE_PART_NAME> | base64` for `SHA-1`, or
+        `openssl sha512 -binary <FILE_PART_NAME> | base64` for `SHA-512`.
 
         [1]: https://tools.ietf.org/html/rfc3230
+        [2]: https://tools.ietf.org/html/rfc5843
                 :type digest: str
                 :param content_range: The byte range of the chunk.
 
@@ -650,10 +656,10 @@ class ChunkedUploadsManager:
         have already been uploaded (cache hits) and only uploading missing parts.
 
 
-        The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+        The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions)
 
 
-        and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+        and [`Get upload session`](https://developer.box.com/reference/get-files-upload-sessions-id) endpoints.
 
         :param url: URL of createFileUploadSessionPlan method
         :type url: str
@@ -696,10 +702,10 @@ class ChunkedUploadsManager:
                 have already been uploaded (cache hits) and only uploading missing parts.
 
 
-                The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
+                The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions)
 
 
-                and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+                and [`Get upload session`](https://developer.box.com/reference/get-files-upload-sessions-id) endpoints.
 
                 :param upload_session_id: The ID of the upload session.
         Example: "D5E3F7A"
@@ -761,12 +767,26 @@ class ChunkedUploadsManager:
                 :param url: URL of createFileUploadSessionCommit method
                 :type url: str
                 :param parts: The list details for the uploaded parts.
+
+        Each entry can include `sha1` or `sha512`. Include `sha512`
+        on every entry or on none of them. A request where only
+        some entries include `sha512` is rejected.
+
+        Include parts that the server already has, returned as
+        `hits` by the [`Plan upload session`](https://developer.box.com/reference/post-files-upload-sessions-id-plan)
+        endpoint. Use the `part_id`, `offset`, and `size` from the
+        plan response. If the other entries include `sha512`,
+        include the `sha512` value from the plan response.
+        Otherwise, leave the hash out of these entries.
                 :type parts: List[UploadPart]
                 :param digest: The [RFC3230][1] message digest of the whole file.
 
         Only SHA1 is supported. The SHA1 digest must be Base64
         encoded. The format of this header is as
         `sha=BASE64_ENCODED_DIGEST`.
+
+        `SHA-512` is not supported for the whole-file digest, even if
+        the parts were uploaded with `SHA-512` digests.
 
         [1]: https://tools.ietf.org/html/rfc3230
                 :type digest: str
@@ -837,12 +857,26 @@ class ChunkedUploadsManager:
         Example: "D5E3F7A"
                 :type upload_session_id: str
                 :param parts: The list details for the uploaded parts.
+
+        Each entry can include `sha1` or `sha512`. Include `sha512`
+        on every entry or on none of them. A request where only
+        some entries include `sha512` is rejected.
+
+        Include parts that the server already has, returned as
+        `hits` by the [`Plan upload session`](https://developer.box.com/reference/post-files-upload-sessions-id-plan)
+        endpoint. Use the `part_id`, `offset`, and `size` from the
+        plan response. If the other entries include `sha512`,
+        include the `sha512` value from the plan response.
+        Otherwise, leave the hash out of these entries.
                 :type parts: List[UploadPart]
                 :param digest: The [RFC3230][1] message digest of the whole file.
 
         Only SHA1 is supported. The SHA1 digest must be Base64
         encoded. The format of this header is as
         `sha=BASE64_ENCODED_DIGEST`.
+
+        `SHA-512` is not supported for the whole-file digest, even if
+        the parts were uploaded with `SHA-512` digests.
 
         [1]: https://tools.ietf.org/html/rfc3230
                 :type digest: str
