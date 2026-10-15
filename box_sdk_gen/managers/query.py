@@ -154,12 +154,51 @@ class QueryManager:
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> QueryResultsV2026R0:
         """
-                Runs a query to discover Box items using a logical predicate that can filter
+                Runs a query to discover Box items using a logical predicate, similar to a SQL
 
-                across item fields and metadata templates. Results can be sorted, paginated,
+                WHERE clause. The predicate can filter across multiple metadata templates and
 
 
-                and shaped to include additional item or metadata fields.
+                item fields in a single request. Results can be sorted, paginated with markers,
+
+
+                and shaped with fields so each entry includes additional item or metadata
+
+
+                attributes.
+
+
+                This is the item-retrieval endpoint in the Query API (version 2026.0). Unlike
+
+
+                the [Metadata Query API](https://developer.box.com/reference/post-metadata-queries-execute-read),
+
+
+                it is not limited to a single metadata template or to files and folders. For
+
+
+                totals and grouped metrics over the same predicates, use
+
+
+                [Query Insights](https://developer.box.com/reference/v2026.0/post-query-insights)
+
+
+                instead of paging through every matching item.
+
+
+                For predicate syntax, parameters, examples, pagination behavior, and error
+
+
+                codes, see the
+
+
+                [Box Query guide](https://developer.box.com/guides/query/box-query). For shared
+
+
+                response schemas, including Query results and result entries, see
+
+
+                [Query resources](https://developer.box.com/reference/v2026.0/query-resources).
 
                 :param query: The query definition, including the filtering predicate and its optional
         parameters and ancestor restrictions.

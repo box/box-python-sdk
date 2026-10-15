@@ -160,8 +160,7 @@ def test_add_email_alias_returns_the_correct_email_alias_object(
     assert isinstance(new_email_alias, EmailAlias)
     assert (
         # pylint: disable=protected-access
-        new_email_alias._session
-        == mock_box_session
+        new_email_alias._session == mock_box_session
     )
     assert new_email_alias.object_id == '1234'
 

@@ -51,6 +51,7 @@ class DocGenJobFullV2025R0(DocGenJobV2025R0):
         id: str,
         *,
         created_at: Optional[str] = None,
+        external_id: Optional[str] = None,
         output_file: Optional[FileReferenceV2025R0] = None,
         output_file_version: Optional[FileVersionBaseV2025R0] = None,
         failures: Optional[DocGenJobV2025R0FailuresField] = None,
@@ -58,20 +59,25 @@ class DocGenJobFullV2025R0(DocGenJobV2025R0):
         **kwargs
     ):
         """
-        :param source: Source of the request.
-        :type source: str
-        :param status: Status of the job.
-        :type status: DocGenJobV2025R0StatusField
-        :param output_type: Type of the generated file.
-        :type output_type: str
-        :param id: The unique identifier that represent a Box Doc Gen job.
-        :type id: str
-        :param created_at: Time of job creation., defaults to None
-        :type created_at: Optional[str], optional
-        :param failures: Errors and warnings that occurred during document generation., defaults to None
-        :type failures: Optional[DocGenJobV2025R0FailuresField], optional
-        :param type: The value will always be `docgen_job`., defaults to DocGenJobBaseV2025R0TypeField.DOCGEN_JOB
-        :type type: DocGenJobBaseV2025R0TypeField, optional
+                :param source: Source of the request.
+                :type source: str
+                :param status: Status of the job.
+                :type status: DocGenJobV2025R0StatusField
+                :param output_type: Type of the generated file.
+                :type output_type: str
+                :param id: The unique identifier that represent a Box Doc Gen job.
+                :type id: str
+                :param created_at: Time of job creation., defaults to None
+                :type created_at: Optional[str], optional
+                :param external_id: An optional identifier supplied by the caller when the Box Doc Gen
+        job was created. Returned for correlation only. It is not a Box
+        resource ID, is not required to be unique, and cannot be used to
+        look up the job., defaults to None
+                :type external_id: Optional[str], optional
+                :param failures: Errors and warnings that occurred during document generation., defaults to None
+                :type failures: Optional[DocGenJobV2025R0FailuresField], optional
+                :param type: The value will always be `docgen_job`., defaults to DocGenJobBaseV2025R0TypeField.DOCGEN_JOB
+                :type type: DocGenJobBaseV2025R0TypeField, optional
         """
         super().__init__(
             batch=batch,
@@ -80,6 +86,7 @@ class DocGenJobFullV2025R0(DocGenJobV2025R0):
             status=status,
             output_type=output_type,
             id=id,
+            external_id=external_id,
             output_file=output_file,
             output_file_version=output_file_version,
             failures=failures,
