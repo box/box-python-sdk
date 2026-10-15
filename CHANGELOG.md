@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.19.0](https://github.com/box/box-python-sdk/compare/v4.18.0...v4.19.0) (2026-10-15)
+
+
+### New Features and Enhancements:
+
+* **boxsdkgen:** support `sha512` for chunked uploads and add `external_id` fields (box/box-openapi[#620](https://github.com/box/box-python-sdk/issues/620)) ([a5e89d0](https://github.com/box/box-python-sdk/commit/a5e89d051b507cc283c0acbfbfdf273f42c4f67a))
+
 ## [4.18.0](https://github.com/box/box-python-sdk/compare/v4.17.0...v4.18.0) (2026-10-07)
 
 
