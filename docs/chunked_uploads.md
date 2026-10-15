@@ -177,7 +177,7 @@ client.chunked_uploads.upload_file_part_by_url(
 - request_body `ByteStream`
   - Request body of uploadFilePart method
 - digest `str`
-  - The [RFC3230][1] message digest of the chunk uploaded. Only SHA1 is supported. The SHA1 digest must be base64 encoded. The format of this header is as `sha=BASE64_ENCODED_DIGEST`. To get the value for the `SHA` digest, use the openSSL command to encode the file part: `openssl sha1 -binary <FILE_PART_NAME> | base64`. [1]: https://tools.ietf.org/html/rfc3230
+  - The [RFC3230][1] message digest of the chunk uploaded. `SHA-1` and `SHA-512` ([RFC5843][2]) are supported. The digest must be base64 encoded. The format of this header is as `sha=BASE64_ENCODED_DIGEST` for `SHA-1`, or `sha-512=BASE64_ENCODED_DIGEST` for `SHA-512`. To get the value for the digest, use the openSSL command to encode the file part: `openssl sha1 -binary <FILE_PART_NAME> | base64` for `SHA-1`, or `openssl sha512 -binary <FILE_PART_NAME> | base64` for `SHA-512`. [1]: https://tools.ietf.org/html/rfc3230 [2]: https://tools.ietf.org/html/rfc5843
 - content_range `str`
   - The byte range of the chunk. Must not overlap with the range of a part already uploaded this session. Each part’s size must be exactly equal in size to the part size specified in the upload session that you created. One exception is the last part of the file, as this can be smaller. When providing the value for `content-range`, remember that: * The lower bound of each part's byte range must be a multiple of the part size. * The higher bound must be a multiple of the part size - 1.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
@@ -188,6 +188,9 @@ client.chunked_uploads.upload_file_part_by_url(
 This function returns a value of type `UploadedPart`.
 
 Chunk has been uploaded successfully.
+
+The response always includes `sha512`. It also includes
+`sha1` if the `Digest` header used `SHA-1`.
 
 ## Upload part of file
 
@@ -219,7 +222,7 @@ client.chunked_uploads.upload_file_part(
 - request_body `ByteStream`
   - Request body of uploadFilePart method
 - digest `str`
-  - The [RFC3230][1] message digest of the chunk uploaded. Only SHA1 is supported. The SHA1 digest must be base64 encoded. The format of this header is as `sha=BASE64_ENCODED_DIGEST`. To get the value for the `SHA` digest, use the openSSL command to encode the file part: `openssl sha1 -binary <FILE_PART_NAME> | base64`. [1]: https://tools.ietf.org/html/rfc3230
+  - The [RFC3230][1] message digest of the chunk uploaded. `SHA-1` and `SHA-512` ([RFC5843][2]) are supported. The digest must be base64 encoded. The format of this header is as `sha=BASE64_ENCODED_DIGEST` for `SHA-1`, or `sha-512=BASE64_ENCODED_DIGEST` for `SHA-512`. To get the value for the digest, use the openSSL command to encode the file part: `openssl sha1 -binary <FILE_PART_NAME> | base64` for `SHA-1`, or `openssl sha512 -binary <FILE_PART_NAME> | base64` for `SHA-512`. [1]: https://tools.ietf.org/html/rfc3230 [2]: https://tools.ietf.org/html/rfc5843
 - content_range `str`
   - The byte range of the chunk. Must not overlap with the range of a part already uploaded this session. Each part’s size must be exactly equal in size to the part size specified in the upload session that you created. One exception is the last part of the file, as this can be smaller. When providing the value for `content-range`, remember that: * The lower bound of each part's byte range must be a multiple of the part size. * The higher bound must be a multiple of the part size - 1.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
@@ -230,6 +233,9 @@ client.chunked_uploads.upload_file_part(
 This function returns a value of type `UploadedPart`.
 
 Chunk has been uploaded successfully.
+
+The response always includes `sha512`. It also includes
+`sha1` if the `Digest` header used `SHA-1`.
 
 ## Remove upload session by URL
 
@@ -334,6 +340,9 @@ This function returns a value of type `UploadParts`.
 
 Returns a list of parts that have been uploaded.
 
+Each part includes the hash type used to upload it. Parts
+uploaded with a `SHA-512` `Digest` header don't include `sha1`.
+
 ## List parts
 
 Return a list of the chunks uploaded to the upload session so far.
@@ -369,14 +378,17 @@ This function returns a value of type `UploadParts`.
 
 Returns a list of parts that have been uploaded.
 
+Each part includes the hash type used to upload it. Parts
+uploaded with a `SHA-512` `Digest` header don't include `sha1`.
+
 ## Plan upload session by URL
 
 Plan an upload session by checking which parts already exist on the server.
 This endpoint allows clients to optimize uploads by skipping parts that
 have already been uploaded (cache hits) and only uploading missing parts.
 
-The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
-and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions)
+and [`Get upload session`](https://developer.box.com/reference/get-files-upload-sessions-id) endpoints.
 
 This operation is performed by calling function `create_file_upload_session_plan_by_url`.
 
@@ -411,8 +423,8 @@ Plan an upload session by checking which parts already exist on the server.
 This endpoint allows clients to optimize uploads by skipping parts that
 have already been uploaded (cache hits) and only uploading missing parts.
 
-The actual endpoint URL is returned by the [`Create upload session`](e://post-files-upload-sessions)
-and [`Get upload session`](e://get-files-upload-sessions-id) endpoints.
+The actual endpoint URL is returned by the [`Create upload session`](https://developer.box.com/reference/post-files-upload-sessions)
+and [`Get upload session`](https://developer.box.com/reference/get-files-upload-sessions-id) endpoints.
 
 This operation is performed by calling function `create_file_upload_session_plan`.
 
@@ -462,9 +474,9 @@ client.chunked_uploads.create_file_upload_session_commit_by_url(
 - url `str`
   - URL of createFileUploadSessionCommit method
 - parts `List[UploadPart]`
-  - The list details for the uploaded parts.
+  - The list details for the uploaded parts. Each entry can include `sha1` or `sha512`. Include `sha512` on every entry or on none of them. A request where only some entries include `sha512` is rejected. Include parts that the server already has, returned as `hits` by the [`Plan upload session`](https://developer.box.com/reference/post-files-upload-sessions-id-plan) endpoint. Use the `part_id`, `offset`, and `size` from the plan response. If the other entries include `sha512`, include the `sha512` value from the plan response. Otherwise, leave the hash out of these entries.
 - digest `str`
-  - The [RFC3230][1] message digest of the whole file. Only SHA1 is supported. The SHA1 digest must be Base64 encoded. The format of this header is as `sha=BASE64_ENCODED_DIGEST`. [1]: https://tools.ietf.org/html/rfc3230
+  - The [RFC3230][1] message digest of the whole file. Only SHA1 is supported. The SHA1 digest must be Base64 encoded. The format of this header is as `sha=BASE64_ENCODED_DIGEST`. `SHA-512` is not supported for the whole-file digest, even if the parts were uploaded with `SHA-512` digests. [1]: https://tools.ietf.org/html/rfc3230
 - if_match `Optional[str]`
   - Ensures this item hasn't recently changed before making changes. Pass in the item's last observed `etag` value into this header and the endpoint will fail with a `412 Precondition Failed` if it has changed since.
 - if_none_match `Optional[str]`
@@ -507,9 +519,9 @@ client.chunked_uploads.create_file_upload_session_commit(
 - upload_session_id `str`
   - The ID of the upload session. Example: "D5E3F7A"
 - parts `List[UploadPart]`
-  - The list details for the uploaded parts.
+  - The list details for the uploaded parts. Each entry can include `sha1` or `sha512`. Include `sha512` on every entry or on none of them. A request where only some entries include `sha512` is rejected. Include parts that the server already has, returned as `hits` by the [`Plan upload session`](https://developer.box.com/reference/post-files-upload-sessions-id-plan) endpoint. Use the `part_id`, `offset`, and `size` from the plan response. If the other entries include `sha512`, include the `sha512` value from the plan response. Otherwise, leave the hash out of these entries.
 - digest `str`
-  - The [RFC3230][1] message digest of the whole file. Only SHA1 is supported. The SHA1 digest must be Base64 encoded. The format of this header is as `sha=BASE64_ENCODED_DIGEST`. [1]: https://tools.ietf.org/html/rfc3230
+  - The [RFC3230][1] message digest of the whole file. Only SHA1 is supported. The SHA1 digest must be Base64 encoded. The format of this header is as `sha=BASE64_ENCODED_DIGEST`. `SHA-512` is not supported for the whole-file digest, even if the parts were uploaded with `SHA-512` digests. [1]: https://tools.ietf.org/html/rfc3230
 - if_match `Optional[str]`
   - Ensures this item hasn't recently changed before making changes. Pass in the item's last observed `etag` value into this header and the endpoint will fail with a `412 Precondition Failed` if it has changed since.
 - if_none_match `Optional[str]`
