@@ -285,6 +285,12 @@ still owns any content.
 To proceed, move their owned content first, or use the `force` parameter to delete
 the user and their files.
 
+If the enterprise has a retention policy, including a retired one, or a
+legal hold that is not fully released, you can't delete a user who owns
+content, even with `force`. Transfer the user's content first by using the
+[Transfer owned folders](https://developer.box.com/reference/put-users-id-folders-0)
+endpoint.
+
 This operation is performed by calling function `delete_user_by_id`.
 
 See the endpoint docs at
@@ -303,7 +309,7 @@ client.users.delete_user_by_id(user.id)
 - notify `Optional[bool]`
   - Whether the user will receive email notification of the deletion.
 - force `Optional[bool]`
-  - Specifies whether to delete the user even if they still own files.
+  - Specifies whether to delete the user even if they still own files. If the user owns content and the enterprise has a retention policy, including a retired one, or a legal hold that is not fully released, setting `force` to `true` doesn't delete the user. The request returns a `403` error, and you must transfer the user's content before deleting the user.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 
