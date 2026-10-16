@@ -671,13 +671,34 @@ class UsersManager:
 
                 the user and their files.
 
+
+                If the enterprise has a retention policy, including a retired one, or a
+
+
+                legal hold that is not fully released, you can't delete a user who owns
+
+
+                content, even with `force`. Transfer the user's content first by using the
+
+
+                [Transfer owned folders](https://developer.box.com/reference/put-users-id-folders-0)
+
+
+                endpoint.
+
                 :param user_id: The ID of the user.
         Example: "12345"
                 :type user_id: str
                 :param notify: Whether the user will receive email notification of
         the deletion., defaults to None
                 :type notify: Optional[bool], optional
-                :param force: Specifies whether to delete the user even if they still own files., defaults to None
+                :param force: Specifies whether to delete the user even if they still own files.
+
+        If the user owns content and the enterprise has a retention policy,
+        including a retired one, or a legal hold that is not fully released,
+        setting `force` to `true` doesn't delete the user. The request returns
+        a `403` error, and you must transfer the user's content before deleting
+        the user., defaults to None
                 :type force: Optional[bool], optional
                 :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
                 :type extra_headers: Optional[Dict[str, Optional[str]]], optional

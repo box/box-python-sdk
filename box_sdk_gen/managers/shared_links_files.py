@@ -18,11 +18,21 @@ from box_sdk_gen.internal.null_value import NullValue
 
 from typing import Union
 
+from box_sdk_gen.schemas.shared_link_otp_writable_none import SharedLinkOtpWritableNone
+
+from box_sdk_gen.schemas.shared_link_otp_writable_open import SharedLinkOtpWritableOpen
+
+from box_sdk_gen.schemas.shared_link_otp_writable_allowlist import (
+    SharedLinkOtpWritableAllowlist,
+)
+
 from box_sdk_gen.networking.fetch_options import ResponseFormat
 
 from box_sdk_gen.schemas.file_full import FileFull
 
 from box_sdk_gen.schemas.client_error import ClientError
+
+from box_sdk_gen.schemas.shared_link_otp_writable import SharedLinkOtpWritable
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -93,6 +103,7 @@ class AddShareLinkToFileSharedLink(BaseObject):
         vanity_name: Optional[str] = None,
         unshared_at: Optional[DateTime] = None,
         permissions: Optional[AddShareLinkToFileSharedLinkPermissionsField] = None,
+        one_time_passcode: Optional[SharedLinkOtpWritable] = None,
         **kwargs
     ):
         """
@@ -135,6 +146,7 @@ class AddShareLinkToFileSharedLink(BaseObject):
         self.vanity_name = vanity_name
         self.unshared_at = unshared_at
         self.permissions = permissions
+        self.one_time_passcode = one_time_passcode
 
 
 class UpdateSharedLinkOnFileSharedLinkAccessField(str, Enum):
@@ -183,6 +195,7 @@ class UpdateSharedLinkOnFileSharedLink(BaseObject):
         vanity_name: Optional[str] = None,
         unshared_at: Optional[DateTime] = None,
         permissions: Optional[UpdateSharedLinkOnFileSharedLinkPermissionsField] = None,
+        one_time_passcode: Optional[SharedLinkOtpWritable] = None,
         **kwargs
     ):
         """
@@ -225,6 +238,7 @@ class UpdateSharedLinkOnFileSharedLink(BaseObject):
         self.vanity_name = vanity_name
         self.unshared_at = unshared_at
         self.permissions = permissions
+        self.one_time_passcode = one_time_passcode
 
 
 class RemoveSharedLinkFromFileSharedLink(BaseObject):
