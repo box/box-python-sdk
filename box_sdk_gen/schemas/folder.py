@@ -14,6 +14,10 @@ from box_sdk_gen.schemas.folder_mini import FolderMini
 
 from box_sdk_gen.schemas.user_mini import UserMini
 
+from box_sdk_gen.schemas.shared_link_otp_allowlist_entry import (
+    SharedLinkOtpAllowlistEntry,
+)
+
 from box_sdk_gen.schemas.items import Items
 
 from box_sdk_gen.box.errors import BoxSDKError
@@ -79,6 +83,45 @@ class FolderSharedLinkPermissionsField(BaseObject):
         self.can_edit = can_edit
 
 
+class FolderSharedLinkOneTimePasscodeField(BaseObject):
+    def __init__(
+        self,
+        mode: str,
+        *,
+        allowlist: Optional[List[SharedLinkOtpAllowlistEntry]] = None,
+        **kwargs
+    ):
+        """
+                :param mode: The current OTP enforcement mode for the shared link.
+
+        * `none` - OTP enforcement is turned off. The shared link is accessible
+          without any one-time-passcode verification.
+        * `open` - Any anonymous recipient can request a one-time-passcode to
+          any email address and access the shared link after verifying it.
+          Collaborators and registered Box users access the link without
+          being prompted.
+        * `allowlist` - Anonymous recipients can request a one-time-passcode
+          only when they enter an email that matches an entry on the
+          `allowlist`.
+                :type mode: str
+                :param allowlist: The list of email and domain entries that are permitted to access the
+        shared link when `mode` is `allowlist`. Anonymous users whose
+        email matches an entry can request and verify a one-time-passcode.
+
+        Because the entries carry recipient email addresses and the identity
+        of the user who added them, this field is only returned to users
+        with owner, co-owner, or editor access on the item. For viewer
+        collaborators and below the field is omitted.
+
+        An allowlist contains at most 1000 entries, matching the limit
+        enforced when setting the allowlist on a shared link., defaults to None
+                :type allowlist: Optional[List[SharedLinkOtpAllowlistEntry]], optional
+        """
+        super().__init__(**kwargs)
+        self.mode = mode
+        self.allowlist = allowlist
+
+
 class FolderSharedLinkField(BaseObject):
     def __init__(
         self,
@@ -88,6 +131,7 @@ class FolderSharedLinkField(BaseObject):
         is_password_enabled: bool,
         download_count: int,
         preview_count: int,
+        one_time_passcode: FolderSharedLinkOneTimePasscodeField,
         *,
         download_url: Optional[str] = None,
         vanity_url: Optional[str] = None,
@@ -158,6 +202,7 @@ class FolderSharedLinkField(BaseObject):
         self.is_password_enabled = is_password_enabled
         self.download_count = download_count
         self.preview_count = preview_count
+        self.one_time_passcode = one_time_passcode
         self.download_url = download_url
         self.vanity_url = vanity_url
         self.vanity_name = vanity_name

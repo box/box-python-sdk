@@ -75,7 +75,7 @@ class UploadSession(BaseObject):
                 :type type: Optional[UploadSessionTypeField], optional
                 :param session_expires_at: The date and time when this session expires., defaults to None
                 :type session_expires_at: Optional[DateTime], optional
-                :param part_size: The  size in bytes that must be used for all parts of of the
+                :param part_size: The size in bytes that must be used for all parts of the
         upload.
 
         Only the last part is allowed to be of a smaller size., defaults to None
@@ -86,7 +86,7 @@ class UploadSession(BaseObject):
                 :param num_parts_processed: The number of parts that have been uploaded and processed
         by the server. This starts at `0`.
 
-        When committing a file files, inspecting this property can
+        When committing a file, inspecting this property can
         provide insight if all parts have been uploaded correctly., defaults to None
                 :type num_parts_processed: Optional[int], optional
         """

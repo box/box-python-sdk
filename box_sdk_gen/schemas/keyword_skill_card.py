@@ -118,7 +118,7 @@ class KeywordSkillCard(BaseObject):
                 :param invocation: The invocation of this service, used to track
         which instance of a service applied the metadata.
                 :type invocation: KeywordSkillCardInvocationField
-                :param entries: An list of entries in the metadata card.
+                :param entries: A list of entries in the metadata card.
                 :type entries: List[KeywordSkillCardEntriesField]
                 :param created_at: The optional date and time this card was created at., defaults to None
                 :type created_at: Optional[DateTime], optional

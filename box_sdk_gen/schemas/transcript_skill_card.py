@@ -141,7 +141,7 @@ class TranscriptSkillCard(BaseObject):
                 :param invocation: The invocation of this service, used to track
         which instance of a service applied the metadata.
                 :type invocation: TranscriptSkillCardInvocationField
-                :param entries: An list of entries for the card. This represents the individual entries of
+                :param entries: A list of entries for the card. This represents the individual entries of
         the transcription.
                 :type entries: List[TranscriptSkillCardEntriesField]
                 :param created_at: The optional date and time this card was created at., defaults to None
