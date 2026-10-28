@@ -142,7 +142,9 @@ class SignRequestSigner(SignRequestCreateSigner):
         determine which signers belongs to same group. A successful response will provide a generated UUID value
         instead for signers in the same signer group., defaults to None
                 :type signer_group_id: Optional[str], optional
-                :param suppress_notifications: If true, no emails about the sign request will be sent., defaults to None
+                :param suppress_notifications: If true, no emails about the sign request are sent.
+        The `embed_url_external_user_id` parameter is required when using
+        `suppress_notifications` for a signer., defaults to None
                 :type suppress_notifications: Optional[bool], optional
                 :param language: The language of the user, formatted in modified version of the
         [ISO 639-1](https://developer.box.com/guides/api-calls/language-codes) format., defaults to None
