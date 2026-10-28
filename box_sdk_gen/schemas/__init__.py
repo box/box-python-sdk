@@ -278,6 +278,16 @@ from box_sdk_gen.schemas.outcome import *
 
 from box_sdk_gen.schemas.session_termination_message import *
 
+from box_sdk_gen.schemas.shared_link_otp_allowlist_entry_writable import *
+
+from box_sdk_gen.schemas.shared_link_otp_writable_allowlist import *
+
+from box_sdk_gen.schemas.shared_link_otp_writable_none import *
+
+from box_sdk_gen.schemas.shared_link_otp_writable_open import *
+
+from box_sdk_gen.schemas.shared_link_otp_writable import *
+
 from box_sdk_gen.schemas.shield_information_barrier_base import *
 
 from box_sdk_gen.schemas.shield_information_barrier_reference import *
@@ -468,12 +478,6 @@ from box_sdk_gen.schemas.file_versions import *
 
 from box_sdk_gen.schemas.file_request import *
 
-from box_sdk_gen.schemas.file import *
-
-from box_sdk_gen.schemas.file_full import *
-
-from box_sdk_gen.schemas.files import *
-
 from box_sdk_gen.schemas.event_source import *
 
 from box_sdk_gen.schemas.device_pinner import *
@@ -517,6 +521,14 @@ from box_sdk_gen.schemas.shield_information_barrier_reports import *
 from box_sdk_gen.schemas.shield_information_barrier import *
 
 from box_sdk_gen.schemas.shield_information_barriers import *
+
+from box_sdk_gen.schemas.shared_link_otp_allowlist_entry import *
+
+from box_sdk_gen.schemas.file import *
+
+from box_sdk_gen.schemas.file_full import *
+
+from box_sdk_gen.schemas.files import *
 
 from box_sdk_gen.schemas.folder_lock import *
 
