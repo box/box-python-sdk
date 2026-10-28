@@ -6,6 +6,10 @@ from typing import List
 
 from box_sdk_gen.internal.base_object import BaseObject
 
+from box_sdk_gen.schemas.v2026_r0.document_split_page_selection_item_v2026_r0 import (
+    DocumentSplitPageSelectionItemV2026R0,
+)
+
 from box_sdk_gen.box.errors import BoxSDKError
 
 
