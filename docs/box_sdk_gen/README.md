@@ -29,6 +29,7 @@ the SDK are available by topic:
 - [Device pinners](device_pinners.md)
 - [Docgen](docgen.md)
 - [Docgen template](docgen_template.md)
+- [Document split](document_split.md)
 - [Downloads](downloads.md)
 - [Email aliases](email_aliases.md)
 - [Enterprise configurations](enterprise_configurations.md)

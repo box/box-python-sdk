@@ -12,11 +12,21 @@ from box_sdk_gen.serialization.json import deserialize
 
 from box_sdk_gen.internal.utils import to_string
 
+from box_sdk_gen.schemas.shared_link_otp_writable_none import SharedLinkOtpWritableNone
+
+from box_sdk_gen.schemas.shared_link_otp_writable_open import SharedLinkOtpWritableOpen
+
+from box_sdk_gen.schemas.shared_link_otp_writable_allowlist import (
+    SharedLinkOtpWritableAllowlist,
+)
+
 from box_sdk_gen.networking.fetch_options import ResponseFormat
 
 from box_sdk_gen.schemas.web_link import WebLink
 
 from box_sdk_gen.schemas.client_error import ClientError
+
+from box_sdk_gen.schemas.shared_link_otp_writable import SharedLinkOtpWritable
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -80,6 +90,7 @@ class UpdateWebLinkByIdSharedLink(BaseObject):
         password: Optional[str] = None,
         vanity_name: Optional[str] = None,
         unshared_at: Optional[DateTime] = None,
+        one_time_passcode: Optional[SharedLinkOtpWritable] = None,
         **kwargs
     ):
         """
@@ -121,6 +132,7 @@ class UpdateWebLinkByIdSharedLink(BaseObject):
         self.password = password
         self.vanity_name = vanity_name
         self.unshared_at = unshared_at
+        self.one_time_passcode = one_time_passcode
 
 
 class WebLinksManager:

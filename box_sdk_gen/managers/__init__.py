@@ -168,4 +168,6 @@ from box_sdk_gen.managers.automate_workflows import *
 
 from box_sdk_gen.managers.notes import *
 
+from box_sdk_gen.managers.document_split import *
+
 from box_sdk_gen.managers.query import *
