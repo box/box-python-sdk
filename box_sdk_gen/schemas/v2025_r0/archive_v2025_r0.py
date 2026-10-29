@@ -32,10 +32,10 @@ class ArchiveV2025R0(BaseObject):
         id: str,
         name: str,
         size: int,
+        owned_by: ArchiveV2025R0OwnedByField,
         *,
         type: ArchiveV2025R0TypeField = ArchiveV2025R0TypeField.ARCHIVE,
         description: Optional[str] = None,
-        owned_by: Optional[ArchiveV2025R0OwnedByField] = None,
         **kwargs
     ):
         r"""
@@ -50,17 +50,17 @@ class ArchiveV2025R0(BaseObject):
                 :type name: str
                 :param size: The size of the archive in bytes.
                 :type size: int
+                :param owned_by: The part of an archive API response that describes the user who owns the archive.
+                :type owned_by: ArchiveV2025R0OwnedByField
                 :param type: The value is always `archive`., defaults to ArchiveV2025R0TypeField.ARCHIVE
                 :type type: ArchiveV2025R0TypeField, optional
                 :param description: The description of the archive., defaults to None
                 :type description: Optional[str], optional
-                :param owned_by: The part of an archive API response that describes the user who owns the archive., defaults to None
-                :type owned_by: Optional[ArchiveV2025R0OwnedByField], optional
         """
         super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.size = size
+        self.owned_by = owned_by
         self.type = type
         self.description = description
-        self.owned_by = owned_by
