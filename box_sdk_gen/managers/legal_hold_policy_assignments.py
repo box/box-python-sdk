@@ -22,6 +22,10 @@ from box_sdk_gen.schemas.client_error import ClientError
 
 from box_sdk_gen.schemas.legal_hold_policy_assignment import LegalHoldPolicyAssignment
 
+from box_sdk_gen.schemas.legal_hold_policy_assignment_filter_field import (
+    LegalHoldPolicyAssignmentFilterField,
+)
+
 from box_sdk_gen.schemas.files_on_hold import FilesOnHold
 
 from box_sdk_gen.box.errors import BoxSDKError
@@ -52,6 +56,7 @@ class GetLegalHoldPolicyAssignmentsAssignToType(str, Enum):
     USER = 'user'
     OWNERSHIP = 'ownership'
     INTERACTIONS = 'interactions'
+    METADATA_TEMPLATE = 'metadata_template'
 
 
 class CreateLegalHoldPolicyAssignmentAssignToTypeField(str, Enum):
@@ -61,6 +66,7 @@ class CreateLegalHoldPolicyAssignmentAssignToTypeField(str, Enum):
     USER = 'user'
     OWNERSHIP = 'ownership'
     INTERACTIONS = 'interactions'
+    METADATA_TEMPLATE = 'metadata_template'
 
 
 class CreateLegalHoldPolicyAssignmentAssignTo(BaseObject):
@@ -71,6 +77,7 @@ class CreateLegalHoldPolicyAssignmentAssignTo(BaseObject):
         'user',
         'ownership',
         'interactions',
+        'metadata_template',
     }
 
     def __init__(
@@ -176,20 +183,27 @@ class LegalHoldPolicyAssignmentsManager:
         policy_id: str,
         assign_to: CreateLegalHoldPolicyAssignmentAssignTo,
         *,
+        filter_fields: Optional[List[LegalHoldPolicyAssignmentFilterField]] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> LegalHoldPolicyAssignment:
         """
-        Assign a legal hold to an item type of: file, file version, folder, user, ownership, or interactions.
+        Assign a legal hold to an item type of: file, file version, folder, user, ownership, interactions, or metadata template.
         :param policy_id: The ID of the policy to assign.
         :type policy_id: str
         :param assign_to: The item to assign the policy to.
         :type assign_to: CreateLegalHoldPolicyAssignmentAssignTo
+        :param filter_fields: List of metadata template field filters. Only required when `assign_to.type` is `metadata_template`., defaults to None
+        :type filter_fields: Optional[List[LegalHoldPolicyAssignmentFilterField]], optional
         :param extra_headers: Extra headers that will be included in the HTTP request., defaults to None
         :type extra_headers: Optional[Dict[str, Optional[str]]], optional
         """
         if extra_headers is None:
             extra_headers = {}
-        request_body: Dict = {'policy_id': policy_id, 'assign_to': assign_to}
+        request_body: Dict = {
+            'policy_id': policy_id,
+            'assign_to': assign_to,
+            'filter_fields': filter_fields,
+        }
         headers_map: Dict[str, str] = prepare_params({**extra_headers})
         response: FetchResponse = self.network_session.network_client.fetch(
             FetchOptions(
