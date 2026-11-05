@@ -204,6 +204,8 @@ from box_sdk_gen.schemas.legal_hold_policy_assigned_item import *
 
 from box_sdk_gen.schemas.legal_hold_policy_assignment_base import *
 
+from box_sdk_gen.schemas.legal_hold_policy_assignment_filter_field import *
+
 from box_sdk_gen.schemas.metadata_base import *
 
 from box_sdk_gen.schemas.metadata import *

@@ -50,7 +50,11 @@ This operation is performed by calling function `get_shuttle_systems_v2026_r0`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-systems/).
 
-_Currently we don't have an example for calling `get_shuttle_systems_v2026_r0` in integration tests_
+<!-- sample get_shuttle_systems_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_systems_v2026_r0()
+```
 
 ### Arguments
 
@@ -80,7 +84,11 @@ This operation is performed by calling function `create_shuttle_system_v2026_r0`
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-shuttle-systems/).
 
-_Currently we don't have an example for calling `create_shuttle_system_v2026_r0` in integration tests_
+<!-- sample post_shuttle_systems_v2026.0 -->
+
+```python
+client.shuttle.create_shuttle_system_v2026_r0(system_name, system_type=CreateShuttleSystemV2026R0SystemType.WINDOWS)
+```
 
 ### Arguments
 
@@ -109,7 +117,11 @@ This operation is performed by calling function `get_shuttle_system_by_id_v2026_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-systems-id/).
 
-_Currently we don't have an example for calling `get_shuttle_system_by_id_v2026_r0` in integration tests_
+<!-- sample get_shuttle_systems_id_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_system_by_id_v2026_r0(created_system.id)
+```
 
 ### Arguments
 
@@ -136,7 +148,11 @@ This operation is performed by calling function `update_shuttle_system_by_id_v20
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/put-shuttle-systems-id/).
 
-_Currently we don't have an example for calling `update_shuttle_system_by_id_v2026_r0` in integration tests_
+<!-- sample put_shuttle_systems_id_v2026.0 -->
+
+```python
+client.shuttle.update_shuttle_system_by_id_v2026_r0(created_system.id, name=updated_system_name)
+```
 
 ### Arguments
 
@@ -165,7 +181,11 @@ This operation is performed by calling function `delete_shuttle_system_by_id_v20
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/delete-shuttle-systems-id/).
 
-_Currently we don't have an example for calling `delete_shuttle_system_by_id_v2026_r0` in integration tests_
+<!-- sample delete_shuttle_systems_id_v2026.0 -->
+
+```python
+client.shuttle.delete_shuttle_system_by_id_v2026_r0(created_system.id)
+```
 
 ### Arguments
 
@@ -194,7 +214,11 @@ This operation is performed by calling function `create_shuttle_system_issue_reg
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-shuttle-systems-id-issue-registration-token/).
 
-_Currently we don't have an example for calling `create_shuttle_system_issue_registration_token_v2026_r0` in integration tests_
+<!-- sample post_shuttle_systems_id_issue_registration_token_v2026.0 -->
+
+```python
+client.shuttle.create_shuttle_system_issue_registration_token_v2026_r0(created_system.id)
+```
 
 ### Arguments
 
@@ -221,7 +245,11 @@ This operation is performed by calling function `get_shuttle_jobs_v2026_r0`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-jobs/).
 
-_Currently we don't have an example for calling `get_shuttle_jobs_v2026_r0` in integration tests_
+<!-- sample get_shuttle_jobs_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_jobs_v2026_r0()
+```
 
 ### Arguments
 
@@ -250,7 +278,11 @@ This operation is performed by calling function `create_shuttle_job_v2026_r0`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-shuttle-jobs/).
 
-_Currently we don't have an example for calling `create_shuttle_job_v2026_r0` in integration tests_
+<!-- sample post_shuttle_jobs_v2026.0 -->
+
+```python
+client.shuttle.create_shuttle_job_v2026_r0(get_uuid(), CreateShuttleJobV2026R0JobType.TRANSFER, resource_id)
+```
 
 ### Arguments
 
@@ -289,7 +321,11 @@ This operation is performed by calling function `get_shuttle_job_by_id_v2026_r0`
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-jobs-id/).
 
-_Currently we don't have an example for calling `get_shuttle_job_by_id_v2026_r0` in integration tests_
+<!-- sample get_shuttle_jobs_id_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_job_by_id_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -316,7 +352,11 @@ This operation is performed by calling function `update_shuttle_job_by_id_v2026_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/put-shuttle-jobs-id/).
 
-_Currently we don't have an example for calling `update_shuttle_job_by_id_v2026_r0` in integration tests_
+<!-- sample put_shuttle_jobs_id_v2026.0 -->
+
+```python
+client.shuttle.update_shuttle_job_by_id_v2026_r0(resource_id, name=get_uuid())
+```
 
 ### Arguments
 
@@ -353,7 +393,11 @@ This operation is performed by calling function `delete_shuttle_job_by_id_v2026_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/delete-shuttle-jobs-id/).
 
-_Currently we don't have an example for calling `delete_shuttle_job_by_id_v2026_r0` in integration tests_
+<!-- sample delete_shuttle_jobs_id_v2026.0 -->
+
+```python
+client.shuttle.delete_shuttle_job_by_id_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -380,7 +424,11 @@ This operation is performed by calling function `create_shuttle_job_start_v2026_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-shuttle-jobs-id-start/).
 
-_Currently we don't have an example for calling `create_shuttle_job_start_v2026_r0` in integration tests_
+<!-- sample post_shuttle_jobs_id_start_v2026.0 -->
+
+```python
+client.shuttle.create_shuttle_job_start_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -410,7 +458,11 @@ This operation is performed by calling function `create_shuttle_job_stop_v2026_r
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-shuttle-jobs-id-stop/).
 
-_Currently we don't have an example for calling `create_shuttle_job_stop_v2026_r0` in integration tests_
+<!-- sample post_shuttle_jobs_id_stop_v2026.0 -->
+
+```python
+client.shuttle.create_shuttle_job_stop_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -437,7 +489,11 @@ This operation is performed by calling function `create_shuttle_job_prepare_migr
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-shuttle-jobs-id-prepare-migration/).
 
-_Currently we don't have an example for calling `create_shuttle_job_prepare_migration_v2026_r0` in integration tests_
+<!-- sample post_shuttle_jobs_id_prepare_migration_v2026.0 -->
+
+```python
+client.shuttle.create_shuttle_job_prepare_migration_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -464,7 +520,11 @@ This operation is performed by calling function `get_shuttle_runs_v2026_r0`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-runs/).
 
-_Currently we don't have an example for calling `get_shuttle_runs_v2026_r0` in integration tests_
+<!-- sample get_shuttle_runs_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_runs_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -495,7 +555,11 @@ This operation is performed by calling function `get_shuttle_run_by_id_v2026_r0`
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-runs-id/).
 
-_Currently we don't have an example for calling `get_shuttle_run_by_id_v2026_r0` in integration tests_
+<!-- sample get_shuttle_runs_id_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_run_by_id_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -522,7 +586,11 @@ This operation is performed by calling function `get_shuttle_job_schedules_v2026
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-job-schedules/).
 
-_Currently we don't have an example for calling `get_shuttle_job_schedules_v2026_r0` in integration tests_
+<!-- sample get_shuttle_job_schedules_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_job_schedules_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -555,7 +623,11 @@ This operation is performed by calling function `create_shuttle_job_schedule_v20
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-shuttle-job-schedules/).
 
-_Currently we don't have an example for calling `create_shuttle_job_schedule_v2026_r0` in integration tests_
+<!-- sample post_shuttle_job_schedules_v2026.0 -->
+
+```python
+client.shuttle.create_shuttle_job_schedule_v2026_r0(resource_id, CreateShuttleJobScheduleV2026R0RunMode.TRANSFER, ShuttleJobScheduleTriggerByTimeV2026R0(type=ShuttleJobScheduleTriggerByTimeV2026R0TypeField.BY_TIME, start_at='2030-01-01T09:00:00', time_zone='America/Los_Angeles', repeat=ShuttleJobScheduleTriggerByTimeV2026R0RepeatField.DAILY), state=CreateShuttleJobScheduleV2026R0State.PAUSED)
+```
 
 ### Arguments
 
@@ -589,7 +661,11 @@ This operation is performed by calling function `get_shuttle_job_schedule_by_id_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-job-schedules-id/).
 
-_Currently we don't have an example for calling `get_shuttle_job_schedule_by_id_v2026_r0` in integration tests_
+<!-- sample get_shuttle_job_schedules_id_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_job_schedule_by_id_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -617,7 +693,11 @@ This operation is performed by calling function `update_shuttle_job_schedule_by_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/put-shuttle-job-schedules-id/).
 
-_Currently we don't have an example for calling `update_shuttle_job_schedule_by_id_v2026_r0` in integration tests_
+<!-- sample put_shuttle_job_schedules_id_v2026.0 -->
+
+```python
+client.shuttle.update_shuttle_job_schedule_by_id_v2026_r0(resource_id, run_mode=UpdateShuttleJobScheduleByIdV2026R0RunMode.SIMULATION)
+```
 
 ### Arguments
 
@@ -652,7 +732,11 @@ This operation is performed by calling function `delete_shuttle_job_schedule_by_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/delete-shuttle-job-schedules-id/).
 
-_Currently we don't have an example for calling `delete_shuttle_job_schedule_by_id_v2026_r0` in integration tests_
+<!-- sample delete_shuttle_job_schedules_id_v2026.0 -->
+
+```python
+client.shuttle.delete_shuttle_job_schedule_by_id_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -680,7 +764,11 @@ This operation is performed by calling function `get_shuttle_path_mappings_v2026
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-path-mappings/).
 
-_Currently we don't have an example for calling `get_shuttle_path_mappings_v2026_r0` in integration tests_
+<!-- sample get_shuttle_path_mappings_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_path_mappings_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -711,7 +799,11 @@ This operation is performed by calling function `create_shuttle_path_mapping_v20
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-shuttle-path-mappings/).
 
-_Currently we don't have an example for calling `create_shuttle_path_mapping_v2026_r0` in integration tests_
+<!-- sample post_shuttle_path_mappings_v2026.0 -->
+
+```python
+client.shuttle.create_shuttle_path_mapping_v2026_r0(resource_id, ShuttlePathMappingAccountLocationInputV2026R0(type=ShuttlePathMappingAccountLocationInputV2026R0TypeField.ACCOUNT, path='/finance', account=ShuttlePathMappingAccountInputV2026R0(email='user@example.com')))
+```
 
 ### Arguments
 
@@ -744,7 +836,11 @@ This operation is performed by calling function `get_shuttle_path_mapping_by_id_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-path-mappings-id/).
 
-_Currently we don't have an example for calling `get_shuttle_path_mapping_by_id_v2026_r0` in integration tests_
+<!-- sample get_shuttle_path_mappings_id_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_path_mapping_by_id_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -772,7 +868,11 @@ This operation is performed by calling function `update_shuttle_path_mapping_by_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/put-shuttle-path-mappings-id/).
 
-_Currently we don't have an example for calling `update_shuttle_path_mapping_by_id_v2026_r0` in integration tests_
+<!-- sample put_shuttle_path_mappings_id_v2026.0 -->
+
+```python
+client.shuttle.update_shuttle_path_mapping_by_id_v2026_r0(resource_id, is_path_skipped=True)
+```
 
 ### Arguments
 
@@ -805,7 +905,11 @@ This operation is performed by calling function `delete_shuttle_path_mapping_by_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/delete-shuttle-path-mappings-id/).
 
-_Currently we don't have an example for calling `delete_shuttle_path_mapping_by_id_v2026_r0` in integration tests_
+<!-- sample delete_shuttle_path_mappings_id_v2026.0 -->
+
+```python
+client.shuttle.delete_shuttle_path_mapping_by_id_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -846,7 +950,11 @@ This operation is performed by calling function `create_shuttle_path_mapping_imp
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-shuttle-path-mapping-imports/).
 
-_Currently we don't have an example for calling `create_shuttle_path_mapping_import_v2026_r0` in integration tests_
+<!-- sample post_shuttle_path_mapping_imports_v2026.0 -->
+
+```python
+client.shuttle.create_shuttle_path_mapping_import_v2026_r0(resource_id, resource_id)
+```
 
 ### Arguments
 
@@ -908,7 +1016,11 @@ This operation is performed by calling function `create_shuttle_subject_mapping_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-shuttle-subject-mapping-imports/).
 
-_Currently we don't have an example for calling `create_shuttle_subject_mapping_import_v2026_r0` in integration tests_
+<!-- sample post_shuttle_subject_mapping_imports_v2026.0 -->
+
+```python
+client.shuttle.create_shuttle_subject_mapping_import_v2026_r0(resource_id, resource_id)
+```
 
 ### Arguments
 
@@ -942,7 +1054,11 @@ This operation is performed by calling function `get_shuttle_subject_mappings_v2
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-subject-mappings/).
 
-_Currently we don't have an example for calling `get_shuttle_subject_mappings_v2026_r0` in integration tests_
+<!-- sample get_shuttle_subject_mappings_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_subject_mappings_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -973,7 +1089,11 @@ This operation is performed by calling function `create_shuttle_subject_mapping_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-shuttle-subject-mappings/).
 
-_Currently we don't have an example for calling `create_shuttle_subject_mapping_v2026_r0` in integration tests_
+<!-- sample post_shuttle_subject_mappings_v2026.0 -->
+
+```python
+client.shuttle.create_shuttle_subject_mapping_v2026_r0(resource_id, resource_id)
+```
 
 ### Arguments
 
@@ -1008,7 +1128,11 @@ This operation is performed by calling function `get_shuttle_subject_mapping_by_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-subject-mappings-id/).
 
-_Currently we don't have an example for calling `get_shuttle_subject_mapping_by_id_v2026_r0` in integration tests_
+<!-- sample get_shuttle_subject_mappings_id_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_subject_mapping_by_id_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -1036,7 +1160,11 @@ This operation is performed by calling function `update_shuttle_subject_mapping_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/put-shuttle-subject-mappings-id/).
 
-_Currently we don't have an example for calling `update_shuttle_subject_mapping_by_id_v2026_r0` in integration tests_
+<!-- sample put_shuttle_subject_mappings_id_v2026.0 -->
+
+```python
+client.shuttle.update_shuttle_subject_mapping_by_id_v2026_r0(resource_id, is_subject_skipped=True)
+```
 
 ### Arguments
 
@@ -1066,7 +1194,11 @@ This operation is performed by calling function `delete_shuttle_subject_mapping_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/delete-shuttle-subject-mappings-id/).
 
-_Currently we don't have an example for calling `delete_shuttle_subject_mapping_by_id_v2026_r0` in integration tests_
+<!-- sample delete_shuttle_subject_mappings_id_v2026.0 -->
+
+```python
+client.shuttle.delete_shuttle_subject_mapping_by_id_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -1094,7 +1226,11 @@ This operation is performed by calling function `get_shuttle_discovered_subjects
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-discovered-subjects/).
 
-_Currently we don't have an example for calling `get_shuttle_discovered_subjects_v2026_r0` in integration tests_
+<!-- sample get_shuttle_discovered_subjects_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_discovered_subjects_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -1129,7 +1265,11 @@ This operation is performed by calling function `get_shuttle_path_entries_v2026_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-path-entries/).
 
-_Currently we don't have an example for calling `get_shuttle_path_entries_v2026_r0` in integration tests_
+<!-- sample get_shuttle_path_entries_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_path_entries_v2026_r0(resource_id, GetShuttlePathEntriesV2026R0Side.SOURCE)
+```
 
 ### Arguments
 
@@ -1169,7 +1309,11 @@ This operation is performed by calling function `get_shuttle_mapping_errors_v202
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-mapping-errors/).
 
-_Currently we don't have an example for calling `get_shuttle_mapping_errors_v2026_r0` in integration tests_
+<!-- sample get_shuttle_mapping_errors_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_mapping_errors_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -1200,7 +1344,11 @@ This operation is performed by calling function `get_shuttle_reports_v2026_r0`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-reports/).
 
-_Currently we don't have an example for calling `get_shuttle_reports_v2026_r0` in integration tests_
+<!-- sample get_shuttle_reports_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_reports_v2026_r0(resource_id)
+```
 
 ### Arguments
 
@@ -1235,7 +1383,11 @@ This operation is performed by calling function `create_shuttle_report_v2026_r0`
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-shuttle-reports/).
 
-_Currently we don't have an example for calling `create_shuttle_report_v2026_r0` in integration tests_
+<!-- sample post_shuttle_reports_v2026.0 -->
+
+```python
+client.shuttle.create_shuttle_report_v2026_r0(resource_id, CreateShuttleReportV2026R0Format.CSV, ['summary'])
+```
 
 ### Arguments
 
@@ -1272,7 +1424,11 @@ This operation is performed by calling function `get_shuttle_report_by_id_v2026_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-shuttle-reports-id/).
 
-_Currently we don't have an example for calling `get_shuttle_report_by_id_v2026_r0` in integration tests_
+<!-- sample get_shuttle_reports_id_v2026.0 -->
+
+```python
+client.shuttle.get_shuttle_report_by_id_v2026_r0(resource_id)
+```
 
 ### Arguments
 
