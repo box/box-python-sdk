@@ -32,6 +32,7 @@ class LegalHoldPolicyAssignmentCountsField(BaseObject):
         file_version: Optional[int] = None,
         ownership: Optional[int] = None,
         interactions: Optional[int] = None,
+        metadata_template: Optional[int] = None,
         **kwargs
     ):
         """
@@ -47,6 +48,8 @@ class LegalHoldPolicyAssignmentCountsField(BaseObject):
         :type ownership: Optional[int], optional
         :param interactions: The number of users this policy is applied to with the `interactions` type assignment., defaults to None
         :type interactions: Optional[int], optional
+        :param metadata_template: The number of metadata templates this policy is applied to., defaults to None
+        :type metadata_template: Optional[int], optional
         """
         super().__init__(**kwargs)
         self.user = user
@@ -55,6 +58,7 @@ class LegalHoldPolicyAssignmentCountsField(BaseObject):
         self.file_version = file_version
         self.ownership = ownership
         self.interactions = interactions
+        self.metadata_template = metadata_template
 
 
 class LegalHoldPolicy(LegalHoldPolicyMini):
