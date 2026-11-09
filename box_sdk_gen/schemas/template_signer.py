@@ -6,7 +6,23 @@ from typing import List
 
 from box_sdk_gen.internal.base_object import BaseObject
 
+from box_sdk_gen.schemas.template_signer_verification_method_login import (
+    TemplateSignerVerificationMethodLogin,
+)
+
+from box_sdk_gen.schemas.template_signer_verification_method_phone_sms import (
+    TemplateSignerVerificationMethodPhoneSms,
+)
+
+from box_sdk_gen.schemas.template_signer_verification_method_cac_piv import (
+    TemplateSignerVerificationMethodCacPiv,
+)
+
 from box_sdk_gen.schemas.template_signer_input import TemplateSignerInput
+
+from box_sdk_gen.schemas.template_signer_verification_method import (
+    TemplateSignerVerificationMethod,
+)
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -32,6 +48,7 @@ class TemplateSigner(BaseObject):
         is_password_required: Optional[bool] = None,
         is_phone_number_required: Optional[bool] = None,
         login_required: Optional[bool] = None,
+        verification_method: Optional[TemplateSignerVerificationMethod] = None,
         **kwargs
     ):
         """
@@ -65,6 +82,8 @@ class TemplateSigner(BaseObject):
                 :type is_phone_number_required: Optional[bool], optional
                 :param login_required: If true, the signer is required to login to access the document., defaults to None
                 :type login_required: Optional[bool], optional
+                :param verification_method: The verification method for the signer., defaults to None
+                :type verification_method: Optional[TemplateSignerVerificationMethod], optional
         """
         super().__init__(**kwargs)
         self.inputs = inputs
@@ -78,3 +97,4 @@ class TemplateSigner(BaseObject):
         self.is_password_required = is_password_required
         self.is_phone_number_required = is_phone_number_required
         self.login_required = login_required
+        self.verification_method = verification_method
