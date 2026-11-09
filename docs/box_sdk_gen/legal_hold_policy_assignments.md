@@ -46,7 +46,7 @@ Returns a list of legal hold policy assignments.
 
 ## Assign legal hold policy
 
-Assign a legal hold to an item type of: file, file version, folder, user, ownership, or interactions.
+Assign a legal hold to an item type of: file, file version, folder, user, ownership, interactions, or metadata template.
 
 This operation is performed by calling function `create_legal_hold_policy_assignment`.
 
@@ -65,6 +65,8 @@ client.legal_hold_policy_assignments.create_legal_hold_policy_assignment(legal_h
   - The ID of the policy to assign.
 - assign_to `CreateLegalHoldPolicyAssignmentAssignTo`
   - The item to assign the policy to.
+- filter_fields `Optional[List[LegalHoldPolicyAssignmentFilterField]]`
+  - List of metadata template field filters. Only required when `assign_to.type` is `metadata_template`.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
   - Extra headers that will be included in the HTTP request.
 

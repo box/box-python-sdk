@@ -1,5 +1,7 @@
 from typing import Optional
 
+from typing import List
+
 from box_sdk_gen.schemas.legal_hold_policy_assignment_base import (
     LegalHoldPolicyAssignmentBaseTypeField,
 )
@@ -15,6 +17,10 @@ from box_sdk_gen.schemas.legal_hold_policy_assigned_item import (
 )
 
 from box_sdk_gen.schemas.user_mini import UserMini
+
+from box_sdk_gen.schemas.legal_hold_policy_assignment_filter_field import (
+    LegalHoldPolicyAssignmentFilterField,
+)
 
 from box_sdk_gen.box.errors import BoxSDKError
 
@@ -32,6 +38,7 @@ class LegalHoldPolicyAssignment(LegalHoldPolicyAssignmentBase):
         assigned_by: Optional[UserMini] = None,
         assigned_at: Optional[DateTime] = None,
         deleted_at: Optional[DateTime] = None,
+        filter_fields: Optional[List[LegalHoldPolicyAssignmentFilterField]] = None,
         id: Optional[str] = None,
         type: Optional[LegalHoldPolicyAssignmentBaseTypeField] = None,
         **kwargs
@@ -46,6 +53,8 @@ class LegalHoldPolicyAssignment(LegalHoldPolicyAssignmentBase):
         assignment is fully deleted). If null, Assignment
         was not deleted., defaults to None
                 :type deleted_at: Optional[DateTime], optional
+                :param filter_fields: List of metadata template field filters. Only present when `assigned_to.type` is `metadata_template`., defaults to None
+                :type filter_fields: Optional[List[LegalHoldPolicyAssignmentFilterField]], optional
                 :param id: The unique identifier for this legal hold assignment., defaults to None
                 :type id: Optional[str], optional
                 :param type: The value will always be `legal_hold_policy_assignment`., defaults to None
@@ -57,3 +66,4 @@ class LegalHoldPolicyAssignment(LegalHoldPolicyAssignmentBase):
         self.assigned_by = assigned_by
         self.assigned_at = assigned_at
         self.deleted_at = deleted_at
+        self.filter_fields = filter_fields

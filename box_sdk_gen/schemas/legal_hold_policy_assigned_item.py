@@ -12,6 +12,7 @@ class LegalHoldPolicyAssignedItemTypeField(str, Enum):
     USER = 'user'
     OWNERSHIP = 'ownership'
     INTERACTIONS = 'interactions'
+    METADATA_TEMPLATE = 'metadata_template'
 
 
 class LegalHoldPolicyAssignedItem(BaseObject):
@@ -22,6 +23,7 @@ class LegalHoldPolicyAssignedItem(BaseObject):
         'user',
         'ownership',
         'interactions',
+        'metadata_template',
     }
 
     def __init__(self, type: LegalHoldPolicyAssignedItemTypeField, id: str, **kwargs):
