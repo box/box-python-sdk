@@ -10,6 +10,22 @@ from box_sdk_gen.schemas.sign_request_create_signer import (
     SignRequestCreateSignerRoleField,
 )
 
+from box_sdk_gen.schemas.sign_request_signer_verification_method_login import (
+    SignRequestSignerVerificationMethodLogin,
+)
+
+from box_sdk_gen.schemas.sign_request_signer_verification_method_phone_sms import (
+    SignRequestSignerVerificationMethodPhoneSms,
+)
+
+from box_sdk_gen.schemas.sign_request_signer_verification_method_cac_piv import (
+    SignRequestSignerVerificationMethodCacPiv,
+)
+
+from box_sdk_gen.schemas.sign_request_signer_verification_method import (
+    SignRequestSignerVerificationMethod,
+)
+
 from box_sdk_gen.schemas.sign_request_create_signer import SignRequestCreateSigner
 
 from box_sdk_gen.schemas.sign_request_signer_input import SignRequestSignerInput
@@ -76,6 +92,7 @@ class SignRequestSigner(SignRequestCreateSigner):
         signer_group_id: Optional[str] = None,
         suppress_notifications: Optional[bool] = None,
         language: Optional[str] = None,
+        verification_method: Optional[SignRequestSignerVerificationMethod] = None,
         **kwargs
     ):
         """
@@ -149,6 +166,8 @@ class SignRequestSigner(SignRequestCreateSigner):
                 :param language: The language of the user, formatted in modified version of the
         [ISO 639-1](https://developer.box.com/guides/api-calls/language-codes) format., defaults to None
                 :type language: Optional[str], optional
+                :param verification_method: The verification method for the signer., defaults to None
+                :type verification_method: Optional[SignRequestSignerVerificationMethod], optional
         """
         super().__init__(
             email=email,
@@ -164,6 +183,7 @@ class SignRequestSigner(SignRequestCreateSigner):
             signer_group_id=signer_group_id,
             suppress_notifications=suppress_notifications,
             language=language,
+            verification_method=verification_method,
             **kwargs
         )
         self.has_viewed_document = has_viewed_document
