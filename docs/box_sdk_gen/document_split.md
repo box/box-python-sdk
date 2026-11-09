@@ -25,7 +25,11 @@ This operation is performed by calling function `create_document_split_v2026_r0`
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/post-document-splits/).
 
-_Currently we don't have an example for calling `create_document_split_v2026_r0` in integration tests_
+<!-- sample post_document_splits_v2026.0 -->
+
+```python
+client.document_split.create_document_split_v2026_r0(file.id, folder.id, CreateDocumentSplitV2026R0InputSource.API, DocumentSplitCreateRequestManualV2026R0(split_type=DocumentSplitCreateRequestManualV2026R0SplitTypeField.MANUAL, split_definition=[DocumentSplitPageRangeV2026R0(start=1, end=1)]), external_id=external_id)
+```
 
 ### Arguments
 
@@ -61,7 +65,11 @@ This operation is performed by calling function `get_document_splits_v2026_r0`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-document-splits/).
 
-_Currently we don't have an example for calling `get_document_splits_v2026_r0` in integration tests_
+<!-- sample get_document_splits_v2026.0 -->
+
+```python
+client.document_split.get_document_splits_v2026_r0(limit=10)
+```
 
 ### Arguments
 
@@ -91,7 +99,11 @@ This operation is performed by calling function `get_document_split_by_id_v2026_
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-document-splits-id/).
 
-_Currently we don't have an example for calling `get_document_split_by_id_v2026_r0` in integration tests_
+<!-- sample get_document_splits_id_v2026.0 -->
+
+```python
+client.document_split.get_document_split_by_id_v2026_r0(created_document_split.id)
+```
 
 ### Arguments
 
