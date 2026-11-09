@@ -306,13 +306,9 @@ from box_sdk_gen.schemas.shield_information_barrier_segment_restriction_mini imp
 
 from box_sdk_gen.schemas.sign_request_cancel_request import *
 
-from box_sdk_gen.schemas.sign_request_create_signer import *
-
 from box_sdk_gen.schemas.sign_request_prefill_tag import *
 
 from box_sdk_gen.schemas.sign_request_base import *
-
-from box_sdk_gen.schemas.sign_request_create_request import *
 
 from box_sdk_gen.schemas.sign_request_signer_attachment import *
 
@@ -344,19 +340,25 @@ from box_sdk_gen.schemas.sign_request_signer_input_validation import *
 
 from box_sdk_gen.schemas.template_signer_input import *
 
-from box_sdk_gen.schemas.template_signer import *
-
-from box_sdk_gen.schemas.sign_template import *
-
-from box_sdk_gen.schemas.sign_templates import *
-
 from box_sdk_gen.schemas.sign_request_signer_input import *
+
+from box_sdk_gen.schemas.sign_request_signer_verification_method_cac_piv import *
+
+from box_sdk_gen.schemas.sign_request_signer_verification_method_login import *
+
+from box_sdk_gen.schemas.sign_request_signer_verification_method_phone_sms import *
+
+from box_sdk_gen.schemas.sign_request_signer_verification_method import *
+
+from box_sdk_gen.schemas.sign_request_create_signer import *
 
 from box_sdk_gen.schemas.sign_request_signer import *
 
 from box_sdk_gen.schemas.sign_request import *
 
 from box_sdk_gen.schemas.sign_requests import *
+
+from box_sdk_gen.schemas.sign_request_create_request import *
 
 from box_sdk_gen.schemas.status_skill_card import *
 
@@ -369,6 +371,20 @@ from box_sdk_gen.schemas.storage_policy_assignments import *
 from box_sdk_gen.schemas.storage_policy import *
 
 from box_sdk_gen.schemas.storage_policies import *
+
+from box_sdk_gen.schemas.template_signer_verification_method_cac_piv import *
+
+from box_sdk_gen.schemas.template_signer_verification_method_login import *
+
+from box_sdk_gen.schemas.template_signer_verification_method_phone_sms import *
+
+from box_sdk_gen.schemas.template_signer_verification_method import *
+
+from box_sdk_gen.schemas.template_signer import *
+
+from box_sdk_gen.schemas.sign_template import *
+
+from box_sdk_gen.schemas.sign_templates import *
 
 from box_sdk_gen.schemas.terms_of_service_base import *
 
