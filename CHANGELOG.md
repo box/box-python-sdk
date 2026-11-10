@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.19.0](https://github.com/box/box-python-sdk/compare/v10.18.0...v10.19.0) (2026-11-10)
+
+
+### New Features and Enhancements
+
+* add `DocumentSplitManager` and document split APIs + OTP for shared links (box/box-openapi[#621](https://github.com/box/box-python-sdk/issues/621)) ([98b77e6](https://github.com/box/box-python-sdk/commit/98b77e6501f45a3aac03fd02a36b4ac82836d2a8))
+* add `metadata_template` support and `filter_fields` to legal hold assignments (box/box-openapi[#625](https://github.com/box/box-python-sdk/issues/625)) ([758e56f](https://github.com/box/box-python-sdk/commit/758e56fa6e510f0cdfaddebc64659fa1c208ee80))
+* add `ShuttleManager` and `shuttle_*` APIs for Shuttle `v2026` `r0` (box/box-openapi[#622](https://github.com/box/box-python-sdk/issues/622)) ([a52c426](https://github.com/box/box-python-sdk/commit/a52c426ffdfacca8e4df23186f1a9827f48b7e18))
+* add `verification_method` field to Sign Request signer schemas (box/box-openapi[#626](https://github.com/box/box-python-sdk/issues/626)) ([438e678](https://github.com/box/box-python-sdk/commit/438e6788f2df8be55019ea1fde56039cc9f09b03))
+
 ## [10.18.0](https://github.com/box/box-python-sdk/compare/v10.17.1...v10.18.0) (2026-10-15)
 
 
