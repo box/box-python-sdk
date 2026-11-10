@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.20.0](https://github.com/box/box-python-sdk/compare/v4.19.0...v4.20.0) (2026-11-10)
+
+
+### New Features and Enhancements:
+
+* **boxsdkgen:** add `DocumentSplitManager` and document split schemas/docs; support shared link OTP fields (box/box-openapi[#621](https://github.com/box/box-python-sdk/issues/621)) ([de4d6f6](https://github.com/box/box-python-sdk/commit/de4d6f6ac1f20d96c9ca5729feddd2b8a091366c))
+* **boxsdkgen:** add `metadata_template` support and `filter_fields` to legal hold assignments (box/box-openapi[#625](https://github.com/box/box-python-sdk/issues/625)) ([73d3ba4](https://github.com/box/box-python-sdk/commit/73d3ba445809d38a65fe6cb4371ef072e4aedd21))
+* **boxsdkgen:** add `ShuttleManager` and generate shuttle API models/docs (box/box-openapi[#622](https://github.com/box/box-python-sdk/issues/622)) ([#1636](https://github.com/box/box-python-sdk/issues/1636)) ([89a3d8a](https://github.com/box/box-python-sdk/commit/89a3d8a9baae9241ebd8168c0b3f5507145c4c84))
+* **boxsdkgen:** add `verification_method` field to Sign Request signer schemas (box/box-openapi[#626](https://github.com/box/box-python-sdk/issues/626)) ([ec11691](https://github.com/box/box-python-sdk/commit/ec116914b3a948665447eaa7c90377e4df66bc39))
+
 ## [4.19.0](https://github.com/box/box-python-sdk/compare/v4.18.0...v4.19.0) (2026-10-15)
 
 
