@@ -7,10 +7,16 @@
 
 Invites an existing external user to join an enterprise.
 
-The existing user can not be part of another enterprise and
-must already have a Box account. Once invited, the user will receive an
-email and are prompted to accept the invitation within the
-Box web application.
+The user must already have a Box account and cannot be
+part of another enterprise. Once invited, the user receives
+an email and is prompted to accept the invitation in
+the Box web application.
+
+If `is_auto_roll_in_enabled` is set to `true`, the user does not have to
+accept the invitation and is added to the enterprise automatically after
+14 days. Only unmanaged users can be invited this way. An unmanaged user
+is a free user whose email domain matches one of the enterprise's
+domains. Availability depends on the enterprise's plan.
 
 This method requires the "Manage An Enterprise" scope enabled for
 the application, which can be enabled within the developer console.
@@ -35,6 +41,8 @@ client.invites.create_invite(
   - The enterprise to invite the user to.
 - actionable_by `CreateInviteActionableBy`
   - The user to invite.
+- is_auto_roll_in_enabled `Optional[bool]`
+  - If set to `true`, the user is added to the enterprise automatically after 14 days instead of having to accept the invite. Only unmanaged users can be invited this way. Availability depends on the enterprise's plan.
 - fields `Optional[List[str]]`
   - A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response. Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
 - extra_headers `Optional[Dict[str, Optional[str]]]`
