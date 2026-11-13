@@ -76,22 +76,38 @@ class InvitesManager:
         enterprise: CreateInviteEnterprise,
         actionable_by: CreateInviteActionableBy,
         *,
+        is_auto_roll_in_enabled: Optional[bool] = None,
         fields: Optional[List[str]] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> Invite:
         """
                 Invites an existing external user to join an enterprise.
 
-                The existing user can not be part of another enterprise and
+                The user must already have a Box account and cannot be
 
 
-                must already have a Box account. Once invited, the user will receive an
+                part of another enterprise. Once invited, the user receives
 
 
-                email and are prompted to accept the invitation within the
+                an email and is prompted to accept the invitation in
 
 
-                Box web application.
+                the Box web application.
+
+
+                If `is_auto_roll_in_enabled` is set to `true`, the user does not have to
+
+
+                accept the invitation and is added to the enterprise automatically after
+
+
+                14 days. Only unmanaged users can be invited this way. An unmanaged user
+
+
+                is a free user whose email domain matches one of the enterprise's
+
+
+                domains. Availability depends on the enterprise's plan.
 
 
                 This method requires the "Manage An Enterprise" scope enabled for
@@ -103,6 +119,11 @@ class InvitesManager:
                 :type enterprise: CreateInviteEnterprise
                 :param actionable_by: The user to invite.
                 :type actionable_by: CreateInviteActionableBy
+                :param is_auto_roll_in_enabled: If set to `true`, the user is added to the enterprise
+        automatically after 14 days instead of having to accept the
+        invite. Only unmanaged users can be invited this way.
+        Availability depends on the enterprise's plan., defaults to None
+                :type is_auto_roll_in_enabled: Optional[bool], optional
                 :param fields: A comma-separated list of attributes to include in the
         response. This can be used to request fields that are
         not normally returned in a standard response.
@@ -118,7 +139,11 @@ class InvitesManager:
         """
         if extra_headers is None:
             extra_headers = {}
-        request_body: Dict = {'enterprise': enterprise, 'actionable_by': actionable_by}
+        request_body: Dict = {
+            'enterprise': enterprise,
+            'actionable_by': actionable_by,
+            'is_auto_roll_in_enabled': is_auto_roll_in_enabled,
+        }
         query_params_map: Dict[str, str] = prepare_params({'fields': to_string(fields)})
         headers_map: Dict[str, str] = prepare_params({**extra_headers})
         response: FetchResponse = self.network_session.network_client.fetch(

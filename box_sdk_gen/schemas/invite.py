@@ -58,21 +58,30 @@ class Invite(BaseObject):
         status: Optional[str] = None,
         created_at: Optional[DateTime] = None,
         modified_at: Optional[DateTime] = None,
+        auto_roll_in_at: Optional[DateTime] = None,
+        is_auto_roll_in: Optional[bool] = None,
         **kwargs
     ):
         """
-        :param id: The unique identifier for this invite.
-        :type id: str
-        :param type: The value will always be `invite`., defaults to InviteTypeField.INVITE
-        :type type: InviteTypeField, optional
-        :param invited_to: A representation of a Box enterprise., defaults to None
-        :type invited_to: Optional[InviteInvitedToField], optional
-        :param status: The status of the invite., defaults to None
-        :type status: Optional[str], optional
-        :param created_at: When the invite was created., defaults to None
-        :type created_at: Optional[DateTime], optional
-        :param modified_at: When the invite was modified., defaults to None
-        :type modified_at: Optional[DateTime], optional
+                :param id: The unique identifier for this invite.
+                :type id: str
+                :param type: The value will always be `invite`., defaults to InviteTypeField.INVITE
+                :type type: InviteTypeField, optional
+                :param invited_to: A representation of a Box enterprise., defaults to None
+                :type invited_to: Optional[InviteInvitedToField], optional
+                :param status: The status of the invite., defaults to None
+                :type status: Optional[str], optional
+                :param created_at: When the invite was created., defaults to None
+                :type created_at: Optional[DateTime], optional
+                :param modified_at: When the invite was modified., defaults to None
+                :type modified_at: Optional[DateTime], optional
+                :param auto_roll_in_at: The date and time when the user is added to the enterprise
+        automatically, or `null` if the user has to accept the invite., defaults to None
+                :type auto_roll_in_at: Optional[DateTime], optional
+                :param is_auto_roll_in: Whether the user is added to the enterprise automatically, without
+        having to accept the invite. When `true`, `auto_roll_in_at` contains
+        the date and time of the roll-in., defaults to None
+                :type is_auto_roll_in: Optional[bool], optional
         """
         super().__init__(**kwargs)
         self.id = id
@@ -83,3 +92,5 @@ class Invite(BaseObject):
         self.status = status
         self.created_at = created_at
         self.modified_at = modified_at
+        self.auto_roll_in_at = auto_roll_in_at
+        self.is_auto_roll_in = is_auto_roll_in
