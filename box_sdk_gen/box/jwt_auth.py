@@ -6,6 +6,8 @@ from typing import Optional
 
 from box_sdk_gen.serialization.json import deserialize
 
+from box_sdk_gen.serialization.json import serialize
+
 from typing import List
 
 from box_sdk_gen.schemas.post_o_auth_2_token import PostOAuth2TokenGrantTypeField
@@ -29,6 +31,14 @@ from box_sdk_gen.box.token_storage import InMemoryTokenStorage
 from box_sdk_gen.serialization.json import json_to_serialized_data
 
 from box_sdk_gen.serialization.json import SerializedData
+
+from box_sdk_gen.networking.fetch_options import FetchOptions
+
+from box_sdk_gen.networking.fetch_options import RequestDataFactory
+
+from box_sdk_gen.networking.fetch_options import ResponseFormat
+
+from box_sdk_gen.networking.fetch_response import FetchResponse
 
 from box_sdk_gen.internal.utils import get_uuid
 
@@ -269,6 +279,63 @@ class JWTConfig:
         )
 
 
+class JwtAccessTokenDataFactory(RequestDataFactory):
+    def __init__(
+        self,
+        config: JWTConfig,
+        *,
+        subject_id: Optional[str] = None,
+        subject_type: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :param config: JWT configuration used to sign the assertion
+        :type config: JWTConfig
+        :param subject_id: The ID of the user or enterprise to authenticate as, defaults to None
+        :type subject_id: Optional[str], optional
+        :param subject_type: The type of the subject ID, either 'user' or 'enterprise', defaults to None
+        :type subject_type: Optional[str], optional
+        """
+        super().__init__(**kwargs)
+        self.config = config
+        self.subject_id = subject_id
+        self.subject_type = subject_type
+
+    def create(self) -> SerializedData:
+        """
+        Creates the access token request body with a newly signed JWT assertion.
+        """
+        alg: JwtAlgorithm = (
+            self.config.algorithm
+            if not self.config.algorithm == None
+            else JwtAlgorithm.RS256
+        )
+        claims: Dict = {
+            'exp': get_epoch_time_in_seconds() + 30,
+            'box_sub_type': self.subject_type,
+        }
+        jwt_options: JwtSignOptions = JwtSignOptions(
+            algorithm=alg,
+            audience='https://api.box.com/oauth2/token',
+            subject=self.subject_id,
+            issuer=self.config.client_id,
+            jwtid=get_uuid(),
+            keyid=self.config.jwt_key_id,
+            private_key_decryptor=self.config.private_key_decryptor,
+        )
+        jwt_key: JwtKey = JwtKey(
+            key=self.config.private_key, passphrase=self.config.private_key_passphrase
+        )
+        assertion: str = create_jwt_assertion(claims, jwt_key, jwt_options)
+        request_body: PostOAuth2Token = PostOAuth2Token(
+            grant_type=PostOAuth2TokenGrantTypeField.URN_IETF_PARAMS_OAUTH_GRANT_TYPE_JWT_BEARER,
+            assertion=assertion,
+            client_id=self.config.client_id,
+            client_secret=self.config.client_secret,
+        )
+        return serialize(request_body)
+
+
 class BoxJWTAuth(Authentication):
     def __init__(self, config: JWTConfig, **kwargs):
         """
@@ -299,39 +366,27 @@ class BoxJWTAuth(Authentication):
             raise BoxSDKError(
                 message='JWT auth is not supported in browser environment.'
             )
-        alg: JwtAlgorithm = (
-            self.config.algorithm
-            if not self.config.algorithm == None
-            else JwtAlgorithm.RS256
+        network_session_to_use: NetworkSession = (
+            network_session if not network_session == None else NetworkSession()
         )
-        claims: Dict = {
-            'exp': get_epoch_time_in_seconds() + 30,
-            'box_sub_type': self.subject_type,
-        }
-        jwt_options: JwtSignOptions = JwtSignOptions(
-            algorithm=alg,
-            audience='https://api.box.com/oauth2/token',
-            subject=self.subject_id,
-            issuer=self.config.client_id,
-            jwtid=get_uuid(),
-            keyid=self.config.jwt_key_id,
-            private_key_decryptor=self.config.private_key_decryptor,
+        data_factory: JwtAccessTokenDataFactory = JwtAccessTokenDataFactory(
+            config=self.config,
+            subject_id=self.subject_id,
+            subject_type=self.subject_type,
         )
-        jwt_key: JwtKey = JwtKey(
-            key=self.config.private_key, passphrase=self.config.private_key_passphrase
-        )
-        assertion: str = create_jwt_assertion(claims, jwt_key, jwt_options)
-        auth_manager: AuthorizationManager = AuthorizationManager(
-            network_session=(
-                network_session if not network_session == None else NetworkSession()
+        response: FetchResponse = network_session_to_use.network_client.fetch(
+            FetchOptions(
+                url=''.join(
+                    [network_session_to_use.base_urls.base_url, '/oauth2/token']
+                ),
+                method='POST',
+                data_factory=data_factory,
+                content_type='application/x-www-form-urlencoded',
+                response_format=ResponseFormat.JSON,
+                network_session=network_session_to_use,
             )
         )
-        token: AccessToken = auth_manager.request_access_token(
-            PostOAuth2TokenGrantTypeField.URN_IETF_PARAMS_OAUTH_GRANT_TYPE_JWT_BEARER,
-            assertion=assertion,
-            client_id=self.config.client_id,
-            client_secret=self.config.client_secret,
-        )
+        token: AccessToken = deserialize(response.data, AccessToken)
         self.token_storage.store(token)
         return token
 

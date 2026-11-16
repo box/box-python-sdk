@@ -27,6 +27,8 @@ This method allows you to make any HTTP request to the Box API. It will automati
 network configuration settings from the client.
 The method accepts a `FetchOptions` object as an argument and returns a `FetchResponse` object.
 
+For request bodies that cannot be safely replayed, such as a JWT assertion with a one-time `jti`, `FetchOptions` also accepts `data_factory`. `data_factory.create()` is called on the first attempt when `data` is not set and on each retry so each retry can send a fresh body.
+
 ## JSON request
 
 The following example demonstrates how to make a custom POST request to create a new folder in the root folder.

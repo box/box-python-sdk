@@ -6,6 +6,8 @@ from enum import Enum
 
 from typing import Optional
 
+from abc import abstractmethod
+
 from typing import Dict
 
 from typing import List
@@ -56,6 +58,18 @@ class MultipartItem:
         self.content_type = content_type
 
 
+class RequestDataFactory:
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def create(self) -> SerializedData:
+        """
+        Creates a new request body
+        """
+        pass
+
+
 class FetchOptions:
     def __init__(
         self,
@@ -65,6 +79,7 @@ class FetchOptions:
         params: Optional[Dict[str, str]] = None,
         headers: Optional[Dict[str, str]] = None,
         data: Optional[SerializedData] = None,
+        data_factory: Optional[RequestDataFactory] = None,
         file_stream: Optional[ByteStream] = None,
         multipart_data: Optional[List[MultipartItem]] = None,
         content_type: str = 'application/json',
@@ -84,6 +99,8 @@ class FetchOptions:
         :type headers: Optional[Dict[str, str]], optional
         :param data: Request body of the request, defaults to None
         :type data: Optional[SerializedData], optional
+        :param data_factory: Factory that builds a request body when `data` is not provided and rebuilds it for each retry., defaults to None
+        :type data_factory: Optional[RequestDataFactory], optional
         :param file_stream: Stream data of the request, defaults to None
         :type file_stream: Optional[ByteStream], optional
         :param multipart_data: Multipart data of the request, defaults to None
@@ -104,6 +121,7 @@ class FetchOptions:
         self.params = params
         self.headers = headers
         self.data = data
+        self.data_factory = data_factory
         self.file_stream = file_stream
         self.multipart_data = multipart_data
         self.content_type = content_type
