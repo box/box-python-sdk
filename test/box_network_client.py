@@ -1,4 +1,5 @@
 import pytest
+import base64
 import json
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -6,7 +7,10 @@ from io import BytesIO, RawIOBase, StringIO, UnsupportedOperation, SEEK_END, SEE
 from unittest import mock
 from unittest.mock import Mock, patch
 from requests import Session, Response, RequestException
+from urllib.parse import parse_qs
 from urllib3.filepost import encode_multipart_formdata
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 
 from box_sdk_gen import (
     NetworkSession,
@@ -17,6 +21,8 @@ from box_sdk_gen import (
     ResponseFormat,
     DataSanitizer,
 )
+from box_sdk_gen.box.jwt_auth import BoxJWTAuth, JWTConfig
+from box_sdk_gen.networking.base_urls import BaseUrls
 from box_sdk_gen.networking.box_network_client import (
     BoxNetworkClient,
     USER_AGENT_HEADER,
@@ -488,6 +494,37 @@ def test_fetch_successfully_retry_network_exception(
         assert response.status == 200
 
 
+def test_retry_network_exception_regenerates_request_data(
+    network_client, mock_requests_session, network_session_mock, response_200
+):
+    bodies = []
+    data_factory = Mock()
+    data_factory.create.return_value = {"attempt": "D2"}
+
+    def request_side_effect(**kwargs):
+        bodies.append(kwargs["data"])
+        if len(bodies) == 1:
+            raise RequestException("Connection cancelled")
+        return response_200
+
+    mock_requests_session.request.side_effect = request_side_effect
+
+    with patch("time.sleep"):
+        network_client.fetch(
+            FetchOptions(
+                method="POST",
+                url="https://example.com",
+                content_type="application/x-www-form-urlencoded",
+                data={"attempt": "D1"},
+                data_factory=data_factory,
+                network_session=network_session_mock,
+            )
+        )
+
+    assert bodies == ["attempt=D1", "attempt=D2"]
+    data_factory.create.assert_called_once_with()
+
+
 def test_fetch_retries_network_exception_max_attempts(
     network_client, mock_requests_session, network_session_mock
 ):
@@ -611,6 +648,183 @@ def test_retryable_status_codes_with_invalid__response_body(
     assert fetch_response.status == 200
     assert fetch_response.data == {"id": "123456"}
     assert mock_requests_session.request.call_count == 3
+
+
+def test_retry_500_regenerates_request_data(
+    network_client,
+    mock_requests_session,
+    network_session_mock,
+    response_500,
+    response_200,
+):
+    data_factory = Mock()
+    data_factory.create.return_value = {"attempt": "D2"}
+    mock_requests_session.request.side_effect = [response_500, response_200]
+
+    with patch("time.sleep"):
+        network_client.fetch(
+            FetchOptions(
+                method="POST",
+                url="https://example.com",
+                content_type="application/x-www-form-urlencoded",
+                data={"attempt": "D1"},
+                data_factory=data_factory,
+                network_session=network_session_mock,
+            )
+        )
+
+    bodies = [
+        call.kwargs["data"] for call in mock_requests_session.request.call_args_list
+    ]
+    assert bodies == ["attempt=D1", "attempt=D2"]
+    data_factory.create.assert_called_once_with()
+
+
+def test_retry_strategy_receives_regenerated_request_data(
+    network_client, mock_requests_session, response_500, response_200
+):
+    class RetryStrategySpy:
+        def __init__(self):
+            self.data = []
+
+        def should_retry(self, fetch_options, fetch_response, attempt_number):
+            self.data.append(fetch_options.data)
+            return fetch_response.status == 500
+
+        def retry_after(self, fetch_options, fetch_response, attempt_number):
+            return 0
+
+    retry_strategy = RetryStrategySpy()
+    data_factory = Mock()
+    data_factory.create.return_value = {"attempt": "D2"}
+    mock_requests_session.request.side_effect = [response_500, response_200]
+
+    with patch("time.sleep"):
+        network_client.fetch(
+            FetchOptions(
+                method="POST",
+                url="https://example.com",
+                content_type="application/x-www-form-urlencoded",
+                data={"attempt": "D1"},
+                data_factory=data_factory,
+                network_session=NetworkSession(retry_strategy=retry_strategy),
+            )
+        )
+
+    assert retry_strategy.data == [{"attempt": "D1"}, {"attempt": "D2"}]
+
+
+def test_retry_without_data_factory_reuses_request_data(
+    network_client,
+    mock_requests_session,
+    network_session_mock,
+    response_500,
+    response_200,
+):
+    mock_requests_session.request.side_effect = [response_500, response_200]
+
+    with patch("time.sleep"):
+        network_client.fetch(
+            FetchOptions(
+                method="POST",
+                url="https://example.com",
+                content_type="application/x-www-form-urlencoded",
+                data={"attempt": "D1"},
+                network_session=network_session_mock,
+            )
+        )
+
+    bodies = [
+        call.kwargs["data"] for call in mock_requests_session.request.call_args_list
+    ]
+    assert bodies == ["attempt=D1", "attempt=D1"]
+
+
+def _create_jwt_auth():
+    passphrase = b"passphrase"
+    private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    private_key_pem = private_key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.BestAvailableEncryption(passphrase),
+    ).decode("ascii")
+
+    return BoxJWTAuth(
+        config=JWTConfig(
+            client_id="client-id",
+            client_secret="client-secret",
+            enterprise_id="enterprise-id",
+            jwt_key_id="jwt-key-id",
+            private_key=private_key_pem,
+            private_key_passphrase=passphrase.decode("ascii"),
+        )
+    )
+
+
+def _decode_jwt_payload(assertion):
+    payload = assertion.split(".")[1]
+    padded_payload = payload + "=" * (-len(payload) % 4)
+    return json.loads(base64.urlsafe_b64decode(padded_payload))
+
+
+@pytest.fixture
+def jwt_token_server():
+    bodies = []
+    statuses = [500, 200]
+
+    class Handler(BaseHTTPRequestHandler):
+        protocol_version = "HTTP/1.1"
+
+        def do_POST(self):
+            body = _read_request_body(self)
+            bodies.append(body.decode("utf-8"))
+            status = statuses.pop(0)
+            response_body = (
+                b'{"access_token":"token","expires_in":3600,"token_type":"bearer"}'
+            )
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(response_body)))
+            self.end_headers()
+            self.wfile.write(response_body)
+
+        def log_message(self, *args):
+            pass
+
+    server = HTTPServer(("127.0.0.1", 0), Handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    yield f"http://127.0.0.1:{server.server_port}", bodies
+    server.shutdown()
+    server.server_close()
+
+
+class OneSecondRetryStrategy:
+    def should_retry(self, fetch_options, fetch_response, attempt_number):
+        return fetch_response.status == 500
+
+    def retry_after(self, fetch_options, fetch_response, attempt_number):
+        return 1
+
+
+def test_box_jwt_auth_regenerates_assertion_on_token_request_retry(jwt_token_server):
+    url, bodies = jwt_token_server
+    auth = _create_jwt_auth()
+
+    auth.refresh_token(
+        network_session=NetworkSession(
+            base_urls=BaseUrls(base_url=url, upload_url=url, oauth_2_url=url),
+            retry_strategy=OneSecondRetryStrategy(),
+        )
+    )
+
+    assert len(bodies) == 2
+    first_assertion = parse_qs(bodies[0])["assertion"][0]
+    second_assertion = parse_qs(bodies[1])["assertion"][0]
+    first_payload = _decode_jwt_payload(first_assertion)
+    second_payload = _decode_jwt_payload(second_assertion)
+
+    assert second_payload["jti"] != first_payload["jti"]
+    assert second_payload["exp"] > first_payload["exp"]
 
 
 def test_status_code_202_with_no_retry_after_header(
