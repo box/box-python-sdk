@@ -191,3 +191,7 @@ from box_sdk_gen.schemas.v2026_r0.automate_workflows_v2026_r0 import *
 from box_sdk_gen.schemas.v2026_r0.shuttle_run_v2026_r0 import *
 
 from box_sdk_gen.schemas.v2026_r0.shuttle_runs_v2026_r0 import *
+
+from box_sdk_gen.schemas.v2026_r0.ai_session_v2026_r0 import *
+
+from box_sdk_gen.schemas.v2026_r0.ai_sessions_v2026_r0 import *
