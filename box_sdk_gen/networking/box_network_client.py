@@ -1,3 +1,4 @@
+import copy
 import io
 
 import time
@@ -89,6 +90,7 @@ class BoxNetworkClient(NetworkClient):
         multipart_streams_positions = self._get_multipart_stream_positions(options)
 
         while True:
+            options = self._prepare_options_for_attempt(options, attempt_nr)
             request: APIRequest = self._prepare_request(
                 options=options, reauthenticate=response.reauthentication_needed
             )
@@ -149,6 +151,19 @@ class BoxNetworkClient(NetworkClient):
         self._raise_on_unsuccessful_request(
             request=request, response=response, data_sanitizer=data_sanitizer
         )
+
+    @staticmethod
+    def _prepare_options_for_attempt(
+        options: 'FetchOptions', attempt_number: int
+    ) -> 'FetchOptions':
+        if options.data_factory is None or (
+            attempt_number == 1 and options.data is not None
+        ):
+            return options
+
+        retry_options = copy.copy(options)
+        retry_options.data = options.data_factory.create()
+        return retry_options
 
     def _prepare_request(
         self, options: 'FetchOptions', reauthenticate: bool = False
