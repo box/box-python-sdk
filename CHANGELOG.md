@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.20.0](https://github.com/box/box-python-sdk/compare/v10.19.0...v10.20.0) (2026-11-18)
+
+
+### Bug Fixes
+
+* Regenerate JWT assertions on token request retries (box/box-codegen[#1001](https://github.com/box/box-python-sdk/issues/1001)) ([73934d9](https://github.com/box/box-python-sdk/commit/73934d9de3dc5048e193040c53823f1187afe0bc))
+
+
+### New Features and Enhancements
+
+* add `is_auto_roll_in_enabled` and roll-in fields to invites API (box/box-openapi[#627](https://github.com/box/box-python-sdk/issues/627)) ([ba51901](https://github.com/box/box-python-sdk/commit/ba519018e6592e5102201e564ea592ec51bb9bef))
+
 ## [10.19.0](https://github.com/box/box-python-sdk/compare/v10.18.0...v10.19.0) (2026-11-10)
 
 
