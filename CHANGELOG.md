@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.21.0](https://github.com/box/box-python-sdk/compare/v4.20.0...v4.21.0) (2026-11-18)
+
+
+### New Features and Enhancements:
+
+* **boxsdkgen:** add `is_auto_roll_in_enabled` to `create_invite` and invite schema (box/box-openapi[#627](https://github.com/box/box-python-sdk/issues/627)) ([0e17000](https://github.com/box/box-python-sdk/commit/0e170007a0f63cf79c0f4db806399616aa16f7a4))
+
+
+### Bug Fixes:
+
+* **boxsdkgen:** Regenerate JWT assertions on token request retries (box/box-codegen[#1001](https://github.com/box/box-python-sdk/issues/1001)) ([42363f9](https://github.com/box/box-python-sdk/commit/42363f9df5ba81d775c8e9bec7c7663279f5e15f))
+
 ## [4.20.0](https://github.com/box/box-python-sdk/compare/v4.19.0...v4.20.0) (2026-11-10)
 
 
