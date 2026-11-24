@@ -275,7 +275,7 @@ class SearchManager:
         include_recent_shared_links: Optional[bool] = None,
         fields: Optional[List[str]] = None,
         offset: Optional[int] = None,
-        deleted_user_ids: Optional[List[str]] = None,
+        deleter_user_ids: Optional[List[str]] = None,
         deleted_at_range: Optional[List[str]] = None,
         extra_headers: Optional[Dict[str, Optional[str]]] = None
     ) -> SearchResultsResponse:
@@ -489,7 +489,7 @@ class SearchManager:
         exceeding 10000 will be rejected
         with a 400 response., defaults to None
                 :type offset: Optional[int], optional
-                :param deleted_user_ids: Limits the search results to items that were deleted by the given
+                :param deleter_user_ids: Limits the search results to items that were deleted by the given
         list of users, defined as a list of comma separated user IDs.
 
         The `trash_content` parameter needs to be set to `trashed_only`.
@@ -503,7 +503,7 @@ class SearchManager:
         any of the users, an empty result set is returned.
 
         Data available from 2023-02-01 onwards., defaults to None
-                :type deleted_user_ids: Optional[List[str]], optional
+                :type deleter_user_ids: Optional[List[str]], optional
                 :param deleted_at_range: Limits the search results to any items deleted within a given
         date range.
 
@@ -548,7 +548,7 @@ class SearchManager:
                 'include_recent_shared_links': to_string(include_recent_shared_links),
                 'fields': to_string(fields),
                 'offset': to_string(offset),
-                'deleted_user_ids': to_string(deleted_user_ids),
+                'deleter_user_ids': to_string(deleter_user_ids),
                 'deleted_at_range': to_string(deleted_at_range),
             }
         )
