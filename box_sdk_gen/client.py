@@ -204,6 +204,8 @@ from box_sdk_gen.managers.query import QueryManager
 
 from box_sdk_gen.managers.shuttle import ShuttleManager
 
+from box_sdk_gen.managers.ai_sessions import AiSessionsManager
+
 from box_sdk_gen.networking.auth import Authentication
 
 from box_sdk_gen.networking.network import NetworkSession
@@ -487,6 +489,9 @@ class BoxClient:
         )
         self.query = QueryManager(auth=self.auth, network_session=self.network_session)
         self.shuttle = ShuttleManager(
+            auth=self.auth, network_session=self.network_session
+        )
+        self.ai_sessions = AiSessionsManager(
             auth=self.auth, network_session=self.network_session
         )
 
