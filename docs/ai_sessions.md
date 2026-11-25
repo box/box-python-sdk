@@ -21,7 +21,11 @@ This operation is performed by calling function `get_ai_sessions_v2026_r0`.
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/get-ai-sessions/).
 
-_Currently we don't have an example for calling `get_ai_sessions_v2026_r0` in integration tests_
+<!-- sample get_ai_sessions_v2026.0 -->
+
+```python
+client.ai_sessions.get_ai_sessions_v2026_r0(GetAiSessionsV2026R0Source.API)
+```
 
 ### Arguments
 
@@ -64,7 +68,11 @@ This operation is performed by calling function `delete_ai_session_by_id_v2026_r
 See the endpoint docs at
 [API Reference](https://developer.box.com/reference/v2026.0/delete-ai-sessions-id/).
 
-_Currently we don't have an example for calling `delete_ai_session_by_id_v2026_r0` in integration tests_
+<!-- sample delete_ai_sessions_id_v2026.0 -->
+
+```python
+client.ai_sessions.delete_ai_session_by_id_v2026_r0(ai_session_id)
+```
 
 ### Arguments
 
